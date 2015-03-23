@@ -88,33 +88,37 @@
             </div>
 
             <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
-                <ul class="filter-box">
-                    <li class="stage-label ng-scope" ng-class="{active: spike}" style="max-width:33.333333333333336%" ng-repeat="(key,value) in aggregations.date">
-                        <!-- <button ng-click="setDateFilter(key)">{{key}} <i>{{ value }}</i></button> -->
-                        <input type="checkbox" ng-checked="hasFilter('date',key)" ng-click="toggleFilter('date', key)">
-                        <span>{{key | translate}} <i>{{ value }}</i></span>
-                    </li>
-                </ul>
-                <ul class="date-filter">
-                    <li sd-date-param data-location="beforefirstcreated">
-                        <label for="created_before" translate>Created before</label>
-                       <div sd-datepicker ng-model="date"></div>
-                    </li>
-                    <li sd-date-param data-location="afterfirstcreated">
-                        <label for="created_after" translate>Created after</label>
-                        <div sd-datepicker ng-model="date"></div>
-                    </li>
-                </ul>
-                <ul class="date-filter">
-                    <li sd-date-param data-location="beforeversioncreated">
-                        <label for="modified_before" translate>Modified before</label>
-                        <div sd-datepicker ng-model="date"></div>
-                    </li>
-                    <li sd-date-param data-location="versioncreated">
-                        <label for="modified_after" translate>Modified after</label>
-                        <div sd-datepicker ng-model="date"></div>
-                    </li>
-                </ul>
+                
+               <form class="date-filter">
+                    <div class="predefined-dates">
+                        <div ng-repeat="(key,value) in aggregations.date" >
+                            <button ng-click="toggleFilter('date', key)" 
+                                class="btn btn-mini" ng-class="{active: hasFilter('date',key)}"
+                                >{{key}}</button>
+                        </div>
+                    </div> 
+                    <fieldset class="span-2">
+                        <div class="field" sd-date-param data-location="beforefirstcreated">
+                            <label for="created_before" translate>Created before</label>
+                            <div sd-datepicker ng-model="date"></div>
+                        </div>
+                        <div class="field" sd-date-param data-location="afterfirstcreated">
+                             <label for="created_after" translate>Created after</label>
+                            <div sd-datepicker ng-model="date"></div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="span-2">
+                        <div class="field" sd-date-param data-location="beforefirstcreated">
+                            <label for="modified_before" translate>Modified before</label>
+                            <div sd-datepicker ng-model="date"></div>
+                        </div>
+                        <div class="field" sd-date-param data-location="afterfirstcreated">
+                            <label for="modified_before" translate>Modified before</label>
+                            <div sd-datepicker ng-model="date"></div>
+                        </div>
+                    </fieldset>
+                    
+               </form>               
             </div>
         </div>
     </div>

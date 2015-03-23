@@ -81,6 +81,12 @@
 				background-color: @archive-sidebar-bg;
 			}
 		}
+		&.pane {
+			margin: 0 -20px;
+			> .toggle-content {
+				padding: 20px 15px;
+			}
+		}
 	}
 
 
@@ -106,18 +112,11 @@
 			}
 			i {
 				&:not([class*="filetype-icon-"]) {
-					background: @grayLight;
-					min-width: 12px;
-					text-align: center;
-					font-style: normal;
-					.border-radius(2px);
 					line-height: 16px;
 					margin-top: 3px;
 					float: right;
-					padding: 0px 6px;
-					color: @white;
-					border: 0;
-					font-size: 10px;
+					color: @gray;
+					font-size: 11px;
 				}
 			}
 			[class*="filetype-icon-"] {
@@ -131,31 +130,48 @@
 	}
 
 	.search-within-filter {
-		margin-bottom: 20px;
+		position: relative;
+		margin: -19px -20px 20px -20px;
+		height: @nav-height;
+		input {
+			height: @nav-height;
+			border-width: 0 0 1px 0 !important;
+			padding-left: 15px;
+		}
 		button {
-			float: right;
-			margin-top: -27px;
-			position: relative;
-			height: 27px;
-			.border-radius(0 2px 2px 0);
+			position: absolute;
+			top: 0; right: 0;
+			height: @nav-height;
+			width: @nav-height - 15px;
+			border: 0;
+			background: none;
+			i {
+				width: 18px;
+  				background-repeat: no-repeat;
+  				margin-top: 5px;
+			}
 		}
 	}
 
 	.date-filter {
-		li {
-			margin-bottom: 5px;
-			padding-left: 10px;
-			.clearfix();
-			label {
-				font-size: 12px;
-				float: left;
-				margin-top: 5px;
-			}
-			input {
-				float: right;
-				width: 130px;
-			}
 
+		.predefined-dates {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+			> div {
+				flex: 1 1 auto;
+				padding: 4px;
+				.border-box();
+				button {
+					display: block;
+					.border-box();
+					width: 100%;
+				}
+			}	
+		}
+		.datepicker-input {
+			min-width: initial;
 		}
 		
 	}
