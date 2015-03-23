@@ -680,6 +680,40 @@ form {
           }
         }
     }
+    .flex-group {
+      display: flex;
+      margin-bottom: 12px;
+      &.header {
+        margin-bottom: 4px !important;
+      } 
+      .flex-field {
+        flex-grow: 1;
+        flex-basis: 100%;
+        margin-right: 10px;
+        line-height: 0;
+        &:last-child {
+          margin-right: 0;
+        }
+        &-empty {
+          width: 64px;
+        }
+      }
+      .btn {
+        padding: 4px 6px;
+        min-width: 32px;
+        height: auto;
+        line-height: 12px;
+        .btn [class^="icon-"], .btn [class*=" icon-"] {
+          margin: 0;
+        }
+      }
+      &:last-child {
+        margin-bottom: 20px;
+      }
+    }
+    legend + .flexbox {
+      margin-top: -4px;
+    }
     &.horizontal {
       .clearfix();
       .field {
@@ -722,6 +756,9 @@ form {
         }
       }
     }
+  }
+  fieldset + fieldset {
+    margin-top: 20px;
   }
 }
 
