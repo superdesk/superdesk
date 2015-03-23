@@ -172,11 +172,6 @@ define([
         return service;
     }
 
-    IngestDashboardController.$inject = ['$scope', 'api', 'ingestSources'];
-    function IngestDashboardController($scope, $api, ingestSources) {
-
-    }
-
     IngestListController.$inject = ['$scope', '$injector', '$location', 'api', '$rootScope'];
     function IngestListController($scope, $injector, $location, api, $rootScope) {
         $injector.invoke(BaseListController, this, {$scope: $scope});
@@ -1032,10 +1027,9 @@ define([
         .directive('sdSortrules', SortRulesDirectives)
         .directive('sdUserIngestDashboardDropDown', IngestUserDashboardDropDown)
         .directive('sdUserIngestDashboardList', IngestUserDashboardList)
-        .directive('sdUserIngestDashboard', IngestUserDashboard)        
+        .directive('sdUserIngestDashboard', IngestUserDashboard)
         .filter('insert', InsertFilter)
         .filter('scheduleFilter', ScheduleFilter);
-
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk

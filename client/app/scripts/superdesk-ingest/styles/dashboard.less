@@ -4,7 +4,7 @@
 @import 'variables.less';
 
 
-.ingest-dashboard {
+.ingest-dashboard-dropdown {
     .source-list {
         li {
             padding: 0px 15px 5px 10px;
@@ -18,5 +18,101 @@
                 text-transform: uppercase;    
             }
         }
+    }
+}
+
+// Article dashboard
+// -------------------------------------------------
+
+.ingest-dashboard {
+    padding: 40px;
+    overflow: auto;
+    
+    .dropdown {
+        position: absolute;
+        top: 7px;
+        right: 1px;
+    }
+    .card-list {
+        width: 0;
+        margin: 0 auto;
+    }
+    .card-list > li {
+        width: 240px;
+        height: auto;
+        float: left;
+        margin: 10px;
+        padding: 0px;
+        position: relative;
+        .pad-left {
+            padding-left: 10px;
+        }
+        .header {
+            height: 90px;
+            background: @black;
+            color: @white;
+            .title {
+                height: 30px;
+                padding-top: 10px;
+                .text-semibold();
+            }
+            .sub-title {
+                color: @gray;
+                .text {
+                    .text-semibold();
+                }    
+            }
+        }
+        .status {
+            color: @white;
+            font-size: 14px;
+            padding: 5px 0px;
+            .text-semibold();
+            .text {
+                text-transform: uppercase;                
+            }
+            .time {
+                font-size: 10px
+            }
+        }
+        .open {
+            background: @green;
+        }
+        .closed {
+            background: @red;
+
+        }
+        .ingested_count {
+            text-align: center;
+            .count {
+                font-size: 25px;
+                padding: 10px 0px;
+                .text-bold();
+            }
+            .text {
+                font-size: 10px;
+                color: @gray;
+            }
+        }
+        .divider {
+            height:1px;
+            margin: 8px 1px;
+            margin-right: 2px;
+            background-color: #e3e3e3;
+        }
+        .update-time {
+            padding-bottom: 7px;
+            .text {
+                text-transform: uppercase;   
+                color: @gray;
+                .text-semibold();
+            }
+            .time {
+                font-size: 10px;
+            }
+        }
+        .error {
+            color: @red;        
+        }            
     }
 }

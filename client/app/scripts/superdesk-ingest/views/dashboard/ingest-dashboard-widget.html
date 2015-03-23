@@ -1,73 +1,77 @@
-<div class="ingest-dashboard-widget">
-    <div class="header">
-        <ul>
+<div class="header pad-left">
+    <div class="title">{{item.name}}</div>
+    <div class="sub-title"><span translate>Source Type:</span> <span class="text">{{item.source}}</span></div>
+    <div class="sub-title"><span translate>Update Cycle:</span> <span class="text">{{item.update_schedule | scheduleFilter}}</span></div>
+</div>
+
+<div ng-show="item.show_status" ng-class="{closed: item.is_closed, status: true, open: !item.is_closed}">
+    <div ng-show="item.is_closed" class="pad-left">
+        <div class="text" translate>Closed</div>
+        <div class="time" ng-show="{{item.last_closed}}">
+            <span translate>on {{item.last_closed | dateTimeString}}</span>
+        </div>
+    </div>
+    <div ng-show="!item.is_closed" class="pad-left">
+        <div class="text" translate>Open</div>
+        <div class="time" ng-show="{{item.last_open}}">
+            <span translate>since {{item.last_open | dateTimeString}}</span>
+        </div>
+    </div>    
+</div>
+<div ng-show="item.show_ingest_count" class="ingested_count">
+    <div class="count">{{ingested_count}}</div>
+    <div class="text">items in last 24 hours.</div>    
+</div>
+<div class="divider"></div>
+<div ng-show="item.show_time" class="pad-left">
+    <div class="update-time" ng-show="item.show_time">
+        <div class="text" translate>Last Time Updated</div>
+        <div class="time">{{item.last_updated | reldate}}</div>
+    </div>
+    <div class="update-time" ng-show="item.last_item_update">
+        <div class="text" translate>Last Item Arrived</div>
+        <div class="time">{{item.last_item_update | reldate}}</div>
+    </div>
+    <div ng-show="isIdle()">
+        <span class="error" translate>{{idle_message}}</span>
+    </div>               
+</div>
+<div class="divider"></div>    
+<div sd-toggle-box data-title="{{ 'Log Messages' | translate }}" ng-if="item.show_log_messages" class="pad-left">
+    
+</div>
+
+<div class="dropdown" dropdown>
+    <button class="dropdown-toggle" dropdown-toggle><i class="icon-white icon-dots-vertical"></i></button>
+        <ul class="dropdown-menu condensed pull-right">
             <li>
                 <div>
-                    <span>{{item.name}}</span> 
-                    <div class="dropdown" dropdown>
-                        <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-                            <ul class="dropdown-menu condensed pull-right">
-                                <li>
-                                    <div>
-                                        <span class="title" translate>Show</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <span translate>Status</span> <span class="pull-right" sd-switch ng-model="item.show_status" ng-click="setUserPreferences()"></span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <span translate>Number of items</span> <span class="pull-right" sd-switch ng-model="item.show_ingest_count" ng-click="setUserPreferences()"></span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <span translate>Time</span> <span class="pull-right" sd-switch ng-model="item.show_time" ng-click="setUserPreferences()"></span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div>
-                                        <span translate>Log Messages</span> <span class="pull-right" sd-switch ng-model="item.show_log_messages" ng-click="setUserPreferences()"></span>
-                                    </div>
-                                </li>                                
-                            </ul>
-                    </div>
+                    <span class="title" translate>Show</span>
                 </div>
             </li>
             <li>
-                <span translate>Source Type:</span> <span>{{item.source}}</span>
+                <div>
+                    <span translate>Status</span> <span class="pull-right" sd-switch ng-model="item.show_status" ng-click="setUserPreferences()"></span>
+                </div>
             </li>
             <li>
-                <span translate>Update Cycle:</span> <span>{{item.update_schedule | scheduleFilter}}</span>
+                <div>
+                    <span translate>Number of items</span> <span class="pull-right" sd-switch ng-model="item.show_ingest_count" ng-click="setUserPreferences()"></span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span translate>Time</span> <span class="pull-right" sd-switch ng-model="item.show_time" ng-click="setUserPreferences()"></span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <span translate>Log Messages</span> <span class="pull-right" sd-switch ng-model="item.show_log_messages" ng-click="setUserPreferences()"></span>
+                </div>
             </li>                                
         </ul>
-    </div>
-    <div class="status" ng-if="item.show_status">
-        <span ng-if="item.is_closed" translate>CLOSED</span>
-        <span ng-if="!item.is_closed" translate>OPEN</span>
-    </div>
-    <div class="ingest-count" ng-if="item.show_ingest_count">
-        <span>{{ingested_count}}</span>
-    </div>
-    <div ng-if="item.show_time">
-        <div class="update-time" ng-if="item.show_time">
-            <label translate>Last Time Updated</label>
-            <span>{{item.last_updated}} -- {{item.last_updated | reldate}}</span>
-        </div>
-        <div class="update-time" ng-if="item.last_item_update">
-            <label translate>Last Item Arrived</label>
-            <span>{{item.last_item_update}} -- {{item.last_item_update | reldate}}</span>
-        </div>
-        <div ng-if="isIdle()">
-            <span translate>{{idle_message}}</span>
-        </div>               
-    </div>
-    <div ng-if="item.show_log_messages">
-        <label translate>Log Messages</label>
-    </div>    
 </div>
+
 
 
 
