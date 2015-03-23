@@ -145,7 +145,7 @@
                 };
 
                 if (post_filters.length > 0) {
-                     criteria.post_filter = {'or': post_filters};
+                     criteria.post_filter = {'and': post_filters};
                 }
 
                 paginate(criteria, search);
@@ -215,7 +215,7 @@
 
     TagService.$inject = ['$location', 'desks'];
     function TagService($location, desks) {
-        var tags = {}
+        var tags = {};
         tags.selectedFacets = {};
         tags.selectedParameters = [];
         tags.selectedKeywords = [];
@@ -254,11 +254,11 @@
                 tags.selectedKeywords.push(keyword);
                 keywords = keywords.replace(keyword, '');
             }
-        }
+        };
 
         var removeFacet = function(type, key) {
             if (key.indexOf('Last') >= 0) {
-                scope.removeDateFacet();
+                removeDateFacet();
             } else {
                 var search = $location.search();
                 if (search[type]) {
@@ -287,12 +287,12 @@
                 tags.selectedParameters = [];
                 tags.selectedKeywords = [];
                 tags.currentSearch = $location.search();
-                
+
                 var parameters = tags.currentSearch.q;
                 if (parameters) {
                     var keywords = initSelectedParameters(parameters);
-                    initSelectedKeywords(keywords);    
-                } 
+                    initSelectedKeywords(keywords);
+                }
 
                 _.forEach(tags.currentSearch, function(type, key) {
                     if (key !== 'q') {
@@ -309,7 +309,7 @@
                             });
                         } else if (FacetKeys[key]) {
                             tags.selectedFacets[key] = JSON.parse(type);
-                        } 
+                        }
                         }
                 });
 
@@ -320,7 +320,7 @@
         return {
             initSelectedFacets: initSelectedFacets,
             removeFacet: removeFacet
-        }
+        };
     }
 
     SearchController.$inject = ['$scope', '$location', 'api', 'search'];
@@ -416,7 +416,9 @@
                                 });
 
                                 _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                    if ((!currentTags.selectedFacets.category || currentTags.selectedFacets.category !== cat.key) && cat.key !== '') {
+                                    if ((!currentTags.selectedFacets.category ||
+                                        currentTags.selectedFacets.category !== cat.key) &&
+                                        cat.key !== '') {
                                         scope.aggregations.category[cat.key] = cat.doc_count;
                                     }
                                 });
@@ -465,7 +467,8 @@
 
                                 if (!scope.desk) {
                                     _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                        if (!currentTags.selectedFacets.desk || currentTags.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
+                                        if (!currentTags.selectedFacets.desk ||
+                                            currentTags.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
                                             scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
                                                 count: desk.doc_count,
                                                 id: desk.key
@@ -493,7 +496,7 @@
                         if (scope.hasFilter(type, key)) {
                             scope.removeFilter(type, key);
                         } else {
-                            if(type === 'date') {
+                            if (type === 'date') {
                                 scope.setDateFilter(key);
                             } else {
                                 scope.setFilter(type, key);
@@ -548,7 +551,7 @@
                 }
             };
         }])
-        
+
         .directive('sdSearchTags', ['$location', '$route', 'tags', function($location, $route, tags) {
             return {
                 scope: {},
@@ -559,8 +562,8 @@
                         var search = $location.search();
                         tags.initSelectedFacets(search).then(function(currentTags) {
                             scope.tags = currentTags;
-                        });                        
-                    }
+                        });
+                    };
 
                     update();
 
@@ -961,7 +964,7 @@
         .directive('sdItemSearch', ['$location', '$timeout', function($location, $timeout) {
             return {
                 scope: {
-                    repo: '=', 
+                    repo: '=',
                     context: '='
                 },
                 templateUrl: 'scripts/superdesk-search/views/item-search.html',
@@ -1031,16 +1034,22 @@
 
                         if (metas.length) {
                             if (scope.query) {
-                                return scope.query + ' ' + metas.join(' ')
+                                return scope.query + ' ' + metas.join(' ');
                             } else {
-                                return metas.join(' ')
+                                return metas.join(' ');
                             }
                         } else {
                             return scope.query || null;
                         }
 
-                        //return metas.length ? scope.query + ' ' + metas.join(' ') : scope.query || null;
                     }
+
+                    scope.focusOnSearch = function() {
+                        if (scope.advancedOpen) {
+                           scope.toggle();
+                        }
+                        input.focus();
+                    };
 
                     function updateParam() {
                         scope.query = $location.search().q;
@@ -1053,7 +1062,14 @@
                         updateParam();
                     };
 
-                   
+                    scope.$on('key:s', function openSearch() {
+                        scope.$apply(function() {
+                            scope.flags = {extended: true};
+                            $timeout(function() { // call focus when input will be visible
+                                input.focus();
+                            }, 0, false);
+                        });
+                    });
                 }
             };
         }])
