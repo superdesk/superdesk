@@ -168,7 +168,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
         if items:
             update[LAST_ITEM_UPDATE] = utcnow()
 
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], update, provider)
+    superdesk.get_resource_service('ingest_providers').system_update(provider['_id'], update, provider)
 
     if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
         notify_and_add_activity(
@@ -211,10 +211,6 @@ def process_iptc_codes(item, provider):
             return False
 
         for subject in item['subject']:
-            # removing subjects with only name field.
-            if 'name' in subject and 'qcode' not in subject:
-                item['subject'].remove(subject)
-
             if 'qcode' in subject and len(subject['qcode']) == 8:
                 top_qcode = subject['qcode'][:2] + '000000'
                 if not iptc_already_exists(top_qcode):

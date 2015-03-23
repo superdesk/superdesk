@@ -45,7 +45,10 @@ Feature: Ingest Provider
         """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [
+          {"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+          {"event": "ingest:create", "extra": {"provider_id": "#ingest_providers._id#"}}
+        ]
         """
         Then we get emails
         """
@@ -83,7 +86,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """
@@ -128,7 +133,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """
@@ -137,6 +144,7 @@ Feature: Ingest Provider
           {"body":"closed Ingest Channel reuters 4"}
         ]
         """
+
 
     @auth
     @notification
