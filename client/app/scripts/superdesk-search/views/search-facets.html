@@ -41,7 +41,7 @@
                 <ul class="filter-box">
                     <li ng-repeat="(key,value) in aggregations.stage">
                         <!-- <button ng-click="setFilter('stage', value.id)">{{key | translate}} <i>{{ value.count }}</i></button> -->
-                        <input type="checkbox" ng-checked="hasFilter('stage',key)" ng-click="toggleFilter('stage', key)">
+                        <input type="checkbox" ng-checked="hasFilter('stage',key)" ng-click="toggleFilter('stage', value.id)">
                         <span>{{key | translate}} <i>{{ value.count }}</i></span>
                     </li>
                 </ul>
