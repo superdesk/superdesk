@@ -109,27 +109,27 @@
                 }
 
                 if (params.urgency) {
-                    query.post_filter({term: {urgency: JSON.parse(params.urgency)}});
+                    query.post_filter({terms: {urgency: JSON.parse(params.urgency)}});
                 }
 
                 if (params.source) {
-                    query.post_filter({term: {source: JSON.parse(params.source)}});
+                    query.post_filter({terms: {source: JSON.parse(params.source)}});
                 }
 
                 if (params.category) {
-                    query.post_filter({term: {'anpa-category.name': JSON.parse(params.category)}});
+                    query.post_filter({terms: {'anpa-category.name': JSON.parse(params.category)}});
                 }
 
                 if (params.desk) {
-                    query.post_filter({term: {'task.desk': JSON.parse(params.desk)}});
+                    query.post_filter({terms: {'task.desk': JSON.parse(params.desk)}});
                 }
 
                 if (params.stage) {
-                    query.post_filter({term: {'task.stage': JSON.parse(params.stage)}});
+                    query.post_filter({terms: {'task.stage': JSON.parse(params.stage)}});
                 }
 
                 if (params.state) {
-                    query.post_filter({term: {'state': JSON.parse(params.state)}});
+                    query.post_filter({terms: {'state': JSON.parse(params.state)}});
                 }
             }
 
@@ -307,10 +307,20 @@
                                     tags.selectedFacets[key].push(deskStage.name);
                                 }
                             });
+                        } else if (key === 'after') {
+
+                            if (type === 'now-24H') {
+                                tags.selectedFacets.date = ['Last Day'];
+                            } else if (type === 'now-1w'){
+                                tags.selectedFacets.date = ['Last Week'];
+                            } else if (type === 'now-1M'){
+                                tags.selectedFacets.date = ['Last Month'];
+                            }
+
                         } else if (FacetKeys[key]) {
                             tags.selectedFacets[key] = JSON.parse(type);
                         }
-                        }
+                    }
                 });
 
                 return tags;
@@ -410,81 +420,54 @@
                             if (scope.items && scope.items._aggregations !== undefined) {
 
                                 _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                    if (!currentTags.selectedFacets.type || currentTags.selectedFacets.type !== type.key) {
-                                        scope.aggregations.type[type.key] = type.doc_count;
-                                    }
+                                    scope.aggregations.type[type.key] = type.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                    if ((!currentTags.selectedFacets.category ||
-                                        currentTags.selectedFacets.category !== cat.key) &&
-                                        cat.key !== '') {
+                                    if (cat.key !== '') {
                                         scope.aggregations.category[cat.key] = cat.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
-                                    if (!currentTags.selectedFacets.urgency || currentTags.selectedFacets.urgency !== urgency.key) {
-                                        scope.aggregations.urgency[urgency.key] = urgency.doc_count;
-                                    }
+                                    scope.aggregations.urgency[urgency.key] = urgency.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                    if (!currentTags.selectedFacets.source || currentTags.selectedFacets.source !== source.key) {
-                                        scope.aggregations.source[source.key] = source.doc_count;
-                                    }
+                                    scope.aggregations.source[source.key] = source.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.state.buckets, function(state) {
-                                    if (!currentTags.selectedFacets.state || currentTags.selectedFacets.state !== state.key) {
-                                        scope.aggregations.state[state.key] = state.doc_count;
-                                    }
+                                    scope.aggregations.state[state.key] = state.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Day') {
-                                        if (day.doc_count > 0) {
-                                            scope.aggregations.date['Last Day'] = day.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Day'] = day.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Week') {
-                                        if (week.doc_count > 0) {
-                                            scope.aggregations.date['Last Week'] = week.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Week'] = week.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Month') {
-                                        if (month.doc_count > 0) {
-                                            scope.aggregations.date['Last Month'] = month.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Month'] = month.doc_count;
                                 });
 
                                 if (!scope.desk) {
                                     _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                        if (!currentTags.selectedFacets.desk ||
-                                            currentTags.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
-                                            scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
+                                        scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
                                                 count: desk.doc_count,
                                                 id: desk.key
                                             };
-                                        }
                                     }) ;
                                 }
 
                                 if (scope.desk) {
                                     _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                         _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
-                                            if (!currentTags.selectedFacets.stage || currentTags.selectedFacets.stage !== deskStage.name) {
-                                                if (deskStage._id === stage.key) {
+                                            if (deskStage._id === stage.key) {
                                                     scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
                                                 }
-                                            }
                                         });
                                     });
                                 }
@@ -524,8 +507,6 @@
                     };
 
                     scope.setDateFilter = function(key) {
-                        scope.selectedFacets.date = [key];
-
                         if (key === 'Last Day') {
                             $location.search('after', 'now-24H');
                         } else if (key === 'Last Week'){
