@@ -854,33 +854,39 @@
                     scope.selectedStage = stage;
                 };
 
+                scope.selectMacro = function(macro) {
+                    if (scope.selectedMacro === macro) {
+                        scope.selectedMacro = null;
+                    } else {
+                        scope.selectedMacro = macro;
+                    }
+                };
                 scope.send = function send() {
-                    save({
-                            desk: scope.desk._id,
-                            stage: scope.selectedStage._id || scope.desk.incoming_stage
+                    if (scope.selectedMacro != null) {
+                        scope.transform(scope.selectedMacro).then(function(result) {
+                            save({
+                                task: _.extend(scope.task.task, {
+                                    desk: scope.desk._id,
+                                    stage: scope.selectedStage._id || scope.desk.incoming_stage
+                                })
+                            });
                         });
+                    } else {
+                            save({
+                                task: _.extend(scope.task.task, {
+                                    desk: scope.desk._id,
+                                    stage: scope.selectedStage._id || scope.desk.incoming_stage
+                                })
+                            });
+                    }
                 };
 
                 scope.transform = function transform(macro) {
                     notify.success(gettext('Applying Transformation...'));
                     scope.loading = true;
                     scope.currentMacro = macro.label;
-                    macros.call(macro, scope.item).then(function(result) {
+                    return macros.call(macro, scope.item).then(function(result) {
                         scope.loading = false;
-                        notify.success(gettext('Transformation applied.'));
-                        return result;
-                    }, function(response) {
-                        notify.error(gettext('Error. Transformation not applied.'));
-                    });
-                };
-
-                scope.transform = function transform(macro) {
-                    notify.success(gettext('Applying Transformation...'));
-                    scope.loading = true;
-                    scope.currentMacro = macro.label;
-                    macros.call(macro, scope.item).then(function(result) {
-                        scope.loading = false;
-                        notify.success(gettext('Transformation applied.'));
                         return result;
                     }, function(response) {
                         notify.error(gettext('Error. Transformation not applied.'));
