@@ -22,6 +22,17 @@ describe('desks service', function() {
 		expect(userDesks.length).toBe(2);
 	}));
 
+	it('can pick a first desk if user has no current desk selected',
+		inject(function(desks, session, api, preferencesService, $q, $rootScope) {
+			spyOn(preferencesService, 'get').and.returnValue($q.when(null));
+			spyOn(preferencesService, 'update');
+			spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: [{_id: 1, desk: 'foo'}]}));
+			desks.fetchCurrentUserDesks();
+			$rootScope.$digest();
+			expect(desks.activeDeskId).not.toBe(null);
+		})
+	);
+
 	it('can save desk changes', inject(function(desks, api, $q) {
 		spyOn(api, 'save').and.returnValue($q.when({}));
 		desks.save({}, {});
@@ -32,5 +43,46 @@ describe('desks service', function() {
 		spyOn(api, 'remove').and.returnValue($q.when({}));
 		desks.remove({});
 		expect(api.remove).toHaveBeenCalledWith({});
+	}));
+
+	it('can change both desk and stage at same time', inject(function(desks, preferencesService, $q) {
+		spyOn(preferencesService, 'update').and.returnValue($q.when({}));
+		desks.setWorkspace(null);
+		expect(preferencesService.update.calls.count()).toBe(0);
+		desks.setWorkspace(null, null);
+		expect(preferencesService.update.calls.count()).toBe(0);
+		desks.setWorkspace('1');
+		expect(preferencesService.update.calls.count()).toBe(1);
+		desks.setWorkspace('1', null);
+		expect(preferencesService.update.calls.count()).toBe(1);
+		desks.setWorkspace('1', '1');
+		expect(preferencesService.update.calls.count()).toBe(2);
+		desks.setWorkspace('2', '1');
+		expect(preferencesService.update.calls.count()).toBe(3);
+	}));
+
+	it('has active property with desk&stage', inject(function(desks, preferencesService) {
+		var active = desks.active;
+		spyOn(preferencesService, 'update');
+
+		// change desk
+		desks.setCurrentDeskId('desk');
+		expect(desks.active.desk).toBe('desk');
+		expect(desks.active.stage).toBe(null);
+		expect(active).not.toBe(desks.active);
+
+		// change stage
+		active = desks.active;
+		desks.setCurrentStageId('stage');
+		expect(desks.active.desk).toBe('desk');
+		expect(desks.active.stage).toBe('stage');
+		expect(active).not.toBe(desks.active);
+
+		// no change if set to same value
+		active = desks.active;
+		desks.setCurrentDeskId('desk');
+		expect(active).toBe(desks.active);
+		desks.setCurrentStageId('stage');
+		expect(active).toBe(desks.active);
 	}));
 });

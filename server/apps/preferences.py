@@ -154,13 +154,12 @@ class PreferencesService(BaseService):
     def update_session_prefs(self, updates, existing_session_preferences, session_id):
         session_prefs = updates.get(_session_preferences_key)
         if session_prefs is not None:
-            for k in ((k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences)):
+            for k in (k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences):
                 raise ValidationError('Invalid preference: %s' % k)
 
             existing = existing_session_preferences.get(session_id, {})
             existing.update(session_prefs)
-            existing_session_preferences[session_id] = existing
-            updates[_session_preferences_key] = existing_session_preferences
+            updates[_session_preferences_key] = existing
 
     def update_user_prefs(self, updates, existing_user_preferences):
         user_prefs = updates.get(_user_preferences_key)

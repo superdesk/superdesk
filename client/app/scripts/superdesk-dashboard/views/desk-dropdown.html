@@ -1,6 +1,6 @@
 <button id="selected-desk" data-toggle="dropdown" class="dropdown-toggle pull-left">
     <span class="name" ng-if="selected.name">{{ selected.name }}</span>
-    <span class="name" ng-if="!selected.name" translate>Personal</span>
+    <span class="name" ng-if="selected !== undefined && !selected.name" translate>Personal</span>
     <span class="caret"></span>
 </button>
 
