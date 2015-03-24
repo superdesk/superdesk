@@ -833,15 +833,32 @@
             scope: {
                 item: '=',
                 view: '=',
-                _beforeSend: '=beforeSend'
+                _beforeSend: '=beforeSend',
+                mode: '@'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
             link: function sendItemLink(scope, elem, attrs) {
+                scope.mode = scope.mode || 'authoring';
+
                 scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
                 scope.macros = null;
+
+                scope.$watch('item', function() {
+                    if (scope.item) {
+                        desks.initialize()
+                        .then(fetchDesks)
+                        .then(fetchStages)
+                        .then(fetchMacros);
+                    }
+                });
+
+                scope.close = function() {
+                    scope.item = null;
+                    $location.search('fetch', null);
+                };
 
                 scope.selectDesk = function(desk) {
                     scope.desk = desk;
@@ -893,10 +910,6 @@
                     });
                 };
 
-                scope.$watch('item', function() {
-                    fetchDesks();
-                });
-
                 function fetchMacros() {
                     if (scope.desk != null) {
                             macros.getByDesk(scope.desk.name).then(function(_macros) {
@@ -906,15 +919,26 @@
                 }
 
                 function fetchDesks() {
-                    return api.find('tasks', scope.item._id)
+                    var p = desks.initialize()
+                    .then(function() {
+                        scope.desks = desks.desks;
+                    });
+
+                    if (scope.mode === 'ingest') {
+                        p = p.then(function() {
+                            scope.desk = desks.getCurrentDesk();
+                        });
+                    } else {
+                        p = p.then(function() {
+                            scope.desk = desks.getItemDesk(scope.item);
+                            return api.find('tasks', scope.item._id);
+                        })
                         .then(function(_task) {
                             scope.task = _task;
-                        }).then(function() {
-                            return desks.initialize();
-                        }).then(function() {
-                            scope.desks = desks.desks;
-                            scope.desk = desks.getItemDesk(scope.item);
-                        }).then(fetchStages).then(fetchMacros);
+                        });
+                    }
+
+                    return p;
                 }
 
                 function fetchStages() {
@@ -927,8 +951,13 @@
                 function save(data) {
                     scope.beforeSend()
                     .then(function(result) {
-                        scope.task._etag = result._etag;
-                        api.save('move', {}, data, scope.task).then(gotoPreviousScreen);
+		    			if (result && result._etag) {
+                            scope.task._etag = result._etag;
+                        }
+                        return api.save('tasks', scope.task, data).then(gotoPreviousScreen);
+                    })
+                    .then(function() {
+                        scope.close();
                     });
                 }
 
