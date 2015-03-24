@@ -35,7 +35,7 @@ function MacrosService(api, autosave) {
     this.call = triggerMacro;
 
     function triggerMacro(macro, item) {
-        return api.save('macros', {
+       return api.save('macros', {
             macro: macro.name,
             item: _.omit(item) // get all the properties as shallow copy
         }).then(function(res) {
