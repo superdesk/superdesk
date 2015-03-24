@@ -12,7 +12,6 @@
 import superdesk
 from flask import current_app as app, json, g
 from apps.archive.common import aggregations
-from apps.archive.common import aggregations
 from eve_elastic.elastic import set_filters
 
 
@@ -22,7 +21,7 @@ class SearchService(superdesk.Service):
     It can search ingest/content/archive/spike at the same time.
     """
 
-    available_repos = ('ingest', 'archive')
+    available_repos = ('ingest', 'archive', 'aapmultimedia')
     default_repos = ['ingest', 'archive']
 
     private_filters = [{
@@ -53,6 +52,12 @@ class SearchService(superdesk.Service):
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
+        if 'aapmultimedia' in types:
+            mm = app.data.aapmm
+            mmhits = mm.find('what', query, None)
+            mmdocs = mm._parse_hits(mmhits)
+            return mmdocs
+
         query['aggs'] = aggregations
         stages = superdesk.get_resource_service('users').get_invisible_stages_ids(g.get('user', {}).get('_id'))
         if stages:
