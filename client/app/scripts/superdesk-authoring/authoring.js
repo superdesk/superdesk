@@ -840,6 +840,7 @@
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
 
+                scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
                 scope.macros = null;
@@ -996,7 +997,6 @@
                     .then(function() {
                         scope.desks = desks.desks;
                     });
-
                     if (scope.mode === 'ingest') {
                         p = p.then(function() {
                             scope.selectDesk(desks.getCurrentDesk());
