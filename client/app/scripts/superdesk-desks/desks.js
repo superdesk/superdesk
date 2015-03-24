@@ -381,14 +381,22 @@
 
                 fetchCurrentDeskId: function() {
                     var self = this;
+                    if (self.activeDeskId) {
+                        return $q.when(self.activeDeskId);
+                    }
+
                     return preferencesService.get('desk:last_worked').then(function(result) {
-                        if (angular.isDefined(result)) {
+                        if (angular.isDefined(result) && result !== '') {
                             self.activeDeskId = result;
                         }
                     });
                 },
                 fetchCurrentStageId: function() {
                     var self = this;
+                    if (self.activeStageId) {
+                        return $q.when(self.activeStageId);
+                    }
+
                     return preferencesService.get('stage:items').then(function(result) {
                         if (angular.isDefined(result)) {
                             self.activeStageId = angular.isArray(result) ? result[0] : result;
@@ -396,10 +404,18 @@
                     });
                 },
                 getCurrentDeskId: function() {
-                    return this.activeDeskId;
+                	if (this.activeDeskId === 'personal') {
+                		return '';
+                	} else {
+                		return this.activeDeskId;
+                	}
                 },
                 setCurrentDeskId: function(deskId) {
-                    this.activeDeskId = deskId;
+                	if (!deskId) {
+                		this.activeDeskId = 'personal';
+                	} else {
+                		this.activeDeskId = deskId;
+                	}
                 },
                 getCurrentStageId: function() {
                     return this.activeStageId;
@@ -423,11 +439,14 @@
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
-                getCurrentDesk: function(desk) {
-                    return this.deskLookup[this.getCurrentDeskId()];
+                getCurrentDesk: function() {
+                	if (!this.activeDeskId || this.activeDeskId === 'personal') {
+                		return {'_id': 'personal'};
+                	} else {
+                		return this.deskLookup[this.activeDeskId];
+                	}
                 },
                 initialize: function() {
-
                     if (!this.loading) {
                         this.fetchCurrentDeskId();
                         this.fetchCurrentStageId();
