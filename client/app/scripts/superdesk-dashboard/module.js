@@ -37,12 +37,10 @@ define([
                 .then(function() {
                     desks.fetchCurrentUserDesks().then(function (userDesks) {
                     	scope.userDesks = userDesks._items;
-                    	if (!desks.activeDeskId && scope.userDesks) {
+                    	if (!desks.activeDeskId && scope.userDesks.length) {
                     		scope.select(scope.userDesks[0], false);
-                    	} else {
-                    		if (desks.getCurrentDesk() !== scope.selected) {
-                    			scope.select(desks.getCurrentDesk(), false);
-                    		}
+                    	} else if (desks.getCurrentDesk() != null) {
+                    		scope.select(desks.getCurrentDesk(), false);
                     	}
                     });
                 });
