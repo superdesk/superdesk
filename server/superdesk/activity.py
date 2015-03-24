@@ -116,7 +116,8 @@ class ActivityResource(Resource):
         'read': {'type': 'dict'},
         'item': Resource.rel('archive', type='string'),
         'user': Resource.rel('users'),
-        'desk': Resource.rel('desks')
+        'desk': Resource.rel('desks'),
+        'resource': {'type': 'string'}
     }
     exclude = {endpoint_name, 'notification'}
     datasource = {
@@ -171,7 +172,7 @@ ACTIVITY_EVENT = 'event'
 ACTIVITY_ERROR = 'error'
 
 
-def add_activity(activity_name, msg, item=None, notify=None, **data):
+def add_activity(activity_name, msg, resource, item=None, notify=None, **data):
     """Add an activity into activity log.
 
     This will became part of current user activity log.
@@ -182,6 +183,7 @@ def add_activity(activity_name, msg, item=None, notify=None, **data):
         'name': activity_name,
         'message': msg,
         'data': data,
+        'resource': resource
     }
 
     user = getattr(g, 'user', None)
@@ -202,7 +204,7 @@ def add_activity(activity_name, msg, item=None, notify=None, **data):
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])
 
 
-def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **data):
+def notify_and_add_activity(activity_name, msg, resource, item=None, user_list=None, **data):
     """
     this function will add the activity and notify via email.
     """
@@ -210,7 +212,7 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
     if not user_list and activity_name == ACTIVITY_ERROR:
         user_list = superdesk.get_resource_service('users').get_users_by_user_type('administrator')
 
-    add_activity(activity_name, msg=msg, item=item,
+    add_activity(activity_name, msg=msg, resource=resource, item=item,
                  notify=[user.get("_id") for user in user_list] if user_list else None, **data)
     if user_list:
         recipients = [user.get('email') for user in user_list if
@@ -223,12 +225,14 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
                 'name': activity_name,
                 'message': current_user.get('display_name') + ' ' + msg if current_user else msg,
                 'data': data,
+                'resource': resource
             }
         else:
             activity = {
                 'name': activity_name,
                 'message': 'System ' + msg,
                 'data': data,
+                'resource': resource
             }
 
         if recipients:

@@ -894,8 +894,8 @@ define([
         $scope.fetchItems();
     }
 
-    IngestUserDashboard.$inject = ['api'];
-    function IngestUserDashboard (api) {
+    IngestUserDashboard.$inject = ['api', 'userList'];
+    function IngestUserDashboard (api, userList) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget.html',
             scope: {
@@ -930,6 +930,7 @@ define([
                 function updateProvider() {
                     api.ingestProviders.getById(scope.item._id).then(function (result) {
                         angular.extend(scope.item, result);
+                        getUser();
                     }, function (error) {
                         if (error.status === 404) {
                             scope.item.dashboard_enabled = false;
@@ -941,12 +942,33 @@ define([
                 function init() {
                     scope.ingested_count = 0;
                     getCount();
+                    getUser();
+                    getLogMessages();
                 }
 
                 function getLogMessages() {
-                    var criteria = {};
+                    var criteria = {
+                        max_results: 5,
+                        sort: '[(\'_created\',-1)]',
+                        embedded: {user: 1}
+                    };
+
+                    var where = [
+                            {resource: 'ingest_providers'},
+                            {'data.provider_id': scope.item._id}
+                        ];
+
+                    if (scope.item.log_messages === 'error') {
+                        where.push({name: 'error'});
+                    }
+
+                    criteria.where = JSON.stringify ({
+                        '$and': where
+                    });
+
                     api.activity.query(criteria).then(function (result) {
                         scope.log_messages = result._items;
+                        console.log(scope.log_messages);
                     });
                 }
 
@@ -954,7 +976,19 @@ define([
                     if (data.provider_id === scope.item._id) {
                         getCount();
                         updateProvider();
-                        //getLogMessages();
+                        getLogMessages();
+                    }
+                }
+
+                function getUser() {
+                    if (scope.item.is_closed && scope.item.last_closed && scope.item.last_closed.closed_by) {
+                        userList.getUser(scope.item.last_closed.closed_by).then(function(result) {
+                            scope.item.last_closed.display_name = result.display_name;
+                        });
+                    } else if (!scope.item.is_closed && scope.item.last_opened && scope.item.last_opened.opened_by) {
+                        userList.getUser(scope.item.last_opened.opened_by).then(function(result) {
+                            scope.item.last_opened.display_name = result.display_name;
+                        });
                     }
                 }
 
@@ -977,6 +1011,7 @@ define([
 
                 scope.filterLogMessages = function() {
                     scope.setUserPreferences();
+                    getLogMessages();
                 };
 
                 scope.$on('ingest:update', function (evt, extras) {

@@ -145,8 +145,8 @@ class UsersService(BaseService):
 
     def on_created(self, docs):
         for user_doc in docs:
-            self.__update_user_defaults(user_doc)
-            add_activity(ACTIVITY_CREATE, 'created user {{user}}',
+            self.update_user_defaults(user_doc)
+            add_activity(ACTIVITY_CREATE, 'created user {{user}}', self.datasource,
                          user=user_doc.get('display_name', user_doc.get('username')))
 
     def on_update(self, updates, original):
@@ -202,6 +202,7 @@ class UsersService(BaseService):
                 archive_autosave_service.delete(lookup={'_id': item['_id']})
 
     def on_deleted(self, doc):
+<<<<<<< HEAD
         """
         Overriding to add to activity stream and handle user clean up:
             1. Authenticated Sessions
@@ -212,6 +213,10 @@ class UsersService(BaseService):
         add_activity(ACTIVITY_UPDATE, 'disabled user {{user}}', user=doc.get('display_name', doc.get('username')))
         self.__clear_locked_items(str(doc['_id']))
         self.__handle_status_changed(updates={'is_enabled': False, 'is_active': False}, user=doc)
+=======
+        add_activity(ACTIVITY_DELETE, 'removed user {{user}}', self.datasource,
+                     user=doc.get('display_name', doc.get('username')))
+>>>>>>> Adding log messages to the ingest dashboard.
 
     def on_fetched(self, document):
         for doc in document['_items']:
