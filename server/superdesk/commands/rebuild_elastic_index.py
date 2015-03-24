@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from .utils import get_random_string
+from superdesk.utils import get_random_string
 from elasticsearch.helpers import reindex
 from eve_elastic import get_es, get_indices
 import elasticsearch
@@ -17,6 +17,10 @@ import superdesk
 
 
 class RebuildElasticIndex(superdesk.Command):
+    """
+    Rebuild the elastic index from existing data by creating a new index with
+    the same alias as the configured index, puts the new mapping and delete the old index.
+    """
     def run(self):
         index_name = superdesk.app.config['ELASTICSEARCH_INDEX']
         print('Starting index rebuilding for index: ', index_name)

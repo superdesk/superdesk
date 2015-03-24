@@ -86,6 +86,11 @@ class BaseService():
             req = ParsedRequest()
         return self.backend.get(self.datasource, req=req, lookup=lookup)
 
+    def get_from_mongo(self, req, lookup):
+        if req is None:
+            req = ParsedRequest()
+        return self.backend.get_from_mongo(self.datasource, req=req, lookup=lookup)
+
     def post(self, docs, **kwargs):
         for doc in docs:
             resolve_default_values(doc, app.config['DOMAIN'][self.datasource]['defaults'])
