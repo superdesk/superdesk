@@ -300,7 +300,7 @@
                                     scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
                                 } else if (key === 'stage') {
                                     var stageid = type;
-                                    _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                    _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                         if (deskStage._id === JSON.parse(stageid)[0]) {
                                             scope.selectedFacets[key] = deskStage.name;
                                         }
@@ -409,7 +409,7 @@
                         if (type === 'desk') {
                             scope.selectedFacets[type] = desks.deskLookup[key].name;
                         } else if (type === 'stage') {
-                            _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                            _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                 if (deskStage._id === key) {
                                     scope.selectedFacets[type] = deskStage.name;
                                 }
