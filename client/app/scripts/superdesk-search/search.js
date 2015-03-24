@@ -234,7 +234,7 @@
             'state':1
         };
 
-        var initSelectedParameters = function (parameters) {
+        function initSelectedParameters (parameters) {
             tags.selectedParameters = [];
             while (parameters.indexOf(':') >= 0) {
                 var colonIndex = parameters.indexOf(':');
@@ -244,9 +244,9 @@
             }
 
             return parameters;
-        };
+        }
 
-        var initSelectedKeywords = function (keywords) {
+        function initSelectedKeywords (keywords) {
             tags.selectedKeywords = [];
             while (keywords.indexOf('(') >= 0) {
                 var paranthesisIndex = keywords.indexOf('(');
@@ -254,9 +254,9 @@
                 tags.selectedKeywords.push(keyword);
                 keywords = keywords.replace(keyword, '');
             }
-        };
+        }
 
-        var removeFacet = function(type, key) {
+        function removeFacet (type, key) {
             if (key.indexOf('Last') >= 0) {
                 removeDateFacet();
             } else {
@@ -272,20 +272,21 @@
                     }
                 }
             }
-        };
+        }
 
-        var removeDateFacet = function() {
+        function removeDateFacet () {
             var search = $location.search();
             if (search.after) {
                 $location.search('after', null);
             }
-        };
+        }
 
-        var initSelectedFacets = function (search) {
+        function initSelectedFacets () {
             return desks.initialize().then(function(result) {
                 tags.selectedFacets = {};
                 tags.selectedParameters = [];
                 tags.selectedKeywords = [];
+
                 tags.currentSearch = $location.search();
 
                 var parameters = tags.currentSearch.q;
@@ -328,7 +329,7 @@
 
                 return tags;
             });
-        };
+        }
 
         return {
             initSelectedFacets: initSelectedFacets,
@@ -415,8 +416,7 @@
                     scope.$watch('items', function() {
 
                         initAggregations();
-                        var search = $location.search();
-                        tags.initSelectedFacets(search).then(function(currentTags) {
+                        tags.initSelectedFacets().then(function(currentTags) {
 
                             scope.tags = currentTags;
 
@@ -548,8 +548,7 @@
                 link: function(scope, elem) {
 
                     var update = function() {
-                        var search = $location.search();
-                        tags.initSelectedFacets(search).then(function(currentTags) {
+                        tags.initSelectedFacets().then(function(currentTags) {
                             scope.tags = currentTags;
                         });
                     };
