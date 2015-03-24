@@ -939,13 +939,6 @@ define([
                     });
                 }
 
-                function init() {
-                    scope.ingested_count = 0;
-                    getCount();
-                    getUser();
-                    getLogMessages();
-                }
-
                 function getLogMessages() {
                     var criteria = {
                         max_results: 5,
@@ -990,6 +983,13 @@ define([
                             scope.item.last_opened.display_name = result.display_name;
                         });
                     }
+                }                
+
+                function init() {
+                    scope.ingested_count = 0;
+                    getCount();
+                    getUser();
+                    getLogMessages();
                 }
 
                 init();
