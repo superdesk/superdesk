@@ -18,7 +18,8 @@ from superdesk import get_resource_service
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
-from superdesk.errors import SuperdeskApiError, UserInactiveError
+from superdesk.errors import SuperdeskApiError
+from apps.auth.errors import UserInactiveError
 
 
 logger = logging.getLogger(__name__)
@@ -302,9 +303,9 @@ class DBUsersService(UsersService):
         if not self.is_user_active(user):
             raise UserInactiveError()
 
-        updates = {}
-        updates['password'] = get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
-        updates[app.config['LAST_UPDATED']] = utcnow()
+        updates = {'password': get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12)),
+                   app.config['LAST_UPDATED']: utcnow()}
+
         if self.user_is_waiting_activation(user):
             updates['needs_activation'] = False
 
