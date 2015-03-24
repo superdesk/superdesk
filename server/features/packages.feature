@@ -73,7 +73,7 @@ Feature: Packages
     @auth
     Scenario: Create new package with image content
         Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
+        When upload a file "bike.jpg" to "archive" with "tag:example.com,0000:newsml_BRE9A605"
         When we post to "archive" with success
         """
         {
@@ -84,7 +84,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#archive_media._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A605",
                             "slugline": "awesome picture"
                         }
                     ],
@@ -107,7 +107,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with pic",
-                                    "residRef": "#archive_media._id#",
+                                    "residRef": "tag:example.com,0000:newsml_BRE9A605",
                                     "slugline": "awesome picture"
                                 }
                             ],
@@ -122,7 +122,7 @@ Feature: Packages
     @auth
     Scenario: Create package with image and text
         Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
+        When upload a file "bike.jpg" to "archive" with "tag:example.com,0000:newsml_BRE9A605"
         When we post to "archive"
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
@@ -137,7 +137,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#archive_media._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A605",
                             "slugline": "awesome picture"
                         },
                         {
@@ -165,7 +165,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with pic",
-                                    "residRef": "#archive_media._id#",
+                                    "residRef": "tag:example.com,0000:newsml_BRE9A605",
                                     "slugline": "awesome picture"
                                 },
                                 {
@@ -533,7 +533,7 @@ Feature: Packages
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we upload a file "bike.jpg" to "archive_media"
+        When we upload a file "bike.jpg" to "archive"
         When we post to "archive" with success
         """
         {
@@ -566,7 +566,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#archive_media._id#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome picture"
                         },
                         {
@@ -603,7 +603,7 @@ Feature: Packages
         """
         [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we upload a file "bike.jpg" to "archive_media"
+        When upload a file "bike.jpg" to "archive" with "tag:example.com,0000:newsml_BRE9A604"
         When we post to "archive" with success
         """
         {
@@ -635,7 +635,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#archive_media._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A604",
                             "slugline": "awesome picture"
                         },
                         {
@@ -660,7 +660,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#archive_media._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A604",
                             "slugline": "awesome picture"
                         },
                         {

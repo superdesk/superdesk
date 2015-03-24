@@ -7,13 +7,8 @@ describe('Login', function() {
 
     var modal;
 
-    beforeEach(function(done) {
-        browser.get('/').then(
-            waitForSuperdesk
-        ).then(function() {
-            modal = new Login();
-            done();
-        });
+    beforeEach(function() {
+        modal = new Login();
     });
 
     it('form renders modal on load', function() {

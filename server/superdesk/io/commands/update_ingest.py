@@ -256,69 +256,91 @@ def ingest_items(items, provider, rule_set=None, routing_scheme=None):
     all_items = filter_expired_items(provider, items)
     items_dict = {doc['guid']: doc for doc in all_items}
     items_in_package = []
+    failed_items = []
 
     for item in [doc for doc in all_items if doc.get('type') == 'composite']:
         items_in_package = [ref['residRef'] for group in item.get('groups', [])
                             for ref in group.get('refs', []) if 'residRef' in ref]
 
     for item in [doc for doc in all_items if doc.get('type') != 'composite']:
-        ingest_item(item, provider, rule_set,
-                    routing_scheme=routing_scheme if not item['guid'] in items_in_package else None)
+        ingested = ingest_item(item, provider, rule_set,
+                               routing_scheme=routing_scheme if not item['guid'] in items_in_package else None)
+        if not ingested:
+            failed_items.append(item['guid'])
 
     for item in [doc for doc in all_items if doc.get('type') == 'composite']:
         for ref in [ref for group in item.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
+            if ref['residRef'] in failed_items:
+                failed_items.append(item['guid'])
+                continue
+
             ref.setdefault('location', 'ingest')
             itemRendition = items_dict.get(ref['residRef'], {}).get('renditions')
             if itemRendition:
                 ref.setdefault('renditions', itemRendition)
-        ingest_item(item, provider, rule_set, routing_scheme)
+        if item['guid'] in failed_items:
+            continue
+
+        ingested = ingest_item(item, provider, rule_set, routing_scheme)
+        if not ingested:
+            failed_items.append(item['guid'])
+    if failed_items:
+        logger.error('Failed to ingest the following items: %s', failed_items)
 
 
 def ingest_item(item, provider, rule_set=None, routing_scheme=None):
-    item.setdefault('_id', item['guid'])
-    providers[provider.get('type')].provider = provider
+    try:
+        item.setdefault('_id', item['guid'])
+        providers[provider.get('type')].provider = provider
 
-    item['ingest_provider'] = str(provider['_id'])
-    item.setdefault('source', provider.get('source', ''))
-    set_default_state(item, STATE_INGESTED)
-    item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
-                                     item.get('versioncreated'))
+        item['ingest_provider'] = str(provider['_id'])
+        item.setdefault('source', provider.get('source', ''))
+        set_default_state(item, STATE_INGESTED)
+        item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
+                                         item.get('versioncreated'))
 
-    if 'anpa-category' in item:
-        process_anpa_category(item, provider)
+        if 'anpa-category' in item:
+            process_anpa_category(item, provider)
 
-    if 'subject' in item:
-        process_iptc_codes(item, provider)
+        if 'subject' in item:
+            process_iptc_codes(item, provider)
 
-    apply_rule_set(item, provider, rule_set)
+        apply_rule_set(item, provider, rule_set)
 
-    ingest_service = superdesk.get_resource_service('ingest')
+        ingest_service = superdesk.get_resource_service('ingest')
 
-    if item.get('ingest_provider_sequence') is None:
-        ingest_service.set_ingest_provider_sequence(item, provider)
+        if item.get('ingest_provider_sequence') is None:
+            ingest_service.set_ingest_provider_sequence(item, provider)
 
-    rend = item.get('renditions', {})
-    if rend:
-        baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
-        if baseImageRend:
-            href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
-            update_renditions(item, href)
+        rend = item.get('renditions', {})
+        if rend:
+            baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
+            if baseImageRend:
+                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+                update_renditions(item, href)
 
-    old_item = ingest_service.find_one(_id=item['guid'], req=None)
+        old_item = ingest_service.find_one(_id=item['guid'], req=None)
 
-    if old_item:
-        ingest_service.put(item['guid'], item)
-    else:
-        try:
-            ingest_service.post([item])
-        except HTTPException as e:
-            logger.error("Exception while persisting item in ingest collection", e)
+        if old_item:
             ingest_service.put(item['guid'], item)
+        else:
+            try:
+                ingest_service.post([item])
+            except HTTPException as e:
+                logger.error("Exception while persisting item in ingest collection", e)
 
-    if routing_scheme:
-        superdesk.get_resource_service('routing_schemes')\
-            .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None), provider, routing_scheme)
+        if routing_scheme:
+            superdesk.get_resource_service('routing_schemes')\
+                .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None), provider, routing_scheme)
+    except Exception as ex:
+        logger.exception(ex)
+        try:
+            superdesk.app.sentry.captureException()
+        except:
+            pass
+        return False
+    return True
 
 
 def update_renditions(item, href):
@@ -336,8 +358,7 @@ def update_renditions(item, href):
         item['renditions'] = renditions
         item['mimetype'] = content_type
         item['filemeta'] = metadata
-    except Exception as io:
-        logger.exception(io)
+    except Exception:
         for file_id in inserted:
             app.media.delete(file_id)
         raise

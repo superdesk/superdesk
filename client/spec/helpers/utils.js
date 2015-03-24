@@ -11,7 +11,7 @@ exports.constructUrl = function(base, uri) {
     return base.replace(/\/$/, '') + uri;
 };
 
-var Q = require('q');
+var webdriver = require('selenium-webdriver');
 var LoginModal = require('./pages').login;
 
 // authenticate if needed
@@ -25,36 +25,49 @@ function login() {
         });
 }
 
-// open url and authenticate
-function openUrl(url) {
-    return browser.driver.get(browser.baseUrl)
-        .then(waitForSuperdesk)
-        .then(login)
-        .then(waitForSuperdesk)
-        .then(function() {
-            return browser.get(url);
-        }).then(waitForSuperdesk).then(
-            function() {
-                return Q.defer().resolve();
-            },
-            function(err) {
-                console.log('catched error from waitForSuperdesk in openUrl.');
-                return Q.defer().reject(err);
-            }
-    );
-}
-
 // open url
 function changeUrl(url) {
     return browser.get(url).then(waitForSuperdesk).then(
             function() {
-                return Q.defer().resolve();
+                return webdriver.promise.fulfilled();
             },
             function(err) {
-                console.log('catched error from waitForSuperdesk in changeUrl.');
-                return Q.defer().reject(err);
+                console.log('WARNING: catched error from waitForSuperdesk ' +
+                    'in changeUrl.');
+                //return webdriver.promise.rejected(err);
+                console.log('trying again...');
+                return browser.sleep(500).then(function() {
+                    return changeUrl(url);
+                });
             }
     );
+}
+
+// open url and authenticate
+function openUrl(url) {
+    return browser.driver.get(browser.baseUrl)
+        .then(waitForSuperdesk)
+        .then(
+            function() {
+                return webdriver.promise.fulfilled();
+            },
+            function(err) {
+                console.log('WARNING: catched error from waitForSuperdesk ' +
+                    'in openUrl before login.');
+                return webdriver.promise.rejected(err);
+            }
+        ).then(login)
+        .then(waitForSuperdesk)
+        .then(
+            function() {
+                return changeUrl(url);
+            },
+            function(err) {
+                console.log('WARNING: catched error from waitForSuperdesk ' +
+                    'in openUrl after login.');
+                return webdriver.promise.rejected(err);
+            }
+        );
 }
 
 function printLogs(prefix) {
@@ -95,12 +108,14 @@ function waitForAngular(opt_description) {
         timeout = /-?[\d\.]*\ ms/.exec(err.message);
       }
       if (timeout) {
-        return Q.defer().reject(err);
+        console.log('WARNING: rejected because of timeout.');
+        return webdriver.promise.rejected(err);
         //throw 'Timed out waiting for Protractor to synchronize with ' +
             //'the page after ' + timeout + '. Please see ' +
             //'https://github.com/angular/protractor/blob/master/docs/faq.md';
       } else {
-        return Q.defer().reject(err);
+        console.log('WARNING: rejected because of error.');
+        return webdriver.promise.rejected(err);
       }
     });
   };
@@ -114,13 +129,14 @@ function waitForSuperdesk() {
         return waitForAngular();
     }).then(
         function() {
-            return Q.defer().resolve();
+            return webdriver.promise.fulfilled();
         },
         function(err) {
-            console.log('catched error from waitForAngular in waitForSuperdesk:');
-            console.log(err);
+            console.log('WARNING: catched error from waitForAngular ' +
+                'in waitForSuperdesk:');
             console.log(err.message);
-            return Q.defer().reject(err);
+            //console.log(err.stack.replace('\\n', '\n'));
+            return webdriver.promise.rejected(err);
         }
     );
 }

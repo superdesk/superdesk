@@ -18,14 +18,11 @@ import signal
 
 from autobahn.asyncio.websocket import WebSocketServerProtocol
 from autobahn.asyncio.websocket import WebSocketServerFactory
-from app import get_app
+from settings import WS_HOST, WS_PORT
 
 
 beat_delay = 30
 logger = logging.getLogger(__name__)
-app = get_app()
-host = app.config['WS_HOST']
-port = app.config['WS_PORT']
 
 
 def log(msg):
@@ -101,7 +98,7 @@ if __name__ == '__main__':
     factory.protocol = BroadcastProtocol
 
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(factory, host, port)
+    coro = loop.create_server(factory, WS_HOST, WS_PORT)
     server = loop.run_until_complete(coro)
 
     def stop():
@@ -115,7 +112,7 @@ if __name__ == '__main__':
         log('initializing heartbeat...')
         asyncio.async(send_heartbeat(factory, loop))
 
-        log('listening on {0}:{1}'.format(host, port))
+        log('listening on {0}:{1}'.format(WS_HOST, WS_PORT))
         loop.run_forever()
     except KeyboardInterrupt:
         pass

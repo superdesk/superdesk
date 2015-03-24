@@ -39,7 +39,7 @@ def get_file_name(file):
 
 
 def download_file_from_url(url):
-    rv = requests.get(url, timeout=300)
+    rv = requests.get(url, timeout=15)
     if rv.status_code not in (200, 201):
         raise SuperdeskApiError.internalError('Failed to retrieve file from URL: %s' % url)
 

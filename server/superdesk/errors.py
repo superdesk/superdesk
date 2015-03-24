@@ -155,6 +155,7 @@ class SuperdeskIngestError(SuperdeskError):
     def __init__(self, code, exception, provider=None):
         super().__init__(code)
         self.system_exception = exception
+        provider = provider or {}
         self.provider_name = provider.get('name', 'Unknown provider') if provider else 'Unknown provider'
 
         if provider.get('notifications', {}).get('on_error', True):

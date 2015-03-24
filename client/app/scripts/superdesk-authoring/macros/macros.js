@@ -10,7 +10,7 @@ function MacrosService(api, autosave) {
                 this.macros = macros._items;
                 return this.macros;
             }));
-    };
+        };
 
      this.getByDesk = function(desk) {
         return api.query('macros', {'desk': desk})
@@ -46,13 +46,18 @@ function MacrosService(api, autosave) {
     }
 }
 
-MacrosController.$inject = ['$scope', 'macros'];
-function MacrosController($scope, macros) {
-
+MacrosController.$inject = ['$scope', 'macros', 'desks'];
+function MacrosController($scope, macros, desks) {
     macros.get().then(function() {
-        $scope.macros = macros.macros;
+        var currentDeskId = desks.getCurrentDeskId();
+        if (currentDeskId != null) {
+            macros.getByDesk(desks.getCurrentDesk().name).then(function(_macros) {
+                $scope.macros = _macros;
+            });
+        } else {
+            $scope.macros = macros.macros;
+        }
     });
-
     $scope.call = function(macro) {
         return macros.call(macro, $scope.item);
     };

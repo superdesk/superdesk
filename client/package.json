@@ -47,7 +47,7 @@
     "request": "^2.47.0",
     "jasmine-reporters": "^1.0.1",
     "karma-phantomjs-launcher": "^0.1.4",
-	"q": "^1.2.0"
+    "selenium-webdriver": "2.45.1"
   },
   "scripts": {
     "test": "grunt ci:travis"

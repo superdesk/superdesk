@@ -21,7 +21,6 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import SERVER_DOMAIN
 from superdesk import get_resource_service
-from superdesk.notification import push_notification
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -30,7 +29,6 @@ from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
-ARCHIVE_MEDIA = 'archive_media'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
 
@@ -125,18 +123,6 @@ aggregations = {
     'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
     'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
 }
-
-
-def on_create_media_archive():
-    push_notification('media_archive', created=1)
-
-
-def on_update_media_archive(item=None):
-    push_notification('media_archive', updated=1, item=item)
-
-
-def on_delete_media_archive():
-    push_notification('media_archive', deleted=1)
 
 
 def generate_unique_id_and_name(item):

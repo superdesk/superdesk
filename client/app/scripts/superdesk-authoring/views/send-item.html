@@ -29,15 +29,15 @@
         </ul>
         <div>
             <header>
-                <h3 translate ng-show="macros">Fetch As</h3>
+                <h3 translate ng-show="macros">Transformation</h3>
             </header>
             <br />
             <ul class="btn-list" ng-if="macros">
                 <li ng-repeat="macro in macros">
                     <button 
-                        ng-class="{actioning: loading === true && currentMacro === macro.label}" 
+                        ng-class="{active: macro.label === selectedMacro.label}" 
                         ng-disabled="loading === true"
-                        ng-click="transform(macro)">{{macro.label}}</button>
+                        ng-click="selectMacro(macro)">{{macro.label}}</button>
                 </li>
             </ul>
         </div>

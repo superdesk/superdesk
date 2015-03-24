@@ -116,7 +116,7 @@ class ReutersIngestService(IngestService):
         url = self.get_url(endpoint)
 
         try:
-            response = requests.get(url, params=payload, timeout=30)
+            response = requests.get(url, params=payload, timeout=15)
         except requests.exceptions.Timeout as ex:
             # Maybe set up for a retry, or continue in a retry loop
             raise IngestApiError.apiTimeoutError(ex, self.provider)
@@ -131,7 +131,7 @@ class ReutersIngestService(IngestService):
             raise IngestApiError(error, self.provider)
 
         if response.status_code == 404:
-            LookupError('Not found %s' % payload)
+            raise LookupError('Not found %s' % payload)
 
         try:
             # workaround for httmock lib

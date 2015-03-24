@@ -40,7 +40,9 @@ define([
         this.unspike = function unspike(item) {
             return api.update(UNSPIKE_RESOURCE, item, {})
                 .then(function() {
-                    //nothing to do
+                    if ($location.search()._id === item._id) {
+                        $location.search('_id', null);
+                    }
                 }, function(response) {
                     item.error = response;
                 })
@@ -156,12 +158,6 @@ define([
                 type: 'http',
                 backend: {
                     rel: 'archive'
-                }
-            });
-            apiProvider.api('archiveMedia', {
-                type: 'http',
-                backend: {
-                    rel: 'archive_media'
                 }
             });
         }]);
