@@ -21,15 +21,10 @@ define([
                         reloadRoute = true;
                     }
 
-                    if (!desk || desk._id === 'personal') {
-                    	desks.setCurrentDesk('');
-                    } else {
-                    	desks.setCurrentDesk(desk);
-                    }
-
+                    desks.setCurrentDesk(desk);
                     scope.selected = desk;
 
-                    if (angular.isDefined(desk) && desk._id === 'personal') {
+                    if (desk._id === 'personal' && $location.path() === '/workspace/ingest') {
                        $location.path('/workspace/content') ;
                     }
 
@@ -38,26 +33,19 @@ define([
                     }
                 };
 
-                desks.fetchCurrentUserDesks()
-                    .then(function(userDesks) {
-                        scope.userDesks = userDesks._items;
-
-                        var currentDeskId = desks.getCurrentDeskId();
-                        if (!currentDeskId) {
-                            preferencesService.get('desk:last_worked').then(
-                                function(desk) {
-                                    if (desk !== '' && desk !== 'personal') {
-                                        scope.select(_.find(scope.userDesks, {_id: desk}), false);
-                                    } else {
-                                        scope.select(scope.userDesks[0], false);
-                                    }
-                            },  function() {
-                                    scope.select(scope.userDesks[0], false);
-                            });
-                        } else {
-                            scope.select(_.find(scope.userDesks, {_id: currentDeskId}), false);
-                        }
+                desks.initialize()
+                .then(function() {
+                    desks.fetchCurrentUserDesks().then(function (userDesks) {
+                    	scope.userDesks = userDesks._items;
+                    	if (!desks.activeDeskId && scope.userDesks) {
+                    		scope.select(scope.userDesks[0], false);
+                    	} else {
+                    		if (desks.getCurrentDesk() !== scope.selected) {
+                    			scope.select(desks.getCurrentDesk(), false);
+                    		}
+                    	}
                     });
+                });
             }
         };
     }

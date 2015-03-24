@@ -71,13 +71,7 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
-        	if (!$scope.selected.desk && desks.getCurrentDeskId()) {
-        		desks.fetchCurrentUserDesks()
-                .then(function(userDesks) {
-                    $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
-                });
-        	}
-            if ($scope.selected.desk) {
+            if ($scope.selected.desk && $scope.selected.desk.name) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
@@ -110,7 +104,18 @@ define([
         $scope.$on('item:deleted', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', reset);
-        $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
+
+        $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshOnDeskAndStages);
+        function refreshOnDeskAndStages() {
+        	if ($scope.selected.desk && desks.activeDeskId) {
+        		refreshItems();
+        	} else if (!$scope.selected.desk && desks.activeDeskId) {
+        		desks.fetchCurrentUserDesks()
+                .then(function(userDesks) {
+                	$scope.selected.desk = desks.getCurrentDesk();
+                });
+        	}
+        }
 
         $scope.$watch('selected.desk', initpage);
         function initpage() {
