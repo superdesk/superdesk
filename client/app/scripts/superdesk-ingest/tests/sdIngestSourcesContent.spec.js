@@ -30,6 +30,21 @@ describe('sdIngestSourcesContent directive', function () {
         scope.$digest();
     }));
 
+    it('initializes field aliases in scope to a list containing a single ' +
+       'empty alias item',
+       function () {
+            expect(scope.fieldAliases).toEqual([
+                {fieldName: null, alias: ''}
+            ]);
+        }
+    );
+
+    it('initializes the list of available field names in scope', function () {
+        expect(scope.contentFields).toEqual([
+            'body_text', 'guid', 'published_parsed',
+            'summary', 'title', 'updated_parsed'
+        ]);
+    });
 
     describe('setRssConfig() method', function () {
         var fakeProvider;
@@ -62,6 +77,42 @@ describe('sdIngestSourcesContent directive', function () {
                 expect(scope.provider.config).toEqual({
                     auth_required: false, username: null, password: null
                 });
+            }
+        );
+    });
+
+    describe('addFieldAlias() method', function () {
+        it('appends a new item to the list of field aliases', function () {
+            scope.fieldAliases = [
+                {fieldName: 'foo', alias: 'bar'},
+                {fieldName: 'foo2', alias: 'bar2'}
+            ];
+
+            scope.addFieldAlias();
+
+            expect(scope.fieldAliases).toEqual([
+                {fieldName: 'foo', alias: 'bar'},
+                {fieldName: 'foo2', alias: 'bar2'},
+                {fieldName: null, alias: ''}
+             ]);
+        });
+    });
+
+    describe('removeFieldAlias() method', function () {
+        it('removes an item at given index from the list of field aliases',
+            function () {
+                scope.fieldAliases = [
+                    {fieldName: 'foo', alias: 'bar'},
+                    {fieldName: 'foo2', alias: 'bar2'},
+                    {fieldName: 'foo3', alias: 'bar3'}
+                ];
+
+                scope.removeFieldAlias(1);
+
+                expect(scope.fieldAliases).toEqual([
+                    {fieldName: 'foo', alias: 'bar'},
+                    {fieldName: 'foo3', alias: 'bar3'}
+                 ]);
             }
         );
     });

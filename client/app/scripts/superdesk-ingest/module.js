@@ -273,6 +273,21 @@ define([
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
                 $scope.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
+                // a list of all data field names in retrieved content
+                // expected by the server
+                // XXX: have this somewhere in config? probably better
+                $scope.contentFields = [
+                    'body_text', 'guid', 'published_parsed',
+                    'summary', 'title', 'updated_parsed'
+                ];
+
+                // a list of field names aliases - used for fields in retrieved
+                // content whose names differ from what the server expects
+                $scope.fieldAliases = [
+                    {fieldName: null, alias: ''}
+                ];
+                // TODO: initialize to existing provider data!
+
                 fetchProviders();
 
                 function fetchProviders() {
@@ -328,6 +343,26 @@ define([
                         provider.config.password = null;
                     }
                     $scope.provider.config = provider.config;
+                };
+
+                /**
+                * Appends a new (empty) item to the list of field aliases.
+                *
+                * @method addFieldAlias
+                */
+                $scope.addFieldAlias = function () {
+                    $scope.fieldAliases.push({fieldName: null, alias: ''});
+                };
+
+                /**
+                * Removes a field alias from the list of field aliases at the
+                * specified index.
+                *
+                * @method removeFieldAlias
+                * @param {Number} itemIdx index of the item to remove
+                */
+                $scope.removeFieldAlias = function (itemIdx) {
+                    $scope.fieldAliases.splice(itemIdx, 1);
                 };
 
                 $scope.save = function() {

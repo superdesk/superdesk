@@ -35,69 +35,49 @@
 </fieldset>
 
 <fieldset class="separated">
-  <legend translate>Content fields</legend>
+  <legend translate>Content Field Aliases</legend>
   <div class="flex-group header">
     <div class="flex-field">
-      <label for="" translate>Content field</label>
+      <label for="" translate>Content Field Name</label>
     </div>
     <div class="flex-field">
-      <label for="" translate>Alias</label>
+      <label for="" translate>Field Alias</label>
     </div>
     <div class="flex-field-empty">
     </div>
   </div>
-  <div class="flex-group">
+
+  <div class="flex-group" ng-repeat="item in fieldAliases">
     <div class="flex-field">
-      <select ng-model="" ng-options="">
-        <option value="">dfsfdsf</option>
-        <option value="">some text</option>
-        <option value="">Lorem ipsum dolor sit amet</option>
+      <select
+          ng-options="fieldName for fieldName in contentFields"
+          ng-model="item.fieldName">
       </select>
     </div>
+
     <div class="flex-field">
       <input type="text" id=""
-          placeholder="Type field alias"
-          ng-model=""
-          ng-required="">
+          placeholder="{{:: 'Enter field alias'|translate }}"
+          ng-model="item.alias">
     </div>
-    <button class="btn btn-default" ng-click="">
+
+    <button
+        type="button"
+        class="btn btn-default"
+        title="{{:: 'Remove'|translate}}"
+        ng-show="item.fieldName && item.alias"
+        ng-click="removeFieldAlias($index)">
       <i class="icon-close-small"></i>
     </button>
-  </div>
-  <div class="flex-group">
-    <div class="flex-field">
-      <select ng-model="" ng-options="">
-        <option value="">dfsfdsf</option>
-        <option value="">some text</option>
-        <option value="">Lorem ipsum dolor sit amet</option>
-      </select>
-    </div>
-    <div class="flex-field">
-      <input type="text" id=""
-          placeholder="Type field alias"
-          ng-model=""
-          ng-required="">
-    </div>
-    <button class="btn btn-default" ng-click="">
-      <i class="icon-close-small"></i>
-    </button>
-  </div>
-  <div class="flex-group">
-    <div class="flex-field">
-      <select ng-model="" ng-options="">
-        <option value="">dfsfdsf</option>
-        <option value="">some text</option>
-        <option value="">Lorem ipsum dolor sit amet</option>
-      </select>
-    </div>
-    <div class="flex-field">
-      <input type="text" id=""
-          placeholder="Type field alias"
-          ng-model=""
-          ng-required="">
-    </div>
-    <button class="btn btn-info" ng-click="">
+
+    <button
+        type="button"
+        class="btn btn-info"
+        ng-if="$last"
+        title="{{:: 'Add another'|translate}}"
+        ng-click="addFieldAlias()">
       <i class="svg-icon-plus"></i>
     </button>
   </div>
+
 </fieldset>
