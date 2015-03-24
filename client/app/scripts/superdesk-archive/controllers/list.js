@@ -62,7 +62,7 @@ define([
             if (resource == null) {
                 return;
             }
-            resource.getById(id)
+            return resource.getById(id)
             .then(function(item) {
                 $scope.selected.fetch = item;
             });
