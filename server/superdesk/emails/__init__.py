@@ -37,8 +37,7 @@ def send_activate_account_email(doc):
                      text_body=text_body, html_body=html_body)
 
 
-def send_user_status_changed_email(recipients, is_active):
-    status = 'active' if is_active else 'inactive'
+def send_user_status_changed_email(recipients, status):
     admins = app.config['ADMINS']
     app_name = app.config['APPLICATION_NAME']
     subject = render_template("account_status_changed_subject.txt", app_name=app_name, status=status)

@@ -9,10 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import bcrypt
+from flask import g
+
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
-from superdesk.errors import CredentialsAuthError
-from flask import g, current_app as app
+from apps.auth.errors import UserDisabledError, CredentialsAuthError, UserInactiveError
 
 
 class DbAuthService(AuthService):
@@ -21,6 +22,12 @@ class DbAuthService(AuthService):
         user = get_resource_service('auth_users').find_one(req=None, username=credentials.get('username'))
         if not user:
             raise CredentialsAuthError(credentials)
+
+        if 'is_enabled' in user and not user.get('is_enabled', False):
+            raise UserDisabledError()
+
+        if not user.get('is_active', False):
+            raise UserInactiveError()
 
         password = credentials.get('password').encode('UTF-8')
         hashed = user.get('password').encode('UTF-8')
@@ -36,14 +43,6 @@ class DbAuthService(AuthService):
             raise CredentialsAuthError(credentials)
 
         return user
-
-    def on_deleted(self, doc):
-        '''
-        :param doc: A deleted auth doc AKA a session
-        :return:
-        '''
-        # notify that the session has ended
-        app.on_session_end(doc['user'], doc['_id'])
 
     def is_authorized(self, **kwargs):
         if kwargs.get("user_id") is None:

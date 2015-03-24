@@ -11,14 +11,15 @@
 import flask
 import logging
 from flask import current_app as app
-from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
-from superdesk import get_resource_service, get_resource_privileges
+from superdesk import get_resource_service
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
-from superdesk.errors import SuperdeskApiError, UserInactiveError
+from superdesk.errors import SuperdeskApiError
+from apps.auth.errors import UserInactiveError
 
 
 logger = logging.getLogger(__name__)
@@ -90,6 +91,51 @@ def get_invisible_stages(user):
 
 class UsersService(BaseService):
 
+    def __is_invalid_operation(self, user, updates, method):
+        """
+        Checks if the requested 'PATCH' or 'DELETE' operation is Invalid.
+        Operation is invalid if one of the below is True:
+            1. Check if the user is updating his/her own status.
+            2. Check if the user is changing the status of other logged-in users.
+            3. A user without 'User Management' privilege is changing role/user_type/privileges
+
+        :return: error message if invalid.
+        """
+
+        if 'user' in flask.g:
+            if method == 'PATCH':
+                if ('is_active' in updates or 'is_enabled' in updates) and str(user['_id']) == str(flask.g.user['_id']):
+                    return 'Not allowed to change your own status'
+                if str(user['_id']) != str(flask.g.user['_id']) and get_resource_service('auth').get(
+                        req=None, lookup={'username': user['username']}).count() != 0:
+                    return 'Not allowed to change the status of a logged-in user'
+            elif method == 'DELETE' and str(user['_id']) == str(flask.g.user['_id']):
+                return 'Not allowed to disable your own profile.'
+
+        if method == 'PATCH' and is_sensitive_update(updates) and not current_user_has_privilege('users'):
+            return 'Insufficient privileges to update role/user_type/privileges'
+
+    def __handle_status_changed(self, updates, user):
+        enabled = updates.get('is_enabled', None)
+        active = updates.get('is_active', None)
+
+        if enabled is not None or active is not None:
+            get_resource_service('auth').delete_action({'username': user.get('username')})  # remove active tokens
+
+            # send email notification
+            can_send_mail = get_resource_service('preferences').email_notification_is_enabled(user_id=user['_id'])
+
+            status = ''
+
+            if enabled is not None:
+                status = 'enabled' if enabled else 'disabled'
+
+            if (status == '' or status == 'enabled') and active is not None:
+                status = 'enabled and active' if active else 'enabled but inactive'
+
+            if can_send_mail:
+                send_user_status_changed_email([user['email']], status)
+
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
@@ -99,68 +145,91 @@ class UsersService(BaseService):
 
     def on_created(self, docs):
         for user_doc in docs:
-            self.update_user_defaults(user_doc)
+            self.__update_user_defaults(user_doc)
             add_activity(ACTIVITY_CREATE, 'created user {{user}}',
                          user=user_doc.get('display_name', user_doc.get('username')))
 
     def on_update(self, updates, original):
         """
-        Overriding the method to prevent a user without 'User Management' privilege from changing a role.
+        Overriding the method to prevent user from the below:
+            1. Check if the user is updating his/her own status.
+            2. Check if the user is changing the status of other logged-in users.
+            3. A user without 'User Management' privilege is changing role/user_type/privileges
         """
+        error_message = self.__is_invalid_operation(original, updates, 'PATCH')
+        if error_message:
+            raise SuperdeskApiError.forbiddenError(message=error_message)
 
-        if 'role' in updates and 'active_privileges' in flask.g.user:
-            if not get_resource_privileges('users')['PATCH'] in flask.g.user['active_privileges']:
-                raise SuperdeskApiError.forbiddenError(message="Insufficient privileges to change the role")
-
-    def update(self, id, updates, original):
-        if is_sensitive_update(updates) and not current_user_has_privilege('users'):
-            raise SuperdeskApiError.forbiddenError(message='Current user has no privilege to edit users')
-        return super().update(id, updates, original)
+        if updates.get('is_enabled', False):
+            updates['is_active'] = True
 
     def on_updated(self, updates, user):
         if 'role' in updates or 'privileges' in updates:
             get_resource_service('preferences').on_update(updates, user)
-        self.handle_status_changed(updates, user)
+        self.__handle_status_changed(updates, user)
 
-    def handle_status_changed(self, updates, user):
-        status = updates.get('is_active', None)
-        if status is not None and status != self.user_is_active(user):
-            if not status:
-                # remove active tokens
-                get_resource_service('auth').delete_action({'username': user.get('username')})
-            # send email notification
-            preferences_service = get_resource_service('preferences')
-            send_email = preferences_service.\
-                email_notification_is_enabled(user_id=user['_id'])
-            if send_email:
-                send_user_status_changed_email([user['email']], status)
+    def on_delete(self, user):
+        """
+        Overriding the method to prevent user from the below:
+            1. Check if the user is updating his/her own status.
+            2. Check if the user is changing the status of other logged-in users.
+            3. A user without 'User Management' privilege is changing role/user_type/privileges
+        """
+
+        updates = {'is_enabled': False, 'is_active': False}
+        error_message = self.__is_invalid_operation(user, updates, 'DELETE')
+        if error_message:
+            raise SuperdeskApiError.forbiddenError(message=error_message)
 
     def delete(self, lookup):
         """
-        Overriding the method to prevent user deleting their own profile from the system.
+        Overriding the method to prevent from hard delete
         """
 
-        if 'user' in flask.g and str(lookup.get('_id')) == str(flask.g.user['_id']):
-            raise SuperdeskApiError.forbiddenError("Not allowed to delete your own profile.")
+        user = super().find_one(req=None, _id=str(lookup['_id']))
+        return super().update(id=lookup['_id'], updates={'is_enabled': False, 'is_active': False}, original=user)
 
-        return super().delete(lookup)
+    def __clear_locked_items(self, user_id):
+        archive_service = get_resource_service('archive')
+        archive_autosave_service = get_resource_service('archive_autosave')
+
+        doc_to_unlock = {'lock_user': None, 'lock_session': None, 'lock_time': None, 'force_unlock': True}
+
+        items_locked_by_user = archive_service.get(req=None, lookup={'lock_user': user_id})
+        if items_locked_by_user and items_locked_by_user.count():
+            for item in items_locked_by_user:
+                archive_service.update(item['_id'], doc_to_unlock, item)
+                archive_autosave_service.delete(lookup={'_id': item['_id']})
 
     def on_deleted(self, doc):
-        add_activity(ACTIVITY_DELETE, 'removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+        """
+        Overriding to add to activity stream and handle user clean up:
+            1. Authenticated Sessions
+            2. Locked Articles
+            3. Reset Password Tokens
+        """
+
+        add_activity(ACTIVITY_UPDATE, 'disabled user {{user}}', user=doc.get('display_name', doc.get('username')))
+        self.__clear_locked_items(str(doc['_id']))
+        self.__handle_status_changed(updates={'is_enabled': False, 'is_active': False}, user=doc)
 
     def on_fetched(self, document):
         for doc in document['_items']:
-            self.update_user_defaults(doc)
+            self.__update_user_defaults(doc)
 
-    def update_user_defaults(self, doc):
+    def on_fetched_item(self, doc):
+        self.__update_user_defaults(doc)
+
+    def __update_user_defaults(self, doc):
         """Set default fields for users"""
         doc.setdefault('display_name', get_display_name(doc))
         doc.pop('password', None)
+        doc.setdefault('is_enabled', doc.get('is_active'))
 
     def user_is_waiting_activation(self, doc):
         return doc.get('needs_activation', False)
 
-    def user_is_active(self, doc):
+    def is_user_active(self, doc):
         return doc.get('is_active', False)
 
     def get_role(self, user):
@@ -231,16 +300,24 @@ class DBUsersService(UsersService):
         if not user:
             raise SuperdeskApiError.unauthorizedError('User not found')
 
-        if not self.user_is_active(user):
+        if not self.is_user_active(user):
             raise UserInactiveError()
 
-        updates = {}
-        updates['password'] = get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
-        updates[app.config['LAST_UPDATED']] = utcnow()
+        updates = {'password': get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12)),
+                   app.config['LAST_UPDATED']: utcnow()}
+
         if self.user_is_waiting_activation(user):
             updates['needs_activation'] = False
 
         self.patch(user_id, updates=updates)
+
+    def on_deleted(self, doc):
+        """
+        Overriding clean up reset password tokens:
+        """
+
+        super().on_deleted(doc)
+        get_resource_service('reset_user_password').remove_all_tokens_for_email(doc.get('email'))
 
 
 class ADUsersService(UsersService):
@@ -256,7 +333,7 @@ class ADUsersService(UsersService):
             document['_readonly'] = ADUsersService.readonly_fields
 
     def on_fetched_item(self, doc):
-        super().update_user_defaults(doc)
+        super().on_fetched_item(doc)
         doc['_readonly'] = ADUsersService.readonly_fields
 
 

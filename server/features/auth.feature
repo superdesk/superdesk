@@ -92,11 +92,10 @@ Feature: Authentication
         """
 
         When we post to reset_password we get email with token
-        When we change user status to "inactive" using "/users/foo"
-            """
-            {"is_active": false}
-            """
-
+        When we change user status to "enabled but inactive" using "/users/foo"
+        """
+        {"is_active": false}
+        """
         Then we fail to reset password for user
 
     Scenario: Authenticate with wrong password returns error

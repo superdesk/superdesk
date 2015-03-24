@@ -388,8 +388,8 @@ define([
                         .then(function(result) {
                             _.remove(scope.rulesets, ruleset);
                         }, function(response) {
-                            if (response.status === 400) {
-                                notify.error(gettext('Rule set is applied to channel(s). It cannot be deleted.'));
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
                             } else {
                                 notify.error(gettext('There is an error. Rule set cannot be deleted.'));
                             }
@@ -482,8 +482,8 @@ define([
                         .then(function(result) {
                             _.remove(scope.schemes, scheme);
                         }, function(response) {
-                            if (response.status === 400) {
-                                notify.error(gettext('Routing scheme is applied to channel(s). It cannot be deleted.'));
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
                             } else {
                                 notify.error(gettext('There is an error. Routing scheme cannot be deleted.'));
                             }
