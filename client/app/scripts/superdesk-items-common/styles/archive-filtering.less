@@ -114,10 +114,13 @@
 				&:not([class*="filetype-icon-"]) {
 					line-height: 16px;
 					margin-top: 3px;
-					float: right;
-					color: @gray;
+					margin-left: 5px;
+					color: @grayLight;
 					font-size: 11px;
 				}
+			}
+			.sd-checkbox {
+				margin-top: 3px;
 			}
 			[class*="filetype-icon-"] {
 				.opacity(40);
@@ -125,6 +128,43 @@
 			&:hover {
 				cursor: pointer;
 				background: #ddd;
+			}
+			&:active {
+				background: #ccc;
+			}
+		}
+	}
+
+	.content-type-filters {
+		li {
+			position: relative;
+
+			i[class*="filetype-icon-"] {
+				margin-left: -8px;
+			}
+			.sd-checkbox {
+				position: absolute;
+				left: 5px;
+				top: 0px;
+				visibility: hidden;
+				
+			}
+
+			.hover-box {
+				&:hover {
+					i[class*="filetype-icon-"] {
+						visibility: hidden;
+					}
+					.sd-checkbox {
+						visibility: visible;
+					}
+				}
+			}
+			
+			&.checked {
+				.sd-checkbox {
+					visibility: visible;
+				}
 			}
 		}
 	}
