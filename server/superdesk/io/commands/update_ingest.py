@@ -174,6 +174,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
         notify_and_add_activity(
             ACTIVITY_EVENT,
             'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
+            resource='ingest_providers',
             user_list=superdesk.get_resource_service('ingest_providers')._get_administrators(),
             name=provider.get('name'),
             last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))

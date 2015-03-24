@@ -6,15 +6,15 @@
 
 <div ng-show="item.show_status" ng-class="{closed: item.is_closed, status: true, open: !item.is_closed}">
     <div ng-show="item.is_closed" class="pad-left">
-        <div class="text" translate>Closed</div>
+        <div><span class="text" translate>Closed</span><span> by {{item.last_closed.display_name}}</span></div>
         <div class="time" ng-show="item.last_closed">
-            <span translate>on {{item.last_closed | dateTimeString}}</span>
+            <span translate>on {{item.last_closed.closed_at | dateTimeString}}</span>
         </div>
     </div>
     <div ng-show="!item.is_closed" class="pad-left">
         <div class="text" translate>Open</div>
-        <div class="time" ng-show="item.last_open">
-            <span translate>since {{item.last_open | dateTimeString}}</span>
+        <div class="time" ng-show="item.last_opened">
+            <span translate>since {{item.last_opened.opened_at | dateTimeString}}</span>
         </div>
     </div>    
 </div>
@@ -38,7 +38,14 @@
 </div>
 <div class="divider"></div>    
 <div sd-toggle-box data-title="{{ 'Log Messages' | translate }}" ng-if="item.show_log_messages" class="pad-left">
-    
+    <ul>
+        <li ng-repeat="message in log_messages track by message._id">
+            <div>{{message._created | reldate}}</div>
+            <div><b>{{ message.user.display_name || 'System' }} </b><span sd-activity-message data-activity="message"></span></div>
+            <div class="divider"></div>
+        </li>
+
+    </ul>
 </div>
 
 <div class="dropdown strict" dropdown>

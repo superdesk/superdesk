@@ -155,7 +155,8 @@ class TasksService(BaseService):
         for doc in docs:
             insert_into_versions(doc['_id'])
             if is_assigned_to_a_desk(doc):
-                add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}', item=doc,
+                add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}',
+                             self.datasource, item=doc,
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
@@ -188,7 +189,7 @@ class TasksService(BaseService):
                 insert_into_versions(original['_id'])
 
             add_activity(ACTIVITY_UPDATE, 'updated task {{ subject }} for item {{ type }}',
-                         item=updated, subject=get_subject(updated), type=updated['type'])
+                         self.datasource, item=updated, subject=get_subject(updated), type=updated['type'])
 
     def on_deleted(self, doc):
         push_notification(self.datasource, deleted=1)
