@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="preview-pane content-item-preview" ng-init="tab = 'content'">
+    <div class="preview-pane content-item-preview" ng-if="!selected.fetch" ng-init="tab = 'content'">
         <header>
             <ul class="nav nav-tabs">
                 <li ng-class="{active: tab === 'content'}">
@@ -58,12 +58,5 @@
         </div>
     </div>
 
-    <div class="preview-pane content-item-preview" ng-if="selected.fetch">
-        <header>
-
-        </header>
-        <div class="content">
-            <div sd-media-fetch data-item="selected.fetch"></div>
-        </div>
-    </div>
+    <div class="preview-pane content-item-preview" ng-if="selected.fetch" sd-send-item data-item="selected.fetch" data-view="selected.fetch" data-mode="{{type}}"></div>
 </div>

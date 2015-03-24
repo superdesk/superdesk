@@ -1,8 +1,8 @@
-<div class="send-to-pane" sd-click-close>
+<div class="send-to-pane" ng-class="{show: view}">
     <header>
         <h3 translate ng-show="desk">Transform and Send</h3>
         <h3 translate ng-show="!desk">Submit to</h3>
-        <div class="close" ng-click="view = !view"><i class="icon-close-small icon-white"></i></div>
+        <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
     </header>
     <div class="content">
         <div class="dropdown desk-select" dropdown>
