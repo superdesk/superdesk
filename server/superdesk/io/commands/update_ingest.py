@@ -179,7 +179,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
             last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
-    push_notification('ingest:update', provider=str(provider['_id']))
+    push_notification('ingest:update', provider_id=str(provider['_id']))
 
 
 def process_anpa_category(item, provider):

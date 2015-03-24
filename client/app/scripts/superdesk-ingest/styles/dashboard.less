@@ -6,8 +6,14 @@
 
 .ingest-dashboard-dropdown {
     .source-list {
+        li.divider {
+            height:1px;
+            margin: 8px 1px;
+            margin-right: 2px;
+            background-color: #e3e3e3;
+        }
         li {
-            padding: 0px 15px 5px 10px;
+            padding: 0px 15px 0px 10px;
             color: #999999;
             &:first-child {
                 text-transform: uppercase;
@@ -16,6 +22,9 @@
             &:last-child {
                 padding-top: 5px;
                 text-transform: uppercase;    
+            }
+            div {
+                padding: 5px 0px 5px 0px;
             }
         }
     }
@@ -27,7 +36,6 @@
 .ingest-dashboard {
     padding: 40px;
     overflow: auto;
-    
     .dropdown {
         position: absolute;
         top: 7px;
@@ -46,6 +54,12 @@
         position: relative;
         .pad-left {
             padding-left: 10px;
+        }
+        .dropdown-menu{
+            &:before {
+                display: none;
+            }
+                
         }
         .header {
             height: 90px;
@@ -99,7 +113,7 @@
             margin: 8px 1px;
             margin-right: 2px;
             background-color: #e3e3e3;
-        }
+        }        
         .update-time {
             padding-bottom: 7px;
             .text {

@@ -950,6 +950,21 @@ define([
                     getCount();
                 }
 
+                function getLogMessages() {
+                    var criteria = {};
+                    api.activity.query(criteria).then(function (result) {
+                        scope.log_messages = result._items;
+                    });
+                }
+
+                function refreshItem(data) {
+                    if (data.provider_id === scope.item._id) {
+                        getCount();
+                        updateProvider();
+                        //getLogMessages();
+                    }
+                }
+
                 init();
 
                 scope.isIdle = function() {
@@ -967,11 +982,16 @@ define([
                     return false;
                 };
 
+                scope.filterLogMessages = function() {
+                    scope.setUserPreferences();
+                };
+
                 scope.$on('ingest:update', function (evt, extras) {
-                    if (extras.provider === scope.item._id) {
-                        getCount();
-                        updateProvider();
-                    }
+                    refreshItem(extras);
+                });
+
+                scope.$on('ingest_provider:update', function (evt, extras) {
+                    refreshItem(extras);
                 });
             }
         };
@@ -1111,6 +1131,10 @@ define([
             backend: {
                 rel: 'ingest_providers'
             }
+        });
+        apiProvider.api('activity', {
+            type: 'http',
+            backend: {rel: 'activity'}
         });
     }]);
 
