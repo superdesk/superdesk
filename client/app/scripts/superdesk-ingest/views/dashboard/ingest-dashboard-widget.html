@@ -41,10 +41,9 @@
     <ul>
         <li ng-repeat="message in log_messages track by message._id">
             <div>{{message._created | reldate}}</div>
-            <div><b>{{ message.user.display_name || 'System' }} </b><span sd-activity-message data-activity="message"></span></div>
-            <div class="divider"></div>
+            <div ng-class="{true:'error'}[message.name == 'error']"><b>{{ message.user.display_name || 'System' }} </b><span sd-activity-message data-activity="message"></span></div>
+            <div ng-if="!$last" class="divider"></div>
         </li>
-
     </ul>
 </div>
 
@@ -104,8 +103,8 @@
                     </ul>    
                 </div>
             </li>
-            <li class="divider"></li>
-            <li>Edit Ingest Source</li>
+<!--             <li class="divider"></li>
+            <li>Edit Ingest Source</li> -->
         </ul>
 </div>
 

@@ -30,7 +30,7 @@
     }
 }
 
-// Article dashboard
+// Ingest dashboard
 // -------------------------------------------------
 
 .ingest-dashboard {
@@ -55,11 +55,14 @@
         .pad-left {
             padding-left: 10px;
         }
+        &:hover {
+            cursor: default;
+        }
         .dropdown-menu{
             &:before {
                 display: none;
             }
-                
+            width: 200px;    
         }
         .header {
             height: 90px;
@@ -127,6 +130,9 @@
         }
         .error {
             color: @red;        
+        }
+        .toggle-box {
+            padding-right: 5px;
         }            
     }
 }
