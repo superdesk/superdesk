@@ -78,14 +78,6 @@
                 templateUrl: 'scripts/superdesk-archive/views/preview.html'
             };
         }])
-        .directive('sdMediaFetch', [function() {
-            return {
-                scope: {
-                    item: '='
-                },
-                templateUrl: 'scripts/superdesk-archive/views/fetch.html'
-            };
-        }])
         .directive('sdMediaPreviewWidget', [function() {
             return {
                 scope: {
