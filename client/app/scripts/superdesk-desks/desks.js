@@ -282,7 +282,7 @@
 
                 var userDesks, userDesksPromise;
 
-                var _fetchCombined = function(endpoint, page, items) {
+                var _fetchAll = function(endpoint, page, items) {
                     page = page || 1;
                     items = items || [];
                     return api(endpoint)
@@ -291,7 +291,7 @@
                         items = items.concat(result._items);
                         if (result._links.next) {
                             page++;
-                            return _fetchCombined(endpoint, page, items);
+                            return _fetchAll(endpoint, page, items);
                         }
                         return items;
                     });
@@ -312,7 +312,7 @@
                 fetchDesks: function() {
                     var self = this;
 
-                    return _fetchCombined('desks')
+                    return _fetchAll('desks')
                     .then(function(items) {
                         self.desks = {_items: items};
                         _.each(items, function(item) {
@@ -334,7 +334,7 @@
                 fetchStages: function() {
                     var self = this;
 
-                    return _fetchCombined('stages')
+                    return _fetchAll('stages')
                     .then(function(items) {
                         self.stages = {_items: items};
                         _.each(items, function(item) {
