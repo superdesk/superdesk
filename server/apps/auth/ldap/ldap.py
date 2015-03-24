@@ -13,11 +13,12 @@ from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
 from apps.auth.service import AuthService
 from apps.users.services import UsersService
 from superdesk import get_resource_service
+from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from flask import current_app as app
 import flask
 import superdesk
-from superdesk.errors import SuperdeskApiError, CredentialsAuthError, UserDisabledError, UserInactiveError
+from apps.auth.errors import UserDisabledError, CredentialsAuthError, UserInactiveError
 
 
 logger = logging.getLogger(__name__)
