@@ -38,7 +38,7 @@ describe('Users', function() {
             expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
         });
 
-        it('can delete user', function() {
+        it('can disable user', function() {
             var user = element.all(by.repeater('users')).first(),
                 activity = user.element(by.className('icon-trash'));
 
@@ -55,7 +55,7 @@ describe('Users', function() {
                     return elem.element(by.binding('bodyText'))
                         .getText()
                         .then(function(text) {
-                            if (text === 'Please confirm you want to delete a user.') {
+                            if (text === 'Please confirm that you want to disable a user.') {
                                 return true;
                             }
                         });
@@ -74,7 +74,7 @@ describe('Users', function() {
                     return element.all(by.repeater('users'))
                         .count()
                         .then(function(c) {
-                            if (c === 2) {
+                            if (c === 3) {
                                 return true;
                             }
                         });
