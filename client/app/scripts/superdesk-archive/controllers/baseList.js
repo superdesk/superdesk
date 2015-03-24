@@ -22,9 +22,10 @@ define(['lodash'], function(_) {
                 $scope.selected.preview = null;
             }
             if ($location.search().fetch) {
-                console.log($location.search().fetch);
-                console.log(decodeURIComponent($location.search().fetch));
-                self.fetchItem(decodeURIComponent($location.search().fetch));
+                self.fetchItem(decodeURIComponent($location.search().fetch))
+                .then(function() {
+                    $scope.selected.preview = null;
+                });
             }
         });
 
