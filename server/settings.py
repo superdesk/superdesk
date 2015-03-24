@@ -152,7 +152,8 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
-    'apps.macros'
+    'apps.macros',
+    'apps.dictionaries'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
