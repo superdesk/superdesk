@@ -120,7 +120,7 @@ define([
 			preferencesService.get();
             $rootScope.$digest();
 
-            preferencesService.update(update, 'feature:preview').then(function() {}, function(response) { });
+            preferencesService.update(update, 'feature:preview');
             $rootScope.$digest();
 
             var preferences;
