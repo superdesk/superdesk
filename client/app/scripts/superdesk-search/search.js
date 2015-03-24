@@ -306,7 +306,7 @@
                             });
                         } else if (key === 'stage') {
                             var stageid = type;
-                            _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                            _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                 if (deskStage._id === JSON.parse(stageid)[0]) {
                                     tags.selectedFacets[key].push(deskStage.name);
                                 }
