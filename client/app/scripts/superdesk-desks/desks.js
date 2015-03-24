@@ -275,6 +275,21 @@
 
                 var userDesks, userDesksPromise;
 
+                var _fetchAll = function(endpoint, page, items) {
+                    page = page || 1;
+                    items = items || [];
+                    return api(endpoint)
+                    .query({max_results: 200, page: page})
+                    .then(function(result) {
+                        items = items.concat(result._items);
+                        if (result._links.next) {
+                            page++;
+                            return _fetchAll(endpoint, page, items);
+                        }
+                        return items;
+                    });
+                };
+
             var desksService = {
                 desks: null,
                 users: null,
@@ -290,11 +305,11 @@
                 fetchDesks: function() {
                     var self = this;
 
-                    return api.desks.query({max_results: 500})
-                    .then(function(result) {
-                        self.desks = result;
-                        _.each(result._items, function(desk) {
-                            self.deskLookup[desk._id] = desk;
+                    return _fetchAll('desks')
+                    .then(function(items) {
+                        self.desks = {_items: items};
+                        _.each(items, function(item) {
+                            self.deskLookup[item._id] = item;
                         });
                     });
                 },
@@ -312,11 +327,11 @@
                 fetchStages: function() {
                     var self = this;
 
-                    return api('stages').query({max_results: 500})
-                    .then(function(result) {
-                        self.stages = result;
-                        _.each(result._items, function(stage) {
-                            self.stageLookup[stage._id] = stage;
+                    return _fetchAll('stages')
+                    .then(function(items) {
+                        self.stages = {_items: items};
+                        _.each(items, function(item) {
+                            self.stageLookup[item._id] = item;
                         });
                     });
                 },
