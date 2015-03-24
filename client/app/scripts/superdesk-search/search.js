@@ -622,10 +622,6 @@
                         $location.search('_id', item ? item._id : null);
                     };
 
-                    scope.closeFetch = function closeFetch() {
-                        $location.search('fetch', null);
-                    };
-
                     scope.openLightbox = function openLightbox() {
                         scope.selected.view = scope.selected.preview;
                     };
