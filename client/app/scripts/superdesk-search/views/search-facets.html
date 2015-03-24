@@ -19,10 +19,12 @@
 
         <div sd-toggle-box data-title="{{ 'Filters' | translate }}" data-open="true" data-mode="pane">
             <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
-                <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.type">
-                        <i class="filetype-icon-{{key}}"></i>
-                        <input type="checkbox" ng-checked="hasFilter('type',key)" ng-click="toggleFilter('type', key)">
+                <ul class="filter-box content-type-filters">
+                    <li ng-repeat="(key,value) in aggregations.type" ng-click="toggleFilter('type', key)" ng-class="{checked: hasFilter('type',key)}">
+                        <span class="hover-box">
+                            <i class="filetype-icon-{{key}}"></i>
+                            <span class="sd-checkbox" ng-checked="hasFilter('type',key)"></span>
+                        </span>
                         <span>{{ key | translate}} <i>{{ value }}</i></span>
                     </li>
                 </ul>
@@ -30,8 +32,8 @@
 
             <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.desk">
-                        <input type="checkbox" ng-checked="hasFilter('desk', value.id)" ng-click="toggleFilter('desk', value.id)">
+                    <li ng-repeat="(key,value) in aggregations.desk" ng-click="toggleFilter('desk', value.id)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('desk', value.id)"></span>
                         <span>{{key | translate}} <i>{{ value.count }}</i></span>
                     </li>
                 </ul>
@@ -39,8 +41,8 @@
 
             <div sd-toggle-box data-title="{{ 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true" >
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.stage">
-                        <input type="checkbox" ng-checked="hasFilter('stage', key)" ng-click="toggleFilter('stage', value.id)">
+                    <li ng-repeat="(key,value) in aggregations.stage" ng-click="toggleFilter('stage', value.id)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('stage', key)"></span>
                         <span>{{key | translate}} <i>{{ value.count }}</i></span>
                     </li>
                 </ul>
@@ -48,8 +50,8 @@
 
             <div sd-toggle-box data-title="{{ 'Sources' | translate }}" ng-hide="isEmpty('source')" data-open="true">
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.source">
-                        <input type="checkbox" ng-checked="hasFilter('source',key)" ng-click="toggleFilter('source', key)">
+                    <li ng-repeat="(key,value) in aggregations.source" ng-click="toggleFilter('source', key)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('source',key)"></span>
                         <span>{{key | translate}} <i>{{ value }}</i></span>
                     </li>
                 </ul>
@@ -57,8 +59,8 @@
 
             <div sd-toggle-box data-title="{{ 'Categories' | translate }}" ng-hide="isEmpty('category')" data-open="true">
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.category">
-                        <input type="checkbox" ng-checked="hasFilter('category',key)" ng-click="toggleFilter('category', key)">
+                    <li ng-repeat="(key,value) in aggregations.category" ng-click="toggleFilter('category', key)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('category',key)"></span>
                         <span>{{key | translate}} <i>{{ value }}</i></span>
                     </li>
                 </ul>
@@ -66,8 +68,8 @@
 
             <div sd-toggle-box data-title="{{ 'Urgency' | FacetLabels }}" ng-hide="isEmpty('urgency')" data-open="true">
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.urgency">
-                        <input type="checkbox" ng-checked="hasFilter('urgency',key)" ng-click="toggleFilter('urgency', key)">
+                    <li ng-repeat="(key,value) in aggregations.urgency" ng-click="toggleFilter('urgency', key)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('urgency',key)"></span>
                         <span>{{key | translate}} <i>{{ value }}</i></span>
                     </li>
                 </ul>
@@ -75,8 +77,8 @@
 
             <div sd-toggle-box data-title="{{ 'States' | translate }}" ng-hide="isEmpty('state')" data-open="true">
                 <ul class="filter-box">
-                    <li ng-repeat="(key,value) in aggregations.state">
-                        <input type="checkbox" ng-checked="hasFilter('state',key)" ng-click="toggleFilter('state', key)">
+                    <li ng-repeat="(key,value) in aggregations.state" ng-click="toggleFilter('state', key)">
+                        <span class="sd-checkbox" ng-checked="hasFilter('state',key)"></span>
                         <span>{{key | translate}} <i>{{ value }}</i></span>
                     </li>
                 </ul>
