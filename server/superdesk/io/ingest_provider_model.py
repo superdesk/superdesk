@@ -113,7 +113,7 @@ class IngestProviderService(BaseService):
             notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
                                     user_list=self._get_administrators(),
                                     name=doc.get('name'))
-            push_notification('ingest:create', provider_id=str(doc.get('_id')))
+            push_notification('ingest_provider:create', provider_id=str(doc.get('_id')))
         logger.info("Created Ingest Channel. Data:{}".format(docs))
 
     def on_update(self, updates, original):
@@ -155,5 +155,5 @@ class IngestProviderService(BaseService):
                                     name=updates.get('name', original.get('name')),
                                     status=status)
 
-        push_notification('ingest:update', provider_id=str(original.get('_id')))
+        push_notification('ingest_provider:update', provider_id=str(original.get('_id')))
         logger.info("Updated Ingest Channel. Data: {}".format(updates))

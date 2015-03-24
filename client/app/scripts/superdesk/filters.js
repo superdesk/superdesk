@@ -95,7 +95,7 @@ define([
         .filter('dateTimeString', ['$filter', function($filter) {
             return function(input) {
                 if (input !== null) {
-                    return $filter('date')(input, 'dd.MM.yyyy HH.mm');
+                    return $filter('date')(input, 'dd.MM.yyyy HH:mm');
                 }
             };
         }]);

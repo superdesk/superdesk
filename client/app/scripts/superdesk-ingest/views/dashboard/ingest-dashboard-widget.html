@@ -7,13 +7,13 @@
 <div ng-show="item.show_status" ng-class="{closed: item.is_closed, status: true, open: !item.is_closed}">
     <div ng-show="item.is_closed" class="pad-left">
         <div class="text" translate>Closed</div>
-        <div class="time" ng-show="{{item.last_closed}}">
+        <div class="time" ng-show="item.last_closed">
             <span translate>on {{item.last_closed | dateTimeString}}</span>
         </div>
     </div>
     <div ng-show="!item.is_closed" class="pad-left">
         <div class="text" translate>Open</div>
-        <div class="time" ng-show="{{item.last_open}}">
+        <div class="time" ng-show="item.last_open">
             <span translate>since {{item.last_open | dateTimeString}}</span>
         </div>
     </div>    
@@ -41,34 +41,64 @@
     
 </div>
 
-<div class="dropdown" dropdown>
+<div class="dropdown strict" dropdown>
     <button class="dropdown-toggle" dropdown-toggle><i class="icon-white icon-dots-vertical"></i></button>
-        <ul class="dropdown-menu condensed pull-right">
+        <ul class="dropdown-menu pull-right">
             <li>
                 <div>
                     <span class="title" translate>Show</span>
                 </div>
             </li>
+            <li class="divider"></li>
             <li>
                 <div>
-                    <span translate>Status</span> <span class="pull-right" sd-switch ng-model="item.show_status" ng-click="setUserPreferences()"></span>
+                    <span class="pull-right" sd-switch ng-model="item.show_status" ng-click="setUserPreferences()"></span>
+                    <label translate>Status</label> 
                 </div>
             </li>
+            <li class="divider"></li>
             <li>
                 <div>
-                    <span translate>Number of items</span> <span class="pull-right" sd-switch ng-model="item.show_ingest_count" ng-click="setUserPreferences()"></span>
+                    <span class="pull-right" sd-switch ng-model="item.show_ingest_count" ng-click="setUserPreferences()"></span>
+                    <label translate>Number of items</label>
+                    <span translate>in the last 24 hours.</span>  
                 </div>
             </li>
+            <li class="divider"></li>            
             <li>
                 <div>
-                    <span translate>Time</span> <span class="pull-right" sd-switch ng-model="item.show_time" ng-click="setUserPreferences()"></span>
+                    <span class="pull-right" sd-switch ng-model="item.show_time" ng-click="setUserPreferences()"></span>
+                    <label translate>Time</label>
+                    <span translate>last update and last item arrived.</span> 
                 </div>
             </li>
+            <li class="divider"></li>            
             <li>
                 <div>
-                    <span translate>Log Messages</span> <span class="pull-right" sd-switch ng-model="item.show_log_messages" ng-click="setUserPreferences()"></span>
+                    <span class="pull-right" sd-switch ng-model="item.show_log_messages" ng-click="setUserPreferences()"></span>
+                    <label translate>Log Messages</label>
+                    <ul>
+                        <li>
+                            <div>
+                                <label translate>
+                                    <input type="radio" name="{{item._id}}_messages" value="all" ng-model="item.log_messages" ng-change="filterLogMessages()">
+                                    Show all messages
+                                </label>
+                            </div>    
+                        </li>
+                        <li>
+                            <div>
+                                <label translate>
+                                    <input type="radio" name="{{item._id}}_messages" value="error" ng-model="item.log_messages" ng-change="filterLogMessages()">
+                                    Show error messages
+                                </label>
+                            </div>    
+                        </li>
+                    </ul>    
                 </div>
-            </li>                                
+            </li>
+            <li class="divider"></li>
+            <li>Edit Ingest Source</li>
         </ul>
 </div>
 
