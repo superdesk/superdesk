@@ -192,7 +192,7 @@ Feature: Highlights
 
         Then we get new resource
         """
-        {"_id": "", "type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<h2>item2</h2>\n<p>item2 first</p>"}
+        {"_id": "", "type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<p></p>\n<h2>item2</h2>\n<p>item2 first</p>\n<p></p>"}
         """
 
         When we get "/archive"
