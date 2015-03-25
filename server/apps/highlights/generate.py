@@ -3,6 +3,29 @@ import superdesk
 from bs4 import BeautifulSoup
 
 
+def join_html(pieces):
+    """Join given list with line breaks.
+
+    :param pieces: list of str
+    """
+    return '\n'.join(pieces)
+
+
+def item_to_str(item):
+    """Get text representation of a given item.
+
+    :param item: news item
+    """
+
+    pieces = []
+    pieces.append('<h2>%s</h2>' % item.get('headline', ''))
+    html = item.get('body_html')
+    if html:
+        soup = BeautifulSoup(html)
+        pieces.append(str(soup.p))
+    return join_html(pieces)
+
+
 class GenerateHighlightsService(superdesk.Service):
     def create(self, docs, **kwargs):
         """Generate highlights text item for given package.
@@ -29,10 +52,9 @@ class GenerateHighlightsService(superdesk.Service):
                 for ref in group.get('refs', []):
                     if 'residRef' in ref:
                         item = service.find_one(req=None, _id=ref.get('residRef'))
-                        body.append('<h2>%s</h2>' % item.get('headline', ''))
-                        soup = BeautifulSoup(item.get('body_html', ''))
-                        body.append(str(soup.p))
-            doc['body_html'] = '\n'.join(body)
+                        body.append(item_to_str(item))
+                        body.append('<p></p>')
+            doc['body_html'] = join_html(body)
 
         if preview:
             return ['' for doc in docs]
