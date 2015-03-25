@@ -44,6 +44,7 @@ find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
+docker-compose pull &&
 docker-compose build &&
 docker-compose up -d &&
 
