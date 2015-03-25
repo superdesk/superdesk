@@ -18,12 +18,7 @@ define([
 
                 scope.select = function selectDesk(desk) {
                     scope.selected = desk;
-
-                    if (desk._id === 'personal' && $location.path() === '/workspace/ingest') {
-                        desks.setCurrentDesk();
-                    } else {
-                        desks.setCurrentDesk(desk);
-                    }
+                    desks.setCurrentDesk(desk._id === 'personal' ? null : desk);
 
                     if (desk._id === 'personal') {
                        $location.path('/workspace/content') ;
