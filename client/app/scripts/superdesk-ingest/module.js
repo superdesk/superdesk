@@ -309,6 +309,7 @@ define([
 
                 var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
                 var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
+                var searchObj = $location.search();
 
                 $scope.provider = null;
                 $scope.origProvider = null;
@@ -321,9 +322,23 @@ define([
                 fetchProviders();
 
                 function fetchProviders() {
-                    return api.ingestProviders.query({max_results: 100})
+                    return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
                             $scope.providers = result;
+                            var provider_id = searchObj._id;
+                            var provider;
+                            if (provider_id) {
+                                provider = _.find($scope.providers._items, function (item) {
+                                    return item._id === provider_id;
+                                });
+
+                                if (provider == null) {
+                                    api.ingestProviders.getById(provider_id).then(function (result) {
+                                        provider = result;
+                                    });        
+                                }
+                                if (provider) $scope.edit(provider);
+                            }
                         });
                 }
 
@@ -879,7 +894,10 @@ define([
             var update = {};
 
             _.forEach(_.filter($scope.items, {'dashboard_enabled': true}),
-                function (item) { preferences.push(_.pick(item, _.union(['_id'], _.keys(PROVIDER_DASHBOARD_DEFAULTS))));});
+                function (item) { 
+                    preferences.push(_.pick(item, _.union(['_id'], _.keys(PROVIDER_DASHBOARD_DEFAULTS))));
+                }
+            );
 
             update['dashboard:ingest'] = preferences;
             preferencesService.update(update).then(function(result) {
@@ -894,8 +912,8 @@ define([
         $scope.fetchItems();
     }
 
-    IngestUserDashboard.$inject = ['api', 'userList'];
-    function IngestUserDashboard (api, userList) {
+    IngestUserDashboard.$inject = ['api', 'userList', 'privileges'];
+    function IngestUserDashboard (api, userList, privileges) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget.html',
             scope: {
@@ -961,7 +979,6 @@ define([
 
                     api.activity.query(criteria).then(function (result) {
                         scope.log_messages = result._items;
-                        console.log(scope.log_messages);
                     });
                 }
 
@@ -986,6 +1003,7 @@ define([
                 }                
 
                 function init() {
+                    scope.showIngest = Boolean(privileges.privileges.ingest_providers);
                     scope.ingested_count = 0;
                     getCount();
                     getUser();
@@ -1036,13 +1054,16 @@ define([
         };
     }
 
-    IngestUserDashboardDropDown.$inject = [];
-    function IngestUserDashboardDropDown () {
+    IngestUserDashboardDropDown.$inject = ['privileges'];
+    function IngestUserDashboardDropDown (privileges) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-sources-list.html',
             scope: {
                 items: '=',
                 setUserPreferences: '&'
+            },
+            link: function (scope) {
+                scope.showIngest = Boolean(privileges.privileges.ingest_providers);
             }
         };
     }
