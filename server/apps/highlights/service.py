@@ -33,7 +33,7 @@ class MarkedForHighlightsService(BaseService):
                 ids.append(None)
                 continue
             ids.append(item['_id'])
-            if not item.get('highlights', []) or doc['highlights'] not in item.get('highlights', []):
+            if doc['highlights'] not in item.get('highlights', []):
                 updates = item.get('highlights', [])
                 updates.append(doc['highlights'])
                 service.update(item['_id'], {'highlights': updates}, item)
