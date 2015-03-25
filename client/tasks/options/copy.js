@@ -13,6 +13,17 @@ module.exports = {
             ]
         }]
     },
+    docs: {
+        files: [{
+            expand: true,
+            dot: true,
+            cwd: '<%= appDir %>/docs',
+            dest: '<%= distDir %>',
+            src: [
+                'views/**/*.{html,css,jpg,jpeg,png,gif,json}'
+            ]
+        }]
+    },
     js: {
         files: [{
             expand: true,

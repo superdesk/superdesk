@@ -44,6 +44,7 @@ find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
+docker-compose pull &&
 docker-compose build &&
 docker-compose up -d &&
 
@@ -70,12 +71,16 @@ echo "+++ new user has been created" &&
 	true
 );
 CODE="$?"
+
+echo "===clean-up:"
 (
-	echo "===clean-up:"
 	docker-compose stop;
 	docker-compose kill;
-	docker-compose rm --force;
 	killall chromedriver;
-	echo "+++clean-up done"
-) &&
+);
+test $CODE -gt 0 && (
+	docker-compose rm --force;
+) ;
+echo "+++clean-up done"
+
 exit $CODE
