@@ -229,9 +229,9 @@ function AssigneeViewDirective(desks) {
     };
 }
 
+// todo(petr): move to desks module
 StagesCtrlFactory.$inject = ['api', 'desks'];
 function StagesCtrlFactory(api, desks) {
-
     var promise = desks.initialize();
     return function StagesCtrl($scope) {
         var self = this;
@@ -242,27 +242,22 @@ function StagesCtrlFactory(api, desks) {
 
             // select a stage as active
             self.select = function(stage) {
-                self.selected = stage || null;
                 var stageId = stage ? stage._id : null;
+                self.selected = stage || null;
                 desks.setCurrentStageId(stageId);
             };
 
             // reload list of stages
             self.reload = function(deskId) {
-                if (deskId) {
-                    self.stages = desks.deskStages[deskId];
-                } else {
-                    self.stages = null;
-                }
-                self.select(_.find(self.stages, {_id: desks.getCurrentStageId()}));
+                self.stages = deskId ? desks.deskStages[deskId] : null;
+                self.select(_.find(self.stages, {_id: desks.activeStageId}));
             };
 
             $scope.$watch(function() {
-                return desks.getCurrentDeskId();
-            }, function(_deskId) {
-                self.reload(_deskId || null);
+                return desks.activeDeskId;
+            }, function() {
+                self.reload(desks.activeDeskId);
             });
-
         });
     };
 }

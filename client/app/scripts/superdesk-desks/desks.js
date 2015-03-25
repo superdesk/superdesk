@@ -56,7 +56,6 @@
                 $scope.deskStages[deskId] = desks.deskStages[deskId];
             });
         });
-
     }
 
     StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
@@ -89,8 +88,7 @@
                 });
 
                 scope.open = function(item) {
-                    desks.setCurrentDeskId(item.task.desk);
-                    desks.setCurrentStageId(item.task.stage);
+                    desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
                 };
             }
@@ -297,6 +295,22 @@
                     });
                 };
 
+            /**
+             * Set desks.active which contains both desk and stage
+             * refs and is updated only when one of those is changed.
+             */
+            function setActive(desks) {
+                if (desks.active && desks.active.desk === desks.activeDeskId && desks.active.stage === desks.activeStageId) {
+                    // pass
+                    return;
+                }
+
+                desks.active = {
+                    desk: desks.activeDeskId,
+                    stage: desks.activeStageId
+                };
+            }
+
             var desksService = {
                 desks: null,
                 users: null,
@@ -309,6 +323,7 @@
                 loading: null,
                 activeDeskId: null,
                 activeStageId: null,
+                active: {desk: null, stage: null},
                 fetchDesks: function() {
                     var self = this;
 
@@ -377,10 +392,14 @@
                         userDesksPromise = this.fetchCurrentDeskId() // make sure there will be current desk
                             .then(angular.bind(session, session.getIdentity))
                             .then(angular.bind(this, this.fetchUserDesks))
-                            .then(function(desks) {
+                            .then(angular.bind(this, function(desks) {
                                 userDesks = desks;
+                                if (!this.activeDeskId && desks._items.length) {
+                                    this.setCurrentDesk(desks._items[0]);
+                                }
+                                setActive(this);
                                 return desks;
-                            });
+                            }));
                     }
 
                     return userDesksPromise;
@@ -418,27 +437,28 @@
                 	}
                 },
                 setCurrentDeskId: function(deskId) {
-                	if (!deskId) {
-                		this.activeDeskId = 'personal';
-                	} else {
-                		this.activeDeskId = deskId;
-                	}
+                    if (this.activeDeskId !== deskId) {
+                        this.activeDeskId = deskId;
+                        this.activeStageId = null;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
                 },
                 getCurrentStageId: function() {
                     return this.activeStageId;
                 },
                 setCurrentStageId: function(stageId) {
-                    this.activeStageId = stageId;
-                    preferencesService.update({'desk:last_worked': this.activeDeskId}, 'desk:last_worked').then(function() {
-                        // update the stage prefs
-                        preferencesService.update({'stage:items': [stageId]}, 'stage:items').then(function() {
-                            //nothing to do
-                        }, function(response) {
-                            notify.error(gettext('Session preference could not be saved...'));
-                        });
-                    }, function(response) {
-                        notify.error(gettext('Session preference could not be saved...'));
-                    });
+                    if (this.activeStageId !== stageId) {
+                        this.activeStageId = stageId;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
                 },
                 fetchCurrentDesk: function() {
                     return api.desks.getById(this.getCurrentDeskId());
@@ -453,6 +473,19 @@
                 		return this.deskLookup[this.activeDeskId];
                 	}
                 },
+                setWorkspace: function(deskId, stageId) {
+                    deskId = deskId || null;
+                    stageId = stageId || null;
+                    if (this.activeDeskId !== deskId || this.activeStageId !== stageId) {
+                        this.activeDeskId = deskId;
+                        this.activeStageId = stageId;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
+                },
                 initialize: function() {
                     if (!this.loading) {
                         this.fetchCurrentDeskId();
@@ -462,10 +495,14 @@
                             .then(angular.bind(this, this.fetchUsers))
                             .then(angular.bind(this, this.generateDeskMembers))
                             .then(angular.bind(this, this.fetchStages))
-                            .then(angular.bind(this, this.generateDeskStages));
+                            .then(angular.bind(this, this.generateDeskStages))
+                            .then(angular.bind(this, this.initActive));
                     }
 
                     return this.loading;
+                },
+                initActive: function() {
+                    setActive(this);
                 },
                 save: function(dest, diff) {
                     return api.save('desks', dest, diff)
@@ -493,14 +530,14 @@
                 }
             };
 
+            return desksService;
+
             function reset(res) {
                 userDesks = null;
                 userDesksPromise = null;
                 desksService.loading = null;
                 return res;
             }
-
-            return desksService;
         }])
         .directive('sdStageItems', StageItemListDirective)
         .directive('sdTaskStatusItems', TaskStatusItemsDirective)

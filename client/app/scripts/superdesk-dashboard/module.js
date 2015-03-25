@@ -16,34 +16,20 @@ define([
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
 
-                scope.select = function selectDesk(desk, reloadRoute) {
-                    if (angular.isUndefined(reloadRoute)) {
-                        reloadRoute = true;
-                    }
-
-                    desks.setCurrentDesk(desk);
+                scope.select = function selectDesk(desk) {
                     scope.selected = desk;
+                    desks.setCurrentDesk(desk._id === 'personal' ? null : desk);
 
-                    if (desk._id === 'personal' && $location.path() === '/workspace/ingest') {
+                    if (desk._id === 'personal') {
                        $location.path('/workspace/content') ;
-                    }
-
-                    if (reloadRoute) {
-                        $route.reload();
                     }
                 };
 
-                desks.initialize()
-                .then(function() {
-                    desks.fetchCurrentUserDesks().then(function (userDesks) {
-                    	scope.userDesks = userDesks._items;
-                    	if (!desks.activeDeskId && scope.userDesks.length) {
-                    		scope.select(scope.userDesks[0], false);
-                    	} else if (desks.getCurrentDesk() != null) {
-                    		scope.select(desks.getCurrentDesk(), false);
-                    	}
+                desks.fetchCurrentUserDesks()
+                    .then(function(userDesks) {
+                        scope.userDesks = userDesks._items;
+                        scope.selected = _.find(scope.userDesks, {_id: desks.activeDeskId}) || null;
                     });
-                });
             }
         };
     }
