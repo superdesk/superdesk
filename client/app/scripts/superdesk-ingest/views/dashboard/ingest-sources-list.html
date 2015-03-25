@@ -10,8 +10,4 @@
     </div>        
 </li>
 <li class="divider"></li>
-<li>
-    <div>
-        <span translate><i class="icon-pencil"></i> Edit Ingest Sources</span>
-    </div>
-</li>
+<li ng-if="showIngest"><a ng-href="#/settings/ingest" translate><i class="icon-pencil"></i>Edit Ingest Sources</a></li>
