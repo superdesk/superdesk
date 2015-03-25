@@ -487,7 +487,7 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', function($location, preferencesService) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', function($location, preferencesService, packages) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -533,6 +533,12 @@
 
                     scope.closeLightbox = function closeLightbox() {
                         scope.selected.view = null;
+                    };
+
+                    scope.openSingleItem = function (packageItem) {
+                        packages.fetchItem(packageItem).then(function(item) {
+                            scope.selected.view = item;
+                        });
                     };
 
                     scope.setview = setView;
