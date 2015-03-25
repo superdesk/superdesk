@@ -8,5 +8,5 @@
     <li ng-repeat="desk in userDesks track by desk._id" ng-if="desk !== selected">
         <button option="{{ desk.name | uppercase }}" ng-click="select(desk)">{{ desk.name }}</button>
     </li>
-    <li ng-if="selected.name"><button option="PERSONAL" ng-click="select({'_id': 'personal'})" translate>Personal</button></li>
+    <li ng-if="selected.name"><button option="PERSONAL" ng-click="select({_id: 'personal'})" translate>Personal</button></li>
 </ul>
