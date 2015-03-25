@@ -30,10 +30,40 @@ describe('sdIngestSourcesContent directive', function () {
         scope.$digest();
     }));
 
-    it('some dummy first test', function () {
-        console.debug(scope.minutes);
-        expect(scope.minutes).toBeDefined();  // this works now! just fix tpl cache issue
-       //  debugger;
+
+    describe('setRssConfig() method', function () {
+        var fakeProvider;
+
+        beforeEach(function () {
+            scope.provider = {
+                config: {}
+            };
+            fakeProvider = {
+                config: {
+                    auth_required: true,
+                    username: 'user',
+                    password: 'password'
+                }
+            };
+        });
+
+        it('stores provider configuration in scope', function () {
+            scope.setRssConfig(fakeProvider);
+            expect(scope.provider.config).toEqual({
+                auth_required: true, username: 'user', password: 'password'
+            });
+        });
+
+        it('removes username and password from provider config if ' +
+           'authenticationration is not required',
+           function () {
+                fakeProvider.config.auth_required = false;
+                scope.setRssConfig(fakeProvider);
+                expect(scope.provider.config).toEqual({
+                    auth_required: false, username: null, password: null
+                });
+            }
+        );
     });
 
     // TODO: scope.save() ... check that aliases are in config!
