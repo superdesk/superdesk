@@ -4,6 +4,8 @@ exports.login = LoginModal;
 exports.workspace = new Workspace();
 exports.content = new Content();
 exports.authoring = new Authoring();
+exports.ingestProvider = new IngestProvider();
+exports.ingestProviderDashboard = new IngestProviderDashboard();
 
 function LoginModal() {
     this.username = element(by.model('username'));
@@ -160,4 +162,15 @@ function Authoring() {
           crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();
       });
     };
+}
+
+function IngestProvider() {}
+
+function IngestProviderDashboard() {
+    var self = this;
+    this.dropDown = element(by.css('.ingest-dashboard-dropdown'));
+    
+    this.openDropDown = function() {
+        return self.dropDown.click();
+    }
 }

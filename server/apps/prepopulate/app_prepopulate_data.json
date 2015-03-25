@@ -12,26 +12,26 @@
         "id_name": "-id user admin-",
         "resource": "users"
     },
-    
+
     {
         "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Sport Desks-"
     },
-    
+
     {
         "data": {"members": [{"user": "-id user admin-"}], "name": "Politic Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
     },
-    
+
     {
-    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, 
+    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}},
     	"resource": "roles"
     },
-    
+
     {
         "resource": "archive",
         "username": "admin",
@@ -43,7 +43,7 @@
             "original_creator": "-id user admin-"
         }
     },
-    
+
     {
         "resource": "archive",
         "username": "admin",
@@ -55,7 +55,7 @@
             "original_creator": "-id user admin-"
         }
     },
-    
+
     {
         "resource": "archive",
         "username": "admin",
@@ -87,7 +87,7 @@
 		    }
         }
     },
-    
+
         {
         "resource": "archive",
         "username": "admin",
@@ -103,7 +103,7 @@
 		    }
         }
     },
-    
+
         {
         "resource": "archive",
         "username": "admin",
@@ -139,6 +139,32 @@
             "original_creator": "-id user admin-",
 	    	"groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}]
     	}
+    },
+    {
+        "resource":"ingest_providers",
+        "username": "admin",
+        "data": {
+          "name": "aap",
+          "type": "aap",
+          "config": {"path": "/"},
+          "source": "aap",
+          "is_closed": true
+        }
+    },
+    {
+        "resource":"ingest_providers",
+        "username": "admin",
+        "data": {
+          "name": "afp",
+          "type": "ftp",
+          "config": {
+            "host": "ftp.com",
+            "username": "user",
+            "password": "password",
+            "dest_path": "/"
+          },
+          "source": "afp",
+          "is_closed": true
+        }
     }
-    
 ]
