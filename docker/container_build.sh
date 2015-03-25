@@ -70,12 +70,12 @@ echo "+++ new user has been created" &&
 	true
 );
 CODE="$?"
-(
+test $CODE -gt 0 && (
 	echo "===clean-up:"
 	docker-compose stop;
 	docker-compose kill;
 	docker-compose rm --force;
 	killall chromedriver;
 	echo "+++clean-up done"
-) &&
+) ;
 exit $CODE
