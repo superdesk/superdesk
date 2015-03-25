@@ -58,6 +58,16 @@ define([
             });
         };
 
+        this.fetchItem = function fetchItem(id) {
+            if (resource == null) {
+                return;
+            }
+            return resource.getById(id)
+            .then(function(item) {
+                $scope.selected.fetch = item;
+            });
+        };
+
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
