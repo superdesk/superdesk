@@ -337,11 +337,12 @@ define([
                                         provider = result;
                                     });
                                 }
+
                                 if (provider) {
                                     $scope.edit(provider);
                                 }
                             }
-                        });
+                    });
                 }
 
                 api('rule_sets').query().then(function(result) {
