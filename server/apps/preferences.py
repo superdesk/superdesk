@@ -159,7 +159,8 @@ class PreferencesService(BaseService):
 
             existing = existing_session_preferences.get(session_id, {})
             existing.update(session_prefs)
-            updates[_session_preferences_key] = existing
+            existing_session_preferences[session_id] = existing
+            updates[_session_preferences_key] = existing_session_preferences
 
     def update_user_prefs(self, updates, existing_user_preferences):
         user_prefs = updates.get(_user_preferences_key)
