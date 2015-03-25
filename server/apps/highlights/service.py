@@ -33,9 +33,11 @@ class MarkedForHighlightsService(BaseService):
                 ids.append(None)
                 continue
             ids.append(item['_id'])
-            if not item.get('highlights', []) or doc['highlights'] not in item.get('highlights', []):
-                updates = item.get('highlights', [])
-                updates.append(doc['highlights'])
-                service.update(item['_id'], {'highlights': updates}, item)
+            highlights = item.get('highlights', [])
+            if not highlights:
+                highlights = []
+            if doc['highlights'] not in highlights:
+                highlights.append(doc['highlights'])
+                service.update(item['_id'], {'highlights': highlights}, item)
             push_notification('item:mark', marked=1)
         return ids
