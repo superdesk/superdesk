@@ -10,7 +10,7 @@ exports.config = {
         username: 'admin',
         password: 'admin'
     },
-    specs: ['spec/setup.js', 'spec/**/*[Ss]pec.js'],
+    specs: ['spec/setup.js', 'spec/**/ingest*[Ss]pec.js'],
     capabilities: {
         browserName: 'chrome',
         chromeOptions: {
