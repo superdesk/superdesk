@@ -342,9 +342,11 @@ define([
                                 if (provider == null) {
                                     api.ingestProviders.getById(provider_id).then(function (result) {
                                         provider = result;
-                                    });        
+                                    });
                                 }
-                                if (provider) $scope.edit(provider);
+                                if (provider) {
+                                    $scope.edit(provider);
+                                }
                             }
                         });
                 }
@@ -901,7 +903,7 @@ define([
             var update = {};
 
             _.forEach(_.filter($scope.items, {'dashboard_enabled': true}),
-                function (item) { 
+                function (item) {
                     preferences.push(_.pick(item, _.union(['_id'], _.keys(PROVIDER_DASHBOARD_DEFAULTS))));
                 }
             );
@@ -1007,7 +1009,7 @@ define([
                             scope.item.last_opened.display_name = result.display_name;
                         });
                     }
-                }                
+                }
 
                 function init() {
                     scope.showIngest = Boolean(privileges.privileges.ingest_providers);

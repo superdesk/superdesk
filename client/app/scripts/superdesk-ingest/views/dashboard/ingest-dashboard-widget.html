@@ -1,43 +1,41 @@
-<div class="header pad-left">
+<div class="header">
     <div class="title">{{item.name}}</div>
     <div class="sub-title"><span translate>Source Type:</span> <span class="text">{{item.source}}</span></div>
     <div class="sub-title"><span translate>Update Cycle:</span> <span class="text">{{item.update_schedule | scheduleFilter}}</span></div>
 </div>
 
-<div ng-show="item.show_status" ng-class="{closed: item.is_closed, status: true, open: !item.is_closed}">
-    <div ng-show="item.is_closed" class="pad-left">
-        <div><span class="text" translate>Closed</span><span> by {{item.last_closed.display_name}}</span></div>
-        <div class="time" ng-show="item.last_closed">
-            <span translate>on {{item.last_closed.closed_at | dateTimeString}}</span>
+<div ng-show="item.show_status" class="status" ng-class="{closed: item.is_closed, opened: !item.is_closed}">
+    <div ng-show="item.is_closed">
+        <div><span class="uppercase" translate>Closed</span><span> by {{item.last_closed.display_name}}</span></div>
+        <div class="time" ng-show="item.last_closed" translate>
+            on {{item.last_closed.closed_at | dateTimeString}}
         </div>
     </div>
-    <div ng-show="!item.is_closed" class="pad-left">
-        <div class="text" translate>Open</div>
-        <div class="time" ng-show="item.last_opened">
-            <span translate>since {{item.last_opened.opened_at | dateTimeString}}</span>
+    <div ng-show="!item.is_closed">
+        <div class="uppercase" translate>Open</div>
+        <div class="time" ng-show="item.last_opened" translate>
+            since {{item.last_opened.opened_at | dateTimeString}
         </div>
     </div>    
 </div>
-<div ng-show="item.show_ingest_count" class="ingested_count">
+<div ng-show="item.show_ingest_count" class="ingested-count">
     <div class="count">{{ingested_count}}</div>
     <div class="text">items in last 24 hours.</div>    
 </div>
-<div class="divider"></div>
-<div ng-show="item.show_time" class="pad-left">
-    <div class="update-time" ng-show="item.show_time">
+<div ng-show="item.show_time" class="update-time">
+    <div ng-show="item.show_time">
         <div class="text" translate>Last Time Updated</div>
         <div class="time">{{item.last_updated | reldate}}</div>
     </div>
-    <div class="update-time" ng-show="item.last_item_update">
+    <div ng-show="item.last_item_update">
         <div class="text" translate>Last Item Arrived</div>
         <div class="time">{{item.last_item_update | reldate}}</div>
     </div>
-    <div ng-show="isIdle()">
-        <span class="error" translate>Channel has gone strangely quiet.</span>
+    <div ng-show="isIdle()" class="error">
+        <em translate>Channel has gone strangely quiet.</em>
     </div>               
 </div>
-<div class="divider"></div>    
-<div sd-toggle-box data-title="{{ 'Log Messages' | translate }}" ng-if="item.show_log_messages" class="pad-left">
+<div sd-toggle-box data-title="{{ 'Log Messages' | translate }}" ng-if="item.show_log_messages">
     <ul>
         <li ng-repeat="message in log_messages track by message._id">
             <div>{{message._created | reldate}}</div>
@@ -50,11 +48,7 @@
 <div class="dropdown strict" dropdown>
     <button class="dropdown-toggle" dropdown-toggle><i class="icon-white icon-dots-vertical"></i></button>
         <ul class="dropdown-menu pull-right">
-            <li>
-                <div>
-                    <span class="title" translate>Show</span>
-                </div>
-            </li>
+            <li class="menu-label" translate> Show</li>
             <li class="divider"></li>
             <li>
                 <div>
@@ -67,7 +61,7 @@
                 <div>
                     <span class="pull-right" sd-switch ng-model="item.show_ingest_count" ng-click="setUserPreferences()"></span>
                     <label translate>Number of items</label>
-                    <span translate>in the last 24 hours.</span>  
+                    <span class="info" translate>in the last 24 hours.</span>  
                 </div>
             </li>
             <li class="divider"></li>            
@@ -75,7 +69,7 @@
                 <div>
                     <span class="pull-right" sd-switch ng-model="item.show_time" ng-click="setUserPreferences()"></span>
                     <label translate>Time</label>
-                    <span translate>last update and last item arrived.</span> 
+                    <span class="info" translate>last update and last item arrived.</span> 
                 </div>
             </li>
             <li class="divider"></li>            
@@ -104,7 +98,7 @@
                 </div>
             </li>
             <li class="divider"></li>
-            <li ng-if="showIngest"><a ng-href="#/settings/ingest?_id={{item._id}}" translate><i class="icon-pencil"></i>Edit Ingest Source</a></li>
+            <li ng-if="showIngest"><a class="uppercase" ng-href="#/settings/ingest?_id={{item._id}}" translate><i class="icon-pencil"></i>Edit Ingest Source</a></li>
         </ul>
 </div>
 
