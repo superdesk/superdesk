@@ -465,6 +465,7 @@ define([
                             scope.editScheme.rules[scope.ruleIndex] = scope.rule;
                         }
                     }
+                    scope.editScheme.rules = _.reject(scope.editScheme.rules, {name: null});
                     var _new = scope.editScheme._id ? false : true;
                     api('routing_schemes').save(_orig, scope.editScheme)
                     .then(function() {
