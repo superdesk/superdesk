@@ -573,7 +573,8 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', function($location, preferencesService, packages, tags) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags',
+            function($location, preferencesService, packages, tags) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -816,7 +817,7 @@
                     scope.search = function() {
                         scope.focused = false;
                         input.blur();
-                        //to be implemented
+                        $location.search('q', input[0].value || null);
                     };
 
                     scope.cancel = function() {
