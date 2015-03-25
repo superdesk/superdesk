@@ -55,7 +55,8 @@ define([], function() {
 
             return $http({
                 method: 'GET',
-                url: baseUrl
+                url: baseUrl,
+                cache: true
             }).then(function(response) {
                 _links = {};
 
