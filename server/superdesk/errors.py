@@ -143,8 +143,9 @@ class SuperdeskIngestError(SuperdeskError):
         self.provider_name = provider.get('name', 'Unknown provider') if provider else 'Unknown provider'
 
         if provider.get('notifications', {}).get('on_error', True):
+            exception_msg = str(exception)[-200:]
             update_notifiers('error',
-                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception),
+                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
                              name=self.provider_name)
 
         if provider:
