@@ -580,7 +580,8 @@
                     item: ['$route', 'authoring', function($route, authoring) {
                         return authoring.open($route.current.params._id, true);
                     }]
-                }
+                },
+                authoring: true
             })
             .activity('create.package', {
                 label: gettext('Create package'),
