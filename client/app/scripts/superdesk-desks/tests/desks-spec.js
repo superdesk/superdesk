@@ -31,6 +31,7 @@ describe('desks service', function() {
 			desks.fetchCurrentUserDesks();
 			$rootScope.$digest();
 			expect(desks.activeDeskId).toBe('foo');
+			expect(preferencesService.update).not.toHaveBeenCalled();
 		})
 	);
 
@@ -42,6 +43,7 @@ describe('desks service', function() {
 			desks.fetchCurrentUserDesks();
 			$rootScope.$digest();
 			expect(desks.activeDeskId).toBe(null);
+			expect(preferencesService.update).not.toHaveBeenCalled();
 		})
 	);
 
