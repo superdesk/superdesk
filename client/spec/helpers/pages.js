@@ -6,6 +6,7 @@ exports.content = new Content();
 exports.authoring = new Authoring();
 exports.ingestProvider = new IngestProvider();
 exports.ingestDashboard = new IngestDashboard();
+exports.masterDesks = new MasterDesks();
 
 function LoginModal() {
     this.username = element(by.model('username'));
@@ -214,5 +215,32 @@ function IngestDashboard() {
 
     this.getDashboardIngestCount = function(dashboard) {
         return dashboard.element(by.css('.ingested-count'));
+    };
+}
+
+function MasterDesks() {
+    this.switchToTab = function(name) {
+        element(by.id(name)).click();
+    };
+
+    this.getDesk = function(desk) {
+    	return element.all(by.repeater('desk in desks._items')).get(desk);
+    };
+
+    this.getRole = function(desk, role) {
+    	return this.getDesk(desk).all(by.repeater('role in roles')).get(role);
+    };
+
+    this.getUser = function(desk, role, user) {
+    	return this.getRole(desk, role).all(by.repeater('item in items')).get(user);
+    };
+
+    this.goToDesk = function(desk) {
+    	this.getDesk(desk).element(by.className('icon-external')).click();
+    };
+
+    this.editDesk = function(desk) {
+    	this.getDesk(desk).element(by.className('icon-dots')).click();
+    	this.getDesk(desk).element(by.className('icon-pencil')).click();
     };
 }

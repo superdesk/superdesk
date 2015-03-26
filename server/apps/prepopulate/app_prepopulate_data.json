@@ -1,5 +1,29 @@
 [
     {
+    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Editor role-"
+    },
+    
+    {
+    	"data": {"name": "Writer", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Writer role-"
+    },
+    
+    {
+    	"data": {"name": "Superadmin", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Superadmin role-"
+    },
+    
+    {
+    	"data": {"name": "admin", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id admin role-"
+    },
+    
+    {
         "data": {
             "email": "a@a.com",
             "first_name": "first name",
@@ -7,29 +31,85 @@
             "needs_activation": false,
             "password": "admin",
             "user_type": "administrator",
-            "username": "admin"
+            "username": "admin",
+            "role": "-id Editor role-"
         },
         "id_name": "-id user admin-",
         "resource": "users"
     },
+    
+        {
+        "data": {
+            "email": "a4@a.com",
+            "first_name": "first name4",
+            "last_name": "last name4",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin4",
+            "role": "-id Editor role-"
+        },
+        "id_name": "-id user admin4-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a3@a.com",
+            "first_name": "first name3",
+            "last_name": "last name3",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin3",
+            "role": "-id Writer role-"
+        },
+        "id_name": "-id user admin3-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a2@a.com",
+            "first_name": "first name2",
+            "last_name": "last name2",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin2",
+            "role": "-id Writer role-"
+        },
+        "id_name": "-id user admin2-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a1@a.com",
+            "first_name": "first name1",
+            "last_name": "last name1",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin1",
+            "role": "-id Superadmin role-"
+        },
+        "id_name": "-id user admin1-",
+        "resource": "users"
+    },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Sport Desks-"
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}], "name": "Politic Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
-    },
-
-    {
-    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}},
-    	"resource": "roles"
     },
 
     {
