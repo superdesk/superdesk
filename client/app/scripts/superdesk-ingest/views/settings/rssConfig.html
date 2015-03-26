@@ -50,8 +50,10 @@
   <div class="flex-group" ng-repeat="item in fieldAliases">
     <div class="flex-field">
       <select
-          ng-options="fieldName for fieldName in contentFields"
-          ng-model="item.fieldName">
+          ng-options="fieldName for fieldName in
+                      (availableFieldOptions(item.fieldName) | orderBy)"
+          ng-model="item.fieldName"
+          ng-change="fieldSelectionChanged()">
       </select>
     </div>
 

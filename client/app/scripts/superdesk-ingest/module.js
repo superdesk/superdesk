@@ -281,12 +281,18 @@ define([
                     'summary', 'title', 'updated_parsed'
                 ];
 
+                // a list of data field names currently *not* selected in any
+                // of the dropdown menus in the field aliases section
+                $scope.fieldsNotSelected = angular.copy($scope.contentFields);
+
                 // a list of field names aliases - used for fields in retrieved
                 // content whose names differ from what the server expects
                 $scope.fieldAliases = [
                     {fieldName: null, alias: ''}
                 ];
-                // TODO: initialize to existing provider data!
+                // TODO: initialize to existing provider data! same for the
+                // fieldsNotSelected
+                // probably in edit()?
 
                 fetchProviders();
 
@@ -318,6 +324,7 @@ define([
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
                     $scope.provider.idle_time = $scope.origProvider.idle_time || DEFAULT_IDLE_TIME;
                     $scope.provider.notifications = $scope.origProvider.notifications;
+                    $scope.provider.config = $scope.origProvider.config;
                 };
 
                 $scope.cancel = function() {
@@ -335,7 +342,7 @@ define([
                 * needed for an RSS source.
                 *
                 * @method setRssConfig
-                * @param {Object} provider ingest provider instance
+                * @param {Object} provider - ingest provider instance
                 */
                 $scope.setRssConfig = function(provider) {
                     if (!provider.config.auth_required) {
@@ -359,10 +366,58 @@ define([
                 * specified index.
                 *
                 * @method removeFieldAlias
-                * @param {Number} itemIdx index of the item to remove
+                * @param {Number} itemIdx - index of the item to remove
                 */
                 $scope.removeFieldAlias = function (itemIdx) {
-                    $scope.fieldAliases.splice(itemIdx, 1);
+                    var removed = $scope.fieldAliases.splice(itemIdx, 1);
+                    if (removed[0].fieldName) {
+                        $scope.fieldsNotSelected.push(removed[0].fieldName);
+                    }
+                };
+
+                /**
+                * Updates the list of content field names not selected in any
+                * of the dropdown menus.
+                *
+                * @method fieldSelectionChanged
+                */
+                $scope.fieldSelectionChanged = function () {
+                    var selectedFields = {};
+
+                    $scope.fieldAliases.forEach(function (item) {
+                        if (item.fieldName) {
+                            selectedFields[item.fieldName] = true;
+                        }
+                    });
+
+                    $scope.fieldsNotSelected = $scope.contentFields.filter(
+                        function (fieldName) {
+                            return !(fieldName in selectedFields);
+                        }
+                    );
+                };
+
+                /**
+                * Calculates a list of content field names that can be used as
+                * options in a dropdown menu.
+                *
+                * The list is comprised of all field names that are currently
+                * not selected in any of the other dropdown menus and
+                * of a field name that should be selected in the current
+                * dropdown menu (if any).
+                *
+                * @method availableFieldOptions
+                * @param {String} [selectedName] - currently selected field
+                * @return {String[]} list of field names
+                */
+                $scope.availableFieldOptions = function (selectedName) {
+                    var fieldNames = angular.copy($scope.fieldsNotSelected);
+
+                    // add current field selection, if available
+                    if (selectedName) {
+                        fieldNames.push(selectedName);
+                    }
+                    return fieldNames;
                 };
 
                 $scope.save = function() {
