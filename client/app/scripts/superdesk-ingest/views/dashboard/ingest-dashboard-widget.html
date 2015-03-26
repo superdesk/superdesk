@@ -10,8 +10,8 @@
         <div class="time" ng-show="item.last_closed && item.last_closed.closed_at" translate>
             on {{item.last_closed.closed_at | dateTimeString}}
         </div>
-        <div>
-            Message goes here. Message goes here. Message goes here. Message goes here. Message goes here.
+        <div ng-show="item.last_closed && item.last_closed.message">
+            {{item.last_closed.message}}
         </div>
     </div>
     <div ng-show="!item.is_closed">

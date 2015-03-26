@@ -1,40 +1,83 @@
 'use strict';
 var openUrl = require('./helpers/utils').open,
-    post = require('./helpers/utils').post,
-    ingestProviderDashboard = require('./helpers/pages').ingestProviderDashboard;
+    ingestDashboard = require('./helpers/pages').ingestDashboard;
 
-
-describe('Ingest Provider Dashboard', function() {
+describe('Ingest Provider Dashboard Maintenance', function() {
 
     beforeEach(function(done) {
         openUrl('/#/ingest_dashboard').then(done);
     });
 
+    function addProvider() {
+        ingestDashboard.openDropDown();
+        var providerButton = ingestDashboard.getProviderButton(ingestDashboard.getProvider(0));
+        expect(providerButton.getAttribute('class')).toNotContain('checked');
+        providerButton.click();
+        expect(providerButton.getAttribute('class')).toContain('checked');
+
+        // for the add board to appear.
+        browser.wait(function() {
+            return ingestDashboard.getDashboard(0).isDisplayed();
+        }, 1000);
+
+        ingestDashboard.getDashboard(0).click();
+    }
+
     it('add ingest provider to dashboard', function() {
-        var dropDown;
+        addProvider();
+    });
 
-        ingestProviderDashboard.openDropDown().then(function(elem) {
-            var items = ingestProviderDashboard.dropDown.all(by.repeater('item in items'));
-            expect(items.count()).toEqual(2);
-            // var first = items.first();
+    it('remove ingest provider to dashboard', function() {
+        addProvider();
+        ingestDashboard.openDropDown();
+        var providerButton = ingestDashboard.getProviderButton(ingestDashboard.getProvider(0));
+        expect(providerButton.getAttribute('class')).toContain('checked');
+        providerButton.click();
+        expect(providerButton.getAttribute('class')).toNotContain('checked');
+        expect(ingestDashboard.getDashboardList().count()).toEqual(0);
+    });
 
-            // first.then(function (elem) {
-            //     //console.log(elem);
-            //     expect(elem.element(by.css('.pull-right'))).toBe(false);
-            //     console.log('after');
-            // });
-            //expect(first.by.model('item.dashboard_enabled'))).toBe(true);
+    it('Change settings for Ingest Provider', function() {
+       addProvider();
+       expect(ingestDashboard.getDashboardList().count()).toEqual(1);
+       var dashboard = ingestDashboard.getDashboard(0);
+       var settings = ingestDashboard.getDashboardSettings(dashboard);
+       settings.click();
 
+       //status
+       expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(true);
+       ingestDashboard.getDashboardSettingsStatusButton(settings).click();
+       expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(false);
+
+       //ingest count
+       expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(true);
+       ingestDashboard.getDashboardSettingsIngestCountButton(settings).click();
+       expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(false);
+    });
+
+    it('Go to Ingest Providers', function() {
+        ingestDashboard.openDropDown();
+        ingestDashboard.dropDown.element(by.css('.icon-pencil')).click();
+
+        browser.wait(function() {
+            return element(by.id('ingest-settings')).isDisplayed();
+        }, 1000).then(function() {
+            expect(element(by.id('ingest-settings')).isDisplayed()).toBe(true);
         });
+    });
 
-        // openUrl('/#/ingest_dashboard').then(function (result) {
-        //     console.log('openurl');
-        // }).then(function() {
-        //     return element(by.id('ingest-dashboard-dropdown')).click();
-        // }).then (function() {
-        //     var dropDown = element(by.css('.ingest-dashboard-dropdown'));
-        //     expect(dropDown.all(by.repeater('item in items')).count()).toEqual(2);
-        // });
-        
+    it('Go to Ingest Providers and open dialog', function() {
+        addProvider();
+        var dashboard = ingestDashboard.getDashboard(0);
+        var settings = ingestDashboard.getDashboardSettings(dashboard);
+        settings.click();
+        settings.element(by.css('.icon-pencil')).click();
+
+        browser.wait(function() {
+            return element(by.id('ingest-settings')).isDisplayed();
+        }, 1000).then(function() {
+            expect(element(by.id('ingest-settings')).isDisplayed()).toBe(true);
+            expect(element(by.css('.modal-dialog')).element(by.id('provider-name')).isDisplayed()).toBe(true);
+        });
     });
 });
