@@ -111,8 +111,10 @@ define([
             return this;
         };
 
-        this.$get = ['$q', '$route', '$rootScope', 'activityService', 'activityChooser', 'betaService', 'features', 'privileges',
-        function superdeskFactory($q, $route, $rootScope, activityService, activityChooser, betaService, features, privileges) {
+        this.$get = ['$q', '$route', '$rootScope', 'activityService', 'activityChooser',
+            'betaService', 'features', 'privileges', '$injector',
+            function superdeskFactory($q, $route, $rootScope, activityService, activityChooser, betaService,
+                                      features, privileges, $injector) {
 
             /**
              * Render main menu depending on registered acitivites
@@ -199,7 +201,13 @@ define([
                     }
 
                     return _.sortBy(_.filter(this.activities, function(activity) {
-                        return _.find(activity.filters, criteria) && isAllowed(activity) && activity.condition(item);
+                        var additionalConditionValue = true;
+                        if (activity.additionalCondition) {
+                            additionalConditionValue = $injector.invoke(activity.additionalCondition, {}, {'item': item});
+                        }
+
+                        return _.find(activity.filters, criteria) && isAllowed(activity) &&
+                            activity.condition(item) && additionalConditionValue;
                     }), 'priority').reverse();
                 },
 

@@ -267,7 +267,7 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
-                item_id = get_resource_service('archive_ingest') \
+                item_id = get_resource_service('fetch') \
                     .post([{'guid': ingest_item['guid'],
                             'desk': str(destination.get('desk')),
                             'stage': str(destination.get('stage')),

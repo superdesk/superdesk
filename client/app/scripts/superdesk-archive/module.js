@@ -114,35 +114,74 @@ define([
                     filters: [{action: 'list', type: 'spike'}],
                     action: 'unspike'
                 })
-                .activity('archive-content', {
-                    label: gettext('Fetch'),
+                .activity('duplicate-content', {
+                    label: gettext('Duplicate'),
                     icon: 'archive',
                     monitor: true,
                     controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
-                        api.archiveIngest.create({
-                            guid: data.item.guid,
-                            desk: desks.getCurrentDeskId()
-                        })
-                        .then(function(archiveItem) {
-                            data.item.task_id = archiveItem.task_id;
-                            data.item.created = archiveItem._created;
-                            $rootScope.$broadcast('item:fetch');
-                        }, function(response) {
-                            data.item.error = response;
-                        })
+                        api
+                            .save('duplicate', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                            .then(function(archiveItem) {
+                                data.item.task_id = archiveItem.task_id;
+                                data.item.created = archiveItem._created;
+                                $rootScope.$broadcast('item:duplicate');
+                            }, function(response) {
+                                data.item.error = response;
+                            })
                         ['finally'](function() {
                             data.item.actioning.archiveContent = false;
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    action: 'fetch_as_from_content',
+                    privileges: {duplicate: 1},
                     condition: function(item) {
                         return item.lock_user === null || angular.isUndefined(item.lock_user);
-                    }
+                    },
+                    additionalCondition:['desks', 'item', function(desks, item) {
+                        return desks.getCurrentDeskId() !== null || desks.getCurrentDeskId() !== '';
+                    }]
+                })
+                .activity('copy-content', {
+                    label: gettext('Copy'),
+                    icon: 'copy',
+                    monitor: true,
+                    controller: ['api', 'data', '$rootScope', function(api, data, $rootScope) {
+                        api
+                            .save('copy', {}, {}, data.item)
+                            .then(function(archiveItem) {
+                                data.item.task_id = archiveItem.task_id;
+                                data.item.created = archiveItem._created;
+                                $rootScope.$broadcast('item:copy');
+                            }, function(response) {
+                                data.item.error = response;
+                            })
+                        ['finally'](function() {
+                            data.item.actioning.archiveContent = false;
+                        });
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    },
+                    additionalCondition:['desks', 'item', function(desks, item) {
+                        return desks.getCurrentDeskId() === null || desks.getCurrentDeskId() === '';
+                    }]
                 });
         }])
 
         .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('copy', {
+                type: 'http',
+                backend: {
+                    rel: 'copy'
+                }
+            });
+            apiProvider.api('duplicate', {
+                type: 'http',
+                backend: {
+                    rel: 'duplicate'
+                }
+            });
             apiProvider.api('notification', {
                 type: 'http',
                 backend: {
