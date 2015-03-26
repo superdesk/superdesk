@@ -45,7 +45,10 @@ Feature: Ingest Provider
         """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [
+          {"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+          {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}}
+        ]
         """
         Then we get emails
         """
@@ -83,7 +86,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest_provider:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """
@@ -108,11 +113,14 @@ Feature: Ingest Provider
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
-        {"is_closed": true}
+        {"is_closed": true, "last_closed": {"message": "system misbehaving."}}
         """
         Then we get updated response
         """
-        {"is_closed": true}
+        {
+          "is_closed": true,
+          "last_closed": {"closed_by":"#CONTEXT_USER_ID#", "message": "system misbehaving."}
+        }
         """
         When we get "/activity/"
         Then we get existing resource
@@ -128,7 +136,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest_provider:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """

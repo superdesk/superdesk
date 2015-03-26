@@ -1,0 +1,7 @@
+<div class="ingest-dashboard-list">
+    <ul class="card-list">
+        <li ng-repeat="item in items track by item._id">
+            <div sd-user-ingest-dashboard data-item="item" data-set-user-preferences="setUserPreferences()"></div>
+        </li>
+    </ul>
+</div>

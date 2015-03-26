@@ -146,7 +146,7 @@ class UsersService(BaseService):
     def on_created(self, docs):
         for user_doc in docs:
             self.__update_user_defaults(user_doc)
-            add_activity(ACTIVITY_CREATE, 'created user {{user}}',
+            add_activity(ACTIVITY_CREATE, 'created user {{user}}', self.datasource,
                          user=user_doc.get('display_name', user_doc.get('username')))
 
     def on_update(self, updates, original):
@@ -209,7 +209,8 @@ class UsersService(BaseService):
             3. Reset Password Tokens
         """
 
-        add_activity(ACTIVITY_UPDATE, 'disabled user {{user}}', user=doc.get('display_name', doc.get('username')))
+        add_activity(ACTIVITY_UPDATE, 'disabled user {{user}}', self.datasource,
+                     user=doc.get('display_name', doc.get('username')))
         self.__clear_locked_items(str(doc['_id']))
         self.__handle_status_changed(updates={'is_enabled': False, 'is_active': False}, user=doc)
 
