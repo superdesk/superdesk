@@ -342,7 +342,7 @@ define([
                 * @method setRssConfig
                 * @param {Object} provider - ingest provider instance
                 */
-                $scope.setRssConfig = function(provider) {
+                $scope.setRssConfig = function (provider) {
                     if (!provider.config.auth_required) {
                         provider.config.username = null;
                         provider.config.password = null;
@@ -419,6 +419,16 @@ define([
                 };
 
                 $scope.save = function() {
+                    var newAliases = {};
+
+                    $scope.fieldAliases.forEach(function (item) {
+                        if (item.fieldName && item.alias) {
+                            newAliases[item.fieldName] = item.alias;
+                        }
+                    });
+
+                    $scope.provider.config.field_aliases = newAliases;
+
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {
                         notify.success(gettext('Provider saved!'));

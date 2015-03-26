@@ -187,4 +187,46 @@ describe('sdIngestSourcesContent directive', function () {
         );
     });
 
+    describe('save() method', function () {
+        var deferredSave;
+
+        beforeEach(inject(function ($q, api) {
+            deferredSave = $q.defer();
+
+            api.ingestProviders = {
+                save: jasmine.createSpy().and.returnValue(deferredSave.promise)
+            };
+
+            scope.provider = {
+                config: {
+                    field_aliases: {headline: 'title'}
+                }
+            };
+        }));
+
+        it('updates field aliases in provider configuration', function () {
+            scope.fieldAliases = [
+                {fieldName: 'foo', alias: 'bar'},
+                {fieldName: 'foo2', alias: 'bar2'}
+            ];
+            scope.save();
+            expect(scope.provider.config.field_aliases).toEqual(
+                {foo: 'bar', foo2: 'bar2'}
+            );
+        });
+
+        it('does not add field aliases with missing data to ' +
+           ' provider configuration',
+           function () {
+                scope.fieldAliases = [
+                    {fieldName: 'headline', alias: ''},
+                    {fieldName: null, alias: 'some_alias'},
+                    {fieldName: null, alias: ''}
+                ];
+                scope.save();
+                expect(scope.provider.config.field_aliases).toEqual({});
+            }
+        );
+    });
+
 });
