@@ -34,9 +34,11 @@
   </div>
 </fieldset>
 
+
 <fieldset class="separated">
   <legend translate>Content Field Aliases</legend>
-  <div class="flex-group header">
+
+  <div class="flex-group header" ng-show="fieldAliases.length > 0">
     <div class="flex-field">
       <label for="" translate>Content Field Name</label>
     </div>
@@ -45,6 +47,10 @@
     </div>
     <div class="flex-field-empty">
     </div>
+  </div>
+
+  <div class="flex-group" ng-show="fieldAliases.length == 0">
+    {{:: 'No field aliases defined.'|translate }}
   </div>
 
   <div class="flex-group" ng-repeat="item in fieldAliases">
@@ -67,16 +73,16 @@
         type="button"
         class="btn btn-default"
         title="{{:: 'Remove'|translate}}"
-        ng-show="item.fieldName && item.alias"
         ng-click="removeFieldAlias($index)">
       <i class="icon-close-small"></i>
     </button>
+  </div>
 
+  <div class="flex-group" ng-show="fieldAliases.length < contentFields.length">
     <button
         type="button"
         class="btn btn-info"
-        ng-if="$last"
-        title="{{:: 'Add another'|translate}}"
+        title="{{:: 'Add alias'|translate}}"
         ng-click="addFieldAlias()">
       <i class="svg-icon-plus"></i>
     </button>

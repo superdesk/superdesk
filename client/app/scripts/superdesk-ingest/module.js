@@ -287,9 +287,7 @@ define([
 
                 // a list of field names aliases - used for fields in retrieved
                 // content whose names differ from what the server expects
-                $scope.fieldAliases = [
-                    {fieldName: null, alias: ''}
-                ];
+                $scope.fieldAliases = [];
                 // TODO: initialize to existing provider data! same for the
                 // fieldsNotSelected
                 // probably in edit()?

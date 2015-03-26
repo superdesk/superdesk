@@ -30,14 +30,9 @@ describe('sdIngestSourcesContent directive', function () {
         scope.$digest();
     }));
 
-    it('initializes field aliases in scope to a list containing a single ' +
-       'empty alias item',
-       function () {
-            expect(scope.fieldAliases).toEqual([
-                {fieldName: null, alias: ''}
-            ]);
-        }
-    );
+    it('initializes field aliases in scope to an empty list', function () {
+        expect(scope.fieldAliases).toEqual([]);
+    });
 
     it('initializes the list of available field names in scope', function () {
         expect(scope.contentFields).toEqual([
