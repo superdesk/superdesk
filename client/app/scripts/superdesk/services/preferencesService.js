@@ -27,7 +27,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
             function saveLocally(preferences, type) {
                 if (type && original_preferences) {
-                    angular.extend(original_preferences[type], preferences[type][session.sessionId] || preferences[type]);
+                    angular.extend(original_preferences[type], preferences[type]);
                 } else {
                     original_preferences = preferences;
                 }
