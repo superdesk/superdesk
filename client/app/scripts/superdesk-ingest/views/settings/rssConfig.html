@@ -72,8 +72,10 @@
     <button
         type="button"
         class="btn btn-default"
-        title="{{:: 'Remove'|translate}}"
-        ng-click="removeFieldAlias($index)">
+        ng-click="removeFieldAlias($index)"
+        tooltip="{{:: 'Remove'|translate}}"
+        tooltip-placement="bottom"
+        tooltip-popup-delay="500">
       <i class="icon-close-small"></i>
     </button>
   </div>
@@ -84,7 +86,8 @@
         class="btn btn-info"
         ng-click="addFieldAlias()"
         tooltip="{{:: 'Add alias'|translate}}"
-        tooltip-placement="right">
+        tooltip-placement="right"
+        tooltip-popup-delay="500">
       <i class="svg-icon-plus"></i>
     </button>
   </div>
