@@ -71,7 +71,7 @@ class MoveService(BaseService):
             del archived_doc['_id']
             archive_service.update(original['_id'], archived_doc, original)
 
-            insert_into_versions(doc=archived_doc)
+            insert_into_versions(guid=original['_id'])
 
             guid_of_moved_items.append(archived_doc['guid'])
 
