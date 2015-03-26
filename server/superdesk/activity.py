@@ -172,7 +172,7 @@ ACTIVITY_EVENT = 'event'
 ACTIVITY_ERROR = 'error'
 
 
-def add_activity(activity_name, msg, resource, item=None, notify=None, **data):
+def add_activity(activity_name, msg, resource=None, item=None, notify=None, **data):
     """Add an activity into activity log.
 
     This will became part of current user activity log.
@@ -204,7 +204,7 @@ def add_activity(activity_name, msg, resource, item=None, notify=None, **data):
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])
 
 
-def notify_and_add_activity(activity_name, msg, resource, item=None, user_list=None, **data):
+def notify_and_add_activity(activity_name, msg, resource=None, item=None, user_list=None, **data):
     """
     this function will add the activity and notify via email.
     """
