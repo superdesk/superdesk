@@ -11,6 +11,7 @@ describe('desks service', function() {
 		spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
 		spyOn(api, 'get').and.returnValue($q.when({_items: [{name: 'sport'}, {name: 'news'}]}));
 		spyOn(preferencesService, 'get').and.returnValue($q.when([]));
+		spyOn(preferencesService, 'update');
 
 		var userDesks;
 		desks.fetchCurrentUserDesks().then(function(_userDesks) {
@@ -24,12 +25,23 @@ describe('desks service', function() {
 
 	it('can pick a first desk if user has no current desk selected',
 		inject(function(desks, session, api, preferencesService, $q, $rootScope) {
-			spyOn(preferencesService, 'get').and.returnValue($q.when(null));
+			spyOn(preferencesService, 'get').and.returnValue($q.when('missing'));
 			spyOn(preferencesService, 'update');
-			spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: [{_id: 1, desk: 'foo'}]}));
+			spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
 			desks.fetchCurrentUserDesks();
 			$rootScope.$digest();
-			expect(desks.activeDeskId).not.toBe(null);
+			expect(desks.activeDeskId).toBe('foo');
+		})
+	);
+
+	it('can checks if current desk is part of user desks',
+		inject(function(desks, session, api, preferencesService, $q, $rootScope) {
+			spyOn(preferencesService, 'get').and.returnValue($q.when('missing'));
+			spyOn(preferencesService, 'update');
+			spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: []}));
+			desks.fetchCurrentUserDesks();
+			$rootScope.$digest();
+			expect(desks.activeDeskId).toBe(null);
 		})
 	);
 

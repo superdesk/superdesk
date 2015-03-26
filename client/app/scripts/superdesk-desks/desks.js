@@ -383,6 +383,9 @@
                     return api.get(user._links.self.href + '/desks');
                 },
 
+                /**
+                 * Fetch current user desks and make sure active desk is present in there
+                 */
                 fetchCurrentUserDesks: function() {
                     if (userDesks) {
                         return $q.when(userDesks);
@@ -394,8 +397,12 @@
                             .then(angular.bind(this, this.fetchUserDesks))
                             .then(angular.bind(this, function(desks) {
                                 userDesks = desks;
-                                if (!this.activeDeskId && desks._items.length) {
-                                    this.setCurrentDesk(desks._items[0]);
+                                if (desks._items.length) {
+                                    if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
+                                        this.setCurrentDesk(desks._items[0]);
+                                    }
+                                } else if (this.activeDeskId) {
+                                    this.setCurrentDesk(null);
                                 }
                                 setActive(this);
                                 return desks;
