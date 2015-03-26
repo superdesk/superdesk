@@ -103,10 +103,10 @@ class IngestProviderResource(Resource):
         }
     }
 
-
     item_methods = ['GET', 'PATCH']
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers'}
     etag_ignore_fields = ['last_updated', 'last_item_update', 'last_closed', 'last_opened']
+
 
 class IngestProviderService(BaseService):
     def __init__(self, datasource=None, backend=None):
