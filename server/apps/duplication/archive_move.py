@@ -68,7 +68,8 @@ class MoveService(BaseService):
             archived_doc[config.CONTENT_STATE] = 'submitted'
             resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
 
-            archive_service.update(archived_doc['_id'], archived_doc, original)
+            del archived_doc['_id']
+            archive_service.update(original['_id'], archived_doc, original)
 
             insert_into_versions(doc=archived_doc)
 
