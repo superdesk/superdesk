@@ -30,7 +30,6 @@ Feature: User preferences
         {"user_preferences": {"archive:view": {"view": "compact" }}}
         """
 
-        When we get "/preferences/#SESSION_ID#"
         Then we get existing resource
         """
         {
@@ -54,8 +53,6 @@ Feature: User preferences
         """
         {"user_preferences": {"feature:preview": {"enabled": true }}}
         """
-
-        When we get "/preferences/#SESSION_ID#"
         Then we get existing resource
         """
         {
@@ -80,8 +77,6 @@ Feature: User preferences
         """
         {"user_preferences": {"email:notification": {"enabled": false }}}
         """
-
-        When we get "/preferences/#SESSION_ID#"
         Then we get existing resource
         """
         {
@@ -144,7 +139,6 @@ Feature: User preferences
         {"session_preferences": {"desk:items": [123]}}
         """
 
-        When we get "/preferences/#SESSION_ID#"
         Then we get existing resource
         """
         {"session_preferences": {"desk:items": [123]}}
