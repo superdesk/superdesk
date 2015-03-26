@@ -119,6 +119,8 @@ define([
                     }, function (error) {
                         deferred.reject(error);
                     });
+                }, function (error) {
+                    deferred.reject(error);
                 });
 
                 return deferred.promise;
