@@ -141,7 +141,7 @@ Feature: User preferences
 
         Then we get existing resource
         """
-        {"session_preferences": {"desk:items": [123]}}
+        {"session_preferences": {"#SESSION_ID#": {"desk:items": [123]}}}
         """
         When we delete "/auth/#SESSION_ID#"
         Given we login as user "test_user" with password "test_password"
