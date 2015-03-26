@@ -399,10 +399,10 @@
                                 userDesks = desks;
                                 if (desks._items.length) {
                                     if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
-                                        this.setCurrentDesk(desks._items[0]);
+                                        this.activeDeskId = desks._items[0]._id;
                                     }
                                 } else if (this.activeDeskId) {
-                                    this.setCurrentDesk(null);
+                                    this.activeDeskId = null;
                                 }
                                 setActive(this);
                                 return desks;
