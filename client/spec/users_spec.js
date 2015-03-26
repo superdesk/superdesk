@@ -34,7 +34,7 @@ describe('Users', function() {
         });
 
         it('can list users', function() {
-            expect(element.all(by.repeater('user in users')).count()).toBe(3);
+            expect(element.all(by.repeater('user in users')).count()).toBe(7);
             expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
         });
 
