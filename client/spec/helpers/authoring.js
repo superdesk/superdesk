@@ -8,7 +8,6 @@ function Authoring() {
      * Send item to given desk
      */
     this.sendTo = function sendTo(desk) {
-        // send to sports
         var sidebar = element(by.css('.send-to-pane')),
             dropdown = sidebar.element(by.css('.desk-select .dropdown-toggle'));
 
