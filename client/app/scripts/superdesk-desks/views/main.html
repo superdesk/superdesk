@@ -2,7 +2,7 @@
     <div class="navbtn toggle-list desk-tabs">
     	<ul>
 	    	<li ng-repeat="v in views" ng-class="{active: v === view}">
-	    		<a href="" ng-click="setView(v)" translate>{{v}}</a>
+	    		<a href="" id="{{v}}" ng-click="setView(v)" translate>{{v}}</a>
 	    	</li>
 	    </ul>
     </div>
