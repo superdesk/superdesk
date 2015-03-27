@@ -2,17 +2,22 @@
 
     
     <!-- package items list -->
-    <div class="lightbox-composite" ng-show="item.type == 'composite'" ng-class="{'open': compositeOpen}" ng-init="compositeOpen = true">
+    <div class="lightbox-composite" ng-show="packageItem" ng-class="{'open': compositeOpen}" ng-init="compositeOpen = true">
         <div class="toggle-composite" ng-click="compositeOpen = !compositeOpen">
             <i class="svg-icon-right inverse"></i>
         </div>
-        <div class="header" ng-click="setSingleItem(item)">
-            <span><i class="filetype-icon-large-composite icon-white"></i></span>
-            <h5>{{ item.headline }}</h5>
+        <div class="header" ng-click="setSingleItem(packageItem)">
+            <span ng-if="!nested()">
+                <i class="filetype-icon-large-composite icon-white" ></i>
+            </span>
+            <span ng-if="nested()" ng-click="previousPackage(); $event.stopPropagation();">
+                <i class="backlink white"></i>
+            </span>
+            <h5>{{ packageItem.headline }}</h5>
         </div>
         <div class="content">
-            <ul ng-if="item.type === 'composite'">
-                <div sd-package data-item="item" data-setitem="setPackageSingle(selected)"></div>
+            <ul ng-if="packageItem">
+                <div sd-package data-item="packageItem" data-setitem="setPackageSingle(selected)"></div>
             </ul>
         </div>
     </div>
@@ -23,11 +28,10 @@
 
         <div sd-single-item data-item="singleItem" data-setitem="setPackageSingle(selected)"></div>
 
-
-        <button class="navigation left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
+        <button class="navigation left" ng-click="prev()" ng-if="prevEnabled" title="{{ 'previous' | translate }}">
             <i class="arrow-icon-large-left"></i>
         </button>
-        <button class="navigation right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
+        <button class="navigation right" ng-click="next()" ng-if="nextEnabled" title="{{ 'next' | translate }}">
             <i class="arrow-icon-large-right"></i>
         </button>
 
@@ -36,12 +40,12 @@
 
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">{{ item.headline }}</h5>
+            <h5 class="lightbox-title">{{ singleItem.headline }}</h5>
             <button class="lightbox-close" ng-click="close()"><i class="icon-close-small"></i></button>
-            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.firstcreated|date:'medium' }}</span>
-            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.versioncreated|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ singleItem.firstcreated|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ singleItem.versioncreated|date:'medium' }}</span>
             
-            <span class="lightbox-media-type filetype-icon-{{item.type}}"></span>
+            <span class="lightbox-media-type filetype-icon-{{singleItem.type}}"></span>
 
             <div class="lightbox-actions">
                 <button class="btn pull-left" ng-show><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
@@ -52,7 +56,7 @@
             <div class="lightbox-descritpion">
             </div>
             <div sd-toggle-box data-title="{{ 'Details' | translate }}" data-open="true">
-                <div sd-media-metadata data-item="item"></div>
+                <div sd-media-metadata data-item="singleItem"></div>
             </div>
         </div>
     </section>

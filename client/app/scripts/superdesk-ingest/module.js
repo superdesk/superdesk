@@ -1,10 +1,11 @@
 define([
     'angular',
     'd3',
+    'moment',
     'superdesk-archive/controllers/baseList',
     './ingest-widget/ingest',
     './ingest-stats-widget/stats'
-], function(angular, d3, BaseListController) {
+], function(angular, d3, moment, BaseListController) {
     'use strict';
 
     var app = angular.module('superdesk.ingest', [
@@ -49,8 +50,29 @@ define([
         }
     });
 
-    IngestProviderService.$inject = ['api', '$q'];
-    function IngestProviderService(api, $q) {
+    var PROVIDER_DASHBOARD_DEFAULTS = {
+        show_log_messages: true,
+        show_ingest_count: true,
+        show_time: true,
+        log_messages: 'error',
+        show_status: true
+    };
+
+    var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
+    var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
+
+    function forcedExtend(dest, src) {
+        _.each(PROVIDER_DASHBOARD_DEFAULTS, function(value, key) {
+            if (_.has(src, key)) {
+                dest[key] = src[key];
+            } else {
+                dest[key] = PROVIDER_DASHBOARD_DEFAULTS[key];
+            }
+        });
+    }
+
+    IngestProviderService.$inject = ['api', '$q', 'preferencesService'];
+    function IngestProviderService(api, $q, preferencesService) {
 
         var service = {
             providers: null,
@@ -77,6 +99,34 @@ define([
                 }
 
                 return this.fetched;
+            },
+            fetchDashboardProviders: function() {
+                var deferred = $q.defer();
+                api.ingestProviders.query({max_results:500}).then(function (result) {
+                    var ingest_providers = result._items;
+                    preferencesService.get('dashboard:ingest').then(function(user_ingest_providers) {
+                        if (!_.isArray(user_ingest_providers)) {
+                            user_ingest_providers = [];
+                        }
+
+                        _.forEach(ingest_providers, function(provider) {
+                            var user_provider = _.find(user_ingest_providers, function(item) {
+                                return item._id === provider._id;
+                            });
+
+                            provider.dashboard_enabled = user_provider?true:false;
+                            forcedExtend(provider, user_provider?user_provider:PROVIDER_DASHBOARD_DEFAULTS);
+                        });
+
+                        deferred.resolve(ingest_providers);
+                    }, function (error) {
+                        deferred.reject(error);
+                    });
+                }, function (error) {
+                    deferred.reject(error);
+                });
+
+                return deferred.promise;
             }
         };
         return service;
@@ -261,10 +311,6 @@ define([
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
-
-                var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
-                var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
-
                 $scope.provider = null;
                 $scope.origProvider = null;
 
@@ -292,14 +338,38 @@ define([
                 // fieldsNotSelected
                 // probably in edit()?
 
-                fetchProviders();
-
                 function fetchProviders() {
-                    return api.ingestProviders.query({max_results: 100})
+                    return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
                             $scope.providers = result;
-                        });
+                    });
                 }
+
+                function openProviderModal() {
+                    var provider_id = $location.search()._id;
+                    var provider;
+                    if (provider_id) {
+                        if ($scope.providers && $scope.providers._items) {
+                            provider = _.find($scope.providers._items, function (item) {
+                                return item._id === provider_id;
+                            });
+                        }
+
+                        if (provider == null) {
+                            api.ingestProviders.getById(provider_id).then(function (result) {
+                                provider = result;
+                            });
+                        }
+
+                        if (provider) {
+                            $scope.edit(provider);
+                        }
+                    }
+                }
+
+                fetchProviders().then(function() {
+                    openProviderModal();
+                });
 
                 api('rule_sets').query().then(function(result) {
                     $scope.rulesets = result._items;
@@ -486,8 +556,8 @@ define([
                         .then(function(result) {
                             _.remove(scope.rulesets, ruleset);
                         }, function(response) {
-                            if (response.status === 400) {
-                                notify.error(gettext('Rule set is applied to channel(s). It cannot be deleted.'));
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
                             } else {
                                 notify.error(gettext('There is an error. Rule set cannot be deleted.'));
                             }
@@ -556,6 +626,7 @@ define([
                             scope.editScheme.rules[scope.ruleIndex] = scope.rule;
                         }
                     }
+                    scope.editScheme.rules = _.reject(scope.editScheme.rules, {name: null});
                     var _new = scope.editScheme._id ? false : true;
                     api('routing_schemes').save(_orig, scope.editScheme)
                     .then(function() {
@@ -580,8 +651,8 @@ define([
                         .then(function(result) {
                             _.remove(scope.schemes, scheme);
                         }, function(response) {
-                            if (response.status === 400) {
-                                notify.error(gettext('Routing scheme is applied to channel(s). It cannot be deleted.'));
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
                             } else {
                                 notify.error(gettext('There is an error. Routing scheme cannot be deleted.'));
                             }
@@ -914,6 +985,210 @@ define([
         };
     }
 
+    IngestDashboardController.$inject = ['$scope', 'api', 'ingestSources', 'preferencesService', 'notify', 'gettext'];
+    function IngestDashboardController($scope, $api, ingestSources, preferencesService, notify, gettext) {
+        $scope.items = [];
+        $scope.dashboard_items = [];
+
+        $scope.fetchItems = function () {
+            ingestSources.fetchDashboardProviders().then(function(result) {
+                $scope.items = result;
+                $scope.dashboard_items =  _.filter(result, {'dashboard_enabled': true});
+            });
+        };
+
+        $scope.setUserPreferences = function(refresh) {
+            var preferences = [];
+            var update = {};
+
+            _.forEach(_.filter($scope.items, {'dashboard_enabled': true}),
+                function (item) {
+                    preferences.push(_.pick(item, _.union(['_id'], _.keys(PROVIDER_DASHBOARD_DEFAULTS))));
+                }
+            );
+
+            update['dashboard:ingest'] = preferences;
+            preferencesService.update(update).then(function(result) {
+                if (refresh) {
+                    $scope.fetchItems();
+                }
+            }, function(error) {
+                notify.error(gettext('Ingest Dashboard preferences could not be saved.'), 2000);
+            });
+        };
+
+        $scope.fetchItems();
+    }
+
+    IngestUserDashboard.$inject = ['api', 'userList', 'privileges'];
+    function IngestUserDashboard (api, userList, privileges) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget.html',
+            scope: {
+                item: '=',
+                setUserPreferences: '&'
+            },
+            link: function (scope) {
+
+                function getCount() {
+                    var criteria = {
+                            source: {
+                                query: {
+                                    filtered: {
+                                        filter: {
+                                            and: [
+                                                {term: {ingest_provider: scope.item._id}},
+                                                {range: {versioncreated: {gte: 'now-24h'}}}
+                                            ]
+                                        }
+                                    }
+                                },
+                                size: 0,
+                                from: 0
+                            }
+                        };
+
+                    api.ingest.query(criteria).then(function (result) {
+                        scope.ingested_count = result._meta.total;
+                    });
+                }
+
+                function updateProvider() {
+                    api.ingestProviders.getById(scope.item._id).then(function (result) {
+                        angular.extend(scope.item, result);
+                        getUser();
+                    }, function (error) {
+                        if (error.status === 404) {
+                            scope.item.dashboard_enabled = false;
+                            scope.setUserPreferences();
+                        }
+                    });
+                }
+
+                function getLogMessages() {
+                    var criteria = {
+                        max_results: 5,
+                        sort: '[(\'_created\',-1)]',
+                        embedded: {user: 1}
+                    };
+
+                    var where = [
+                            {resource: 'ingest_providers'},
+                            {'data.provider_id': scope.item._id}
+                        ];
+
+                    if (scope.item.log_messages === 'error') {
+                        where.push({name: 'error'});
+                    }
+
+                    criteria.where = JSON.stringify ({
+                        '$and': where
+                    });
+
+                    api.activity.query(criteria).then(function (result) {
+                        scope.log_messages = result._items;
+                    });
+                }
+
+                function refreshItem(data) {
+                    if (data.provider_id === scope.item._id) {
+                        getCount();
+                        updateProvider();
+                        getLogMessages();
+                    }
+                }
+
+                function getUser() {
+                    if (scope.item.is_closed && scope.item.last_closed && scope.item.last_closed.closed_by) {
+                        userList.getUser(scope.item.last_closed.closed_by).then(function(result) {
+                            scope.item.last_closed.display_name = result.display_name;
+                        });
+                    } else if (!scope.item.is_closed && scope.item.last_opened && scope.item.last_opened.opened_by) {
+                        userList.getUser(scope.item.last_opened.opened_by).then(function(result) {
+                            scope.item.last_opened.display_name = result.display_name;
+                        });
+                    }
+                }
+
+                function init() {
+                    scope.showIngest = Boolean(privileges.privileges.ingest_providers);
+                    scope.ingested_count = 0;
+                    getCount();
+                    getUser();
+                    getLogMessages();
+                }
+
+                init();
+
+                scope.isIdle = function() {
+                    if (scope.item.last_item_update && !scope.item.is_closed) {
+                        var idle_time =  scope.item.idle_time || DEFAULT_IDLE_TIME;
+                        var last_item_update = moment(scope.item.last_item_update);
+                        if (idle_time && !angular.equals(idle_time, DEFAULT_IDLE_TIME)) {
+                            last_item_update.add(idle_time.hours, 'h').add(idle_time.minutes, 'm');
+                            if (moment() > last_item_update) {
+                                return true;
+                            }else {
+                                return false;
+                            }
+                        }
+                    }
+                    return false;
+                };
+
+                scope.filterLogMessages = function() {
+                    scope.setUserPreferences();
+                    getLogMessages();
+                };
+
+                scope.$on('ingest:update', function (evt, extras) {
+                    refreshItem(extras);
+                });
+
+                scope.$on('ingest_provider:update', function (evt, extras) {
+                    refreshItem(extras);
+                });
+            }
+        };
+    }
+
+    IngestUserDashboardList.$inject = [];
+    function IngestUserDashboardList () {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget-list.html',
+            scope: {
+                items: '=',
+                setUserPreferences: '&'
+            }
+        };
+    }
+
+    IngestUserDashboardDropDown.$inject = ['privileges'];
+    function IngestUserDashboardDropDown (privileges) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-sources-list.html',
+            scope: {
+                items: '=',
+                setUserPreferences: '&'
+            },
+            link: function (scope) {
+                scope.showIngest = Boolean(privileges.privileges.ingest_providers);
+            }
+        };
+    }
+
+    function ScheduleFilter() {
+        return function(input) {
+            var schedule = '';
+            if (_.isPlainObject(input)) {
+                schedule += (input.minutes && input.minutes > 0)? (input.minutes + (input.minutes > 1?' minutes':' minute')):'';
+                schedule += schedule.length > 0?' ':'';
+                schedule += (input.seconds && input.seconds > 0)? (input.seconds + (input.seconds > 1?' seconds':' second')):'';
+            }
+            return schedule;
+        };
+    }
+
     app
         .service('ingestSources', IngestProviderService)
         .factory('subjectService', SubjectService)
@@ -926,7 +1201,11 @@ define([
         .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
         .directive('sdSortrules', SortRulesDirectives)
-        .filter('insert', InsertFilter);
+        .directive('sdUserIngestDashboardDropDown', IngestUserDashboardDropDown)
+        .directive('sdUserIngestDashboardList', IngestUserDashboardList)
+        .directive('sdUserIngestDashboard', IngestUserDashboard)
+        .filter('insert', InsertFilter)
+        .filter('scheduleFilter', ScheduleFilter);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -946,21 +1225,27 @@ define([
                 category: superdesk.MENU_SETTINGS,
                 privileges: {ingest_providers: 1}
             })
+            .activity('/ingest_dashboard', {
+                label: gettext('Ingest Dashboard'),
+                templateUrl: 'scripts/superdesk-ingest/views/dashboard/dashboard.html',
+                controller: IngestDashboardController,
+                category: superdesk.MENU_MAIN,
+                privileges: {ingest_providers: 1}
+            })
             .activity('archive', {
                 label: gettext('Fetch'),
                 icon: 'archive',
                 monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
-                    api.archiveIngest.create({
-                        guid: data.item.guid,
-                        desk: desks.getCurrentDeskId()
-                    })
-                    .then(function(archiveItem) {
-                        data.item.task_id = archiveItem.task_id;
-                        data.item.archived = archiveItem._created;
-                    }, function(response) {
-                        data.item.error = response;
-                    })
+                    api
+                        .save('fetch', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                        .then(
+                            function(archiveItem) {
+                                data.item.task_id = archiveItem.task_id;
+                                data.item.archived = archiveItem._created;
+                            }, function(response) {
+                                data.item.error = response;
+                            })
                     ['finally'](function() {
                         data.item.actioning.archive = false;
                     });
@@ -968,16 +1253,16 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                action: 'fetch_as_from_ingest',
+                privileges: {fetch: 1},
                 key: 'f'
             });
     }]);
 
     app.config(['apiProvider', function(apiProvider) {
-        apiProvider.api('archiveIngest', {
+        apiProvider.api('fetch', {
             type: 'http',
             backend: {
-                rel: 'archive_ingest'
+                rel: 'fetch'
             }
         });
         apiProvider.api('ingest', {
@@ -991,6 +1276,10 @@ define([
             backend: {
                 rel: 'ingest_providers'
             }
+        });
+        apiProvider.api('activity', {
+            type: 'http',
+            backend: {rel: 'activity'}
         });
     }]);
 

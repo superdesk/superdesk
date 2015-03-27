@@ -73,48 +73,22 @@
 
 	.toggle-box {
 		header {
-			margin-left: -10px;
-			i {
-				.opacity(60);
-			}
 			h6 {
 				font-size: 12px;
 				background: @archive-sidebar-bg;
 			}
+			.chevron {
+				background-color: @archive-sidebar-bg;
+			}
 		}
-	}
-
-	.selected-filters {
-		margin-bottom: 20px;
-		li {
-			div {
-				line-height: 26px;
-				background: @sd-blue;
-				.border-radius(3px);
-				padding: 0px 0px 0px 5px;
-				color: darken(@white,10%);
-				margin-bottom: 5px;
-				span {
-					color: @white;
-					margin-right: 5px;
-					text-transform: capitalize;
-				}
-				button {
-					background: none;
-					border: 0;
-					float: right;
-					height: 26px;
-					.border-radius(0 3px 3px 0);
-					i {
-						margin-top: -4px;
-					}
-					&:hover {
-						background: darken(@sd-blue, 10%);
-					}
-				}
+		&.pane {
+			margin: 0 -20px;
+			> .toggle-content {
+				padding: 20px 15px;
 			}
 		}
 	}
+
 
 	.filter-box {
 		li {
@@ -138,19 +112,15 @@
 			}
 			i {
 				&:not([class*="filetype-icon-"]) {
-					background: @grayLight;
-					min-width: 12px;
-					text-align: center;
-					font-style: normal;
-					.border-radius(2px);
 					line-height: 16px;
 					margin-top: 3px;
-					float: right;
-					padding: 0px 6px;
-					color: @white;
-					border: 0;
-					font-size: 10px;
+					margin-left: 5px;
+					color: @grayLight;
+					font-size: 11px;
 				}
+			}
+			.sd-checkbox {
+				margin-top: 3px;
 			}
 			[class*="filetype-icon-"] {
 				.opacity(40);
@@ -159,35 +129,89 @@
 				cursor: pointer;
 				background: #ddd;
 			}
+			&:active {
+				background: #ccc;
+			}
+		}
+	}
+
+	.content-type-filters {
+		li {
+			position: relative;
+
+			i[class*="filetype-icon-"] {
+				margin-left: -8px;
+			}
+			.sd-checkbox {
+				position: absolute;
+				left: 5px;
+				top: 0px;
+				visibility: hidden;
+				
+			}
+
+			.hover-box {
+				&:hover {
+					i[class*="filetype-icon-"] {
+						visibility: hidden;
+					}
+					.sd-checkbox {
+						visibility: visible;
+					}
+				}
+			}
+			
+			&.checked {
+				.sd-checkbox {
+					visibility: visible;
+				}
+			}
 		}
 	}
 
 	.search-within-filter {
-		margin-bottom: 20px;
+		position: relative;
+		margin: -19px -20px 20px -20px;
+		height: @nav-height;
+		input {
+			height: @nav-height;
+			border-width: 0 0 1px 0 !important;
+			padding-left: 15px;
+		}
 		button {
-			float: right;
-			margin-top: -27px;
-			position: relative;
-			height: 27px;
-			.border-radius(0 2px 2px 0);
+			position: absolute;
+			top: 0; right: 0;
+			height: @nav-height;
+			width: @nav-height - 15px;
+			border: 0;
+			background: none;
+			i {
+				width: 18px;
+  				background-repeat: no-repeat;
+  				margin-top: 5px;
+			}
 		}
 	}
 
 	.date-filter {
-		li {
-			margin-bottom: 5px;
-			padding-left: 10px;
-			.clearfix();
-			label {
-				font-size: 12px;
-				float: left;
-				margin-top: 5px;
-			}
-			input {
-				float: right;
-				width: 130px;
-			}
 
+		.predefined-dates {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+			> div {
+				flex: 1 1 auto;
+				padding: 4px;
+				.border-box();
+				button {
+					display: block;
+					.border-box();
+					width: 100%;
+				}
+			}	
+		}
+		.datepicker-input {
+			min-width: initial;
 		}
 		
 	}

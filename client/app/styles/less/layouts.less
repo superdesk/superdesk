@@ -134,7 +134,6 @@ a:hover {
 		right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
 		left: 0; bottom:0;
 		border-right: 1px solid #d0d0d0;
-		.box-shadow(2px 0 3px -1px #d8d8d8);
 		overflow: auto;
 		overflow-x: hidden;
 		z-index: 1;
@@ -157,6 +156,8 @@ a:hover {
 		background: #fff;
 		overflow-y: auto;
 		.transition(right ease 0.2s);
+		z-index: 2;
+		.box-shadow(inset 2px 0 3px -1px #d8d8d8);
 		> header {
 			padding: 0 20px;
 			position: relative;

@@ -130,9 +130,13 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         if (options.savedSearch && options.savedSearch._links) {
             return api.get(options.savedSearch._links.self.href).then(function(savedSearch) {
                 var criteria = search.query(savedSearch.filter.query).getCriteria();
+
                 query.source.query.filtered.filter.and = query.source.query.filtered.filter.and.concat(
                     criteria.query.filtered.filter.and
                 );
+
+                query.source.post_filter = criteria.post_filter;
+
                 return query;
             });
         }
@@ -272,8 +276,8 @@ angular.module('superdesk.itemList', ['superdesk.search'])
 
     return itemPinService;
 }])
-.directive('sdItemListWidget', ['ItemList', 'notify', 'itemPinService', 'gettext',
-function(ItemList, notify, itemPinService, gettext) {
+.directive('sdItemListWidget', ['ItemList', 'notify', 'itemPinService', 'gettext', '$timeout',
+function(ItemList, notify, itemPinService, gettext, $timeout) {
     return {
         scope: {
             options: '=',
@@ -292,10 +296,14 @@ function(ItemList, notify, itemPinService, gettext) {
 
             var itemList = new ItemList();
 
-            var _refresh = function() {
-                itemList.fetch();
-            };
-            var refresh = _.debounce(_refresh, 100);
+            var timeout;
+
+            function refresh() {
+                $timeout.cancel(timeout);
+                timeout = $timeout(function() {
+                    itemList.fetch();
+                }, 100, false);
+            }
 
             scope.view = function(item) {
                 scope.selected = item;

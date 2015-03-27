@@ -58,15 +58,15 @@ Feature: Content Publishing
         [{"name": "Sports"}]
         """
     	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-        And we post to "/archive_ingest"
+        And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
         """
         {
-        "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
+        "desk": "#desks._id#"
         }
         """
 		And we get "/archive"
         Then we get list with 6 items
-        When we publish "#archive_ingest._id#"
+        When we publish "#fetch._id#"
         Then we get OK response
 		When we get "/archive"
         Then we get existing resource

@@ -25,15 +25,15 @@
 }
 
 .todo-status {
-	background: @todo-color; 
+	background: @todo-color;
 }
 
 .inprogress-status {
-	background: @inprogress-color; 
+	background: @inprogress-color;
 }
 
 .done-status {
-	background: @done-color; 
+	background: @done-color;
 }
 
 .desk-tabs.toggle-list {
@@ -70,7 +70,7 @@
 	height: auto;
 	padding: 20px;
 	.border-box();
-	
+
 	.user-select(none);
 
 	// horizontal scroll adjustment
@@ -90,7 +90,7 @@
 	&::-webkit-scrollbar-thumb:hover {
 		background: #777;
 	}
-	
+
 
 
 	.desk-container {
@@ -258,7 +258,7 @@
 			position: absolute;
 			right: 0; top: 0;
 			display: none;
-			
+
 			button {
 				background: transparent;
 				height: 32px;
@@ -319,13 +319,13 @@
 /* Desk create/edit popup */
 
 .add-desk-popup {
-	top: 100px!important;
-	bottom: 100px!important;
-	width: 630px;
-	margin: 0 0 0 -315px;
-	left: 50%!important;
+
 	.modal-body {
 		bottom: 0;
+		height: 500px !important;
+		max-height: 500px !important;
+		.border-radius(0px 0px 4px 4px);
+
 		.modal-screen {
 			top: 48px;
 		}
@@ -337,12 +337,15 @@
                 color: #D33C30;
             }
 		}
-		.float-right {
-			float:right;
-		}
+	}
+	.modal-footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 	.stages {
-	
+
 		.col {
 			position: absolute;
 			.border-box();
@@ -363,7 +366,7 @@
 				margin-bottom:30px;
 
 				.field {
-					
+
 					margin-bottom:10px;
 
 					input {
@@ -461,7 +464,7 @@
 					display: none;
 					position: absolute;
 					top:0; right: 0;
-					
+
 				}
 			}
 			&.edit-mode {
@@ -555,130 +558,10 @@
 						border-color: rgba(0,0,0,0.12);
 						.box-shadow(0 1px 3px 0 rgba(0,0,0,30%));
 					}
+                    &.inactive {
+                      color: #ccc;
+                    }
 				}
-			}
-		}
-	}
-}
-
-/* Scheme create/edit popup */
-
-.add-scheme-popup {
-	top: 20px!important;
-	bottom: 20px!important;
-	width: 800px;
-	margin: 0 0 0 -315px;
-	left: 50%!important;
-	.modal-body {
-		bottom: 0;
-		.modal-screen {
-			top: 48px;
-		}
-	}
-	.right-pad {
-		padding-right: 24px;
-	}
-	.summary {
-		background-color: rgb(250, 250, 250);
-		padding: 4px;
-		margin: 2px;
-		font-size: 0.7em;
-		.title {
-			font-weight: bold;
-		}
-	}
-	.push-down {
-		margin-top: 50px;
-	}
-	.push-right {
-		margin-left: 20px;
-	}
-	.rules {
-		.double {
-			right: 0 !important;
-			&:last-child {
-				left: 25% !important;
-			}
-		}
-
-		.small-col {
-			width: 30%;
-			margin-right: 8px;
-		}
-	
-		.col {
-			position: absolute;
-			.border-box();
-			top:110px;
-			bottom: 70px;
-			left: 0;
-			right: 75%;
-			padding: 10px 20px;
-			overflow-x: hidden;
-			overflow-y: auto;
-			&:last-child {
-				left: 75%;
-				right: 0;
-				border-left: 1px solid #e0e0e0;
-			}
-
-			.row {
-				margin-bottom:30px;
-
-				.field {
-					
-					margin-bottom:10px;
-
-					input {
-						height: 29px !important;
-					}
-				}
-			}
-
-			.pills-list {
-				max-width: 100%;
-			}
-
-			.pill-small {
-				width: inherit;
-			}
-
-			.type-filter-box {
-				.btn {
-					width: 29px;
-					margin: 5px 3px 0 0;
-					padding: 0 3px;
-					i {
-						padding-left: 23px;
-					}
-				}
-			}
-
-			.day-filter-box {
-				.btn {
-					margin: 4px;
-					padding: 6px;
-					font-size: 0.9em;
-				}
-			}
-		}
-
-		.header {
-			font-size: 11px;
-			font-weight: 700;
-			color: #a0a0a0;
-			text-transform: uppercase;
-			margin-bottom: 20px;
-		}
-
-		.add {
-			padding: 0;
-			height: 22px;
-			width: 22px;
-			.border-radius(50%);
-			line-height: 20px;
-			i {
-				margin: 0;
 			}
 		}
 	}

@@ -79,6 +79,11 @@
                     .box-shadow(none) !important;
                 }
             }
+            .more-actions {
+                position: absolute;
+                right: 0px;
+                top: 14px;
+            }
         }
         .filter-list {
             position: absolute;
@@ -89,7 +94,7 @@
             border-bottom: 1px solid #dcdcdc;
             padding: 10px;
         }
-        .content-list {           
+        .content-list {
             position: absolute;
             top: 2*@nav-height;
             bottom: @bottom-view-padding - 20px;
@@ -116,7 +121,7 @@
             }
         }
     }
-    
+
     .preview-container {
         width: @search-widget-preview-width;
         position: absolute;
@@ -127,7 +132,7 @@
         .border-box();
         .box-shadow(inset 1px 0 0 #dcdcdc);
         > header {
-            border-bottom: 1px solid #dcdcdc; 
+            border-bottom: 1px solid #dcdcdc;
             padding: 0 15px;
         }
         .close-preview {
@@ -140,7 +145,7 @@
         > .content-item-preview {
             position: absolute;
             top: @nav-height;
-            bottom: 0; 
+            bottom: 0;
             left: 0 ;right: 0;
             padding: 20px;
             overflow: auto;
@@ -241,7 +246,7 @@
                             }
                         }
                     }
-                    
+
                     &.added {
                         background: #fafafa;
                         border-right-color: #ddd;
@@ -311,11 +316,41 @@
                         margin-right: -3px;
                         font-size: 11px;
                     }
-                }   
+                }
                 .stage-content {
                     margin: 5px 0 20px;
                 }
             }
+        }
+    }
+}
+
+.aggregate-widget-config {
+	.modal-body {
+		padding-top: 0;
+	}
+    .legend {
+        color: @grayLight;
+        text-transform: uppercase;
+        font-size: 12px;
+        .text-semibold();
+        margin-top: 20px;
+    }
+    .desk-title {
+        font-size: 16px;
+        .text-semibold();
+        padding: 15px 0;
+    }
+    .stages {
+		li {
+			float: left;
+			margin-bottom:15px;
+			.border-box();
+			width: 33%;
+			overflow: hidden;
+			height: 18px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
         }
     }
 }

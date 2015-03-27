@@ -58,6 +58,7 @@ X_MAX_AGE = 24 * 3600
 X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 
+MONGO_ENABLE_MULTI_DBS = False
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 if env('MONGOLAB_URI'):
     MONGO_URI = env('MONGOLAB_URI')
@@ -97,7 +98,7 @@ CELERYBEAT_SCHEDULE = {
         # there is internal schedule for updates per provider,
         # so this is minimal interval when an update can occur
         'schedule': timedelta(seconds=30),
-        'options': {'expires': 59}
+        'options': {'expires': 29}
     },
     'ingest:gc': {
         'task': 'superdesk.io.gc_ingest',
@@ -110,7 +111,11 @@ CELERYBEAT_SCHEDULE = {
     'spike:gc': {
         'task': 'apps.archive.content_purge',
         'schedule': crontab(minute=30)
-    }
+    },
+    'macros:print': {
+        'task': 'apps.macros.print_macros',
+        'schedule': timedelta(seconds=30),
+    },
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
@@ -132,7 +137,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
-    'superdesk.macros',
+    'superdesk.macro_register',
     'superdesk.commands',
 
     'apps.archive',
@@ -152,7 +157,9 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
-    'apps.macros'
+    'apps.macros',
+    'apps.dictionaries',
+    'apps.duplication'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

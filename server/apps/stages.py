@@ -104,15 +104,12 @@ class StagesService(BaseService):
     def on_delete(self, doc):
         if doc['default_incoming'] is True:
             desk_id = doc.get('desk', None)
-            if desk_id:
-                desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
-                if desk:
-                    raise SuperdeskApiError.forbiddenError(message='Deleting default stages is not allowed.')
+            if desk_id and superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id):
+                raise SuperdeskApiError.forbiddenError(message='Cannot delete a default stage.')
         else:
             # check if the stage has any documents in it
             items = self.get_stage_documents(str(doc['_id']))
-            if items.count() > 0:
-                # cannot delete
+            if items.count() > 0:  # cannot delete
                 raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
 
     def on_deleted(self, doc):

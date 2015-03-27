@@ -140,7 +140,7 @@ class RoutingRuleSchemeService(BaseService):
         """
 
         if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc['_id']):
-            raise SuperdeskApiError.forbiddenError('Routing Scheme is in use')
+            raise SuperdeskApiError.forbiddenError('Routing scheme is applied to channel(s). It cannot be deleted.')
 
     def apply_routing_scheme(self, ingest_item, provider, routing_scheme):
         """
@@ -267,12 +267,11 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
-                item_id = get_resource_service('archive_ingest') \
-                    .post([{'guid': ingest_item['guid'],
-                            'desk': str(destination.get('desk')),
-                            'stage': str(destination.get('stage')),
-                            'state': STATE_ROUTED,
-                            'macro': destination.get('macro', None)}])[0]
+                item_id = get_resource_service('fetch').fetch([{'_id': ingest_item['_id'],
+                                                                'desk': str(destination.get('desk')),
+                                                                'stage': str(destination.get('stage')),
+                                                                'state': STATE_ROUTED,
+                                                                'macro': destination.get('macro', None)}])[0]
                 archive_items.append(item_id)
             except:
                 logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))

@@ -45,13 +45,13 @@ Feature: Fetch From Ingest
                     "groups": [
                         {
                             "refs": [
-                                {"itemClass": "icls:text", "residRef": "tag_reuters.com_2014_newsml_KBN0FL0NN"},
-                                {"itemClass": "icls:picture", "residRef": "tag_reuters.com_2014_newsml_LYNXMPEA6F13M"},
-                                {"itemClass": "icls:picture", "residRef": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MS"},
-                                {"itemClass": "icls:picture", "residRef": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MT"}
+                                {"itemClass": "icls:text", "guid": "tag_reuters.com_2014_newsml_KBN0FL0NN"},
+                                {"itemClass": "icls:picture", "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F13M"},
+                                {"itemClass": "icls:picture", "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MS"},
+                                {"itemClass": "icls:picture", "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MT"}
                             ]
                         },
-                        {"refs": [{"itemClass": "icls:text", "residRef": "tag_reuters.com_2014_newsml_KBN0FL0ZP"}]}
+                        {"refs": [{"itemClass": "icls:text", "guid": "tag_reuters.com_2014_newsml_KBN0FL0ZP"}]}
                     ],
                     "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM",
                     "ingest_provider_sequence": "6",
@@ -93,7 +93,7 @@ Feature: Fetch From Ingest
     	Given empty "ingest"
     	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_LYNXMPEA6F0MS"
         And we fetch from "AAP" ingest "aap.xml"
-        And we get "/ingest/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS"
+        And we get "/ingest/#reuters.tag_reuters.com_2014_newsml_LYNXMPEA6F0MS#"
         Then we get existing resource
 		"""
 		{
@@ -103,7 +103,7 @@ Feature: Fetch From Ingest
           "ingest_provider_sequence" : "1"
 		}
   		"""
-        When we get "/ingest/AAP.115314987.5417374"
+        When we get "/ingest/#AAP.AAP.115314987.5417374#"
         Then we get existing resource
 		"""
 		{

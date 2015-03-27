@@ -18,7 +18,8 @@ define([
 
     './datetime/datetime',
     './ui/ui',
-    './directives/all'
+    './directives/all',
+    './services/modalService'
 
 ], function(angular, require) {
     'use strict';
@@ -29,7 +30,8 @@ define([
         'ui.bootstrap',
 
         require('./datetime/datetime').name,
-        require('./ui/ui').name
+        require('./ui/ui').name,
+        require('./services/modalService').name
     ];
 
     modules.push.apply(modules, require('./directives/all'));

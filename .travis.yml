@@ -102,3 +102,4 @@ after_success:
     - if [ "${TARGET}" = "client" ]; then
         cd client && grunt coveralls && cd .. ;
       fi
+

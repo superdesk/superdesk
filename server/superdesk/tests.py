@@ -26,6 +26,7 @@ test_user = {
     'username': 'test_user',
     'password': 'test_password',
     'is_active': True,
+    'is_enabled': True,
     'needs_activation': False,
     'email': 'behave_test@sourcefabric.org',
     'preferences': {
@@ -68,8 +69,8 @@ def drop_elastic(app):
 def drop_mongo(app):
     with app.app_context():
         try:
-            app.data.mongo.driver.cx.drop_database(app.config['MONGO_DBNAME'])
-            app.data.mongo.driver.cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
+            app.data.mongo.pymongo().cx.drop_database(app.config['MONGO_DBNAME'])
+            app.data.mongo.pymongo().cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
         except AttributeError:
             pass
 

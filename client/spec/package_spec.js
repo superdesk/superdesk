@@ -22,7 +22,6 @@ describe('Content', function() {
     });
 
     xit('edit title and description', function() {
-    	//TODO: disabled until the save of packages is fixed
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Edit package', 0);
@@ -59,6 +58,32 @@ describe('Content', function() {
     });
 
     it('add multiple items to package', function() {
+        addItemsToPackage();
+        expect(authoring.getGroupItems('MAIN').count()).toBe(3);
+    });
+
+    it('can preview package in a package', function() {
+        // populate package
+        addItemsToPackage();
+
+        // package existing package
+        openUrl('/#/workspace/content');
+        workspace.switchToDesk('Personal');
+        content.setListView();
+        content.actionOnItem('Package item', 0);
+
+        // select package
+        openUrl('/#/workspace/content');
+        workspace.switchToDesk('Personal');
+        element.all(by.repeater('item in items')).first().click();
+
+        // preview package via preview
+        element.all(by.repeater('child in item')).first().click();
+        expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
+        expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
+    });
+
+    function addItemsToPackage() {
         workspace.switchToDesk('Personal').then(
             content.setListView
         ).then(function() {
@@ -69,6 +94,6 @@ describe('Content', function() {
         authoring.selectSearchItem(1);
         authoring.selectSearchItem(2);
         authoring.addMultiToGroup('MAIN');
-        expect(authoring.getGroupItems('MAIN').count()).toBe(3);
-    });
+        authoring.save();
+    }
 });

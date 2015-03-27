@@ -52,4 +52,4 @@ class RuleSetsService(BaseService):
 
     def on_delete(self, doc):
         if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):
-            raise SuperdeskApiError.forbiddenError('rule set is in use')
+            raise SuperdeskApiError.forbiddenError("Cannot delete Rule set as it's associated with channel(s).")

@@ -13,11 +13,12 @@ from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
 from apps.auth.service import AuthService
 from apps.users.services import UsersService
 from superdesk import get_resource_service
+from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from flask import current_app as app
 import flask
 import superdesk
-from superdesk.errors import SuperdeskApiError, CredentialsAuthError
+from apps.auth.errors import UserDisabledError, CredentialsAuthError, UserInactiveError
 
 
 logger = logging.getLogger(__name__)
@@ -173,6 +174,20 @@ class ADAuthService(AuthService):
                                user_type=None if 'user_type' not in user_data else user_data['user_type'])
             user = user_data
         else:
+            if 'is_enabled' in user and not user.get('is_enabled', False):
+                raise UserDisabledError()
+
+            if not user.get('is_active', False):
+                raise UserInactiveError()
+
+            '''
+             Needs to delete the below from updates as disabled and inactive users are prevented from login
+             Also, changing status will trigger terminating authenticated sessions of the user.
+            '''
+            del user_data['is_active']
+            del user_data['is_enabled']
+            del user_data['needs_activation']
+
             superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
 

@@ -39,6 +39,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         return _id
 
     def fs(self):
-        if self._fs is None:
-            self._fs = GridFS(self.app.data.mongo.driver.db)
-        return self._fs
+        driver = self.app.data.mongo
+        px = driver.current_mongo_prefix()
+        if px not in self._fs:
+            self._fs[px] = GridFS(driver.pymongo(prefix=px).db)
+        return self._fs[px]

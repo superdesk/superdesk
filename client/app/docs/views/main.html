@@ -12,6 +12,9 @@
             <li>
                 <a ng-click="scrollTo('buttons-global')">Buttons</a>
             </li>
+            <li>
+                <a ng-click="scrollTo('modals')">Modals</a>
+            </li>
         </ul>
     </div>
 
@@ -27,11 +30,11 @@
                         <div class="preview-area">
                             <button class="btn">Action</button>
                         </div>
-                        
+
                         <pre class="prettyprint lang-html linenums">
                             <button class="btn">Action</button>
                         </pre>
-                        
+
                     </div>
 
                     <p>There are also few other button colors reached by classes <code>.btn-light</code> , <code>.btn-info</code> , <code>.btn-success</code> , <code>.btn-danger</code> , <code>.btn-inverse</code> </p>
@@ -53,9 +56,124 @@
                             <button class="btn btn-danger">Action</button>
                             <button class="btn btn-inverse">Action</button>
                         </pre>
-                        
+
                     </div>
 
+                </li>
+
+                <li>
+                    <a class="link-holder" id="modals"></a>
+                    <div class="docs-title">Modals</div>
+
+                    <p>The best way to invoke the modal window is through directive <code>sd-modal</code>. Here is an example:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <button class="btn" ng-click="openModal()">Show modal</button>
+                            <div sd-modal data-model="isModalOpen">
+                                <div class="modal-header">
+                                    <button class="close" ng-click="closeModal()"><i class="icon-close-small"></i></button>
+                                    <h3>Sample modal</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p>This is sample message inside modal!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" ng-click="closeModal()">Cancel</button>
+                                    <button class="btn btn-primary" ng-click="closeModal()">Ok</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <button class="btn" ng-click="openModal()" ng-non-bindable>Show modal</button>
+                            <div sd-modal data-model="isModalOpen" ng-non-bindable>
+                                <div class="modal-header">
+                                    <button class="close" ng-click="closeModal()">
+                                        <i class="icon-close-small"></i>
+                                    </button>
+                                    <h3 translate>Sample modal</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p>This is sample message inside modal!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" ng-click="close()" translate>Cancel</button>
+                                    <button class="btn btn-primary" ng-click="closeModal()" translate>Ok</button>
+                                </div>
+                            </div>
+                        </pre>
+                    </div>
+                    <p>Modal state (open/close) is handled by <code>data-model=""</code> attribute. </p>
+
+                    <div class="docs-preview">
+                        <pre class="prettyprint lang-js linenums">
+                            scope.isModalOpen = false;
+
+                            scope.openModal = function() {
+                                scope.isModalOpen = true;
+                            };
+
+                            scope.closeModal = function() {
+                                scope.isModalOpen = false;
+                            };
+                        </pre>
+                    </div>
+                    <p>Modal content itself is <strong>transcluded</strong>. Parts of modal are <code>.modal-header</code>, <code>.modal-body</code> and <code>.modal-footer</code>. If presented, those parts have to be placed in the first level in html. Otherwise custom styling is needed.</p>
+
+                    <div class="docs-subtitle">Modal sizes</div>
+
+                    <p>By default modal has <strong>static width</strong> (currently 460px) and <strong>auto height</strong>. If the content is bigger than the screen height, content (modal-body) will become scrollable.</p>
+
+                    <p>There are several size variations of modal window:</p>
+
+                    <ul class="description-list">
+                        <li>
+                            <img src="/images/docs/modals/modal-basic.png">
+                            <p>Basic modal window.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-basic-extended-content.png">
+                            <p>Basic modal with lot of content. Modal body is scrollable.</p>
+                            <p>This happens by default.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-streched.png">
+                            <p><strong>Streched modal</strong> is always streched (vertically) to the screen limits.</p>
+                            <p>Use class <code>modal-strech</code> to achieve this.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-static.png">
+                            <p><strong>Static modal</strong> has static body height no matter how large the content is. Bigger content will make box scrollable.</p>
+                            <p>Use class <code>modal-static</code> to achieve this.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-large.png">
+                            <p><strong>Large modal</strong> has larger width than default one. <i>(currently 660px)</i></p>
+                            <p>Use class <code>modal-large</code> to achieve this.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-big.png">
+                            <p><strong>Big modal</strong> has more larger width than default one. <i>(currently 820px)</i></p>
+                            <p>Use class <code>modal-big</code> to achieve this.</p>
+                        </li>
+                        <li>
+                            <img src="/images/docs/modals/modal-responsive.png">
+                            <p><strong>Responsive modal</strong> is streched both vertically and horizontally to the screen limits.</i></p>
+                            <p>Use class <code>modal-responsive</code> to achieve this.</p>
+                        </li>
+                    </ul>
+                    <p>All classes should be added to the root element:</p>
+                    <div class="docs-preview">
+                        <pre class="prettyprint lang-html linenums">
+                            <div sd-modal data-model="isModalOpen" class="modal-large modal-strech" ng-non-bindable>
+                                <div class="modal-header">...</div>
+                                <div class="modal-body">...</div>
+                                <div class="modal-footer">...</div>
+                            </div>
+                        </pre>
+                    </div>
+                    <p><span class="badge">Tip!</span> When modal content is hoppin during the work (e.g. changing tab inside modal) use either <code>modal-strech</code> or <code>modal-static</code> for better user experience.</p>
                 </li>
             </ul>
         </div>

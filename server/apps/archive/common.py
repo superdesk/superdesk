@@ -28,6 +28,7 @@ from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 
 
 GUID_TAG = 'tag'
+GUID_FIELD = 'guid'
 GUID_NEWSML = 'newsml'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
@@ -39,27 +40,27 @@ def on_create_item(docs):
         update_dates_for(doc)
         set_original_creator(doc)
 
-        if not doc.get('guid'):
-            doc['guid'] = generate_guid(type=GUID_NEWSML)
+        if not doc.get(GUID_FIELD):
+            doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
 
         if 'family_id' not in doc:
-            doc['family_id'] = doc['guid']
+            doc['family_id'] = doc[GUID_FIELD]
 
         set_default_state(doc, 'draft')
-        doc.setdefault('_id', doc['guid'])
+        doc.setdefault('_id', doc[GUID_FIELD])
 
 
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
-    doc['guid'] = generate_guid(type=GUID_NEWSML)
+    doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
     if 'unique_id' not in doc:
         generate_unique_id_and_name(doc)
 
-    doc.setdefault('_id', doc['guid'])
+    doc.setdefault('_id', doc[GUID_FIELD])
 
 
 def update_dates_for(doc):
@@ -109,7 +110,7 @@ def set_original_creator(doc):
 
 item_url = 'regex("[\w,.:_-]+")'
 
-extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
+extra_response_fields = [GUID_FIELD, 'headline', 'firstcreated', 'versioncreated', 'archived']
 
 aggregations = {
     'type': {'terms': {'field': 'type'}},
@@ -148,7 +149,7 @@ def insert_into_versions(guid=None, doc=None):
     There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
     manually manage versions. Below are some scenarios:
 
-    1.  When user fetches a content from ingest collection the request is handled by archive_ingest API which doesn't
+    1.  When user fetches a content from ingest collection the request is handled by fetch API which doesn't
         extend from ArchiveResource.
     2.  When user submits content to a desk the request is handled by /tasks API.
     3.  When user publishes a package the items of the package also needs to be published. The publishing of items
@@ -198,10 +199,22 @@ def get_item_expiry(app, stage):
     return get_expiry_date(expiry_minutes)
 
 
-def get_expiry(desk_id=None, stage_id=None):
+def get_expiry(desk_id=None, stage_id=None, desk_or_stage_doc=None):
+    """
+    Calculates the expiry for a content from fetching the expiry duration from one of the below
+        1. desk identified by desk_id
+        2. stage identified by stage_id. This will ignore desk_id if specified
+        3. desk doc or stage doc identified by doc_or_stage_doc. This will ignore desk_id and stage_id if specified
+
+    :param desk_id: desk identifier
+    :param stage_id: stage identifier
+    :param desk_or_stage_doc: doc from either desks collection or stages collection
+    :return: when the doc will expire
+    """
 
     stage = None
-    if desk_id:
+
+    if desk_or_stage_doc is None and desk_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
 
         if not desk:
@@ -213,13 +226,13 @@ def get_expiry(desk_id=None, stage_id=None):
             if not stage:
                 raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
 
-    if stage_id:
+    if desk_or_stage_doc is None and stage_id:
         stage = get_resource_service('stages').find_one(req=None, _id=stage_id)
 
         if not stage:
                 raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
 
-    return get_item_expiry(app=app, stage=stage)
+    return get_item_expiry(app=app, stage=desk_or_stage_doc or stage)
 
 
 def set_item_expiry(update, original):

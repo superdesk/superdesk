@@ -84,6 +84,10 @@ class PreferencesResource(Resource):
         'items': []
     })
 
+    superdesk.register_default_user_preference('dashboard:ingest', {
+        'providers': []
+    })
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])
@@ -154,7 +158,7 @@ class PreferencesService(BaseService):
     def update_session_prefs(self, updates, existing_session_preferences, session_id):
         session_prefs = updates.get(_session_preferences_key)
         if session_prefs is not None:
-            for k in ((k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences)):
+            for k in (k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences):
                 raise ValidationError('Invalid preference: %s' % k)
 
             existing = existing_session_preferences.get(session_id, {})

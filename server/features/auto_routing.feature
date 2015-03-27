@@ -60,14 +60,14 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         Then the ingest item is not routed based on routing scheme and rule "Sports Rule"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         When we fetch from "AAP" ingest "aap-sports.xml" using routing_scheme
@@ -78,18 +78,18 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AAP.123253116.6697929"
+          "ingest": "#AAP.AAP.123253116.6697929#"
         }
         """
         Then the ingest item is not routed based on routing scheme and rule "Finance Rule"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AAP.123253116.6697929"
+          "ingest": "#AAP.AAP.123253116.6697929#"
         }
         """
 
-    @auth @provider @test
+    @auth @provider
     Scenario: Package is routed automatically
         Given empty "desks"
         When we post to "/desks"
@@ -128,7 +128,7 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "tag_reuters.com_2014_newsml_KBN0FL0NM"
+          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#"
         }
         """
 
@@ -209,14 +209,14 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         Then the ingest item is routed based on routing scheme and rule "Finance Rule 2"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         When we fetch from "AAP" ingest "aap-finance1.xml" using routing_scheme
@@ -227,14 +227,14 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AAP.0.6703189"
+          "ingest": "#AAP.AAP.0.6703189#"
         }
         """
         Then the ingest item is routed based on routing scheme and rule "Finance Rule 1"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AAP.0.6703189"
+          "ingest": "#AAP.AAP.0.6703189#"
         }
         """
 
@@ -303,14 +303,14 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         Then the ingest item is routed based on routing scheme and rule "Finance Rule 2"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
 
@@ -380,13 +380,13 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
         Then the ingest item is routed and transformed based on routing scheme and rule "Politics Rule 2"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "AFP.121974877.6504909"
+          "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """

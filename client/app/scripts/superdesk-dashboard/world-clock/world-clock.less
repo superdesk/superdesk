@@ -63,15 +63,24 @@
 		}
 	}
 	&.widget-config {
-		margin: -20px;
-		min-height: 300px;
+		height: 400px;
 		.nav-tabs {
 			border-bottom: 1px solid #dedede;
 		}
 		.tab-content {
-			margin-top: 25px;
+			padding: 20px;
+			position: absolute;
+			left: 0; right: 0; bottom: 0;
+			top: @nav-height;
+			margin: 0;
+			padding: 20px;
+			overflow: auto;
+			overflow-x: hidden;
+			display: block;
+			width: auto;
 		}
 		.list-group {
+			max-width: 100%;
 			max-height: 280px;
 			overflow: auto;
 			&::-webkit-scrollbar {
@@ -82,8 +91,8 @@
 				.border-radius(2px);
 				border-left: 3px solid #fff;
 				background: #aaa;
-				
-				
+
+
 			}
 		}
 	}
