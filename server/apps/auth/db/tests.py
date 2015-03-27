@@ -22,11 +22,11 @@ class UsersTestCase(TestCase):
             user = {'username': 'foo', 'password': 'bar', 'email': 'baz'}
             cmd = CreateUserCommand()
             with self.app.test_request_context(URL_PREFIX):
-                cmd.run(user['username'], user['password'], user['email'])
+                cmd.run(user['username'], user['password'], user['email'], admin='true')
                 auth_user = get_resource_service('auth').authenticate(user)
                 self.assertEquals(auth_user['username'], user['username'])
 
-                cmd.run(user['username'], user['password'], user['email'])
+                cmd.run(user['username'], user['password'], user['email'], admin='true')
                 auth_user2 = get_resource_service('auth').authenticate(user)
                 self.assertEquals(auth_user2['username'], user['username'])
                 self.assertEquals(auth_user2['_id'], auth_user['_id'])

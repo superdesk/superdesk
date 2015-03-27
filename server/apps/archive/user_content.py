@@ -41,15 +41,3 @@ class UserContentService(BaseService):
 
 
 superdesk.workflow_state('draft')
-
-superdesk.workflow_action(
-    name='fetch_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published'],
-    privileges=['archive']
-)
-
-superdesk.workflow_action(
-    name='fetch_as_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published'],
-    privileges=['archive']
-)

@@ -28,13 +28,12 @@ define([
 
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;
-            $scope.stages.select(null);
             $location.search('spike', $scope.spike ? 1 : null);
             $location.search('_id', null);
+            $scope.stages.select(null);
         };
 
         $scope.stageSelect = function(stage) {
-            initpage();
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
@@ -59,15 +58,8 @@ define([
         };
 
         var refreshItems = _.debounce(_refresh, 100);
-
         function _refresh() {
-        	if (!$scope.selected.desk && desks.getCurrentDeskId()) {
-        		desks.fetchCurrentUserDesks()
-                .then(function(userDesks) {
-                    $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
-                });
-        	}
-            if ($scope.selected.desk) {
+            if (desks.activeDeskId) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
@@ -85,27 +77,37 @@ define([
         }
 
         $scope.$on('task:stage', function(_e, data) {
-        	if ($scope.stages.selected &&
-        	    ($scope.stages.selected._id === data.new_stage ||
-        	     $scope.stages.selected._id === data.old_stage)) {
+        	if ($scope.stages.selected && (
+                $scope.stages.selected._id === data.new_stage ||
+                $scope.stages.selected._id === data.old_stage)) {
         		refreshItems();
         	}
         });
 
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:fetch', refreshItems);
+        $scope.$on('item:copy', refreshItems);
+        $scope.$on('item:duplicate', refreshItems);
         $scope.$on('item:created', refreshItems);
         $scope.$on('item:updated', refreshItems);
         $scope.$on('item:replaced', refreshItems);
         $scope.$on('item:deleted', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', reset);
-        $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
 
-        $scope.$watch('selected.desk', initpage);
-        function initpage() {
-            $location.search('page', null);
-        }
+        desks.fetchCurrentUserDesks().then(function() {
+            // only watch desk/stage after we get current user desk
+            $scope.$watch(function() {
+                return desks.active;
+            }, function(active) {
+                if ($location.search().page) {
+                    $location.search('page', null);
+                    return; // will reload via $routeUpdate
+                }
+
+                refreshItems();
+            });
+        });
 
         // reload on route change if there is still the same _id
         var oldQuery = _.omit($location.search(), '_id');

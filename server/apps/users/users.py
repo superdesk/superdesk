@@ -98,6 +98,10 @@ class UsersResource(Resource):
             'type': 'boolean',
             'default': True
         },
+        'is_enabled': {
+            'type': 'boolean',
+            'default': True
+        },
         'needs_activation': {
             'type': 'boolean',
             'default': True
@@ -113,6 +117,7 @@ class UsersResource(Resource):
         'picture_url',
         'avatar',
         'is_active',
+        'is_enabled',
         'needs_activation',
         'desk'
     ]

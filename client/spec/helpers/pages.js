@@ -4,6 +4,8 @@ exports.login = LoginModal;
 exports.workspace = new Workspace();
 exports.content = new Content();
 exports.authoring = new Authoring();
+exports.ingestProvider = new IngestProvider();
+exports.ingestDashboard = new IngestDashboard();
 
 function LoginModal() {
     this.username = element(by.model('username'));
@@ -115,10 +117,15 @@ function Authoring() {
         return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
     this.addMultiToGroup = function(group) {
-        var addButton = element(by.css('[class="icon-package-plus"]'));
-        addButton.click();
-        var groups = element(by.repeater('t in groupList'));
-        return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
+        return element.all(by.css('[class="icon-package-plus"]')).first()
+            .waitReady()
+            .then(function(elem) {
+                return elem.click();
+            }).then(function() {
+                var groups = element(by.repeater('t in groupList'));
+                return groups.all(by.css('[option="' + group.toUpperCase() + '"]'))
+                    .click();
+            });
     };
     this.getGroupItems = function(group) {
         return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
@@ -154,5 +161,58 @@ function Authoring() {
       }).then(function() {
           crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();
       });
+    };
+}
+
+function IngestProvider() {}
+
+function IngestDashboard() {
+    var self = this;
+    this.dropDown = element(by.id('ingest-dashboard-dropdown'));
+    this.ingestDashboard = element(by.css('.ingest-dashboard-list'));
+
+    this.openDropDown = function() {
+        return self.dropDown.click();
+    };
+
+    this.getProviderList = function() {
+        return self.dropDown.all(by.repeater('item in items'));
+    };
+
+    this.getProvider = function(index) {
+        return self.getProviderList().get(index);
+    };
+
+    this.getProviderButton = function (provider) {
+        var toggleButton = provider.element(by.model('item.dashboard_enabled'));
+        return toggleButton;
+    };
+
+    this.getDashboardList = function() {
+        return self.ingestDashboard.all(by.repeater('item in items'));
+    };
+
+    this.getDashboard = function(index) {
+        return self.getDashboardList().get(index);
+    };
+
+    this.getDashboardSettings = function(dashboard) {
+        return dashboard.element(by.css('.dropdown'));
+    };
+
+    this.getDashboardSettingsStatusButton = function(settings) {
+        return settings.element(by.model('item.show_status'));
+    };
+
+    this.getDashboardStatus = function(dashboard) {
+        return dashboard.element(by.css('.status'));
+    };
+
+    this.getDashboardSettingsIngestCountButton = function(settings) {
+        return settings.element(by.model('item.show_ingest_count'));
+    };
+
+    this.getDashboardIngestCount = function(dashboard) {
+        return dashboard.element(by.css('.ingested-count'));
     };
 }

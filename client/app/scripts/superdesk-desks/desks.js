@@ -56,7 +56,6 @@
                 $scope.deskStages[deskId] = desks.deskStages[deskId];
             });
         });
-
     }
 
     StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
@@ -89,8 +88,7 @@
                 });
 
                 scope.open = function(item) {
-                    desks.setCurrentDeskId(item.task.desk);
-                    desks.setCurrentStageId(item.task.stage);
+                    desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
                 };
             }
@@ -191,10 +189,17 @@
         $scope.remove = function(desk) {
             modal.confirm(gettext('Please confirm you want to delete desk.')).then(
                 function runConfirmed() {
-                    desks.remove(desk).then(function() {
-                        _.remove($scope.desks._items, desk);
-                        notify.success(gettext('Desk deleted.'), 3000);
-                    });
+                    desks.remove(desk).then(
+                        function(response) {
+                            _.remove($scope.desks._items, desk);
+                            notify.success(gettext('Desk deleted.'), 3000);
+                        },
+                        function(response) {
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
+                            }
+                        }
+                    );
                 }
             );
         };
@@ -275,6 +280,37 @@
 
                 var userDesks, userDesksPromise;
 
+                var _fetchAll = function(endpoint, page, items) {
+                    page = page || 1;
+                    items = items || [];
+                    return api(endpoint)
+                    .query({max_results: 200, page: page})
+                    .then(function(result) {
+                        items = items.concat(result._items);
+                        if (result._links.next) {
+                            page++;
+                            return _fetchAll(endpoint, page, items);
+                        }
+                        return items;
+                    });
+                };
+
+            /**
+             * Set desks.active which contains both desk and stage
+             * refs and is updated only when one of those is changed.
+             */
+            function setActive(desks) {
+                if (desks.active && desks.active.desk === desks.activeDeskId && desks.active.stage === desks.activeStageId) {
+                    // pass
+                    return;
+                }
+
+                desks.active = {
+                    desk: desks.activeDeskId,
+                    stage: desks.activeStageId
+                };
+            }
+
             var desksService = {
                 desks: null,
                 users: null,
@@ -287,14 +323,15 @@
                 loading: null,
                 activeDeskId: null,
                 activeStageId: null,
+                active: {desk: null, stage: null},
                 fetchDesks: function() {
                     var self = this;
 
-                    return api.desks.query({max_results: 500})
-                    .then(function(result) {
-                        self.desks = result;
-                        _.each(result._items, function(desk) {
-                            self.deskLookup[desk._id] = desk;
+                    return _fetchAll('desks')
+                    .then(function(items) {
+                        self.desks = {_items: items};
+                        _.each(items, function(item) {
+                            self.deskLookup[item._id] = item;
                         });
                     });
                 },
@@ -312,11 +349,11 @@
                 fetchStages: function() {
                     var self = this;
 
-                    return api('stages').query({max_results: 500})
-                    .then(function(result) {
-                        self.stages = result;
-                        _.each(result._items, function(stage) {
-                            self.stageLookup[stage._id] = stage;
+                    return _fetchAll('stages')
+                    .then(function(items) {
+                        self.stages = {_items: items};
+                        _.each(items, function(item) {
+                            self.stageLookup[item._id] = item;
                         });
                     });
                 },
@@ -346,6 +383,9 @@
                     return api.get(user._links.self.href + '/desks');
                 },
 
+                /**
+                 * Fetch current user desks and make sure active desk is present in there
+                 */
                 fetchCurrentUserDesks: function() {
                     if (userDesks) {
                         return $q.when(userDesks);
@@ -355,10 +395,18 @@
                         userDesksPromise = this.fetchCurrentDeskId() // make sure there will be current desk
                             .then(angular.bind(session, session.getIdentity))
                             .then(angular.bind(this, this.fetchUserDesks))
-                            .then(function(desks) {
+                            .then(angular.bind(this, function(desks) {
                                 userDesks = desks;
+                                if (desks._items.length) {
+                                    if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
+                                        this.activeDeskId = desks._items[0]._id;
+                                    }
+                                } else if (this.activeDeskId) {
+                                    this.activeDeskId = null;
+                                }
+                                setActive(this);
                                 return desks;
-                            });
+                            }));
                     }
 
                     return userDesksPromise;
@@ -366,14 +414,22 @@
 
                 fetchCurrentDeskId: function() {
                     var self = this;
+                    if (self.activeDeskId) {
+                        return $q.when(self.activeDeskId);
+                    }
+
                     return preferencesService.get('desk:last_worked').then(function(result) {
-                        if (angular.isDefined(result)) {
+                        if (angular.isDefined(result) && result !== '') {
                             self.activeDeskId = result;
                         }
                     });
                 },
                 fetchCurrentStageId: function() {
                     var self = this;
+                    if (self.activeStageId) {
+                        return $q.when(self.activeStageId);
+                    }
+
                     return preferencesService.get('stage:items').then(function(result) {
                         if (angular.isDefined(result)) {
                             self.activeStageId = angular.isArray(result) ? result[0] : result;
@@ -381,26 +437,35 @@
                     });
                 },
                 getCurrentDeskId: function() {
-                    return this.activeDeskId;
+                	if (this.activeDeskId === 'personal') {
+                		return '';
+                	} else {
+                		return this.activeDeskId;
+                	}
                 },
                 setCurrentDeskId: function(deskId) {
-                    this.activeDeskId = deskId;
+                    if (this.activeDeskId !== deskId) {
+                        this.activeDeskId = deskId;
+                        this.activeStageId = null;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
                 },
                 getCurrentStageId: function() {
                     return this.activeStageId;
                 },
                 setCurrentStageId: function(stageId) {
-                    this.activeStageId = stageId;
-                    preferencesService.update({'desk:last_worked': this.activeDeskId}, 'desk:last_worked').then(function() {
-                        // update the stage prefs
-                        preferencesService.update({'stage:items': [stageId]}, 'stage:items').then(function() {
-                            //nothing to do
-                        }, function(response) {
-                            notify.error(gettext('Session preference could not be saved...'));
-                        });
-                    }, function(response) {
-                        notify.error(gettext('Session preference could not be saved...'));
-                    });
+                    if (this.activeStageId !== stageId) {
+                        this.activeStageId = stageId;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
                 },
                 fetchCurrentDesk: function() {
                     return api.desks.getById(this.getCurrentDeskId());
@@ -408,11 +473,27 @@
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
-                getCurrentDesk: function(desk) {
-                    return this.deskLookup[this.getCurrentDeskId()];
+                getCurrentDesk: function() {
+                	if (!this.activeDeskId || this.activeDeskId === 'personal') {
+                		return {'_id': 'personal'};
+                	} else {
+                		return this.deskLookup[this.activeDeskId];
+                	}
+                },
+                setWorkspace: function(deskId, stageId) {
+                    deskId = deskId || null;
+                    stageId = stageId || null;
+                    if (this.activeDeskId !== deskId || this.activeStageId !== stageId) {
+                        this.activeDeskId = deskId;
+                        this.activeStageId = stageId;
+                        setActive(this);
+                        preferencesService.update({
+                            'desk:last_worked': this.activeDeskId,
+                            'stage:items': [this.activeStageId]
+                        }, 'desk:last_worked');
+                    }
                 },
                 initialize: function() {
-
                     if (!this.loading) {
                         this.fetchCurrentDeskId();
                         this.fetchCurrentStageId();
@@ -421,10 +502,14 @@
                             .then(angular.bind(this, this.fetchUsers))
                             .then(angular.bind(this, this.generateDeskMembers))
                             .then(angular.bind(this, this.fetchStages))
-                            .then(angular.bind(this, this.generateDeskStages));
+                            .then(angular.bind(this, this.generateDeskStages))
+                            .then(angular.bind(this, this.initActive));
                     }
 
                     return this.loading;
+                },
+                initActive: function() {
+                    setActive(this);
                 },
                 save: function(dest, diff) {
                     return api.save('desks', dest, diff)
@@ -452,14 +537,14 @@
                 }
             };
 
+            return desksService;
+
             function reset(res) {
                 userDesks = null;
                 userDesksPromise = null;
                 desksService.loading = null;
                 return res;
             }
-
-            return desksService;
         }])
         .directive('sdStageItems', StageItemListDirective)
         .directive('sdTaskStatusItems', TaskStatusItemsDirective)

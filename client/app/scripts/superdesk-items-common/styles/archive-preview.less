@@ -20,8 +20,11 @@
 				display: none;
 			}
 			h6 {
-				background: #fff;
+				background: @white;
 				padding-left: 0;
+			}
+			.chevron {
+				background-color: @white;
 			}
 		}
 	}
@@ -842,6 +845,9 @@
 				i {
 					.opacity(100);
 				}
+				&:hover {
+					cursor: pointer;
+				}
 			}
 		}
 
@@ -923,6 +929,14 @@
 						display: block;
 					}
 				}
+				&.composite {
+					padding-right: 35px;
+					.package-details {
+						position: absolute;
+						top: 50%; right: 5px;
+						margin-top: -7px;
+					}	
+				}
 			}
 			.toggle-box > header {
 				margin-left: 5px;
@@ -950,6 +964,13 @@
 					background: #000;
 					color: #fff;
 					padding-right: 10px;
+				}
+			}
+			.item {
+				&.composite {
+					.package-details {
+						display: block;
+					}
 				}
 			}
 		}

@@ -130,9 +130,13 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         if (options.savedSearch && options.savedSearch._links) {
             return api.get(options.savedSearch._links.self.href).then(function(savedSearch) {
                 var criteria = search.query(savedSearch.filter.query).getCriteria();
+
                 query.source.query.filtered.filter.and = query.source.query.filtered.filter.and.concat(
                     criteria.query.filtered.filter.and
                 );
+
+                query.source.post_filter = criteria.post_filter;
+
                 return query;
             });
         }

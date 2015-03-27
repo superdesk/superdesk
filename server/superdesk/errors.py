@@ -10,9 +10,10 @@
 
 
 import logging
+
 from flask import current_app as app
-from flask import json
 from eve.validation import ValidationError
+
 
 logger = logging.getLogger(__name__)
 notifiers = []
@@ -108,23 +109,6 @@ class SuperdeskApiError(SuperdeskError):
         return SuperdeskApiError(status_code=500, message=message, payload=payload)
 
 
-class CredentialsAuthError(SuperdeskApiError):
-    """Credentials Not Match Auth Exception"""
-
-    def __init__(self, credentials, error=None):
-        super().__init__(status_code=401, payload={'credentials': 1})
-        logger.warning("Login failure: %s" % json.dumps(credentials))
-        if error:
-            logger.error("Exception occurred: {}".format(error))
-
-
-class UserInactiveError(SuperdeskApiError):
-    """User is inactive, access restricted"""
-    status_code = 403
-    payload = {'is_active': False}
-    message = 'Account suspended, access restricted.'
-
-
 class IdentifierGenerationError(SuperdeskApiError):
     """Exception raised if failed to generate unique_id."""
 
@@ -159,9 +143,12 @@ class SuperdeskIngestError(SuperdeskError):
         self.provider_name = provider.get('name', 'Unknown provider') if provider else 'Unknown provider'
 
         if provider.get('notifications', {}).get('on_error', True):
+            exception_msg = str(exception)[-200:]
             update_notifiers('error',
-                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception),
-                             name=self.provider_name)
+                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
+                             resource='ingest_providers' if provider else None,
+                             name=self.provider_name,
+                             provider_id=provider.get('_id', ''))
 
         if provider:
             logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))

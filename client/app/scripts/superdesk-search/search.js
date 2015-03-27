@@ -45,7 +45,8 @@
         function Query(params) {
             var DEFAULT_SIZE = 25,
                 size,
-                filters = [];
+                filters = [],
+                post_filters = [];
 
             if (params == null) {
                 params = {};
@@ -77,7 +78,7 @@
                         range.firstcreated.gte = params.afterfirstcreated;
                     }
 
-                    query.filter({range: range});
+                    query.post_filter({range: range});
                 }
 
                 if (params.beforeversioncreated || params.afterversioncreated) {
@@ -90,45 +91,45 @@
                         vrange.versioncreated.gte = params.afterversioncreated;
                     }
 
-                    query.filter({range: vrange});
+                    query.post_filter({range: vrange});
                 }
 
                 if (params.after)
                 {
                     var facetrange = {firstcreated: {}};
                     facetrange.firstcreated.gte = params.after;
-                    query.filter({range: facetrange});
+                    query.post_filter({range: facetrange});
                 }
 
                 if (params.type) {
                     var type = {
                         type: JSON.parse(params.type)
                     };
-                    query.filter({terms: type});
+                    query.post_filter({terms: type});
                 }
 
                 if (params.urgency) {
-                    query.filter({term: {urgency: JSON.parse(params.urgency)}});
+                    query.post_filter({terms: {urgency: JSON.parse(params.urgency)}});
                 }
 
                 if (params.source) {
-                    query.filter({term: {source: JSON.parse(params.source)}});
+                    query.post_filter({terms: {source: JSON.parse(params.source)}});
                 }
 
                 if (params.category) {
-                    query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
+                    query.post_filter({terms: {'anpa-category.name': JSON.parse(params.category)}});
                 }
 
                 if (params.desk) {
-                    query.filter({term: {'task.desk': JSON.parse(params.desk)}});
+                    query.post_filter({terms: {'task.desk': JSON.parse(params.desk)}});
                 }
 
                 if (params.stage) {
-                    query.filter({term: {'task.stage': JSON.parse(params.stage)}});
+                    query.post_filter({terms: {'task.stage': JSON.parse(params.stage)}});
                 }
 
                 if (params.state) {
-                    query.filter({term: {'state': JSON.parse(params.state)}});
+                    query.post_filter({terms: {'state': JSON.parse(params.state)}});
                 }
             }
 
@@ -142,6 +143,10 @@
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
                 };
+
+                if (post_filters.length > 0) {
+                     criteria.post_filter = {'and': post_filters};
+                }
 
                 paginate(criteria, search);
 
@@ -173,6 +178,11 @@
                 return this;
             };
 
+            this.post_filter = function addPostFilter(filter) {
+                post_filters.push(filter);
+                return this;
+            };
+
             /**
              * Set size
              *
@@ -200,6 +210,130 @@
          */
         this.query = function createQuery(params) {
             return new Query(params);
+        };
+    }
+
+    TagService.$inject = ['$location', 'desks'];
+    function TagService($location, desks) {
+        var tags = {};
+        tags.selectedFacets = {};
+        tags.selectedParameters = [];
+        tags.selectedKeywords = [];
+        tags.currentSearch = {};
+
+        var FacetKeys = {
+            'type': 1,
+            'category': 1,
+            'urgency': 1,
+            'source': 1,
+            'day': 1,
+            'week': 1,
+            'month': 1,
+            'desk': 1,
+            'stage':1,
+            'state':1
+        };
+
+        function initSelectedParameters (parameters) {
+            tags.selectedParameters = [];
+            while (parameters.indexOf(':') >= 0) {
+                var colonIndex = parameters.indexOf(':');
+                var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
+                tags.selectedParameters.push(parameter);
+                parameters = parameters.replace(parameter, '');
+            }
+
+            return parameters;
+        }
+
+        function initSelectedKeywords (keywords) {
+            tags.selectedKeywords = [];
+            while (keywords.indexOf('(') >= 0) {
+                var paranthesisIndex = keywords.indexOf('(');
+                var keyword = keywords.substring(paranthesisIndex, keywords.indexOf(')', paranthesisIndex) + 1);
+                tags.selectedKeywords.push(keyword);
+                keywords = keywords.replace(keyword, '');
+            }
+        }
+
+        function removeFacet (type, key) {
+            if (key.indexOf('Last') >= 0) {
+                removeDateFacet();
+            } else {
+                var search = $location.search();
+                if (search[type]) {
+                    var keys = JSON.parse(search[type]);
+                    keys.splice(keys.indexOf(key), 1);
+                    if (keys.length > 0)
+                    {
+                        $location.search(type, JSON.stringify(keys));
+                    } else {
+                        $location.search(type, null);
+                    }
+                }
+            }
+        }
+
+        function removeDateFacet () {
+            var search = $location.search();
+            if (search.after) {
+                $location.search('after', null);
+            }
+        }
+
+        function initSelectedFacets () {
+            return desks.initialize().then(function(result) {
+                tags.selectedFacets = {};
+                tags.selectedParameters = [];
+                tags.selectedKeywords = [];
+
+                tags.currentSearch = $location.search();
+
+                var parameters = tags.currentSearch.q;
+                if (parameters) {
+                    var keywords = initSelectedParameters(parameters);
+                    initSelectedKeywords(keywords);
+                }
+
+                _.forEach(tags.currentSearch, function(type, key) {
+                    if (key !== 'q') {
+                        tags.selectedFacets[key] = [];
+
+                        if (key === 'desk') {
+                            var selectedDesks = JSON.parse(type);
+                            _.forEach(selectedDesks, function(selectedDesk) {
+                                tags.selectedFacets[key].push(desks.deskLookup[selectedDesk].name);
+                            });
+                        } else if (key === 'stage') {
+                            var stageid = type;
+                            _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
+                                if (deskStage._id === JSON.parse(stageid)[0]) {
+                                    tags.selectedFacets[key].push(deskStage.name);
+                                }
+                            });
+                        } else if (key === 'after') {
+
+                            if (type === 'now-24H') {
+                                tags.selectedFacets.date = ['Last Day'];
+                            } else if (type === 'now-1w'){
+                                tags.selectedFacets.date = ['Last Week'];
+                            } else if (type === 'now-1M'){
+                                tags.selectedFacets.date = ['Last Month'];
+                            }
+
+                        } else if (FacetKeys[key]) {
+                            tags.selectedFacets[key] = JSON.parse(type);
+                        }
+                    }
+                });
+
+                return tags;
+            });
+        }
+
+        return {
+            initSelectedFacets: initSelectedFacets,
+            removeFacet: removeFacet
         };
     }
 
@@ -235,6 +369,7 @@
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
         .service('search', SearchService)
+        .service('tags', TagService)
         .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
@@ -248,21 +383,21 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks', 'privileges',  function($location, desks, privileges) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags',  function($location, desks, privileges, tags) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
                 scope: {
                     items: '=',
-                    desk: '='
+                    desk: '=',
+                    repo: '=',
+                    context: '='
                 },
                 link: function(scope, element, attrs, controller) {
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.aggregations = {};
-                    scope.selectedFacets = {};
-                    scope.keyword = null;
                     scope.privileges = privileges.privileges;
 
                     var initAggregations = function () {
@@ -278,126 +413,64 @@
                         };
                     };
 
-                    var FacetKeys = {
-                        'type': 1,
-                        'category': 1,
-                        'urgency': 1,
-                        'source': 1,
-                        'day': 1,
-                        'week': 1,
-                        'month': 1,
-                        'desk': 1,
-                        'stage':1,
-                        'state':1
-                    };
-
-                    var initSelectedFacets = function () {
-                        return desks.initialize().then(function(result) {
-                            var search = $location.search();
-                            scope.keyword = search.q;
-                            _.forEach(search, function(type, key) {
-                                if (key === 'desk') {
-                                    scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
-                                } else if (key === 'stage') {
-                                    var stageid = type;
-                                    _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                                        if (deskStage._id === JSON.parse(stageid)[0]) {
-                                            scope.selectedFacets[key] = deskStage.name;
-                                        }
-                                    });
-                                } else if (FacetKeys[key]) {
-                                    scope.selectedFacets[key] = JSON.parse(type)[0];
-                                }
-                            });
-                        });
-                    };
-
                     scope.$watch('items', function() {
 
                         initAggregations();
-                        initSelectedFacets().then(function() {
-                            var search = $location.search();
-                            if (search.q && scope.keyword !== search.q)
-                            {
-                                scope.selectedFacets = {};
-                                scope.keyword = search.q;
-                            }
+                        tags.initSelectedFacets().then(function(currentTags) {
+
+                            scope.tags = currentTags;
 
                             if (scope.items && scope.items._aggregations !== undefined) {
 
                                 _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                    if (!scope.selectedFacets.type || scope.selectedFacets.type !== type.key) {
-                                        scope.aggregations.type[type.key] = type.doc_count;
-                                    }
+                                    scope.aggregations.type[type.key] = type.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                    if ((!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) && cat.key !== '') {
+                                    if (cat.key !== '') {
                                         scope.aggregations.category[cat.key] = cat.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
-                                    if (!scope.selectedFacets.urgency || scope.selectedFacets.urgency !== urgency.key) {
-                                        scope.aggregations.urgency[urgency.key] = urgency.doc_count;
-                                    }
+                                    scope.aggregations.urgency[urgency.key] = urgency.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                    if (!scope.selectedFacets.source || scope.selectedFacets.source !== source.key) {
-                                        scope.aggregations.source[source.key] = source.doc_count;
-                                    }
+                                    scope.aggregations.source[source.key] = source.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.state.buckets, function(state) {
-                                    if (!scope.selectedFacets.state || scope.selectedFacets.state !== state.key) {
-                                        scope.aggregations.state[state.key] = state.doc_count;
-                                    }
+                                    scope.aggregations.state[state.key] = state.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Day') {
-                                        if (day.doc_count > 0) {
-                                            scope.aggregations.date['Last Day'] = day.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Day'] = day.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Week') {
-                                        if (week.doc_count > 0) {
-                                            scope.aggregations.date['Last Week'] = week.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Week'] = week.doc_count;
                                 });
 
                                 _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Month') {
-                                        if (month.doc_count > 0) {
-                                            scope.aggregations.date['Last Month'] = month.doc_count;
-                                        }
-                                    }
+                                    scope.aggregations.date['Last Month'] = month.doc_count;
                                 });
 
                                 if (!scope.desk) {
                                     _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                        if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
-                                            scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
+                                        scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
                                                 count: desk.doc_count,
                                                 id: desk.key
                                             };
-                                        }
                                     }) ;
                                 }
 
                                 if (scope.desk) {
                                     _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                         _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
-                                            if (!scope.selectedFacets.stage || scope.selectedFacets.stage !== deskStage.name) {
-                                                if (deskStage._id === stage.key) {
+                                            if (deskStage._id === stage.key) {
                                                     scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
                                                 }
-                                            }
                                         });
                                     });
                                 }
@@ -405,34 +478,38 @@
                         });
                     });
 
-                    var setSelectedFacets = function(type, key) {
-                        if (type === 'desk') {
-                            scope.selectedFacets[type] = desks.deskLookup[key].name;
-                        } else if (type === 'stage') {
-                            _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                                if (deskStage._id === key) {
-                                    scope.selectedFacets[type] = deskStage.name;
-                                }
-                            });
+                    scope.toggleFilter = function(type, key) {
+                        if (scope.hasFilter(type, key)) {
+                            scope.removeFilter(type, key);
                         } else {
-                            scope.selectedFacets[type] = key;
+                            if (type === 'date') {
+                                scope.setDateFilter(key);
+                            } else {
+                                scope.setFilter(type, key);
+                            }
                         }
                     };
 
+                    scope.removeFilter = function(type, key) {
+                        tags.removeFacet(type, key);
+                    };
+
                     scope.setFilter = function(type, key) {
-
-                        setSelectedFacets(type, key);
-
                         if (!scope.isEmpty(type) && key) {
-                            $location.search(type, JSON.stringify([key]));
+                            var currentKeys = $location.search()[type];
+                            if (currentKeys) {
+                                currentKeys = JSON.parse(currentKeys);
+                                currentKeys.push(key);
+                                $location.search(type, JSON.stringify(currentKeys));
+                            } else {
+                                $location.search(type, JSON.stringify([key]));
+                            }
                         } else {
                             $location.search(type, null);
                         }
                     };
 
                     scope.setDateFilter = function(key) {
-                        scope.selectedFacets.date = key;
-
                         if (key === 'Last Day') {
                             $location.search('after', 'now-24H');
                         } else if (key === 'Last Week'){
@@ -444,41 +521,50 @@
                         }
                     };
 
-                    scope.removeFilter = function(type, key) {
-                        if (key.indexOf('Last') >= 0) {
-                            scope.removeDateFilter(key);
-                        } else {
-                            var search = $location.search();
-                            if (search[type]) {
-                                var keys = JSON.parse(search[type]);
-                                keys.splice(keys.indexOf(key), 1);
-                                if (keys.length > 0)
-                                {
-                                    $location.search(type, JSON.stringify(keys));
-                                } else {
-                                    $location.search(type, null);
-                                }
-                            }
-                            delete scope.selectedFacets[type];
-                        }
-                    };
-
-                    scope.removeDateFilter = function(key) {
-
-                        var search = $location.search();
-                        if (search.after) {
-                            $location.search('after', null);
-                        }
-
-                        delete scope.selectedFacets.date;
-                    };
-
                     scope.isEmpty = function(type) {
                         return _.isEmpty(scope.aggregations[type]);
                     };
 
                     scope.format = function (date) {
                         return date ? moment(date).format('YYYY-MM-DD') : null; // jshint ignore:line
+                    };
+
+                    scope.hasFilter = function(type, key) {
+                        if (type === 'desk') {
+                            return scope.tags.selectedFacets[type] &&
+                            scope.tags.selectedFacets[type].indexOf(desks.deskLookup[key].name) >= 0;
+                        }
+
+                        return scope.tags.selectedFacets[type] && scope.tags.selectedFacets[type].indexOf(key) >= 0;
+                    };
+                }
+            };
+        }])
+
+        .directive('sdSearchTags', ['$location', '$route', 'tags', function($location, $route, tags) {
+            return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-search/views/search-tags.html',
+                link: function(scope, elem) {
+
+                    var update = function() {
+                        tags.initSelectedFacets().then(function(currentTags) {
+                            scope.tags = currentTags;
+                        });
+                    };
+
+                    update();
+
+                    scope.removeFilter = function(type, key) {
+                        tags.removeFacet(type, key);
+                    };
+
+                    scope.removeParameter = function(param) {
+                        var params = $location.search();
+                        if (params.q) {
+                            params.q = params.q.replace(param, '').trim();
+                            $location.search('q', params.q || null);
+                        }
                     };
                 }
             };
@@ -487,7 +573,8 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', function($location, preferencesService) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags',
+            function($location, preferencesService, packages, tags) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -535,6 +622,12 @@
                         scope.selected.view = null;
                     };
 
+                    scope.openSingleItem = function (packageItem) {
+                        packages.fetchItem(packageItem).then(function(item) {
+                            scope.selected.view = item;
+                        });
+                    };
+
                     scope.setview = setView;
 
                     var savedView;
@@ -569,11 +662,11 @@
                         if (scope.within) {
                             var params = $location.search();
                             if (params.q) {
-                                scope.query = params.q + ' ' + scope.within;
+                                scope.query = params.q + ' (' + scope.within + ') ';
                             } else {
-                                scope.query = scope.within;
+                                scope.query = '(' + scope.within + ')';
                             }
-                            $location.search('q', scope.query|| null);
+                            $location.search('q', scope.query || null);
                             scope.within = null;
                         }
                     };
@@ -705,16 +798,68 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', ['$location', '$timeout', function($location, $timeout) {
+        .directive('sdItemSearchbar', ['$location', '$document', function($location, $document) {
             return {
-                scope: {repo: '=', context: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
-                    var ESC = 27;
+
+                    scope.focused = false;
+                    var input = elem.find('#search-input');
+
+                    scope.searchOnEnter = function($event) {
+                        if ($event.keyCode === ENTER) {
+                            scope.search();
+                            $event.stopPropagation();
+                        }
+                    };
+
+                    scope.search = function() {
+                        scope.focused = false;
+                        input.blur();
+                        $location.search('q', input[0].value || null);
+                    };
+
+                    scope.cancel = function() {
+                        scope.query = null;
+                        input.focus();
+                        //to be implemented
+                    };
+
+                    //initial query
+                    var srch = $location.search();
+                    if (srch.q && srch.q !== '') {
+                        scope.query = srch.q;
+                    } else {
+                        scope.query = null;
+                    }
+
+                    function closeOnClick() {
+                        scope.$apply(function() {
+                            scope.focused = false;
+                        });
+                    }
+
+                    $document.bind('click', closeOnClick);
+
+                    scope.$on('$destroy', function() {
+                        $document.unbind('click', closeOnClick);
+                    });
+
+                }
+            };
+        }])
+
+        .directive('sdItemSearch', ['$location', '$timeout', function($location, $timeout) {
+            return {
+                scope: {
+                    repo: '=',
+                    context: '='
+                },
+                templateUrl: 'scripts/superdesk-search/views/item-search.html',
+                link: function(scope, elem) {
 
                     var input = elem.find('#search-input');
-                    scope.advancedOpen = false;
 
                     function init() {
                         var params = $location.search();
@@ -775,57 +920,18 @@
                                 }
                             }
                         });
-                        return metas.length ? metas.join(' ') : scope.query || null;
-                    }
 
-                    function updateParam() {
-                        $location.$$search = {};
-                        $location.search('q', getQuery() || null);
-                        $location.search('repo', getActiveRepos());
-                        scope.query = $location.search().q;
-                        scope.meta = {};
-                    }
-
-                    function parseFields() {
-                        scope.meta = {};
-                        if (scope.query) {
-                           angular.forEach(scope.query.split(' '), function(val) {
-                                if (val.indexOf(':') >= 0) {
-                                    var meta = val.split(':')[0];
-                                    var value = val.split(':')[1].replace('(', '').replace(')', '');
-
-                                    if (meta.indexOf('.') >= 0) {
-                                        var submeta = meta.split('.')[0];
-                                        var subvalue = meta.split('.')[1];
-                                        scope.meta[submeta] = {};
-                                        scope.meta[submeta][subvalue] = value;
-                                    } else {
-                                        scope.meta[meta] = value;
-                                    }
-                                } else {
-                                    if (!scope.meta._all) {
-                                        scope.meta._all = [];
-                                    }
-                                    scope.meta._all.push(val);
-                                }
-                            });
+                        if (metas.length) {
+                            if (scope.query) {
+                                return scope.query + ' ' + metas.join(' ');
+                            } else {
+                                return metas.join(' ');
+                            }
+                        } else {
+                            return scope.query || null;
                         }
+
                     }
-
-                    scope.search = function() {
-                        updateParam();
-                        _closeSearchPopup();
-                    };
-
-                    scope.searchOnEnter = function($event) {
-                        if ($event.keyCode === ENTER) {
-                            scope.search();
-                            $event.stopPropagation();
-                        }
-                        if ($event.keyCode === ESC) {
-                            _closeSearchPopup();
-                        }
-                    };
 
                     scope.focusOnSearch = function() {
                         if (scope.advancedOpen) {
@@ -834,11 +940,15 @@
                         input.focus();
                     };
 
-                    scope.toggle = function() {
-                        scope.advancedOpen = !scope.advancedOpen;
-                        if (scope.advancedOpen) {
-                            parseFields();
-                        }
+                    function updateParam() {
+                        scope.query = $location.search().q;
+                        $location.search('q', getQuery() || null);
+                        $location.search('repo', getActiveRepos());
+                        scope.meta = {};
+                    }
+
+                    scope.search = function() {
+                        updateParam();
                     };
 
                     scope.$on('key:s', function openSearch() {
@@ -849,10 +959,6 @@
                             }, 0, false);
                         });
                     });
-
-                    function _closeSearchPopup() {
-                        scope.flags.extended = false;
-                    }
                 }
             };
         }])
@@ -860,7 +966,7 @@
         /**
          * Item sort component
          */
-        .directive('sdItemSortbar', ['$location', 'search', function sortBarDirective($location, search) {
+        .directive('sdItemSortbar', ['search', function sortBarDirective(search) {
             return {
                 scope: {},
                 templateUrl: 'scripts/superdesk-search/views/item-sortbar.html',
@@ -869,12 +975,6 @@
 
                     function getActive() {
                         scope.active = search.getSort();
-                        var srch = $location.search();
-                        if (srch.q && srch.q !== '') {
-                            scope.queryString = srch.q;
-                        } else {
-                            scope.queryString = null;
-                        }
                     }
 
                     scope.sort = function sort(field) {

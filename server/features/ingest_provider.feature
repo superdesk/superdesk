@@ -45,7 +45,10 @@ Feature: Ingest Provider
         """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [
+          {"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+          {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}}
+        ]
         """
         Then we get emails
         """
@@ -83,7 +86,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest_provider:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """
@@ -108,11 +113,14 @@ Feature: Ingest Provider
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
-        {"is_closed": true}
+        {"is_closed": true, "last_closed": {"message": "system misbehaving."}}
         """
         Then we get updated response
         """
-        {"is_closed": true}
+        {
+          "is_closed": true,
+          "last_closed": {"closed_by":"#CONTEXT_USER_ID#", "message": "system misbehaving."}
+        }
         """
         When we get "/activity/"
         Then we get existing resource
@@ -128,7 +136,9 @@ Feature: Ingest Provider
          """
         Then we get notifications
         """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+         {"event": "ingest_provider:create", "extra": {"provider_id": "#ingest_providers._id#"}},
+         {"event": "ingest_provider:update", "extra": {"provider_id": "#ingest_providers._id#"}}]
         """
         Then we get emails
         """
@@ -136,39 +146,6 @@ Feature: Ingest Provider
           {"body":"updated Ingest Channel reuters 4"},
           {"body":"closed Ingest Channel reuters 4"}
         ]
-        """
-
-    @auth
-    @notification
-    Scenario: Delete ingest_provider
-        Given empty "ingest_providers"
-        Given "ingest_providers"
-	    """
-        [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
-        }]
-        """
-        When we delete "/ingest_providers/#ingest_providers._id#"
-        Then we get deleted response
-        When we get "/activity/"
-        Then we get existing resource
-        """
-        {"_items": [{"data": {"name": "reuters 4"}, "message": "deleted Ingest Channel {{name}}"}]}
-        """
-        Then we get notifications
-        """
-        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
-        """
-        Then we get emails
-        """
-        [
-          {"body": "deleted Ingest Channel reuters 4"}
-        ]
-
         """
 
     @auth

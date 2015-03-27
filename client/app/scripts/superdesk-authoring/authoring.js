@@ -847,11 +847,9 @@
 
                 scope.send = function send() {
                     save({
-                        task: _.extend(scope.task.task, {
                             desk: scope.desk._id,
                             stage: scope.selectedStage._id || scope.desk.incoming_stage
-                        })
-                    });
+                        });
                 };
 
                 scope.$watch('item', fetchDesks);
@@ -879,7 +877,7 @@
                     scope.beforeSend()
                     .then(function(result) {
 		    			scope.task._etag = result._etag;
-                        api.save('tasks', scope.task, data).then(gotoPreviousScreen);
+                        api.save('move', {}, data, scope.task).then(gotoPreviousScreen);
                     });
                 }
 
@@ -1001,7 +999,16 @@
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
                         }]
-                    }
+                    },
+                    authoring: true
 	            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('move', {
+                type: 'http',
+                backend: {
+                    rel: 'move'
+                }
+            });
         }]);
 })();
