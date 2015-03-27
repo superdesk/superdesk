@@ -143,7 +143,7 @@ define([
                         return item.lock_user === null || angular.isUndefined(item.lock_user);
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() !== null || desks.getCurrentDeskId() !== '';
+                        return desks.getCurrentDeskId() !== null;
                     }]
                 })
                 .activity('copy-content', {
@@ -169,7 +169,7 @@ define([
                         return item.lock_user === null || angular.isUndefined(item.lock_user);
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() === null || desks.getCurrentDeskId() === '';
+                        return desks.getCurrentDeskId() === null;
                     }]
                 });
         }])
