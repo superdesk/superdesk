@@ -222,6 +222,9 @@
             $scope.selected = item;
         };
 
+        $scope.closeModal = function() {
+            $scope.modalActive = false;
+        };
     }
 
     var app = angular.module('superdesk.desks', [

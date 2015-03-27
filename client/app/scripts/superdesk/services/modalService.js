@@ -43,5 +43,50 @@ define(['angular'], function(angular) {
                 return delay.promise;
             };
 
+        }])
+        .directive('sdModal', ['$document', function($document) {
+
+            return {
+                template: [
+                    '<div class="modal fade hide">',
+                    '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
+                    '</div>'].join(''),
+                transclude: true,
+                scope: {
+                    model: '='
+                },
+                link: function(scope, element, attrs) {
+
+                    var content, _initialized = false;
+
+                    scope.$watch('model', function() {
+                        if (scope.model) {
+                            if (!_initialized) {
+                                content = element.children();
+                                content.addClass(element.attr('class'));
+                                content.appendTo($document.find('body'));
+                                _initialized = true;
+                            }
+                            content.modal('show');
+                        } else {
+                            if (initialized()) {
+                                content.modal('hide');
+                            }
+                        }
+                    });
+
+                    function initialized() {
+                        return _initialized && content;
+                    }
+
+                    scope.$on('$destroy', function() {
+                        if (initialized()) {
+                            content.modal('hide');
+                            content.remove();
+                        }
+                        angular.element(document.body).find('.modal-backdrop').remove();
+                    });
+                }
+            };
         }]);
 });
