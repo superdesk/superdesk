@@ -110,3 +110,28 @@ Feature: Move or Send Content to another desk
         """
         {"_message": "Workflow transition is invalid.", "_status": "ERR"}
         """
+
+    @auth
+    Scenario: User can't move content without a privilege
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        And "archive"
+        """
+        [{  "type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "published",
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        """
+        When we post to "/desks"
+        """
+        [{"name": "Finance"}]
+        """
+        And we login as user "foo" with password "bar"
+        """
+        {"user_type": "user", "email": "foo.bar@foobar.org"}
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+        """
+        Then we get response code 403
