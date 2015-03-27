@@ -30,10 +30,6 @@ describe('sdIngestSourcesContent directive', function () {
         scope.$digest();
     }));
 
-    it('initializes field aliases in scope to an empty list', function () {
-        expect(scope.fieldAliases).toEqual([]);
-    });
-
     it('initializes the list of available field names in scope', function () {
         expect(scope.contentFields).toEqual([
             'body_text', 'guid', 'published_parsed',
@@ -41,8 +37,12 @@ describe('sdIngestSourcesContent directive', function () {
         ]);
     });
 
-    it('initializes the list of field names not selected for an alias ' +
-        'to all available fields',
+    it('initializes field aliases in scope to an empty list', function () {
+        expect(scope.fieldAliases).toEqual([]);
+    });
+
+    it('initializes the list of field names without aliases to all ' +
+       'content fields',
         function () {
             expect(scope.fieldsNotSelected).toEqual([
                 'body_text', 'guid', 'published_parsed',
@@ -82,6 +82,44 @@ describe('sdIngestSourcesContent directive', function () {
                 expect(scope.provider.config).toEqual({
                     auth_required: false, username: null, password: null
                 });
+            }
+        );
+    });
+
+    describe('edit() method', function () {
+        var fakeProvider;
+
+        beforeEach(function () {
+            fakeProvider = {
+                config: {
+                    field_aliases: {
+                        foo2: 'bar2',
+                        foo5: 'bar5'
+                    }
+                }
+            };
+            scope.contentFields = ['foo', 'foo2', 'foo3', 'foo4', 'foo5'];
+        });
+
+        it('updates the list of field name aliases to match ' +
+           'provider\'s configuration',
+            function () {
+                scope.fieldAliases = [{fieldName: 'body', alias: 'content'}];
+                scope.edit(fakeProvider);
+                expect(scope.fieldAliases).toEqual([
+                    {fieldName: 'foo2', alias: 'bar2'},
+                    {fieldName: 'foo5', alias: 'bar5'}
+                ]);
+            }
+        );
+
+        it('updates the list of field names that don\'t have an alias set',
+            function () {
+                scope.fieldsNotSelected = [];
+                scope.edit(fakeProvider);
+                expect(scope.fieldsNotSelected).toEqual(
+                    ['foo', 'foo3', 'foo4']
+                );
             }
         );
     });
