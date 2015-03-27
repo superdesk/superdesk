@@ -832,6 +832,8 @@
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
 
+                scope.item = null;
+
                 scope.desks = null;
                 scope.stages = null;
                 scope.macros = null;
@@ -920,10 +922,8 @@
                 };
 
                 var sendContent = function(deskId, stageId, macro, open) {
-                    api.archiveIngest.create({
-                        guid: scope.item.guid,
-                        desk: scope.selectedDesk._id
-                    })
+                    var finalItem;
+                    var p = api.save('duplicate', {}, {desk: scope.item.task.desk}, scope.item)
                     .then(function(item) {
                         return api.find('archive', item._id);
                     })
@@ -931,6 +931,7 @@
                         return runMacro(item, macro);
                     })
                     .then(function(item) {
+                        finalItem = item;
                         return api.find('tasks', item._id);
                     })
                     .then(function(_task) {
@@ -943,6 +944,11 @@
                         notify.success(gettext('Item sent.'));
                         $rootScope.$broadcast('item:fetch');
                     });
+                    if (open) {
+                        p.then(function() {
+                            superdesk.intent('author', 'article', finalItem);
+                        });
+                    }
                 };
 
                 var sendIngest = function(open) {
