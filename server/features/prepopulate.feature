@@ -29,6 +29,7 @@ Feature: Prepopulate
         When we find for "users" the id as "user_admin2" by "{"username": "admin2"}"
         When we find for "users" the id as "user_admin3" by "{"username": "admin3"}"
         When we find for "users" the id as "user_admin4" by "{"username": "admin4"}"
+        
         And we get "/desks"
         Then we get list with 2 items
         """
