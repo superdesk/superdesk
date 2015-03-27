@@ -306,8 +306,8 @@ define([
         };
     }
 
-    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', '$rootScope'];
-    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, $rootScope) {
+    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location'];
+    function IngestSourcesContent(providerTypes, gettext, notify, api, $location) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
