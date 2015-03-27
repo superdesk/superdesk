@@ -13,6 +13,7 @@ import feedparser
 import requests
 
 from calendar import timegm
+from collections import namedtuple
 from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
@@ -30,6 +31,27 @@ class RssIngestService(IngestService):
 
     (NOTE: it should also work with other syndicated feeds formats, too, since
     the underlying parser supports them, but for our needs RSS 2.0 is assumed)
+    """
+
+    ItemField = namedtuple('ItemField', ['name', 'name_in_data', 'type'])
+
+    item_fields = [
+        ItemField('guid', 'guid', str),
+        ItemField('uri', 'guid', str),
+        ItemField('firstcreated', 'published_parsed', datetime),
+        ItemField('versioncreated', 'updated_parsed', datetime),
+        ItemField('headline', 'title', str),
+        ItemField('abstract', 'summary', str),
+        ItemField('body_html', 'body_text', str),
+    ]
+    """A list of fields that items created from the ingest data should contain.
+
+    Each list item is a named tuple with the following three attribues:
+
+    * name - the name of the field (attribute) in the resulting ingest item
+    * name_in_data - the expected name of the data field in the retrieved
+        ingest data (this can be overriden by providing a field name alias)
+    * type - field's data type
     """
 
     def _update(self, provider):
@@ -60,12 +82,13 @@ class RssIngestService(IngestService):
         t_provider_updated = t_provider_updated.replace(tzinfo=None)
 
         new_items = []
+        field_aliases = config.get('field_aliases')
 
         for entry in data.entries:
             t_entry_updated = utcfromtimestamp(timegm(entry.updated_parsed))
 
             if t_entry_updated > t_provider_updated:
-                item = self._create_item(entry)
+                item = self._create_item(entry, field_aliases)
                 self.add_timestamps(item)
                 new_items.append(item)
 
@@ -104,23 +127,32 @@ class RssIngestService(IngestService):
                 raise IngestApiError.apiGeneralError(
                     Exception(response.reason), provider)
 
-    def _create_item(self, data):
+    def _create_item(self, data, field_aliases=None):
         """Create a new content item from RSS feed data.
 
         :param dict data: parsed data of a single feed entry
+        :param field_aliases: (optional) field name aliases. Used for content
+             fields that are named differently in retrieved data.
+        :type field_aliases: dict or None
+
         :return: created content item
         :rtype: dict
         """
-        item = dict()
-        item['guid'] = item['uri'] = data.get('guid')
-        item['type'] = 'text'
-        if data.get('updated_parsed'):
-            item['versioncreated'] = utcfromtimestamp(timegm(data.get('updated_parsed')))
-        if data.get('published_parsed') or data.get('updated_parsed'):
-            item['firstcreated'] = utcfromtimestamp(timegm(data.get('published_parsed', data.get('updated_parsed'))))
-        item['headline'] = data.get('title')
-        item['abstract'] = data.get('summary')
-        item['body_html'] = data.get('body_text')
+        if field_aliases is None:
+            field_aliases = {}
+
+        item = dict(type='text')
+
+        for field in self.item_fields:
+            data_field_name = field_aliases.get(
+                field.name_in_data, field.name_in_data
+            )
+            field_value = data.get(data_field_name)
+
+            if (field.type is datetime) and field_value:
+                field_value = utcfromtimestamp(timegm(field_value))
+
+            item[field.name] = field_value
 
         return item
 
