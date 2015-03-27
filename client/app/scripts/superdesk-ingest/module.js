@@ -58,6 +58,9 @@ define([
         show_status: true
     };
 
+    var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
+    var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
+
     function forcedExtend(dest, src) {
         _.each(PROVIDER_DASHBOARD_DEFAULTS, function(value, key) {
             if (_.has(src, key)) {
@@ -308,11 +311,6 @@ define([
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
-
-                var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
-                var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
-                var searchObj = $location.search();
-
                 $scope.provider = null;
                 $scope.origProvider = null;
 
@@ -321,31 +319,38 @@ define([
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
                 $scope.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
-                fetchProviders();
-
                 function fetchProviders() {
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
                             $scope.providers = result;
-                            var provider_id = searchObj._id;
-                            var provider;
-                            if (provider_id) {
-                                provider = _.find($scope.providers._items, function (item) {
-                                    return item._id === provider_id;
-                                });
-
-                                if (provider == null) {
-                                    api.ingestProviders.getById(provider_id).then(function (result) {
-                                        provider = result;
-                                    });
-                                }
-
-                                if (provider) {
-                                    $scope.edit(provider);
-                                }
-                            }
                     });
                 }
+
+                function openProviderModal() {
+                    var provider_id = $location.search()._id;
+                    var provider;
+                    if (provider_id) {
+                        if ($scope.providers && $scope.providers._items) {
+                            provider = _.find($scope.providers._items, function (item) {
+                                return item._id === provider_id;
+                            });
+                        }
+
+                        if (provider == null) {
+                            api.ingestProviders.getById(provider_id).then(function (result) {
+                                provider = result;
+                            });
+                        }
+
+                        if (provider) {
+                            $scope.edit(provider);
+                        }
+                    }
+                }
+
+                fetchProviders().then(function() {
+                    openProviderModal();
+                });
 
                 api('rule_sets').query().then(function(result) {
                     $scope.rulesets = result._items;
@@ -1018,10 +1023,11 @@ define([
                 init();
 
                 scope.isIdle = function() {
-                    if (scope.item.last_item_update) {
+                    if (scope.item.last_item_update && !scope.item.is_closed) {
+                        var idle_time =  scope.item.idle_time || DEFAULT_IDLE_TIME;
                         var last_item_update = moment(scope.item.last_item_update);
-                        if (scope.item.idle_time) {
-                            last_item_update.add(scope.item.idle_time.hours, 'h').add(scope.item.idle_time.minutes, 'm');
+                        if (idle_time && !angular.equals(idle_time, DEFAULT_IDLE_TIME)) {
+                            last_item_update.add(idle_time.hours, 'h').add(idle_time.minutes, 'm');
                             if (moment() > last_item_update) {
                                 return true;
                             }else {
