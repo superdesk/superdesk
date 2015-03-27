@@ -103,3 +103,24 @@ Feature: Duplication of Content within Desk
       """
       {"_message": "Duplicate is allowed within the same desk.", "_status": "ERR"}
       """
+
+    @auth
+    Scenario: User can't duplicate content without a privilege
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        And "archive"
+        """
+        [{  "type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "published",
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        """
+        When we login as user "foo" with password "bar"
+        """
+        {"user_type": "user", "email": "foo.bar@foobar.org"}
+        """
+        And we post to "/archive/123/duplicate"
+        """
+        [{"desk": "#desks._id#"}]
+        """
+        Then we get response code 403

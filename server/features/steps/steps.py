@@ -1271,8 +1271,7 @@ def then_we_get_activity(context):
             set_placeholder(context, 'USERS_ID', item['user'])
 
 
-@given('we login as user "{username}" with password "{password}"')
-def when_we_login_as_user(context, username, password):
+def login_as(context, username, password):
     user = {'username': username, 'password': password, 'is_active': True,
             'is_enabled': True, 'needs_activation': False}
 
@@ -1280,6 +1279,16 @@ def when_we_login_as_user(context, username, password):
         user.update(json.loads(context.text))
 
     tests.setup_auth_user(context, user)
+
+
+@given('we login as user "{username}" with password "{password}"')
+def given_we_login_as_user(context, username, password):
+    login_as(context, username, password)
+
+
+@when('we login as user "{username}" with password "{password}"')
+def when_we_login_as_user(context, username, password):
+    login_as(context, username, password)
 
 
 def is_user_resource(resource):

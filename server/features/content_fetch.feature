@@ -215,3 +215,25 @@ Feature: Fetch Items from Ingest
       """
       {"headline": "test 2", "state": "in_progress", "task": {"desk": "#desks._id#"}}
       """
+
+    @auth
+    @provider
+    Scenario: User can't fetch content without a privilege
+      Given empty "archive"
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And ingest from "reuters"
+      """
+      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
+      """
+      When we login as user "foo" with password "bar"
+      """
+      {"user_type": "user", "email": "foo.bar@foobar.org"}
+      """
+      And we post to "/ingest/tag_reuters.com_2014_newsml_LOVEA6M0L7U2E/fetch"
+      """
+      {"desk": "#desks._id#"}
+      """
+      Then we get response code 403
