@@ -1,6 +1,8 @@
 from eve.io.base import DataLayer
 import urllib3
 import json
+import datetime
+from superdesk.utc import utc, utcnow
 from eve_elastic.elastic import ElasticCursor
 
 urllib3.disable_warnings()
@@ -27,39 +29,60 @@ class AAPMMDatalayer(DataLayer):
         query_keywords = '*:*'
         if 'query' in req['query']['filtered']:
             query_keywords = req['query']['filtered']['query']['query_string']['query']
-        fields = {'query': query_keywords, 'pageSize': str(req['size']),
-                  'pageNumber': str(int(req['from']) // int(req['size']) + 1)}
+        fields = {'query': query_keywords, 'pageSize': str(req.get('size','25')),
+                  'pageNumber': str(int(req.get('from', '0')) // int(req.get('size','25')) + 1)}
         r = self._http.request('GET', url, fields=fields, headers=self._headers)
-        return json.loads(r.data.decode('UTF-8'))
+        hits = self._parse_hits(json.loads(r.data.decode('UTF-8')))
+        return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
+
+    def _parse_doc(self, doc):
+        new_doc = {}
+        new_doc['_id'] = 'tag:aap.com.au,' + doc['AssetId']
+        new_doc['guid'] = new_doc['_id']
+        new_doc['family_id'] = new_doc['_id']
+        new_doc['unique_name'] = new_doc['_id']
+        new_doc['unique_id'] = doc['AssetId']
+
+        new_doc['headline'] = doc['Title']
+        new_doc['description'] = doc['Description']
+        new_doc['source'] = doc['Credit']
+        new_doc['original_source'] = doc['Credit'] + '/' + doc['Source']
+        new_doc['versioncreated'] = self._datetime(doc['ModifiedDate'])
+        new_doc['firstcreated'] = self._datetime(doc['CreationDate'])
+        new_doc['type'] = 'picture'
+        new_doc['pubstatus'] = 'usable'
+        # doc['state'] = 'external'
+        new_doc['renditions'] = {'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
+                             'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
+                             'original': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
+                             'baseImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']}}
+        if doc['AssetType'] == 'VIDEO':
+            new_doc['type'] = 'video'
+            # don't actually know!
+            new_doc['mimetype'] = 'image/jpeg'
+        else:
+            new_doc['type'] = 'picture'
+            new_doc['mimetype'] = 'image/jpeg'
+
+        new_doc['slugline'] = doc['Title']
+        new_doc['byline'] = doc['Byline']
+        new_doc['ednote'] = doc['SpecialInstructions']
+        doc.clear()
+        doc.update(new_doc)
 
     def _parse_hits(self, hits):
         hits['docs'] = hits.pop('Assets')
         hits['total'] = hits.pop('Total')
         for doc in hits['docs']:
-            doc['_id'] = doc.pop('AssetId')
-            doc['guid'] = doc['_id']
-            doc['headline'] = doc.pop('Title')
-            doc['body_html'] = doc.pop('Description')
-            doc['description'] = doc['body_html']
-            doc['source'] = doc['Credit']
-            doc['original_source'] = doc.pop('Credit') + '/' + doc.pop('Source')
-            doc['versioncreated'] = doc.pop('ModifiedDate')
-            doc['firstcreated'] = doc.pop('CreationDate')
-            doc['type'] = 'picture'
-            doc['renditions'] = {'viewImage': {'href': doc['Layout']['Href']},
-                                 'thumbnail': {'href': doc['Thumbnail']['Href']},
-                                 'original': {'href': doc['Layout']['Href']},
-                                 'baseImage': {'href': doc['Layout']['Href']}}
-            if doc['AssetType'] == 'VIDEO':
-                doc['type'] = 'video'
-                # don't actually know!
-                doc['mimetype'] = 'image/jpeg'
-            else:
-                doc['type'] = 'picture'
-                doc['mimetype'] = 'image/jpeg'
+            self._parse_doc(doc)
+        return hits
 
-            doc['slugline'] = doc.pop('Byline')
-        return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
+    def _datetime(self, string):
+        try:
+            dt = datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
+        except:
+            dt = utcnow()
+        return dt
 
     def find_all(self, resource, max_results=1000):
         raise NotImplementedError
@@ -68,7 +91,12 @@ class AAPMMDatalayer(DataLayer):
         raise NotImplementedError
 
     def find_one_raw(self, resource, _id):
-        raise NotImplementedError
+        url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}'.format(_id)
+        r = self._http.request('GET', url, headers=self._headers)
+        doc = json.loads(r.data.decode('UTF-8'))
+        self._parse_doc(doc)
+        return doc
+
 
     def find_list_of_ids(self, resource, ids, client_projection=None):
         raise NotImplementedError

@@ -155,7 +155,8 @@ INSTALLED_APPS = [
     'apps.publish',
     'apps.macros',
     'apps.dictionaries',
-    'apps.duplication'
+    'apps.duplication',
+    'apps.aap_mm'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

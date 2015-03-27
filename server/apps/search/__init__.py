@@ -52,11 +52,9 @@ class SearchService(superdesk.Service):
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
+
         if 'aapmultimedia' in types:
-            mm = app.data.aapmm
-            mmhits = mm.find('what', query, None)
-            mmdocs = mm._parse_hits(mmhits)
-            return mmdocs
+            return superdesk.get_resource_service('aapmm').get(req=req, lookup=lookup)
 
         query['aggs'] = aggregations
         stages = superdesk.get_resource_service('users').get_invisible_stages_ids(g.get('user', {}).get('_id'))
