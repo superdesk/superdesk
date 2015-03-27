@@ -334,9 +334,6 @@ define([
                 // a list of field names aliases - used for fields in retrieved
                 // content whose names differ from what the server expects
                 $scope.fieldAliases = [];
-                // TODO: initialize to existing provider data! same for the
-                // fieldsNotSelected
-                // probably in edit()?
 
                 function fetchProviders() {
                     return api.ingestProviders.query({max_results: 200})
@@ -387,12 +384,29 @@ define([
                 };
 
                 $scope.edit = function(provider) {
+                    var aliases;
+
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
                     $scope.provider.idle_time = $scope.origProvider.idle_time || DEFAULT_IDLE_TIME;
                     $scope.provider.notifications = $scope.origProvider.notifications;
                     $scope.provider.config = $scope.origProvider.config;
+
+                    // init the lists of field aliases and non-selected fields
+                    $scope.fieldAliases = [];
+                    aliases = $scope.origProvider.config.field_aliases || {};
+
+                    Object.keys(aliases).forEach(function (fieldName) {
+                        $scope.fieldAliases.push(
+                            {fieldName: fieldName, alias: aliases[fieldName]});
+                    });
+
+                    $scope.fieldsNotSelected = $scope.contentFields.filter(
+                        function (fieldName) {
+                            return !(fieldName in aliases);
+                        }
+                    );
                 };
 
                 $scope.cancel = function() {
