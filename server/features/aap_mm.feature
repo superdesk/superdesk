@@ -11,7 +11,7 @@ Feature: AAP Multimedia Feature
         """
         [{"name": "Sports"}]
         """
-        When we post to "/aapmm/"
+        When we post to "/aapmm"
         """
         {
         "guid": "20150324001115164080", "desk": "#desks._id#"
