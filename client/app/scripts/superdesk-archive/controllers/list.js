@@ -5,13 +5,14 @@ define([
     'use strict';
 
     ArchiveListController.$inject = [
-        '$scope', '$injector', '$location',
+        '$scope', '$injector', '$location', '$timeout',
         'superdesk', 'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl'
     ];
-    function ArchiveListController($scope, $injector, $location, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
+    function ArchiveListController($scope, $injector, $location, $timeout, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
 
-        var resource;
-        var self = this;
+        var resource,
+            timeout,
+            self = this;
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
 

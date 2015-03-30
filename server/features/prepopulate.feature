@@ -18,24 +18,36 @@ Feature: Prepopulate
 		When we setup test user
 	
         When we get "/users"
-        Then we get list with 2 items
+        Then we get list with 6 items
         """
         {"_items": [{"username":"admin", "first_name":"first name", "last_name":"last name", "user_type": "administrator", "email": "a@a.com"}, 
                    {"username": "test_user"}]}
         """
         
         When we find for "users" the id as "user_admin" by "{"username": "admin"}"
+        When we find for "users" the id as "user_admin1" by "{"username": "admin1"}"
+        When we find for "users" the id as "user_admin2" by "{"username": "admin2"}"
+        When we find for "users" the id as "user_admin3" by "{"username": "admin3"}"
+        When we find for "users" the id as "user_admin4" by "{"username": "admin4"}"
+        
         And we get "/desks"
         Then we get list with 2 items
         """
-        {"_items": [{"members": [{"user": "#user_admin#"}], "name": "Sports Desk"},
-                    {"members": [{"user": "#user_admin#"}], "name": "Politic Desk"}]}
+        {"_items": [{"members": [{"user": "#user_admin#"}, {"user": "#user_admin1#"}, {"user": "#user_admin2#"}, {"user": "#user_admin3#"}], "name": "Sports Desk"},
+                    {"members": [{"user": "#user_admin#"}, {"user": "#user_admin4#"}, {"user": "#user_admin1#"}], "name": "Politic Desk"}]}
         """ 
         
         When we get "/roles"
-        Then we get list with 1 items
+        Then we get list with 4 items
         """
-        {"_items": [{"name": "Editor", "privileges": {"ingest": {"read": 1}}}]}
+        {"_items": [
+        	{"name": "Editor", "privileges": {"ingest": {"read": 1}}},
+        	{"name": "Writer", "privileges": {"ingest": {"read": 1}}},
+        	{"name": "Superadmin", "privileges": {"ingest": {"read": 1}}},
+        	{"name": "admin", "privileges": {"ingest": {"read": 1}}}
+        
+        
+        ]}
         """        
         
 	@auth
@@ -77,9 +89,13 @@ Feature: Prepopulate
         """
 		
         When we get "/users"
-        Then we get list with 3 items
+        Then we get list with 7 items
         """
         {"_items": [{"username":"admin", "first_name":"first name", "last_name":"last name", "user_type": "administrator", "email": "a@a.com"},
+			        {"username":"admin1", "first_name":"first name1", "last_name":"last name1", "user_type": "administrator", "email": "a1@a.com"},
+			        {"username":"admin2", "first_name":"first name2", "last_name":"last name2", "user_type": "administrator", "email": "a2@a.com"},
+			        {"username":"admin3", "first_name":"first name3", "last_name":"last name3", "user_type": "administrator", "email": "a3@a.com"},
+			        {"username":"admin4", "first_name":"first name4", "last_name":"last name4", "user_type": "administrator", "email": "a4@a.com"},
                     {"username": "foo", "email": "foo@bar.com"},
                     {"username": "test_user"}]}
         """

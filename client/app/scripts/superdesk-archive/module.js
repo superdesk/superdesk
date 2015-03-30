@@ -139,6 +139,9 @@ define([
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    },
                     additionalCondition:['desks', 'item', function(desks, item) {
                         return desks.getCurrentDeskId() !== null;
                     }]

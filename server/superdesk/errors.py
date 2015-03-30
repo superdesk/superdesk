@@ -146,7 +146,9 @@ class SuperdeskIngestError(SuperdeskError):
             exception_msg = str(exception)[-200:]
             update_notifiers('error',
                              'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
-                             name=self.provider_name)
+                             resource='ingest_providers' if provider else None,
+                             name=self.provider_name,
+                             provider_id=provider.get('_id', ''))
 
         if provider:
             logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))

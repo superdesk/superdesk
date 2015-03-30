@@ -1,5 +1,29 @@
 [
     {
+    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Editor role-"
+    },
+    
+    {
+    	"data": {"name": "Writer", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Writer role-"
+    },
+    
+    {
+    	"data": {"name": "Superadmin", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id Superadmin role-"
+    },
+    
+    {
+    	"data": {"name": "admin", "privileges": {"ingest": {"read": 1}}},
+    	"resource": "roles",
+    	"id_name": "-id admin role-"
+    },
+    
+    {
         "data": {
             "email": "a@a.com",
             "first_name": "first name",
@@ -7,29 +31,175 @@
             "needs_activation": false,
             "password": "admin",
             "user_type": "administrator",
-            "username": "admin"
+            "username": "admin",
+            "role": "-id Editor role-"
         },
         "id_name": "-id user admin-",
         "resource": "users"
     },
+    
+        {
+        "data": {
+            "email": "a4@a.com",
+            "first_name": "first name4",
+            "last_name": "last name4",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin4",
+            "role": "-id Editor role-"
+        },
+        "id_name": "-id user admin4-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a3@a.com",
+            "first_name": "first name3",
+            "last_name": "last name3",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin3",
+            "role": "-id Writer role-"
+        },
+        "id_name": "-id user admin3-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a2@a.com",
+            "first_name": "first name2",
+            "last_name": "last name2",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin2",
+            "role": "-id Writer role-"
+        },
+        "id_name": "-id user admin2-",
+        "resource": "users"
+    },
+    
+        {
+        "data": {
+            "email": "a1@a.com",
+            "first_name": "first name1",
+            "last_name": "last name1",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin1",
+            "role": "-id Superadmin role-"
+        },
+        "id_name": "-id user admin1-",
+        "resource": "users"
+    },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Sport Desks-"
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}], "name": "Politic Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
     },
 
     {
-    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}},
-    	"resource": "roles"
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Sport Desks-",
+		    "is_visible" : true,
+		    "task_status" : "todo",
+		    "content_expiry" : 43200,
+		    "name" : "one",
+		    "desk_order" : 2
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage one Sport Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Sport Desks-",
+		    "is_visible" : true,
+		    "task_status" : "in_progress",
+		    "content_expiry" : 43200,
+		    "name" : "two",
+		    "desk_order" : 3
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage two Sport Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Sport Desks-",
+		    "is_visible" : true,
+		    "task_status" : "done",
+		    "content_expiry" : 43200,
+		    "name" : "three",
+		    "desk_order" : 4
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage three Sport Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Politic Desks-",
+		    "is_visible" : true,
+		    "task_status" : "todo",
+		    "content_expiry" : 43200,
+		    "name" : "one",
+		    "desk_order" : 2
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage one Politic Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Politic Desks-",
+		    "is_visible" : true,
+		    "task_status" : "in_progress",
+		    "content_expiry" : 43200,
+		    "name" : "two",
+		    "desk_order" : 3
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage two Politic Desks-"
+    },
+    
+    {
+        "data":   {
+		    "default_incoming" : false,
+		    "desk" : "-id desk Politic Desks-",
+		    "is_visible" : true,
+		    "task_status" : "done",
+		    "content_expiry" : 43200,
+		    "name" : "three",
+		    "desk_order" : 4
+		},
+        "resource": "stages",
+        "username": "admin",
+        "id_name": "-id stage three Politic Desks-"
     },
 
     {
@@ -61,13 +231,16 @@
         "username": "admin",
         "data": {
             "headline": "item3",
+            "slugline": "item3 slugline",
             "type": "text",
             "guid": "item3",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
             "task" : {
 		        "desk" : "-id desk Sport Desks-",
-		        "user" : "-id user admin-"
+		        "user" : "-id user admin-",
+		        "status": "todo",
+		        "stage": "-id stage one Sport Desks-"
 		    }
         }
     },
@@ -77,13 +250,16 @@
         "username": "admin",
         "data": {
             "headline": "item4",
+            "slugline": "item4 slugline",
             "type": "text",
             "guid": "item4",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
             "task" : {
 		        "desk" : "-id desk Sport Desks-",
-		        "user" : "-id user admin-"
+		        "user" : "-id user admin1-",
+		        "status": "done",
+		        "stage": "-id stage three Sport Desks-"
 		    }
         }
     },
@@ -93,13 +269,16 @@
         "username": "admin",
         "data": {
             "headline": "item5",
+            "slugline": "item5 slugline",
             "type": "text",
             "guid": "item5",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
-		        "user" : "-id user admin-"
+		        "user" : "-id user admin1-",
+		        "status": "todo",
+		        "stage": "-id stage one Politic Desks-"
 		    }
         }
     },
@@ -109,13 +288,16 @@
         "username": "admin",
         "data": {
             "headline": "item6",
+            "slugline": "item6 slugline",
             "type": "text",
             "guid": "item6",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
-		        "user" : "-id user admin-"
+		        "user" : "-id user admin2-",
+		        "status": "in_progress",
+		        "stage": "-id stage two Politic Desks-"
 		    }
         }
     },

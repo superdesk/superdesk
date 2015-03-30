@@ -15,7 +15,7 @@
         </div>
     </div>
     <div ng-show="!item.is_closed">
-        <div><span class="uppercase" translate>Open</span><span> by {{item.last_opened.display_name  || 'System'}}</span></div>
+        <div><span class="uppercase" translate>Opened</span><span> by {{item.last_opened.display_name  || 'System'}}</span></div>
         <div class="time" ng-show="item.last_opened && item.last_opened.opened_at" translate>
             since {{item.last_opened.opened_at | dateTimeString}}
         </div>
