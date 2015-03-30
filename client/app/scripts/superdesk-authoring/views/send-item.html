@@ -1,14 +1,14 @@
 <div class="send-to-pane" ng-class="{show: view}">
     <header>
-        <h3 translate ng-show="desk">Transform and Send</h3>
-        <h3 translate ng-show="!desk">Submit to</h3>
+        <h3 translate ng-show="mode !== 'archive'">Send</h3>
+        <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
         <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
     </header>
     <div class="content">
         <div class="dropdown desk-select" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
-                <span ng-show="!desk" translate>Select desk</span>
-                <span ng-show="desk">{{desk.name}}</span>
+                <span ng-show="!selectedDesk || selectedDesk._id === 'personal'" translate>Select desk</span>
+                <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
                 <b class="caret white"></b>
             </button>
             <div class="dropdown-menu">
@@ -27,25 +27,33 @@
                     ng-click="selectStage(stage)">{{stage.name}}</button>
             </li>
         </ul>
-        <div>
+        <div ng-if="macros && selectedDesk._id !== 'personal'">
             <header>
                 <h3 translate ng-show="macros">Transformation</h3>
             </header>
             <br />
-            <ul class="btn-list" ng-if="macros">
+            <ul class="btn-list">
                 <li ng-repeat="macro in macros">
                     <button 
                         ng-class="{active: macro.label === selectedMacro.label}" 
-                        ng-disabled="loading === true"
                         ng-click="selectMacro(macro)">{{macro.label}}</button>
                 </li>
             </ul>
         </div>
         <ul class="btn-list">
-            <li><button class="cancel" ng-click="view = !view" translate>cancel</button></li>
-            <li><button class="send" ng-click="send()"
-                ng-disabled="!desk || selectedStage._id === item.task.stage"
-                translate>send</button></li>
+            <li>
+                <button class="cancel" ng-click="close()" translate>cancel</button>
+            </li>
+            <li>
+                <button class="send" ng-click="send()"
+                ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                translate>send</button>
+            </li>
+            <li ng-show="mode !== 'authoring'">
+                <button class="send" ng-click="send(true)"
+                ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                translate>send and open</button>
+            </li>
         </ul>
     </div>
 </div>
