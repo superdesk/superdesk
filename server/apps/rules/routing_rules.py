@@ -267,12 +267,11 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
-                item_id = get_resource_service('fetch') \
-                    .post([{'_id': ingest_item['_id'],
-                            'desk': str(destination.get('desk')),
-                            'stage': str(destination.get('stage')),
-                            'state': STATE_ROUTED,
-                            'macro': destination.get('macro', None)}])[0]
+                item_id = get_resource_service('fetch').fetch([{'_id': ingest_item['_id'],
+                                                                'desk': str(destination.get('desk')),
+                                                                'stage': str(destination.get('stage')),
+                                                                'state': STATE_ROUTED,
+                                                                'macro': destination.get('macro', None)}])[0]
                 archive_items.append(item_id)
             except:
                 logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))

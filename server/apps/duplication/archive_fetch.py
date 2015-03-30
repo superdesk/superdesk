@@ -52,9 +52,9 @@ class FetchResource(Resource):
 class FetchService(BaseService):
 
     def create(self, docs, **kwargs):
-        return self.__fetch(docs, id=request.view_args.get('id'), **kwargs)
+        return self.fetch(docs, id=request.view_args.get('id'), **kwargs)
 
-    def __fetch(self, docs, id=None, **kwargs):
+    def fetch(self, docs, id=None, **kwargs):
         id_of_fetched_items = []
 
         for doc in docs:
@@ -113,7 +113,7 @@ class FetchService(BaseService):
                 for ref in group.get('refs', []) if 'residRef' in ref]
 
         if refs:
-            new_ref_guids = self.__fetch(refs, id=None, notify=False)
+            new_ref_guids = self.fetch(refs, id=None, notify=False)
             count = 0
             for ref in [ref for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]:
