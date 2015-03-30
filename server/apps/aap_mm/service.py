@@ -23,13 +23,14 @@ logger = logging.getLogger(__name__)
 
 STATE_FETCHED = 'fetched'
 
+
 class AapMMService(superdesk.Service):
 
     def create(self, docs, **kwargs):
         new_guids = []
         for doc in docs:
             if not doc.get('desk'):
-            # if no desk is selected then it is bad request
+                # if no desk is selected then it is bad request
                 raise SuperdeskApiError.badRequestError("Destination desk cannot be empty.")
 
             archived_doc = self.backend.find_one_raw(doc['guid'], doc['guid'])
@@ -57,7 +58,6 @@ class AapMMService(superdesk.Service):
     def get(self, req, lookup):
         query = self._get_query(req)
         return self.backend.find('what', query, None)
-
 
     def _get_query(self, req):
         args = getattr(req, 'args', {})

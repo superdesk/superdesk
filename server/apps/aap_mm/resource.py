@@ -22,5 +22,3 @@ class AapMMResource(superdesk.Resource):
         'guid': {'type': 'string', 'required': True},
         'desk': Resource.rel('desks', False, nullable=True)
     }
-
-

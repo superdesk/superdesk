@@ -14,6 +14,6 @@ Feature: AAP Multimedia Feature
         When we post to "/aapmm"
         """
         {
-        "guid": "20150324001115164080", "desk": "#desks._id#"
+        "guid": "20150329001116807745", "desk": "#desks._id#"
         }
         """
