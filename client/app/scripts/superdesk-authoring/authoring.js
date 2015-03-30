@@ -840,7 +840,6 @@
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
 
-                scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
                 scope.macros = null;
@@ -853,6 +852,14 @@
 
                 scope.beforeSend = scope._beforeSend || $q.when;
                 scope.macros = null;
+
+                scope.selectedDesk = null;
+                scope.selectedStage = null;
+                scope.selectedMacro = null;
+
+                scope.task = null;
+
+                scope.beforeSend = scope._beforeSend || $q.when;
 
                 scope.$watch('item', function() {
                     if (scope.item) {
