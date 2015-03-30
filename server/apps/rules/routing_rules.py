@@ -268,7 +268,7 @@ class RoutingRuleSchemeService(BaseService):
         for destination in destinations:
             try:
                 item_id = get_resource_service('fetch') \
-                    .post([{'guid': ingest_item['guid'],
+                    .post([{'_id': ingest_item['_id'],
                             'desk': str(destination.get('desk')),
                             'stage': str(destination.get('stage')),
                             'state': STATE_ROUTED,

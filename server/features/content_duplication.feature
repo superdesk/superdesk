@@ -46,7 +46,7 @@ Feature: Duplication of Content within Desk
       """
       And empty "archive"
       When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-      And we post to "/ingest/tag_reuters.com_2014_newsml_KBN0FL0NM/fetch"
+      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch" with success
       """
       {
       "desk": "#desks._id#"

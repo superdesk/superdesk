@@ -28,6 +28,7 @@ from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 
 
 GUID_TAG = 'tag'
+GUID_FIELD = 'guid'
 GUID_NEWSML = 'newsml'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
@@ -39,27 +40,27 @@ def on_create_item(docs):
         update_dates_for(doc)
         set_original_creator(doc)
 
-        if not doc.get('guid'):
-            doc['guid'] = generate_guid(type=GUID_NEWSML)
+        if not doc.get(GUID_FIELD):
+            doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
 
         if 'family_id' not in doc:
-            doc['family_id'] = doc['guid']
+            doc['family_id'] = doc[GUID_FIELD]
 
         set_default_state(doc, 'draft')
-        doc.setdefault('_id', doc['guid'])
+        doc.setdefault('_id', doc[GUID_FIELD])
 
 
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
-    doc['guid'] = generate_guid(type=GUID_NEWSML)
+    doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
     if 'unique_id' not in doc:
         generate_unique_id_and_name(doc)
 
-    doc.setdefault('_id', doc['guid'])
+    doc.setdefault('_id', doc[GUID_FIELD])
 
 
 def update_dates_for(doc):
@@ -109,7 +110,7 @@ def set_original_creator(doc):
 
 item_url = 'regex("[\w,.:_-]+")'
 
-extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
+extra_response_fields = [GUID_FIELD, 'headline', 'firstcreated', 'versioncreated', 'archived']
 
 aggregations = {
     'type': {'terms': {'field': 'type'}},

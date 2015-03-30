@@ -41,7 +41,7 @@ class FetchResource(Resource):
         }
     }
 
-    url = 'ingest/<{0}:guid>/fetch'.format(item_url)
+    url = 'ingest/<{0}:id>/fetch'.format(item_url)
 
     resource_methods = ['POST']
     item_methods = []
@@ -52,23 +52,23 @@ class FetchResource(Resource):
 class FetchService(BaseService):
 
     def create(self, docs, **kwargs):
-        return self.__fetch(docs, guid=request.view_args.get('guid'), **kwargs)
+        return self.__fetch(docs, id=request.view_args.get('id'), **kwargs)
 
-    def __fetch(self, docs, guid=None, **kwargs):
-        guid_of_fetched_items = []
+    def __fetch(self, docs, id=None, **kwargs):
+        id_of_fetched_items = []
 
         for doc in docs:
-            guid_of_item_to_be_fetched = doc['guid'] if guid is None else guid
+            id_of_item_to_be_fetched = doc.get('_id') if id is None else id
 
             desk_id = doc.get('desk')
             stage_id = doc.get('stage')
 
             ingest_service = get_resource_service('ingest')
-            ingest_doc = ingest_service.find_one(req=None, _id=guid_of_item_to_be_fetched)
+            ingest_doc = ingest_service.find_one(req=None, _id=id_of_item_to_be_fetched)
 
             if not ingest_doc:
-                raise SuperdeskApiError.notFoundError('Fail to found ingest item with guid: %s' %
-                                                      guid_of_item_to_be_fetched)
+                raise SuperdeskApiError.notFoundError('Fail to found ingest item with _id: %s' %
+                                                      id_of_item_to_be_fetched)
 
             if not is_workflow_state_transition_valid('fetch_from_ingest', ingest_doc[config.CONTENT_STATE]):
                 raise InvalidStateTransitionError()
@@ -77,11 +77,11 @@ class FetchService(BaseService):
                 ingest_doc = get_resource_service('macros').execute_macro(ingest_doc, doc.get('macro'))
 
             archived = utcnow()
-            ingest_service.patch(guid_of_item_to_be_fetched, {'archived': archived})
+            ingest_service.patch(id_of_item_to_be_fetched, {'archived': archived})
 
             dest_doc = dict(ingest_doc)
             new_id = generate_guid(type=GUID_TAG)
-            guid_of_fetched_items.append(new_id)
+            id_of_fetched_items.append(new_id)
             dest_doc['_id'] = new_id
             dest_doc['guid'] = new_id
             generate_unique_id_and_name(dest_doc)
@@ -101,20 +101,19 @@ class FetchService(BaseService):
         if kwargs.get('notify', True):
             push_notification('item:fetch', fetched=1)
 
-        return guid_of_fetched_items
+        return id_of_fetched_items
 
     def __fetch_items_in_package(self, dest_doc, desk, stage, state):
         for ref in [ref for group in dest_doc.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
             ref['location'] = ARCHIVE
-            ref['guid'] = ref['residRef']
 
-        refs = [{'guid': ref.get('residRef'), 'desk': desk, 'stage': stage, 'state': state}
+        refs = [{'_id': ref.get('residRef'), 'desk': desk, 'stage': stage, 'state': state}
                 for group in dest_doc.get('groups', [])
                 for ref in group.get('refs', []) if 'residRef' in ref]
 
         if refs:
-            new_ref_guids = self.__fetch(refs, guid=None, notify=False)
+            new_ref_guids = self.__fetch(refs, id=None, notify=False)
             count = 0
             for ref in [ref for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]:

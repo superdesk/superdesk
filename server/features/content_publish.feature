@@ -58,7 +58,7 @@ Feature: Content Publishing
         [{"name": "Sports"}]
         """
     	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-        And we post to "/ingest/tag_reuters.com_2014_newsml_KBN0FL0NM/fetch"
+        And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
         """
         {
         "desk": "#desks._id#"
