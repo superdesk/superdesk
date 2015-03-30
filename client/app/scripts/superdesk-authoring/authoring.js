@@ -827,8 +827,8 @@
         };
     }
 
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$timeout'];
-    function SendItem($q, superdesk, api, desks, notify, $location, macros, $timeout) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope'];
+    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope) {
         return {
             scope: {
                 item: '=',
@@ -840,11 +840,17 @@
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
 
-                scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
-                scope.beforeSend = scope._beforeSend || $q.when;
                 scope.macros = null;
+
+                scope.selectedDesk = null;
+                scope.selectedStage = null;
+                scope.selectedMacro = null;
+
+                scope.task = null;
+
+                scope.beforeSend = scope._beforeSend || $q.when;
 
                 scope.$watch('item', function() {
                     if (scope.item) {
@@ -856,12 +862,16 @@
                 });
 
                 scope.close = function() {
-                    scope.item = null;
+                    if (scope.$parent.views) {
+                        scope.$parent.views.send = false;
+                    } else {
+                        scope.item = null;
+                    }
                     $location.search('fetch', null);
                 };
 
                 scope.selectDesk = function(desk) {
-                    scope.desk = desk;
+                    scope.selectedDesk = _.cloneDeep(desk);
                     scope.selectedStage = null;
                     fetchStages();
                     fetchMacros();
@@ -870,7 +880,6 @@
                 scope.selectStage = function(stage) {
                     scope.selectedStage = stage;
                 };
-
                 scope.selectMacro = function(macro) {
                     if (scope.selectedMacro === macro) {
                         scope.selectedMacro = null;
@@ -878,45 +887,106 @@
                         scope.selectedMacro = macro;
                     }
                 };
-                scope.send = function send() {
-                    if (scope.selectedMacro != null) {
-                        scope.transform(scope.selectedMacro).then(function(result) {
-                            save({
-                                task: _.extend(scope.task.task, {
-                                    desk: scope.desk._id,
-                                    stage: scope.selectedStage._id || scope.desk.incoming_stage
-                                })
-                            });
-                        });
-                    } else {
-                            save({
-                                task: _.extend(scope.task.task, {
-                                    desk: scope.desk._id,
-                                    stage: scope.selectedStage._id || scope.desk.incoming_stage
-                                })
-                            });
+                scope.send = function(open) {
+                    var deskId = scope.selectedDesk._id;
+                    var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
+                    if (scope.mode === 'authoring') {
+                        return sendAuthoring(deskId, stageId, scope.selectedMacro);
+                    } else if (scope.mode === 'archive') {
+                        return sendContent(deskId, stageId, scope.selectedMacro, open);
+                    } else if (scope.mode === 'ingest') {
+                        return sendIngest(deskId, stageId, scope.selectedMacro, open);
                     }
                 };
 
-                scope.transform = function transform(macro) {
-                    notify.success(gettext('Applying Transformation...'));
-                    scope.loading = true;
-                    scope.currentMacro = macro.label;
-                    return macros.call(macro, scope.item).then(function(result) {
-                        scope.loading = false;
-                        return result;
-                    }, function(response) {
-                        notify.error(gettext('Error. Transformation not applied.'));
+                var runMacro = function(item, macro) {
+                    var p;
+                    if (macro) {
+                        p = macros.call(macro, item)
+                        .then(function(result) {
+                            return api.save('archive', item, extendItem({}, result));
+                        });
+                    } else {
+                        p = $q.when(item);
+                    }
+                    return p;
+                };
+
+                var sendAuthoring = function(deskId, stageId, macro) {
+                    runMacro(scope.item, macro)
+                    .then(function(item) {
+                        api.find('tasks', scope.item._id)
+                        .then(function(task) {
+                            scope.task = task;
+                            return scope.beforeSend();
+                        })
+                        .then(function(result) {
+                            if (result && result._etag) {
+                                scope.task._etag = result._etag;
+                            }
+                            return api.save('tasks', scope.task, {
+                                task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
+                            });
+                        })
+                        .then(function() {
+                            notify.success(gettext('Item sent.'));
+                            $location.url(scope.$parent.referrerUrl);
+                        });
                     });
                 };
 
-                function fetchMacros() {
-                    if (scope.desk != null) {
-                            macros.getByDesk(scope.desk.name).then(function(_macros) {
-                            scope.macros = _macros;
+                var sendContent = function(deskId, stageId, macro, open) {
+                    var finalItem;
+                    api.save('duplicate', {}, {desk: scope.item.task.desk}, scope.item)
+                    .then(function(item) {
+                        return api.find('archive', item._id);
+                    })
+                    .then(function(item) {
+                        return runMacro(item, macro);
+                    })
+                    .then(function(item) {
+                        finalItem = item;
+                        return api.find('tasks', item._id);
+                    })
+                    .then(function(_task) {
+                        scope.task = _task;
+                        api.save('tasks', scope.task, {
+                            task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
                         });
-                    }
-                }
+                    })
+                    .then(function() {
+                        notify.success(gettext('Item sent.'));
+                        $rootScope.$broadcast('item:fetch');
+                        if (open) {
+                            superdesk.intent('author', 'article', finalItem);
+                        }
+                    });
+                };
+
+                var sendIngest = function(deskId, stageId, macro, open) {
+                    var finalItem;
+                    api.save('fetch', {}, {desk: deskId}, scope.item)
+                    .then(function(item) {
+                        return runMacro(item, macro);
+                    })
+                    .then(function(item) {
+                        finalItem = item;
+                        return api.find('tasks', item._id);
+                    })
+                    .then(function(_task) {
+                        scope.task = _task;
+                        api.save('tasks', scope.task, {
+                            task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
+                        });
+                    })
+                    .then(function() {
+                        notify.success(gettext('Item fetched.'));
+                        $rootScope.$broadcast('item:fetch');
+                        if (open) {
+                            superdesk.intent('author', 'article', finalItem);
+                        }
+                    });
+                };
 
                 function fetchDesks() {
                     var p = desks.initialize()
@@ -926,15 +996,16 @@
 
                     if (scope.mode === 'ingest') {
                         p = p.then(function() {
-                            scope.desk = desks.getCurrentDesk();
+                            scope.selectDesk(desks.getCurrentDesk());
                         });
                     } else {
                         p = p.then(function() {
-                            scope.desk = desks.getItemDesk(scope.item);
-                            return api.find('tasks', scope.item._id);
-                        })
-                        .then(function(_task) {
-                            scope.task = _task;
+                            var itemDesk = desks.getItemDesk(scope.item);
+                            if (itemDesk) {
+                                scope.selectDesk(itemDesk);
+                            } else {
+                                scope.selectDesk(desks.getCurrentDesk());
+                            }
                         });
                     }
 
@@ -942,28 +1013,19 @@
                 }
 
                 function fetchStages() {
-                    if (scope.desk) {
-                        scope.stages = desks.deskStages[scope.desk._id];
-                        scope.selectedStage = _.find(scope.stages, {_id: scope.desk.incoming_stage});
+                    if (scope.selectedDesk) {
+                        scope.stages = desks.deskStages[scope.selectedDesk._id];
+                        scope.selectedStage = _.find(scope.stages, {_id: scope.selectedDesk.incoming_stage});
                     }
                 }
 
-                function save(data) {
-                    scope.beforeSend()
-                    .then(function(result) {
-		    			if (result && result._etag) {
-                            scope.task._etag = result._etag;
-                        }
-                        return api.save('tasks', scope.task, data).then(gotoPreviousScreen);
-                    })
-                    .then(function() {
-                        scope.close();
-                    });
-                }
-
-                function gotoPreviousScreen($scope) {
-                    notify.success(gettext('Item sent.'));
-                    $location.url(scope.$parent.referrerUrl);
+                function fetchMacros() {
+                    if (scope.selectedDesk != null) {
+                            macros.getByDesk(scope.selectedDesk.name)
+                            .then(function(_macros) {
+                            scope.macros = _macros;
+                        });
+                    }
                 }
             }
         };
