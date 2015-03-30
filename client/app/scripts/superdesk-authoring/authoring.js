@@ -832,12 +832,10 @@
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
 
-                scope.item = null;
-
                 scope.desks = null;
                 scope.stages = null;
                 scope.macros = null;
-                
+
                 scope.selectedDesk = null;
                 scope.selectedStage = null;
                 scope.selectedMacro = null;
@@ -856,7 +854,7 @@
                 });
 
                 scope.close = function() {
-                    scope.item = null;
+                    scope.$parent.views.send = false;
                     $location.search('fetch', null);
                 };
 
@@ -905,7 +903,11 @@
                 var sendAuthoring = function(deskId, stageId, macro) {
                     runMacro(scope.item, macro)
                     .then(function(item) {
-                        scope.beforeSend()
+                        api.find('tasks', scope.item._id)
+                        .then(function(task) {
+                            scope.task = task;
+                            return scope.beforeSend();
+                        })
                         .then(function(result) {
                             if (result && result._etag) {
                                 scope.task._etag = result._etag;
@@ -967,12 +969,19 @@
                         });
                     } else {
                         p = p.then(function() {
-                            scope.selectedDesk = desks.getItemDesk(scope.item);
-                            return api.find('tasks', scope.item._id);
+                            var itemDesk = desks.getItemDesk(scope.item);
+                            if (itemDesk) {
+                                scope.selectDesk(itemDesk);
+                            } else {
+                                scope.selectDesk(desks.getCurrentDesk());
+                            }
+                            //return (scope.selectedDesk._id === 'personal') ? $q.when() : api.find('tasks', scope.item._id);
                         })
+                        /*
                         .then(function(_task) {
+                            console.log(_task);
                             scope.task = _task;
-                        });
+                        })*/;
                     }
 
                     return p;

@@ -7,7 +7,7 @@
     <div class="content">
         <div class="dropdown desk-select" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
-                <span ng-show="!selectedDesk" translate>Select desk</span>
+                <span ng-show="!selectedDesk || selectedDesk._id === 'personal'" translate>Select desk</span>
                 <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
                 <b class="caret white"></b>
             </button>
@@ -27,12 +27,12 @@
                     ng-click="selectStage(stage)">{{stage.name}}</button>
             </li>
         </ul>
-        <div>
+        <div ng-if="macros && selectedDesk._id !== 'personal'">
             <header>
                 <h3 translate ng-show="macros">Transformation</h3>
             </header>
             <br />
-            <ul class="btn-list" ng-if="macros">
+            <ul class="btn-list">
                 <li ng-repeat="macro in macros">
                     <button 
                         ng-class="{active: macro.label === selectedMacro.label}" 
