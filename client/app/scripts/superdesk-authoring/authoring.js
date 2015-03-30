@@ -950,6 +950,8 @@
                     })
                     .then(function() {
                         scope.close();
+		    			scope.task._etag = result._etag;
+                        api.save('move', {}, data, scope.task).then(gotoPreviousScreen);
                     });
                 }
 
@@ -1071,7 +1073,16 @@
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
                         }]
-                    }
+                    },
+                    authoring: true
 	            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('move', {
+                type: 'http',
+                backend: {
+                    rel: 'move'
+                }
+            });
         }]);
 })();

@@ -1,5 +1,5 @@
 <ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
-	<li ng-repeat="item in items" >
+	<li ng-repeat="item in items track by item._id" class="item">
 		<figure class="avatar small" title="{{item.display_name}}"><img sd-user-avatar data-src="item.picture_url"></figure>
 		<div class="text">
 			{{item.display_name}}

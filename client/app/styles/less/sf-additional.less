@@ -266,7 +266,7 @@
 		background-position: 0 -15px;
 		cursor: pointer;
 	}
-	&.checked {
+	&.checked, &[checked="checked"] {
 		background-position: 0 -30px !important;
 		&:hover {
 			background-position: 0 -30px !important;
@@ -328,7 +328,7 @@
 		overflow-x: hidden;
 		.box-sizing(border-box);
 		background: #fff;
-		border: 1px solid #bbb;
+		border: 1px #bbb;
 		.box-shadow(0 0 3px 0 #ccc);
 		position: absolute;
 		right: -5px;
@@ -607,11 +607,15 @@
 	height: 28px;
 	line-height: 24px;
 	margin-top: -5px;
+	&.white {
+		background: transparent url('../../images/back-arrow-white.png') no-repeat 5px 7px;
+	}
 	&:hover {
 		background-position: 0 7px;
 		text-decoration: none;
 		color: @sd-text;
 	}
+
 }
 
 
@@ -917,8 +921,7 @@
 	}
 }
 header .sortbar {
-	margin: 10px;
-	border-right: 1px solid #dfdfdf;
+	margin: 10px 5px;
 	padding: 3px 10px;
 }
 
@@ -1023,6 +1026,9 @@ header .sortbar {
 		&.active {
 			background: @sd-blue;
 		}
+        &.inactive {
+          color: #ccc;
+        }
 	}
 }
 
@@ -1442,12 +1448,18 @@ header .sortbar {
 			border-bottom: 1px solid #dcdcdc;
 			height: 1px;
 			top:9px;
-			left:20px;
+			left:0;
 			right: 0px;
 		}
 		.chevron {
-			.transition(all 0.2s ease);
-			.rotate(90deg);
+			padding: 2px;
+			background-color: @tabpane-background;
+			position: relative;
+			bottom: 2px;
+			i {
+				.transition(all 0.2s ease);
+				.rotate(90deg);
+			}
 		}
 		h6 {
 			background: @tabpane-background;
@@ -1456,10 +1468,10 @@ header .sortbar {
 			text-transform: uppercase;
 			color: #666;
 			position: relative;
-			display: 	inline-block;
+			display: inline-block;
 		}
 		&:hover {
-				cursor: pointer;
+			cursor: pointer;
 		}
 
 	}
@@ -1472,8 +1484,23 @@ header .sortbar {
 	}
 
 	&.hidden {
-		> header .chevron {
+		> header .chevron i {
 			.rotate(0);
+		}
+	}
+
+	&.pane {
+		> header {
+			text-align: center;	
+		}
+		.chevron i {
+			.rotate(-90deg);
+			
+		}
+		&.hidden {
+			> header .chevron i {
+				.rotate(90deg);
+			}
 		}
 	}
 

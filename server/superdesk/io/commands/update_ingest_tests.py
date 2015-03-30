@@ -124,11 +124,11 @@ class UpdateIngestTest(TestCase):
 
     def test_change_last_updated(self):
         with self.app.app_context():
-            test_provider = {'type': 'test', '_etag': 'test'}
-            self.app.data.insert('ingest_providers', [test_provider])
+            ingest_provider = {'type': 'test', '_etag': 'test'}
+            self.app.data.insert('ingest_providers', [ingest_provider])
 
-            ingest.update_provider(test_provider)
-            provider = self.app.data.find_one('ingest_providers', req=None, _id=test_provider['_id'])
+            ingest.update_provider(ingest_provider)
+            provider = self.app.data.find_one('ingest_providers', req=None, _id=ingest_provider['_id'])
             self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
             self.assertEqual('test', provider.get('_etag'))
 

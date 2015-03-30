@@ -44,17 +44,21 @@ find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
+docker-compose pull &&
 docker-compose build &&
 docker-compose up -d &&
 
-# run backend unit tests:
-docker-compose run backend ./scripts/fig_wrapper.sh nosetests -sv --with-xunit --xunit-file=./results-unit/unit.xml &&
+(
+	# run backend unit tests:
+	docker-compose run backend ./scripts/fig_wrapper.sh nosetests -sv --with-xunit --xunit-file=./results-unit/unit.xml ;
 
-# run backend behavior tests:
-docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR &&
+	# run backend behavior tests:
+	docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR ;
 
-# run frontend unit tests:
-docker-compose run frontend bash -c "grunt bamboo && mv test-results.xml ./unit-test-results/" &&
+	# run frontend unit tests:
+	docker-compose run frontend bash -c "grunt bamboo && mv test-results.xml ./unit-test-results/" ;
+	true
+) &&
 
 # create admin user:
 docker-compose run backend ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true &&
@@ -68,14 +72,18 @@ echo "+++ new user has been created" &&
 	mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR &&
 		echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
 	true
-);
+) &&
 CODE="$?"
+
+echo "===clean-up:"
 (
-	echo "===clean-up:"
 	docker-compose stop;
 	docker-compose kill;
-	docker-compose rm --force;
 	killall chromedriver;
-	echo "+++clean-up done"
-) &&
+);
+test $CODE -gt 0 && (
+	docker-compose rm --force;
+) ;
+echo "+++clean-up done"
+
 exit $CODE

@@ -15,9 +15,9 @@ define(['angular', 'lodash'], function(angular, _) {
                     'feature:preview': 1,
                     'archive:view': 1,
                     'email:notification': 1,
-                    'workqueue:items': 1
+                    'workqueue:items': 1,
+                    'dashboard:ingest': 1
                 },
-                api,
                 original_preferences = null,
                 defaultPreferences = {};
 
@@ -26,24 +26,19 @@ define(['angular', 'lodash'], function(angular, _) {
             defaultPreferences[ACTIVE_PRIVILEGES] = {};
             defaultPreferences[ACTIONS] = {};
 
-            function saveLocally(preferences, type, key) {
-
-                if (type && key && original_preferences)
-                {
-                    original_preferences[type][key] = preferences[type][key];
-                    original_preferences._etag = preferences._etag;
-                } else
-                {
+            function saveLocally(preferences, type) {
+                if (type && original_preferences) {
+                    angular.extend(original_preferences[type], preferences[type]);
+                } else {
                     original_preferences = preferences;
                 }
 
+                original_preferences._etag = preferences._etag;
                 storage.setItem(PREFERENCES, original_preferences);
             }
 
-            function loadLocally()
-            {
-                if (!original_preferences)
-                {
+            function loadLocally() {
+                if (!original_preferences) {
                     original_preferences = storage.getItem(PREFERENCES);
                 }
 
@@ -70,7 +65,7 @@ define(['angular', 'lodash'], function(angular, _) {
             };
 
             function getPreferences(sessionId, key) {
-                if (!api) { api = $injector.get('api'); }
+                var api = $injector.get('api');
 
                 if (!sessionId) {
                     return $q.reject();
@@ -127,12 +122,15 @@ define(['angular', 'lodash'], function(angular, _) {
             };
 
             function updatePreferences(type, updates, key) {
-
+                var api = $injector.get('api');
                 var original_prefs = _.cloneDeep(loadLocally());
                 var user_updates = {};
                 user_updates[type] = updates;
 
-                if (!api) { api = $injector.get('api'); }
+                if (type) {
+                    // make changes available right away
+                    angular.extend(original_preferences[type], updates);
+                }
 
                 return api.save('preferences', original_prefs, user_updates)
                 .then(function(result) {
@@ -148,5 +146,4 @@ define(['angular', 'lodash'], function(angular, _) {
                 return session.sessionId;
             }, getPreferences);
     }]);
-
 });

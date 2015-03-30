@@ -22,6 +22,7 @@ define([
 				$scope.title = attrs.title;
 				$scope.isOpen = attrs.open === 'true';
 				$scope.icon = attrs.icon;
+				$scope.mode = attrs.mode;
 				$scope.toggleModule = function() {
 					$scope.isOpen = !$scope.isOpen;
 				};

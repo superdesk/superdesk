@@ -68,7 +68,7 @@
 							<p ng-if="message">{{ message }}</p>
 							<div class="member-list clearfix">
 								<ul>
-									<li ng-repeat="user in groupMembers">
+									<li ng-repeat="user in groupMembers" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
 										<i class="icon-close-small" ng-click="remove(user)"></i>
 										<figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
 										<div class="name">{{user.display_name}}</div>
