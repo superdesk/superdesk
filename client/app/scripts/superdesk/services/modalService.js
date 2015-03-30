@@ -48,7 +48,7 @@ define(['angular'], function(angular) {
 
             return {
                 template: [
-                    '<div class="modal fade hide">',
+                    '<div class="modal">',
                     '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
                     '</div>'].join(''),
                 transclude: true,

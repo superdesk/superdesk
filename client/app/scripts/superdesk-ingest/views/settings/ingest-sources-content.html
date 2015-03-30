@@ -5,7 +5,7 @@
             <i class="icon-plus-sign icon-white"></i> <span translate>Add New Source</span>
         </button>
     </div>
-    
+
     <div class="content">
         <ul class="pills-list provider-list">
             <li ng-repeat="provider in providers._items" class="clearfix">
@@ -14,7 +14,7 @@
                     <div class="last-updated" ng-if="provider.last_updated">
                         <span translate>Last updated</span> {{ provider.last_updated | reldate }}
                     </div>
-                    <div class="actions"> 
+                    <div class="actions">
                         <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
                         <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
                     </div>
@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div sd-modal-view data-model="provider" class="ingestsource-modal">
+<div sd-modal data-model="provider" class="ingestsource-modal">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
         <h3 translate ng-show="provider._id" translate>Edit Source "{{ origProvider.name }}"</h3>
         <h3 translate ng-hide="provider._id" translate>Add New Source</h3>
@@ -41,7 +41,7 @@
                                             <span sd-switch-inverted ng-model="provider.is_closed"></span>
                                         </span>
                                     </div>
-                                    <div class="field">                                        
+                                    <div class="field">
                                         <label for="provider-type" translate>Source Type</label>
                                         <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
                                     </div>
@@ -73,7 +73,7 @@
                                             <select id="idle-hours" class="input-mini"
                                                 ng-model="provider.idle_time.hours"
                                                 ng-options="hrs as hrs for hrs in hours"
-                                            ></select> <span translate>hrs</span>       
+                                            ></select> <span translate>hrs</span>
                                             <select id="idle-minutes" class="input-mini"
                                                 ng-model="provider.idle_time.minutes"
                                                 ng-options="min as min for min in minutes"
@@ -96,14 +96,14 @@
                                         <select ng-model="provider.routing_scheme" ng-options="rs._id as rs.name for rs in routingScheme">
                                             <option value=""></option>
                                         </select>
-                                    </div>                                   
+                                    </div>
                             </tab>
                             <tab heading="Notification" class="TabContent">
                                 <div class="field field-horizontal">
                                     <label translate>Update</label>
                                     <span sd-switch ng-model="provider.notifications.on_update"></span>
                                 </div>
-                                <div class="field field-horizontal">  
+                                <div class="field field-horizontal">
                                     <label translate>Close</label>
                                     <span sd-switch ng-model="provider.notifications.on_close"></span>
                                 </div>
@@ -117,7 +117,7 @@
                                 </div>
                             </tab>
                     </tabset>
-                </div>                    
+                </div>
             </fieldset>
         </form>
     </div>
