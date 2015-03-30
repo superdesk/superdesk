@@ -854,7 +854,11 @@
                 });
 
                 scope.close = function() {
-                    scope.$parent.views.send = false;
+                    if (scope.$parent.views) {
+                        scope.$parent.views.send = false;
+                    } else {
+                        scope.item = null;
+                    }
                     $location.search('fetch', null);
                 };
 
@@ -925,7 +929,7 @@
 
                 var sendContent = function(deskId, stageId, macro, open) {
                     var finalItem;
-                    var p = api.save('duplicate', {}, {desk: scope.item.task.desk}, scope.item)
+                    api.save('duplicate', {}, {desk: scope.item.task.desk}, scope.item)
                     .then(function(item) {
                         return api.find('archive', item._id);
                     })
@@ -945,16 +949,35 @@
                     .then(function() {
                         notify.success(gettext('Item sent.'));
                         $rootScope.$broadcast('item:fetch');
-                    });
-                    if (open) {
-                        p.then(function() {
+                        if (open) {
                             superdesk.intent('author', 'article', finalItem);
-                        });
-                    }
+                        }
+                    });
                 };
 
-                var sendIngest = function(open) {
-
+                var sendIngest = function(deskId, stageId, macro, open) {
+                    var finalItem;
+                    api.save('fetch', {}, {desk: deskId}, scope.item)
+                    .then(function(item) {
+                        return runMacro(item, macro);
+                    })
+                    .then(function(item) {
+                        finalItem = item;
+                        return api.find('tasks', item._id);
+                    })
+                    .then(function(_task) {
+                        scope.task = _task;
+                        api.save('tasks', scope.task, {
+                            task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
+                        });
+                    })
+                    .then(function() {
+                        notify.success(gettext('Item fetched.'));
+                        $rootScope.$broadcast('item:fetch');
+                        if (open) {
+                            superdesk.intent('author', 'article', finalItem);
+                        }
+                    });
                 };
 
                 function fetchDesks() {
@@ -965,7 +988,7 @@
 
                     if (scope.mode === 'ingest') {
                         p = p.then(function() {
-                            scope.selectedDesk = desks.getCurrentDesk();
+                            scope.selectDesk(desks.getCurrentDesk());
                         });
                     } else {
                         p = p.then(function() {
@@ -975,13 +998,7 @@
                             } else {
                                 scope.selectDesk(desks.getCurrentDesk());
                             }
-                            //return (scope.selectedDesk._id === 'personal') ? $q.when() : api.find('tasks', scope.item._id);
-                        })
-                        /*
-                        .then(function(_task) {
-                            console.log(_task);
-                            scope.task = _task;
-                        })*/;
+                        });
                     }
 
                     return p;
