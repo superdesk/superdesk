@@ -32,7 +32,7 @@ Feature: Desks
         And we delete latest
         Then we get error 403
         """
-        {"_status": "ERR", "_message": "Deleting default stages is not allowed."}
+        {"_status": "ERR", "_message": "Cannot delete a default stage."}
         """
 
 	@auth
@@ -94,3 +94,43 @@ Feature: Desks
             {"name": "SportS DesK"}
              """
 		Then we get response code 400
+
+    @auth
+    Scenario: Cannot delete desk if it is assigned as a default desk to user(s)
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
+        """
+        And "desks"
+        """
+        [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
+        """
+        When we patch "/users/#users._id#"
+        """
+        {"desk": "#desks._id#"}
+        """
+        And we delete "/desks/#desks._id#"
+        Then we get error 412
+        """
+        {"_message": "Cannot delete desk as it is assigned as default desk to user(s)."}
+        """
+
+    @auth
+    Scenario: Cannot delete desk if it is assigned as a default desk to user(s)
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
+        """
+        And "desks"
+        """
+        [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
+        """
+        When we patch "/users/#users._id#"
+        """
+        {"desk": "#desks._id#"}
+        """
+        And we delete "/desks/#desks._id#"
+        Then we get error 412
+        """
+        {"_message": "Cannot delete desk as it is assigned as default desk to user(s)."}
+        """

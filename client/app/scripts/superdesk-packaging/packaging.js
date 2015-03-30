@@ -92,6 +92,18 @@
              _.extend(current, {groups: origGroups});
         };
 
+        this.fetchItem = function(packageItem) {
+            var repo = packageItem.location || 'ingest';
+            return api(repo).getById(packageItem.residRef)
+                .then(function(item) {
+                    return item;
+                }, function(response) {
+                    if (response.status === 404) {
+                        console.log('Item not found');
+                    }
+                });
+        };
+
         function getGroupFor(item, idRef) {
             var refs = [];
             if (item) {
@@ -127,6 +139,7 @@
                 itemClass: item.type ? ('icls:' + item.type) : ''
             };
         }
+
     }
 
     PackagingController.$inject = ['$scope', 'item', 'packages', '$location'];
@@ -567,7 +580,8 @@
                     item: ['$route', 'authoring', function($route, authoring) {
                         return authoring.open($route.current.params._id, true);
                     }]
-                }
+                },
+                authoring: true
             })
             .activity('create.package', {
                 label: gettext('Create package'),

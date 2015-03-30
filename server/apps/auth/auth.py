@@ -36,6 +36,9 @@ class AuthUsersResource(Resource):
         },
         'is_active': {
             'type': 'boolean'
+        },
+        'is_enabled': {
+            'type': 'boolean'
         }
     }
     item_methods = []

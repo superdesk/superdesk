@@ -45,9 +45,9 @@ Feature: Content Spiking
             """
             [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
             """
-        When we post to "/archive_ingest"
+        When we post to "/ingest/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E/fetch"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"desk": "#desks._id#"}
             """
         Then we get "_id"
         When we spike fetched item

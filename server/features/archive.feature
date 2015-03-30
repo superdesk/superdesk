@@ -281,7 +281,7 @@ Feature: News Items Archive
         Then we get response code 200
 
 	@auth
-	Scenario: Unique Name can be updated by be user has privileges
+	Scenario: Unique Name can be updated only by user having privileges
 	    Given the "archive"
 	    """
         [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},
@@ -355,3 +355,21 @@ Feature: News Items Archive
         """
         {"_items": [{"state": "in_progress"}]}
         """
+
+    @auth
+    Scenario: Cannot delete desk when it has article(s)
+      Given empty "desks"
+      And empty "archive"
+      When we post to "/desks"
+      """
+      {"name": "Sports"}
+      """
+      And we post to "/archive"
+      """
+      [{"type": "text", "body_html": "<p>content</p>", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we delete "/desks/#desks._id#"
+      Then we get error 412
+      """
+      {"_message": "Cannot delete desk as it has article(s)."}
+      """

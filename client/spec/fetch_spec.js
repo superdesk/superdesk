@@ -10,6 +10,31 @@ describe('Fetch', function() {
 
     beforeEach(function(done) {openUrl('/#/workspace/content').then(done);});
 
+    it('items in personal should have copy icon and in desk should have duplicate icon',
+        function() {
+            var itemEL;
+
+            workspace.switchToDesk('SPORTS DESK').then(content.setListView);
+            content.getItem(0).waitReady().then(
+                function(elem) {
+                    itemEL = elem;
+                    return browser.actions().mouseMove(itemEL).perform();
+                }).then(function() {
+                    expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
+                    expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
+                });
+
+            workspace.switchToDesk('PERSONAL').then(content.setListView);
+            content.getItem(0).waitReady().then(
+                function(elem) {
+                    itemEL = elem;
+                    return browser.actions().mouseMove(itemEL).perform();
+                }).then(function() {
+                    expect(itemEL.element(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
+                    expect(browser.driver.isElementPresent(by.css('[title="Duplicate"]'))).toBe(false);
+                });
+    });
+
     it('can fetch from ingest with keyboards', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
@@ -81,7 +106,6 @@ describe('Fetch', function() {
     it('can fetch from content with menu', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
         changeUrl('/#/workspace/ingest').then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
@@ -96,8 +120,7 @@ describe('Fetch', function() {
             content.setListView
         );
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
-
-        content.actionOnItem('Fetch', 0).then(function() {
+        content.actionOnItem('Duplicate', 0).then(function() {
             return workspace.switchToDesk('PERSONAL');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');

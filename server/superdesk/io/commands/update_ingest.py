@@ -159,9 +159,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     updates the provider.
     """
     update = {
-        LAST_UPDATED: utcnow(),
-        # Providing the _etag as system updates to the documents shouldn't override _etag.
-        app.config['ETAG']: provider.get(app.config['ETAG'])
+        LAST_UPDATED: utcnow()
     }
 
     for items in providers[provider.get('type')].update(provider):
@@ -170,18 +168,19 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
         if items:
             update[LAST_ITEM_UPDATE] = utcnow()
 
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], update, provider)
+    superdesk.get_resource_service('ingest_providers').system_update(provider['_id'], update, provider)
 
     if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
         notify_and_add_activity(
             ACTIVITY_EVENT,
             'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
+            resource='ingest_providers',
             user_list=superdesk.get_resource_service('ingest_providers')._get_administrators(),
             name=provider.get('name'),
             last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
-    push_notification('ingest:update')
+    push_notification('ingest:update', provider_id=str(provider['_id']))
 
 
 def process_anpa_category(item, provider):
@@ -214,7 +213,6 @@ def process_iptc_codes(item, provider):
 
         for subject in item['subject']:
             if 'qcode' in subject and len(subject['qcode']) == 8:
-
                 top_qcode = subject['qcode'][:2] + '000000'
                 if not iptc_already_exists(top_qcode):
                     item['subject'].append({'qcode': top_qcode, 'name': subject_codes[top_qcode]})

@@ -509,3 +509,35 @@ Feature: Routing Scheme and Routing Rules
         """
       When we delete "/routing_schemes/#routing_schemes._id#"
       Then we get response code 403
+
+    @auth
+    Scenario: Cannot delete desk when routing schemes are associated
+      Given empty "desks"
+      When we post to "/desks"
+      """
+      {"name": "Sports"}
+      """
+      And we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                  "category": [{"name": "Overseas Sport", "qcode": "S"}]
+                  },
+              "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+                  }
+            }
+          ]
+        }
+      ]
+      """
+      And we delete "/desks/#desks._id#"
+      Then we get error 412
+      """
+      {"_message": "Cannot delete desk as routing scheme(s) are associated with the desk"}
+      """

@@ -375,6 +375,13 @@ def when_we_get_url(context, url):
     context.response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
 
 
+@when('we get dictionary "{dictionary_id}"')
+def when_we_get_dictionary(context, dictionary_id):
+    dictionary_id = apply_placeholders(context, dictionary_id)
+    url = '/dictionaries/' + dictionary_id + '?projection={"content": 1}'
+    return when_we_get_url(context, url)
+
+
 @then('we get latest')
 def steo_impl_we_get_latest(context):
     data = get_json_data(context.response)
@@ -501,30 +508,46 @@ def step_impl_when_restore_version(context, version):
 
 @when('we upload a file "{filename}" to "{dest}"')
 def step_impl_when_upload_image(context, filename, dest):
-    upload_file(context, dest, filename)
+    upload_file(context, dest, filename, 'media')
 
 
 @when('we upload a binary file with cropping')
 def step_impl_when_upload_with_crop(context):
     data = {'CropTop': '0', 'CropLeft': '0', 'CropBottom': '333', 'CropRight': '333'}
-    upload_file(context, '/upload', 'bike.jpg', data)
+    upload_file(context, '/upload', 'bike.jpg', 'media', data)
 
 
 @when('upload a file "{file_name}" to "{destination}" with "{guid}"')
 def step_impl_when_upload_image_with_guid(context, file_name, destination, guid):
-    upload_file(context, destination, file_name, {'guid': guid})
+    upload_file(context, destination, file_name, 'media', {'guid': guid})
 
 
-def upload_file(context, dest, filename, extra_data=None):
+@when('we upload a new dictionary with success')
+def when_upload_dictionary(context):
+    data = json.loads(apply_placeholders(context, context.text))
+    upload_file(context, '/dictionary_upload', 'test_dict.txt', 'dictionary_file', data)
+    assert_ok(context.response)
+
+
+@when('we upload to an existing dictionary with success')
+def when_upload_patch_dictionary(context):
+    data = json.loads(apply_placeholders(context, context.text))
+    url = apply_placeholders(context, '/dictionary_upload/#dictionary_upload._id#')
+    etag = apply_placeholders(context, '#dictionary_upload._etag#')
+    upload_file(context, url, 'test_dict2.txt', 'dictionary_file', data, 'patch', [('If-Match', etag)])
+    assert_ok(context.response)
+
+
+def upload_file(context, dest, filename, file_field, extra_data=None, method='post', user_headers=[]):
     with open(get_fixture_path(filename), 'rb') as f:
-        data = {'media': f}
-
+        data = {file_field: f}
         if extra_data:
             data.update(extra_data)
         headers = [('Content-Type', 'multipart/form-data')]
+        headers.extend(user_headers)
         headers = unique_headers(headers, context.headers)
         url = get_prefixed_url(context.app, dest)
-        context.response = context.client.post(url, data=data, headers=headers)
+        context.response = getattr(context.client, method)(url, data=data, headers=headers)
         assert_ok(context.response)
         store_placeholder(context, url)
 
@@ -780,11 +803,6 @@ def check_thumbnail_rendition(context):
 def check_rendition(context, rendition_name):
     rv = parse_json_response(context.response)
     assert rv['renditions'][rendition_name] != context.renditions[rendition_name], rv['renditions']
-
-
-@then('we get archive ingest result')
-def step_impl_then_get_archive_ingest_result(context):
-    assert_200(context.response)
 
 
 @then('we get "{key}"')
@@ -1253,14 +1271,24 @@ def then_we_get_activity(context):
             set_placeholder(context, 'USERS_ID', item['user'])
 
 
-@given('we login as user "{username}" with password "{password}"')
-def when_we_login_as_user(context, username, password):
-    user = {'username': username, 'password': password, 'is_active': True, 'needs_activation': False}
+def login_as(context, username, password):
+    user = {'username': username, 'password': password, 'is_active': True,
+            'is_enabled': True, 'needs_activation': False}
 
     if context.text:
         user.update(json.loads(context.text))
 
     tests.setup_auth_user(context, user)
+
+
+@given('we login as user "{username}" with password "{password}"')
+def given_we_login_as_user(context, username, password):
+    login_as(context, username, password)
+
+
+@when('we login as user "{username}" with password "{password}"')
+def when_we_login_as_user(context, username, password):
+    login_as(context, username, password)
 
 
 def is_user_resource(resource):

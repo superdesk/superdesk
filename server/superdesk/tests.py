@@ -26,6 +26,7 @@ test_user = {
     'username': 'test_user',
     'password': 'test_password',
     'is_active': True,
+    'is_enabled': True,
     'needs_activation': False,
     'email': 'behave_test@sourcefabric.org',
     'preferences': {

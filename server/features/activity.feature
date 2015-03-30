@@ -20,7 +20,7 @@ Feature: User Activity
          When we get "/activity/"
          Then we get existing resource
          	"""
-         	{"_items": [{"data": {"user": "foo"}, "message": "removed user {{user}}"}]}
+         	{"_items": [{"data": {"user": "foo"}, "message": "disabled user {{user}}"}]}
          	"""
 
     @auth

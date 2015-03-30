@@ -65,6 +65,9 @@ class CreateUserCommand(superdesk.Command):
 
 
 class HashUserPasswordsCommand(superdesk.Command):
+    """
+    Hash all the user passwords which are not hashed yet.
+    """
     def run(self):
         users = superdesk.get_resource_service('auth_users').get(req=None, lookup={})
         for user in users:
@@ -78,6 +81,10 @@ class HashUserPasswordsCommand(superdesk.Command):
 
 
 class GetAuthTokenCommand(superdesk.Command):
+    """
+    Generate an authorization token to be able to authenticate against the REST api without
+    starting the client the copy the authorization header.
+    """
 
     option_list = (
         superdesk.Option('--username', '-u', dest='username', required=True),

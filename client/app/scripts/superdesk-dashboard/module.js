@@ -16,47 +16,19 @@ define([
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
 
-                scope.select = function selectDesk(desk, reloadRoute) {
-                    if (angular.isUndefined(reloadRoute)) {
-                        reloadRoute = true;
-                    }
-
-                    if (!desk || desk._id === 'personal') {
-                    	desks.setCurrentDesk('');
-                    } else {
-                    	desks.setCurrentDesk(desk);
-                    }
-
+                scope.select = function selectDesk(desk) {
                     scope.selected = desk;
+                    desks.setCurrentDesk(desk._id === 'personal' ? null : desk);
 
-                    if (angular.isDefined(desk) && desk._id === 'personal') {
+                    if (desk._id === 'personal') {
                        $location.path('/workspace/content') ;
-                    }
-
-                    if (reloadRoute) {
-                        $route.reload();
                     }
                 };
 
                 desks.fetchCurrentUserDesks()
                     .then(function(userDesks) {
                         scope.userDesks = userDesks._items;
-
-                        var currentDeskId = desks.getCurrentDeskId();
-                        if (!currentDeskId) {
-                            preferencesService.get('desk:last_worked').then(
-                                function(desk) {
-                                    if (desk !== '' && desk !== 'personal') {
-                                        scope.select(_.find(scope.userDesks, {_id: desk}), false);
-                                    } else {
-                                        scope.select(scope.userDesks[0], false);
-                                    }
-                            },  function() {
-                                    scope.select(scope.userDesks[0], false);
-                            });
-                        } else {
-                            scope.select(_.find(scope.userDesks, {_id: currentDeskId}), false);
-                        }
+                        scope.selected = _.find(scope.userDesks, {_id: desks.activeDeskId}) || null;
                     });
             }
         };

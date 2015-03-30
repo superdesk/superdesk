@@ -133,6 +133,7 @@ INSTALLED_APPS = [
     'superdesk.io.ftp',
     'superdesk.io.rss',
     'superdesk.macros',
+    'superdesk.commands',
 
     'apps.archive',
     'apps.stages',
@@ -151,7 +152,9 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
-    'apps.macros'
+    'apps.macros',
+    'apps.dictionaries',
+    'apps.duplication'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

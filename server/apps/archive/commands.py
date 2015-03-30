@@ -18,6 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 class ArchiveRemoveExpiredContent(superdesk.Command):
+    """
+    Remove expired items form archive after they have been spiked.
+    """
     def run(self):
         self.remove_expired_content()
 

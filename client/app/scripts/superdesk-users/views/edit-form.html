@@ -8,7 +8,8 @@
         <figure class="avatar">
             <img sd-user-avatar data-src="user.picture_url" alt="{{ user.FullName }}">
         </figure>
-        <span class="disabled-label" ng-if="user._id && !_active" translate>disabled</span>
+        <span class="disabled-label" ng-if="user._id && !user.is_enabled" translate>disabled</span>
+        <span class="disabled-label" ng-if="user._id && user.is_enabled && !_active" translate>inactive</span>
         <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
@@ -16,7 +17,11 @@
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
-            <div class="active" ng-if="!profile && user._id && !dirty" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
+            <div class="active"
+                 ng-show="user.is_enabled"
+                 ng-if="!profile && user._id && !dirty"
+                 tooltip="{{ _active ? 'Deactivate user' : 'Activate user' | translate }}"
+                 tooltip-placement="left">
               <span sd-switch ng-model="$parent._active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
@@ -63,7 +68,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && _active" id="password-reset-trigger">
+                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && user.is_enabled && _active" id="password-reset-trigger">
                   <label translate>password</label>
                   <i class="change-btn sd-blue" ng-click="show.reset_password = !show.reset_password" ng-show="!show.reset_password">reset password</i>
                 </div>
