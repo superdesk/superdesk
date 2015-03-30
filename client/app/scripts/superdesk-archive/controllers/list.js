@@ -69,11 +69,6 @@ define([
         };
 
         var refreshItems = _.debounce(_refresh, 100);
-        function refreshItems() {
-            $timeout.cancel(timeout);
-            timeout = $timeout(_refresh, 100, false);
-        }
-
         function _refresh() {
             if (desks.activeDeskId) {
                 resource = api('archive');
