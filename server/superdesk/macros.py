@@ -13,6 +13,7 @@ import importlib
 import sys
 import imp
 from flask import current_app as app
+import macros
 
 
 def load_macros():
