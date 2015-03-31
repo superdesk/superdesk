@@ -32,7 +32,7 @@ Feature: Fetch Items from Ingest
       [{"name": "Sports"}]
       """
       When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
-      And we post to "/ingest/tag_reuters.com_0000_newsml_GM1EA7M13RP01/fetch" with success
+      And we post to "/ingest/#reuters.tag_reuters.com_0000_newsml_GM1EA7M13RP01#/fetch" with success
       """
       {
       "desk": "#desks._id#"
@@ -62,7 +62,7 @@ Feature: Fetch Items from Ingest
       [{"name": "Sports"}]
       """
       When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
-      And we post to "/ingest/tag_reuters.com_2014_newsml_KBN0FL0NM/fetch"
+      And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
       """
       {
       "desk": "#desks._id#"
@@ -169,7 +169,7 @@ Feature: Fetch Items from Ingest
       """
       Then we get error 404
       """
-      {"_message": "Fail to found ingest item with guid: invalid_id", "_status": "ERR"}
+      {"_message": "Fail to found ingest item with _id: invalid_id", "_status": "ERR"}
       """
 
     @auth

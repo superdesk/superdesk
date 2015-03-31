@@ -276,7 +276,7 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 
 
 @when('we fetch from "{provider_name}" ingest "{guid}" using routing_scheme')
-def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
+def step_impl_fetch_from_provider_ingest_using_routing(context, provider_name, guid):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         _id = apply_placeholders(context, context.text)
         routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
@@ -298,8 +298,11 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
         item['versioncreated'] = utcnow()
         item['expiry'] = utcnow() + timedelta(minutes=20)
 
-    context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
-                         routing_scheme=provider.get('routing_scheme'))
+    failed = context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
+                                  routing_scheme=provider.get('routing_scheme'))
+    assert len(failed) == 0, failed
+    for item in items:
+        set_placeholder(context, '{}.{}'.format(provider_name, item['guid']), item['_id'])
 
 
 @when('we post to "{url}"')
@@ -343,6 +346,8 @@ def store_placeholder(context, url):
 def step_impl_when_post_url_with_success(context, url):
     with context.app.mail.record_messages() as outbox:
         data = apply_placeholders(context, context.text)
+        url = apply_placeholders(context, url)
+        print(url)
         context.response = context.client.post(get_prefixed_url(context.app, url),
                                                data=data, headers=context.headers)
         assert_ok(context.response)
@@ -1324,7 +1329,7 @@ def then_field_is_populated(context, field_name):
 
 
 @when('we publish "{item_id}"')
-def step_impl_when_spike_url(context, item_id):
+def step_impl_when_publish_url(context, item_id):
     item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
@@ -1352,6 +1357,8 @@ def then_ingest_item_is_not_routed_based_on_routing_scheme(context, rule_name):
 
 
 def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
+    data = json.loads(apply_placeholders(context, context.text))
+
     def validate_rule(action, state):
         for destination in rule.get('actions', {}).get(action, []):
             query = {
@@ -1362,10 +1369,10 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                     {'term': {'state': state}}
                 ]
             }
-
             item = get_archive_items(query)
 
             if is_routed:
+                assert len(item) > 0, 'No routed items found for criteria: ' + str(query)
                 assert item[0]['ingest_id'] == data['ingest']
                 assert item[0]['task']['desk'] == str(destination['desk'])
                 assert item[0]['task']['stage'] == str(destination['stage'])
@@ -1379,7 +1386,6 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
             else:
                 assert len(item) == 0
 
-    data = json.loads(apply_placeholders(context, context.text))
     scheme = get_resource_service('routing_schemes').find_one(_id=data['routing_scheme'], req=None)
     rule = next((rule for rule in scheme['rules'] if rule['name'].lower() == rule_name.lower()), {})
     validate_rule('fetch', 'routed')
