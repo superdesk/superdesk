@@ -17,6 +17,8 @@ $ sudo apt-get install docker.io
 
 and make sure you can run [docker without sudo](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).
 
+_**next steps should be executed inside the repository root:**_
+
 ##### create python virtualenv
 
 ```sh
@@ -32,4 +34,4 @@ $ pip install -r docker/requirements.txt
 $ ./scripts/docker-local-demo.sh
 ```
 
-For manual installation just follow the steps described both [client](./client/Dockerfile) and [server](./server/Dockerfile) Dockerfiles.
+For manual installation just follow the steps described in both [client](./client/Dockerfile) and [server](./server/Dockerfile) Dockerfiles.
