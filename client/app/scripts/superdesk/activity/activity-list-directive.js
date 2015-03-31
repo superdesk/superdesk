@@ -27,25 +27,26 @@ define([
                     return;
                 }
 
-                scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
-
-                    if (activity.monitor) {
-                        scope.item.actioning[activity._id] = false;
-                        scope.$watch('item.actioning', function(newValue, oldValue) {
-                            if (scope.item.actioning &&
-                                !scope.item.actioning[activity._id] &&
-                                oldValue &&
-                                (newValue[activity._id] !== oldValue[activity._id])) {
-                                    if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
-                                        notify.error(gettext(scope.item.error.data._message));
-                                        delete scope.item.error;
+                var initializeActivities = function() {
+                    scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
+                        if (activity.monitor) {
+                            scope.item.actioning[activity._id] = false;
+                            scope.$watch('item.actioning', function(newValue, oldValue) {
+                                if (scope.item.actioning &&
+                                    !scope.item.actioning[activity._id] &&
+                                    oldValue &&
+                                    (newValue[activity._id] !== oldValue[activity._id])) {
+                                        if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
+                                            notify.error(gettext(scope.item.error.data._message));
+                                            delete scope.item.error;
+                                        }
                                     }
-                                }
-                        }, true);
-                    }
+                            }, true);
+                        }
 
-                    return workflowService.isActionAllowed(scope.item, activity.action);
-                });
+                        return workflowService.isActionAllowed(scope.item, activity.action);
+                    });
+                };
 
                 scope.run = function runActivity(activity, e) {
                     if (scope.$root.link(activity._id, scope.item)) {
@@ -79,6 +80,9 @@ define([
                         }
                     });
                 }
+
+                scope.$watch('item', initializeActivities, true);
+                initializeActivities();
             }
         };
     }];

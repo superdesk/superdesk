@@ -330,7 +330,7 @@
      */
     UserEnableCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'users', '$rootScope'];
     function UserEnableCommand(api, data, $q, notify, gettext, users, $rootScope) {
-    	var user = data.item.item;
+    	var user = data.item;
 
         return users.save(user, {'is_enabled': true, 'is_active': true}).then(
             function(response) {
@@ -352,14 +352,16 @@
     /**
      * Disable user
      */
-    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'userList', '$rootScope'];
-    function UserDeleteCommand(api, data, $q, notify, gettext, userList, $rootScope) {
-    	data = data.item;
-        return api.users.remove(data.item).then(
+    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', '$rootScope'];
+    function UserDeleteCommand(api, data, $q, notify, gettext, $rootScope) {
+    	var user = data.item;
+        return api.users.remove(user).then(
             function(response) {
-                userList.getUser(data.item._id).then(function(response) {
-                    data.item = response;
-                    $rootScope.$broadcast('user:updated', response);
+                return api.users.getById(user._id)
+                .then(function(newUser) {
+                    user = angular.extend(user, newUser);
+                    $rootScope.$broadcast('user:updated', user);
+                    return user;
                 });
             },
             function(response) {
@@ -371,7 +373,8 @@
                 } else {
                     notify.error(gettext('Error. User Profile cannot be disabled.'));
                 }
-        });
+            }
+        );
     }
 
     /**
@@ -694,7 +697,7 @@
                         }
                     ],
                     condition: function(data) {
-                        return data.item.is_enabled;
+                        return data.is_enabled;
                     },
                     privileges: {users: 1}
                 })
@@ -709,7 +712,7 @@
                         }
                     ],
                     condition: function(data) {
-                        return !data.item.is_enabled;
+                        return !data.is_enabled;
                     },
                     privileges: {users: 1}
                 })
