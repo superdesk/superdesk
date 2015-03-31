@@ -121,7 +121,7 @@ describe('Fetch', function() {
             content.setListView
         );
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
-        content.actionOnItem('Duplicate', 0).then(function() {
+        content.actionOnItem('Copy', 0).then(function() {
             return workspace.switchToDesk('PERSONAL');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');
