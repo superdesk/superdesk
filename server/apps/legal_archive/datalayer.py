@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from eve.io.mongo import Mongo
-from flask.ext.pymongo import PyMongo
 from eve.io.base import ConnectionException
 
 
@@ -18,9 +17,12 @@ class LegalArchiveDataLayer(Mongo):
 
     def init_app(self, app):
         try:
-            self.driver = PyMongo(app, config_prefix='LEGAL_ARCHIVE')
+            super().init_app(app)
         except Exception as e:
             raise ConnectionException(e)
+
+    def current_mongo_prefix(self):
+        return self.app.config['LEGAL_ARCHIVE_DBNAME']
 
     def delete(self, resource, lookup):
         self.remove(resource, lookup)
