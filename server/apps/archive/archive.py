@@ -161,7 +161,7 @@ class ArchiveService(BaseService):
                 msg = 'added new {{ type }} item with empty header/title'
             add_activity(ACTIVITY_CREATE, msg,
                          self.datasource, item=doc, type=doc['type'], subject=subject)
-            push_notification('item:created', item=str(doc['_id']), user=str(user))
+            push_notification('item:created', item=str(doc['_id']), user=str(user.get('_id')))
 
     def on_update(self, updates, original):
         is_update_allowed(original)
@@ -213,7 +213,7 @@ class ArchiveService(BaseService):
                          self.datasource, item=updated,
                          version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
-            push_notification('item:updated', item=str(original['_id']), user=str(user))
+            push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
     def on_replace(self, document, original):
         remove_unwanted(document)
@@ -235,7 +235,7 @@ class ArchiveService(BaseService):
                      self.datasource, item=original,
                      type=original['type'], subject=get_subject(original))
         user = get_user()
-        push_notification('item:replaced', item=str(original['_id']), user=str(user))
+        push_notification('item:replaced', item=str(original['_id']), user=str(user.get('_id')))
 
     def on_delete(self, doc):
         """Delete associated binary files."""
@@ -254,7 +254,7 @@ class ArchiveService(BaseService):
                      self.datasource, item=doc,
                      type=doc['type'], subject=get_subject(doc))
         user = get_user()
-        push_notification('item:deleted', item=str(doc['_id']), user=str(user))
+        push_notification('item:deleted', item=str(doc['_id']), user=str(user.get('_id')))
 
     def replace(self, id, document, original):
         return self.restore_version(id, document, original) or super().replace(id, document, original)

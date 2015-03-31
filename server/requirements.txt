@@ -40,6 +40,6 @@ python3-ldap==0.9.5.3
 behave==1.2.5
 wooper==0.4.2
 
-git+git://github.com/superdesk/eve@e49cca#egg=Eve==0.6-dev
+git+git://github.com/superdesk/eve@20e42d4#egg=Eve==0.6-dev
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
 -e hg+http://bitbucket.org/haypo/hachoir3/#egg=hachoir3

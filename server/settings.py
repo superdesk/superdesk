@@ -58,6 +58,7 @@ X_MAX_AGE = 24 * 3600
 X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 
+MONGO_ENABLE_MULTI_DBS = False
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 if env('MONGOLAB_URI'):
     MONGO_URI = env('MONGOLAB_URI')

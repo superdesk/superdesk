@@ -347,7 +347,6 @@ def step_impl_when_post_url_with_success(context, url):
     with context.app.mail.record_messages() as outbox:
         data = apply_placeholders(context, context.text)
         url = apply_placeholders(context, url)
-        print(url)
         context.response = context.client.post(get_prefixed_url(context.app, url),
                                                data=data, headers=context.headers)
         assert_ok(context.response)
@@ -401,7 +400,6 @@ def steo_impl_we_get_latest(context):
 def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resource, name, search_criteria):
     url = '/' + resource + '?where=' + search_criteria
     context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
-    print('context.response.status_code: ', context.response.status_code)
     if context.response.status_code == 200:
         expect_json_length(context.response, 1, path='_items')
         item = json.loads(context.response.get_data())
@@ -441,7 +439,8 @@ def step_impl_when_patch_url(context, url):
         href = get_self_href(res, context)
         headers = if_match(context, res.get('_etag'))
         data = apply_placeholders(context, context.text)
-        context.response = context.client.patch(get_prefixed_url(context.app, href), data=data, headers=headers)
+        href = get_prefixed_url(context.app, href)
+        context.response = context.client.patch(href, data=data, headers=headers)
         context.outbox = outbox
 
 
@@ -986,7 +985,6 @@ def check_token_invalid(context):
     headers = unique_headers(headers, context.headers)
     context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
                                            data=data, headers=headers)
-    print(context.response.get_data())
     expect_status_in(context.response, (403, 401))
 
 
