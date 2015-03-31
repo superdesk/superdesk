@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
-from superdesk import macros
+#from superdesk import macros
 
 
 def populate(item, **kwargs):
@@ -31,11 +31,17 @@ def populate(item, **kwargs):
 
     return item
 
+name='populate_abstract',
+label='Populate Abstract',
+shortcut='a',
+callback=populate,
+desks=['POLITICS']
 
-macros.register(
-    name='populate_abstract',
-    label='Populate Abstract',
-    shortcut='a',
-    callback=populate,
-    desks=['POLITICS']
-)
+
+# macros.register(
+#     name='populate_abstract',
+#     label='Populate Abstract',
+#     shortcut='a',
+#     callback=populate,
+#     desks=['POLITICS']
+# )

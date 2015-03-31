@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
-from superdesk import macros
+#from superdesk import macros
 
 
 def find_and_replace(item, **kwargs):
@@ -36,10 +36,14 @@ def find_and_replace(item, **kwargs):
 
     return item
 
+name='dollar_AUD_character_replace',
+label='$ -> AUD',
+shortcut='$2',
+callback=find_and_replace
 
-macros.register(
-    name='dollar_AUD_character_replace',
-    label='$ -> AUD',
-    shortcut='$',
-    callback=find_and_replace
-)
+# macros.register(
+#     name='dollar_AUD_character_replace',
+#     label='$ -> AUD',
+#     shortcut='$',
+#     callback=find_and_replace
+# )

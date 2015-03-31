@@ -23,6 +23,7 @@ for macro in macros:
             m = sys.modules[module]
             imp.reload(m)
         else:
-            importlib.import_module(module)
-    except:
-        pass
+            importlib.import_module(name=module, package='macros')
+    except Exception as ex:
+        print('PROBLEM2')
+        print(ex.args)

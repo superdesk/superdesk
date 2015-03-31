@@ -12,7 +12,7 @@ import os
 import re
 import requests
 
-from superdesk import macros
+#from superdesk import macros
 
 
 USD_TO_AUD = 1.27  # backup
@@ -42,11 +42,16 @@ def usd_to_aud(item, **kwargs):
     item['body_html'] = re.sub('\$([0-9]+)', convert, item['body_html'])
     return item
 
+name = 'usd_to_aud'
+label='Convert USD to AUD'
+shortcut='c'
+callback=usd_to_aud
+desks=['SPORTS DESK', 'POLITICS']
 
-macros.register(
-    name='usd_to_aud',
-    label='Convert USD to AUD',
-    shortcut='c',
-    callback=usd_to_aud,
-    desks=['SPORTS DESK', 'POLITICS']
-)
+# macros.register(
+#     name='usd_to_aud',
+#     label='Convert USD to AUD',
+#     shortcut='c',
+#     callback=usd_to_aud,
+#     desks=['SPORTS DESK', 'POLITICS']
+# )
