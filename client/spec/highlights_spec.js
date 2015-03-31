@@ -119,7 +119,9 @@ describe('HIGHLIGHTS', function() {
     'use strict';
 
     describe('add highlights configuration:', function() {
-    	beforeEach(openUrl('/#/settings/highlights'));
+    	beforeEach(function() {
+    		openUrl('/#/settings/highlights');
+    	});
 
 		it('add highlights configuration with one desk', function() {
 	    	var highlights = new Highlights();
@@ -151,7 +153,9 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('edit highlights configuration:', function() {
-        beforeEach(openUrl('/#/settings/highlights'));
+        beforeEach(function() {
+        	openUrl('/#/settings/highlights');
+        });
 
         it('change the name of highlight configuration', function() {
 	    	var highlights = new Highlights();
@@ -181,20 +185,24 @@ describe('HIGHLIGHTS', function() {
         });
     });
 
-  describe('delete highlights configuration:', function() {
-	  beforeEach(openUrl('/#/settings/highlights'));
+	describe('delete highlights configuration:', function() {
+		beforeEach(function() {
+			openUrl('/#/settings/highlights');
+		});
 
-	  it('delete highlight configuration', function() {
-	  		var highlights = new Highlights();
+		it('delete highlight configuration', function() {
+			var highlights = new Highlights();
 			expect(highlights.getRow('highlight one').count()).toBe(1);
 			highlights.remove('highlight one');
 			expect(highlights.getRow('highlight one').count()).toBe(0);
-	  });
-  });
+		});
+	});
 
   describe('mark for highlights in a desk:', function() {
 	var highlights = new Highlights();
-    beforeEach(openUrl('/#/workspace/content'));
+    beforeEach(function() {
+    	openUrl('/#/workspace/content');
+	});
 
     it('mark for highlights in list view', function() {
     	workspace.switchToDesk('SPORTS DESK');

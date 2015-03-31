@@ -21,7 +21,7 @@ describe('Content', function() {
         expect(element.all(by.css('[ng-click="openVersion(version)"]')).count()).toBe(2);
     });
 
-    it('edit title and description', function() {
+    xit('edit title and description', function() {
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Edit package', 0);
