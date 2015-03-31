@@ -16,11 +16,13 @@ from superdesk.services import BaseService
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from eve.utils import ParsedRequest
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
 
 class DestinationGroupsResource(Resource):
+
     schema = {
         'name': {
             'type': 'string',
