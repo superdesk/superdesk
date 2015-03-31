@@ -12,7 +12,6 @@ import logging
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from eve.utils import ParsedRequest
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 
