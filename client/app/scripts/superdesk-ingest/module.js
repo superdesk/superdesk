@@ -1134,6 +1134,13 @@ define([
                 category: superdesk.MENU_SETTINGS,
                 privileges: {ingest_providers: 1}
             })
+            .activity('/ingest_dashboard', {
+                label: gettext('Ingest Dashboard'),
+                templateUrl: 'scripts/superdesk-ingest/views/dashboard/dashboard.html',
+                controller: IngestDashboardController,
+                category: superdesk.MENU_MAIN,
+                privileges: {ingest_providers: 1}
+            })
             .activity('fetchAs', {
                 label: gettext('Fetch As'),
                 icon: 'archive',
@@ -1143,8 +1150,7 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                action: 'fetch_as_from_ingest',
-                key: 'f'
+                privileges: {fetch: 1}
             })
             .activity('/ingest_dashboard', {
                 label: gettext('Ingest Dashboard'),
