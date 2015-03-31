@@ -11,6 +11,8 @@
 """Superdesk"""
 
 import logging
+import blinker
+
 from flask import abort, json, Blueprint, current_app as app  # noqa
 from flask.ext.script import Command as BaseCommand, Option  # noqa @UnresolvedImport
 from werkzeug.exceptions import HTTPException
@@ -39,6 +41,7 @@ default_session_preferences = dict()
 
 
 logger = logging.getLogger(__name__)
+signals = blinker.Namespace()
 
 
 class Command(BaseCommand):

@@ -168,12 +168,9 @@
                     });
                 };
 
-                scope.hasHighlights = function() {
-                    return _.size(scope.highlights) > 0;
-                };
-
                 highlightsService.get(desks.activeDeskId).then(function(result) {
                     scope.highlights = result._items;
+                    scope.hasHighlights = _.size(scope.highlights) > 0;
                 });
             }
         };
