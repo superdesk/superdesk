@@ -14,7 +14,6 @@ import json
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
-from superdesk.errors import SuperdeskApiError
 from eve.utils import ParsedRequest
 from superdesk.errors import SuperdeskApiError
 
@@ -81,6 +80,7 @@ class DestinationGroupsService(BaseService):
         request.args = {'source': json.dumps(query)}
         archive_content = get_resource_service('archive') \
             .get(req=request, lookup=None)
+
         if archive_content and archive_content.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by items.')
