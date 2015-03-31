@@ -349,6 +349,21 @@ def store_placeholder(context, url):
             setattr(context, get_resource_name(url), item)
 
 
+@when('we post to "{url}" with "{tag}" and success')
+def step_impl_when_post_url_with_tag(context, url, tag):
+    with context.app.mail.record_messages() as outbox:
+        data = apply_placeholders(context, context.text)
+        url = apply_placeholders(context, url)
+        print(url)
+        context.response = context.client.post(get_prefixed_url(context.app, url),
+                                               data=data, headers=context.headers)
+        assert_ok(context.response)
+        item = json.loads(context.response.get_data())
+        if item.get('_id'):
+            set_placeholder(context, tag, item.get('_id'))
+        context.outbox = outbox
+
+
 @when('we post to "{url}" with success')
 def step_impl_when_post_url_with_success(context, url):
     with context.app.mail.record_messages() as outbox:
