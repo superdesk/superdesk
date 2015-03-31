@@ -59,20 +59,20 @@
                                 <li ng-show="options.pinEnabled"><button ng-show="item.pinnedInstance && isPinned(item)" ng-click="unpin(item)">
                                     <i class="icon-pin"></i> {{ :: 'Unpin' | translate }}</button>
                                 </li>
-                                <li><button ng-click="view(item)"><i class="icon-expand"></i> {{ :: 'Open' | translate }}</button></li>
+                                <li ng-repeat="action in actions">
+                                    <button ng-click="action.method(item)"><i class="icon-expand"></i> {{ :: action.title | translate }}</button>
+                                </li>
                             </ul>
                         </div>
                     </div>
                     <div ng-if="options.mode === 'basic'" class="basic item-block urgency-{{ item.urgency }}" 
-                        ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}"
-                        ng-click="view(item)">
+                        ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
                         <div class="content">
                             <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}}</p>
                         </div>
                     </div>
                     <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 
-                        ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}"
-                        ng-click="view(item)">
+                        ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}" ng-click="view(item)">
                         <div class="content">
                             <ul class="top-line clearfix">
                                 <li>
@@ -103,7 +103,9 @@
 <div class="preview" ng-class="{wrap: !selected}">
     <div class="nav">
         <button class="backlink" href="" ng-click="view(null)" translate>Back</button>
-        <button ng-show="actions.open" class="open pull-right" ng-click="actions.open.method(selected)"><i class="icon-expand"></i> {{ actions.open.title | translate }}</button>
+        <button ng-repeat="action in actions" class="{{action.class}} pull-right" ng-click="actions.open.method(selected)">
+            <i class="{{action.icon}}"></i> {{ action.title | translate }}
+        </button>
     </div>
     <div class="content-item-preview">
         <div class="content">
