@@ -117,7 +117,8 @@ define([
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
                     icon: 'archive',
-                    monitor: true,
+                    //monitor: true,
+                    /*
                     controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
                         api
                             .save('duplicate', {}, {desk: desks.getCurrentDeskId()}, data.item)
@@ -131,6 +132,10 @@ define([
                         ['finally'](function() {
                             data.item.actioning.archiveContent = false;
                         });
+                    }],
+                    */
+                    controller: ['$location', 'data', function($location, data) {
+                        $location.search('fetch', data.item._id);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},
