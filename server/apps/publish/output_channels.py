@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+import json
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
@@ -36,9 +37,9 @@ class OutputChannelsResource(Resource):
 
 class OutputChannelsService(BaseService):
     def on_delete(self, doc):
-        parsed_request = ParsedRequest()
-        parsed_request.args = {'output_channels.channels': doc.get('_id')}
-        if list(get_resource_service('destination_groups').find(req=parsed_request, lookup=None)).count() > 0:
+        lookup = {'output_channels.channel': str(doc.get('_id'))}
+        dest_groups = get_resource_service('destination_groups').get(req=None, lookup=lookup)
+        if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Output Channel is associated with Destination Groups.',
                 payload={'destination_groups': 1})
