@@ -23,7 +23,7 @@
 	    </div>
     </div>
 
-    <div sd-modal data-model="modalActive" class="add-group-popup responsive-popup hide" >
+    <div sd-modal data-model="modalActive" class="add-group-popup modal-large modal-static" >
 
 		<div class="modal-header">
 			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
@@ -38,7 +38,7 @@
 					<form name="generalStep">
 						<div class="content">
 							<fieldset>
-								<span class="float-right" sd-character-count data-item="group.edit.name" data-limit="limits.group"></span>
+								<span class="pull-right" sd-character-count data-item="group.edit.name" data-limit="limits.group"></span>
 								<div class="field">
 									<label translate>Group name</label>
 									<input type="text" class="fullwidth-input" ng-model="group.edit.name" ng-keyup="handleEdit($event);" required>

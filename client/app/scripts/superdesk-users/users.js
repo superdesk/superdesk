@@ -719,7 +719,7 @@
                 .activity('edit.avatar', {
                     label: gettext('Change avatar'),
                     modal: true,
-                    cssClass: 'upload-avatar',
+                    cssClass: 'upload-avatar modal-static modal-large',
                     controller: ChangeAvatarController,
                     templateUrl: asset.templateUrl('superdesk-users/views/change-avatar.html'),
                     filters: [{action: 'edit', type: 'avatar'}]

@@ -1,4 +1,4 @@
-<div sd-modal data-model="modalActive" class="add-desk-popup responsive-popup" >
+<div sd-modal data-model="modalActive" class="add-desk-popup modal-large modal-static">
 
 	<div class="modal-header">
 		<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
@@ -13,13 +13,13 @@
 				<form name="generalStep">
 					<div class="content">
 						<fieldset>
-							<span class="float-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
+							<span class="pull-right" sd-character-count data-item="desk.edit.name" data-limit="limits.desk"></span>
 							<div class="field">
 								<label translate>Desk name</label>
 								<input type="text" class="fullwidth-input" ng-model="desk.edit.name" ng-keyup="handleEdit($event);" required>
 							</div>
 							<div class="field">
-								<label translate>Desk description {{test}}</label>
+								<label translate>Desk description</label>
 								<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 							</div>
 							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry"></div>

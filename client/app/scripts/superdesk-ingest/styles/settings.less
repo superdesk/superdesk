@@ -1,0 +1,120 @@
+// settings.less
+// Styling for the superdesk ingest settings
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+
+/* Scheme create/edit popup */
+
+.add-scheme-popup {
+
+	.modal-body {
+		.split-content {
+			> .header {
+				padding: 10px;
+				height: 78px;
+			}
+			> .content {
+				top: 78px;
+			}
+		}
+	}
+	.col-left {
+		position: absolute;
+		left:0; top: 0; bottom: 0; width: 250px;
+		border-right: 1px solid #e0e0e0;
+		padding: 10px;
+		.border-box();
+	}
+	.col-right {
+		position: absolute;
+		left:250px; top: 0; bottom: 0; right: 0;
+		.border-box();
+		.content {
+			position: absolute;
+			top: 48px; left: 0;
+			right: 0; bottom: 0;
+			overflow: auto;
+			padding: 20px;
+		}
+	}
+	.half-input {
+		width: 60%;
+	}
+	.sd-typeahead {
+		width: 60%;
+		float: left;
+		margin-right: 10px;
+	}
+	.split {
+		display: flex;
+		> div, > .field {
+			flex: 1 1 auto;
+			padding: 0 15px 0 0;
+		}
+	}
+	.general-tab {
+		.summary {
+			> div {
+				.field {
+					background-color: @sd-background;
+					padding: 5px;
+					font-size: 12px;
+					.title {
+						.text-bold();
+					}
+				}
+			}
+		}
+	}
+
+	.pills-list {
+		margin-top: 10px;
+		max-width: 100%;
+		li {
+			margin: 0 5px 5px 0;
+		}
+	}
+
+	.filter-tab {
+		.type-filter-box {
+			.btn {
+				padding: 0;
+				margin-right: 10px;
+			}
+		}
+	}
+
+	.action-tab {
+		.pills-list {
+			li {
+				padding-right: 35px;
+			}
+		}
+	}
+
+	.schedule-tab {
+		.day-filter-box {
+			.btn {
+				margin: 4px;
+				padding: 6px;
+				font-size: 0.9em;
+			}
+		}
+	}
+
+	.add {
+		margin-top: -3px;
+		position: absolute;
+		padding: 0;
+		margin-left: 10px;
+		height: 22px;
+		width: 22px;
+		.border-radius(50%);
+		line-height: 20px;
+		i {
+			margin: 0;
+		}
+	}
+}

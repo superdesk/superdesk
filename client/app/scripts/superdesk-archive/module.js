@@ -77,7 +77,7 @@ define([
                 .activity('upload.media', {
                     label: gettext('Upload media'),
                     modal: true,
-                    cssClass: 'upload-media responsive-popup',
+                    cssClass: 'upload-media responsive',
                     controller: require('./controllers/upload'),
                     templateUrl: require.toUrl('./views/upload.html'),
                     filters: [

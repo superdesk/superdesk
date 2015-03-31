@@ -5,20 +5,20 @@
 @import 'variables.less';
 
 
-/* 	============================ 
+/* 	============================
 		GROUP CONFIG
 	============================ */
 
 /* Group create/edit popup */
 
 .add-group-popup {
-	top: 100px!important;
-	bottom: 100px!important;
-	width: 630px;
-	margin: 0 0 0 -315px;
-	left: 50%!important;
+
 	.modal-body {
 		bottom: 0;
+		height: 500px !important;
+		max-height: 500px !important;
+		.border-radius(0px 0px 4px 4px);
+
 		.modal-screen {
 			top: 48px;
 		}
@@ -30,9 +30,12 @@
                 color: #D33C30;
             }
 		}
-		.float-right {
-			float:right;
-		}
+	}
+	.modal-footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 	.people-stage {
 		.header {

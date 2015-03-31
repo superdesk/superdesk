@@ -64,13 +64,14 @@
 	<div sd-workqueue></div>
 </section>
 
-<div sd-modal data-model="newTask" class="create-task responsive-popup">
-	<form>
+<div sd-modal data-model="newTask" class="create-task-popup modal-static modal-body-grey">
+
     <div class="modal-header"> <button class="close" ng-click="close()"><i class="icon-close-small"></i></button>
         <h3 translate>Create New Task</h3>
     </div>
 
-	    <div class="modal-body task-details" ng-if="newTask">
+	<div class="modal-body" ng-if="newTask">
+		<form>
 	    	<fieldset class="full">
 	    		<textarea
 					sd-autoexpand
@@ -104,11 +105,12 @@
 					<div sd-timepicker ng-model="newTask.task.due_time">
 				</div>
 			</fieldset>
-	    </div>
+		</form>
+    </div>
 
-	    <div class="modal-footer">
-	        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-	        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
-	    </div>
-    </form>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
+    </div>
+
 </div>

@@ -1,8 +1,8 @@
-<div class="content rules push-down">
+<div class="general-tab">
     <fieldset>
         <div class="field">
             <label translate>Rule name</label>
-            <input type="text" class="fullwidth-input" style="width: 50%;" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
+            <input type="text" class="half-input" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
             <button class="btn btn-info" ng-click="remove()">
                 <i class="icon-trash icon-white"></i> <span translate>Delete Rule</span>
             </button>
@@ -10,7 +10,8 @@
         <div class="field">
             <label translate>Summary</label>
             <fieldset>
-                <div class="small-col pull-left summary">
+                <div class="split summary">
+                <div>
                     <div class="field">
                         <label translate>Filter</label>
                         <div ng-show="rule.filter.headline">
@@ -56,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="small-col pull-left summary">
+                <div>
                     <div class="field">
                         <label translate>Action</label>
                         <div ng-show="rule.actions.fetch">
@@ -82,7 +83,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="small-col pull-left summary">
+                <div>
                     <div class="field">
                         <label translate>Schedule</label>
                         <div ng-show="rule.schedule.day_of_week">
@@ -102,6 +103,7 @@
                             <span translate>{{rule.schedule.hour_of_day_to|insert:2:':'}}</span>
                         </div>
                     </div>
+                </div>
                 </div>
             </fieldset>
         </div>
