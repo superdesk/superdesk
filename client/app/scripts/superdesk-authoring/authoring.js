@@ -948,9 +948,10 @@
                     })
                     .then(function() {
                         notify.success(gettext('Item sent.'));
-                        $rootScope.$broadcast('item:fetch');
                         if (open) {
-                            superdesk.intent('author', 'article', finalItem);
+                            $location.url('/authoring/' + finalItem._id);
+                        } else {
+                            $rootScope.$broadcast('item:fetch');
                         }
                     });
                 };
@@ -973,9 +974,10 @@
                     })
                     .then(function() {
                         notify.success(gettext('Item fetched.'));
-                        $rootScope.$broadcast('item:fetch');
                         if (open) {
-                            superdesk.intent('author', 'article', finalItem);
+                            $location.url('/authoring/' + finalItem._id);
+                        } else {
+                            $rootScope.$broadcast('item:fetch');
                         }
                     });
                 };
