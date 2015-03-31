@@ -1,11 +1,12 @@
 define([
     './list',
     '../services/keyboardManager',
-    './views/list-view.html'
+    './views/list-view.html',
+    './views/searchbar.html'
 ], function(ListModule, kbModule) {
     'use strict';
 
-    describe('ListView directive', function() {
+    describe('list directives', function() {
         beforeEach(module(ListModule.name));
         beforeEach(module(kbModule.name));
         beforeEach(module('templates'));
@@ -19,6 +20,21 @@ define([
 
             expect(elem.html()).toContain('foo');
             expect(elem.find('.item').length).toBe(2);
+        }));
+
+        it('renders searchbar', inject(function($compile, $location, $rootScope) {
+            var scope = $rootScope.$new(true);
+            var elem = $compile('<div sd-searchbar></div>')(scope);
+            $location.search('page', 1);
+            scope.$digest();
+
+            var iscope = elem.scope();
+            iscope.q = 'test';
+            iscope.search();
+            iscope.$digest();
+
+            expect($location.search().q).toBe('test');
+            expect($location.search().page).toBe(undefined);
         }));
     });
 });
