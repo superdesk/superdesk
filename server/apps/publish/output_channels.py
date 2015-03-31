@@ -9,11 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-import json
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
-from eve.utils import ParsedRequest
 from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
