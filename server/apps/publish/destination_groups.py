@@ -58,13 +58,11 @@ class DestinationGroupsResource(Resource):
 
 
 class DestinationGroupsService(BaseService):
-    def on_create(self, docs):
-        pass
 
     def on_update(self, updates, original):
         dest_groups = updates.get('destination_groups', [])
         if dest_groups:
-            if self.is_group_self_referenced(original[superdesk.config.ID_FIELD], dest_groups):
+            if self._is_self_referenced(original[superdesk.config.ID_FIELD], dest_groups):
                 raise SuperdeskApiError.badRequestError(
                     message='Circular dependency in Destination Group.')
 
@@ -82,15 +80,15 @@ class DestinationGroupsService(BaseService):
                 message='Destination Group is referenced by another destination group.',
                 payload={'destination_group': 1})
 
-    def is_group_self_referenced(self, dest_group_id, dest_groups):
+    def _is_self_referenced(self, dest_group_id, dest_groups):
         dest_groups = dest_groups or []
         for dest_group in dest_groups:
-            if dest_group_id == dest_group['group']:
+            if str(dest_group_id) == str(dest_group['group']):
                 return True
 
             group = self.find_one(req=None, _id=dest_group['group'])
             referenced_groups = group.get('destination_groups', [])
             if referenced_groups:
-                return self.is_group_self_referenced(dest_group_id, referenced_groups)
+                return self._is_self_referenced(dest_group_id, referenced_groups)
 
         return False
