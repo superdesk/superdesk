@@ -13,6 +13,8 @@ import logging
 import superdesk
 
 from apps.publish.archive_publish import ArchivePublishResource, ArchivePublishService
+from apps.publish.destination_groups import DestinationGroupsResource, DestinationGroupsService
+from apps.publish.output_channels import OutputChannelsResource, OutputChannelsService
 from superdesk import get_backend
 
 logger = logging.getLogger(__name__)
@@ -24,4 +26,16 @@ def init_app(app):
     service = ArchivePublishService(endpoint_name, backend=get_backend())
     ArchivePublishResource(endpoint_name, app=app, service=service)
 
+    endpoint_name = 'output_channels'
+    service = OutputChannelsService(endpoint_name, backend=get_backend())
+    OutputChannelsResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'destination_groups'
+    service = DestinationGroupsService(endpoint_name, backend=get_backend())
+    DestinationGroupsResource(endpoint_name, app=app, service=service)
+
     superdesk.privilege(name='publish', label='Publish', description='Publish a content')
+    superdesk.privilege(name='destination_groups', label='Destination Groups',
+                        description='User can manage destination groups')
+    superdesk.privilege(name='output_channels', label='Output Channels',
+                        description='User can manage output channels')
