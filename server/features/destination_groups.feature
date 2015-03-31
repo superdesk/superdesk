@@ -203,3 +203,11 @@ Feature:Destination Groups
     }
     """
     Then we get error 400
+    When we patch "/destination_groups/#destgroup2#"
+    """
+    {
+      "name":"Group 1 testing",
+      "destination_groups": [{"group":"#destgroup1#"}, {"group": "#destgroup3#"}]
+    }
+    """
+    Then we get error 400
