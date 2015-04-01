@@ -698,7 +698,9 @@
                                 }
                             });
                         } else {
-                            scope.item.container = 'location:workspace';
+                            if (scope.item._type === 'multimedia') {
+                                scope.item.container = 'AAP Multimedia';
+                            } else { scope.item.container = 'location:workspace'; }
                         }
                     }
                 }

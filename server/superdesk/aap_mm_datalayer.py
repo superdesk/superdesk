@@ -23,7 +23,7 @@ class AAPMMDatalayer(DataLayer):
         self._app = app
         self._headers = None
         self._http = urllib3.PoolManager()
-        if 'AAP_MM_USER' in app.config and 'AAP_MM_PASSWORD' in app.config:
+        if 'AAP_MM_USER' in app.config and 'AAP_MM_PASSWORD' in app.config and app.config['AAP_MM_USER'] is not None:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/login'
             values = {'username': app.config['AAP_MM_USER'], 'password': app.config['AAP_MM_PASSWORD']}
             r = self._http.urlopen('POST', url, headers={'Content-Type': 'application/json'}, body=json.dumps(values))
@@ -45,11 +45,8 @@ class AAPMMDatalayer(DataLayer):
 
     def _parse_doc(self, doc):
         new_doc = {}
-        new_doc['_id'] = 'tag:aapimage:' + doc['AssetId']
-        new_doc['guid'] = new_doc['_id']
-        new_doc['family_id'] = new_doc['_id']
-        new_doc['unique_name'] = new_doc['_id']
-        new_doc['unique_id'] = doc['AssetId']
+        new_doc['_id'] = doc['AssetId']
+        new_doc['guid'] = doc['AssetId']
 
         new_doc['headline'] = doc['Title']
         new_doc['description'] = doc['Description']
@@ -59,7 +56,7 @@ class AAPMMDatalayer(DataLayer):
         new_doc['firstcreated'] = self._datetime(doc['CreationDate'])
         new_doc['type'] = 'picture'
         new_doc['pubstatus'] = 'usable'
-        # doc['state'] = 'external'
+        new_doc['_type'] = 'multimedia'
         new_doc['renditions'] = {
             'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
             'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
@@ -104,7 +101,8 @@ class AAPMMDatalayer(DataLayer):
         self._parse_doc(doc)
 
         # Only if we have credentials can we download the original if the account has that privilege
-        if 'AAP_MM_USER' in self._app.config and 'AAP_MM_PASSWORD' in self._app.config:
+        if 'AAP_MM_USER' in self._app.config and 'AAP_MM_PASSWORD' in self._app.config \
+                and self._app.config['AAP_MM_USER'] is not None:
             url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Original/download'.format(_id)
         else:
             url = doc['renditions']['original']['href']

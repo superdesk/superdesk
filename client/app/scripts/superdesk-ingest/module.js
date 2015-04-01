@@ -1301,6 +1301,28 @@ define([
                 ],
                 privileges: {fetch: 1},
                 key: 'f'
+            })
+            .activity('aapmm', {
+                label: gettext('Get from AAP multimedia'),
+                icon: 'archive',
+                monitor: true,
+                controller: ['api', 'data', 'desks', function(api, data, desks) {
+                    api.aapmm.create({
+                            guid: data.item.guid,
+                            desk: desks.getCurrentDeskId()
+                        })
+                        .then(
+                            function(response) {
+                                data.item.error = response;
+                            })
+                    ['finally'](function() {
+                        data.item.actioning.aapmm = false;
+                    });
+                }],
+                filters: [
+                    {action: 'list', type: 'multimedia'}
+                ],
+                privileges: {fetch: 1}
             });
     }]);
 
@@ -1315,6 +1337,12 @@ define([
             type: 'http',
             backend: {
                 rel: 'ingest'
+            }
+        });
+        apiProvider.api('aapmm', {
+            type: 'http',
+            backend: {
+                rel: 'aapmm'
             }
         });
         apiProvider.api('ingestProviders', {

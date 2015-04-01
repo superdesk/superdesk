@@ -39,7 +39,6 @@ class AapMMService(superdesk.Service):
             new_id = generate_guid(type=GUID_TAG)
             new_guids.append(new_id)
             dest_doc['_id'] = new_id
-            dest_doc['guid'] = new_id
             generate_unique_id_and_name(dest_doc)
 
             dest_doc[config.VERSION] = 1
@@ -51,7 +50,7 @@ class AapMMService(superdesk.Service):
             set_original_creator(dest_doc)
 
             superdesk.get_resource_service(ARCHIVE).post([dest_doc])
-            insert_into_versions(dest_doc.get('guid'))
+            insert_into_versions(dest_doc.get('_id'))
 
         return new_guids
 
