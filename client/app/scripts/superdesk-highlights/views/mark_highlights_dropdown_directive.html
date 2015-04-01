@@ -1,5 +1,6 @@
 <ul ng-show="highlights">
 	<li ng-repeat="h in highlights"> 
-	    <button option="{{ h.name | uppercase  }}" ng-click="mark_item(h);">{{ h.name | uppercase  }}</button>
+	    <button ng-if="is_marked(h)" ng-disabled="true"  option="{{ h.name | uppercase  }}" ng-click="mark_item(h);">{{ h.name | uppercase  }}</button>
+	    <button ng-if="!is_marked(h)" option="{{ h.name | uppercase  }}" ng-click="mark_item(h);">{{ h.name | uppercase  }}</button>
 	</li>
 </ul>

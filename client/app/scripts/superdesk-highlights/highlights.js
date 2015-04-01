@@ -92,6 +92,10 @@
                 	scope.$root.$broadcast('item:mark');
                 };
 
+                scope.is_marked = function is_marked(highlight) {
+                	return scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
+                };
+
             	highlightsService.get(desks.activeDeskId).then(function(result) {
         	    	scope.highlights = result._items;
         	    });
