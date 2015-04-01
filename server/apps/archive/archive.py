@@ -96,7 +96,16 @@ class ArchiveResource(Resource):
         'last_version': {
             'type': 'number',
         },
-        'task': {'type': 'dict'}
+        'task': {'type': 'dict'},
+        'destination_groups': {
+            'type': 'list',
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'group': Resource.rel('destination_groups', True)
+                }
+            }
+        }
     }
 
     schema.update(metadata_schema)
