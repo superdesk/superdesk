@@ -90,3 +90,4 @@ Feature: Output Channels
     """
     {"_message":"Output Channel is associated with Destination Groups.", "_status": "ERR"}
     """
+
