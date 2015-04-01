@@ -1,0 +1,18 @@
+<div id="publish-settings" sd-settings-view ng-init="tab = 'output_channels'">
+
+    <div class="split-content">
+        <ul class="nav nav-tabs">
+            <li ng-class="{active: tab === 'output_channels'}" ng-show="showOutputChannels">
+                <button ng-click="tab = 'output_channels'" translate>Output Channels</button>
+            </li>
+            <li ng-class="{active: tab === 'destionation_groups'}" ng-show="showDestinationGroups">
+                <button ng-click="tab = 'destionation_groups'" translate>Destionation Groups</button>
+            </li>
+        </ul>
+        
+        <div class="content">
+            <div ng-if="tab === 'output_channels'" sd-admin-pub-output-channels></div>
+            <div ng-if="tab === 'destionation_groups'" sd-admin-pub-destination-groups></div>
+        </div>
+    </div>
+</div>
