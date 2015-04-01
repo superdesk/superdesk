@@ -66,14 +66,15 @@ class DestinationGroupsService(BaseService):
         query = {
             "query": {
                 "filtered": {
-                    "query": {
-                        "query_string": {
-                            "query": "destination_groups.group:" + str(doc_id)
+                    "filter": {
+                        "term": {
+                            "destination_groups.group": str(doc_id)
                         }
                     }
                 }
             }
         }
+
         request = ParsedRequest()
         request.args = {'source': json.dumps(query)}
         archive_content = get_resource_service('archive') \
