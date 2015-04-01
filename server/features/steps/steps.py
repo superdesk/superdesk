@@ -314,18 +314,21 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
 
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
-    with context.app.mail.record_messages() as outbox:
-        data = apply_placeholders(context, context.text)
-        url = apply_placeholders(context, url)
+    post_data(context, url)
+    # with context.app.mail.record_messages() as outbox:
+    #     data = apply_placeholders(context, context.text)
+    #     url = apply_placeholders(context, url)
+    #     set_user_default(url, data)
+    #     context.response = context.client.post(get_prefixed_url(context.app, url),
+    #                                            data=data, headers=context.headers)
+    #     store_placeholder(context, url)
+    #     context.outbox = outbox
 
-        if is_user_resource(url):
-            user = json.loads(data)
-            user.setdefault('needs_activation', False)
-            data = json.dumps(user)
-        context.response = context.client.post(get_prefixed_url(context.app, url),
-                                               data=data, headers=context.headers)
-        store_placeholder(context, url)
-        context.outbox = outbox
+def set_user_default(url, data):
+    if is_user_resource(url):
+        user = json.loads(data)
+        user.setdefault('needs_activation', False)
+        data = json.dumps(user)
 
 
 def get_response_etag(response):
@@ -349,33 +352,32 @@ def store_placeholder(context, url):
             setattr(context, get_resource_name(url), item)
 
 
-@when('we post to "{url}" with "{tag}" and success')
-def step_impl_when_post_url_with_tag(context, url, tag):
+def post_data(context, url, success=False):
     with context.app.mail.record_messages() as outbox:
         data = apply_placeholders(context, context.text)
         url = apply_placeholders(context, url)
-        print(url)
+        set_user_default(url, data)
         context.response = context.client.post(get_prefixed_url(context.app, url),
                                                data=data, headers=context.headers)
-        assert_ok(context.response)
+        if success:
+            assert_ok(context.response)
+
         item = json.loads(context.response.get_data())
-        if item.get('_id'):
-            set_placeholder(context, tag, item.get('_id'))
         context.outbox = outbox
+        store_placeholder(context, url)
+        return item
+
+
+@when('we post to "{url}" with "{tag}" and success')
+def step_impl_when_post_url_with_tag(context, url, tag):
+    item = post_data(context, url, True)
+    if item.get('_id'):
+        set_placeholder(context, tag, item.get('_id'))
 
 
 @when('we post to "{url}" with success')
 def step_impl_when_post_url_with_success(context, url):
-    with context.app.mail.record_messages() as outbox:
-        data = apply_placeholders(context, context.text)
-        url = apply_placeholders(context, url)
-        context.response = context.client.post(get_prefixed_url(context.app, url),
-                                               data=data, headers=context.headers)
-        assert_ok(context.response)
-        item = json.loads(context.response.get_data())
-        if item.get('_id'):
-            setattr(context, get_resource_name(url), item)
-        context.outbox = outbox
+    post_data(context, url, True)
 
 
 @when('we put to "{url}"')
