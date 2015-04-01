@@ -14,11 +14,27 @@ def init_parsed_request(elastic_query):
     return parsed_request
 
 
+def get_highlighted_items(highlights_id):
+    """Get items marked for given highlight and passing date range query."""
+    highlight = get_resource_service('highlights').find_one(req=None, _id=highlights_id)
+    req = init_parsed_request({
+        'query': {
+            'filtered': {'filter': {'and': [
+                {'range': {'versioncreated': {'gte': highlight.get('auto_insert', 'now/d')}}},
+                {'term': {'highlights': str(highlights_id)}},
+            ]}}
+        },
+        'sort': [
+            {'versioncreated': 'desc'},
+        ]
+    })
+    return get_resource_service('archive').get(req, lookup=None)
+
+
 def init_highlight_package(doc):
     """Add to package items marked for doc highlight."""
     main_group = doc.get('groups')[1]
-    items = get_resource_service('archive').get(None, {'highlights': str(doc.get('highlight'))})
-    assert items.count() == 2, items.count()
+    items = get_highlighted_items(doc.get('highlight'))
     for item in items:
         main_group['refs'].append(package.get_item_ref(item))
 

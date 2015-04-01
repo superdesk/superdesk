@@ -3,6 +3,8 @@ from flask import json
 from behave import given, when, then
 from superdesk import get_resource_service
 from superdesk.tests import get_prefixed_url
+from superdesk.utc import utcnow
+from datetime import timedelta
 
 
 @given('highlights')
@@ -13,7 +15,11 @@ def given_highlights(context):
         context.highlights = [{'name': 'highlight', 'desks': [desk['_id'] for desk in context.desks]}]
         get_resource_service('highlights').post(context.highlights)
         task = {'desk': context.desks[0]['_id']}
-        context.items = [{'headline': 'item1', 'task': task}, {'headline': 'item2', 'task': task}]
+        context.items = [
+            {'headline': 'item1', 'task': task, 'versioncreated': utcnow() - timedelta(minutes=5)},
+            {'headline': 'item2', 'task': task, 'versioncreated': utcnow() - timedelta(hours=8)},
+            {'headline': 'old', 'task': task, 'versioncreated': utcnow() - timedelta(days=2)},
+        ]
         get_resource_service('archive').post(context.items)
         for item in context.items:
             marks = [{'highlights': context.highlights[0]['_id'], 'marked_item': item['_id']}]
@@ -37,5 +43,5 @@ def then_we_get_new_package_with_items(context):
 
     refs = groups[1].get('refs')
     assert len(refs) == 2, refs
-    assert refs[0]['headline']
-    assert refs[1]['headline']
+    assert refs[0]['headline'] == 'item1', refs[0]
+    assert refs[1]['headline'] == 'item2', refs[1]

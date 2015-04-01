@@ -206,7 +206,6 @@ Feature: Highlights
         {"type": "text"}
         """
 
-    @wip
     @auth
     Scenario: Prepopulate highlights when creating a package
         Given highlights
