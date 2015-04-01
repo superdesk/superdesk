@@ -59,27 +59,27 @@ class DestinationGroupsResource(Resource):
 class DestinationGroupsService(BaseService):
 
     def on_update(self, updates, original):
-        dest_groups = updates.get('destination_groups', [])
-        if dest_groups:
-            if self._is_self_referenced(original[superdesk.config.ID_FIELD], dest_groups):
-                raise SuperdeskApiError.badRequestError(
-                    message='Circular dependency in Destination Group.')
+        self.__validate_self_referenced(original[superdesk.config.ID_FIELD], updates.get('destination_groups', []))
 
     def on_delete(self, doc):
         archive_content = get_resource_service('archive')\
             .get(req=None, lookup={'destination_groups': doc.get(superdesk.config.ID_FIELD)})
         if archive_content and archive_content.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
-                message='Destination Group is referenced by items.',
-                payload={'item': 1})
+                message='Destination Group is referenced by items.')
 
         dest_groups = self.get(req=None, lookup={'destination_groups.group': doc.get(superdesk.config.ID_FIELD)})
         if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
-                message='Destination Group is referenced by another destination group.',
-                payload={'destination_group': 1})
+                message='Destination Group is referenced by other Destination Group/s.')
 
-    def _is_self_referenced(self, dest_group_id, dest_groups):
+    def __validate_self_referenced(self, dest_group_id, dest_groups):
+        if dest_groups:
+            if self.__is_self_referenced(dest_group_id, dest_groups):
+                raise SuperdeskApiError.badRequestError(
+                    message='Circular dependency in Destination Group.')
+
+    def __is_self_referenced(self, dest_group_id, dest_groups=[]):
         dest_groups = dest_groups or []
         for dest_group in dest_groups:
             if str(dest_group_id) == str(dest_group['group']):
@@ -88,6 +88,6 @@ class DestinationGroupsService(BaseService):
             group = self.find_one(req=None, _id=dest_group['group'])
             referenced_groups = group.get('destination_groups', [])
             if referenced_groups:
-                return self._is_self_referenced(dest_group_id, referenced_groups)
+                return self.__is_self_referenced(dest_group_id, referenced_groups)
 
         return False
