@@ -21,8 +21,13 @@
     </div>
 
     <div class="media-info">
-        <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
-        <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
+
+        <span ng-show="item.highlights" class="highlights-title" sd-highlights-title data-highlights="item.highlights"></span>
+
+        <h5 ng-class="{'shifted' : item.highlights}">
+            <span ng-show="item.slugline">{{ item.slugline }}</span>
+            <span ng-show="!item.slugline">{{ item.type | translate }}</span>
+        </h5>
 
         <dl>
             <dt class="source"><span translate>source:</span></dt>
