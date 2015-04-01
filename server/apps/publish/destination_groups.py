@@ -98,7 +98,6 @@ class DestinationGroupsService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by Routing Scheme/s.')
 
-
     def __validate_self_referenced(self, dest_group_id, dest_groups):
         if dest_groups:
             if self.__is_self_referenced(dest_group_id, dest_groups):
