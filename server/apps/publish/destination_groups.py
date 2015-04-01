@@ -10,16 +10,17 @@
 
 import logging
 import superdesk
+import json
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
+from eve.utils import ParsedRequest
 
 logger = logging.getLogger(__name__)
 
 
 class DestinationGroupsResource(Resource):
-
     schema = {
         'name': {
             'type': 'string',
@@ -57,21 +58,46 @@ class DestinationGroupsResource(Resource):
 
 
 class DestinationGroupsService(BaseService):
-
     def on_update(self, updates, original):
         self.__validate_self_referenced(original[superdesk.config.ID_FIELD], updates.get('destination_groups', []))
 
     def on_delete(self, doc):
-        archive_content = get_resource_service('archive')\
-            .get(req=None, lookup={'destination_groups': doc.get(superdesk.config.ID_FIELD)})
+        doc_id = doc.get(superdesk.config.ID_FIELD)
+        query = {
+            "query": {
+                "filtered": {
+                    "query": {
+                        "query_string": {
+                            "query": "destination_groups.group:" + str(doc_id)
+                        }
+                    }
+                }
+            }
+        }
+        request = ParsedRequest()
+        request.args = {'source': json.dumps(query)}
+        archive_content = get_resource_service('archive') \
+            .get(req=request, lookup=None)
         if archive_content and archive_content.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by items.')
 
-        dest_groups = self.get(req=None, lookup={'destination_groups.group': doc.get(superdesk.config.ID_FIELD)})
+        dest_groups = self.get(req=None, lookup={'destination_groups.group': doc_id})
         if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by other Destination Group/s.')
+
+        dest_groups = get_resource_service('routing_schemes') \
+            .get(req=None,
+                 lookup={'$or': [
+                     {'rules.actions.fetch.destination_groups.group': doc_id},
+                     {'rules.actions.publish.destination_groups.group': doc_id}
+                 ]})
+
+        if dest_groups and dest_groups.count() > 0:
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Destination Group is referenced by Routing Scheme/s.')
+
 
     def __validate_self_referenced(self, dest_group_id, dest_groups):
         if dest_groups:
