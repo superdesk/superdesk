@@ -106,6 +106,7 @@ define([
             $scope.$watch(function() {
                 return desks.active;
             }, function(active) {
+            	$scope.selected = active;
                 if ($location.search().page) {
                     $location.search('page', null);
                     return; // will reload via $routeUpdate
