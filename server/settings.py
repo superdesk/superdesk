@@ -98,7 +98,7 @@ CELERYBEAT_SCHEDULE = {
         # there is internal schedule for updates per provider,
         # so this is minimal interval when an update can occur
         'schedule': timedelta(seconds=30),
-        'options': {'expires': 59}
+        'options': {'expires': 29}
     },
     'ingest:gc': {
         'task': 'superdesk.io.gc_ingest',
@@ -111,7 +111,11 @@ CELERYBEAT_SCHEDULE = {
     'spike:gc': {
         'task': 'apps.archive.content_purge',
         'schedule': crontab(minute=30)
-    }
+    },
+    'macros:print': {
+        'task': 'apps.macros.print_macros',
+        'schedule': timedelta(seconds=30),
+    },
 }
 
 SENTRY_DSN = env('SENTRY_DSN')

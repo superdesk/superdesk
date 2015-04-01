@@ -28,14 +28,14 @@ def load_module(module):
     :param module: name of he module
     """
     try:
-        if module in sys.modules.keys():
-            m = sys.modules[module]
-            imp.reload(m)
-        else:
+        m = sys.modules[module]
+        imp.reload(m)
+    except AttributeError:
+        try:
             importlib.import_module(module)
-        register_macros()
-    except ImportError:
-        pass
+        except ImportError:
+            return
+    register_macros()
 
 
 def register_macros():
