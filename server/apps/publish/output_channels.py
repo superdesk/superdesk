@@ -39,5 +39,4 @@ class OutputChannelsService(BaseService):
         dest_groups = get_resource_service('destination_groups').get(req=None, lookup=lookup)
         if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
-                message='Output Channel is associated with Destination Groups.',
-                payload={'destination_groups': 1})
+                message='Output Channel is associated with Destination Groups.')
