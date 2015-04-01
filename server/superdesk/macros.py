@@ -33,18 +33,20 @@ def load_module(module):
             imp.reload(m)
         else:
             importlib.import_module(module)
-    except Exception as ex:
-        print('PROBLEM1')
+        register_macros()
+    except ImportError:
+        pass
 
-    module_name = 'macros.'
-    for key in sys.modules.keys():
-        if module_name in key:
-            register(name=sys.modules[key].name,
-                     label=sys.modules[key].label,
-                     shortcut=sys.modules[key].shortcut,
-                     callback=sys.modules[key].callback)
 
-    print('done')
+def register_macros():
+    macro_modules = [sys.modules[m] for m in sys.modules.keys() if 'macros.' in m]
+
+    for macro_module in macro_modules:
+        register(name=macro_module.name,
+                 label=macro_module.label,
+                 shortcut=macro_module.shortcut,
+                 callback=macro_module.callback)
+
 
 class MacroRegister():
     """Dynamic macros registry.
