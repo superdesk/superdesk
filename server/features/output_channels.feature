@@ -87,3 +87,6 @@ Feature: Output Channels
     """
     When we delete "/output_channels/#output_channels._id#"
     Then we get error 412
+    """
+    {"_message":"Output Channel is associated with Destination Groups.", "_status": "ERR"}
+    """

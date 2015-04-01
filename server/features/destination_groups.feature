@@ -140,6 +140,9 @@ Feature:Destination Groups
     """
     When we delete "/destination_groups/#destgroup1#"
     Then we get error 412
+    """
+    {"_message":"Destination Group is referenced by other Destination Group/s.", "_status": "ERR"}
+    """
 
   @auth @test
   Scenario: Failure to have self referenced Destination Group
@@ -203,6 +206,9 @@ Feature:Destination Groups
     }
     """
     Then we get error 400
+    """
+    {"_issues": {"validator exception":"400: Circular dependency in Destination Group."}}
+    """
     When we patch "/destination_groups/#destgroup2#"
     """
     {
@@ -211,3 +217,6 @@ Feature:Destination Groups
     }
     """
     Then we get error 400
+    """
+    {"_issues": {"validator exception":"400: Circular dependency in Destination Group."}}
+    """
