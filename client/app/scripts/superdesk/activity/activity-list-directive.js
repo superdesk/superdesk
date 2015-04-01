@@ -30,6 +30,7 @@ define([
                 var initializeActivities = function() {
                     scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
                         if (activity.monitor) {
+                            scope.item.actioning = {};
                             scope.item.actioning[activity._id] = false;
                             scope.$watch('item.actioning', function(newValue, oldValue) {
                                 if (scope.item.actioning &&
@@ -46,6 +47,20 @@ define([
 
                         return workflowService.isActionAllowed(scope.item, activity.action);
                     });
+                    // register key shortcuts for single instance of activity list - in preview sidebar
+                    if (scope.single) {
+                        angular.forEach(scope.activities, function(activity) {
+                            if (activity.key) {
+                                if (activity.unbind) {
+                                    activity.unbind();
+                                }
+                                activity.unbind = scope.$on('key:' + activity.key, function() {
+                                    console.log(activity);
+                                    scope.run(activity);
+                                });
+                            }
+                        });
+                    }
                 };
 
                 scope.run = function runActivity(activity, e) {
@@ -69,17 +84,6 @@ define([
                         });
 
                 };
-
-                // register key shortcuts for single instance of activity list - in preview sidebar
-                if (scope.single) {
-                    angular.forEach(scope.activities, function(activity) {
-                        if (activity.key) {
-                            scope.$on('key:' + activity.key, function() {
-                                scope.run(activity);
-                            });
-                        }
-                    });
-                }
 
                 scope.$watch('item', initializeActivities, true);
                 initializeActivities();
