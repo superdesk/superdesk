@@ -183,6 +183,5 @@ describe('HIGHLIGHTS', function() {
         content.setListView();
         expect(content.getCount()).toBe(5);
     });
-});
-
+  });
 });

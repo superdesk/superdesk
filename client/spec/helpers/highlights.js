@@ -1,7 +1,7 @@
 
 'use strict';
 
-var openUrl = require('./helpers/utils').open;
+var openUrl = require('./utils').open;
 
 module.exports = new Highlights();
 
