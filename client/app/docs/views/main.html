@@ -13,6 +13,9 @@
                 <a ng-click="scrollTo('buttons-global')">Buttons</a>
             </li>
             <li>
+                <a ng-click="scrollTo('inputs')">Input elements</a>
+            </li>
+            <li>
                 <a ng-click="scrollTo('modals')">Modals</a>
             </li>
         </ul>
@@ -147,7 +150,209 @@
                             </div>
                         </pre>
                     </div>
+                </li>
 
+                <li>
+                    <a class="link-holder" id="inputs"></a>
+                    <div class="docs-title">Input elements</div>
+
+                    <div class="docs-subtitle">Text inputs</div>
+                    <p>Be sure to add <code>type="text"</code> attribute for every text input to get proper styling. Default text input occupies the entire width of the parent block. In case you want smaller input sizes use specific classes to achieve this. Below are listed different sized text inputs.</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <div style="margin-bottom:10px;">
+                                <input type="text" placeholder="This is default input with placeholder">
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-mini" >
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-small" >
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-medium" >
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-large">
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-xlarge">
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <input type="text" class="input-xxlarge">
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <input type="text" placeholder="This is default input with placeholder">
+                            <input type="text" class="input-mini" >
+                            <input type="text" class="input-small" >
+                            <input type="text" class="input-medium" >
+                            <input type="text" class="input-large">
+                            <input type="text" class="input-xlarge">
+                            <input type="text" class="input-xxlarge">
+                        </pre>
+                    </div>
+
+                    <p>To get inline styled input add class <code>sf-inline-input</code></p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <div>
+                                London is capital of <input type="text" class="input-large inline-input" placeholder="Enter state name">
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div>
+                                London is capital of <input type="text" class="input-large inline-input" placeholder="Enter state name">
+                            </div>
+                        </pre>
+                    </div>
+
+                    <p>To get text input with large text, add class <code>large-text-input</code></p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <input type="text" class="input-xxlarge large-text-input" placeholder="Your name">
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <input type="text" class="input-xxlarge large-text-input" placeholder="Your name">
+                        </pre>
+                    </div>
+
+                    <div class="docs-subtitle">Textarea</div>
+                    <p>Use <code>rows</code> attribute to set default height. Width is controlled by the same classes as simple text input.</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <textarea rows="6" class="input-xxlarge"></textarea>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <textarea rows="6" class="input-xxlarge" ></textarea>
+                        </pre>
+                    </div>
+
+                    <p>Use directive <code>sd-auto-height</code> to get <strong>auto resizable textearea.</strong></p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <textarea rows="2" class="input-xxlarge" sd-auto-height ng-model="myTextarea"></textarea>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <textarea rows="2" class="input-xxlarge" sd-auto-height ng-model="myTextarea" ng-non-bindable></textarea>
+                        </pre>
+                    </div>
+
+                    <div class="docs-subtitle">Checkboxes</div>
+                    <p>Standard checkboxes</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area" ng-init="myCheck = false">
+                            <p><input type="checkbox" ng-model="myCheck"> Is checked: {{myCheck}}</p>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <p ng-non-bindable><input type="checkbox" ng-model="myCheck" > Is checked: {{myCheck}}</p>
+                        </pre>
+                    </div>
+
+                    <p>Superdesk styled checkboxes with directive <code>sd-check</code></p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area" ng-init="myCheckFancy = false">
+                            <p><span sd-check ng-model="myCheckFancy"></span> Is checked: {{myCheckFancy}}</p>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <p ng-non-bindable><span sd-check ng-model="myCheckFancy"></span> Is checked: {{myCheckFancy}}</p>
+                        </pre>
+                    </div>
+
+                    <div class="docs-subtitle">Toggle buttons</div>
+                    <p>These are acting the same way as checkboxes:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area" ng-init="myToggle = false">
+                            <p><span sd-switch ng-model="myToggle" class="pull-left"></span> Toggle state: {{myToggle}}</p>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <p ng-non-bindable><span sd-switch ng-model="myToggle"></span> Toggle state: {{myToggle}}</p>
+                        </pre>
+                    </div>
+
+                    <div class="docs-subtitle">Select boxes</div>
+                    <p>Angualar example of single select boxes:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div>
+                                <select class="input-large pull-left" ng-model="selectedOpt" ng-options="o for o in opts"></select>
+                                <span style="margin:10px 0 0 10px;">My favourite country is: {{selectedOpt}}</span>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div ng-non-bindable>
+                                <select class="input-large pull-left" ng-model="selectedOpt" ng-options="o for o in opts"></select>
+                                <span>My favourite country is: {{selectedOpt}}</span>
+                            </div>
+                        </pre>
+
+                        <p>JS code for select box is pretty simple:
+
+                        <pre class="prettyprint lang-js linenums">
+                            scope.opts = ['Serbia', 'Czech Republic', 'Germany', 'Australia'];
+                        </pre>
+                    </div>
+
+                    <div class="docs-subtitle">Typeahead</div>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div sd-typeahead items="taItems" term="taSelected" search="taSearch(term)" select="taSelect(item)" style="width:200px; float: left; margin-right: 10px;">
+                                <ul>
+                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem }}</li>
+                                </ul>
+                            </div>
+                            <span>My favourite country is: {{taSelected}}</span>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div sd-typeahead items="taItems" term="taSelected" search="taSearch(term)" select="taSelect(item)" ng-non-bindable>
+                                <ul>
+                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem }}</li>
+                                </ul>
+                            </div>
+                            <span ng-non-bindable>My favourite country is: {{taSelected}}</span>
+                        </pre>
+                        <p>JS code for typeahead</p>
+                        <pre class="prettyprint lang-js linenums">
+                            scope.taTerms = [
+                                'Serbia', 'Czech Republic', 'Germany', 'Australia',
+                                'Canada', 'Russia', 'Italy', 'Egypt', 'China'
+                            ];
+                            scope.taSelected = null;
+                            scope.taItems = [];
+
+                            scope.taSearch = function(term) {
+                                scope.taItems = _.filter(scope.taTerms, function(t) {
+                                    return t.toLowerCase().indexOf(term.toLowerCase()) !== -1
+                                });
+                                return scope.taItems;
+                            }
+
+                            scope.taSelect = function(term) {
+                                scope.taSelected = term;
+                            }
+                        </pre>
+
+                    </div>
 
 
                 </li>
