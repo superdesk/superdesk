@@ -54,7 +54,16 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'}
+                                        'macro': {'type': 'string'},
+                                        'destination_groups': {
+                                            'type': 'list',
+                                            'schema': {
+                                                'type': 'dict',
+                                                'schema': {
+                                                    'group': Resource.rel('destination_groups', True)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             },
@@ -65,7 +74,16 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'}
+                                        'macro': {'type': 'string'},
+                                        'destination_groups': {
+                                            'type': 'list',
+                                            'schema': {
+                                                'type': 'dict',
+                                                'schema': {
+                                                    'group': Resource.rel('destination_groups', True)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             },
