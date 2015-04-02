@@ -13,6 +13,9 @@
                 <a ng-click="scrollTo('buttons-global')">Buttons</a>
             </li>
             <li>
+                <a ng-click="scrollTo('dropdowns')">Dropdowns</a>
+            </li>
+            <li>
                 <a ng-click="scrollTo('inputs')">Input elements</a>
             </li>
             <li>
@@ -130,7 +133,7 @@
                     <p>For blue-colored button add class <code>navbtn-info</code>. </p>
                     <p>Nav buttons have auto width, but for strict width (<i>currently 48px</i>) use class <code>strict</code>. This is useful when icon is used as button content.</p>
                     <div class="docs-preview">
-                        <div class="preview-area clearfix" style="padding: 10px 20px;height:28px;">
+                        <div class="preview-area clearfix docs-navbar" >
                             <div class="button-stack">
                                 <button class="navbtn">Sample nav button</button>
                                 <button class="navbtn strict"><i class="svg-icon-create-list"></i></button>
@@ -155,7 +158,7 @@
                     </div>
                     <p>There is specific nav button meant to be used for adding/creating action. To get this button use class <code>sd-create-button</code>. </p>
                     <div class="docs-preview">
-                        <div class="preview-area clearfix" style="padding: 10px 20px;height:28px;">
+                        <div class="preview-area clearfix docs-navbar">
                             <div class="button-stack">
                                 <button class="navbtn sd-create-btn"></button>
                             </div>
@@ -167,8 +170,175 @@
                             </div>
                         </pre>
                     </div>
+                </li>
 
+                <li>
+                    <a class="link-holder" id="dropdowns"></a>
+                    <div class="docs-title">Dropdowns</div>
 
+                    <p>Dropdowns have it's specific class <code>dropdown</code> and consist of two parts, <code>dropdown-toggle</code> and <code>dropdown-menu</code> It is important to have those two in order to have porperly styled component.</p>
+                    <p>By default dropdown-menu is positioned left comparing to dropdown-toggle element. For right positioned menu (second example) add class <code>pull-right</code></p>
+                    <p>Menu items should be <code>li</code> elements, containing either <code>button</code> or <code>a</code> tag.</p>
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div class="dropdown pull-left" style="margin:0 10px;" dropdown>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Action
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li><button>Action 3</button></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown pull-left" style="margin:0 10px;" dropdown>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Action
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li><button>Action 3</button></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div class="dropdown" dropdown ng-non-bindable>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Action
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li><button>Action 3</button></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown" dropdown ng-non-bindable>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Action
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li><button>Action 3</button></li>
+                                </ul>
+                            </div>
+                        </pre>
+                    </div>
+
+                    <p>Another example shows customization of dropdown</p>
+                    <ol class="simple-list">
+                        <li><code>dropdown-toggle</code> item is changed with classes <code>btn btn-info</code></li>
+                        <li>Label is added on the of menu with class <code>menu-label</code></li>
+                        <li>There is a use of divder</li>
+                        <li>Items used in the menu have different tags (both <code>button</code> and <code>a</code>)</li>
+                        <li>Item can be <code>disabled</code></li>
+                    </ol>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div class="dropdown pull-left" dropdown>
+                                <button class="btn btn-info dropdown-toggle" dropdown-toggle>
+                                    Special choice
+                                    <span class="caret white"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><div class="menu-label">Choose one of items</div></li>
+                                    <li class="divider"></li>
+                                    <li><button>Action Button</button></li>
+                                    <li><button disabled>Disabled Button</button></li>
+                                    <li><a href="#">Cool Link</a></li>
+                                    <li class="divider"></li>
+                                    <li><button><i class="icon-pencil"></i>Button with icon</button></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div class="dropdown" dropdown ng-non-bindable>
+                                <button class="btn btn-info dropdown-toggle" dropdown-toggle>
+                                    Special choice
+                                    <span class="caret white"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><div class="menu-label">Choose one of items</div></li>
+                                    <li class="divider"></li>
+                                    <li><button>Action Button</button></li>
+                                    <li><button disabled>Disabled Button</button></li>
+                                    <li><a href="#">Cool Link</a></li>
+                                    <li class="divider"></li>
+                                    <li><button><i class="icon-pencil"></i>Button with icon</button></li>
+                                </ul>
+                            </div>
+                        </pre>
+                    </div>
+
+                    <p>To get upside positioned menu, add class <code>dropup</code> near <code>dropdown</code>. Example:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div class="dropdown dropup" dropdown>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Dropup menu
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button><i class="icon-remove"></i>Delete</button></li>
+                                    <li><button><i class="icon-pencil"></i>Edit</button></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div class="dropdown dropup" dropdown ng-non-bindable>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    Dropup menu
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button><i class="icon-remove"></i>Delete</button></li>
+                                    <li><button><i class="icon-pencil"></i>Edit</button></li>
+                                </ul>
+                            </div>
+                        </pre>
+                    </div>
+
+                    <p>There is another style for big dropdowns, mainly used for important dropdowns (top level buttons), and this is achieved with the class<code>dropdown-big</code> near <code>dropdown</code>. Example:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix" style="padding:0;height:48px">
+                            <div class="dropdown dropdown-big pull-left" dropdown>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    <i class="svg-icon-settings"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button><i class="icon-external"></i>Open link</button></li>
+                                    <li><button><i class="icon-remove"></i>Remove item</button></li>
+                                    <li><button><i class="icon-list-plus"></i>Add list of items</button></li>
+                                    <li><button><i class="icon-archive"></i>Download item</button></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <div class="dropdown dropdown-big" dropdown ng-non-bindable>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                    <i class="svg-icon-settings"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button><i class="icon-external"></i>Open link</button></li>
+                                    <li><button><i class="icon-remove"></i>Remove item</button></li>
+                                    <li><button><i class="icon-list-plus"></i>Add list of items</button></li>
+                                    <li><button><i class="icon-archive"></i>Download item</button></li>
+                                </ul>
+                            </div>
+                        </pre>
+                    </div>
                 </li>
 
                 <li>
