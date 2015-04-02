@@ -383,11 +383,12 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags',  function($location, desks, privileges, tags) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags', 'asset',
+            function($location, desks, privileges, tags, asset) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
-                templateUrl: 'scripts/superdesk-search/views/search-facets.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-facets.html'),
                 scope: {
                     items: '=',
                     desk: '=',
@@ -541,10 +542,11 @@
             };
         }])
 
-        .directive('sdSearchTags', ['$location', '$route', 'tags', function($location, $route, tags) {
+        .directive('sdSearchTags', ['$location', '$route', 'tags', 'asset',
+            function($location, $route, tags, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/search-tags.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-tags.html'),
                 link: function(scope, elem) {
 
                     var update = function() {
@@ -573,8 +575,8 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags',
-            function($location, preferencesService, packages, tags) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
+            function($location, preferencesService, packages, tags, asset) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -591,7 +593,7 @@
 
             return {
                 require: '^sdSearchContainer',
-                templateUrl: 'scripts/superdesk-search/views/search-results.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-results.html'),
                 link: function(scope, elem, attr, controller) {
 
                     var GRID_VIEW = 'mgrid',
@@ -653,10 +655,10 @@
             };
         }])
 
-        .directive('sdSearchWithin', ['$location', function($location) {
+        .directive('sdSearchWithin', ['$location', 'asset', function($location, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/search-within.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-within.html'),
                 link: function(scope, elem) {
                     scope.searchWithin = function() {
                         if (scope.within) {
@@ -700,11 +702,12 @@
         /**
          * Open Item dialog
          */
-        .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify', 'gettext', 'keyboardManager',
-            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager) {
+        .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify',
+            'gettext', 'keyboardManager', 'asset',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset) {
             return {
                 scope: {repo: '=', context: '='},
-                templateUrl: 'scripts/superdesk-search/views/item-globalsearch.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-globalsearch.html'),
                 link: function(scope, elem) {
 
                     var ENTER = 13;
@@ -798,9 +801,9 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', ['$location', '$document', function($location, $document) {
+        .directive('sdItemSearchbar', ['$location', '$document', 'asset', function($location, $document, asset) {
             return {
-                templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-searchbar.html'),
                 link: function(scope, elem) {
                     var ENTER = 13;
 
@@ -850,13 +853,13 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', function($location, $timeout) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', function($location, $timeout, asset) {
             return {
                 scope: {
                     repo: '=',
                     context: '='
                 },
-                templateUrl: 'scripts/superdesk-search/views/item-search.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-search.html'),
                 link: function(scope, elem) {
 
                     var input = elem.find('#search-input');
@@ -966,10 +969,10 @@
         /**
          * Item sort component
          */
-        .directive('sdItemSortbar', ['search', function sortBarDirective(search) {
+        .directive('sdItemSortbar', ['search', 'asset', function sortBarDirective(search, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/item-sortbar.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-sortbar.html'),
                 link: function(scope) {
                     scope.sortOptions = search.sortOptions;
 
@@ -1001,10 +1004,10 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext',
-        function(api, session, $location, notify, gettext) {
+        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext', 'asset',
+        function(api, session, $location, notify, gettext, asset) {
             return {
-                templateUrl: 'scripts/superdesk-search/views/saved-searches.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
                 link: function(scope) {
 
@@ -1063,7 +1066,7 @@
             };
         })
 
-        .config(['superdeskProvider', function(superdesk) {
+        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk.activity('/search', {
                 description: gettext('Find live and archived content'),
                 beta: 1,
@@ -1071,7 +1074,7 @@
                 category: superdesk.MENU_MAIN,
                 label: gettext('Search'),
                 controller: SearchController,
-                templateUrl: 'scripts/superdesk-search/views/search.html'
+                templateUrl: asset.templateUrl('superdesk-search/views/search.html')
             });
         }])
 
