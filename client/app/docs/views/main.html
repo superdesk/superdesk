@@ -355,22 +355,89 @@
                             ];
                             scope.taSelected = null;
                             scope.taItems = [];
-
                             scope.taSearch = function(term) {
                                 scope.taItems = _.filter(scope.taTerms, function(t) {
                                     return t.toLowerCase().indexOf(term.toLowerCase()) !== -1
                                 });
                                 return scope.taItems;
                             }
-
                             scope.taSelect = function(term) {
                                 scope.taSelected = term;
                             }
                         </pre>
-
                     </div>
 
+                    <div class="docs-subtitle">Datepicker</div>
+                    <p>Datepicker is achieved with <code>sd-datepicker</code> directive. It expects UTC string or UTC time object, and returns UTC string if input is valid, or NULL if it's not. User sees local date.</p>
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div style="margin-right:20px" class="pull-left">
+                                <label translate>Select date:</label>
+                                <div sd-datepicker ng-model="dateBlank"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{dateBlank}}</span>
+                            </div>
+                            <div class="pull-left">
+                                <label translate>Select another date:</label>
+                                <div sd-datepicker ng-model="dateNow"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{dateNow}}</span>
+                            </div>
+                        </div>
+                        <pre class="prettyprint lang-html linenums">
+                            <div ng-non-bindable class="pull-left">
+                                <label translate>Select date</label>
+                                <div sd-timepicker ng-model="dateBlank"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{dateBlank}}</span>
+                            </div>
+                            <div ng-non-bindable class="pull-left">
+                                <label translate>Select another date</label>
+                                <div sd-datepicker ng-model="dateNow"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{dateNow}}</span>
+                            </div>
+                        </pre>
+                    </div>
+                    <pre class="prettyprint lang-js linenums">
+                        scope.dateNow = moment().utc().format();
+                    </pre>
 
+                    <div class="docs-subtitle">Timepicker</div>
+                    <p>Timepicker is achieved with <code>sd-timepicker</code> directive. It expects UTC string, and returns UTC string if input is valid, or NULL if it's not. User sees local time.</p>
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix">
+                            <div style="margin-right:20px" class="pull-left">
+                                <label translate>Select date:</label>
+                                <div sd-timepicker ng-model="timeBlank"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{timeBlank}}</span>
+                            </div>
+                            <div class="pull-left">
+                                <label translate>Select another date:</label>
+                                <div sd-timepicker ng-model="timeNow"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{timeNow}}</span>
+                            </div>
+                        </div>
+                        <pre class="prettyprint lang-html linenums">
+                            <div ng-non-bindable class="pull-left">
+                                <label translate>Select time</label>
+                                <div sd-timepicker ng-model="timeBlank"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{timeBlank}}</span>
+                            </div>
+                            <div ng-non-bindable class="pull-left">
+                                <label translate>Select another time</label>
+                                <div sd-timepicker ng-model="timeNow"></div>
+                                <label>Model value (UTC):</label>
+                                <span>{{timeNow}}</span>
+                            </div>
+                        </pre>
+                    </div>
+                    <pre class="prettyprint lang-javascript linenums">
+                        scope.timeNow = moment().utc().format('HH:mm:ss')
+                    </pre>
                 </li>
 
                 <li>

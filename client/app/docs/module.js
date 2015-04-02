@@ -53,6 +53,12 @@
                 scope.taSelect = function(term) {
                     scope.taSelected = term;
                 };
+
+                //datepicker
+                scope.dateNow = moment().utc().format();
+
+                //timepicker
+                scope.timeNow = moment().utc().format('HH:mm:ss');
             }
         };
     }
