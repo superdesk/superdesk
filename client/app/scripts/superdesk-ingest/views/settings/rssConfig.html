@@ -33,3 +33,63 @@
         ng-change="$parent.setConfig(provider)">
   </div>
 </fieldset>
+
+
+<fieldset class="separated">
+  <legend translate>Content Field Aliases</legend>
+
+  <div class="flex-group header" ng-show="fieldAliases.length > 0">
+    <div class="flex-field">
+      <label for="" translate>Content Field Name</label>
+    </div>
+    <div class="flex-field">
+      <label for="" translate>Field Alias</label>
+    </div>
+    <div class="flex-field-empty">
+    </div>
+  </div>
+
+  <div class="flex-group" ng-show="fieldAliases.length == 0">
+    {{:: 'No field aliases defined.'|translate }}
+  </div>
+
+  <div class="flex-group" ng-repeat="item in fieldAliases">
+    <div class="flex-field">
+      <select
+          ng-options="fieldName for fieldName in
+                      (availableFieldOptions(item.fieldName) | orderBy)"
+          ng-model="item.fieldName"
+          ng-change="fieldSelectionChanged()">
+      </select>
+    </div>
+
+    <div class="flex-field">
+      <input type="text" id=""
+          placeholder="{{:: 'Enter field alias'|translate }}"
+          ng-model="item.alias">
+    </div>
+
+    <button
+        type="button"
+        class="btn btn-default"
+        ng-click="removeFieldAlias($index)"
+        tooltip="{{:: 'Remove'|translate}}"
+        tooltip-placement="bottom"
+        tooltip-popup-delay="500">
+      <i class="icon-close-small"></i>
+    </button>
+  </div>
+
+  <div class="flex-group" ng-show="fieldAliases.length < contentFields.length">
+    <button
+        type="button"
+        class="btn btn-info"
+        ng-click="addFieldAlias()"
+        tooltip="{{:: 'Add alias'|translate}}"
+        tooltip-placement="right"
+        tooltip-popup-delay="500">
+      <i class="svg-icon-plus"></i>
+    </button>
+  </div>
+
+</fieldset>

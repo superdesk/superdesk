@@ -319,6 +319,22 @@ define([
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
                 $scope.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
+                // a list of all data field names in retrieved content
+                // expected by the server
+                // XXX: have this somewhere in config? probably better
+                $scope.contentFields = [
+                    'body_text', 'guid', 'published_parsed',
+                    'summary', 'title', 'updated_parsed'
+                ];
+
+                // a list of data field names currently *not* selected in any
+                // of the dropdown menus in the field aliases section
+                $scope.fieldsNotSelected = angular.copy($scope.contentFields);
+
+                // a list of field names aliases - used for fields in retrieved
+                // content whose names differ from what the server expects
+                $scope.fieldAliases = [];
+
                 function fetchProviders() {
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
@@ -368,11 +384,29 @@ define([
                 };
 
                 $scope.edit = function(provider) {
+                    var aliases;
+
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
                     $scope.provider.idle_time = $scope.origProvider.idle_time || DEFAULT_IDLE_TIME;
                     $scope.provider.notifications = $scope.origProvider.notifications;
+                    $scope.provider.config = $scope.origProvider.config;
+
+                    // init the lists of field aliases and non-selected fields
+                    $scope.fieldAliases = [];
+                    aliases = $scope.origProvider.config.field_aliases || {};
+
+                    Object.keys(aliases).forEach(function (fieldName) {
+                        $scope.fieldAliases.push(
+                            {fieldName: fieldName, alias: aliases[fieldName]});
+                    });
+
+                    $scope.fieldsNotSelected = $scope.contentFields.filter(
+                        function (fieldName) {
+                            return !(fieldName in aliases);
+                        }
+                    );
                 };
 
                 $scope.cancel = function() {
@@ -390,9 +424,9 @@ define([
                 * needed for an RSS source.
                 *
                 * @method setRssConfig
-                * @param {Object} provider ingest provider instance
+                * @param {Object} provider - ingest provider instance
                 */
-                $scope.setRssConfig = function(provider) {
+                $scope.setRssConfig = function (provider) {
                     if (!provider.config.auth_required) {
                         provider.config.username = null;
                         provider.config.password = null;
@@ -400,7 +434,85 @@ define([
                     $scope.provider.config = provider.config;
                 };
 
+                /**
+                * Appends a new (empty) item to the list of field aliases.
+                *
+                * @method addFieldAlias
+                */
+                $scope.addFieldAlias = function () {
+                    $scope.fieldAliases.push({fieldName: null, alias: ''});
+                };
+
+                /**
+                * Removes a field alias from the list of field aliases at the
+                * specified index.
+                *
+                * @method removeFieldAlias
+                * @param {Number} itemIdx - index of the item to remove
+                */
+                $scope.removeFieldAlias = function (itemIdx) {
+                    var removed = $scope.fieldAliases.splice(itemIdx, 1);
+                    if (removed[0].fieldName) {
+                        $scope.fieldsNotSelected.push(removed[0].fieldName);
+                    }
+                };
+
+                /**
+                * Updates the list of content field names not selected in any
+                * of the dropdown menus.
+                *
+                * @method fieldSelectionChanged
+                */
+                $scope.fieldSelectionChanged = function () {
+                    var selectedFields = {};
+
+                    $scope.fieldAliases.forEach(function (item) {
+                        if (item.fieldName) {
+                            selectedFields[item.fieldName] = true;
+                        }
+                    });
+
+                    $scope.fieldsNotSelected = $scope.contentFields.filter(
+                        function (fieldName) {
+                            return !(fieldName in selectedFields);
+                        }
+                    );
+                };
+
+                /**
+                * Calculates a list of content field names that can be used as
+                * options in a dropdown menu.
+                *
+                * The list is comprised of all field names that are currently
+                * not selected in any of the other dropdown menus and
+                * of a field name that should be selected in the current
+                * dropdown menu (if any).
+                *
+                * @method availableFieldOptions
+                * @param {String} [selectedName] - currently selected field
+                * @return {String[]} list of field names
+                */
+                $scope.availableFieldOptions = function (selectedName) {
+                    var fieldNames = angular.copy($scope.fieldsNotSelected);
+
+                    // add current field selection, if available
+                    if (selectedName) {
+                        fieldNames.push(selectedName);
+                    }
+                    return fieldNames;
+                };
+
                 $scope.save = function() {
+                    var newAliases = {};
+
+                    $scope.fieldAliases.forEach(function (item) {
+                        if (item.fieldName && item.alias) {
+                            newAliases[item.fieldName] = item.alias;
+                        }
+                    });
+
+                    $scope.provider.config.field_aliases = newAliases;
+
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {
                         notify.success(gettext('Provider saved!'));
