@@ -1,6 +1,7 @@
 import os
 import json
 import superdesk
+import pymongo
 
 from superdesk import get_resource_service
 from flask import current_app as app
@@ -29,6 +30,16 @@ class AppInitializeWithDataCommand(superdesk.Command):
         self.import_file('vocabularies.json', service)
 
         print('Data import finished')
+
+        print('Starting indexes creation')
+        app.data.mongo.pymongo().db['roles'].create_index('name')
+        app.data.mongo.pymongo().db['users'].create_index([('first_name', pymongo.ASCENDING),
+                                                           ('last_name', pymongo.DESCENDING)])
+        app.data.mongo.pymongo().db['desks'].create_index('incoming_stage')
+        app.data.mongo.pymongo().db['stages'].create_index('desk')
+        print('Finished index creation')
+
+        return 0
 
     def import_file(self, file_name, service):
         file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
