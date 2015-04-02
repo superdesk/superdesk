@@ -8,8 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk import macros
-
 
 def update_fields(item, **kwargs):
     """Updates the abstract field"""
@@ -18,10 +16,8 @@ def update_fields(item, **kwargs):
     return item
 
 
-macros.register(
-    name='update_fields',
-    label='Update Fields',
-    shortcut='w',
-    callback=update_fields,
-    desks=['POLITICS']
-)
+name = 'update_fields'
+label = 'Update Fields'
+shortcut = 'w'
+callback = update_fields
+desks = ['POLITICS']

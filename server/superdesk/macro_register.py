@@ -39,7 +39,10 @@ def load_module(module):
 
 
 def register_macros():
-    macro_modules = [sys.modules[m] for m in sys.modules.keys() if 'macros.' in m]
+    macro_modules = [sys.modules[m] for m in sys.modules.keys()
+                     if 'macros.' in m and
+                     not m.endswith('_test')
+                     and not m.startswith('__')]
 
     for macro_module in macro_modules:
         register(name=macro_module.name,

@@ -12,7 +12,7 @@
 import superdesk
 
 from superdesk.utils import ListCursor
-from superdesk.macros import macros
+from superdesk.macro_register import macros
 
 from superdesk.celery_app import celery
 

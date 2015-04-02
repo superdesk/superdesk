@@ -137,7 +137,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
-    'superdesk.macros',
+    'superdesk.macro_register',
     'superdesk.commands',
 
     'apps.archive',
