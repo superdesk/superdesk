@@ -44,6 +44,7 @@ class Resource():
     item_methods = None
     resource_methods = None
     public_methods = None
+    public_item_methods = None
     extra_response_fields = None
     embedded_fields = None
     datasource = None
@@ -72,6 +73,8 @@ class Resource():
                 endpoint_schema.update({'resource_methods': self.resource_methods})
             if self.public_methods is not None:
                 endpoint_schema.update({'public_methods': self.public_methods})
+            if self.public_item_methods is not None:
+                endpoint_schema.update({'public_item_methods': self.public_item_methods})
             if self.url is not None:
                 endpoint_schema.update({'url': self.url})
             if self.item_url is not None:
