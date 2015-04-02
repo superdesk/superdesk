@@ -18,19 +18,19 @@ angular.module('superdesk.mocks', [])
 
         this.get = function() {
             return $q.when(null);
-    	};
+        };
 
         this.update = function() {
             return $q.when(null);
-    	};
+        };
 
         this.getPrivileges = function() {
             return $q.when({});
         };
     })
     .service('beta', function($q) {
-    	this.isBeta = function() {
-    		return $q.when(false);
-    	};
+        this.isBeta = function() {
+            return $q.when(false);
+        };
     });
 })();

@@ -35,8 +35,8 @@ define([
                     }
                 }
                 function scrollList(id) {
-                   $location.hash(id);
-                   $anchorScroll();
+                    $location.hash(id);
+                    $anchorScroll();
                 }
                 function move(diff) {
                     return function() {
@@ -135,9 +135,9 @@ define([
                 *@param {integer} page
                 */
                 scope.setLimit = function(pagesize) {
-                     localStorage.setItem('pagesize', pagesize);
-                     scope.setPage(0);
-                     $location.search('max_results', pagesize != null ? pagesize : size);
+                    localStorage.setItem('pagesize', pagesize);
+                    scope.setPage(0);
+                    $location.search('max_results', pagesize != null ? pagesize : size);
                 };
             }
         };

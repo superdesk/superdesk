@@ -3,7 +3,7 @@ define([
     'angular',
     './preferencesService'
 ], function(_, angular) {
-   'use strict';
+    'use strict';
 
     return angular.module('superdesk.workflow', [])
         .run(['workflowService', angular.noop]) // make sure it's loaded
@@ -14,7 +14,7 @@ define([
                 if (_.isUndefined(actionName) || _.isUndefined(item.state)) { return true; }
 
                 var action = _.find(_actions, function(actionItem) {
-                   return actionItem.name === actionName;
+                    return actionItem.name === actionName;
                 });
 
                 if (action) {
@@ -36,5 +36,5 @@ define([
 
             $rootScope.isActionAllowed = angular.bind(this, this.isActionAllowed);
 
-    }]);
+        }]);
 });

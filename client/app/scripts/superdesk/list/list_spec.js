@@ -72,7 +72,7 @@ define([
                 expect(scope.to).toBe(48);
             }));
 
-             it('can calculate last of multiple pages when max_results defined', inject(function($compile, $rootScope, $location) {
+            it('can calculate last of multiple pages when max_results defined', inject(function($compile, $rootScope, $location) {
                 var $scope = $rootScope.$new(true);
                 $scope.items = {_meta: {total: 55}};
                 $scope.limit = 25;

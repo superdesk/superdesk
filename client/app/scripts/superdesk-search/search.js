@@ -145,7 +145,7 @@
                 };
 
                 if (post_filters.length > 0) {
-                     criteria.post_filter = {'and': post_filters};
+                    criteria.post_filter = {'and': post_filters};
                 }
 
                 paginate(criteria, search);
@@ -470,8 +470,8 @@
                                     _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                         _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
                                             if (deskStage._id === stage.key) {
-                                                    scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
-                                                }
+                                                scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
+                                            }
                                         });
                                     });
                                 }
@@ -514,9 +514,9 @@
                         if (key === 'Last Day') {
                             $location.search('after', 'now-24H');
                         } else if (key === 'Last Week'){
-                             $location.search('after', 'now-1w');
+                            $location.search('after', 'now-1w');
                         } else if (key === 'Last Month'){
-                             $location.search('after', 'now-1M');
+                            $location.search('after', 'now-1M');
                         } else {
                             $location.search('after', null);
                         }
@@ -741,12 +741,12 @@
                         }
                     }
                     function searchUserContent(criteria) {
-                           var resource = api('user_content', session.identity);
-                           resource.query(criteria).then(function(result) {
-                                    openItem(result._items);
-                            }, function(response) {
-                                scope.message = gettext('There was a problem, item can not open.');
-                            });
+                        var resource = api('user_content', session.identity);
+                        resource.query(criteria).then(function(result) {
+                            openItem(result._items);
+                        }, function(response) {
+                            scope.message = gettext('There was a problem, item can not open.');
+                        });
                     }
                     function fetchItem() {
                         var filter = [
@@ -754,21 +754,21 @@
                             {term: {unique_name: scope.meta.unique_name}}
                         ];
                         var criteria = {
-                                            repo: 'ingest,archive',
-                                            source: {
-                                            query: {filtered: {filter: {
-                                                and: filter
-                                            }}}
-                                         }
+                            repo: 'ingest,archive',
+                            source: {
+                                query: {filtered: {filter: {
+                                    and: filter
+                                }}}
+                            }
                         };
                         api.query('search', criteria).then(function(result) {
-                                scope.items = result._items;
-                                if (scope.items.length > 0) {
-                                    openItem(scope.items);
-                                    reset();
-                                } else {
-                                    searchUserContent(criteria);
-                                }
+                            scope.items = result._items;
+                            if (scope.items.length > 0) {
+                                openItem(scope.items);
+                                reset();
+                            } else {
+                                searchUserContent(criteria);
+                            }
                         }, function(response) {
                             scope.message = gettext('There was a problem, item can not open.');
                         });
@@ -938,7 +938,7 @@
 
                     scope.focusOnSearch = function() {
                         if (scope.advancedOpen) {
-                           scope.toggle();
+                            scope.toggle();
                         }
                         input.focus();
                     };

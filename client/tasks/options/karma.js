@@ -15,8 +15,8 @@ module.exports = {
     },
     unit: {
         coverageReporter: {
-          type: 'html',
-          dir: 'report/'
+            type: 'html',
+            dir: 'report/'
         }
     },
     travis: {

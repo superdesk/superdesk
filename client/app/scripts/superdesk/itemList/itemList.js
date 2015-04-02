@@ -149,7 +149,7 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         return $q.when(getQuery(options)).then(function(query) {
             return api(options.endpoint, options.endpointParam || undefined)
                 .query(query);
-            });
+        });
     };
 }])
 .provider('ItemList', function() {

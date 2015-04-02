@@ -79,16 +79,16 @@ define([
             return desks.getCurrentDeskId();
         }, reload);
 
-    	$scope.addItem = function() {
+        $scope.addItem = function() {
             planning.save($scope.newItem).then(function() {
                 $scope.items = planning.items;
                 $scope.newItem = planning.create();
             });
-    	};
+        };
 
-    	$scope.preview = function(item) {
-    		$scope.selected.item = item;
-    	};
+        $scope.preview = function(item) {
+            $scope.selected.item = item;
+        };
 
         function reload() {
             $scope.items = null;
@@ -100,12 +100,12 @@ define([
 
     PreviewItemDirective.$inject = ['planning', 'api', 'notify', 'es'];
     function PreviewItemDirective(planning, api, notify, es) {
-    	return {
-    		templateUrl: 'scripts/superdesk-planning/views/item-preview.html',
-    		scope: {
-    			origItem: '=item'
-    		},
-    		link: function(scope, elem) {
+        return {
+            templateUrl: 'scripts/superdesk-planning/views/item-preview.html',
+            scope: {
+                origItem: '=item'
+            },
+            link: function(scope, elem) {
                 scope.item = null;
                 scope.origCoverages = {};
                 scope.coverages = {};
@@ -116,7 +116,7 @@ define([
                     resetItem(origItem);
                 });
 
-    			scope.$watchCollection('item', function(item) {
+                scope.$watchCollection('item', function(item) {
                     scope.dirty = !angular.equals(item, scope.origItem);
                 });
 
@@ -214,12 +214,12 @@ define([
                 };
 
                 var resetItem = function(item) {
-    				scope.item = _.create(item);
+                    scope.item = _.create(item);
                     fetchCoverages();
                     fetchUsers();
-    			};
-    		}
-    	};
+                };
+            }
+        };
     }
 
     AssigneeBoxDirective.$inject = ['api', 'desks', 'userList'];
@@ -277,7 +277,7 @@ define([
     }
 
     return angular.module('superdesk.planning', ['superdesk.elastic'])
-    	.directive('sdPreviewItem', PreviewItemDirective)
+        .directive('sdPreviewItem', PreviewItemDirective)
         .directive('sdAssigneeBox', AssigneeBoxDirective)
         .directive('sdCoverageType', CoverageTypeDirective)
         .service('planning', PlanningService)

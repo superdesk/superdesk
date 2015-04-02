@@ -323,7 +323,7 @@ define([
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
                             $scope.providers = result;
-                    });
+                        });
                 }
 
                 function openProviderModal() {

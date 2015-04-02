@@ -44,10 +44,10 @@ describe('Users', function() {
 
             user.waitReady()
                 .then(function(elem) {
-                  return browser.actions().mouseMove(elem).perform();
+                    return browser.actions().mouseMove(elem).perform();
                 })
                 .then(function() {
-                  activity.waitReady().then(function(elem) { elem.click(); });
+                    activity.waitReady().then(function(elem) { elem.click(); });
                 });
 
             element(by.css('.modal-dialog')).waitReady().then(function(elem) {
@@ -113,14 +113,13 @@ describe('Users', function() {
             openUrl('/#/users').then(function() {
                 return element(by.repeater('user in users').row(1).column('username'))
                     .waitReady();
-                }).then(function(elem) {
-                    return elem.click();
-                }).then(function() {
-                    return $('#open-user-profile')
-                        .waitReady();
-                }).then(function(elem) {
-                    return elem.click();
-                }).then(done);
+            }).then(function(elem) {
+                return elem.click();
+            }).then(function() {
+                return $('#open-user-profile').waitReady();
+            }).then(function(elem) {
+                return elem.click();
+            }).then(done);
         });
 
         it('can enable/disable buttons based on form status', function() {

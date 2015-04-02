@@ -82,11 +82,11 @@ define([
         }
 
         $scope.$on('task:stage', function(_e, data) {
-        	if ($scope.stages.selected && (
+            if ($scope.stages.selected && (
                 $scope.stages.selected._id === data.new_stage ||
                 $scope.stages.selected._id === data.old_stage)) {
-        		refreshItems();
-        	}
+                refreshItems();
+            }
         });
 
         $scope.$on('media_archive', refreshItems);
@@ -106,7 +106,7 @@ define([
             $scope.$watch(function() {
                 return desks.active;
             }, function(active) {
-            	$scope.selected = active;
+                $scope.selected = active;
                 if ($location.search().page) {
                     $location.search('page', null);
                     return; // will reload via $routeUpdate

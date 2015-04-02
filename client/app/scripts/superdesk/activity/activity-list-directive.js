@@ -37,11 +37,11 @@ define([
                                     !scope.item.actioning[activity._id] &&
                                     oldValue &&
                                     (newValue[activity._id] !== oldValue[activity._id])) {
-                                        if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
-                                            notify.error(gettext(scope.item.error.data._message));
-                                            delete scope.item.error;
-                                        }
+                                    if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
+                                        notify.error(gettext(scope.item.error.data._message));
+                                        delete scope.item.error;
                                     }
+                                }
                             }, true);
                         }
 
@@ -68,7 +68,7 @@ define([
                         return; // don't try to run it, just let it change url
                     }
 
-					if (activity.monitor) {
+                    if (activity.monitor) {
                         scope.item.actioning[activity._id] = true;
                     }
 

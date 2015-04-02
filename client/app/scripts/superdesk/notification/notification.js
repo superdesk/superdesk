@@ -19,16 +19,16 @@
 
         var ws = new WebSocket(config.server.ws);
 
-    	ws.onmessage = function(event) {
-    		var msg = angular.fromJson(event.data);
+        ws.onmessage = function(event) {
+            var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
-    	};
+        };
 
-    	ws.onerror = function(event) {
-    		console.error(event);
-    	};
+        ws.onerror = function(event) {
+            console.error(event);
+        };
     }
 
     return angular.module('superdesk.notification', [])
-    	.run(WebSocketProxy);
+        .run(WebSocketProxy);
 })();

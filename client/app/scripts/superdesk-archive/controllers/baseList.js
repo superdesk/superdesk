@@ -52,7 +52,7 @@ define(['lodash'], function(_) {
         };
 
         this.refresh = function refresh(filterDesk) {
-        	var query = self.getQuery(_.omit($location.search(), '_id'), filterDesk);
+            var query = self.getQuery(_.omit($location.search(), '_id'), filterDesk);
             self.fetchItems({source: query});
         };
     }
