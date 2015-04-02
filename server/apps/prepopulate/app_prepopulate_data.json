@@ -38,7 +38,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a4@a.com",
             "first_name": "first name4",
@@ -53,7 +53,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a3@a.com",
             "first_name": "first name3",
@@ -68,7 +68,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a2@a.com",
             "first_name": "first name2",
@@ -83,7 +83,7 @@
         "resource": "users"
     },
     
-        {
+    {
         "data": {
             "email": "a1@a.com",
             "first_name": "first name1",
@@ -200,6 +200,30 @@
         "resource": "stages",
         "username": "admin",
         "id_name": "-id stage three Politic Desks-"
+    },
+
+    {
+    	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight one-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight two", "desks": ["-id desk Sport Desks-", "-id desk Politic Desks-"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight two-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight three", "desks": ["-id desk Politic Desks-"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight three-"
+    },
+    
+    {	
+    	"data": {"name": "Highlight four", "desks": ["-id desk Politic Desks-"]}, 
+    	"resource": "highlights",
+    	"id_name": "-id highlight four-"
     },
     
     {

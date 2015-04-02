@@ -254,6 +254,53 @@ define([
 		};
 	}
 
+	DropdownPositionDirective.$inject = ['$document'];
+	function DropdownPositionDirective($document) {
+		return {
+			link: function(scope, element) {
+
+				var tolerance = 250;
+				var isRightOriented = null;
+				var menu = null;
+
+				element.bind('click', function(event) {
+
+					if (menu === null) {
+						checkOrientation();
+					}
+
+					if (closeToBottom(event)) {
+						element.addClass('dropup');
+					} else {
+						element.removeClass('dropup');
+					}
+
+					if (isRightOriented) {
+						if (closeToLeft(event)) {
+							menu.removeClass('pull-right');
+						} else {
+							menu.addClass('pull-right');
+						}
+					}
+				});
+
+				function checkOrientation() {
+					menu = element.children('.dropdown-menu');
+					isRightOriented = menu.hasClass('pull-right');
+				}
+
+				function closeToBottom(e) {
+					var docHeight = $document.height();
+					return e.pageY > docHeight - tolerance;
+				}
+
+				function closeToLeft(e) {
+					return e.pageX < tolerance;
+				}
+			}
+		};
+	}
+
 	PopupService.$inject = ['$document'];
 	function PopupService($document) {
 		var service = {};
@@ -810,5 +857,6 @@ define([
 		.directive('sdTimepickerAlt', TimepickerAltDirective)
 		.service('popupService', PopupService)
 		.service('datetimeHelper', DateTimeHelperService)
-		.filter('leadingZero', LeadingZeroFilter);
+		.filter('leadingZero', LeadingZeroFilter)
+		.directive('sdDropdownPosition', DropdownPositionDirective);
 });

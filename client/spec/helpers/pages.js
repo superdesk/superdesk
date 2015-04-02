@@ -7,6 +7,8 @@ exports.authoring = require('./authoring');
 exports.ingestProvider = new IngestProvider();
 exports.ingestDashboard = new IngestDashboard();
 
+require('./waitReady');
+
 function LoginModal() {
     this.username = element(by.model('username'));
     this.password = element(by.model('password'));

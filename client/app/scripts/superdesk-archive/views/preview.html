@@ -31,6 +31,10 @@
         
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
+		<div ng-show="selected.preview.highlights">
+			<div class="highlights-title" sd-highlights-title data-highlights="selected.preview.highlights"></div>
+		</div>
+
         <div class="core-content">
 
 			<p ng-if="selected.preview.is_spiked" class="alert alert-warning expires">
@@ -53,6 +57,10 @@
             <div class="text" ng-show="selected.preview.type !== 'preformatted' && selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
 
             <div class="text" ng-show="selected.preview.type === 'preformatted' && selected.preview.body_html" sd-html-preview="'<pre class=wrap>' + selected.preview.body_html + '</pre>'"></div>
+            <div class="text body-text" ng-show="selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
+            <div class="text" ng-show="selected.preview.type !== 'preformatted' && selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
+            <div class="text" ng-show="selected.preview.type === 'preformatted' && selected.preview.body_html" sd-html-preview="'<pre class=wrap>' + selected.preview.body_html + '</pre>'"></div>
+            <div class="text body-text" ng-show="selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
 
             <div class="composite-preview" ng-if="selected.preview.type === 'composite'">
                 <div sd-package data-item="selected.preview" data-setitem="openSingleItem(selected)"></div>
