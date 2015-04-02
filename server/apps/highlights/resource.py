@@ -32,6 +32,17 @@ class HighlightsResource(Resource):
     privileges = {'POST': 'highlights', 'PATCH': 'highlights', 'DELETE': 'highlights'}
 
 
+class ArchiveHighlightsResource(Resource):
+    datasource = {
+        'source': 'archive'
+    }
+    schema = {
+        'highlights': Resource.rel('highlights')
+    }
+    item_methods = ['GET', 'PATCH']
+    privileges = {'PATCH': 'archive'}
+
+
 class MarkedForHighlightsResource(Resource):
     '''
     Marked for highlights Schema

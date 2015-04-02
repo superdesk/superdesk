@@ -97,20 +97,21 @@ describe('HIGHLIGHTS', function() {
             content.setListView();
             content.checkMarkedForHighlight('Highlight one', 0);
         });
-
+        
         it('mark for highlights in edit article screen', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.actionOnItem('Edit item', 0);
-            authoring.markForHighlights();
-            expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(2);
-            highlights.selectHighlight(authoring.getSubnav(), 'Highlight one');
-            authoring.close();
-            workspace.switchToDesk('PERSONAL');
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.checkMarkedForHighlight('Highlight one', 0);
-        });
+        	workspace.switchToDesk('SPORTS DESK');
+        	content.setListView();
+        	content.actionOnItem('Edit item', 0);
+        	authoring.markForHighlights();
+        	expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(2);
+        	highlights.selectHighlight(authoring.getSubnav(), 'Highlight one');
+        	authoring.checkMarkedForHighlight('Highlight one');
+        	authoring.close();
+        	workspace.switchToDesk('PERSONAL');
+        	workspace.switchToDesk('SPORTS DESK');
+        	content.setListView();
+        	content.checkMarkedForHighlight('Highlight one', 0);
+        }); 	
 
         it('create highlight package', function() {
             workspace.switchToDesk('PERSONAL');

@@ -58,9 +58,13 @@ class HighlightsService(BaseService):
             service.update(item['_id'], {'highlights': updates}, item)
 
 
+class ArchiveHighlightsService(BaseService):
+    pass
+
+
 class MarkedForHighlightsService(BaseService):
     def create(self, docs, **kwargs):
-        service = get_resource_service('archive')
+        service = get_resource_service('archive_highlights')
         ids = []
         for doc in docs:
             item = service.find_one(req=None, guid=doc['marked_item'])
@@ -73,7 +77,12 @@ class MarkedForHighlightsService(BaseService):
                 highlights = []
             if doc['highlights'] not in highlights:
                 highlights.append(doc['highlights'])
-                service.update(item['_id'], {'highlights': highlights}, item)
+                updates = {
+                    'highlights': highlights,
+                    '_updated': item['_updated'],
+                    '_etag': item['_etag']
+                }
+                service.update(item['_id'], updates, item)
             push_notification('item:mark', marked=1)
         return ids
 
