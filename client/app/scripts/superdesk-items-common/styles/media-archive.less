@@ -267,6 +267,19 @@
 			.caption {
 				display: none;
 			}
+
+			.selectbox {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 0;
+				padding: 1px 0 3px 5px;
+				background-color: #fff;
+
+				.sd-checkbox {
+					margin: 0;
+				}
+			}
 		}
 		&.media-picture {
 			.text {
@@ -538,12 +551,20 @@
 
 		.type-icon {
 			text-align: center;
+			width: 44px;
+			height: 56px;
+			.box-sizing(border-box);
+
 			i {
 				.opacity(50);
 				width: 24px;
 				padding-left: 0;
 				margin-left: 0;
-				margin-top: 28%;
+				margin-top: 7px;
+			}
+
+			.sd-checkbox {
+				margin: 9px 0 0 1px;
 			}
 		}
 

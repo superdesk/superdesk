@@ -1072,6 +1072,21 @@
             };
         })
 
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
+        function(asset, multi, multiEdit) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                link: function(scope) {
+                    scope.multi = multi;
+
+                    scope.multiedit = function() {
+                        multiEdit.create(multi.getQueue());
+                        multiEdit.open();
+                    };
+                }
+            };
+        }])
+
         .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk.activity('/search', {
                 description: gettext('Find live and archived content'),

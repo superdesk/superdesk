@@ -34,7 +34,7 @@ tests.push('superdesk/notification/notification');
 tests.push('superdesk/itemList/itemList');
 tests.push('superdesk/ui/ui');
 tests.push('superdesk/list/list');
-tests.push('superdesk/services/keyboardManager');
+tests.push('superdesk/keyboard/keyboard');
 
 // apps
 tests.push('superdesk-authoring/authoring');

@@ -39,4 +39,40 @@ describe('search service', function() {
         expect(criteria).toEqual(search.query().getCriteria());
         expect(criteria).not.toEqual(search.query({q: 'test'}).getCriteria());
     }));
+
+    describe('multi action bar directive', function() {
+
+        var scope;
+
+        beforeEach(module('superdesk.archive'));
+        beforeEach(module('superdesk.authoring.multiedit'));
+
+        beforeEach(inject(function($rootScope, $compile) {
+            scope = $rootScope.$new();
+            $compile('<div sd-multi-action-bar></div>')(scope);
+            scope.$digest();
+        }));
+
+        it('can show how many items are selected', inject(function() {
+            expect(scope.multi.count).toBe(0);
+
+            scope.multi.toggle({_id: 1});
+            expect(scope.multi.count).toBe(1);
+
+            scope.multi.reset();
+            expect(scope.multi.count).toBe(0);
+        }));
+
+        it('can trigger multi editing', inject(function(multiEdit) {
+            spyOn(multiEdit, 'create');
+            spyOn(multiEdit, 'open');
+
+            scope.multi.toggle({_id: 'foo'});
+            scope.multi.toggle({_id: 'bar'});
+
+            scope.multiedit();
+            expect(multiEdit.create).toHaveBeenCalledWith(['foo', 'bar']);
+            expect(multiEdit.open).toHaveBeenCalled();
+        }));
+    });
 });
