@@ -89,7 +89,7 @@
             _.each(items, function(item) {
                 targetGroup.refs.push(getReferenceFor(item));
             });
-             _.extend(current, {groups: origGroups});
+            _.extend(current, {groups: origGroups});
         };
 
         this.fetchItem = function(packageItem) {
@@ -193,13 +193,13 @@
         $scope.groupList = packages.groupList;
 
         function fetchContentItems() {
-        	if (!init) {
-        		return;
-        	}
+            if (!init) {
+                return;
+            }
             var query = search.query($scope.query);
             query.size(25);
             if ($scope.highlight) {
-            	query.filter({term: {'highlights': $scope.highlight.toString()}});
+                query.filter({term: {'highlights': $scope.highlight.toString()}});
             }
             api.archive.query(query.getCriteria(true))
             .then(function(result) {
@@ -613,7 +613,7 @@
                 href: '/packaging/:_id/view',
                 when: '/packaging/:_id/view',
                 label: gettext('Packaging Read Only'),
-                 templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
+                templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 controller: PackagingController,
                 filters: [{action: 'read_only', type: 'content_package'}],
@@ -641,7 +641,7 @@
                             });
                         }
                     }],
-                    filters: [{action: 'create', type: 'package'}]
+                filters: [{action: 'create', type: 'package'}]
             })
             .activity('package.item', {
                 label: gettext('Package item'),
@@ -661,25 +661,25 @@
                     {action: 'list', type: 'archive'}
                 ]
             });
-        }])
-        .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('archive', {
-                type: 'http',
-                backend: {rel: 'archive'}
+    }])
+    .config(['apiProvider', function(apiProvider) {
+        apiProvider.api('archive', {
+            type: 'http',
+            backend: {rel: 'archive'}
+        });
+    }])
+    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+        authoringWidgetsProvider
+            .widget('search', {
+                icon: 'view',
+                label: gettext('Search'),
+                template: 'scripts/superdesk-packaging/views/search.html',
+                side: 'left',
+                extended: true,
+                display: {authoring: false, packages: true}
             });
-        }])
-        .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-            authoringWidgetsProvider
-                .widget('search', {
-                    icon: 'view',
-                    label: gettext('Search'),
-                    template: 'scripts/superdesk-packaging/views/search.html',
-                    side: 'left',
-                    extended: true,
-                    display: {authoring: false, packages: true}
-                });
-        }])
-        .controller('SearchWidgetCtrl', SearchWidgetCtrl);
+    }])
+    .controller('SearchWidgetCtrl', SearchWidgetCtrl);
 
     return app;
 })();

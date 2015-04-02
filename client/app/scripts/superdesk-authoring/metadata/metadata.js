@@ -5,97 +5,97 @@
 
 MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges'];
 function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
-	desks.initialize()
-	.then(function() {
-		$scope.deskLookup = desks.deskLookup;
-		$scope.userLookup = desks.userLookup;
-	});
+    desks.initialize()
+    .then(function() {
+        $scope.deskLookup = desks.deskLookup;
+        $scope.userLookup = desks.userLookup;
+    });
 
-	metadata.initialize().then(function() {
-		$scope.metadata = metadata.values;
-	});
+    metadata.initialize().then(function() {
+        $scope.metadata = metadata.values;
+    });
 
-	$scope.processGenre = function() {
-		$scope.item.genre = _.map($scope.item.genre, function(g) {
-			return _.pick(g, 'name');
-		});
-	};
+    $scope.processGenre = function() {
+        $scope.item.genre = _.map($scope.item.genre, function(g) {
+            return _.pick(g, 'name');
+        });
+    };
 
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
 
 MetadataDropdownDirective.$inject = [];
 function MetadataDropdownDirective() {
-	return {
-		scope: {
-			list: '=',
-			disabled: '=',
-			item: '=',
-			field: '@',
-			change: '&'
-		},
-		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
-		link: function(scope) {
-			scope.select = function(item) {
-				scope.item = scope.field ? item[scope.field] : item;
-				scope.change({item: scope.item});
-			};
-		}
-	};
+    return {
+        scope: {
+            list: '=',
+            disabled: '=',
+            item: '=',
+            field: '@',
+            change: '&'
+        },
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
+        link: function(scope) {
+            scope.select = function(item) {
+                scope.item = scope.field ? item[scope.field] : item;
+                scope.change({item: scope.item});
+            };
+        }
+    };
 }
 
 MetadataWordsListEditingDirective.$inject = [];
 function MetadataWordsListEditingDirective() {
-	return {
-		scope: {
-			item: '=',
-			field: '@',
-			disabled: '=',
-			list: '=',
-			change: '&'
-		},
-		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-words-list.html',
-		link: function(scope) {
+    return {
+        scope: {
+            item: '=',
+            field: '@',
+            disabled: '=',
+            list: '=',
+            change: '&'
+        },
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-words-list.html',
+        link: function(scope) {
 
-			var ENTER = 13;
+            var ENTER = 13;
 
-			scope.selectTerm = function($event) {
-				if ($event.keyCode === ENTER && _.trim(scope.term) !== '') {
+            scope.selectTerm = function($event) {
+                if ($event.keyCode === ENTER && _.trim(scope.term) !== '') {
 
-					//instead of simple push, extend the item[field] in order to trigger dirty $watch
-					var t = _.clone(scope.item[scope.field]) || [];
-					var index = _.findIndex(t, function(word) {
-						return word.toLowerCase() === scope.term.toLowerCase();
-					});
+                    //instead of simple push, extend the item[field] in order to trigger dirty $watch
+                    var t = _.clone(scope.item[scope.field]) || [];
+                    var index = _.findIndex(t, function(word) {
+                        return word.toLowerCase() === scope.term.toLowerCase();
+                    });
 
-					if (index < 0) {
-						t.push(_.trim(scope.term));
+                    if (index < 0) {
+                        t.push(_.trim(scope.term));
 
-						//build object
-						var o = {};
-						o[scope.field] = t;
-						_.extend(scope.item, o);
-						scope.change({item: scope.item});
-					}
+                        //build object
+                        var o = {};
+                        o[scope.field] = t;
+                        _.extend(scope.item, o);
+                        scope.change({item: scope.item});
+                    }
 
-					scope.term = '';
-				}
-			};
+                    scope.term = '';
+                }
+            };
 
-			scope.removeTerm = function(term) {
-				var temp = _.without(scope.item[scope.field], term);
+            scope.removeTerm = function(term) {
+                var temp = _.without(scope.item[scope.field], term);
 
-				//build object
-				var o = {};
-				o[scope.field] = temp;
+                //build object
+                var o = {};
+                o[scope.field] = temp;
 
-				_.extend(scope.item, o);
+                _.extend(scope.item, o);
 
-				scope.change({item: scope.item});
-			};
+                scope.change({item: scope.item});
+            };
 
-		}
-	};
+        }
+    };
 }
 
 /**
@@ -110,144 +110,144 @@ function MetadataWordsListEditingDirective() {
  */
 MetadataListEditingDirective.$inject = [];
 function MetadataListEditingDirective() {
-	return {
-		scope: {
-			item: '=',
-			field: '@',
-			disabled: '=',
-			list: '=',
-			unique: '@',
-			postprocessing: '&',
-			change: '&'
-		},
-		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
-		link: function(scope) {
+    return {
+        scope: {
+            item: '=',
+            field: '@',
+            disabled: '=',
+            list: '=',
+            unique: '@',
+            postprocessing: '&',
+            change: '&'
+        },
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
+        link: function(scope) {
 
-			scope.terms = [];
-			scope.selectedTerm = '';
-			var uniqueField = scope.unique || 'qcode';
+            scope.terms = [];
+            scope.selectedTerm = '';
+            var uniqueField = scope.unique || 'qcode';
 
-			scope.searchTerms = function(term) {
-				if (!term) {
-					scope.terms = [];
-				} else {
-					scope.terms = _.filter(scope.list, function(t) {
-					var searchObj = {};
-					searchObj[uniqueField] = t[uniqueField];
-					return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
-					!_.find(scope.item[scope.field], searchObj));
-					});
-				}
-				return scope.terms;
-			};
+            scope.searchTerms = function(term) {
+                if (!term) {
+                    scope.terms = [];
+                } else {
+                    scope.terms = _.filter(scope.list, function(t) {
+                        var searchObj = {};
+                        searchObj[uniqueField] = t[uniqueField];
+                        return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
+                            !_.find(scope.item[scope.field], searchObj));
+                    });
+                }
+                return scope.terms;
+            };
 
-			scope.selectTerm = function(term) {
-				if (term) {
+            scope.selectTerm = function(term) {
+                if (term) {
 
-					//instead of simple push, extend the item[field] in order to trigger dirty $watch
-					var t = _.clone(scope.item[scope.field]) || [];
-					t.push(term);
+                    //instead of simple push, extend the item[field] in order to trigger dirty $watch
+                    var t = _.clone(scope.item[scope.field]) || [];
+                    t.push(term);
 
-					//build object
-					var o = {};
-					o[scope.field] = t;
-					_.extend(scope.item, o);
+                    //build object
+                    var o = {};
+                    o[scope.field] = t;
+                    _.extend(scope.item, o);
 
-					scope.selectedTerm = '';
+                    scope.selectedTerm = '';
 
-					scope.postprocessing();
-					scope.change({item: scope.item});
-				}
-			};
+                    scope.postprocessing();
+                    scope.change({item: scope.item});
+                }
+            };
 
-			scope.removeTerm = function(term) {
-				var temp = _.without(scope.item[scope.field], term);
+            scope.removeTerm = function(term) {
+                var temp = _.without(scope.item[scope.field], term);
 
-				//build object
-				var o = {};
-				o[scope.field] = temp;
+                //build object
+                var o = {};
+                o[scope.field] = temp;
 
-				_.extend(scope.item, o);
+                _.extend(scope.item, o);
 
-				scope.change({item: scope.item});
-			};
-		}
-	};
+                scope.change({item: scope.item});
+            };
+        }
+    };
 }
 
 MetadataService.$inject = ['api', '$q', 'staticMetadata'];
 function MetadataService(api, $q, staticMetadata) {
 
-	var service = {
-		values: {},
-		loaded: null,
-		fetchMetadataValues: function() {
-			var self = this;
+    var service = {
+        values: {},
+        loaded: null,
+        fetchMetadataValues: function() {
+            var self = this;
 
-			return api('vocabularies').query().then(function(result) {
-				_.each(result._items, function(vocabulary) {
-					self.values[vocabulary._id] = vocabulary.items;
-				});
-			});
-		},
-		fetchStaticMetadata: function() {
-			var self = this;
+            return api('vocabularies').query().then(function(result) {
+                _.each(result._items, function(vocabulary) {
+                    self.values[vocabulary._id] = vocabulary.items;
+                });
+            });
+        },
+        fetchStaticMetadata: function() {
+            var self = this;
 
-			_.each(staticMetadata, function(source) {
-				self.values[source._id] = source.items;
-			});
-			return $q.when();
-		},
-		fetchSubjectcodes: function(code) {
-			var self = this;
-			return api.get('/subjectcodes').then(function(result) {
-				self.values.subjectcodes = result._items;
-			});
-		},
-		initialize: function() {
-			if (!this.loaded) {
-				this.loaded = this.fetchMetadataValues()
-					.then(angular.bind(this, this.fetchStaticMetadata))
-					.then(angular.bind(this, this.fetchSubjectcodes));
-			}
-			return this.loaded;
-		}
-	};
+            _.each(staticMetadata, function(source) {
+                self.values[source._id] = source.items;
+            });
+            return $q.when();
+        },
+        fetchSubjectcodes: function(code) {
+            var self = this;
+            return api.get('/subjectcodes').then(function(result) {
+                self.values.subjectcodes = result._items;
+            });
+        },
+        initialize: function() {
+            if (!this.loaded) {
+                this.loaded = this.fetchMetadataValues()
+                    .then(angular.bind(this, this.fetchStaticMetadata))
+                    .then(angular.bind(this, this.fetchSubjectcodes));
+            }
+            return this.loaded;
+        }
+    };
 
-	return service;
+    return service;
 }
 
 //hardcoded metadata values
 var staticMetadata = [
-	{
-		_id: 'priority',
-		items: [
-			{
-				name: 'B',
-				qcode: 'B'
-			},
-			{
-				name: 'D',
-				qcode: 'D'
-			},
-			{
-				name: 'F',
-				qcode: 'F'
-			},
-			{
-				name: 'R',
-				qcode: 'R'
-			},
-			{
-				name: 'U',
-				qcode: 'U'
-			},
-			{
-				name: 'Z',
-				qcode: 'Z'
-			}
-		]
-	}
+    {
+        _id: 'priority',
+        items: [
+            {
+                name: 'B',
+                qcode: 'B'
+            },
+            {
+                name: 'D',
+                qcode: 'D'
+            },
+            {
+                name: 'F',
+                qcode: 'F'
+            },
+            {
+                name: 'R',
+                qcode: 'R'
+            },
+            {
+                name: 'U',
+                qcode: 'U'
+            },
+            {
+                name: 'Z',
+                qcode: 'Z'
+            }
+        ]
+    }
 ];
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
@@ -262,10 +262,10 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
             });
     }])
 
-	.controller('MetadataWidgetCtrl', MetadataCtrl)
-	.service('metadata', MetadataService)
-	.directive('sdMetaTerms', MetadataListEditingDirective)
-	.directive('sdMetaDropdown', MetadataDropdownDirective)
-	.directive('sdMetaWordsList', MetadataWordsListEditingDirective)
-	.value('staticMetadata', staticMetadata);
+    .controller('MetadataWidgetCtrl', MetadataCtrl)
+    .service('metadata', MetadataService)
+    .directive('sdMetaTerms', MetadataListEditingDirective)
+    .directive('sdMetaDropdown', MetadataDropdownDirective)
+    .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
+    .value('staticMetadata', staticMetadata);
 })();

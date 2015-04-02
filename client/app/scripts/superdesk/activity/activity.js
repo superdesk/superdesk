@@ -116,161 +116,161 @@ define([
             function superdeskFactory($q, $route, $rootScope, activityService, activityChooser, betaService,
                                       features, privileges, $injector) {
 
-            /**
-             * Render main menu depending on registered acitivites
-             */
-            betaService.isBeta().then(function(beta) {
-                _.forEach(activities, function(activity, id) {
-                    if ((activity.beta === true && !beta) || !isAllowed(activity, beta)) {
-                        $routeProvider.when(activity.when, {redirectTo: '/workspace'});
-                    }
+                /**
+                 * Render main menu depending on registered acitivites
+                 */
+                betaService.isBeta().then(function(beta) {
+                    _.forEach(activities, function(activity, id) {
+                        if ((activity.beta === true && !beta) || !isAllowed(activity, beta)) {
+                            $routeProvider.when(activity.when, {redirectTo: '/workspace'});
+                        }
+                    });
+
+                    $route.reload();
                 });
 
-                $route.reload();
-            });
+                /**
+                 * Let user to choose an activity
+                 */
+                function chooseActivity(activities) {
+                    return activityChooser.choose(activities);
+                }
 
-            /**
-             * Let user to choose an activity
-             */
-            function chooseActivity(activities) {
-                return activityChooser.choose(activities);
-            }
+                function checkFeatures(activity) {
+                    var isMatch = true;
+                    angular.forEach(activity.features, function(val, key) {
+                        isMatch = isMatch && features[key] && val;
+                    });
+                    return isMatch;
+                }
 
-            function checkFeatures(activity) {
-                var isMatch = true;
-                angular.forEach(activity.features, function(val, key) {
-                    isMatch = isMatch && features[key] && val;
-                });
-                return isMatch;
-            }
-
-            function checkPrivileges(activity) {
-                return privileges.userHasPrivileges(activity.privileges);
-            }
-
-            /**
-             * Test if user is allowed to use given activity.
-             *   Testing is based on current server setup (features) and user privileges.
-             *
-             * @param {Object} activity
-             */
-            function isAllowed(activity) {
-                return checkFeatures(activity) && checkPrivileges(activity);
-            }
-
-            return angular.extend({
-                widgets: widgets,
-                activities: activities,
-                permissions: permissions,
-                panes: panes,
+                function checkPrivileges(activity) {
+                    return privileges.userHasPrivileges(activity.privileges);
+                }
 
                 /**
-                 * Return activity by given id
+                 * Test if user is allowed to use given activity.
+                 *   Testing is based on current server setup (features) and user privileges.
+                 *
+                 * @param {Object} activity
                  */
-                activity: function(id) {
-                    return activities[id] || null;
-                },
+                function isAllowed(activity) {
+                    return checkFeatures(activity) && checkPrivileges(activity);
+                }
 
-                /**
-                 * Resolve an intent to a single activity
-                 */
-                resolve: function(intent) {
-                    var activities = this.findActivities(intent);
-                    switch (activities.length) {
-                        case 0:
-                            return $q.reject();
+                return angular.extend({
+                    widgets: widgets,
+                    activities: activities,
+                    permissions: permissions,
+                    panes: panes,
 
-                        case 1:
-                            return $q.when(activities[0]);
+                    /**
+                     * Return activity by given id
+                     */
+                    activity: function(id) {
+                        return activities[id] || null;
+                    },
 
-                        default:
-                            return chooseActivity(activities);
-                    }
-                },
+                    /**
+                     * Resolve an intent to a single activity
+                     */
+                    resolve: function(intent) {
+                        var activities = this.findActivities(intent);
+                        switch (activities.length) {
+                            case 0:
+                                return $q.reject();
 
-                /**
-                 * Find all available activities for given intent
-                 */
-                findActivities: function(intent, item) {
-                    var criteria = {};
-                    if (intent.action) {
-                        criteria.action = intent.action;
-                    }
-                    if (intent.type) {
-                        criteria.type = intent.type;
-                    }
+                            case 1:
+                                return $q.when(activities[0]);
 
-                    return _.sortBy(_.filter(this.activities, function(activity) {
-                        var additionalConditionValue = true;
-                        if (activity.additionalCondition) {
-                            additionalConditionValue = $injector.invoke(activity.additionalCondition, {}, {'item': item});
+                            default:
+                                return chooseActivity(activities);
+                        }
+                    },
+
+                    /**
+                     * Find all available activities for given intent
+                     */
+                    findActivities: function(intent, item) {
+                        var criteria = {};
+                        if (intent.action) {
+                            criteria.action = intent.action;
+                        }
+                        if (intent.type) {
+                            criteria.type = intent.type;
                         }
 
-                        return _.find(activity.filters, criteria) && isAllowed(activity) &&
-                            activity.condition(item) && additionalConditionValue;
-                    }), 'priority').reverse();
-                },
-
-                /**
-                 * Intent factory
-                 *
-                 * starts an activity for given action and data
-                 *
-                 * @param {string} action
-                 * @param {string} type
-                 * @param {Object} data
-                 * @returns {Object} promise
-                 */
-                intent: function(action, type, data) {
-
-                    var intent = {
-                        action: action,
-                        type: type,
-                        data: data
-                    };
-
-                    return this.resolve(intent).then(function(activity) {
-                        return activityService.start(activity, intent);
-                    }, function() {
-                        $rootScope.$broadcast([
-                            'intent',
-                            intent.action || '*',
-                            intent.type || '*'
-                        ].join(':'), intent);
-                        return $q.reject();
-                    });
-                },
-
-                /**
-                 * Get a link for given activity
-                 *
-                 * @param {string} activity
-                 * @param {Object} data
-                 * @returns {string}
-                 */
-                link: function getSuperdeskLink(activity, data) {
-                    return activityService.getLink(this.activity(activity), data);
-                },
-
-                /**
-                 * Get activities based on menu category
-                 *
-                 * @param {string} category
-                 */
-                getMenu: function getMenu(category) {
-                    return privileges.loaded.then(function() {
-                        var menu = [];
-                        angular.forEach(activities, function(activity) {
-                            if (activity.category === category && isAllowed(activity)) {
-                                menu.push(activity);
+                        return _.sortBy(_.filter(this.activities, function(activity) {
+                            var additionalConditionValue = true;
+                            if (activity.additionalCondition) {
+                                additionalConditionValue = $injector.invoke(activity.additionalCondition, {}, {'item': item});
                             }
-                        });
 
-                        return menu;
-                    });
-                }
-            }, constans);
-        }];
+                            return _.find(activity.filters, criteria) && isAllowed(activity) &&
+                                activity.condition(item) && additionalConditionValue;
+                        }), 'priority').reverse();
+                    },
+
+                    /**
+                     * Intent factory
+                     *
+                     * starts an activity for given action and data
+                     *
+                     * @param {string} action
+                     * @param {string} type
+                     * @param {Object} data
+                     * @returns {Object} promise
+                     */
+                    intent: function(action, type, data) {
+
+                        var intent = {
+                            action: action,
+                            type: type,
+                            data: data
+                        };
+
+                        return this.resolve(intent).then(function(activity) {
+                            return activityService.start(activity, intent);
+                        }, function() {
+                            $rootScope.$broadcast([
+                                'intent',
+                                intent.action || '*',
+                                intent.type || '*'
+                            ].join(':'), intent);
+                            return $q.reject();
+                        });
+                    },
+
+                    /**
+                     * Get a link for given activity
+                     *
+                     * @param {string} activity
+                     * @param {Object} data
+                     * @returns {string}
+                     */
+                    link: function getSuperdeskLink(activity, data) {
+                        return activityService.getLink(this.activity(activity), data);
+                    },
+
+                    /**
+                     * Get activities based on menu category
+                     *
+                     * @param {string} category
+                     */
+                    getMenu: function getMenu(category) {
+                        return privileges.loaded.then(function() {
+                            var menu = [];
+                            angular.forEach(activities, function(activity) {
+                                if (activity.category === category && isAllowed(activity)) {
+                                    menu.push(activity);
+                                }
+                            });
+
+                            return menu;
+                        });
+                    }
+                }, constans);
+            }];
     }
 
     var module = angular.module('superdesk.activity', [
@@ -441,7 +441,7 @@ define([
             return referrerURL;
         };
 
-         /**
+        /**
          * Prepares complete Referrer Url from previous route href and querystring params(if exist),
          * e.g /workspace/content?q=test$repo=archive
          *
@@ -452,14 +452,14 @@ define([
             var completeUrl;
             if (refRoute) {
                 completeUrl = refRoute.$$route.href.replace('/:_id', '');
-                    if (!_.isEqual({}, refRoute.pathParams)) {
-                        completeUrl = completeUrl + '/' + refRoute.pathParams._id;
-                    }
+                if (!_.isEqual({}, refRoute.pathParams)) {
+                    completeUrl = completeUrl + '/' + refRoute.pathParams._id;
+                }
 
-                    if (!_.isEqual({}, refRoute.params)) {
-                        completeUrl = completeUrl + '?';
-                        completeUrl = completeUrl + decodeURIComponent($.param(refRoute.params));
-                    }
+                if (!_.isEqual({}, refRoute.params)) {
+                    completeUrl = completeUrl + '?';
+                    completeUrl = completeUrl + decodeURIComponent($.param(refRoute.params));
+                }
             }
             return completeUrl;
         }
@@ -469,7 +469,7 @@ define([
     // todo(petr): what about blocking route change as long as it is opened?
     module.run(['$rootScope', 'activityService', 'referrer', function($rootScope, activityService, referrer) {
         $rootScope.$on('$routeChangeStart', function() {
-        if (activityService.activityStack.length) {
+            if (activityService.activityStack.length) {
                 var item = activityService.activityStack.pop();
                 item.defer.reject();
             }

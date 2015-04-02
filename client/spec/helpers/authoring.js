@@ -44,7 +44,7 @@ function Authoring() {
     };
 
     this.getSearchItemCount = function () {
-    	return element.all(by.repeater('pitem in contentItems')).count();
+        return element.all(by.repeater('pitem in contentItems')).count();
     };
 
     this.addToGroup = function(item, group) {
@@ -95,22 +95,22 @@ function Authoring() {
     };
 
     this.selectSearchItem = function(item) {
-      var crtItem = this.getSearchItem(item);
-      var icon = crtItem.element(by.tagName('i'));
-      return icon.waitReady().then(function() {
-          browser.actions()
-              .mouseMove(icon)
-              .perform();
-      }).then(function() {
-          crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();
-      });
+        var crtItem = this.getSearchItem(item);
+        var icon = crtItem.element(by.tagName('i'));
+        return icon.waitReady().then(function() {
+            browser.actions()
+                .mouseMove(icon)
+                .perform();
+        }).then(function() {
+            crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();
+        });
     };
 
     this.markForHighlights = function() {
-    	element(by.className('svg-icon-add-to-list')).click();
+        element(by.className('svg-icon-add-to-list')).click();
     };
 
     this.getSubnav = function() {
-    	return element(by.id('subnav'));
+        return element(by.id('subnav'));
     };
 }

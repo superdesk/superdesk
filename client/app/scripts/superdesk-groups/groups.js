@@ -104,161 +104,159 @@
         .directive('sdGroupeditBasic', GroupeditBasicDirective)
         .directive('sdGroupeditPeople', GroupeditPeopleDirective);
 
-        GroupsSettingsController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler'];
-        function GroupsSettingsController($scope, gettext, notify, api, groups, WizardHandler) {
+    GroupsSettingsController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler'];
+    function GroupsSettingsController($scope, gettext, notify, api, groups, WizardHandler) {
 
+        $scope.modalActive = false;
+        $scope.step = {
+            current: null
+        };
+        $scope.group = {
+            edit: null
+        };
+        $scope.groups = {};
+
+        groups.initialize()
+        .then(function() {
+            $scope.groups = groups.groups;
+        });
+
+        $scope.openGroup = function(step, group) {
+            $scope.group.edit = group;
+            $scope.modalActive = true;
+            $scope.step.current = step;
+        };
+
+        $scope.cancel = function() {
             $scope.modalActive = false;
-            $scope.step = {
-                current: null
-            };
-            $scope.group = {
-                edit: null
-            };
-            $scope.groups = {};
+            $scope.step.current = null;
+            $scope.group.edit = null;
+        };
 
-            groups.initialize()
-            .then(function() {
-                $scope.groups = groups.groups;
+        $scope.remove = function(group) {
+            api.groups.remove(group).then(function() {
+                _.remove($scope.groups._items, group);
+                notify.success(gettext('Group deleted.'), 3000);
             });
+        };
+    }
 
-            $scope.openGroup = function(step, group) {
-                $scope.group.edit = group;
-                $scope.modalActive = true;
-                $scope.step.current = step;
-            };
+    GroupeditBasicDirective.$inject = ['gettext', 'api', 'WizardHandler'];
+    function GroupeditBasicDirective(gettext, api, WizardHandler) {
+        return {
+            link: function(scope, elem, attrs) {
 
-            $scope.cancel = function() {
-                $scope.modalActive = false;
-                $scope.step.current = null;
-                $scope.group.edit = null;
-            };
+                var limits = {
+                    group: 40
+                };
 
-			$scope.remove = function(group) {
-                api.groups.remove(group).then(function() {
-                    _.remove($scope.groups._items, group);
-                    notify.success(gettext('Group deleted.'), 3000);
-                });
-            };
+                scope.limits = limits;
 
-		}
-
-        GroupeditBasicDirective.$inject = ['gettext', 'api', 'WizardHandler'];
-        function GroupeditBasicDirective(gettext, api, WizardHandler) {
-            return {
-                link: function(scope, elem, attrs) {
-
-                    var limits =
-                        {
-                            group: 40
-                    };
-
-                    scope.limits = limits;
-
-                    scope.$watch('step.current', function(step) {
-                        if (step === 'general') {
-                            scope.edit(scope.group.edit);
-                            scope.message = null;
-                        }
-                    });
-
-                    scope.edit = function(group) {
-                        scope.group.edit = _.create(group);
-                    };
-
-                    scope.save = function(group) {
-                        scope.message = gettext('Saving...');
-                        var _new = group._id ? false : true;
-                        api.groups.save(scope.group.edit, group).then(function() {
-                            if (_new) {
-                                scope.edit(scope.group.edit);
-                                scope.groups._items.unshift(scope.group.edit);
-                            } else {
-                                var orig = _.find(scope.groups._items, {_id: scope.group.edit._id});
-                                _.extend(orig, scope.group.edit);
-                            }
-
-                            WizardHandler.wizard('usergroups').next();
-                        }, errorMessage);
-                    };
-
-                    function errorMessage(response) {
-                        if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                            scope._errorUniqueness = true;
-                        } else {
-                            scope._error = true;
-                        }
+                scope.$watch('step.current', function(step) {
+                    if (step === 'general') {
+                        scope.edit(scope.group.edit);
                         scope.message = null;
                     }
-                    function clearErrorMessages() {
-                        if (scope._errorUniqueness || scope._error || scope._errorLimits) {
-                            scope._errorUniqueness = null;
-                            scope._error = null;
-                            scope._errorLimits = null;
+                });
+
+                scope.edit = function(group) {
+                    scope.group.edit = _.create(group);
+                };
+
+                scope.save = function(group) {
+                    scope.message = gettext('Saving...');
+                    var _new = group._id ? false : true;
+                    api.groups.save(scope.group.edit, group).then(function() {
+                        if (_new) {
+                            scope.edit(scope.group.edit);
+                            scope.groups._items.unshift(scope.group.edit);
+                        } else {
+                            var orig = _.find(scope.groups._items, {_id: scope.group.edit._id});
+                            _.extend(orig, scope.group.edit);
+                        }
+
+                        WizardHandler.wizard('usergroups').next();
+                    }, errorMessage);
+                };
+
+                function errorMessage(response) {
+                    if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
+                        scope._errorUniqueness = true;
+                    } else {
+                        scope._error = true;
+                    }
+                    scope.message = null;
+                }
+                function clearErrorMessages() {
+                    if (scope._errorUniqueness || scope._error || scope._errorLimits) {
+                        scope._errorUniqueness = null;
+                        scope._error = null;
+                        scope._errorLimits = null;
+                    }
+                }
+                scope.handleEdit = function($event) {
+                    clearErrorMessages();
+                    if (scope.group.edit.name != null) {
+                        scope._errorLimits = scope.group.edit.name.length > scope.limits.group ? true : null;
+                    }
+                };
+            }
+        };
+    }
+
+    GroupeditPeopleDirective.$inject = ['gettext', 'api', 'WizardHandler', 'groups'];
+    function GroupeditPeopleDirective(gettext, api, WizardHandler, groups) {
+        return {
+            link: function(scope, elem, attrs) {
+
+                scope.$watch('step.current', function(step, previous) {
+                    if (step === 'people') {
+                        scope.search = null;
+                        scope.groupMembers = [];
+                        scope.users = [];
+                        scope.message = null;
+
+                        if (scope.group.edit && scope.group.edit._id) {
+                            groups.initialize().then(function() {
+                                scope.groupMembers = groups.groupMembers[scope.group.edit._id] || [];
+                                scope.users = groups.users._items;
+                            });
+                        } else {
+                            WizardHandler.wizard('usergroups').goTo(previous);
                         }
                     }
-                    scope.handleEdit = function($event) {
-                        clearErrorMessages();
-                        if (scope.group.edit.name != null) {
-                            scope._errorLimits = scope.group.edit.name.length > scope.limits.group ? true : null;
-                        }
-                    };
-                }
-            };
-        }
+                });
 
-        GroupeditPeopleDirective.$inject = ['gettext', 'api', 'WizardHandler', 'groups'];
-        function GroupeditPeopleDirective(gettext, api, WizardHandler, groups) {
-            return {
-                link: function(scope, elem, attrs) {
+                scope.add = function(user) {
+                    scope.groupMembers.push(user);
+                };
 
-                    scope.$watch('step.current', function(step, previous) {
-                        if (step === 'people') {
-                            scope.search = null;
-                            scope.groupMembers = [];
-                            scope.users = [];
-                            scope.message = null;
+                scope.remove = function(user) {
+                    _.remove(scope.groupMembers, user);
+                };
 
-                            if (scope.group.edit && scope.group.edit._id) {
-                                groups.initialize().then(function() {
-                                    scope.groupMembers = groups.groupMembers[scope.group.edit._id] || [];
-                                    scope.users = groups.users._items;
-                                });
-                            } else {
-                                WizardHandler.wizard('usergroups').goTo(previous);
-                            }
-                        }
+                scope.previous = function() {
+                    WizardHandler.wizard('usergroups').previous();
+                };
+
+                scope.save = function() {
+                    var members = _.map(scope.groupMembers, function(obj) {
+                        return {user: obj._id};
                     });
 
-                    scope.add = function(user) {
-                        scope.groupMembers.push(user);
-                    };
-
-                    scope.remove = function(user) {
-                        _.remove(scope.groupMembers, user);
-                    };
-
-                    scope.previous = function() {
-                        WizardHandler.wizard('usergroups').previous();
-                    };
-
-                    scope.save = function() {
-                        var members = _.map(scope.groupMembers, function(obj) {
-                            return {user: obj._id};
-                        });
-
-                        api.groups.save(scope.group.edit, {members: members}).then(function(result) {
-                            _.extend(scope.group.edit, result);
-                            groups.groupMembers[scope.group.edit._id] = scope.groupMembers;
-                            var orig = _.find(groups.groups._items, {_id: scope.group.edit._id});
-                            _.extend(orig, scope.group.edit);
-                            WizardHandler.wizard('usergroups').finish();
-                        }, function(response) {
-                            scope.message = gettext('There was a problem, members not saved.');
-                        });
-                    };
-                }
-            };
-        }
+                    api.groups.save(scope.group.edit, {members: members}).then(function(result) {
+                        _.extend(scope.group.edit, result);
+                        groups.groupMembers[scope.group.edit._id] = scope.groupMembers;
+                        var orig = _.find(groups.groups._items, {_id: scope.group.edit._id});
+                        _.extend(orig, scope.group.edit);
+                        WizardHandler.wizard('usergroups').finish();
+                    }, function(response) {
+                        scope.message = gettext('There was a problem, members not saved.');
+                    });
+                };
+            }
+        };
+    }
 
     return app;
 })();

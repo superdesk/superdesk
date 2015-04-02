@@ -3,17 +3,17 @@
 
 describe('superdesk ui', function() {
 
-	beforeEach(module('superdesk.ui'));
+    beforeEach(module('superdesk.ui'));
 
-	var datetimeHelper;
+    var datetimeHelper;
 
-	beforeEach(inject(function (_datetimeHelper_) {
-		datetimeHelper = _datetimeHelper_;
-	}));
+    beforeEach(inject(function (_datetimeHelper_) {
+        datetimeHelper = _datetimeHelper_;
+    }));
 
-	it('should have datetimeHelper service be defined', function () {
-		expect(datetimeHelper).toBeDefined();
-	});
+    it('should have datetimeHelper service be defined', function () {
+        expect(datetimeHelper).toBeDefined();
+    });
 
     it('should validate time', function() {
         expect(datetimeHelper.isValidTime('15:14:13')).toBe(true);

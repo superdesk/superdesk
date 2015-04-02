@@ -33,7 +33,8 @@ describe('Fetch', function() {
                     expect(itemEL.element(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
                     expect(browser.driver.isElementPresent(by.css('[title="Duplicate"]'))).toBe(false);
                 });
-    });
+        }
+    );
 
     it('can fetch from ingest with keyboards', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);

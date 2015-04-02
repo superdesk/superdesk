@@ -17,28 +17,28 @@
      */
     HighlightsService.$inject = ['api', '$q', '$cacheFactory', 'packages'];
     function HighlightsService(api, $q, $cacheFactory, packages) {
-    	var service = {};
+        var service = {};
         var cache = $cacheFactory('highlightList');
 
         /**
          * Fetches and caches highlights, or returns from the cache.
          */
         service.get = function get(desk) {
-           var DEFAULT_CACHE_KEY = '_nodesk';
-           var key = desk || DEFAULT_CACHE_KEY;
-
+            var DEFAULT_CACHE_KEY = '_nodesk';
+            var key = desk || DEFAULT_CACHE_KEY;
             var value = cache.get(key);
+
             if (value) {
                 return $q.when(value);
             } else {
                 var criteria = {};
                 if (desk) {
-                	criteria = {where: {'$or': [
-                	                            {'desks': desk},
-                	                            {'desks': {'$size': 0}}
-                	                           ]
-                	                    }
-                	            };
+                    criteria = {where: {'$or': [
+                                                {'desks': desk},
+                                                {'desks': {'$size': 0}}
+                                               ]
+                                        }
+                                };
                 }
 
                 return api('highlights').query(criteria)
@@ -53,7 +53,7 @@
          * Clear user cache
          */
         service.clearCache = function() {
-        	cache.removeAll();
+            cache.removeAll();
         };
 
         /**
@@ -61,21 +61,21 @@
          */
         service.mark_item = function mark_item(highlight, marked_item) {
             return api.markForHighlights.create({highlights: highlight, marked_item: marked_item})
-            	.then(function(result) {
+                .then(function(result) {
                     return result;
-            	});
+                });
         };
 
         /**
          * Create empty highlight package
          */
         service.createEmptyHighlight = function createEmptyHighlight(highlight) {
-           var pkg_defaults = {
-               headline: highlight.name,
-               highlight: highlight._id
-           };
+            var pkg_defaults = {
+                headline: highlight.name,
+                highlight: highlight._id
+            };
 
-           return packages.createEmptyPackage(pkg_defaults);
+            return packages.createEmptyPackage(pkg_defaults);
         };
 
         return service;
@@ -88,17 +88,17 @@
             link: function(scope) {
 
                 scope.mark_item = function mark_item(highlight) {
-                	highlightsService.mark_item(highlight._id, scope.item._id);
-                	scope.$root.$broadcast('item:mark');
+                    highlightsService.mark_item(highlight._id, scope.item._id);
+                    scope.$root.$broadcast('item:mark');
                 };
 
                 scope.is_marked = function is_marked(highlight) {
-                	return scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
+                    return scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
                 };
 
-            	highlightsService.get(desks.activeDeskId).then(function(result) {
-        	    	scope.highlights = result._items;
-        	    });
+                highlightsService.get(desks.activeDeskId).then(function(result) {
+                    scope.highlights = result._items;
+                });
             }
         };
     }
@@ -106,7 +106,7 @@
     HighlightsTitleDirective.$inject = ['highlightsService'];
     function HighlightsTitleDirective(highlightsService) {
         return {
-        	scope: {highlight_ids: '=highlights'},
+            scope: {highlight_ids: '=highlights'},
             templateUrl: 'scripts/superdesk-highlights/views/highlights_title_directive.html',
             link: function(scope) {
 
@@ -124,8 +124,8 @@
                     }
                 });
 
-            	scope.getTitle = function getTitle() {
-                	return scope.title;
+                scope.getTitle = function getTitle() {
+                    return scope.title;
                 };
             }
         };
@@ -134,23 +134,23 @@
     SearchHighlightsDirective.$inject = ['highlightsService'];
     function SearchHighlightsDirective(highlightsService) {
         return {
-        	scope: {highlight_id: '=highlight'},
+            scope: {highlight_id: '=highlight'},
             templateUrl: 'scripts/superdesk-highlights/views/search_highlights_dropdown_directive.html',
             link: function(scope) {
-            	scope.selectHighlight = function selectHighlight(highlight) {
-            		scope.highlight_id = null;
-            		if (highlight) {
-            			scope.highlight_id = highlight._id;
-            		}
+                scope.selectHighlight = function selectHighlight(highlight) {
+                    scope.highlight_id = null;
+                    if (highlight) {
+                        scope.highlight_id = highlight._id;
+                    }
                 };
 
                 scope.hasHighlights = function() {
-                	return _.size(scope.highlights) > 0;
+                    return _.size(scope.highlights) > 0;
                 };
 
-            	highlightsService.get().then(function(result) {
-        	    	scope.highlights = result._items;
-        	    });
+                highlightsService.get().then(function(result) {
+                    scope.highlights = result._items;
+                });
             }
         };
     }
@@ -162,19 +162,19 @@
             link: function(scope) {
 
                 scope.createHighlight = function createHighlight(highlight) {
-                	highlightsService.createEmptyHighlight(highlight)
+                    highlightsService.createEmptyHighlight(highlight)
                     .then(function(new_package) {
                         superdesk.intent('author', 'package', new_package);
                     });
                 };
 
                 scope.hasHighlights = function() {
-                	return _.size(scope.highlights) > 0;
+                    return _.size(scope.highlights) > 0;
                 };
 
-            	highlightsService.get(desks.activeDeskId).then(function(result) {
-        	    	scope.highlights = result._items;
-        	    });
+                highlightsService.get(desks.activeDeskId).then(function(result) {
+                    scope.highlights = result._items;
+                });
             }
         };
     }
@@ -195,7 +195,7 @@
         var _config;
 
         $scope.edit = function(config) {
-        	$scope.message = null;
+            $scope.message = null;
             $scope.modalActive = true;
             $scope.configEdit = _.create(config);
             $scope.assignedDesks = deskList(config.desks);
@@ -280,13 +280,13 @@
     .directive('sdSearchHighlights', SearchHighlightsDirective)
     .config(['superdeskProvider', function(superdesk) {
         superdesk
-	    .activity('mark.item', {
-        	label: gettext('Mark item'),
+        .activity('mark.item', {
+            label: gettext('Mark item'),
             priority: 30,
-        	icon: 'list-plus',
-        	dropdown: true,
-        	templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown.html',
-        	filters: [
+            icon: 'list-plus',
+            dropdown: true,
+            templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown.html',
+            filters: [
                 {action: 'list', type: 'archive'}
             ],
             condition: function(item) {return item.task && item.task.desk;}

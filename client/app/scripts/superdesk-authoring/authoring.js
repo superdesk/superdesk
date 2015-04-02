@@ -487,14 +487,14 @@
                 /**
                  * Create a new version
                  */
-            	$scope.save = function() {
-            		return authoring.save($scope.origItem, $scope.item).then(function(res) {
+                $scope.save = function() {
+                    return authoring.save($scope.origItem, $scope.item).then(function(res) {
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
-            		}, function(response) {
+                    }, function(response) {
                         if (angular.isDefined(response.data._issues)) {
                             if (angular.isDefined(response.data._issues.unique_name) &&
                                 response.data._issues.unique_name.unique === 1) {
@@ -505,8 +505,8 @@
                         } else {
                             notify.error(gettext('Error. Item not updated.'));
                         }
-            		});
-            	};
+                    });
+                };
 
                 function publishItem(item) {
                     authoring.publish(item)
@@ -549,11 +549,11 @@
                 };
 
                 $scope.beforeSend = function() {
-					$scope.sending = true;
+                    $scope.sending = true;
                     return $scope.save()
                     .then(function() {
                         var p = lock.unlock($scope.origItem);
-                		return p;
+                        return p;
                     });
                 };
 
@@ -617,7 +617,7 @@
                 $scope.lock = function() {
                     var path = $location.path();
                     if (path.indexOf('/view') < 0) {
-                       lock.lock($scope.item, true).then(updateEditorState);
+                        lock.lock($scope.item, true).then(updateEditorState);
                     } else {
                         superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
                     }
@@ -640,8 +640,8 @@
                         session.sessionId !== data.lock_session) {
                         var path = $location.path();
                         if (path.indexOf('/view') < 0) {
-                           authoring.lock($scope.item, data.user);
-                           $location.url($scope.referrerUrl);
+                            authoring.lock($scope.item, data.user);
+                            $location.url($scope.referrerUrl);
                         }
                     }
                 });
@@ -876,7 +876,7 @@
                 function save(data) {
                     scope.beforeSend()
                     .then(function(result) {
-		    			scope.task._etag = result._etag;
+                        scope.task._etag = result._etag;
                         api.save('move', {}, data, scope.task).then(gotoPreviousScreen);
                     });
                 }
@@ -942,59 +942,59 @@
                     category: '/authoring',
                     href: '/authoring/:_id',
                     when: '/authoring/:_id',
-                	label: gettext('Authoring'),
-	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    label: gettext('Authoring'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-	                controller: AuthoringController,
-	                filters: [{action: 'author', type: 'article'}],
+                    controller: AuthoringController,
+                    filters: [{action: 'author', type: 'article'}],
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
                         }]
                     },
-                   authoring: true
-	            })
+                    authoring: true
+                })
                 .activity('edit.text', {
-	            	label: gettext('Edit item'),
+                    label: gettext('Edit item'),
                     href: '/authoring/:_id',
                     priority: 10,
-	            	icon: 'pencil',
+                    icon: 'pencil',
                     controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('author', 'article', data.item);
-	                }],
+                    }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
                         return item.type !== 'composite' && item.state !== 'published';
                     }
-	            })
-	            .activity('view.text', {
-	            	label: gettext('View item'),
+                })
+                .activity('view.text', {
+                    label: gettext('View item'),
                     priority: 2000,
-	            	icon: 'external',
-	            	controller: ['data', 'superdesk', function(data, superdesk) {
+                    icon: 'external',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
-	                }],
+                    }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
                         return item.type !== 'composite';
                     }
-	            })
+                })
                 .activity('read_only.content_article', {
                     category: '/authoring',
                     href: '/authoring/:_id/view',
                     when: '/authoring/:_id/view',
-                	label: gettext('Authoring Read Only'),
-	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    label: gettext('Authoring Read Only'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-	                controller: AuthoringController,
-	                filters: [{action: 'read_only', type: 'content_article'}],
+                    controller: AuthoringController,
+                    filters: [{action: 'read_only', type: 'content_article'}],
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
                         }]
                     },
                     authoring: true
-	            });
+                });
         }])
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('move', {

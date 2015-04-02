@@ -20,7 +20,7 @@ define([
                         return $q.when({username: USERNAME});
                     }
                 };
-           });
+            });
             $provide.service('auth', AuthService);
             $provide.service('session', SessionService);
             $provide.service('authAdapter', AuthAdapterMock);
