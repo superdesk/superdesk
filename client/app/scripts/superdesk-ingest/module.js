@@ -395,16 +395,25 @@ define([
 
                     // init the lists of field aliases and non-selected fields
                     $scope.fieldAliases = [];
-                    aliases = $scope.origProvider.config.field_aliases || {};
+                    aliases = $scope.origProvider.config.field_aliases || [];
 
-                    Object.keys(aliases).forEach(function (fieldName) {
-                        $scope.fieldAliases.push(
-                            {fieldName: fieldName, alias: aliases[fieldName]});
+                    aliases.forEach(function (item) {
+                        Object.keys(item).forEach(function (fieldName) {
+                            $scope.fieldAliases.push(
+                                {fieldName: fieldName, alias: item[fieldName]});
+                        });
+                    });
+
+                    var usedFields = {};
+                    aliases.forEach(function (item) {
+                        Object.keys(item).forEach(function (fName) {
+                            usedFields[fName] = true;
+                        });
                     });
 
                     $scope.fieldsNotSelected = $scope.contentFields.filter(
                         function (fieldName) {
-                            return !(fieldName in aliases);
+                            return !(fieldName in usedFields);
                         }
                     );
                 };
@@ -503,11 +512,13 @@ define([
                 };
 
                 $scope.save = function() {
-                    var newAliases = {};
+                    var newAliases = [];
 
                     $scope.fieldAliases.forEach(function (item) {
                         if (item.fieldName && item.alias) {
-                            newAliases[item.fieldName] = item.alias;
+                            var newAlias = {};
+                            newAlias[item.fieldName] = item.alias;
+                            newAliases.push(newAlias);
                         }
                     });
 

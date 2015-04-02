@@ -92,10 +92,10 @@ describe('sdIngestSourcesContent directive', function () {
         beforeEach(function () {
             fakeProvider = {
                 config: {
-                    field_aliases: {
-                        foo2: 'bar2',
-                        foo5: 'bar5'
-                    }
+                    field_aliases: [
+                        {foo2: 'bar2'},
+                        {foo5: 'bar5'}
+                    ]
                 }
             };
             scope.contentFields = ['foo', 'foo2', 'foo3', 'foo4', 'foo5'];
@@ -237,7 +237,7 @@ describe('sdIngestSourcesContent directive', function () {
 
             scope.provider = {
                 config: {
-                    field_aliases: {headline: 'title'}
+                    field_aliases: [{headline: 'title'}]
                 }
             };
         }));
@@ -249,7 +249,7 @@ describe('sdIngestSourcesContent directive', function () {
             ];
             scope.save();
             expect(scope.provider.config.field_aliases).toEqual(
-                {foo: 'bar', foo2: 'bar2'}
+                [{foo: 'bar'}, {foo2: 'bar2'}]
             );
         });
 
@@ -262,7 +262,7 @@ describe('sdIngestSourcesContent directive', function () {
                     {fieldName: null, alias: ''}
                 ];
                 scope.save();
-                expect(scope.provider.config.field_aliases).toEqual({});
+                expect(scope.provider.config.field_aliases).toEqual([]);
             }
         );
     });

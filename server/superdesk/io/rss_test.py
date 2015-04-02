@@ -298,11 +298,9 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
             body_text_field_alias='This is body text.',
         )
 
-        field_aliases = dict(
-            title='title_field_alias',
-            summary='summary_field_alias',
-            body_text='body_text_field_alias',
-        )
+        field_aliases = [{'title': 'title_field_alias'},
+                         {'summary': 'summary_field_alias'},
+                         {'body_text': 'body_text_field_alias'}]
 
         item = self.instance._create_item(data, field_aliases)
 

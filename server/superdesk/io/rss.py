@@ -19,6 +19,7 @@ from datetime import datetime
 from superdesk.errors import IngestApiError, ParserError
 from superdesk.io import register_provider
 from superdesk.io.ingest_service import IngestService
+from superdesk.utils import merge_dicts
 
 
 PROVIDER = 'rss'
@@ -140,6 +141,8 @@ class RssIngestService(IngestService):
         """
         if field_aliases is None:
             field_aliases = {}
+        else:
+            field_aliases = merge_dicts(field_aliases)
 
         item = dict(type='text')
 
