@@ -53,6 +53,7 @@ class Resource():
     service = None
     endpoint_schema = None
     resource_preferences = None
+    etag_ignore_fields = []
 
     def __init__(self, endpoint_name, app, service, endpoint_schema=None):
         self.endpoint_name = endpoint_name
@@ -83,6 +84,8 @@ class Resource():
                 endpoint_schema.update({'internal_resource': self.internal_resource})
             if self.resource_title is not None:
                 endpoint_schema.update({'resource_title': self.resource_title})
+            if self.etag_ignore_fields:
+                endpoint_schema.update({'etag_ignore_fields': self.etag_ignore_fields})
         self.endpoint_schema = endpoint_schema
 
         on_fetched_resource = getattr(app, 'on_fetched_resource_%s' % self.endpoint_name)

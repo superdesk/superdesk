@@ -51,6 +51,8 @@ tests.push('superdesk-desks/desks');
 tests.push('superdesk-groups/groups');
 tests.push('superdesk-search/search');
 
+tests.push('superdesk-ingest/module');
+
 tests.push('superdesk-users/users');
 tests.push('superdesk-users/profile');
 tests.push('superdesk-users/activity/activity');
