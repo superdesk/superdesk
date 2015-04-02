@@ -367,7 +367,13 @@
         }, refresh, true);
     }
 
-    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
+    angular.module('superdesk.search', [
+        'superdesk.api',
+        'superdesk.desks',
+        'superdesk.activity',
+        'superdesk.list',
+        'superdesk.keyboard'
+    ])
         .service('search', SearchService)
         .service('tags', TagService)
         .filter('FacetLabels', function() {

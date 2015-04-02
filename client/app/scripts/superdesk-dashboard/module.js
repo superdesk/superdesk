@@ -63,8 +63,8 @@ define([
             label: gettext('Workspace'),
             description: gettext('Customize your widgets and views'),
             controller: require('./workspace-controller'),
-            templateUrl: require.toUrl('./views/workspace.html'),
-            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
+            templateUrl: 'scripts/superdesk-dashboard/views/workspace.html',
+            topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
             priority: -1000,
             category: superdesk.MENU_MAIN
         });
