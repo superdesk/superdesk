@@ -397,23 +397,19 @@ define([
                     $scope.fieldAliases = [];
                     aliases = $scope.origProvider.config.field_aliases || [];
 
+                    var aliasObj = {};
                     aliases.forEach(function (item) {
-                        Object.keys(item).forEach(function (fieldName) {
-                            $scope.fieldAliases.push(
-                                {fieldName: fieldName, alias: item[fieldName]});
-                        });
+                        _.extend(aliasObj, item);
                     });
 
-                    var usedFields = {};
-                    aliases.forEach(function (item) {
-                        Object.keys(item).forEach(function (fName) {
-                            usedFields[fName] = true;
-                        });
+                    Object.keys(aliasObj).forEach(function (fieldName) {
+                        $scope.fieldAliases.push(
+                            {fieldName: fieldName, alias: aliasObj[fieldName]});
                     });
 
                     $scope.fieldsNotSelected = $scope.contentFields.filter(
                         function (fieldName) {
-                            return !(fieldName in usedFields);
+                            return !(fieldName in aliasObj);
                         }
                     );
                 };
