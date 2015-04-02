@@ -12,7 +12,9 @@ def given_highlights(context):
     with context.app.app_context():
         context.desks = [{'name': 'test'}]
         get_resource_service('desks').post(context.desks)
-        context.highlights = [{'name': 'highlight', 'desks': [desk['_id'] for desk in context.desks]}]
+        context.highlights = [
+            {'name': 'highlight', 'desks': [desk['_id'] for desk in context.desks], 'auto_insert': 'now-12h'},
+        ]
         get_resource_service('highlights').post(context.highlights)
         task = {'desk': context.desks[0]['_id']}
         context.items = [
@@ -39,9 +41,9 @@ def then_we_get_new_package_with_items(context):
     package = json.loads(context.response.get_data())
 
     groups = package.get('groups')
-    assert len(groups) == 2
+    assert len(groups) == 2, 'there should be 2 groups'
 
     refs = groups[1].get('refs')
-    assert len(refs) == 2, refs
+    assert len(refs) == 2, 'there should be 2 refs %s' % (refs)
     assert refs[0]['headline'] == 'item1', refs[0]
     assert refs[1]['headline'] == 'item2', refs[1]
