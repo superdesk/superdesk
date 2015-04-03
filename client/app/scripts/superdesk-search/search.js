@@ -367,7 +367,13 @@
         }, refresh, true);
     }
 
-    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
+    angular.module('superdesk.search', [
+        'superdesk.api',
+        'superdesk.desks',
+        'superdesk.activity',
+        'superdesk.list',
+        'superdesk.keyboard'
+    ])
         .service('search', SearchService)
         .service('tags', TagService)
         .filter('FacetLabels', function() {
@@ -1065,6 +1071,21 @@
                 }]
             };
         })
+
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
+        function(asset, multi, multiEdit) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                link: function(scope) {
+                    scope.multi = multi;
+
+                    scope.multiedit = function() {
+                        multiEdit.create(multi.getQueue());
+                        multiEdit.open();
+                    };
+                }
+            };
+        }])
 
         .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk.activity('/search', {
