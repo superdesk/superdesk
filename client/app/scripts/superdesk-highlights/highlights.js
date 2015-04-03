@@ -168,12 +168,9 @@
                     });
                 };
 
-                scope.hasHighlights = function() {
-                    return _.size(scope.highlights) > 0;
-                };
-
                 highlightsService.get(desks.activeDeskId).then(function(result) {
                     scope.highlights = result._items;
+                    scope.hasHighlights = _.size(scope.highlights) > 0;
                 });
             }
         };
@@ -192,6 +189,8 @@
 
         $scope.configEdit = {};
         $scope.modalActive = false;
+        $scope.hours = _.range(1, 25);
+        $scope.auto = {day: 'now/d', week: 'now/w'};
         var _config;
 
         $scope.edit = function(config) {
@@ -200,6 +199,9 @@
             $scope.configEdit = _.create(config);
             $scope.assignedDesks = deskList(config.desks);
             _config = config;
+            if (!$scope.configEdit.auto_insert) {
+                $scope.configEdit.auto_insert = 'now/d'; // today
+            }
         };
 
         $scope.cancel = function() {
@@ -240,6 +242,10 @@
                     notify.success(gettext('Configuration deleted.'), 3000);
                 });
             });
+        };
+
+        $scope.getHourVal = function(hour) {
+            return 'now-' + hour + 'h';
         };
 
         function deskList(arr) {

@@ -142,7 +142,6 @@ Feature: Highlights
         {"_items": [{"headline": "test", "highlights": []}]}
         """
 
-    @wip
     @auth
     Scenario: Generate text item from highlights
         Given "desks"
@@ -206,3 +205,9 @@ Feature: Highlights
         """
         {"type": "text"}
         """
+
+    @auth
+    Scenario: Prepopulate highlights when creating a package
+        Given highlights
+        When we create highlights package
+        Then we get new package with items

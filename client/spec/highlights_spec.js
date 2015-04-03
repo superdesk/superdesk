@@ -112,7 +112,7 @@ describe('HIGHLIGHTS', function() {
             content.checkMarkedForHighlight('Highlight one', 0);
         });
 
-        it('create highlist package', function() {
+        it('create highlight package', function() {
             workspace.switchToDesk('PERSONAL');
             expect(content.getCount()).toBe(3);
             workspace.switchToDesk('SPORTS DESK');
@@ -128,7 +128,7 @@ describe('HIGHLIGHTS', function() {
             expect(content.getCount()).toBe(4);
         });
 
-        it('filter by highlights in highlist package', function() {
+        it('filter by highlights in highlight package', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 0);
@@ -154,7 +154,7 @@ describe('HIGHLIGHTS', function() {
             expect(authoring.getSearchItemCount()).toBe(1);
         });
 
-        it('export highlist package', function() {
+        it('export highlight package', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 0);

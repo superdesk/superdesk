@@ -43,7 +43,7 @@
 					</div>
 					<div class="field">
 						<label translate>Assigned desks</label>
-						<div class="assigned-desks">
+						<div class="multi-select">
 							<ul>
 								<li ng-repeat="desk in assignedDesks">
 									<span sd-check ng-model="desk.included"></span>
@@ -51,6 +51,16 @@
 								</li>
 							</ul>
 						</div>
+					</div>
+					<div class="field" tooltip="{{ :: 'When creating a highlights package' | translate }}">
+						<label translate>Automatically insert items from:</label>
+						<select ng-model="configEdit.auto_insert" class="input-small">
+							<option value="{{ :: auto.day }}" ng-selected="configEdit.auto_insert === auto.day" translate>Today</option>
+							<option value="{{ :: auto.week }}" ng-selected="configEdit.auto_insert === auto.week" translate>This week</option>
+							<option ng-repeat="hour in hours"
+								value="{{ :: getHourVal(hour) }}"
+								ng-selected="configEdit.auto_insert === getHourVal(hour)" translate>Last {{ hour }} hours</option>
+						</select>
 					</div>
 				</fieldset>
 				<p ng-if="message">{{ message }}</p>
@@ -62,6 +72,4 @@
 		  	<button class="btn btn-primary" ng-click="save()" ng-disabled="!highlightForm.$valid" translate>Save</button>
 		</div>
 	</div>
-
-
 </div>

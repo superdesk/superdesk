@@ -8,26 +8,64 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+
+import logging
+import superdesk
+
 from collections import Counter
 from eve.utils import config
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.content import LINKED_IN_PACKAGES
-import logging
 
 ASSOCIATIONS = 'refs'
 ITEM_REF = 'residRef'
 ID_REF = 'idRef'
+MAIN_GROUP = 'main'
+ROOT_GROUP = 'root'
+
 
 logger = logging.getLogger(__name__)
+package_create_signal = superdesk.signals.signal('package.create')
+
+
+def create_root_group(docs):
+    """Define groups in given docs if not present or empty.
+
+    :param docs: list of docs
+    """
+    for doc in docs:
+        if len(doc.get('groups', [])):
+            continue
+        doc['groups'] = [
+            {'id': ROOT_GROUP, 'refs': [{ID_REF: MAIN_GROUP}]},
+            {'id': MAIN_GROUP, 'refs': []}
+        ]
+
+
+def get_item_ref(item):
+    """Get reference for given item which can be used in group.refs.
+
+    :param item: item dict
+    """
+    return {
+        ITEM_REF: item.get('_id'),
+        'headline': item.get('headline'),
+        'slugline': item.get('slugline'),
+        'location': 'archive',
+        'itemClass': 'icls:' + item.get('type', 'text'),
+        'renditions': item.get('renditions', {}),
+    }
 
 
 class PackageService():
 
     def on_create(self, docs):
+        create_root_group(docs)
         self.check_root_group(docs)
         self.check_package_associations(docs)
+        package_create_signal.send(self, docs=docs)
 
     def on_created(self, docs):
         for (doc, assoc) in [(doc, assoc) for doc in docs
