@@ -89,7 +89,10 @@
 
                 scope.mark_item = function mark_item(highlight) {
                     highlightsService.mark_item(highlight._id, scope.item._id);
-                    scope.$root.$broadcast('item:mark');
+                    if (!scope.item.highlights) {
+                        scope.item.highlights = [];
+                    }
+                    scope.item.highlights.push(highlight._id);
                 };
 
                 scope.is_marked = function is_marked(highlight) {
