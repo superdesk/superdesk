@@ -23,13 +23,9 @@ class HighlightsService(BaseService):
             service.update(item['_id'], {'highlights': updates}, item)
 
 
-class ArchiveHighlightsService(BaseService):
-    pass
-
-
 class MarkedForHighlightsService(BaseService):
     def create(self, docs, **kwargs):
-        service = get_resource_service('archive_highlights')
+        service = get_resource_service('archive')
         ids = []
         for doc in docs:
             item = service.find_one(req=None, guid=doc['marked_item'])
