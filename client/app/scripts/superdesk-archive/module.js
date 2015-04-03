@@ -7,6 +7,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    MultiService.$inject = ['$rootScope'];
     function MultiService($rootScope) {
 
         var items = [];
