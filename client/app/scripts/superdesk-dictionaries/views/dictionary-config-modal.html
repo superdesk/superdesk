@@ -17,10 +17,10 @@
 							<label translate>Language code</label>
 							<input type="text" ng-model="dictionary.language_id" required> 
 							<label translate ng-show="!dictionary._id">Dictionary file</label>
-							<input type="file" ng-model="dictionary.dictionary_file" ng-show="!dictionary._id"> 
+							<input type="file" file-upload accept="text/*" ng-show="!dictionary._id"> 
 						</div>
 					</fieldset>
-			        <button id="save-edit-btn" type="submit" class="btn btn-info pull-right" ng-click="save()" ng-disabled="dictionaryForm.$invalid || !dictionaryForm.$dirty" translate>Save</button>
+			        <button id="save-edit-btn" type="submit" class="btn btn-info pull-right" ng-click="save()" ng-disabled="!canSave(dictionaryForm)" translate>Save</button>
 			        <button id="cancel-edit-btn" type="button" class="btn pull-right" ng-click="cancel()" translate>Cancel</button>
 					<p ng-if="message">{{ message }}</p>
 					<span ng-show="_errorUniqueness" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
@@ -28,7 +28,7 @@
 					<span ng-show="_error" translate>There was a problem, dictionary not created/updated.</span>
 				</ng-form>
 			</div>
-			<div class="content">
+			<div class="content" ng-show="dictionary._id">
 				<ng-form name="wordForm">
 					<label translate>Add word</label>
 					<input type="text" ng-model="word.key" required> 

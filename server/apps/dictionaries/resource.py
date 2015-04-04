@@ -29,7 +29,7 @@ class DictionariesResource(Resource):
     '''
     schema = base_dictionary_schema
     schema.update({'content': {'type': 'list'}})
-    item_methods = ['GET', 'PATCH', 'DELETE']
+    item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
     privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries', 'DELETE': 'dictionaries'}
 
@@ -44,9 +44,12 @@ class DictionaryAddWordResource(Resource):
     privileges = {'POST': 'dictionaries'}
 
 
+DICTIONARY_FILE = 'file'
+
+
 class DictionaryUploadResource(Resource):
     schema = base_dictionary_schema
-    schema.update({'dictionary_file': {'type': 'file', 'required': True}})
+    schema.update({DICTIONARY_FILE: {'type': 'file', 'required': True}})
     datasource = {
         'source': 'dictionaries'
     }

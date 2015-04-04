@@ -14,7 +14,8 @@ from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 from collections import Counter
 from superdesk import get_resource_service
-from copy import copy
+from apps.dictionaries.resource import DICTIONARY_FILE
+from eve import ETAG
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,6 @@ class DictionaryUploadService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
-            print('received', doc)
             self._read_from_file(doc)
 
     def on_created(self, docs):
@@ -32,20 +32,22 @@ class DictionaryUploadService(BaseService):
             del doc['content']
 
     def on_update(self, updates, original):
-        if updates.get('dictionary_file'):
+        if updates.get(DICTIONARY_FILE):
             self._read_from_file(updates)
 
     def _read_from_file(self, doc):
-        content = doc['dictionary_file']
+        content = doc[DICTIONARY_FILE]
         if 'text/' not in content.mimetype:
             raise SuperdeskApiError.badRequestError('A text dictionary file is required')
         doc['content'] = self._read_from_stream(read_line_from_stream(content))
-        del doc['dictionary_file']
+        del doc[DICTIONARY_FILE]
 
     def _read_from_stream(self, stream):
         words = Counter()
         for line in stream:
-            words[line] += 1
+            line = line.strip()
+            if line:
+                words[line] += 1
         return sorted(list(words.keys()))
 
 
@@ -55,18 +57,14 @@ class DictionaryAddWordService(BaseService):
         dict_id = request.view_args['dict_id']
         dict_service = get_resource_service('dictionaries')
         dictionary = dict_service.find_one(req=None, _id=dict_id)
-        print('orig dictionary', dictionary)
         if not dictionary:
             raise SuperdeskApiError.notFoundError('Invalid dictionary identifier: ' + dict_id)
         for doc in docs:
-            print('doc', doc)
             if 'word' in doc:
-                newContent = copy(dictionary['content'])
-                updated = {'content': newContent}
-                updated['content'].append(doc['word'])
-                updated['content'] = sorted(updated['content'])
-                print(updated)
-                dict_service.patch(dict_id, updated)
+                dictionary['content'].append(doc['word'])
+                dictionary['content'] = sorted(dictionary['content'])
+                dict_service.put(dictionary['_id'], dictionary)
+                doc[ETAG] = dictionary[ETAG]
         return [dict_id]
 
 

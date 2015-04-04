@@ -11,82 +11,72 @@
 (function() {
     'use strict';
 
-    DictionaryService.$inject = ['api', 'urls', '$resource', 'upload'];
-    function DictionaryService(api, urls, $resource, upload) {
-    	this.dictionaries = null;
-    	this.currDictionary = null;
+    DictionaryService.$inject = ['api', 'urls', '$resource', '$upload'];
+    function DictionaryService(api, urls, $resource, $upload) {
+        this.dictionaries = null;
+        this.currDictionary = null;
 
-    	this.fetch = function fetch(success, error) {
-    		api.dictionaries.query({projection: {content: 0}}).then(success, error);
-    	};
+        this.fetch = function fetch(success, error) {
+            api.dictionaries.query({projection: {content: 0}}).then(success, error);
+        };
 
         this.open = function open(dictionary, success, error) {
-        	var itemURL = urls.item('/dictionaries/:dictId');
-        	var dictRes = $resource(itemURL);
-        	var dictContent = dictRes.get({dictId: dictionary._id}, function() {
-	            dictionary.content = dictContent.content;
-	            success(dictionary);
-        	}, error);
+            api.find('dictionaries', dictionary._id, {projection: {content: 0}}).then(success, error);
         };
 
-        this.create = function create(dictionary) {
-        	console.log('save', dictionary);
-        	urls.resource('dictionary_upload').then(function(uploadURL) {
-        		return upload.start({
-        			url: uploadURL,
-        			method: 'POST',
-        			data: dictionary
-        		}).then(function(response) {
-        			console.log(response);
-        		});
-        	});
-        };
-
-        this.update = function update(dictionary, data, success, error) {
-        	return api.save('dictionaries', dictionary, data)
-        		.then(success, error);
-        };
-
-        this.addWord = function addWord(dictionary, word, success, error) {
-            console.log('will add sometime', word, 'to', dictionary);
-            return api.save('dictionary_addword', {}, {word:word}, dictionary).then(function(updated) {
-                console.log('seems ok', updated);
-                return updated;
-            }, function(err) {
-                console.log('err', err);
+        this.create = function create(dictionary, file, success, error) {
+            urls.resource('dictionary_upload').then(function(uploadURL) {
+                return $upload.upload({
+                    url: uploadURL,
+                    method: 'POST',
+                    data: dictionary,
+                    file: file
+                }).then(success, error);
             });
         };
 
+        this.update = function update(dictionary, data, success, error) {
+            return api.save('dictionaries', dictionary, data).then(success, error);
+        };
+
+        this.addWord = function addWord(dictionary, word, success, error) {
+            return api.save('dictionary_addword', {}, {word:word}, dictionary)
+                .then(function(updates) {
+                    api.find('dictionaries', dictionary._id).then(function(doc) {
+                        return success(doc, updates);
+                    }, error);
+                }, error);
+        };
+
         this.remove = function remove(dictionary, success, error) {
-        	return api.remove(dictionary).then(success, error);
+            return api.remove(dictionary).then(success, error);
         };
     }
 
     DictionaryConfigController.$inject = ['$scope', 'dictionaries', 'gettext', 'modal', 'notify'];
     function DictionaryConfigController ($scope, dictionaries, gettext, modal, notify) {
-    	$scope.dictionaries = null;
-    	$scope.origDictionary = null;
-    	$scope.dictionary = null;
+        $scope.dictionaries = null;
+        $scope.origDictionary = null;
+        $scope.dictionary = null;
 
-    	var fetchDictionaries = function() {
-	        dictionaries.fetch(function(result) {
-	        	$scope.dictionaries = result;
-	        });
-    	};
+        var fetchDictionaries = function() {
+            dictionaries.fetch(function(result) {
+                $scope.dictionaries = result;
+            });
+        };
 
-    	$scope.createDictionary = function() {
-    		console.log('create');
-    		$scope.dictionary = null;
-    		$scope.origDictionary = null;
-    		$scope.modalActive = true;
-    	};
+        $scope.createDictionary = function() {
+            $scope.dictionary = {};
+            $scope.origDictionary = {};
+            $scope.modalActive = true;
+        };
 
         $scope.openDictionary = function(dictionary) {
-        	dictionaries.open(dictionary, function(result) {
-        		$scope.dictionary = result;
-        		$scope.origDictionary = angular.copy($scope.dictionary);
-        		$scope.modalActive = true;
-        	});
+            dictionaries.open(dictionary, function(result) {
+                $scope.dictionary = result;
+                $scope.origDictionary = angular.copy($scope.dictionary);
+                $scope.modalActive = true;
+            });
         };
 
         $scope.remove = function(dictionary) {
@@ -105,49 +95,67 @@
 
     DictionaryConfigModalController.$inject = ['$scope', 'dictionaries', 'upload', 'gettext', 'notify', 'modal'];
     function DictionaryConfigModalController ($scope, dictionaries, upload, gettext, notify, modal) {
-
-    	function init() {
+        function reset() {
             $scope.dictionary = null;
             $scope.origDictionary = null;
-            $scope.dictionaries = null;
-	    	$scope.word = {};
-    	}
+            $scope.word = {};
+            $scope.file = null;
+            $scope.modalActive = false;
+        }
+
+        var onSuccess = function(result) {
+            reset();
+            dictionaries.fetch(function(result) {
+                $scope.dictionaries = result;
+            });
+            notify.success(gettext('Dictionary saved succesfully'));
+            return result;
+        };
+
+        var onError = function(response) {
+            if (angular.isDefined(response.data._issues) &&
+                    angular.isDefined(response.data._issues['validator exception'])) {
+                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+            } else {
+                notify.error(gettext('Error. Dictionary not saved.'));
+            }
+        };
+
+        //listen for the file selected event
+        $scope.$on('fileSelected', function (event, args) {
+            $scope.$apply(function() {
+                $scope.file = args.file;
+            });
+        });
+
+        $scope.canSave = function(form) {
+            var hasId = _.has($scope.dictionary, '_id') && $scope.dictionary._id !== null;
+            return form.$valid && form.$dirty && (!hasId && $scope.file !== null || hasId);
+        };
 
         $scope.save = function() {
-        	console.log('dictionary', $scope.dictionary, $scope.origDictionary);
-        	if ($scope.dictionary === null) {
-        		console.log('create', $scope.dictionary);
-        		dictionaries.create($scope.dictionary);
-        	} else {
-        		dictionaries.update($scope.origDictionary, $scope.dictionary,
-        			function(updates) {
-        				angular.extend($scope.dictionary, updates);
-        				$scope.origDictionary = angular.copy($scope.dictionary);
-			            init();
-			            $scope.modalActive = false;
-	        			return updates;
-	        		}, function(response) {
-	                    if (angular.isDefined(response.data._issues) &&
-	                            angular.isDefined(response.data._issues['validator exception'])) {
-	                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-	                    } else {
-	                        notify.error(gettext('Error. Dictionary not updated.'));
-	                    }
-        		});
-        	}
+            if (!_.has($scope.dictionary, '_id') || $scope.dictionary._id === null) {
+                dictionaries.create($scope.dictionary, $scope.file, onSuccess, onError);
+            } else {
+                dictionaries.update($scope.origDictionary, $scope.dictionary, onSuccess, onError);
+            }
         };
 
         $scope.cancel = function() {
-        	init();
-        	$scope.modalActive = false;
+            reset();
         };
 
         $scope.addWord = function() {
-            dictionaries.addWord($scope.dictionary, $scope.word.key);
+            dictionaries.addWord($scope.dictionary, $scope.word.key,
+                function(updated, updates) {
+                    _.assign($scope.dictionary, _.omit(updated, 'content'));
+                    _.assign($scope.dictionary, _.omit(updates, 'word'));
+                    notify.success(gettext('Word added succesfully: ') + updates.word);
+                }, onError);
             $scope.word.key = null;
         };
 
-        init();
+        reset();
     }
 
     var app = angular.module('superdesk.dictionaries', []);
@@ -172,16 +180,17 @@
                 }
             });
         }])
-    	.service('dictionaries', DictionaryService)
-	    .directive('sdDictionaryConfig', function() {
-	    	return {
-	    		controller: DictionaryConfigController
-	    	};
-	    })
+        .service('dictionaries', DictionaryService)
+        .directive('sdDictionaryConfig', function() {
+            return {
+                controller: DictionaryConfigController
+            };
+        })
         .directive('sdDictionaryConfigModal', function() {
             return {
                 scope: {
                     modalActive: '=active',
+                    dictionaries: '=',
                     dictionary: '=',
                     origDictionary: '=',
                     word: '=',
@@ -193,6 +202,14 @@
                 link: function(scope, elem, attrs, ctrl) {
                 }
             };
+        }).directive('fileUpload', function () {
+            return {
+                scope: true,
+                link: function (scope, element, attrs) {
+                    element.bind('change', function (event) {
+                        scope.$emit('fileSelected', {file: event.target.files[0]});
+                    });
+                }
+            };
         });
-
 })();
