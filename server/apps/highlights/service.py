@@ -73,7 +73,12 @@ class MarkedForHighlightsService(BaseService):
                 highlights = []
             if doc['highlights'] not in highlights:
                 highlights.append(doc['highlights'])
-                service.update(item['_id'], {'highlights': highlights}, item)
+                updates = {
+                    'highlights': highlights,
+                    '_updated': item['_updated'],
+                    '_etag': item['_etag']
+                }
+                service.update(item['_id'], updates, item)
             push_notification('item:mark', marked=1)
         return ids
 

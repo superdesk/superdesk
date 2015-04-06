@@ -105,6 +105,7 @@ describe('HIGHLIGHTS', function() {
             authoring.markForHighlights();
             expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(2);
             highlights.selectHighlight(authoring.getSubnav(), 'Highlight one');
+            authoring.checkMarkedForHighlight('Highlight one');
             authoring.close();
             workspace.switchToDesk('PERSONAL');
             workspace.switchToDesk('SPORTS DESK');
