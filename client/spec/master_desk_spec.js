@@ -94,11 +94,11 @@ describe('Master Desk', function() {
 
     it('show user role view', function() {
         masterDesks.switchToTab('users');
-        expect(masterDesks.getUser(0, 0, 0).element(by.tagName('div')).getText()).toContain('first name last name');
-        expect(masterDesks.getUser(0, 1, 0).element(by.tagName('div')).getText()).toContain('first name2 last name2');
-        expect(masterDesks.getUser(0, 1, 1).element(by.tagName('div')).getText()).toContain('first name3 last name3');
-        expect(masterDesks.getUser(0, 2, 0).element(by.tagName('div')).getText()).toContain('first name1 last name1');
-        expect(masterDesks.getUser(1, 2, 0).element(by.tagName('div')).getText()).toContain('first name1 last name1');
+        expect(masterDesks.getUser(0, 0, 0).element(by.className('text')).getText()).toContain('first name last name');
+        expect(masterDesks.getUser(0, 1, 0).element(by.className('text')).getText()).toContain('first name2 last name2');
+        expect(masterDesks.getUser(0, 1, 1).element(by.className('text')).getText()).toContain('first name3 last name3');
+        expect(masterDesks.getUser(0, 2, 0).element(by.className('text')).getText()).toContain('first name1 last name1');
+        expect(masterDesks.getUser(1, 2, 0).element(by.className('text')).getText()).toContain('first name1 last name1');
     });
 
     it('user role view - show desk', function() {
