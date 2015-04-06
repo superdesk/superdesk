@@ -9,39 +9,38 @@ define(['angular', 'jquery'], function(angular, $) {
     module.service('betaService', ['$window', '$rootScope', '$q', 'preferencesService',
         function($window, $rootScope, $q, preferencesService) {
 
-        $rootScope.beta = null;
+            $rootScope.beta = null;
 
-        this.toggleBeta = function() {
-            var update = {
-                'feature:preview': {
-                    'default':false,
-                    'enabled':!$rootScope.beta,
-                    'label':'Enable Feature Preview',
-                    'type':'bool',
-                    'category':'feature'
-                }
+            this.toggleBeta = function() {
+                var update = {
+                    'feature:preview': {
+                        'default':false,
+                        'enabled':!$rootScope.beta,
+                        'label':'Enable Feature Preview',
+                        'type':'bool',
+                        'category':'feature'
+                    }
+                };
+
+                preferencesService.update(update, 'feature:preview').then(function() {
+                        $rootScope.beta = !$rootScope.beta;
+                        $window.location.reload();
+                    });
             };
 
-            preferencesService.update(update, 'feature:preview').then(function() {
-                    $rootScope.beta = !$rootScope.beta;
-                    $window.location.reload();
-                });
-        };
-
-        this.isBeta = function() {
-            if ($rootScope.beta == null) {
-                return preferencesService.get('feature:preview').then(function(result) {
-                    $rootScope.beta = result && result.enabled;
-                    return $rootScope.beta;
-                }, function() {
-                    return $q.when(false);
-                });
-            } else {
-                return $q.when($rootScope.beta);
-            }
-        };
-
-    }]);
+            this.isBeta = function() {
+                if ($rootScope.beta == null) {
+                    return preferencesService.get('feature:preview').then(function(result) {
+                        $rootScope.beta = result && result.enabled;
+                        return $rootScope.beta;
+                    }, function() {
+                        return $q.when(false);
+                    });
+                } else {
+                    return $q.when($rootScope.beta);
+                }
+            };
+        }]);
 
     module.config(['$httpProvider', function($httpProvider) {
         $httpProvider.interceptors.push(BetaTemplateInterceptor);

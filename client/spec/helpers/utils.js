@@ -83,43 +83,45 @@ function printLogs(prefix) {
 
 var clientSideScripts = require('./../../node_modules/protractor/lib/clientsidescripts.js');
 function waitForAngular(opt_description) {
-  var description = opt_description ? ' - ' + opt_description : '';
-  var self = browser;
-  var doWork = function() {
-    return self.executeAsyncScript_(
-      clientSideScripts.waitForAngular,
-      'Protractor.waitForAngular()' + description,
-      self.rootEl).
-      then(function(browserErr) {
-        if (browserErr) {
-          throw 'Error while waiting for Protractor to ' +
-                'sync with the page: ' + JSON.stringify(browserErr);
-        }
-    }).then(null, function(err) {
-      var timeout;
-      if (/asynchronous script timeout/.test(err.message)) {
-        // Timeout on Chrome
-        timeout = /-?[\d\.]*\ seconds/.exec(err.message);
-      } else if (/Timed out waiting for async script/.test(err.message)) {
-        // Timeout on Firefox
-        timeout = /-?[\d\.]*ms/.exec(err.message);
-      } else if (/Timed out waiting for an asynchronous script/.test(err.message)) {
-        // Timeout on Safari
-        timeout = /-?[\d\.]*\ ms/.exec(err.message);
-      }
-      if (timeout) {
-        console.log('WARNING: rejected because of timeout.');
-        return webdriver.promise.rejected(err);
-        //throw 'Timed out waiting for Protractor to synchronize with ' +
-            //'the page after ' + timeout + '. Please see ' +
-            //'https://github.com/angular/protractor/blob/master/docs/faq.md';
-      } else {
-        console.log('WARNING: rejected because of error.');
-        return webdriver.promise.rejected(err);
-      }
-    });
-  };
-  return doWork();
+    var description = opt_description ? ' - ' + opt_description : '';
+    var self = browser;
+
+    function doWork() {
+        return self.executeAsyncScript_(
+            clientSideScripts.waitForAngular,
+            'Protractor.waitForAngular()' + description,
+            self.rootEl
+        ).then(function(browserErr) {
+            if (browserErr) {
+                throw 'Error while waiting for Protractor to ' +
+                      'sync with the page: ' + JSON.stringify(browserErr);
+            }
+        }).then(null, function(err) {
+            var timeout;
+            if (/asynchronous script timeout/.test(err.message)) {
+                // Timeout on Chrome
+                timeout = /-?[\d\.]*\ seconds/.exec(err.message);
+            } else if (/Timed out waiting for async script/.test(err.message)) {
+                // Timeout on Firefox
+                timeout = /-?[\d\.]*ms/.exec(err.message);
+            } else if (/Timed out waiting for an asynchronous script/.test(err.message)) {
+                // Timeout on Safari
+                timeout = /-?[\d\.]*\ ms/.exec(err.message);
+            }
+            if (timeout) {
+                console.log('WARNING: rejected because of timeout.');
+                return webdriver.promise.rejected(err);
+                //throw 'Timed out waiting for Protractor to synchronize with ' +
+                    //'the page after ' + timeout + '. Please see ' +
+                    //'https://github.com/angular/protractor/blob/master/docs/faq.md';
+            } else {
+                console.log('WARNING: rejected because of error.');
+                return webdriver.promise.rejected(err);
+            }
+        });
+    }
+
+    return doWork();
 }
 
 function waitForSuperdesk() {

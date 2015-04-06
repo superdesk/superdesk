@@ -255,6 +255,10 @@ metadata_schema = {
         }
     },
     'highlight': Resource.rel('highlights'),
+    'highlights': {
+        'type': 'list',
+        'schema': Resource.rel('highlights', True)
+    },
 
     # Task and Lock Details
     'task_id': {

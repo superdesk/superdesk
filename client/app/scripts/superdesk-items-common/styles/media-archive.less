@@ -153,7 +153,16 @@
 				}
 			}
 		}
-	}	
+	}
+	.content .shadow-list-holder {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		max-height: none;
+		min-height: auto;
+	}
 }
 
 .loading-indicator {
@@ -258,6 +267,19 @@
 			.caption {
 				display: none;
 			}
+
+			.selectbox {
+				position: absolute;
+				top: 0;
+				right: 0;
+				margin: 0;
+				padding: 1px 0 3px 5px;
+				background-color: #fff;
+
+				.sd-checkbox {
+					margin: 0;
+				}
+			}
 		}
 		&.media-picture {
 			.text {
@@ -304,11 +326,14 @@
 				}
 			}
 		}
-
+		.media-info {
+			position: relative;
+		}
 		h5 {
 			position: absolute;
-			left: @sfbox_sidepadding+2;
-			right: @sfbox_sidepadding+2;
+			left: 0;
+			right: 0;
+			top: 0;
 			width:auto;
 			white-space:nowrap;
 			overflow:hidden;
@@ -317,14 +342,19 @@
 			font-size:11px;
 			color:#444;
 			text-transform: uppercase;
+			&.shifted {
+				left: 20px;
+			}
 		}
 		dl {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 20px;
 			.clearfix();
 			font-size:11px;
-			position:relative;
 			height:auto;
 			margin:0 2px;
-			padding-top: 20px;
 			dt {
 				width:auto;
 				float: left;
@@ -386,29 +416,33 @@
 	}
 
 
-
 .mgrid-view, #scratchpad {
 	.media-box {
 		.action {
-			overflow: hidden;
 			height:33px;
 			position: absolute;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			//display: none;
 		}
 		.media-box-generic;
 		&.locked {
 			border-bottom-color: #e51c23 !important;
 		}
+
+		.highlights-title {
+			display: block;
+			float: left;
+			margin-top: -2px;
+		}
+
 		/* control buttons on the bottom */
 		.item-functions {
 			background: #fff;
 			position: absolute;
 			height: 32px;
 			border-top: 1px solid rgba(0,0,0,0.1);
-			bottom: -32px;
+			bottom: 0;
 			left: 0;
 			right: 0;
 			.item-field {
@@ -439,12 +473,6 @@
 				}
 			}
 			
-		}
-		&:hover {
-			.item-functions {
-				bottom: 0px;
-				transition: bottom 60ms ease-out;
-			}
 		}
 	}
 }
@@ -523,12 +551,20 @@
 
 		.type-icon {
 			text-align: center;
+			width: 44px;
+			height: 56px;
+			.box-sizing(border-box);
+
 			i {
 				.opacity(50);
 				width: 24px;
 				padding-left: 0;
 				margin-left: 0;
-				margin-top: 28%;
+				margin-top: 7px;
+			}
+
+			.sd-checkbox {
+				margin: 9px 0 0 1px;
 			}
 		}
 
@@ -579,6 +615,7 @@
 				height: 18px;
 				line-height: 18px;
 				position: relative;
+				margin-left: 142px;
 			}
 			.state-label {
 				margin-top: 2px;

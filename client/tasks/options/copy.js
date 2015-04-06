@@ -22,6 +22,15 @@ module.exports = {
             src: [
                 'views/**/*.{html,css,jpg,jpeg,png,gif,json}'
             ]
+        },
+        {
+            expand: true,
+            dot: true,
+            cwd: '<%= appDir %>',
+            dest: '<%= distDir %>',
+            src: [
+                'docs/images/**/*.{jpg,jpeg,png,gif}'
+            ]
         }]
     },
     js: {

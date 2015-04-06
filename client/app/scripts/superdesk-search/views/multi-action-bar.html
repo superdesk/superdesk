@@ -1,0 +1,13 @@
+<div class="multi-action-bar" ng-if="multi.count">
+	<button class="btn btn-light" ng-click="multi.reset()">cancel</button>
+	<span id="multi-select-count" class="btn btn-light"
+		translate
+		translate-n="multi.count"
+		translate-plural="{{ multi.count }} ITEMS SELECTED">{{ multi.count }} ITEM SELECTED</span>
+
+	<div class="pull-right" ng-if="type === 'archive'">
+		<button class="navbtn" ng-click="multiedit()">
+    		<i class="big-icon-multiedit"></i>
+        </button>
+	</div>
+</div>

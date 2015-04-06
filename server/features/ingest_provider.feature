@@ -59,6 +59,27 @@ Feature: Ingest Provider
         """
 
     @auth
+    Scenario: Update ingest_provider aliases
+        Given "ingest_providers"
+	    """
+        [{
+            "config": {"field_aliases": [{"content": "body_text"}]},
+            "is_closed": false,
+            "name": "reuters 4",
+            "source": "reuters",
+            "type": "reuters"
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"config": {"field_aliases": [{"summary": "summary_alias"}, {"title": "headline"}]}}
+        """
+        Then expect json in "config/field_aliases"
+        """
+        [{"summary": "summary_alias"}, {"title": "headline"}]
+        """
+
+    @auth
     @notification
     Scenario: Update ingest_provider
         Given "ingest_providers"

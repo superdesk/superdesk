@@ -13,6 +13,8 @@ describe('familyService', function() {
 
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive.directives'));
+    beforeEach(module('templates'));
+
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {
             return function() {

@@ -24,7 +24,7 @@
 			</header>
 			<div class="content">
 				<div sd-shadow>
-					<div 
+					<div
 						ng-if="view === 'list'"
 		            	sd-list-view
 		                data-items="tasks._items"
@@ -50,7 +50,7 @@
                             </div>
 		                </div>
 		            </div>
-		            <div 
+		            <div
 		            	ng-if="view === 'kanban'">
 		            	<div sd-task-kanban-board data-items="tasks._items" data-status="todo" data-title="To Do" data-selected="selected"></div>
 		            	<div sd-task-kanban-board data-items="tasks._items" data-status="in_progress" data-title="In Progress" data-selected="selected"></div>
@@ -64,13 +64,14 @@
 	<div sd-workqueue></div>
 </section>
 
-<div sd-modal-view data-model="newTask" class="create-task responsive-popup">
-	<form>
+<div sd-modal data-model="newTask" class="create-task-popup modal-static modal-body-grey">
+
     <div class="modal-header"> <button class="close" ng-click="close()"><i class="icon-close-small"></i></button>
         <h3 translate>Create New Task</h3>
     </div>
-	
-	    <div class="modal-body task-details" ng-if="newTask">
+
+	<div class="modal-body" ng-if="newTask">
+		<form>
 	    	<fieldset class="full">
 	    		<textarea
 					sd-autoexpand
@@ -94,7 +95,7 @@
 	            <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
 	        </fieldset>
 
-	       	<fieldset class="due">	
+	       	<fieldset class="due">
 	       		<div class="break"></div>
 				<label translate>Due</label>
 				<div class="clear field">
@@ -103,12 +104,13 @@
 				<div class="field">
 					<div sd-timepicker ng-model="newTask.task.due_time">
 				</div>
-			</fieldset>	
-	    </div>
+			</fieldset>
+		</form>
+    </div>
 
-	    <div class="modal-footer">
-	        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-	        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
-	    </div>
-    </form>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
+    </div>
+
 </div>

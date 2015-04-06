@@ -3,7 +3,6 @@
         <header class="search-page-header">
             <div class="fitler-trigger" ng-click="flags.facets = true" ng-class="{hidden: flags.facets}"><i class="icon-filter-large"></i></div>
 
-            
             <div sd-item-sortbar></div>
 
             <div sd-item-searchbar data-repo="repo" data-context="context" class="searchbar-flex-handler"></div>
@@ -14,6 +13,8 @@
                 <button title="{{ 'switch to grid view' | translate}}" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
                 <button title="{{ 'switch to list view' | translate}}" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
             </div>
+
+            <div sd-multi-action-bar></div>
         </header>
 
 

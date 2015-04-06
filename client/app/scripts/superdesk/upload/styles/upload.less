@@ -22,11 +22,7 @@ user avatar uploader
 ======================================
 */
 .upload-avatar {
-	width: 740px;
-	margin-left: -370px;
-	margin-top: -280px;
 	.modal-body {
-		height: 400px;
 		position: relative;
 	}
 	.sidebar {
@@ -34,7 +30,7 @@ user avatar uploader
 			li {
 				border-bottom: 1px solid #eee;
 				padding: 7px 10px 7px 20px;
-				height: 36px;	
+				height: 36px;
 				line-height: 22px;
 				font-size: 13px;
 				.box-sizing(border-box);
@@ -156,7 +152,7 @@ user avatar uploader
 		.preview {
 			.crop-area {
 				position: absolute;
-				top: 50px; 
+				top: 50px;
 				left: 20px; right: 20px; bottom: 20px;
 				.original {
 					position: absolute;
@@ -186,11 +182,11 @@ user avatar uploader
 				}
 			}
 		}
-		
+
 		.upload-progress {
 			.generic-upload-progress();
 		}
-		
+
 	}
 }
 
@@ -202,11 +198,6 @@ media uploader
 ======================================
 */
 .upload-media {
-
-	.modal-body {
-		background: @background-main;
-		overflow: hidden;
-	}
 
 	.drag-area { //start screen on modal show
 		position: absolute;
@@ -249,7 +240,7 @@ media uploader
 				height: auto;
 				line-height: 140%;
 			}
-			
+
 		}
 
 		&.compact {
@@ -292,7 +283,7 @@ media uploader
 			}
 		}
 	}
-	
+
 	.upload-error {
 		height: 40px;
 		position: absolute;
@@ -317,7 +308,7 @@ media uploader
 	}
 
 	.upload-edit {	//detail upload screen and basic edit
-		
+
 		position: absolute;
 		left: 0; right: 0; bottom: 0; top: 0px;
 		z-index: 1;
@@ -389,12 +380,12 @@ media uploader
 					border-bottom: 1px solid #c8c8c8;
 					.border-radius(0 0 3px 3px);
 					background: #fff;
-					
+
 					.upload-progress {
 						.generic-upload-progress();
 						top:-1px;
 					}
-					
+
 					input[type="text"] {
 						border: 0 !important;
 						height: 34px !important;
@@ -427,7 +418,7 @@ media uploader
 							}
 						}
 					}
-					
+
 
 					.other-info {
 						position: absolute; left: 0; right: 0;
@@ -438,7 +429,7 @@ media uploader
 							border-top: 1px solid #ebebeb;
 							&.shadow {
 								background: #f4f4f4;
-								border-top-width: 2px; 
+								border-top-width: 2px;
 							}
 							.text {
 								color: #999;
@@ -476,7 +467,7 @@ media uploader
 				margin-top: -2px;
 			}
 		}
-		
+
 	}
 
 }

@@ -145,7 +145,7 @@
                 };
 
                 if (post_filters.length > 0) {
-                     criteria.post_filter = {'and': post_filters};
+                    criteria.post_filter = {'and': post_filters};
                 }
 
                 paginate(criteria, search);
@@ -367,7 +367,13 @@
         }, refresh, true);
     }
 
-    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
+    angular.module('superdesk.search', [
+        'superdesk.api',
+        'superdesk.desks',
+        'superdesk.activity',
+        'superdesk.list',
+        'superdesk.keyboard'
+    ])
         .service('search', SearchService)
         .service('tags', TagService)
         .filter('FacetLabels', function() {
@@ -383,11 +389,12 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags',  function($location, desks, privileges, tags) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags', 'asset',
+            function($location, desks, privileges, tags, asset) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
-                templateUrl: 'scripts/superdesk-search/views/search-facets.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-facets.html'),
                 scope: {
                     items: '=',
                     desk: '=',
@@ -469,8 +476,8 @@
                                     _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                         _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
                                             if (deskStage._id === stage.key) {
-                                                    scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
-                                                }
+                                                scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
+                                            }
                                         });
                                     });
                                 }
@@ -513,9 +520,9 @@
                         if (key === 'Last Day') {
                             $location.search('after', 'now-24H');
                         } else if (key === 'Last Week'){
-                             $location.search('after', 'now-1w');
+                            $location.search('after', 'now-1w');
                         } else if (key === 'Last Month'){
-                             $location.search('after', 'now-1M');
+                            $location.search('after', 'now-1M');
                         } else {
                             $location.search('after', null);
                         }
@@ -541,10 +548,11 @@
             };
         }])
 
-        .directive('sdSearchTags', ['$location', '$route', 'tags', function($location, $route, tags) {
+        .directive('sdSearchTags', ['$location', '$route', 'tags', 'asset',
+            function($location, $route, tags, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/search-tags.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-tags.html'),
                 link: function(scope, elem) {
 
                     var update = function() {
@@ -573,8 +581,8 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags',
-            function($location, preferencesService, packages, tags) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
+            function($location, preferencesService, packages, tags, asset) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -591,7 +599,7 @@
 
             return {
                 require: '^sdSearchContainer',
-                templateUrl: 'scripts/superdesk-search/views/search-results.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-results.html'),
                 link: function(scope, elem, attr, controller) {
 
                     var GRID_VIEW = 'mgrid',
@@ -653,10 +661,10 @@
             };
         }])
 
-        .directive('sdSearchWithin', ['$location', function($location) {
+        .directive('sdSearchWithin', ['$location', 'asset', function($location, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/search-within.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/search-within.html'),
                 link: function(scope, elem) {
                     scope.searchWithin = function() {
                         if (scope.within) {
@@ -700,11 +708,12 @@
         /**
          * Open Item dialog
          */
-        .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify', 'gettext', 'keyboardManager',
-            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager) {
+        .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify',
+            'gettext', 'keyboardManager', 'asset',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset) {
             return {
                 scope: {repo: '=', context: '='},
-                templateUrl: 'scripts/superdesk-search/views/item-globalsearch.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-globalsearch.html'),
                 link: function(scope, elem) {
 
                     var ENTER = 13;
@@ -738,12 +747,12 @@
                         }
                     }
                     function searchUserContent(criteria) {
-                           var resource = api('user_content', session.identity);
-                           resource.query(criteria).then(function(result) {
-                                    openItem(result._items);
-                            }, function(response) {
-                                scope.message = gettext('There was a problem, item can not open.');
-                            });
+                        var resource = api('user_content', session.identity);
+                        resource.query(criteria).then(function(result) {
+                            openItem(result._items);
+                        }, function(response) {
+                            scope.message = gettext('There was a problem, item can not open.');
+                        });
                     }
                     function fetchItem() {
                         var filter = [
@@ -751,21 +760,21 @@
                             {term: {unique_name: scope.meta.unique_name}}
                         ];
                         var criteria = {
-                                            repo: 'ingest,archive',
-                                            source: {
-                                            query: {filtered: {filter: {
-                                                and: filter
-                                            }}}
-                                         }
+                            repo: 'ingest,archive',
+                            source: {
+                                query: {filtered: {filter: {
+                                    and: filter
+                                }}}
+                            }
                         };
                         api.query('search', criteria).then(function(result) {
-                                scope.items = result._items;
-                                if (scope.items.length > 0) {
-                                    openItem(scope.items);
-                                    reset();
-                                } else {
-                                    searchUserContent(criteria);
-                                }
+                            scope.items = result._items;
+                            if (scope.items.length > 0) {
+                                openItem(scope.items);
+                                reset();
+                            } else {
+                                searchUserContent(criteria);
+                            }
                         }, function(response) {
                             scope.message = gettext('There was a problem, item can not open.');
                         });
@@ -798,9 +807,9 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', ['$location', '$document', function($location, $document) {
+        .directive('sdItemSearchbar', ['$location', '$document', 'asset', function($location, $document, asset) {
             return {
-                templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-searchbar.html'),
                 link: function(scope, elem) {
                     var ENTER = 13;
 
@@ -850,13 +859,13 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', function($location, $timeout) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', function($location, $timeout, asset) {
             return {
                 scope: {
                     repo: '=',
                     context: '='
                 },
-                templateUrl: 'scripts/superdesk-search/views/item-search.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-search.html'),
                 link: function(scope, elem) {
 
                     var input = elem.find('#search-input');
@@ -935,7 +944,7 @@
 
                     scope.focusOnSearch = function() {
                         if (scope.advancedOpen) {
-                           scope.toggle();
+                            scope.toggle();
                         }
                         input.focus();
                     };
@@ -966,10 +975,10 @@
         /**
          * Item sort component
          */
-        .directive('sdItemSortbar', ['search', function sortBarDirective(search) {
+        .directive('sdItemSortbar', ['search', 'asset', function sortBarDirective(search, asset) {
             return {
                 scope: {},
-                templateUrl: 'scripts/superdesk-search/views/item-sortbar.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/item-sortbar.html'),
                 link: function(scope) {
                     scope.sortOptions = search.sortOptions;
 
@@ -1001,10 +1010,10 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext',
-        function(api, session, $location, notify, gettext) {
+        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext', 'asset',
+        function(api, session, $location, notify, gettext, asset) {
             return {
-                templateUrl: 'scripts/superdesk-search/views/saved-searches.html',
+                templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
                 link: function(scope) {
 
@@ -1063,7 +1072,22 @@
             };
         })
 
-        .config(['superdeskProvider', function(superdesk) {
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
+        function(asset, multi, multiEdit) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                link: function(scope) {
+                    scope.multi = multi;
+
+                    scope.multiedit = function() {
+                        multiEdit.create(multi.getQueue());
+                        multiEdit.open();
+                    };
+                }
+            };
+        }])
+
+        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk.activity('/search', {
                 description: gettext('Find live and archived content'),
                 beta: 1,
@@ -1071,7 +1095,7 @@
                 category: superdesk.MENU_MAIN,
                 label: gettext('Search'),
                 controller: SearchController,
-                templateUrl: 'scripts/superdesk-search/views/search.html'
+                templateUrl: asset.templateUrl('superdesk-search/views/search.html')
             });
         }])
 

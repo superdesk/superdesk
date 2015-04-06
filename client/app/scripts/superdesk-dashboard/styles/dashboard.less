@@ -6,8 +6,8 @@
 
 .dashboard-container {
 	position: absolute;
-	left: 0; 
-	right: 0; 
+	left: 0;
+	right: 0;
 	bottom: 0;
 	top: @topspace + @subnav-height;
 	overflow-y: auto;
@@ -24,7 +24,7 @@
 		width: 300px;
 		margin-left: -150px;
 	}
-}	
+}
 
 .sd-widget {
 	background: #fff;
@@ -63,7 +63,7 @@
 			top:0;
 			bottom: 0;
 		}
-		
+
 	}
 	.widget-content {
 		position: absolute;
@@ -76,7 +76,7 @@
 				.box-shadow(0 1px 0 0 rgba(0,0,0,.12))!important;
 			}
 		}
-	}		
+	}
 	.widget-footer {
 		border-top: 1px solid #e7e7e7;
 		height: 31px;
@@ -161,7 +161,7 @@ Widgets styles
 ---------------------------------------------
 */
 
-//default-widget 
+//default-widget
 .d-widget {
 	&.default {
 		.widget-content {
@@ -264,7 +264,7 @@ Gridster library
 
 .gridster .gs_w {
     z-index: 2;
-    position: absolute;    
+    position: absolute;
 }
 
 .ready .gs_w:not(.preview-holder) {
@@ -318,7 +318,7 @@ Gridster library
 				top: -15px;
 				cursor: pointer;
 			}
-			
+
 
 			.widget-resize-width , .widget-resize-height {
 				cursor: pointer;
@@ -353,7 +353,7 @@ Gridster library
 				left: 50%;
 				bottom: -24px;
 				margin-left: -22px;
-				
+
 				.resize-up, .resize-down {
 					width : 43px;
 					height: 23px;
@@ -394,9 +394,9 @@ Gridster library
 			.transition(all 0.3s linear);
 		}
 
-		
+
 	}
-	
+
 }
 
 
@@ -407,12 +407,13 @@ Add new widget modal
 */
 
 .widget-select {
-	width: 860px;
-	margin-left: -430px;
-	margin-top: -280px;
+
+	.modal-screen {
+		top: @nav-height;
+	}
 	.modal-body {
-		height: 442px;
-		.popup-subnav {
+		.nav-tabs {
+			line-height: @nav-height;
 			padding-left: 30px;
 			label {
 				display: inline-block;
@@ -422,7 +423,7 @@ Add new widget modal
 				display: inline-block;
 			}
 		}
-		
+
 	}
 	.modal-footer {
 		.center {
@@ -456,7 +457,7 @@ Add new widget modal
 				max-width: 100%;
 			}
 		}
-		.title {	
+		.title {
 			text-align: center;
 			font-size: 14px;
 			color: #000;
@@ -469,7 +470,7 @@ Add new widget modal
 }
 
 .widget-detail {
-	
+
 	.thumbnail-box {
 		width: 350px;
 		float: left;

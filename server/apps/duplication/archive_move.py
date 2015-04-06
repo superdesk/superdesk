@@ -55,9 +55,9 @@ class MoveService(BaseService):
                 raise SuperdeskApiError.notFoundError('Fail to found item with guid: %s' %
                                                       guid_of_item_to_be_moved)
 
-            current_desk_of_item = archived_doc.get('task', {}).get('desk')
-            if current_desk_of_item and str(current_desk_of_item) == str(doc.get('desk')):
-                raise SuperdeskApiError.preconditionFailedError(message='Move is not allowed within the same desk.')
+            current_stage_of_item = archived_doc.get('task', {}).get('stage')
+            if current_stage_of_item and str(current_stage_of_item) == str(doc.get('stage')):
+                raise SuperdeskApiError.preconditionFailedError(message='Move is not allowed within the same stage.')
 
             if not is_workflow_state_transition_valid('submit_to_desk', archived_doc[config.CONTENT_STATE]):
                 raise InvalidStateTransitionError()

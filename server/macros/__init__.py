@@ -2,7 +2,7 @@
 
 This module will get reloaded per request to be up to date.
 
-Use `superdesk.macros.macros.register` for registration.
+Use `superdesk.macro_register.macros.register` for registration.
 """
 import os
 import sys

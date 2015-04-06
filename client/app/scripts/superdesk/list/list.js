@@ -1,16 +1,127 @@
-define([
-    'angular',
-    'require',
-    './list-view-directive',
-    './searchbar-directive',
-    './list-item-directive'
-], function(angular, require) {
+(function() {
     'use strict';
 
-    var mod = angular.module('superdesk.list', []);
-    mod.directive('sdListView', require('./list-view-directive'));
-    mod.directive('sdSearchbar', require('./searchbar-directive'));
-    mod.directive('sdListItem', require('./list-item-directive'));
+    function ListItemDirectiveFactory() {
+        return {
+            link: function(scope, element, attrs, controller, $transclude) {
+                var itemScope;
+
+                scope.$watch('item', function() {
+                    destroyItemScope();
+                    itemScope = scope.$parent.$parent.$new();
+                    itemScope.item = scope.item;
+                    itemScope.items = scope.items;
+                    itemScope.extras = scope.extras;
+                    itemScope.$index = scope.$index;
+                    $transclude(itemScope, function(clone) {
+                        element.empty();
+                        element.append(clone);
+                    });
+                });
+
+                scope.$on('$destroy', destroyItemScope);
+
+                function destroyItemScope() {
+                    if (itemScope) {
+                        itemScope.$destroy();
+                    }
+                }
+            }
+        };
+    }
+
+    var mod = angular.module('superdesk.list', ['superdesk.keyboard']);
+    mod.directive('sdListView', ['$location', 'keyboardManager', function($location, keyboardManager) {
+        return {
+            scope: {
+                select: '&',
+                extras: '=',
+                items: '='
+            },
+            replace: true,
+            transclude: true,
+            templateUrl: 'scripts/superdesk/list/views/list-view.html',
+            link: function(scope, elem, attrs) {
+                var UP = -1,
+                    DOWN = 1;
+
+                function fetchSelectedItem(itemId) {
+                    if (!itemId) {
+                        return;
+                    }
+
+                    var match = _.find(scope.items, {_id: itemId});
+                    if (match) {
+                        scope.clickItem(match);
+                    }
+                }
+
+                function move(diff) {
+                    return function() {
+                        if (scope.items) {
+                            var index = _.indexOf(scope.items, scope.selected);
+                            if (index === -1) { // selected not in current items, select first
+                                return scope.clickItem(_.first(scope.items));
+                            }
+
+                            var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
+                            if (nextIndex < 0) {
+                                return scope.clickItem(_.last(scope.items));
+                            }
+
+                            return scope.clickItem(scope.items[nextIndex]);
+                        }
+                    };
+                }
+
+                function onKey(dir, callback) {
+                    keyboardManager.bind(dir, callback);
+                }
+
+                onKey('up', move(UP));
+                onKey('left', move(UP));
+                onKey('down', move(DOWN));
+                onKey('right', move(DOWN));
+
+                scope.clickItem = function(item, $event) {
+                    scope.selected = item;
+                    scope.select({item: item});
+                    if ($event) {
+                        $event.stopPropagation();
+                    }
+                };
+
+                scope.$watch('items', function() {
+                    fetchSelectedItem($location.search()._id);
+                    elem.find('.list-view').focus();
+                });
+            }
+        };
+    }]);
+
+    mod.directive('sdSearchbar', ['$location', function($location) {
+        return {
+            scope: true,
+            templateUrl: 'scripts/superdesk/list/views/searchbar.html',
+            link: function(scope, elem) {
+                var input = elem.find('#search-input');
+                scope.q = $location.search().q || null;
+                scope.flags = {extended: !!scope.q};
+
+                scope.search = function() {
+                    $location.search('q', scope.q || null);
+                    $location.search('page', null);
+                };
+
+                scope.close = function() {
+                    scope.q = null;
+                    input.focus();
+                };
+            }
+        };
+    }]);
+
+    mod.directive('sdListItem', ListItemDirectiveFactory);
 
     mod.directive('sdUpdown', ['$location', 'keyboardManager', '$anchorScroll', function($location, keyboardManager, $anchorScroll) {
         return {
@@ -35,8 +146,8 @@ define([
                     }
                 }
                 function scrollList(id) {
-                   $location.hash(id);
-                   $anchorScroll();
+                    $location.hash(id);
+                    $anchorScroll();
                 }
                 function move(diff) {
                     return function() {
@@ -94,7 +205,7 @@ define([
      */
     mod.directive('sdPagination', ['$location', function($location) {
         return {
-            templateUrl: require.toUrl('./views/sdPagination.html'),
+            templateUrl: 'scripts/superdesk/list/views/sdPagination.html',
             scope: {
                 items: '='
             },
@@ -135,9 +246,9 @@ define([
                 *@param {integer} page
                 */
                 scope.setLimit = function(pagesize) {
-                     localStorage.setItem('pagesize', pagesize);
-                     scope.setPage(0);
-                     $location.search('max_results', pagesize != null ? pagesize : size);
+                    localStorage.setItem('pagesize', pagesize);
+                    scope.setPage(0);
+                    $location.search('max_results', pagesize != null ? pagesize : size);
                 };
             }
         };
@@ -147,15 +258,13 @@ define([
     // Should replace sdPagination.
     mod.directive('sdPaginationAlt', [function() {
         return {
-            templateUrl: require.toUrl('./views/sdPaginationAlt.html'),
+            templateUrl: 'scripts/superdesk/list/views/sdPaginationAlt.html',
             scope: {
                 page: '=',
                 maxPage: '='
-            },
-            link: function(scope, element, attrs) {
             }
         };
     }]);
 
     return mod;
-});
+})();

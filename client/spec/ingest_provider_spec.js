@@ -38,21 +38,21 @@ describe('Ingest Provider Dashboard Maintenance', function() {
     });
 
     it('Change settings for Ingest Provider', function() {
-       addProvider();
-       expect(ingestDashboard.getDashboardList().count()).toEqual(1);
-       var dashboard = ingestDashboard.getDashboard(0);
-       var settings = ingestDashboard.getDashboardSettings(dashboard);
-       settings.click();
+        addProvider();
+        expect(ingestDashboard.getDashboardList().count()).toEqual(1);
+        var dashboard = ingestDashboard.getDashboard(0);
+        var settings = ingestDashboard.getDashboardSettings(dashboard);
+        settings.click();
 
-       //status
-       expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(true);
-       ingestDashboard.getDashboardSettingsStatusButton(settings).click();
-       expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(false);
+        //status
+        expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(true);
+        ingestDashboard.getDashboardSettingsStatusButton(settings).click();
+        expect(ingestDashboard.getDashboardStatus(dashboard).isDisplayed()).toBe(false);
 
-       //ingest count
-       expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(true);
-       ingestDashboard.getDashboardSettingsIngestCountButton(settings).click();
-       expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(false);
+        //ingest count
+        expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(true);
+        ingestDashboard.getDashboardSettingsIngestCountButton(settings).click();
+        expect(ingestDashboard.getDashboardIngestCount(dashboard).isDisplayed()).toBe(false);
     });
 
     it('Go to Ingest Providers', function() {

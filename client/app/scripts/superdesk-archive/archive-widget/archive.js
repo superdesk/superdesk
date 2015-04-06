@@ -59,7 +59,9 @@ define([
                     title: 'Open',
                     method: function(item) {
                         $location.path('/authoring/' + item._id + '/view');
-                    }
+                    },
+                    'class': 'open',
+                    icon: 'icon-expand'
                 }
             };
 

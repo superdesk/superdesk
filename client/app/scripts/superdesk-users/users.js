@@ -43,7 +43,7 @@
          */
         this.changePassword = function changePassword(user, oldPassword, newPassword) {
             return api.changePassword.create({username: user.username, old_password: oldPassword, new_password: newPassword})
-            	.then(function(result) {});
+                .then(function(result) {});
         };
 
         /**
@@ -148,7 +148,7 @@
          * Clear user cache
          */
         userservice.clearCache = function() {
-        	cache.removeAll();
+            cache.removeAll();
         };
 
         function buildKey(key, page, perPage) {
@@ -330,7 +330,7 @@
      */
     UserEnableCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'users', '$rootScope'];
     function UserEnableCommand(api, data, $q, notify, gettext, users, $rootScope) {
-    	var user = data.item.item;
+        var user = data.item;
 
         return users.save(user, {'is_enabled': true, 'is_active': true}).then(
             function(response) {
@@ -352,14 +352,16 @@
     /**
      * Disable user
      */
-    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'userList', '$rootScope'];
-    function UserDeleteCommand(api, data, $q, notify, gettext, userList, $rootScope) {
-    	data = data.item;
-        return api.users.remove(data.item).then(
+    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', '$rootScope'];
+    function UserDeleteCommand(api, data, $q, notify, gettext, $rootScope) {
+        var user = data.item;
+        return api.users.remove(user).then(
             function(response) {
-                userList.getUser(data.item._id).then(function(response) {
-                    data.item = response;
-                    $rootScope.$broadcast('user:updated', response);
+                return api.users.getById(user._id)
+                .then(function(newUser) {
+                    user = angular.extend(user, newUser);
+                    $rootScope.$broadcast('user:updated', user);
+                    return user;
                 });
             },
             function(response) {
@@ -371,7 +373,8 @@
                 } else {
                     notify.error(gettext('Error. User Profile cannot be disabled.'));
                 }
-        });
+            }
+        );
     }
 
     /**
@@ -430,8 +433,8 @@
                             notify.error(gettext('I\'m sorry but a role with that name already exists.'));
                         } else {
                             if (typeof(response.data._issues['validator exception']) !== 'undefined') {
-                                    notify.error(response.data._issues['validator exception']);
-                                } else {
+                                notify.error(response.data._issues['validator exception']);
+                            } else {
                                 notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
                             }
                         }
@@ -461,7 +464,7 @@
 
                     //find previous role with flag 'default'
                     var previous = _.find(scope.roles, function(r) {
-                      return r._id !== role._id && r.is_default;
+                        return r._id !== role._id && r.is_default;
                     });
 
                     // update it
@@ -694,7 +697,7 @@
                         }
                     ],
                     condition: function(data) {
-                        return data.item.is_enabled;
+                        return data.is_enabled;
                     },
                     privileges: {users: 1}
                 })
@@ -709,14 +712,14 @@
                         }
                     ],
                     condition: function(data) {
-                        return !data.item.is_enabled;
+                        return !data.is_enabled;
                     },
                     privileges: {users: 1}
                 })
                 .activity('edit.avatar', {
                     label: gettext('Change avatar'),
                     modal: true,
-                    cssClass: 'upload-avatar',
+                    cssClass: 'upload-avatar modal-static modal-large',
                     controller: ChangeAvatarController,
                     templateUrl: asset.templateUrl('superdesk-users/views/change-avatar.html'),
                     filters: [{action: 'edit', type: 'avatar'}]
@@ -746,16 +749,16 @@
             // configure new 'compile' directive by passing a directive
             // factory function. The factory function injects the '$compile'
             $compileProvider.directive('compile', ['$compile', function($compile) {
-              // directive factory creates a link function
-              return function(scope, element, attrs) {
-                var value = scope.$eval(attrs.compile);
-                element.html(value);
-                var nscope = scope.$new(true);
-                _.each(scope.$eval(attrs.data), function(value, key) {
-                    nscope[key] = value;
-                });
-                $compile(element.contents())(nscope);
-              };
+                // directive factory creates a link function
+                return function(scope, element, attrs) {
+                    var value = scope.$eval(attrs.compile);
+                    element.html(value);
+                    var nscope = scope.$new(true);
+                    _.each(scope.$eval(attrs.data), function(value, key) {
+                        nscope[key] = value;
+                    });
+                    $compile(element.contents())(nscope);
+                };
             }]);
         }])
 
@@ -958,7 +961,7 @@
                                 scope.cancel();
                             }, function(response) {
                                 notify.error(gettext('User preferences could not be saved...'));
-                        });
+                            });
                     };
 
                     function buildPreferences(struct) {
@@ -1039,7 +1042,7 @@
         .directive('sdResetPassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
             return {
                 link: function(scope, element) {
-                	scope.$watch('user', function() {
+                    scope.$watch('user', function() {
                         scope.oldPasswordInvalid = false;
                     });
 
@@ -1140,10 +1143,11 @@
                         scope.selected = user;
                         bindKeys();
                     };
+
                     scope.$watch('selected', function(selected) {
-                       if (selected == null) {
+                        if (selected == null) {
                             bindKeys();
-                       }
+                        }
                     });
 
                     function bindKeys() {

@@ -1,12 +1,10 @@
 define([
     'require',
-    './sdModal',
     './sdAutofocus',
     './sdDebounceThrottle',
     './sdSort',
     './sdCheck',
     './sdWithParams',
-    './sdModal',
     './sdConfirm',
     './sdSelect',
     './sdPermissions',
@@ -19,7 +17,6 @@ define([
     return [
         require('./sdAutofocus').name,
         require('./sdDebounceThrottle').name,
-        require('./sdModal').name,
         require('./sdSort').name,
         require('./sdWithParams').name,
         require('./sdCheck').name,

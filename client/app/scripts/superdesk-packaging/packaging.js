@@ -89,7 +89,7 @@
             _.each(items, function(item) {
                 targetGroup.refs.push(getReferenceFor(item));
             });
-             _.extend(current, {groups: origGroups});
+            _.extend(current, {groups: origGroups});
         };
 
         this.fetchItem = function(packageItem) {
@@ -142,8 +142,8 @@
 
     }
 
-    PackagingController.$inject = ['$scope', 'item', 'packages', '$location'];
-    function PackagingController($scope, item, packages, $location) {
+    PackagingController.$inject = ['$scope', 'item', 'packages', 'api', 'modal', 'notify', 'gettext', 'superdesk'];
+    function PackagingController($scope, item, packages, api, modal, notify, gettext, superdesk) {
         $scope.origItem = item;
 
         $scope.widget_target = 'packages';
@@ -152,6 +152,31 @@
             action: 'author',
             type: 'package'
         };
+
+        //Highlights related functionality
+
+        $scope.highlight = !!item.highlight;
+
+        $scope.exportHighlight = function(item) {
+            if ($scope.save_enabled()) {
+                modal.confirm(gettext('You have unsaved changes, do you want to continue.'))
+                    .then(function() {
+                        _exportHighlight(item._id);
+                    }
+                );
+            } else {
+                _exportHighlight(item._id);
+            }
+        };
+
+        function _exportHighlight(_id) {
+            api.generate_highlights.save({}, {'package': _id})
+            .then(function(item) {
+                superdesk.intent('author', 'article', item);
+            }, function(response) {
+                notify.error(gettext('Error creating highlight.'));
+            });
+        }
     }
 
     SearchWidgetCtrl.$inject = ['$scope', 'packages', 'api', 'search'];
@@ -159,14 +184,23 @@
 
         $scope.selected = null;
         $scope.multiSelected = [];
+        $scope.query = null;
+        $scope.highlight = null;
 
         var packageItems = null;
+        var init = false;
 
         $scope.groupList = packages.groupList;
 
-        function fetchContentItems(q) {
-            var query = search.query({q: q});
+        function fetchContentItems() {
+            if (!init) {
+                return;
+            }
+            var query = search.query($scope.query);
             query.size(25);
+            if ($scope.highlight) {
+                query.filter({term: {'highlights': $scope.highlight.toString()}});
+            }
             api.archive.query(query.getCriteria(true))
             .then(function(result) {
                 $scope.contentItems = result._items;
@@ -174,7 +208,16 @@
         }
 
         $scope.$watch('query', function(query) {
-            fetchContentItems(query);
+            fetchContentItems();
+        });
+
+        $scope.$watch('highlight', function(highlight) {
+            fetchContentItems();
+        });
+
+        $scope.$watch('item', function(item) {
+            $scope.highlight = item.highlight;
+            init = true;
         });
 
         $scope.$watch('item.groups', function() {
@@ -185,8 +228,6 @@
             packages.addItemsToPackage($scope.item, group, [item]);
             $scope.autosave($scope.item);
         };
-
-        fetchContentItems();
 
         $scope.preview = function(item) {
             $scope.selected = item;
@@ -572,7 +613,7 @@
                 href: '/packaging/:_id/view',
                 when: '/packaging/:_id/view',
                 label: gettext('Packaging Read Only'),
-                 templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
+                templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 controller: PackagingController,
                 filters: [{action: 'read_only', type: 'content_package'}],
@@ -600,7 +641,7 @@
                             });
                         }
                     }],
-                    filters: [{action: 'create', type: 'package'}]
+                filters: [{action: 'create', type: 'package'}]
             })
             .activity('package.item', {
                 label: gettext('Package item'),
@@ -620,25 +661,25 @@
                     {action: 'list', type: 'archive'}
                 ]
             });
-        }])
-        .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('archive', {
-                type: 'http',
-                backend: {rel: 'archive'}
+    }])
+    .config(['apiProvider', function(apiProvider) {
+        apiProvider.api('archive', {
+            type: 'http',
+            backend: {rel: 'archive'}
+        });
+    }])
+    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+        authoringWidgetsProvider
+            .widget('search', {
+                icon: 'view',
+                label: gettext('Search'),
+                template: 'scripts/superdesk-packaging/views/search.html',
+                side: 'left',
+                extended: true,
+                display: {authoring: false, packages: true}
             });
-        }])
-        .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-            authoringWidgetsProvider
-                .widget('search', {
-                    icon: 'view',
-                    label: gettext('Search'),
-                    template: 'scripts/superdesk-packaging/views/search.html',
-                    side: 'left',
-                    extended: true,
-                    display: {authoring: false, packages: true}
-                });
-        }])
-        .controller('SearchWidgetCtrl', SearchWidgetCtrl);
+    }])
+    .controller('SearchWidgetCtrl', SearchWidgetCtrl);
 
     return app;
 })();

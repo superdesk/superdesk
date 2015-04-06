@@ -28,13 +28,27 @@ def load_module(module):
     :param module: name of he module
     """
     try:
-        if module in sys.modules.keys():
-            m = sys.modules[module]
-            imp.reload(m)
-        else:
+        m = sys.modules[module]
+        imp.reload(m)
+    except AttributeError:
+        try:
             importlib.import_module(module)
-    except ImportError:
-        pass
+        except ImportError:
+            return
+    register_macros()
+
+
+def register_macros():
+    macro_modules = [sys.modules[m] for m in sys.modules.keys()
+                     if 'macros.' in m and
+                     not m.endswith('_test')
+                     and not m.startswith('__')]
+
+    for macro_module in macro_modules:
+        register(name=macro_module.name,
+                 label=macro_module.label,
+                 shortcut=macro_module.shortcut,
+                 callback=macro_module.callback)
 
 
 class MacroRegister():

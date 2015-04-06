@@ -22,7 +22,6 @@ describe('Content', function() {
     });
 
     xit('edit title and description', function() {
-    	//TODO: disabled until the save of packages is fixed
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Edit package', 0);

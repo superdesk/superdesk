@@ -15,9 +15,9 @@ describe('Spike', function() {
         workspace.switchToDesk('PERSONAL');
         content.setListView();
 
-    	var personalCount;
+        var personalCount;
         element.all(by.repeater('items._items')).count().then(function(count) {
-             personalCount = count;
+            personalCount = count;
         });
 
         content.actionOnItem('Spike Item', 0);

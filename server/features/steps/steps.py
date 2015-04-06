@@ -635,6 +635,12 @@ def step_impl_then_get_nofield(context, field):
     expect_json_not_contains(context.response, field)
 
 
+@then('expect json in "{path}"')
+def step_impl_then_get_nofield_in_path(context, path):
+    assert_200(context.response)
+    expect_json(context.response, context.text, path)
+
+
 @then('we get existing resource')
 def step_impl_then_get_existing(context):
     assert_200(context.response)

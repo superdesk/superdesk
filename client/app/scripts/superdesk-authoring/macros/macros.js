@@ -12,7 +12,7 @@ function MacrosService(api, autosave) {
             }));
     };
 
-     this.getByDesk = function(desk) {
+    this.getByDesk = function(desk) {
         return api.query('macros', {'desk': desk})
             .then(angular.bind(this, function(macros) {
                 this.macros = macros._items;
