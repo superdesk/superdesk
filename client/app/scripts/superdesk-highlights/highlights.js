@@ -90,13 +90,14 @@
                 scope.mark_item = function mark_item(highlight) {
                     highlightsService.mark_item(highlight._id, scope.item._id);
                     if (!scope.item.highlights) {
-                        scope.item.highlights = [];
+                        scope.item.highlights = [highlight._id];
+                    } else {
+                        scope.item.highlights = [highlight._id].concat(scope.item.highlights);
                     }
-                    scope.item.highlights.push(highlight._id);
                 };
 
                 scope.is_marked = function is_marked(highlight) {
-                    return scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
+                    return scope.item && scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
                 };
 
                 highlightsService.get(desks.activeDeskId).then(function(result) {
@@ -116,10 +117,12 @@
                 scope.$watch('highlight_ids', function(_ids) {
                     if (_ids) {
                         scope.title = '';
+                        scope.length = 0;
                         highlightsService.get().then(function(result) {
                             var highlights = _.filter(result._items, function(highlight) {
                                 return _ids.indexOf(highlight._id) >= 0;
                             });
+                            scope.length = highlights.length;
                             _.forEach(highlights, function(highlight) {
                                 scope.title += highlight.name + '\n';
                             });
@@ -129,6 +132,10 @@
 
                 scope.getTitle = function getTitle() {
                     return scope.title;
+                };
+
+                scope.getLength = function getLength() {
+                    return scope.length;
                 };
             }
         };

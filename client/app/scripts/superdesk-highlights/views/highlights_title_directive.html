@@ -1,1 +1,2 @@
-<i class="icon-star-color" tooltip="{{ getTitle(); }}" tooltip-placement="right" tooltip-append-to-body="true"></i>
+<i ng-if="getLength() == 1" class="icon-star-color" tooltip="{{ getTitle(); }}" tooltip-placement="right"  tooltip-append-to-body="true"></i>
+<i ng-if="getLength() > 1"  class="icon-multi-star-color" tooltip="{{ getTitle(); }}" tooltip-placement="right"  tooltip-append-to-body="true"></i>
