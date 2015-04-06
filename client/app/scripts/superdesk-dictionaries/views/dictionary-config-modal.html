@@ -1,0 +1,42 @@
+<div sd-modal data-model="modalActive" class="add-dictionary-popup responsive-popup hide" >
+    
+	<div class="modal-header"> 
+		<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+		<h3 ng-show="!dictionary._id" translate>Add New Dictionary</h3>
+		<h3 ng-show="dictionary._id" translate>Edit Dictionary</h3>
+	</div>
+	
+	<div class="modal-body">
+		<form novalidate>
+			<div class="content">
+				<ng-form name="dictionaryForm">
+					<fieldset>
+						<div class="field">
+							<label translate>Dictionary name</label>
+							<input type="text" ng-model="dictionary.name" ng-keyup="handleEdit($event);" required> 
+							<label translate>Language code</label>
+							<input type="text" ng-model="dictionary.language_id" required> 
+							<label translate ng-show="!dictionary._id">Dictionary file</label>
+							<input type="file" file-upload accept="text/*" ng-show="!dictionary._id"> 
+						</div>
+					</fieldset>
+			        <button id="save-edit-btn" type="submit" class="btn btn-info pull-right" ng-click="save()" ng-disabled="!canSave(dictionaryForm)" translate>Save</button>
+			        <button id="cancel-edit-btn" type="button" class="btn pull-right" ng-click="cancel()" translate>Cancel</button>
+					<p ng-if="message">{{ message }}</p>
+					<span ng-show="_errorUniqueness" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
+					<p ng-show="_errorLimits" translate>Character limit exceeded, dictionary can not be created/updated.</p>
+					<span ng-show="_error" translate>There was a problem, dictionary not created/updated.</span>
+				</ng-form>
+			</div>
+			<div class="content" ng-show="dictionary._id">
+				<ng-form name="wordForm">
+					<label translate>Add word</label>
+					<input type="text" ng-model="word.key" required> 
+			        <button id="add-word-btn" type="submit" class="btn btn-info pull-right" ng-click="addWord()" ng-disabled="wordForm.$invalid" translate>Add word</button>
+			    </ng-form>
+		    </div>
+		</form>
+
+	</div>
+
+</div>

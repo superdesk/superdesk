@@ -14,14 +14,9 @@ from superdesk.resource import Resource
 base_dictionary_schema = {
     'name': {
         'type': 'string',
-        'unique': True,
         'required': True
     },
     'language_id': {
-        'type': 'string',
-        'required': True
-    },
-    'language_name': {
         'type': 'string',
         'required': True
     }
@@ -34,35 +29,29 @@ class DictionariesResource(Resource):
     '''
     schema = base_dictionary_schema
     schema.update({'content': {'type': 'list'}})
-    datasource = {
-        'source': 'dictionaries',
-        'projection': {
-            'name': 1,
-            'language_id': 1,
-            'language_name': 1,
-            '_created': 1,
-            '_updated': 1,
-            '_etag': 1
-        }
-    }
-    item_methods = ['GET', 'PATCH', 'DELETE']
+    item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
     privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries', 'DELETE': 'dictionaries'}
 
 
+class DictionaryAddWordResource(Resource):
+    endpoint_name = 'dictionary_addword'
+    url = 'dictionaries/<{0}:dict_id>/addword'.format('regex("[\w,.:_-]+")')
+    schema = {'word': {'type': 'string'}}
+    datasource = {'source': 'dictionaries'}
+    resource_methods = ['POST']
+    resource_title = endpoint_name
+    privileges = {'POST': 'dictionaries'}
+
+
+DICTIONARY_FILE = 'file'
+
+
 class DictionaryUploadResource(Resource):
     schema = base_dictionary_schema
-    schema.update({'dictionary_file': {'type': 'file', 'required': True}})
+    schema.update({DICTIONARY_FILE: {'type': 'file', 'required': True}})
     datasource = {
-        'source': 'dictionaries',
-        'projection': {
-            'name': 1,
-            'language_id': 1,
-            'language_name': 1,
-            '_created': 1,
-            '_updated': 1,
-            '_etag': 1
-        }
+        'source': 'dictionaries'
     }
     item_methods = ['PATCH', 'GET', 'DELETE']
     resource_methods = ['POST']

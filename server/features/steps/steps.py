@@ -36,6 +36,7 @@ from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
 from eve.utils import ParsedRequest
 import shutil
+from apps.dictionaries.resource import DICTIONARY_FILE
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -529,7 +530,7 @@ def step_impl_when_upload_image_with_guid(context, file_name, destination, guid)
 @when('we upload a new dictionary with success')
 def when_upload_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
-    upload_file(context, '/dictionary_upload', 'test_dict.txt', 'dictionary_file', data)
+    upload_file(context, '/dictionary_upload', 'test_dict.txt', DICTIONARY_FILE, data)
     assert_ok(context.response)
 
 
@@ -538,7 +539,7 @@ def when_upload_patch_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
     url = apply_placeholders(context, '/dictionary_upload/#dictionary_upload._id#')
     etag = apply_placeholders(context, '#dictionary_upload._etag#')
-    upload_file(context, url, 'test_dict2.txt', 'dictionary_file', data, 'patch', [('If-Match', etag)])
+    upload_file(context, url, 'test_dict2.txt', DICTIONARY_FILE, data, 'patch', [('If-Match', etag)])
     assert_ok(context.response)
 
 
