@@ -557,7 +557,7 @@
 	display: block;
 	.border-radius(50%);
 	overflow: hidden;
-	background: #67b461 url('../../images/avatar_64.png') no-repeat;
+	background: #b9b9b9 url('../../images/avatar_64.png') no-repeat;
 	width: 30px;
 	height: 30px;
 	background-size: 100%;
@@ -568,6 +568,35 @@
 		display: block;
 	}
 }
+.avatar.avatar-with-info {
+	overflow: visible;
+	position: relative;
+	.logged-info {
+		display: block;
+		background-color: #fff;
+		height: 8px;
+		width: 8px;
+		border-radius: 50%;
+		position: absolute;
+		bottom: 0px;
+		right: -4px;
+		box-shadow: 0px 0 0 2px #fff;
+		border: 1px solid #a2c59e;
+		box-sizing: border-box;
+	}
+	.user-image {
+		display: block;
+		.border-radius(50%);
+		overflow: hidden;
+	}
+	&.user-logged {
+		.logged-info {
+			background-color: #67b461;
+			border: 1px solid #67b461;
+		}
+	}
+}
+
 
 .avatar.small {
 	width: 24px;
