@@ -34,11 +34,13 @@
             <fieldset>
                 <tabset>
                     <tab heading="General" class="TabContent">
-                        <div class="field field-horizontal">
-                            <label translate>Status</label>
-                            <span tooltip="{{ providerSwitchOn ? 'Close' : 'Open'  | translate }}" tooltip-placement="right">
-                                <span sd-switch-inverted ng-model="provider.is_closed"></span>
-                            </span>
+                        <div class="field">
+                            <label class="right">
+                                {{:: 'Status' | translate }}
+                                <span tooltip="{{ providerSwitchOn ? 'Close' : 'Open'  | translate }}" tooltip-placement="right">
+                                    <span sd-switch-inverted ng-model="provider.is_closed"></span>
+                                </span>
+                            </label>
                         </div>
                         <div class="field">
                             <label for="provider-type" translate>Source Type</label>
@@ -100,21 +102,29 @@
                         </div>
                     </tab>
                     <tab heading="Notification" class="TabContent">
-                        <div class="field field-horizontal">
-                            <label translate>Update</label>
-                            <span sd-switch ng-model="provider.notifications.on_update"></span>
+                        <div class="field">
+                            <label>
+                                {{ :: 'Update' | translate}}
+                                <span sd-switch ng-model="provider.notifications.on_update"></span>
+                            </label>
                         </div>
-                        <div class="field field-horizontal">
-                            <label translate>Close</label>
-                            <span sd-switch ng-model="provider.notifications.on_close"></span>
+                        <div class="field">
+                            <label>
+                                {{ :: 'Close' | translate}}
+                                <span sd-switch ng-model="provider.notifications.on_close"></span>
+                            </label>
                         </div>
-                        <div class="field field-horizontal">
-                            <label translate>Open</label>
-                            <span sd-switch ng-model="provider.notifications.on_open"></span>
+                        <div class="field">
+                            <label>
+                                {{ :: 'Open' | translate}}
+                                <span sd-switch ng-model="provider.notifications.on_open"></span>
+                            </label>
                         </div>
-                        <div class="field field-horizontal">
-                            <label translate>Error</label>
-                            <span sd-switch ng-model="provider.notifications.on_error"></span>
+                        <div class="field">
+                            <label>
+                                {{ :: 'Error' | translate}}
+                                <span sd-switch ng-model="provider.notifications.on_error"></span>
+                            </label>
                         </div>
                     </tab>
                 </tabset>

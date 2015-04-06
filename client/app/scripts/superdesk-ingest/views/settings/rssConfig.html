@@ -35,26 +35,25 @@
 </fieldset>
 
 
-<fieldset class="separated">
+<fieldset class="separated rss-config">
   <legend translate>Content Field Aliases</legend>
 
-  <div class="flex-group header" ng-show="fieldAliases.length > 0">
-    <div class="flex-field">
-      <label for="" translate>Content Field Name</label>
-    </div>
-    <div class="flex-field">
-      <label for="" translate>Field Alias</label>
-    </div>
-    <div class="flex-field-empty">
-    </div>
-  </div>
-
-  <div class="flex-group" ng-show="fieldAliases.length == 0">
+  <div ng-show="fieldAliases.length == 0">
     {{:: 'No field aliases defined.'|translate }}
   </div>
 
-  <div class="flex-group" ng-repeat="item in fieldAliases">
-    <div class="flex-field">
+  <div class="multiple header" ng-show="fieldAliases.length > 0">
+    <div class="field">
+      <label for="" translate>Content Field Name</label>
+    </div>
+    <div class="field">
+      <label for="" translate>Field Alias</label>
+    </div>
+    <div class="field empty"></div>
+  </div>
+
+  <div class="multiple" ng-repeat="item in fieldAliases">
+    <div class="field">
       <select
           ng-options="fieldName for fieldName in
                       (availableFieldOptions(item.fieldName) | orderBy)"
@@ -63,7 +62,7 @@
       </select>
     </div>
 
-    <div class="flex-field">
+    <div class="field">
       <input type="text" id=""
           placeholder="{{:: 'Enter field alias'|translate }}"
           ng-model="item.alias">
@@ -71,7 +70,7 @@
 
     <button
         type="button"
-        class="btn btn-default"
+        class="btn btn-small btn-remove"
         ng-click="removeFieldAlias($index)"
         tooltip="{{:: 'Remove'|translate}}"
         tooltip-placement="bottom"
@@ -80,10 +79,10 @@
     </button>
   </div>
 
-  <div class="flex-group" ng-show="fieldAliases.length < contentFields.length">
+  <div ng-show="fieldAliases.length < contentFields.length">
     <button
         type="button"
-        class="btn btn-info"
+        class="btn btn-info btn-small"
         ng-click="addFieldAlias()"
         tooltip="{{:: 'Add alias'|translate}}"
         tooltip-placement="right"

@@ -40,12 +40,14 @@
                     <ul sd-sortrules class="rule-list">
                         <li ng-repeat="rule in editRuleset.rules">
                             <div class="order">#{{$index}}</div>
-                            <fieldset class="span-2">
-                                <div class="field">
-                                    <input type="text" placeholder="old" ng-model="rule.old" required>
-                                </div>
-                                <div class="field">
-                                    <input type="text" placeholder="new" ng-model="rule.new">
+                            <fieldset>
+                                <div class="multiple">
+                                    <div class="field">
+                                        <input type="text" placeholder="old" ng-model="rule.old" required>
+                                    </div>
+                                    <div class="field">
+                                        <input type="text" placeholder="new" ng-model="rule.new">
+                                    </div>
                                 </div>
                             </fieldset>
                             <div class="actions">

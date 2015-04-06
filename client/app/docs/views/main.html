@@ -19,6 +19,9 @@
                 <a ng-click="scrollTo('inputs')">Input elements</a>
             </li>
             <li>
+                <a ng-click="scrollTo('forms')">Forms</a>
+            </li>
+            <li>
                 <a ng-click="scrollTo('modals')">Modals</a>
             </li>
             <li>
@@ -613,6 +616,248 @@
                     </pre>
                 </li>
 
+                <li>
+                    <a class="link-holder" id="forms"></a>
+                    <div class="docs-title">Forms</div>
+
+                    <div class="docs-subtitle">Basic forms</div>
+
+                    <p>Form element consists of <b>fieldsets</b> and those of <b>fields</b>. Here is basic example: </p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <form>
+                                <legend>Personal info</legend>
+                                <fieldset>
+                                    <div class="field">
+                                        <label for="fname">Name:</label>
+                                        <div class="control">
+                                            <input type="text" id="fname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="fsurname">Surname:</label>
+                                        <div class="control">
+                                            <input type="text" id="fsurname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label>I am not a robot
+                                            <span sd-check ng-model="formCheck"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field">
+                                        <label>Show details
+                                            <span sd-switch ng-model="formDetails"></span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                                <legend>Professional info</legend>
+                                <div class="fieldset">
+                                    <div class="field">
+                                        <label>Graduate date:</label>
+                                        <div class="control">
+                                            <div sd-datepicker ng-model="fgraduate" class="input-large"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <form ng-non-bindable>
+                                <legend>Personal info</legend>
+                                <fieldset>
+                                    <div class="field">
+                                        <label for="fname">Name:</label>
+                                        <div class="control">
+                                            <input type="text" id="fname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="fsurname">Surname:</label>
+                                        <div class="control">
+                                            <input type="text" id="fsurname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label>I am not a robot
+                                            <span sd-check ng-model="formCheck"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field">
+                                        <label>Show details
+                                            <span sd-switch ng-model="formDetails"></span>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                                <legend>Professional info</legend>
+                                <div class="fieldset">
+                                    <div class="field">
+                                        <label>Graduate date:</label>
+                                        <div class="control">
+                                            <div sd-datepicker ng-model="fgraduate" class="input-large"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </pre>
+
+                        <p>Input elements, in general, should be wrapped with <code>class="control"</code> block. This is not case for checkboxes.</p>
+                        <p>Form elements width is controlled on input level <i>(classes: input-mini, input-large....)</i> not on form level.</p>
+
+                    </div>
+
+                    <div class="docs-subtitle">Flexible forms</div>
+
+                    <p>It is possible to split rows, and place multiple elements on the same level. Fileds width will be flexible. To achieve this, just wrap fields with new element having <code>class="multiple"</code>.</p>
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <form>
+                                <legend>Personal info</legend>
+                                <fieldset>
+                                    <div class="multiple">
+                                        <div class="field">
+                                            <label for="mname">Name:</label>
+                                            <div class="control">
+                                                <input type="text" id="mname">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="msurname">Surname:</label>
+                                            <div class="control">
+                                                <input type="text" id="msurname">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="mgraduate">Graduate date:</label>
+                                            <div class="control">
+                                                <div sd-datepicker ng-model="mgraduate" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <form ng-non-bindable>
+                                <legend>Personal info</legend>
+                                <fieldset>
+                                    <div class="multiple">
+                                        <div class="field">
+                                            <label for="mname">Name:</label>
+                                            <div class="control">
+                                                <input type="text" id="mname">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="msurname">Surname:</label>
+                                            <div class="control">
+                                                <input type="text" id="msurname">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label for="mgraduate">Graduate date:</label>
+                                            <div class="control">
+                                                <div sd-datepicker ng-model="mgraduate" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </pre>
+                    </div>
+                    <p><strong>Important!</strong> Class <code>multiple</code> cannot be applied to <code>fieldset</code> element.</p>
+                    <p><span class="badge">Tip!</span> Avoid seting inputs width when multiple mode is used.</p>
+
+                    <div class="docs-subtitle">Horizontal forms</div>
+
+                    <p>To get horizontal form styling just use class <code>form-horizontal</code> on form element. See the example.</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area">
+                            <form class="form-horizontal">
+                                <fieldset>
+                                    <div class="field">
+                                        <label for="hname">Name</label>
+                                        <div class="control">
+                                            <input type="text" id="hname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="hsurname">Surname</label>
+                                        <div class="control">
+                                            <input type="text" id="hsurname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <label>I am not a robot
+                                                <span sd-check ng-model="hformCheck"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="fieldset">
+                                    <div class="field">
+                                        <label for="hgraduate">Graduate date</label>
+                                        <div class="control">
+                                            <div sd-datepicker ng-model="hgraduate" id="hgraduate" class="input-large"></div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label>I am frontend developer</label>
+                                        <div class="control">
+                                            <span sd-check ng-model="hformDeveloper"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <pre class="prettyprint lang-html linenums">
+                            <form class="form-horizontal" ng-non-bindable>
+                                <fieldset>
+                                    <div class="field">
+                                        <label for="hname">Name</label>
+                                        <div class="control">
+                                            <input type="text" id="hname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="hsurname">Surname</label>
+                                        <div class="control">
+                                            <input type="text" id="hsurname" class="input-large">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <label>I am not a robot
+                                                <span sd-check ng-model="hformCheck"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="fieldset">
+                                    <div class="field">
+                                        <label for="hgraduate">Graduate date</label>
+                                        <div class="control">
+                                            <div sd-datepicker ng-model="hgraduate" id="hgraduate" class="input-large"></div>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label>I am frontend developer</label>
+                                        <div class="control">
+                                            <span sd-check ng-model="hformDeveloper"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </pre>
+                    </div>
+
+                </li>
                 <li>
                     <a class="link-holder" id="modals"></a>
                     <div class="docs-title">Modals</div>
