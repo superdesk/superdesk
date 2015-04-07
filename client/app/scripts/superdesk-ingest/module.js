@@ -395,7 +395,7 @@ define([
 
                     // init the lists of field aliases and non-selected fields
                     $scope.fieldAliases = [];
-                    aliases = $scope.origProvider.config.field_aliases || [];
+                    aliases = (angular.isDefined($scope.origProvider.config) && $scope.origProvider.config.field_aliases) || [];
 
                     var aliasObj = {};
                     aliases.forEach(function (item) {
