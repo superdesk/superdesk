@@ -9,8 +9,7 @@ describe('multi content widget', function() {
         workspace.open();
         workspace.editItem(1);
         authoring.sendTo('Sports Desk');
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem(0);
+        workspace.editItem(0, 'SPORTS DESK');
 
         // only now play with widget
         element(by.id('Aggregate')).click();
@@ -20,5 +19,12 @@ describe('multi content widget', function() {
             .toBe('SPORTS DESK : NEW\n1');
         expect(stage.all(by.repeater('item in items')).first().element(by.css('.text')).getText())
             .toBe('item1');
+    });
+
+    it('can open item stage', function() {
+        workspace.open();
+        workspace.editItem(0, 'SPORTS DESK');
+        element(by.css('button.stage')).click();
+        expect(browser.getCurrentUrl()).toMatch(/workspace\/content$/);
     });
 });
