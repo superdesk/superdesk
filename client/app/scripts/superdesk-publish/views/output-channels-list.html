@@ -1,0 +1,37 @@
+<div>
+    <input placeholder="{{'Search'|translate}}" ng-model="keyword">
+    <div class="multi-select">
+        <ul>
+            <li ng-repeat="channel in target">
+                <span class="text">{{channel.name}}</span>
+                <span><button translate ng-click="removeChannel(channel)">Remove</button></span>
+                <ul class="clearfix">
+                    <li ng-repeat="selector in selectorTarget[channel._id]">
+                        <input style="width: 50px;" maxlength="3" ng-model="selector">
+                        <button ng-click="removeSelector(channel, selector)" title="{{:: 'Remove selector' | translate }}">
+                            <i class="icon-trash"></i>
+                        </button>
+                    </li>
+                    <li ng-show="parentChannel._id === channel._id">
+                        <input style="width: 50px;" maxlength="3" ng-model="$parent.newSelector">
+                        <button type="button" ng-click="addSelector(channel, newSelector)" title="{{:: 'Add selector' | translate }}" translate>
+                            Add
+                        </button>
+                        <button type="button" ng-click="setParentChannel()" translate>
+                            Cancel
+                        </button>
+                    </li>
+                    <li ng-show="parentChannel._id !== channel._id">
+                        <button type="button" ng-click="setParentChannel(channel)" title="{{:: 'Add selector' | translate }}" translate>
+                            Add selector
+                        </button>
+                    </li>
+                </ul>
+            </li>
+            <li ng-repeat="channel in outputChannels" ng-if="isSelected(channel)">
+                <span class="text">{{channel.name}}</span>
+                <span><button translate ng-click="addChannel(channel)">Add</button></span>
+            </li>
+        </ul>
+    </div>
+</div>

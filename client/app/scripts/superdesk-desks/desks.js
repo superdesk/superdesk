@@ -1072,14 +1072,16 @@
                 }
             };
         }])
-        .directive('sdDeskStageMacroPicker', ['desks', 'macros', function(desks, macros) {
+        .directive('sdActionPicker', ['desks', 'macros', 'adminPublishSettingsService',
+            function(desks, macros, adminPublishSettingsService) {
             return {
                 scope: {
                     desk: '=',
                     stage: '=',
-                    macro: '='
+                    macro: '=',
+                    destinationGroups: '='
                 },
-                templateUrl: 'scripts/superdesk-desks/views/deskstagemacropicker.html',
+                templateUrl: 'scripts/superdesk-desks/views/actionpicker.html',
                 link: function(scope, elem, attrs) {
                     scope.desks = null;
                     scope.deskStages = null;
