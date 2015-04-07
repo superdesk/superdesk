@@ -556,16 +556,21 @@ form, ng-form {
             display: flex;
             .field, .flex-field {
                 flex: 1 1 auto;
-                padding-right: 20px;
-                &:last-child {
+                &:not(.btn) {
+                  padding-right: 20px;
+                }
+                &:last-child:not(.btn) {
                     padding-right: 0;
                 }
                 &.no-grow {
-                    flex: 0 0 auto;
+                    flex: 0 1 auto;
                 }
                 &.no-shrink {
-                    flex: 0 0 auto;
+                    flex: 1 0 auto;
                 }
+            }
+            .btn {
+                white-space: nowrap;
             }
         }
         + legend {
