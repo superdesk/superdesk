@@ -6,7 +6,7 @@
 
 
 /* ====================================== */
-   // item(news) urgency colors and labels  
+   // item(news) urgency colors and labels
 
 	@outputItemColor1 : #005e84;
 	@outputItemColor2 : #64a4bf;
@@ -113,7 +113,7 @@
 
 		}
 	}
-	
+
 	.statistics {
 		position: absolute;
 		right: 0; left: 0; bottom: 0;
@@ -196,7 +196,7 @@
 		min-width: @sfbox_minWidth;
 
 		border: 1px solid rgba(0,0,0,0.3);
-		border-width: 0px 0px 3px 0px; 
+		border-width: 0px 0px 3px 0px;
 		margin: 1px 12px 10px 1px;
 
 		.border-radius(2px);
@@ -207,7 +207,7 @@
 		cursor:pointer;
 		background-color:#fff;
 		.box-shadow(0 1px 4px 0 rgba(0,0,0,0.2));
-		
+
 		&.archived {
 			background: #f2f2f2 url(../../images/checkmark-big.png) no-repeat bottom right;
 			.box-shadow-both(0 1px 4px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.03));
@@ -243,11 +243,11 @@
 				border-top: 1px solid #e1bbbb;
 			}
 		}
-		
+
 		.archiving-progress {
 			position: absolute;
 			bottom: -3px; left: 0;
-			height: 3px; 
+			height: 3px;
 			background: @sd-blue;
 		}
 
@@ -289,7 +289,7 @@
 			    bottom: 0;
 				width: @sfbox_minWidth;
 				height:@sfbox_mediaHeight;
-			    background: rgba(192,192,192,0.9);    
+			    background: rgba(192,192,192,0.9);
 			}
 			.media:hover .text {
 			    display: block
@@ -366,7 +366,7 @@
 			dt:after {
 				content : ":";
 			}
-			dd { 
+			dd {
 				width:auto;
 				color:#b4b4b4;
 				line-height:16px;
@@ -462,7 +462,7 @@
 					.actioning {
 						background-image: url("../../images/loading-small.gif");
 						background-repeat: no-repeat;
-	    				background-position: center; 
+	    				background-position: center;
 						display: inline-block;
 						width: 100%;
 						height: 32px;
@@ -472,7 +472,7 @@
 					}
 				}
 			}
-			
+
 		}
 	}
 }
@@ -494,7 +494,7 @@
 }
 
 /* ====================================== */
-  // media box list view 
+  // media box list view
 
 @rightfield-width:150px;
 
@@ -518,15 +518,13 @@
 		background: #fff;
 		border-bottom: 1px solid #ebebeb;
 		border-right: 2px solid #fff;
-		height: 56px;
-		.border-box();
-		padding-left:3px; 
+		padding-left:3px;
 		&:hover {
 			background-color: #f4f4f4 !important;
 			border-right: 2px solid #f4f4f4;
 			cursor: pointer;
 			.list-field {
-				border-color:#ebebeb; 
+				border-color:#ebebeb;
 			}
 		}
 
@@ -535,12 +533,12 @@
 			float: left;
 			padding: 10px;
 			height: 36px;
-			
+
 			&.no-border {
 				border:0;
 			}
 		}
-		
+
 		.archiving-progress {
 			position: absolute;
 			bottom: 0px; left: 0;
@@ -586,7 +584,7 @@
 				//margin-top: -4px;
 			}
 		}
-		
+
 		.word-count-box {
 			width: 50px;
 			span {
@@ -608,7 +606,7 @@
 				margin-top: 1px;
 			}
 		}
-		
+
 		.item-info {
 			padding: 10px;
 			.line {
@@ -640,12 +638,12 @@
 				margin-left: 20px;
 			}
 			.takekey {
-				color: #333;					
+				color: #333;
 				margin-right: 20px;
 				float: left;
 			}
 			.category {
-				color: #444;					
+				color: #444;
 				margin-right: 20px;
 				float: left;
 			}
@@ -669,7 +667,7 @@
 				top:0; right: 0;
 				font-size: 11px;
 				color: @grayLight;
-			}	
+			}
 		}
 		.item-right {
 			border-left: 0;
@@ -697,7 +695,7 @@
 							.actioning {
 								background-image: url("../../images/loading-small.gif");
 								background-repeat: no-repeat;
-			    				background-position: center; 
+			    				background-position: center;
 								display: inline-block;
 								height: 35px;
 								line-height: 35px;
@@ -707,10 +705,10 @@
 						}
 						button {
 							margin-top: 7px;
-						}			
+						}
 					}
 				}
-				
+
 			}
 		}
 
@@ -723,8 +721,8 @@
 				border-right: 2px solid rgba(94,169,200,0.75) !important;
 			}
 		}
-		
-		
+
+
 		&:hover {
 			.action {
 				display: block;
@@ -813,7 +811,7 @@
 				dt:after {
 					content : ":";
 				}
-				dd { 
+				dd {
 					width:245px;
 					max-width: 245px;
 					float:left;
@@ -840,9 +838,9 @@
 						margin-bottom:0px;
 					}
 				}
-			}	
-			
-			
+			}
+
+
 		}
 	}
 }
@@ -857,7 +855,7 @@
 .metadata-details {
 	max-height: 350px;
 	overflow-y: auto;
-	overflow-x: hidden; 
+	overflow-x: hidden;
 	padding: 5px;
 	input, textarea {
 		border-color: #e0e0e0 !important;
@@ -890,7 +888,7 @@
 .modal-body {
 	.form-horizontal {
 		margin:0 !important;
-	}	
+	}
 }
 
 .btn.pull-right {
