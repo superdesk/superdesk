@@ -23,13 +23,6 @@
                     angular.extend(user, data);
                     angular.extend(user, updates);
                     return user;
-                }, function(response) {
-                    if (angular.isDefined(response.data._issues) &&
-                            angular.isDefined(response.data._issues['validator exception'])) {
-                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                    } else {
-                        notify.error(gettext('Error. User Profile not updated.'));
-                    }
                 });
         };
 
@@ -202,6 +195,10 @@
         };
 
         function findUser(list, user) {
+            if (angular.isUndefined(user)) {
+                return false;
+            }
+
             return _.find(list, function(item) {
                 return item._links.self.href === user._links.self.href;
             });
@@ -902,7 +899,7 @@
                                         }
                                     }
                                 }
-                                notify.error(gettext('Hmm, there was an error when saving user. '));
+                                notify.error(gettext('There was an error when saving user. '));
                             }
                         });
                     };
