@@ -1,6 +1,6 @@
 Feature: Auto Routing
 
-    @auth @provider
+    @auth @provider @test
     Scenario: Content is fetched based on subject metadata
         Given empty "desks"
         When we post to "/desks"
@@ -8,6 +8,14 @@ Feature: Auto Routing
           {
             "name": "Sports Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
           }
+        """
+        And we post to "/destination_groups" with "dest_groups1" and success
+        """
+        {"name": "destination1", "description": "description 1"}
+        """
+        And we post to "/destination_groups" with "dest_groups2" and success
+        """
+        {"name": "destination2", "description": "description 2"}
         """
         Then we get response code 201
         When we post to "/routing_schemes"
@@ -22,7 +30,15 @@ Feature: Auto Routing
                   "subject": [{"qcode": "15000000"}]
                 },
                 "actions": {
-                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "fetch": [
+                    {
+                      "desk": "#desks._id#",
+                      "stage": "#desks.incoming_stage#",
+                      "destination_groups": [
+                        {"group": "#dest_groups1#"},
+                        {"group": "#dest_groups2#"}
+                      ]
+                    }],
                   "exit": false
                 }
               }
