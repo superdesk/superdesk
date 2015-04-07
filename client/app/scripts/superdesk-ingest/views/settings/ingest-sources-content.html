@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div sd-modal data-model="provider" class="ingestsource-modal modal-strech">
+<div sd-modal data-model="provider" class="ingestsource-modal modal-large">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
         <h3 translate ng-show="provider._id" translate>Edit Source "{{ origProvider.name }}"</h3>
         <h3 translate ng-hide="provider._id" translate>Add New Source</h3>
@@ -78,6 +78,8 @@
                                     ng-options="min as min for min in minutes"
                                 ></select> <span translate>min</span>
                         </div>
+
+                        <div sd-content-expiry data-item="provider" data-preview="false" data-expiryfield="content_expiry"></div>
 
                         <div class="field credentials">
                             <div ng-include="types[provider.type].templateUrl"></div>

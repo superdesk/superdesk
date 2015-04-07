@@ -103,7 +103,7 @@
                   <select ng-focus="focused()" ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
                 </div>
 
-                <div sd-info-item class="user_role" ng-show="userDesks && userDesks.length > 0">
+                <div sd-info-item class="user_role" ng-if="userDesks && userDesks.length > 0">
                   <label for="user_default_desk" translate>Default Desk</label>
                   <select ng-model="user.desk" name="user_default_desk" id="user_default_desk" ng-options="desk._id as desk.name for desk in userDesks"></select>
                 </div>
