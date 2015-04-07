@@ -22,8 +22,8 @@
         </div>
 
         <div class="content-list">
-            <div class="desk"  ng-repeat="desk in desks._items track by desk._id">
-                <div class="stage" ng-repeat="stage in deskStages[desk._id]  track by stage._id" ng-show="total" ng-init="open = true">
+            <div class="desk"  ng-repeat="desk in desks._items | orderBy:'name' track by desk._id">
+                <div class="stage" ng-repeat="stage in deskStages[desk._id]  | orderBy:'name' track by stage._id" ng-show="total" ng-init="open = true">
                     <div class="stage-header clearfix">
                         <div class="line"></div>
                         <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
