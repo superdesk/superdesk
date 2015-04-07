@@ -21,6 +21,8 @@ import email
 from email.header import decode_header
 import logging
 from superdesk.errors import IngestEmailError
+from bs4 import BeautifulSoup, Comment, Doctype
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -85,6 +87,7 @@ class rfc822Parser(Parser):
                                 else:
                                     charset = part.get_content_charset()
                                     html_body = body.decode(charset)
+                                html_body = self.safe_html(html_body)
                                 continue
                             except Exception as ex:
                                 logger.exception(
@@ -105,6 +108,8 @@ class rfc822Parser(Parser):
                             content = io.BytesIO(image)
                             res = process_file_from_stream(content, part.get_content_type())
                             file_name, content_type, metadata = res
+                            if content_type == 'image/gif' or content_type == 'image/png':
+                                continue
                             content.seek(0)
                             image_id = self.parser_app.media.put(content, filename=fileName,
                                                                  content_type=content_type, metadata=metadata)
@@ -193,3 +198,67 @@ class rfc822Parser(Parser):
                 parsed_field = 'Unknown'
             pass
         return parsed_field
+
+    # from http://chase-seibert.github.io/blog/2011/01/28/sanitize-html-with-beautiful-soup.html
+    def safe_html(self, html):
+
+        if not html:
+            return None
+
+        # remove these tags, complete with contents.
+        blacklist = ["script", "style", "head"]
+
+        whitelist = [
+            "div", "span", "p", "br", "pre",
+            "table", "tbody", "thead", "tr", "td", "a",
+            "blockquote",
+            "ul", "li", "ol",
+            "b", "em", "i", "strong", "u", "font"
+        ]
+
+        try:
+            # BeautifulSoup is catching out-of-order and unclosed tags, so markup
+            # can't leak out of comments and break the rest of the page.
+            soup = BeautifulSoup(html)
+        except Exception as e:
+            # special handling?
+            raise e
+
+        # remove the doctype declaration if present
+        if isinstance(soup.contents[0], Doctype):
+            soup.contents[0].extract()
+
+        # now strip HTML we don't like.
+        for tag in soup.findAll():
+            if tag.name.lower() in blacklist:
+                # blacklisted tags are removed in their entirety
+                tag.extract()
+            elif tag.name.lower() in whitelist:
+                # tag is allowed. Make sure all the attributes are allowed.
+                tag.attrs = [(a[0], self.safe_css(a[0], a[1])) for a in tag.attrs if self._attr_name_whitelisted(a[0])]
+            else:
+                # not a whitelisted tag. I'd like to remove it from the tree
+                # and replace it with its children. But that's hard. It's much
+                # easier to just replace it with an empty span tag.
+                tag.name = "span"
+                tag.attrs = []
+
+        # scripts can be executed from comments in some cases
+        comments = soup.findAll(text=lambda text: isinstance(text, Comment))
+        for comment in comments:
+            comment.extract()
+
+        safe_html = str(soup)
+
+        if safe_html == ", -":
+            return None
+
+        return safe_html
+
+    def _attr_name_whitelisted(self, attr_name):
+        return attr_name.lower() in ["href", "style", "color", "size", "bgcolor", "border"]
+
+    def safe_css(attr, css):
+        if attr == "style":
+            return re.sub("(width|height):[^;]+;", "", css)
+        return css

@@ -33,7 +33,7 @@ class rfc822TestCase(TestCase):
         self.assertEqual(self.items[0]['headline'], 'Test message 1234')
 
     def test_body(self):
-        self.assertEquals(self.items[0]['body_html'].strip(), '<div dir="ltr">body text<br clear="all"><div>')
+        self.assertEquals(self.items[0]['body_html'].strip(), '<div>body text<br><div>\n</div></br></div>')
 
 
 class rfc822ComplexTestCase(TestCase):
@@ -75,7 +75,7 @@ class rfc822OddCharSet(TestCase):
         self.assertEqual(self.items[0]['headline'], '=?windows-1252?Q?TravTalk���s_Special_for_TAAI_convention?=')
 
     def test_body(self):
-        self.assertRegex(self.items[0]['body_html'], '<html>')
+        self.assertRegex(self.items[0]['body_html'], '<span>')
 
 
 class rfc822CharSetInSubject(TestCase):
