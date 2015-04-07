@@ -110,7 +110,10 @@
     HighlightsTitleDirective.$inject = ['highlightsService'];
     function HighlightsTitleDirective(highlightsService) {
         return {
-            scope: {highlight_ids: '=highlights'},
+            scope: {
+                highlight_ids: '=highlights',
+                orientation: '=?'
+            },
             templateUrl: 'scripts/superdesk-highlights/views/highlights_title_directive.html',
             link: function(scope) {
 
@@ -137,6 +140,8 @@
                 scope.getLength = function getLength() {
                     return scope.length;
                 };
+
+                scope.orientation = scope.orientation || 'right';
             }
         };
     }
