@@ -38,6 +38,15 @@ class FetchResource(Resource):
         'stage': Resource.rel('stages', False, nullable=True),
         'macro': {
             'type': 'string'
+        },
+        'destination_groups': {
+            'type': 'list',
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'group': Resource.rel('destination_groups', True)
+                }
+            }
         }
     }
 
@@ -84,6 +93,7 @@ class FetchService(BaseService):
             id_of_fetched_items.append(new_id)
             dest_doc['_id'] = new_id
             dest_doc['guid'] = new_id
+            dest_doc['destination_groups'] = doc.get('destination_groups')
             generate_unique_id_and_name(dest_doc)
 
             dest_doc[config.VERSION] = 1
@@ -93,7 +103,9 @@ class FetchService(BaseService):
 
             remove_unwanted(dest_doc)
             set_original_creator(dest_doc)
-            self.__fetch_items_in_package(dest_doc, desk_id, stage_id, doc.get('state', STATE_FETCHED))
+            self.__fetch_items_in_package(dest_doc, desk_id, stage_id,
+                                          doc.get('state', STATE_FETCHED),
+                                          doc.get('destination_groups'))
 
             get_resource_service(ARCHIVE).post([dest_doc])
             insert_into_versions(doc=dest_doc)
@@ -105,12 +117,13 @@ class FetchService(BaseService):
 
         return id_of_fetched_items
 
-    def __fetch_items_in_package(self, dest_doc, desk, stage, state):
+    def __fetch_items_in_package(self, dest_doc, desk, stage, state, destination_groups):
         for ref in [ref for group in dest_doc.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
             ref['location'] = ARCHIVE
 
-        refs = [{'_id': ref.get('residRef'), 'desk': desk, 'stage': stage, 'state': state}
+        refs = [{'_id': ref.get('residRef'), 'desk': desk,
+                 'stage': stage, 'state': state, 'destination_groups': destination_groups}
                 for group in dest_doc.get('groups', [])
                 for ref in group.get('refs', []) if 'residRef' in ref]
 

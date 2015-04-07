@@ -315,14 +315,6 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
     post_data(context, url)
-    # with context.app.mail.record_messages() as outbox:
-    #     data = apply_placeholders(context, context.text)
-    #     url = apply_placeholders(context, url)
-    #     set_user_default(url, data)
-    #     context.response = context.client.post(get_prefixed_url(context.app, url),
-    #                                            data=data, headers=context.headers)
-    #     store_placeholder(context, url)
-    #     context.outbox = outbox
 
 def set_user_default(url, data):
     if is_user_resource(url):
@@ -1406,11 +1398,16 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
 
+                if destination.get('destination_groups'):
+                    context_data = [{'group': str(g['group'])} for g in destination.get('destination_groups', [])]
+                    response_data = item[0]['destination_groups']
+                    assert_equal(json_match(context_data, response_data), True,
+                                 msg=str(context_data) + '\n != \n' + str(response_data))
+
                 if is_transformed:
                     assert item[0]['abstract'] == 'Abstract has been updated'
 
-                assert_items_in_package(item[0], state,
-                                        str(destination['desk']), str(destination['stage']))
+                assert_items_in_package(item[0], state, str(destination['desk']), str(destination['stage']))
             else:
                 assert len(item) == 0
 
