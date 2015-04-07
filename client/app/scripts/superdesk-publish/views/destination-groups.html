@@ -39,6 +39,16 @@
                     <label for="destinationGroup-description" translate>Description</label>
                     <input type="text" id="destinationGroup-description" ng-model="destinationGroup.description">
                 </div>
+
+                <div class="field">
+                    <label translate>Output channels</label>
+                    <div sd-output-channels-list data-target="selectedOutputChannels" data-selector-target="selectorCodes">
+                </div>
+
+                <div class="field">
+                    <label translate>Destination groups</label>
+                    <div sd-destination-groups-list data-target="selectedDestinationGroups" data-exclude="[destinationGroup]">
+                </div>
             </fieldset>
         </form>
     </div>
