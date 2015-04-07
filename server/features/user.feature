@@ -18,7 +18,7 @@ Feature: User Resource
     @auth
     Scenario: Create user with valid email
         Given empty "users"
-        When we create a new user
+        When we post to "/users"
         """
         {"username": "foo", "password": "barbar", "email": "foo@bar.com.au"}
         """
