@@ -29,7 +29,7 @@ from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.media.renditions import generate_renditions
 from superdesk.io.iptc import subject_codes
-from apps.archive.common import generate_guid, GUID_NEWSML, GUID_FIELD
+from apps.archive.common import generate_guid, GUID_NEWSML, GUID_FIELD, FAMILY_ID
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
@@ -295,6 +295,7 @@ def ingest_items(items, provider, rule_set=None, routing_scheme=None):
 def ingest_item(item, provider, rule_set=None, routing_scheme=None):
     try:
         item.setdefault(superdesk.config.ID_FIELD, generate_guid(type=GUID_NEWSML))
+        item[FAMILY_ID] = item[superdesk.config.ID_FIELD]
         providers[provider.get('type')].provider = provider
 
         item['ingest_provider'] = str(provider[superdesk.config.ID_FIELD])
