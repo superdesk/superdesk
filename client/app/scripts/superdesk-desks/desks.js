@@ -130,8 +130,8 @@
         };
     }
 
-    UserRoleItemListDirective.$inject = ['desks'];
-    function UserRoleItemListDirective(desks) {
+    UserRoleItemListDirective.$inject = ['desks', 'usersService'];
+    function UserRoleItemListDirective(desks, usersService) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/user-role-items.html',
             scope: {
@@ -151,7 +151,7 @@
                 });
 
                 scope.isLoggedIn = function(user) {
-                    return _.size(user.session_preferences) > 0;
+                    return usersService.isLoggedIn(user);
                 };
             }
         };

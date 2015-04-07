@@ -4,27 +4,27 @@ describe('users api', function() {
     beforeEach(module('superdesk.users'));
     beforeEach(module('superdesk.mocks'));
 
-    it('can create user', inject(function(users, api, $q, $rootScope) {
+    it('can create user', inject(function(usersService, api, $q, $rootScope) {
 
         var user = {},
             data = {'UserName': 'foo', 'Password': 'bar'};
 
         spyOn(api, 'save').and.returnValue($q.when({}));
 
-        users.save(user, data).then(function() {});
+        usersService.save(user, data).then(function() {});
 
         $rootScope.$digest();
 
         expect(api.save).toHaveBeenCalled();
     }));
 
-    it('can update user', inject(function(users, api, $q, $rootScope) {
+    it('can update user', inject(function(usersService, api, $q, $rootScope) {
         var user = {UserName: 'foo', FirstName: 'a'},
             data = {FirstName: 'foo', LastName: 'bar'};
 
         spyOn(api, 'save').and.returnValue($q.when({}));
 
-        users.save(user, data);
+        usersService.save(user, data);
 
         $rootScope.$digest();
 
@@ -33,13 +33,13 @@ describe('users api', function() {
         expect(user.LastName).toBe('bar');
     }));
 
-    xit('can change user password', inject(function(users, resource, $rootScope) {
+    xit('can change user password', inject(function(usersService, resource, $rootScope) {
 
         var user = {UserPassword: {href: 'pwd_url'}};
 
         spyOn(resource, 'replace');
 
-        users.changePassword(user, 'old', 'new');
+        usersService.changePassword(user, 'old', 'new');
 
         expect(resource.replace).toHaveBeenCalledWith('pwd_url', {
             old_pwd: 'old',
