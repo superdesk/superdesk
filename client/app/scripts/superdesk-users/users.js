@@ -1148,6 +1148,10 @@
                         }
                     });
 
+                    scope.isLoggedIn = function(user) {
+                        return _.size(user.session_preferences) > 0;
+                    };
+
                     function bindKeys() {
                         unbindKeys();
                         keyboardManager.bind('down', moveDown);
