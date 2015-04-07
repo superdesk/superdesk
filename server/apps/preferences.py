@@ -88,6 +88,10 @@ class PreferencesResource(Resource):
         'providers': []
     })
 
+    superdesk.register_default_user_preference('agg:view', {
+        'active': {},
+    })
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])
