@@ -23,7 +23,7 @@ backend:
    - elastic
   environment:
    - MONGOLAB_URI=mongodb://mongodb:27017/test
-   - LEGAL_ARCHIVEDB_PORT=mongodb://mongodb:27017
+   - LEGAL_ARCHIVE_URI=mongodb://mongodb:27017/legal_test
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX
    - CELERY_BROKER_URL=redis://redis:6379/1
