@@ -111,11 +111,7 @@ CELERYBEAT_SCHEDULE = {
     'spike:gc': {
         'task': 'apps.archive.content_purge',
         'schedule': crontab(minute=30)
-    },
-    'macros:print': {
-        'task': 'apps.macros.print_macros',
-        'schedule': timedelta(seconds=30),
-    },
+    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
