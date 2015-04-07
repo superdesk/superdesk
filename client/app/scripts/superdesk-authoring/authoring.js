@@ -459,8 +459,8 @@
         '$timeout'
     ];
     function AuthoringDirective(superdesk, notify, gettext,
-                                 desks, authoring, api, session, lock, privileges,
-                                 ContentCtrl, $location, referrer, macros, $timeout) {
+                                desks, authoring, api, session, lock, privileges,
+                                ContentCtrl, $location, referrer, macros, $timeout) {
         return {
             link: function($scope) {
                 var _closing;
@@ -656,6 +656,11 @@
                         $scope.item.lock_user = null;
                     }
                 });
+
+                $scope.openStage = function openStage() {
+                    desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
+                    superdesk.intent('view', 'content');
+                };
 
                 macros.setupShortcuts($scope);
             }
