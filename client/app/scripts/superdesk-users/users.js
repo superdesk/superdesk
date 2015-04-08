@@ -7,8 +7,10 @@
     UsersService.$inject = ['api', '$q', 'notify'];
     function UsersService(api, $q, notify) {
 
-        this.usernamePattern = /^[A-Za-z0-9_.'-]+$/;
-        this.phonePattern = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
+        var usersService = {};
+
+        usersService.usernamePattern = /^[A-Za-z0-9_.'-]+$/;
+        usersService.phonePattern = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
 
         /**
          * Save user with given data
@@ -17,7 +19,7 @@
          * @param {Object} data
          * @returns {Promise}
          */
-        this.save = function save(user, data) {
+        usersService.save = function save(user, data) {
             return api.save('users', user, data)
                 .then(function(updates) {
                     angular.extend(user, data);
@@ -34,7 +36,7 @@
          * @param {string} newPassword
          * @returns {Promise}
          */
-        this.changePassword = function changePassword(user, oldPassword, newPassword) {
+        usersService.changePassword = function changePassword(user, oldPassword, newPassword) {
             return api.changePassword.create({username: user.username, old_password: oldPassword, new_password: newPassword})
                 .then(function(result) {});
         };
@@ -45,7 +47,7 @@
          * @param {Object} user
          * @returns {Promise}
          */
-        this.resetPassword = function resetPassword(user) {
+        usersService.resetPassword = function resetPassword(user) {
             return api.resetPassword.create({email: user.email})
                 .then(function(result) {});
         };
@@ -53,23 +55,32 @@
         /**
          * Test if user is active
          */
-        this.isActive = function isActive(user) {
+        usersService.isActive = function isActive(user) {
             return user && user.is_active;
         };
 
         /**
          * Test if user is on pending state
          */
-        this.isPending = function isPending(user) {
+        usersService.isPending = function isPending(user) {
             return user && user.needs_activation;
         };
 
         /**
          * Toggle user status
          */
-        this.toggleStatus = function toggleStatus(user, active) {
+        usersService.toggleStatus = function toggleStatus(user, active) {
             return this.save(user, {is_active: active});
         };
+
+        /**
+         * Checks if the user is logged-in or not
+         */
+        usersService.isLoggedIn = function(user) {
+            return user && _.size(user.session_preferences) > 0;
+        };
+
+        return usersService;
     }
 
     /**
@@ -325,11 +336,11 @@
     /**
      * Enable user
      */
-    UserEnableCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'users', '$rootScope'];
-    function UserEnableCommand(api, data, $q, notify, gettext, users, $rootScope) {
+    UserEnableCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'usersService', '$rootScope'];
+    function UserEnableCommand(api, data, $q, notify, gettext, usersService, $rootScope) {
         var user = data.item;
 
-        return users.save(user, {'is_enabled': true, 'is_active': true}).then(
+        return usersService.save(user, {'is_enabled': true, 'is_active': true}).then(
             function(response) {
                 $rootScope.$broadcast('user:updated', response);
             },
@@ -530,7 +541,7 @@
     ])
 
         .controller('UserEditController', UserEditController) // make it available to user.profile
-        .service('users', UsersService)
+        .service('usersService', UsersService)
         .factory('userList', UserListService)
 
         .factory('userPopup', ['$compile', '$timeout', 'userList', function ($compile, $timeout, userList) {
@@ -805,9 +816,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session',
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session',
             '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
-        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features,
+        function(api, gettext, notify, usersService, userList, session, $location, $route, superdesk, features,
                  asset, privileges, desks, keyboardManager) {
 
             return {
@@ -821,8 +832,8 @@
                 link: function(scope, elem) {
                     scope.privileges = privileges.privileges;
                     scope.features = features;
-                    scope.usernamePattern = users.usernamePattern;
-                    scope.phonePattern = users.phonePattern;
+                    scope.usernamePattern = usersService.usernamePattern;
+                    scope.phonePattern = usersService.phonePattern;
                     scope.dirty = false;
 
                     scope.$watch('origUser', resetUser);
@@ -860,7 +871,7 @@
                         scope.error = null;
                         notify.info(gettext('saving..'));
 
-                        return users.save(scope.origUser, scope.user)
+                        return usersService.save(scope.origUser, scope.user)
                         .then(function(response) {
                             scope.origUser = response;
                             resetUser(scope.origUser);
@@ -905,7 +916,7 @@
                     };
 
                     scope.toggleStatus = function(active) {
-                        users.toggleStatus(scope.origUser, active).then(function() {
+                        usersService.toggleStatus(scope.origUser, active).then(function() {
                             resetUser(scope.origUser);
                             scope.onupdate({user: scope.origUser});
                         });
@@ -916,8 +927,8 @@
                         scope.user = _.create(user);
                         scope.confirm = {password: null};
                         scope.show = {password: false};
-                        scope._active = users.isActive(user);
-                        scope._pending = users.isPending(user);
+                        scope._active = usersService.isActive(user);
+                        scope._pending = usersService.isPending(user);
                         scope.profile = scope.user._id === session.identity._id;
 
                         scope.userDesks = [];
@@ -1010,7 +1021,7 @@
                 }
             };
         }])
-        .directive('sdChangePassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
+        .directive('sdChangePassword', ['usersService', 'notify', 'gettext', function(usersService, notify, gettext) {
             return {
                 link: function(scope, element) {
                     scope.$watch('user', function() {
@@ -1024,7 +1035,7 @@
                      * @param {string} newPassword
                      */
                     scope.changePassword = function(oldPassword, newPassword) {
-                        return users.changePassword(scope.user, oldPassword, newPassword)
+                        return usersService.changePassword(scope.user, oldPassword, newPassword)
                             .then(function(response) {
                                 scope.oldPasswordInvalid = false;
                                 notify.success(gettext('The password has been changed.'), 3000);
@@ -1037,7 +1048,7 @@
             };
         }])
 
-        .directive('sdResetPassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
+        .directive('sdResetPassword', ['usersService', 'notify', 'gettext', function(usersService, notify, gettext) {
             return {
                 link: function(scope, element) {
                     scope.$watch('user', function() {
@@ -1048,7 +1059,7 @@
                      * reset user password
                      */
                     scope.resetPassword = function() {
-                        return users.resetPassword(scope.user)
+                        return usersService.resetPassword(scope.user)
                             .then(function(response) {
                                 scope.oldPasswordInvalid = false;
                                 notify.success(gettext('The password has been reset.'), 3000);
@@ -1118,7 +1129,7 @@
             };
         }])
 
-        .directive('sdUserList', ['keyboardManager', 'users', 'asset', function(keyboardManager, users, asset) {
+        .directive('sdUserList', ['keyboardManager', 'usersService', 'asset', function(keyboardManager, usersService, asset) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html'),
                 scope: {
@@ -1130,11 +1141,11 @@
                 link: function(scope, elem, attrs) {
 
                     scope.active = function(user) {
-                        return users.isActive(user);
+                        return usersService.isActive(user);
                     };
 
                     scope.pending = function(user) {
-                        return users.isPending(user);
+                        return usersService.isPending(user);
                     };
 
                     scope.select = function(user) {
@@ -1147,6 +1158,10 @@
                             bindKeys();
                         }
                     });
+
+                    scope.isLoggedIn = function(user) {
+                        return usersService.isLoggedIn(user);
+                    };
 
                     function bindKeys() {
                         unbindKeys();

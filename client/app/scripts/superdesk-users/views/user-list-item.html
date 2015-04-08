@@ -1,5 +1,5 @@
 <li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected, 'inactive' : !user.is_enabled || !user.is_active}">
-    <figure class="avatar avatar-with-info">
+    <figure class="avatar avatar-with-info" ng-class="{'user-logged': isLoggedIn(user)}">
         <div class="logged-info"></div>
         <div class="user-image">
             <img sd-user-avatar data-src="user.picture_url">

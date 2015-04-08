@@ -101,9 +101,13 @@ class PreferencesService(BaseService):
         service = get_resource_service('users')
         user_doc = service.find_one(req=None, _id=user_id)
         session_prefs = user_doc.get(_session_preferences_key, {}).copy()
+
+        if not isinstance(session_id, str):
+            session_id = str(session_id)
+
         if session_id in session_prefs:
             del session_prefs[session_id]
-            service.patch(user_id, session_prefs)
+            service.patch(user_id, {_session_preferences_key: session_prefs})
 
     def set_session_based_prefs(self, session_id, user_id):
         user_doc = get_resource_service('users').find_one(req=None, _id=user_id)

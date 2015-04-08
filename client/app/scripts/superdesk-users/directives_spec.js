@@ -119,34 +119,34 @@ define([
             });
         }));
 
-        it('checks username for valid characters', inject(function(users) {
-            expect(users.usernamePattern.test('!')).toBe(false);
-            expect(users.usernamePattern.test('@')).toBe(false);
-            expect(users.usernamePattern.test('#')).toBe(false);
-            expect(users.usernamePattern.test(' ')).toBe(false);
+        it('checks username for valid characters', inject(function(usersService) {
+            expect(usersService.usernamePattern.test('!')).toBe(false);
+            expect(usersService.usernamePattern.test('@')).toBe(false);
+            expect(usersService.usernamePattern.test('#')).toBe(false);
+            expect(usersService.usernamePattern.test(' ')).toBe(false);
 
-            expect(users.usernamePattern.test('.')).toBe(true);
-            expect(users.usernamePattern.test('_')).toBe(true);
-            expect(users.usernamePattern.test('-')).toBe(true);
-            expect(users.usernamePattern.test('\'')).toBe(true);
+            expect(usersService.usernamePattern.test('.')).toBe(true);
+            expect(usersService.usernamePattern.test('_')).toBe(true);
+            expect(usersService.usernamePattern.test('-')).toBe(true);
+            expect(usersService.usernamePattern.test('\'')).toBe(true);
 
-            expect(users.usernamePattern.test('b')).toBe(true);
-            expect(users.usernamePattern.test('B')).toBe(true);
-            expect(users.usernamePattern.test('1')).toBe(true);
+            expect(usersService.usernamePattern.test('b')).toBe(true);
+            expect(usersService.usernamePattern.test('B')).toBe(true);
+            expect(usersService.usernamePattern.test('1')).toBe(true);
         }));
 
-        it('checks phone number for valid characters', inject(function(users) {
-            expect(users.phonePattern.test('z')).toBe(false);
-            expect(users.phonePattern.test('zxcvbnmas')).toBe(false);
+        it('checks phone number for valid characters', inject(function(usersService) {
+            expect(usersService.phonePattern.test('z')).toBe(false);
+            expect(usersService.phonePattern.test('zxcvbnmas')).toBe(false);
 
-            expect(users.phonePattern.test('12345678')).toBe(false);
-            expect(users.phonePattern.test('123456789')).toBe(true);
-            expect(users.phonePattern.test('+1234567890')).toBe(true);
-            expect(users.phonePattern.test('+123456789000')).toBe(true);
+            expect(usersService.phonePattern.test('12345678')).toBe(false);
+            expect(usersService.phonePattern.test('123456789')).toBe(true);
+            expect(usersService.phonePattern.test('+1234567890')).toBe(true);
+            expect(usersService.phonePattern.test('+123456789000')).toBe(true);
 
-            expect(users.phonePattern.test('+')).toBe(false);
-            expect(users.phonePattern.test('$')).toBe(false);
-            expect(users.phonePattern.test('$$$$$$$$$')).toBe(false);
+            expect(usersService.phonePattern.test('+')).toBe(false);
+            expect(usersService.phonePattern.test('$')).toBe(false);
+            expect(usersService.phonePattern.test('$$$$$$$$$')).toBe(false);
         }));
 
     });

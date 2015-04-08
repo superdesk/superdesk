@@ -312,7 +312,7 @@ def step_impl_when_post_url(context, url):
         data = apply_placeholders(context, context.text)
         url = apply_placeholders(context, url)
 
-        if url in ('/users', 'users'):
+        if is_user_resource(url):
             user = json.loads(data)
             user.setdefault('needs_activation', False)
             data = json.dumps(user)
@@ -1444,3 +1444,18 @@ def assert_items_in_package(item, state, desk, stage):
             assert item.get('state') == state
             assert item.get('task', {}).get('desk') == desk
             assert item.get('task', {}).get('stage') == stage
+
+
+@given('I logout')
+def logout(context):
+    we_have_sessions_get_id(context, '/sessions')
+    step_impl_when_delete_url(context, '/auth/{}'.format(context.session_id))
+    assert_200(context.response)
+
+
+@then('we get "{url}" and match')
+def we_get_and_match(context, url):
+    response_data = get_res(url, context)
+    context_data = json.loads(apply_placeholders(context, context.text))
+    assert_equal(json_match(context_data, response_data), True,
+                 msg=str(context_data) + '\n != \n' + str(response_data))
