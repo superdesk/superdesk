@@ -81,4 +81,10 @@ describe('familyService', function() {
         $rootScope.$digest();
         expect(memberDesks.length).toBe(0);
     }));
+
+    it('can use item._id for ingest items instead of family id', inject(function($rootScope, $q, familyService) {
+        spyOn(familyService, 'fetchItems').and.returnValue($q.when({}));
+        familyService.fetchDesks({_id: 'id', family_id: 'family_id', state: 'ingested'});
+        expect(familyService.fetchItems).toHaveBeenCalledWith('id', undefined);
+    }));
 });
