@@ -128,6 +128,15 @@
 				<input type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
 			</div>
 		</li>
+		<li>
+			<label translate>Associated</label>
+			<a ng-href="#/authoring/{{item.guid}}" title="{{ item.slugline || item.headline }}">
+	            <div ng-show="item.slugline || item.headline">
+	                {{ item.slugline || item.headline | uppercase}}
+	            </div>
+	            <div ng-hide="item.slugline || item.headline" translate>Blank headline received</div>
+	        </a>
+		</li>
 		<li ng-if="item.copyrightholder">
 			<label translate>Copyright</label>
 			<div class="data">{{item.copyrightholder}}</div>
@@ -167,7 +176,7 @@
 			<li ng-if="item.task.user">
 				<label translate>Assignee</label>
 				<div class="data">{{userLookup[item.task.user].display_name}}</div>
-			</li>
+			</li>	 
 		</ul>
 	</div>
 </div>

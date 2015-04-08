@@ -22,10 +22,7 @@ define([
         .controller('relatedItemController', ['$scope', 'api', 'BaseWidgetController', '$location',
         function ($scope, api, BaseWidgetController, $location) {
             var todayDateTime = new Date();
-            var befor24HrDateTime = new Date(todayDateTime.setDate(todayDateTime.getDate() - 1)).toISOString();
-
-            //console.log('iso before 24 hour', befor24HrDateTime); //'2015-04-01T00:22:24+0000'
-            //console.log('iso today', todayDateTime.toISOString());
+            var before24HrDateTime = new Date(todayDateTime.setDate(todayDateTime.getDate() - 1)).toISOString();
 
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
@@ -34,15 +31,10 @@ define([
                 notStates: ['spiked'],
                 types: ['text', 'picture', 'audio', 'video', 'composite'],
                 page: 1,
-                creationDateAfter: befor24HrDateTime
+                creationDateAfter: before24HrDateTime
             };
             $scope.options = {
-                pinEnabled: true,
-                modeEnabled: true,
                 searchEnabled: true,
-                itemTypeEnabled: true,
-                mode: 'basic',
-                pinMode: 'archive',
                 related: true,
                 itemTypes: ['text', 'picture', 'audio', 'video', 'composite']
             };
@@ -59,6 +51,7 @@ define([
 
                         $scope.origItem = $scope.options.item;
                         $scope.options.item.subject = item.subject;
+                        $scope.options.item['anpa-category'] = item['anpa-category'];
                         api.save('archive', $scope.origItem, $scope.options.item).then(function(_item) {
                             return item;
                         });

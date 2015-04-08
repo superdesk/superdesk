@@ -10,7 +10,7 @@ function MacrosService(api, autosave) {
                 this.macros = macros._items;
                 return this.macros;
             }));
-        };
+    };
 
     this.getByDesk = function(desk) {
         return api.query('macros', {'desk': desk})

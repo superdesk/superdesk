@@ -409,8 +409,8 @@ function(ItemList, notify, itemPinService, gettext, $timeout) {
         }
     };
 }])
-.directive('sdRelatedItemListWidget', ['ItemList', 'notify', 'itemPinService', 'gettext',
-function(ItemList, notify, itemPinService, gettext) {
+.directive('sdRelatedItemListWidget', ['ItemList', 'notify', 'gettext',
+function(ItemList, notify, gettext) {
     return {
         scope: {
             options: '=',
@@ -422,7 +422,6 @@ function(ItemList, notify, itemPinService, gettext) {
             scope.items = null;
             scope.processedItems = null;
             scope.maxPage = 1;
-            scope.pinnedItems = [];
             scope.selected = null;
 
             var oldSearch = null;
@@ -438,37 +437,9 @@ function(ItemList, notify, itemPinService, gettext) {
                 scope.selected = item;
             };
 
-            scope.toggleItemType = function(itemType) {
-                if (scope.itemListOptions.types.indexOf(itemType) > -1) {
-                    scope.itemListOptions.types = _.without(scope.itemListOptions.types, itemType);
-                } else {
-                    scope.itemListOptions.types.push(itemType);
-                }
-            };
-
-            scope.isItemTypeEnabled = function(itemType) {
-                return scope.itemListOptions.types.indexOf(itemType) > -1;
-            };
-
-            scope.pin = function(item) {
-                itemPinService.add(scope.options.pinMode, _.clone(item));
-            };
-
-            scope.unpin = function(item) {
-                itemPinService.remove(item);
-            };
-
-            scope.isPinned = function(item) {
-                return itemPinService.isPinned(scope.options.pinMode, item);
-            };
-
             var processItems = function() {
                 if (scope.items) {
-                    if (scope.options.pinEnabled) {
-                        scope.processedItems = scope.pinnedItems.concat(scope.items._items);
-                    } else {
-                        scope.processedItems = scope.items._items;
-                    }
+                    scope.processedItems = scope.items._items;
                 }
             };
 
@@ -477,19 +448,10 @@ function(ItemList, notify, itemPinService, gettext) {
                 scope.items = itemList.result;
                 processItems();
             };
-            var pinListener = function(pinnedItems) {
-                scope.pinnedItems = pinnedItems;
-                _.each(scope.pinnedItems, function(item) {
-                    item.pinnedInstance = true;
-                });
-                processItems();
-            };
 
             itemList.addListener(itemListListener);
-            itemPinService.addListener(scope.options.pinMode, pinListener);
             scope.$on('$destroy', function() {
                 itemList.removeListener(itemListListener);
-                itemPinService.removeListener(pinListener);
             });
 
             scope.$watch('itemListOptions', function() {
