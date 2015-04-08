@@ -421,7 +421,7 @@ define([
                         }
                     );
 
-                    fetchSourceErrors(provider.source);
+                    fetchSourceErrors(provider.type);
                 };
 
                 $scope.cancel = function() {
