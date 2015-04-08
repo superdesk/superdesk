@@ -108,7 +108,7 @@ class UsersService(BaseService):
                     return 'Not allowed to change your own status'
                 if str(user['_id']) != str(flask.g.user['_id']) and get_resource_service('auth').get(
                         req=None, lookup={'username': user['username']}).count() != 0:
-                    return 'Not allowed to change the status of a logged-in user'
+                    return 'Not allowed to change the status/role of a logged-in user'
             elif method == 'DELETE' and str(user['_id']) == str(flask.g.user['_id']):
                 return 'Not allowed to disable your own profile.'
 
@@ -362,7 +362,7 @@ class RolesService(BaseService):
             raise SuperdeskApiError.forbiddenError('Cannot delete the role, it still has users in it!')
 
     def remove_old_default(self):
-        # see of there is already a default role and set it to no longer default
+        # see if there is already a default role and set it to no longer default
         role_id = self.get_default_role_id()
         # make it no longer default
         if role_id:
