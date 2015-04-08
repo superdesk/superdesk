@@ -55,4 +55,12 @@
   <div class="full-preview" ng-if="item.type == 'picture'" sd-ratio-calc>
     <div class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
   </div>
+  <div ng-if="item.type == 'audio'">
+    <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+  </div>
+
+  <div ng-if="item.type == 'video'">
+    <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+  </div>
+
 </div>
