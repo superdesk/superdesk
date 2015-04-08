@@ -21,7 +21,8 @@
         dateline: '',
         language: null,
         unique_name: '',
-        keywords: []
+        keywords: [],
+        description: null
     };
 
     /**
@@ -660,6 +661,10 @@
                 $scope.openStage = function openStage() {
                     desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
                     superdesk.intent('view', 'content');
+                };
+
+                $scope.isMediaType = function isMediaType(item) {
+                    return item && _.contains(['audio', 'video', 'picture'], item.type);
                 };
 
                 macros.setupShortcuts($scope);
