@@ -53,6 +53,10 @@ metadata_schema = {
         'type': 'string',
         'mapping': not_analyzed
     },
+    'related_to': {  # this field keeps a reference to the related item from which metadata has been copied
+        'type': 'string',
+        'mapping': not_analyzed
+    },
 
     # Audit Information
     'original_creator': Resource.rel('users'),
