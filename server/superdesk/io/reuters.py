@@ -24,6 +24,7 @@ from superdesk.io import register_provider
 from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 from superdesk.errors import IngestApiError
+from flask import current_app as app
 
 
 PROVIDER = 'reuters'
@@ -51,8 +52,9 @@ class ReutersIngestService(IngestService):
         updated = utcnow()
 
         last_updated = provider.get('last_updated')
-        if not last_updated or last_updated < updated - datetime.timedelta(days=7):
-            last_updated = updated - datetime.timedelta(hours=1)
+        ttl_minutes = app.config['INGEST_EXPIRY_MINUTES']
+        if not last_updated or last_updated < updated - datetime.timedelta(minutes=ttl_minutes):
+            last_updated = updated - datetime.timedelta(minutes=ttl_minutes)
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
