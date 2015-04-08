@@ -372,5 +372,13 @@
           "source": "afp",
           "is_closed": true
         }
+    },
+    {
+        "resource":"dictionaries",
+        "data": {
+			"name": "Test 1",
+			"language_id": "en",
+			"content": ["alpha", "beta", "gama"]
+        }
     }
 ]
