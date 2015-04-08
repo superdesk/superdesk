@@ -8,6 +8,7 @@ from eve_elastic.elastic import ElasticCursor
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from flask import url_for
+
 import logging
 
 
@@ -47,7 +48,6 @@ class AAPMMDatalayer(DataLayer):
         new_doc = {}
         new_doc['_id'] = doc['AssetId']
         new_doc['guid'] = doc['AssetId']
-
         new_doc['headline'] = doc['Title']
         new_doc['description'] = doc['Description']
         new_doc['source'] = doc['Credit']

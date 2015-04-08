@@ -21,7 +21,7 @@ class SearchService(superdesk.Service):
     It can search ingest/content/archive/spike at the same time.
     """
 
-    available_repos = ('ingest', 'archive', 'aapmultimedia')
+    available_repos = ('ingest', 'archive')
     default_repos = ['ingest', 'archive']
 
     private_filters = [{
@@ -52,10 +52,6 @@ class SearchService(superdesk.Service):
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
-
-        if 'aapmultimedia' in types:
-            return superdesk.get_resource_service('aapmm').get(req=req, lookup=lookup)
-
         query['aggs'] = aggregations
         stages = superdesk.get_resource_service('users').get_invisible_stages_ids(g.get('user', {}).get('_id'))
         if stages:

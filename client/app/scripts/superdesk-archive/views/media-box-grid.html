@@ -32,8 +32,7 @@
         </h5>
 
         <dl>
-            <dt class="source" ng-show="item.ingest_provider || item._type == 'multimedia'"><span translate>source:</span></dt>
-            <dd class="provider" ng-show="item._type == 'multimedia'">AAP Multimedia</dd>
+            <dt class="source"><span translate>source:</span></dt>
             <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
             <dt translate>updated</dt>
             <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>

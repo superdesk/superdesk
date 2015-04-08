@@ -2,16 +2,24 @@
     <fieldset ng-if="context">
         <div class="field">
             <label for="ingest-collection">
-                {{:: 'Ingest' | translate}}
+                {{ 'Ingest' | translate}}
                 <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
             </label>
         </div>
         <div class="field">
             <label for="archive-collection">
-                {{:: 'Content' | translate}}
+                {{ 'Content' | translate}}
                 <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
             </label>
         </div>
+    </fieldset>
+    <fieldset ng-if="context">
+        <div class="field">
+            <label for="archive-collection">
+            {{ 'AAP Multimedia' | translate}}
+            <input type="checkbox" id="aapmultimedia-collection" ng-model="repo.aapmultimedia" ng-checked="repo.aapmultimedia" tabindex="5">
+            </label>
+        </div>         
     </fieldset>
 	<fieldset>
         <div class="field">

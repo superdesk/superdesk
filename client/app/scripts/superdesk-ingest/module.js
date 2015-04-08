@@ -47,6 +47,9 @@ define([
         dpa: {
             label: 'DPA',
             templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
+        },
+        search: {
+            label: 'Search provider'
         }
     });
 

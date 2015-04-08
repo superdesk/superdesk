@@ -354,7 +354,11 @@
             }
 
             var criteria = search.query($location.search()).getCriteria(true);
-            api.query('search', criteria).then(function(result) {
+            var provider = 'search';
+            if (typeof $scope.repo.aapmultimedia !== 'undefined' && $scope.repo.aapmultimedia === true) {
+                provider = 'aapmm';
+            }
+            api.query(provider, criteria).then(function(result) {
                 $scope.items = result;
             });
 
@@ -698,9 +702,9 @@
                                 }
                             });
                         } else {
-                            if (scope.item._type === 'multimedia') {
-                                scope.item.container = 'AAP Multimedia';
-                            } else { scope.item.container = 'location:workspace'; }
+                            if (scope.item._type === 'archive') {
+                                scope.item.container = 'location:workspace';
+                            }
                         }
                     }
                 }
