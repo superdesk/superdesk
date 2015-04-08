@@ -895,8 +895,15 @@
                                 }
                                 notify.error(gettext('User is not found. It might be deleted.'));
                             } else {
+                                var errorMessage = gettext('There was an error when saving user. ');
+
                                 if (response.data && response.data._issues) {
+                                    if (angular.isDefined(response.data._issues['validator exception'])) {
+                                        errorMessage = gettext('Error: ' + response.data._issues['validator exception']);
+                                    }
+
                                     scope.error = response.data._issues;
+
                                     for (var field in response.data._issues) {
                                         if (scope.userForm[field]) {
                                             if (scope.error[field]) {
@@ -910,7 +917,8 @@
                                         }
                                     }
                                 }
-                                notify.error(gettext('There was an error when saving user. '));
+
+                                notify.error(errorMessage);
                             }
                         });
                     };
