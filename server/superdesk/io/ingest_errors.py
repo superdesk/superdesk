@@ -29,7 +29,7 @@ class IngestErrorsService(superdesk.Service):
             print(ex)
 
     def get_errors_by_source_type(self, source_type):
-        return {'source_errors': provider_errors[source_type],
+        return {'source_errors': provider_errors[source_type.lower()],
                 'all_errors': self._get_all_errors()}
 
     def get_all_errors(self):

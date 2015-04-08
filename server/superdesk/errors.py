@@ -151,10 +151,11 @@ class SuperdeskIngestError(SuperdeskError):
                                  name=self.provider_name,
                                  provider_id=provider.get('_id', ''))
 
-        if provider:
-            logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
-        else:
-            logger.error("{}: {}".format(self, exception))
+        if exception:
+            if provider:
+                logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
+            else:
+                logger.error("{}: {}".format(self, exception))
 
     def get_error_description(self):
         return self.code, self._codes[self.code]

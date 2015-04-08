@@ -102,7 +102,10 @@ class IngestProviderResource(Resource):
             }
         },
         'critical_errors': {
-            'type': 'list'
+            'type': 'dict',
+            'keyschema': {
+                'type': 'boolean'
+            }
         }
     }
 
