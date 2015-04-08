@@ -17,7 +17,7 @@ from nose.tools import assert_raises
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from superdesk.tests import setup
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
@@ -30,7 +30,7 @@ class TestProviderService(IngestService):
         return []
 
 
-register_provider('test', TestProviderService())
+register_provider('test', TestProviderService(), [ProviderError.anpaError(None, None).get_error_description()])
 
 
 class UpdateIngestTest(TestCase):

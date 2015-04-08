@@ -18,6 +18,8 @@ from superdesk.etree import etree
 from superdesk.io import get_xml_parser, register_provider
 from .ingest_service import IngestService
 from superdesk.errors import IngestFtpError
+errors = [IngestFtpError.ftpUnknownParserError(None, None, None).get_error_description(),
+          IngestFtpError.ftpError(None, None).get_error_description()]
 
 try:
     from urllib.parse import urlparse
@@ -95,4 +97,4 @@ class FTPService(IngestService):
         except Exception as ex:
             raise IngestFtpError.ftpError(ex, provider)
 
-register_provider('ftp', FTPService())
+register_provider('ftp', FTPService(), errors)

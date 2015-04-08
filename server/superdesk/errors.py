@@ -142,18 +142,22 @@ class SuperdeskIngestError(SuperdeskError):
         provider = provider or {}
         self.provider_name = provider.get('name', 'Unknown provider') if provider else 'Unknown provider'
 
-        if provider.get('notifications', {}).get('on_error', True):
-            exception_msg = str(exception)[-200:]
-            update_notifiers('error',
-                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
-                             resource='ingest_providers' if provider else None,
-                             name=self.provider_name,
-                             provider_id=provider.get('_id', ''))
+        if exception:
+            if provider.get('notifications', {}).get('on_error', True):
+                exception_msg = str(exception)[-200:]
+                update_notifiers('error',
+                                 'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
+                                 resource='ingest_providers' if provider else None,
+                                 name=self.provider_name,
+                                 provider_id=provider.get('_id', ''))
 
         if provider:
             logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
         else:
             logger.error("{}: {}".format(self, exception))
+
+    def get_error_description(self):
+        return self.code, self._codes[self.code]
 
 
 class ProviderError(SuperdeskIngestError):
@@ -215,12 +219,14 @@ class ParserError(SuperdeskIngestError):
 
     @classmethod
     def parseFileError(cls, source, filename, exception, provider):
-        logger.exception("Source Type: {} - File: {} could not be processed".format(source, filename))
+        if source and filename:
+            logger.exception("Source Type: {} - File: {} could not be processed".format(source, filename))
         return ParserError(1002, exception, provider)
 
     @classmethod
     def anpaParseFileError(cls, filename, exception):
-        logger.exception("File: {} could not be processed".format(filename))
+        if filename:
+            logger.exception("File: {} could not be processed".format(filename))
         return ParserError(1003, exception)
 
     @classmethod

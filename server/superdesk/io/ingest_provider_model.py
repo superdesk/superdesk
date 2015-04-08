@@ -100,6 +100,9 @@ class IngestProviderResource(Resource):
                 'opened_at': {'type': 'datetime'},
                 'opened_by': Resource.rel('users', nullable=True)
             }
+        },
+        'critical_errors': {
+            'type': 'list'
         }
     }
 
