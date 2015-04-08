@@ -150,9 +150,9 @@
                 function(updated, updates) {
                     _.assign($scope.dictionary, _.omit(updated, 'content'));
                     _.assign($scope.dictionary, _.omit(updates, 'word'));
+                    $scope.word.key = null;
                     notify.success(gettext('Word added succesfully: ') + updates.word);
                 }, onError);
-            $scope.word.key = null;
         };
 
         reset();
