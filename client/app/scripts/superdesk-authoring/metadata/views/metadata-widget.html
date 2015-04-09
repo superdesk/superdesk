@@ -130,13 +130,14 @@
 		</li>
 		<li>
 			<label translate>Associated</label>
-			<a ng-href="#/authoring/{{item.guid}}" title="{{ item.slugline || item.headline }}">
-	            <div ng-show="item.slugline || item.headline">
-	                {{ item.slugline || item.headline | uppercase}}
+			<a ng-show="associatedItem != null" ng-href="#/authoring/{{item.related_to}}" title="{{ associatedItem.slugline || associatedItem.headline }}">
+	            <div ng-show="associatedItem.slugline || associatedItem.headline">
+	                {{ associatedItem.slugline || associatedItem.headline | uppercase}}
 	            </div>
-	            <div ng-hide="item.slugline || item.headline" translate>Blank headline received</div>
+	            <div ng-hide="associatedItem.slugline || associatedItem.headline" translate>Blank headline received</div>
 	        </a>
 		</li>
+
 		<li ng-if="item.copyrightholder">
 			<label translate>Copyright</label>
 			<div class="data">{{item.copyrightholder}}</div>
