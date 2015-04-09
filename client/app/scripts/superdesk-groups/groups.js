@@ -134,7 +134,7 @@
         };
 
         $scope.remove = function(group) {
-            modal.confirm('Are you sure you want to delete group?').then(
+            modal.confirm(gettext('Are you sure you want to delete group?')).then(
                 function removeGroup() {
                     api.groups.remove(group).then(function() {
                         _.remove($scope.groups._items, group);

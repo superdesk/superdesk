@@ -144,3 +144,16 @@ Feature: Fetch From Ingest
 		  ]
 		}
   		"""
+
+    @auth
+    @provider
+    Scenario: Deleting an Ingest Provider after receiving items should be prohibited
+    	Given empty "ingest"
+    	When we fetch from "AAP" ingest "aap.xml"
+        And we get "/ingest/#AAP.AAP.115314987.5417374#"
+        Then we get "ingest_provider"
+        When we delete "/ingest_providers/#ingest_provider#"
+        Then we get error 403
+        """
+        {"_message": "Deleting an Ingest Source after receiving items is prohibited."}
+        """
