@@ -489,7 +489,7 @@
                 });
             };
             this.fetchDesks = function(item, excludeSelf) {
-                return this.fetchItems(item.family_id || item._id, excludeSelf ? item : undefined)
+                return this.fetchItems(item.state === 'ingested' ? item._id : item.family_id, excludeSelf ? item : undefined)
                 .then(function(items) {
                     var deskList = [];
                     var deskIdList = [];
