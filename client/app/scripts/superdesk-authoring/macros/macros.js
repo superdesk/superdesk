@@ -10,7 +10,7 @@ function MacrosService(api, autosave) {
                 this.macros = macros._items;
                 return this.macros;
             }));
-        };
+    };
 
     this.getByDesk = function(desk) {
         return api.query('macros', {'desk': desk})
@@ -35,7 +35,7 @@ function MacrosService(api, autosave) {
     this.call = triggerMacro;
 
     function triggerMacro(macro, item) {
-       return api.save('macros', {
+        return api.save('macros', {
             macro: macro.name,
             item: _.omit(item) // get all the properties as shallow copy
         }).then(function(res) {

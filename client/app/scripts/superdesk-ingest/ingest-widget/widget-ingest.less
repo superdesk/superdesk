@@ -5,7 +5,7 @@
 @import 'variables.less';
 
 .sd-widget {
-	&.ingest, &.archive {
+	&.ingest, &.archive, &.related-item {
 		.widget-header {
 			z-index: 1;
 			background: @white;
@@ -124,7 +124,7 @@
 			margin:0;
 			list-style-type: none;
 			padding: 0;
-			overflow: hidden;
+			/*overflow: hidden;*/
 			> li {
 				position: relative;
 				.item-block {
@@ -301,7 +301,7 @@
 	}
 }
 
-.widget-ingest, .widget-archive {
+.widget-ingest, .widget-archive, .widget-related-item {
 
 	.ingest-list-holder {
 		background: @sd-background;
@@ -338,7 +338,7 @@
 }
 
 .tabpane {
-	&.widget-ingest, &.widget-archive {
+	&.widget-ingest, &.widget-archive, &.widget-related-item {
 		.sd-widget {
 
 			.widget-mode {

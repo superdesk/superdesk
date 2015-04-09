@@ -111,6 +111,31 @@ angular.module('superdesk.itemList', ['superdesk.search'])
             };
         }
 
+        // Process related items only search
+        if (options.related === true) {
+            var queryRelatedItem = [];
+            var queryWords = [];
+            queryWords = options.keyword.split(' ');
+            var length = queryWords.length;
+            queryRelatedItem.push('slugline' + ':("' + options.keyword + '")');
+
+            for (var i = 0; i < length; i++) {
+                if (options.keyword) {
+                    queryRelatedItem.push('slugline' + ':(' + queryWords[i] + ')');
+                }
+            }
+
+            if (queryRelatedItem.length) {
+                query.source.query.filtered.query = {
+                    query_string: {
+                        query: queryRelatedItem.join(' '),
+                        lenient: false,
+                        default_operator: 'OR'
+                    }
+                };
+            }
+        }
+
         // process search
         if (options.search) {
             var queryContentAny = [];
@@ -379,6 +404,73 @@ function(ItemList, notify, itemPinService, gettext, $timeout) {
                     }
                 } else {
                     scope.itemListOptions.search = oldSearch || null;
+                }
+            });
+        }
+    };
+}])
+.directive('sdRelatedItemListWidget', ['ItemList', 'notify', 'gettext',
+function(ItemList, notify, gettext) {
+    return {
+        scope: {
+            options: '=',
+            itemListOptions: '=',
+            actions: '='
+        },
+        templateUrl: 'scripts/superdesk/itemList/views/relatedItem-list-widget.html',
+        link: function(scope, element, attrs) {
+            scope.items = null;
+            scope.processedItems = null;
+            scope.maxPage = 1;
+            scope.selected = null;
+
+            var oldSearch = null;
+
+            var itemList = new ItemList();
+
+            var _refresh = function() {
+                itemList.fetch();
+            };
+            var refresh = _.debounce(_refresh, 100);
+
+            scope.view = function(item) {
+                scope.selected = item;
+            };
+
+            var processItems = function() {
+                if (scope.items) {
+                    scope.processedItems = scope.items._items;
+                }
+            };
+
+            var itemListListener = function() {
+                scope.maxPage = itemList.maxPage;
+                scope.items = itemList.result;
+                processItems();
+            };
+
+            itemList.addListener(itemListListener);
+            scope.$on('$destroy', function() {
+                itemList.removeListener(itemListListener);
+            });
+
+            scope.$watch('itemListOptions', function() {
+                itemList.setOptions(scope.itemListOptions);
+                itemList.setOptions({related: scope.options.related});
+                refresh();
+            }, true);
+
+            scope.$watch('options.related', function() {
+                if (scope.options.related && scope.options.item) {
+                    if (!scope.options.item.slugline) {
+                        notify.error(gettext('Error: Keywords required.'));
+                        scope.options.related = false;
+                    } else {
+                        oldSearch = scope.itemListOptions.keyword;
+                        scope.itemListOptions.keyword = scope.options.item.slugline;
+                    }
+                } else {
+                    scope.itemListOptions.keyword = oldSearch || null;
                 }
             });
         }
