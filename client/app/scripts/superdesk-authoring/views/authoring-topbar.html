@@ -5,7 +5,7 @@
         <span class="lock-info" ng-show="item._locked"><i class="icon-lock-red"></i></span>
         <span class="lock-text" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
         <span class="lock-text" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
-        <span class="highlights-title" ng-show="item.highlights" sd-highlights-title data-highlights="item.highlights" data-orientation="'bottom'"></span>
+        <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
     </div>
 
     <div class="button-stack right-stack">

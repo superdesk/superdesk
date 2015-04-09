@@ -15,7 +15,7 @@
 
     <div class="list-field word-count-box">
         <span class="word-count">{{ item.word_count }}</span>
-		<div ng-show="item.highlights" class="highlights-title" sd-highlights-title data-highlights="item.highlights"></div>
+		<div ng-if="item.highlights" sd-highlights-title data-item="item"></div>
         <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
     </div>
     <div class="item-info">

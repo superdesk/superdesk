@@ -24,7 +24,7 @@
 
     <div class="media-info">
 
-        <span ng-show="item.highlights" class="highlights-title" sd-highlights-title data-highlights="item.highlights"></span>
+        <span ng-if="item.highlights" sd-highlights-title data-item="item"></span>
 
         <h5 ng-class="{'shifted' : item.highlights}">
             <span ng-show="item.slugline">{{ item.slugline }}</span>

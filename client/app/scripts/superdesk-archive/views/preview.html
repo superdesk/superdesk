@@ -31,8 +31,8 @@
         
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
-		<div ng-show="selected.preview.highlights">
-			<div class="highlights-title" sd-highlights-title data-highlights="selected.preview.highlights"></div>
+		<div ng-if="selected.preview.highlights">
+			<div sd-highlights-title data-item="selected.preview"></div>
 		</div>
 
         <div class="core-content">
