@@ -162,6 +162,7 @@ class TasksService(BaseService):
 
     def on_created(self, docs):
         push_notification(self.datasource, created=1)
+        push_notification('task:new')
         for doc in docs:
             insert_into_versions(doc['_id'])
             if is_assigned_to_a_desk(doc):
