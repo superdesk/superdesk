@@ -1308,21 +1308,24 @@ define([
                 key: 'f'
             })
             .activity('aapmm', {
-                label: gettext('Get from AAP multimedia'),
+                label: gettext('Get from external repo'),
                 icon: 'archive',
                 monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
-                    api.aapmm.create({
+                    desks.fetchCurrentDeskId().then(function(deskid) {
+                        api(data.item._type).save({
                             guid: data.item.guid,
-                            desk: desks.getCurrentDeskId()
+                            desk: deskid
                         })
                         .then(
                             function(response) {
                                 data.item.error = response;
                             })
-                    ['finally'](function() {
-                        data.item.actioning.aapmm = false;
+                        ['finally'](function() {
+                            data.item.actioning.aapmm = false;
+                        });
                     });
+                    
                 }],
                 filters: [
                     {action: 'list', type: 'aapmm'}
@@ -1342,12 +1345,6 @@ define([
             type: 'http',
             backend: {
                 rel: 'ingest'
-            }
-        });
-        apiProvider.api('aapmm', {
-            type: 'http',
-            backend: {
-                rel: 'aapmm'
             }
         });
         apiProvider.api('ingestProviders', {
