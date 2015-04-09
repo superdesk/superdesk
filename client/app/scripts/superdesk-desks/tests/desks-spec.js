@@ -99,4 +99,46 @@ describe('desks service', function() {
         desks.setCurrentStageId('stage');
         expect(active).toBe(desks.active);
     }));
+
+    describe('aggregate view widget', function() {
+        var CTRL_NAME = 'AggregateWidgetCtrl';
+
+        beforeEach(inject(function(desks, $q) {
+            spyOn(desks, 'initialize').and.returnValue($q.when({}));
+            spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({}));
+        }));
+
+        it('shows all desks if not configured', inject(function ($controller, $rootScope, $q, preferencesService) {
+            spyOn(preferencesService, 'get').and.returnValue($q.when({active: {}}));
+
+            var ctrl = $controller(CTRL_NAME);
+            $rootScope.$digest();
+            expect(ctrl.configured).toBe(false);
+            expect(ctrl.isActive({_id: 'foo'})).toBe(true);
+
+            // when not selecting any desk/stage - still unconfigured
+            spyOn(preferencesService, 'update').and.returnValue($q.when({}));
+            ctrl.save();
+            $rootScope.$digest();
+            expect(ctrl.configured).toBe(false);
+            expect(ctrl.isActive({_id: 'foo'})).toBe(true);
+
+            // use config once there is something
+            ctrl.active.bar = true;
+            ctrl.save();
+            $rootScope.$digest();
+            expect(ctrl.configured).toBe(true);
+            expect(ctrl.isActive({_id: 'foo'})).toBe(false);
+            expect(ctrl.isActive({_id: 'bar'})).toBe(true);
+        }));
+
+        it('shows selected desks when configured', inject(function ($controller, $rootScope, $q, preferencesService) {
+            spyOn(preferencesService, 'get').and.returnValue($q.when({active: {foo: 1}}));
+            var ctrl = $controller(CTRL_NAME);
+            $rootScope.$digest();
+            expect(ctrl.configured).toBe(true);
+            expect(ctrl.isActive({_id: 'bar'})).toBe(false);
+            expect(ctrl.isActive({_id: 'foo'})).toBe(true);
+        }));
+    });
 });

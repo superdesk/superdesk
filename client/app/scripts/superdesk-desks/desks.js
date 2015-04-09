@@ -209,25 +209,66 @@
         };
     }
 
-    AggregatehWidgetCtrl.$inject = ['$scope', 'desks'];
-    function AggregatehWidgetCtrl($scope, desks) {
+    AggregateWidgetCtrl.$inject = ['desks', 'preferencesService'];
+    function AggregateWidgetCtrl(desks, preferencesService) {
 
-        desks.initialize()
-        .then(function() {
-            desks.fetchCurrentUserDesks().then(function (desk_list) {
-                $scope.desks = desk_list;
-            });
-            $scope.deskStages = desks.deskStages;
-        });
+        var PREFERENCES_KEY = 'agg:view';
 
-        $scope.selected = null;
+        this.configured = false;
+        this.selected = null;
+        this.active = {};
 
-        $scope.preview = function(item) {
-            $scope.selected = item;
+        this.setConfigured = function() {
+            this.configured = _.keys(this.active).length > 0;
         };
 
-        $scope.closeModal = function() {
-            $scope.modalActive = false;
+        desks.initialize()
+        .then(angular.bind(this, function() {
+            return preferencesService.get(PREFERENCES_KEY)
+                .then(angular.bind(this, function(active) {
+                    this.active = active != null ? active.active : {};
+                    this.setConfigured();
+                }));
+        }))
+        .then(angular.bind(this, function() {
+            return desks.fetchCurrentUserDesks()
+                .then(angular.bind(this, function (deskList) {
+                    this.desks = deskList;
+                    this.deskStages = desks.deskStages;
+                }));
+        }));
+
+        this.preview = function(item) {
+            this.selected = item;
+        };
+
+        this.closeModal = function() {
+            this.modalActive = false;
+        };
+
+        this.edit = function() {
+            this.oldActive = this.active;
+            this.active = _.create(this.active);
+            this.modalActive = true;
+        };
+
+        this.cancel = function() {
+            this.active = this.oldActive;
+            this.closeModal();
+        };
+
+        this.isActive = angular.bind(this, function(item) {
+            return this.configured ? !!this.active[item._id] : true;
+        });
+
+        this.save = function() {
+            var updates = {};
+            updates[PREFERENCES_KEY] = {active: this.active};
+            preferencesService.update(updates, PREFERENCES_KEY)
+                .then(angular.bind(this, function() {
+                    this.setConfigured();
+                    this.closeModal();
+                }));
         };
     }
 
@@ -281,7 +322,7 @@
                     display: {authoring: true, packages: false}
                 });
         }])
-        .controller('AggregatehWidgetCtrl', AggregatehWidgetCtrl)
+        .controller('AggregateWidgetCtrl', AggregateWidgetCtrl)
         .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
             function($q, api, preferencesService, userList, notify, session) {
 
