@@ -195,6 +195,7 @@
                     authoring.open(scope.article).then(function(item) {
                         scope.item = _.create(item);
                         scope._editable = authoring.isEditable(item);
+                        scope.isMediaType = _.contains(['audio', 'video', 'picture'], scope.item.type);
                         if (scope.focus) {
                             $timeout(function() {
                                 elem.children().focus();

@@ -473,6 +473,7 @@
                 $scope.views = {send: false};
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
+                $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
 
                 $scope.proofread = false;
 
@@ -661,10 +662,6 @@
                 $scope.openStage = function openStage() {
                     desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
                     superdesk.intent('view', 'content');
-                };
-
-                $scope.isMediaType = function isMediaType(item) {
-                    return item && _.contains(['audio', 'video', 'picture'], item.type);
                 };
 
                 macros.setupShortcuts($scope);
