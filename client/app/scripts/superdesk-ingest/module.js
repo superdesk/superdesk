@@ -1307,13 +1307,13 @@ define([
                 privileges: {fetch: 1},
                 key: 'f'
             })
-            .activity('aapmm', {
-                label: gettext('Get from external repo'),
+            .activity('externalsource', {
+                label: gettext('Get from external source'),
                 icon: 'archive',
                 monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
                     desks.fetchCurrentDeskId().then(function(deskid) {
-                        api(data.item._type).save({
+                        api(data.item.fetch_endpoint).save({
                             guid: data.item.guid,
                             desk: deskid
                         })
@@ -1322,14 +1322,11 @@ define([
                                 data.item.error = response;
                             })
                         ['finally'](function() {
-                            data.item.actioning.aapmm = false;
+                            data.item.actioning.externalsource = false;
                         });
                     });
-                    
                 }],
-                filters: [
-                    {action: 'list', type: 'aapmm'}
-                ],
+                filters: [{action: 'list', type: 'externalsource'}],
                 privileges: {fetch: 1}
             });
     }]);

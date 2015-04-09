@@ -57,7 +57,9 @@ class AAPMMDatalayer(DataLayer):
         new_doc['type'] = 'picture'
         new_doc['pubstatus'] = 'usable'
         # This must match the action
-        new_doc['_type'] = 'aapmm'
+        new_doc['_type'] = 'externalsource'
+        # entry that the client can use to identify the fetch endpoint
+        new_doc['fetch_endpoint'] = 'aapmm'
         new_doc['renditions'] = {
             'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
             'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
@@ -100,6 +102,8 @@ class AAPMMDatalayer(DataLayer):
         r = self._http.request('GET', url, headers=self._headers)
         doc = json.loads(r.data.decode('UTF-8'))
         self._parse_doc(doc)
+        if 'fetch_endpoint' in doc:
+            del doc['fetch_endpoint']
 
         # Only if we have credentials can we download the original if the account has that privilege
         if 'AAP_MM_USER' in self._app.config and 'AAP_MM_PASSWORD' in self._app.config \

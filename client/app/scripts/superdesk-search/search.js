@@ -355,7 +355,6 @@
 
             var criteria = search.query($location.search()).getCriteria(true);
             var provider = 'search';
-            
             if (criteria.repo) {
                 provider = criteria.repo;
             }
@@ -363,7 +362,7 @@
             if ($scope.repo.search && $scope.repo.search !== 'local') {
                 provider = $scope.repo.search;
             }
-            
+
             api.query(provider, criteria).then(function(result) {
                 $scope.items = result;
             });
@@ -898,7 +897,7 @@
                         if (!scope.repo.archive && !scope.repo.ingest) {
                             scope.repo.search = params.repo;
                         } else {
-                            scope.repo.search = 'local'
+                            scope.repo.search = 'local';
                         }
                     }
 
@@ -920,9 +919,9 @@
                     function getActiveRepos() {
                         var repos = [];
 
-                        if (scope.repo.search == 'local') {
+                        if (scope.repo.search === 'local') {
                             angular.forEach(scope.repo, function(val, key) {
-                                if (val && val != 'local') {
+                                if (val && val !== 'local') {
                                     repos.push(key);
                                 }
                             });
@@ -930,12 +929,8 @@
                             return repos.length ? repos.join(',') : null;
 
                         } else {
-                             return scope.repo.search
+                            return scope.repo.search;
                         }
-
-                        
-
-                        
                     }
 
                     function getFirstKey(data) {
