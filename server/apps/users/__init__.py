@@ -12,6 +12,7 @@ from settings import LDAP_SERVER
 from .users import RolesResource, UsersResource
 from .services import ADUsersService, DBUsersService, RolesService, is_admin  # noqa
 import superdesk
+from apps.users.user_sessions import UserSessionsService, UserSessionsResource
 
 
 def init_app(app):
@@ -25,6 +26,10 @@ def init_app(app):
     endpoint_name = 'roles'
     service = RolesService(endpoint_name, backend=superdesk.get_backend())
     RolesResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'user_sessions'
+    service = UserSessionsService(endpoint_name, backend=superdesk.get_backend())
+    UserSessionsResource(endpoint_name, app=app, service=service)
 
     superdesk.privilege(name='users', label='User Management', description='User can manage users.')
     superdesk.privilege(name='roles', label='Roles Management', description='User can manage roles.')
