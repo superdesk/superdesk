@@ -37,19 +37,22 @@ class IngestService():
         else:
             try:
                 return self._update(provider) or []
-            except SuperdeskIngestError as ex:
-                if provider.get('critical_errors', {}).get(str(ex.code)):
-                    update = {
-                        'is_closed': True,
-                        'last_closed': {
-                            'closed_at': utcnow(),
-                            'message': 'Channel closed due to critical error: {}'.format(ex)
-                        }
-                    }
+            except SuperdeskIngestError as error:
+                self.close_provider(provider, error)
+                raise error
 
-                    ingest_service = superdesk.get_resource_service('ingest_providers')
-                    ingest_service.system_update(provider[superdesk.config.ID_FIELD], update, provider)
-                raise ex
+    def close_provider(self, provider, error):
+        if provider.get('critical_errors', {}).get(str(error.code)):
+            update = {
+                'is_closed': True,
+                'last_closed': {
+                    'closed_at': utcnow(),
+                    'message': 'Channel closed due to critical error: {}'.format(error)
+                }
+            }
+
+            ingest_service = superdesk.get_resource_service('ingest_providers')
+            ingest_service.system_update(provider[superdesk.config.ID_FIELD], update, provider)
 
     def add_timestamps(self, item):
         """Adds firstcreated and versioncreated timestamps

@@ -109,6 +109,17 @@ class UpdateIngestTest(TestCase):
         ex = error_context.exception
         self.assertTrue(ex.status_code == 500)
 
+    def test_ingest_provider_closed_when_critical_error_raised(self):
+        provider_name = 'AAP'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            self.assertFalse(provider.get('is_closed'))
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            provider_service.close_provider(provider, ProviderError.anpaError(None, None))
+            provider = self._get_provider(provider_name)
+            self.assertTrue(provider.get('is_closed'))
+
     def test_is_scheduled(self):
         self.assertTrue(ingest.is_scheduled({}), 'run after create')
         self.assertFalse(ingest.is_scheduled({'last_updated': utcnow()}), 'wait default time 5m')
