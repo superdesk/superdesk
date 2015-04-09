@@ -21,8 +21,8 @@ from superdesk.io.iptc7901 import Iptc7901FileParser
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'dpa'
-errors = [ParserError.IPTC7901ParserError(None, None).get_error_description(),
-          ProviderError.ingestError(None, None).get_error_description()]
+errors = [ParserError.IPTC7901ParserError().get_error_description(),
+          ProviderError.ingestError().get_error_description()]
 
 
 class DPAIngestService(FileIngestService):

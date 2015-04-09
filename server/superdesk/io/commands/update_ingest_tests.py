@@ -116,7 +116,23 @@ class UpdateIngestTest(TestCase):
             self.assertFalse(provider.get('is_closed'))
             provider_service = self._get_provider_service(provider)
             provider_service.provider = provider
-            provider_service.close_provider(provider, ProviderError.anpaError(None, None))
+            provider_service.close_provider(provider, ProviderError.anpaError())
+            provider = self._get_provider(provider_name)
+            self.assertTrue(provider.get('is_closed'))
+
+    def test_ingest_provider_calls_close_provider(self):
+        def mock_update(provider):
+            raise ProviderError.anpaError()
+
+        provider_name = 'AAP'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            self.assertFalse(provider.get('is_closed'))
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            provider_service._update = mock_update
+            with assert_raises(ProviderError):
+                provider_service.update(provider)
             provider = self._get_provider(provider_name)
             self.assertTrue(provider.get('is_closed'))
 

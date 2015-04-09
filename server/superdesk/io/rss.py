@@ -26,10 +26,10 @@ PROVIDER = 'rss'
 
 utcfromtimestamp = datetime.utcfromtimestamp
 
-errors = [IngestApiError.apiAuthError(None, None).get_error_description(),
-          IngestApiError.apiNotFoundError(None, None).get_error_description(),
-          IngestApiError.apiGeneralError(None, None).get_error_description(),
-          ParserError.parseMessageError(None, None).get_error_description()]
+errors = [IngestApiError.apiAuthError().get_error_description(),
+          IngestApiError.apiNotFoundError().get_error_description(),
+          IngestApiError.apiGeneralError().get_error_description(),
+          ParserError.parseMessageError().get_error_description()]
 
 
 class RssIngestService(IngestService):

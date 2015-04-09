@@ -21,9 +21,9 @@ from superdesk.io.zczc import ZCZCParser
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'teletype'
-errors = [ParserError.ZCZCParserError(None, None).get_error_description(),
-          ProviderError.ingestError(None, None).get_error_description(),
-          ParserError.parseFileError(None, None, None, None).get_error_description()]
+errors = [ParserError.ZCZCParserError().get_error_description(),
+          ProviderError.ingestError().get_error_description(),
+          ParserError.parseFileError().get_error_description()]
 
 
 class TeletypeIngestService(FileIngestService):

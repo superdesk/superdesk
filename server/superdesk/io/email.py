@@ -17,8 +17,8 @@ from superdesk.errors import IngestEmailError
 from superdesk.io.rfc822 import rfc822Parser
 
 PROVIDER = 'email'
-errors = [IngestEmailError.emailError(None, None).get_error_description(),
-          IngestEmailError.emailLoginError(None, None).get_error_description()]
+errors = [IngestEmailError.emailError().get_error_description(),
+          IngestEmailError.emailLoginError().get_error_description()]
 
 
 class EmailReaderService(IngestService):

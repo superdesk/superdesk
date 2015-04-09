@@ -25,8 +25,8 @@ from superdesk.errors import ParserError, ProviderError
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'afp'
-errors = [ParserError.newsmlOneParserError(None, None).get_error_description(),
-          ProviderError.ingestError(None, None).get_error_description()]
+errors = [ParserError.newsmlOneParserError().get_error_description(),
+          ProviderError.ingestError().get_error_description()]
 
 
 class AFPIngestService(FileIngestService):

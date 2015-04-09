@@ -19,14 +19,11 @@ logger = logging.getLogger(__name__)
 class IngestErrorsService(superdesk.Service):
     def get(self, req, lookup):
         """Return all ingest errors."""
-        try:
-            source_type = getattr(req, 'args', {}).get('source_type')
-            if source_type:
-                return ListCursor([self.get_errors_by_source_type(source_type)])
-            else:
-                return ListCursor([self.get_all_errors()])
-        except Exception as ex:
-            print(ex)
+        source_type = getattr(req, 'args', {}).get('source_type')
+        if source_type:
+            return ListCursor([self.get_errors_by_source_type(source_type)])
+        else:
+            return ListCursor([self.get_all_errors()])
 
     def get_errors_by_source_type(self, source_type):
         return {'source_errors': provider_errors[source_type.lower()],
@@ -44,9 +41,8 @@ class IngestErrorsService(superdesk.Service):
 
 
 class IngestErrorsResource(superdesk.Resource):
-    resource_methods = ['GET', 'POST']
+    resource_methods = ['GET']
     item_methods = []
-    privileges = {'POST': 'archive'}
 
     schema = {
         'ingest_error': {

@@ -24,9 +24,9 @@ from superdesk.errors import ParserError, ProviderError
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'aap'
-errors = [ParserError.nitfParserError(None, None).get_error_description(),
-          ProviderError.ingestError(None, None).get_error_description(),
-          ParserError.parseFileError(None, None, None, None).get_error_description()]
+errors = [ParserError.nitfParserError().get_error_description(),
+          ProviderError.ingestError().get_error_description(),
+          ParserError.parseFileError().get_error_description()]
 
 
 class AAPIngestService(FileIngestService):

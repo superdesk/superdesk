@@ -28,12 +28,12 @@ from flask import current_app as app
 
 
 PROVIDER = 'reuters'
-errors = [IngestApiError.apiTimeoutError(None, None).get_error_description(),
-          IngestApiError.apiRedirectError(None, None).get_error_description(),
-          IngestApiError.apiRequestError(None, None).get_error_description(),
-          IngestApiError.apiUnicodeError(None, None).get_error_description(),
-          IngestApiError.apiParseError(None, None).get_error_description(),
-          IngestApiError.apiGeneralError(None, None).get_error_description()]
+errors = [IngestApiError.apiTimeoutError().get_error_description(),
+          IngestApiError.apiRedirectError().get_error_description(),
+          IngestApiError.apiRequestError().get_error_description(),
+          IngestApiError.apiUnicodeError().get_error_description(),
+          IngestApiError.apiParseError().get_error_description(),
+          IngestApiError.apiGeneralError().get_error_description()]
 
 
 class ReutersIngestService(IngestService):

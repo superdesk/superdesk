@@ -1,4 +1,4 @@
-Feature: Macros
+Feature: Ingest Errors
 
     @auth
     Scenario: Get list of all errors
