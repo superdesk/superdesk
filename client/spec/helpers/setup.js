@@ -2,13 +2,13 @@
 
 /* global beforeEach */
 
-var getToken = require('./helpers/auth').getToken;
-var resetApp = require('./helpers/fixtures').resetApp;
-var waitForSuperdesk = require('./helpers/utils').waitForSuperdesk;
+var getToken = require('./auth').getToken;
+var resetApp = require('./fixtures').resetApp;
+var waitForSuperdesk = require('./utils').waitForSuperdesk;
 
 // runs before every spec
 beforeEach(function(done) {
-    require('./helpers/waitReady');
+    require('./waitReady');
     browser.driver.manage().window().setSize(1280, 800);
     getToken(function() {
         resetApp(function() {
