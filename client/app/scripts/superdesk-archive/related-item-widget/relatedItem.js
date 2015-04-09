@@ -19,14 +19,9 @@ define([
                 display: {authoring: true, packages: false}
             });
         }])
-        .controller('relatedItemController', ['$scope', 'api', 'BaseWidgetController', '$location',
-        function ($scope, api, BaseWidgetController, $location) {
-            var todayDateTime = new Date();
-            var befor24HrDateTime = new Date(todayDateTime.setDate(todayDateTime.getDate() - 1)).toISOString();
-
-            //console.log('iso before 24 hour', befor24HrDateTime); //'2015-04-01T00:22:24+0000'
-            //console.log('iso today', todayDateTime.toISOString());
-
+        .controller('relatedItemController', ['$scope', 'api', 'BaseWidgetController', '$location', 'notify',
+        function ($scope, api, BaseWidgetController, $location, notify) {
+            var before24HrDateTime = moment().subtract(1, 'days').format();
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
@@ -54,12 +49,14 @@ define([
                         1) Overwrite Destination code
                         2) Patch IPTC Code
                         3) Overwrite category, service and locator fields
-                        4) Establish a main-story-to-sidebar association (based on guid)
                         */
 
                         $scope.origItem = $scope.options.item;
                         $scope.options.item.subject = item.subject;
+                        $scope.options.item['anpa-category'] = item['anpa-category'];
+                        $scope.options.item.related_to = item._id;
                         api.save('archive', $scope.origItem, $scope.options.item).then(function(_item) {
+                            notify.success(gettext('item updated.'));
                             return item;
                         });
                     },

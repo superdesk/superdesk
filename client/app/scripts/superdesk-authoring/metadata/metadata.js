@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'api'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, api) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -13,6 +13,12 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
 
     metadata.initialize().then(function() {
         $scope.metadata = metadata.values;
+        if ($scope.item.related_to != null) {
+            metadata.fetchAssociated($scope.item.related_to)
+            .then(function(item) {
+                $scope.associatedItem = item;
+            });
+        }
     });
 
     $scope.processGenre = function() {
@@ -20,7 +26,6 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
             return _.pick(g, 'name');
         });
     };
-
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
 
@@ -203,6 +208,13 @@ function MetadataService(api, $q, staticMetadata) {
             return api.get('/subjectcodes').then(function(result) {
                 self.values.subjectcodes = result._items;
             });
+        },
+        fetchAssociated: function(_id) {
+            if (_id != null) {
+                return api('archive').getById(_id).then(function(_item) {
+                    return _item;
+                });
+            }
         },
         initialize: function() {
             if (!this.loaded) {
