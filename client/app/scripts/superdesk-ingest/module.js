@@ -306,8 +306,8 @@ define([
         };
     }
 
-    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location'];
-    function IngestSourcesContent(providerTypes, gettext, notify, api, $location) {
+    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', 'modal'];
+    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, modal) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
@@ -385,10 +385,23 @@ define([
                 });
 
                 $scope.remove = function(provider) {
-                    api.ingestProviders.remove(provider)
-                    .then(function() {
-                        notify.success(gettext('Provider deleted.'));
-                    }).then(fetchProviders);
+                    modal.confirm(gettext('Are you sure you want to delete Ingest Source?')).then(
+                        function removeIngestProviderChannel() {
+                            api.ingestProviders.remove(provider)
+                                .then(
+                                    function () {
+                                        notify.success(gettext('Ingest Source deleted.'));
+                                    },
+                                    function(response) {
+                                        if (angular.isDefined(response.data._message)) {
+                                            notify.error(response.data._message);
+                                        } else {
+                                            notify.error(gettext('Error: Unable to delete Ingest Source'));
+                                        }
+                                    }
+                                ).then(fetchProviders);
+                        }
+                    );
                 };
 
                 $scope.edit = function(provider) {

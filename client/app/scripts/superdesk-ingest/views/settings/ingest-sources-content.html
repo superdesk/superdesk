@@ -17,6 +17,7 @@
                     <div class="actions">
                         <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
                         <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(provider)" ng-show="!provider.last_item_update" title="{{:: 'Remove source' | translate }}"><i class="icon-trash"></i></button>
                     </div>
                 </div>
             </li>

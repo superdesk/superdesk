@@ -11,6 +11,7 @@
 
 import os
 from datetime import datetime, timedelta
+from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -285,7 +286,8 @@ def step_impl_fetch_from_provider_ingest_using_routing(context, provider_name, g
 
 
 def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
-    provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+    ingest_provider_service = get_resource_service('ingest_providers')
+    provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
     provider_service = context.provider_services[provider.get('type')]
     provider_service.provider = provider
@@ -302,6 +304,10 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
     failed = context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
                                   routing_scheme=provider.get('routing_scheme'))
     assert len(failed) == 0, failed
+
+    provider = ingest_provider_service.find_one(name=provider_name, req=None)
+    ingest_provider_service.system_update(provider['_id'], {LAST_ITEM_UPDATE: utcnow()}, provider)
+
     for item in items:
         set_placeholder(context, '{}.{}'.format(provider_name, item['guid']), item['_id'])
 
