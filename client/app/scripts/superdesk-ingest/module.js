@@ -342,6 +342,14 @@ define([
                         });
                 }
 
+                function fetchSourceErrors(source_type) {
+                    return api('ingest_errors').query({'source_type': source_type})
+                        .then(function(result) {
+                            $scope.provider.source_errors = result._items[0].source_errors;
+                            $scope.provider.all_errors = result._items[0].all_errors;
+                        });
+                }
+
                 function openProviderModal() {
                     var provider_id = $location.search()._id;
                     var provider;
@@ -412,6 +420,8 @@ define([
                             return !(fieldName in aliasObj);
                         }
                     );
+
+                    fetchSourceErrors(provider.type);
                 };
 
                 $scope.cancel = function() {
@@ -519,6 +529,8 @@ define([
                     });
 
                     $scope.provider.config.field_aliases = newAliases;
+                    delete $scope.provider.all_errors;
+                    delete $scope.provider.source_errors;
 
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {

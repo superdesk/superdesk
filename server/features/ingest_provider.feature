@@ -121,6 +121,29 @@ Feature: Ingest Provider
 
     @auth
     @notification
+    Scenario: Update critical errors for ingest_provider
+        Given "ingest_providers"
+	    """
+        [{
+        "type": "reuters",
+        "name": "reuters 4",
+        "source": "reuters",
+        "is_closed": false,
+        "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+        Then we get updated response
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+
+
+    @auth
+    @notification
     Scenario: Open/Close ingest_provider
         Given "ingest_providers"
 	    """
