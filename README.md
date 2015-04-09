@@ -1,4 +1,4 @@
-# Superdesk
+# Superdesk [![Build Status](https://travis-ci.org/superdesk/superdesk.png?branch=master)] (https://travis-ci.org/superdesk/superdesk) [![Code Health] [![Code Health](https://landscape.io/github/superdesk/superdesk/master/landscape.svg)](https://landscape.io/github/superdesk/superdesk/master)
 
 Superdesk is an open source end-to-end news creation, production, curation,
 distribution and publishing platform developed and maintained by Sourcefabric
