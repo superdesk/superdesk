@@ -98,6 +98,36 @@
         var DEFAULT_PAGE = 1;
         var DEFAULT_PER_PAGE = 20;
 
+        userservice.getAll = function() {
+            var p = $q.when();
+            var deferred = $q.defer();
+
+            function _getAll(page, items) {
+                page = page || DEFAULT_PAGE;
+                items = items || [];
+
+                api('users')
+                    .query({max_results: 200, page: page})
+                    .then(function(result) {
+                        items = items.concat(result._items);
+                        if (result._links.next) {
+                            page++;
+                            p = p.then(_getAll(page, items));
+                        } else {
+                            cache.put(DEFAULT_CACHE_KEY, items);
+                            deferred.resolve(items);
+                        }
+                    });
+
+                return deferred.promise;
+            }
+
+            p = _getAll();
+            return p.then(function(res) {
+                return res;
+            });
+        };
+
         /**
          * Fetches and caches users, or returns from the cache.
          *

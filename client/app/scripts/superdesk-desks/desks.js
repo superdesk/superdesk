@@ -331,6 +331,7 @@
                 var _fetchAll = function(endpoint, page, items) {
                     page = page || 1;
                     items = items || [];
+
                     return api(endpoint)
                     .query({max_results: 200, page: page})
                     .then(function(result) {
@@ -385,11 +386,11 @@
                     },
                     fetchUsers: function() {
                         var self = this;
-
-                        return userList.get(null, 1, 500)
+                        return userList.getAll()
                         .then(function(result) {
-                            self.users = result;
-                            _.each(result._items, function(user) {
+                            self.users = {};
+                            self.users._items = result;
+                            _.each(result, function(user) {
                                 self.userLookup[user._id] = user;
                             });
                         });
@@ -414,6 +415,8 @@
                                 var user = _.find(self.users._items, {_id: member.user});
                                 if (user) {
                                     self.deskMembers[desk._id].push(user);
+                                } else {
+                                    console.error('Desk user not found for desk: %s , user missing: %s', desk.name, member.user);
                                 }
                             });
                         });
@@ -546,8 +549,8 @@
                             this.fetchCurrentDeskId();
                             this.fetchCurrentStageId();
 
-                            this.loading = this.fetchDesks()
-                                .then(angular.bind(this, this.fetchUsers))
+                            this.loading = this.fetchUsers()
+                                .then(angular.bind(this, this.fetchDesks))
                                 .then(angular.bind(this, this.generateDeskMembers))
                                 .then(angular.bind(this, this.fetchStages))
                                 .then(angular.bind(this, this.generateDeskStages))
