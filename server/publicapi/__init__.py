@@ -11,6 +11,10 @@
 import os
 
 from eve import Eve
+from publicapi.datalayer import ApiDataLayer
 
 
-app = Eve(settings=os.path.join(__name__, 'settings.py'))
+app = Eve(
+    settings=os.path.join(__name__, 'settings.py'),
+    data=ApiDataLayer,
+)

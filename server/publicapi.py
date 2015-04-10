@@ -12,4 +12,7 @@ from publicapi import app
 
 
 if __name__ == '__main__':
-    app.run(port=5050)  # XXX: have PUBAPI_PORT in config... and other things
+    app.run(
+        port=5050,  # XXX: have PUBAPI_PORT in config... and other things
+        debug=True
+    )
