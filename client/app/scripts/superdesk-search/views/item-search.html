@@ -7,13 +7,13 @@
         <div ng-show="repo.search == 'local'">
             <div class="field">
                 <label for="ingest-collection">
-                    {{ 'Ingest' | translate}}
+                    {{:: 'Ingest' | translate}}
                     <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
                 </label>
             </div>
             <div class="field">
                 <label for="archive-collection">
-                    {{ 'Content' | translate}}
+                    {{:: 'Content' | translate}}
                     <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
                 </label>
             </div>
@@ -23,7 +23,7 @@
         <div ng-repeat="provider in providers">
             <label ng-if="provider.type == 'search'"> 
                 <input type="radio" ng-value="provider.source" ng-model="repo.search"> 
-                {{provider.name}}
+                {{:: provider.name}}
             </label>
         </div>
     </fieldset>
