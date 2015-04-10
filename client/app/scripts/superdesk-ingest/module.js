@@ -544,9 +544,9 @@ define([
                         }
                     });
 
-					if (typeof($scope.provider.config) !== 'undefined') {                    
-						$scope.provider.config.field_aliases = newAliases;
-					}
+                    if (typeof($scope.provider.config) !== 'undefined') {
+                        $scope.provider.config.field_aliases = newAliases;
+                    }
                     delete $scope.provider.all_errors;
                     delete $scope.provider.source_errors;
 
