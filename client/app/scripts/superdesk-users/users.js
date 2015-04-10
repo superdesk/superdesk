@@ -80,6 +80,18 @@
             return user && _.size(user.session_preferences) > 0;
         };
 
+        /**
+         * Close user's sessions
+         */
+        usersService.closeSessions = function closeSessions(user) {
+            return api('user_sessions').getById(user._id)
+                .then(function(userSessions) {
+                    api('user_sessions').remove(userSessions).then(function(result) {
+                        return result;
+                    });
+                });
+        };
+
         return usersService;
     }
 
@@ -416,6 +428,24 @@
     }
 
     /**
+     * Close user session
+     */
+    CloseUserSessionCommand.$inject = ['api', 'usersService', 'data', '$rootScope'];
+    function CloseUserSessionCommand(api, usersService, data, $rootScope) {
+        var user = data.item;
+        return usersService.closeSessions(user).then(
+            function(response) {
+                return api('users').getById(user._id)
+                .then(function(newUser) {
+                    user = angular.extend(user, newUser);
+                    $rootScope.$broadcast('user:updated', user);
+                    return user;
+                });
+            }
+        );
+    }
+
+    /**
      * Resolve a user by route id and redirect to /users if such user does not exist
      */
     UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
@@ -739,6 +769,22 @@
                     },
                     privileges: {users: 1}
                 })
+                .activity('session/user', {
+                    label: gettext('Close user session'),
+                    icon: 'off',
+                    confirm: gettext('Please confirm that you want to close user session.'),
+                    controller: CloseUserSessionCommand,
+                    filters: [
+                        {
+                            action: superdesk.ACTION_EDIT,
+                            type: 'user'
+                        }
+                    ],
+                    additionalCondition:['usersService', 'item', function(usersService, item) {
+                        return usersService.isLoggedIn(item);
+                    }],
+                    privileges: {users: 1}
+                })
                 .activity('restore/user', {
                     label: gettext('Enable user'),
                     icon: 'revert',
@@ -780,6 +826,10 @@
             apiProvider.api('changePassword', {
                 type: 'http',
                 backend: {rel: 'change_user_password'}
+            });
+            apiProvider.api('user_sessions', {
+                type: 'http',
+                backend: {rel: 'user_sessions'}
             });
         }])
 
