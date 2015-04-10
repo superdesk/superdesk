@@ -152,7 +152,7 @@ describe('HIGHLIGHTS', function() {
             expect(authoring.getSearchItemCount()).toBe(2);
 
             highlights.switchHighlightFilter('Highlight Two');
-            expect(authoring.getSearchItemCount()).toBe(1);
+            expect(authoring.getSearchItemCount()).toBe(2);
         });
 
         it('export highlight package', function() {

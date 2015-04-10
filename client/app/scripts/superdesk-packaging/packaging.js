@@ -217,7 +217,17 @@
 
         $scope.$watch('item', function(item) {
             $scope.highlight = item.highlight;
-            init = true;
+            if ($scope.highligh) {
+                api('highlights').getById($scope.highlight)
+                .then(function(result) {
+                    $scope.groupList = result.groups;
+                    init = true;
+                }, function(response) {
+                    init = true;
+                });
+            } else {
+                init = true;
+            }
         });
 
         $scope.$watch('item.groups', function() {

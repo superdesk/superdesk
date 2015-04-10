@@ -28,6 +28,12 @@ class HighlightsResource(Resource):
             'allowed': allowed_times,
             'default': TODAY_DATE,
         },
+        'groups': {
+            'type': 'list',
+            'schema': {
+                'type': 'string'
+            }
+        }
     }
     privileges = {'POST': 'highlights', 'PATCH': 'highlights', 'DELETE': 'highlights'}
 
