@@ -4,6 +4,147 @@
 @import 'mixins.less';
 @import 'variables.less';
 
+// Ingest sources
+// -------------------------------------
+
+.provider-list {
+
+	> li {
+		.ingest-count {
+			float: left;
+			margin-top: 1px;
+		}
+		.last-updated {
+			float: left;
+			font-size: 12px;
+			color: #777;
+			padding: 0 10px;
+			span {
+				color: #aaa;
+			}
+		}
+		.label.offProvider {
+			font-size: 10px;
+			font-weight: normal;
+			padding: 0px 5px;
+			line-height: 12px;
+			margin-left: 5px;
+		}
+		.link {
+			margin-right: 15px;
+			font-size: 12px;
+		}
+	}
+}
+
+.addSource.modal {
+	input {
+		height: 31px;
+		line-height: 19px;
+		&.blue-text {
+			&::-webkit-input-placeholder {
+				font-style:normal !important;
+			}
+			&:-moz-placeholder {
+				font-style:normal !important;
+			}
+			&::-moz-placeholder {
+				font-style:normal !important;
+			}
+			&::-ms-input-placeholder {
+				font-style:normal !important;
+			}
+		}
+		&::-webkit-input-placeholder {
+			font-style:italic;
+		}
+	}
+	.credentials {
+		margin-top: 20px;
+		label {
+			font-size: 16px;
+		}
+		input {
+			float: left;
+			width: 49%;
+			&.first {
+				margin-right: 2%;
+			}
+		}
+	}
+}
+
+.ingestsource-modal {
+	.modal-body {
+		.popup-subnav {
+			padding-left: 10px;
+			label {
+				color: #989898;
+			}
+			.TabContent {
+				margin-bottom: 20px;
+			}
+			.field {
+				padding-left: 10px;
+				float: left;
+				.field {
+					padding-left: 0 !important;
+				}
+			}
+		}
+		.rss-config {
+			.empty {
+				width: 64px;
+			}
+			.btn-remove {
+				padding-right: 14px;
+			}
+			.multiple .field {
+				padding-right: 10px;
+			}
+		}
+	}
+}
+
+// Ruleset settings
+// -------------------------------------
+
+.ruleset-modal {
+
+	header {
+		padding: 10px;
+	}
+	.rule-list {
+
+		>li {
+			position: relative;
+			.order {
+				position: absolute;
+				left: 0;
+				top: 0;
+				line-height: 28px;
+				color: #aaa;
+			}
+			.actions {
+				position: absolute;
+				right: 0; top: 0;
+				button {
+					border: 0;
+					background: none;
+				}
+			}
+			fieldset {
+				padding: 0 40px;
+				.field:first-child {
+					padding-right: 3%;
+				}
+				.field:last-child {
+					padding-left: 3%;
+				}
+			}
+		}
+	}
+}
 
 /* Scheme create/edit modal */
 
@@ -47,23 +188,14 @@
 		float: left;
 		margin-right: 10px;
 	}
-	.split {
-		display: flex;
-		> div, > .field {
-			flex: 1 1 auto;
-			padding: 0 15px 0 0;
-		}
-	}
 	.general-tab {
 		.summary {
-			> div {
-				.field {
-					background-color: @sd-background;
-					padding: 5px;
-					font-size: 12px;
-					.title {
-						.text-bold();
-					}
+			.field {
+				background-color: @sd-background;
+				padding: 5px;
+				font-size: 12px;
+				.title {
+					.text-bold();
 				}
 			}
 		}

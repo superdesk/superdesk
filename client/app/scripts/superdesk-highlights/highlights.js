@@ -18,6 +18,7 @@
     HighlightsService.$inject = ['api', '$q', '$cacheFactory', 'packages'];
     function HighlightsService(api, $q, $cacheFactory, packages) {
         var service = {};
+        var promise = {};
         var cache = $cacheFactory('highlightList');
 
         /**
@@ -30,6 +31,8 @@
 
             if (value) {
                 return $q.when(value);
+            } else if (promise[key]) {
+                return promise[key];
             } else {
                 var criteria = {};
                 if (desk) {
@@ -41,11 +44,14 @@
                                 };
                 }
 
-                return api('highlights').query(criteria)
-                .then(function(result) {
-                    cache.put(key, result);
-                    return $q.when(result);
-                });
+                promise[key] = api('highlights').query(criteria)
+                    .then(function(result) {
+                        cache.put(key, result);
+                        promise[key] = null;
+                        return $q.when(result);
+                    });
+
+                return promise[key];
             }
         };
 
@@ -54,16 +60,14 @@
          */
         service.clearCache = function() {
             cache.removeAll();
+            promise = {};
         };
 
         /**
          * Mark an item for a highlight
          */
         service.mark_item = function mark_item(highlight, marked_item) {
-            return api.markForHighlights.create({highlights: highlight, marked_item: marked_item})
-                .then(function(result) {
-                    return result;
-                });
+            return api.markForHighlights.create({highlights: highlight, marked_item: marked_item});
         };
 
         /**
@@ -89,11 +93,15 @@
 
                 scope.mark_item = function mark_item(highlight) {
                     highlightsService.mark_item(highlight._id, scope.item._id);
-                    scope.$root.$broadcast('item:mark');
+                    if (!scope.item.highlights) {
+                        scope.item.highlights = [highlight._id];
+                    } else {
+                        scope.item.highlights = [highlight._id].concat(scope.item.highlights);
+                    }
                 };
 
                 scope.is_marked = function is_marked(highlight) {
-                    return scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
+                    return scope.item && scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
                 };
 
                 highlightsService.get(desks.activeDeskId).then(function(result) {
@@ -103,30 +111,76 @@
         };
     }
 
-    HighlightsTitleDirective.$inject = ['highlightsService'];
-    function HighlightsTitleDirective(highlightsService) {
+    HighlightsTitleDirective.$inject = ['highlightsService', '$timeout'];
+    function HighlightsTitleDirective(highlightsService, $timeout) {
         return {
-            scope: {highlight_ids: '=highlights'},
+            scope: {
+                item: '=item',
+                orientation: '=?'
+            },
             templateUrl: 'scripts/superdesk-highlights/views/highlights_title_directive.html',
-            link: function(scope) {
+            // todo(petr): refactor to use popover-template once angular-bootstrap 0.13 is out
+            link: function(scope, elem) {
+                var unmarkBox = elem.find('.unmark').hide(),
+                    icon = elem.find('i'),
+                    isOpen,
+                    closeTimeout;
 
-                scope.$watch('highlight_ids', function(_ids) {
+                scope.orientation = scope.orientation || 'right';
+
+                scope.$watch('item.highlights', function(_ids) {
                     if (_ids) {
-                        scope.title = '';
                         highlightsService.get().then(function(result) {
-                            var highlights = _.filter(result._items, function(highlight) {
+                            scope.highlights = _.filter(result._items, function(highlight) {
                                 return _ids.indexOf(highlight._id) >= 0;
                             });
-                            _.forEach(highlights, function(highlight) {
-                                scope.title += highlight.name + '\n';
+                            // it has to first update the template before we use its html
+                            scope.$applyAsync(function() {
+                                scope.htmlTooltip = unmarkBox.html();
                             });
                         });
                     }
                 });
 
-                scope.getTitle = function getTitle() {
-                    return scope.title;
+                scope.openTooltip = function() {
+                    $timeout.cancel(closeTimeout);
+                    closeTimeout = null;
+                    if (!isOpen) {
+                        toggle();
+                        isOpen = true;
+                    }
                 };
+
+                scope.closeTooltip = function() {
+                    if (isOpen && !closeTimeout) {
+                        closeTimeout = $timeout(function() {
+                            toggle();
+                            isOpen = false;
+                        }, 100, false);
+                    }
+                };
+
+                function toggle() {
+                    $timeout(function() { // need to timeout because tooltip is not expecting $digest
+                        icon[0].dispatchEvent(new CustomEvent('toggle'));
+                    }, 0, false);
+                }
+
+                // ng-click is not working because of tooltip
+                elem.on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var highlight = e.target.parentNode.attributes['data-highlight'];
+                    if (highlight) {
+                        unmarkHighlight(highlight.value);
+                    }
+                });
+
+                function unmarkHighlight(highlight) {
+                    highlightsService.mark_item(highlight, scope.item._id).then(function() {
+                        scope.item.highlights = _.without(scope.item.highlights, highlight);
+                    });
+                }
             }
         };
     }

@@ -186,6 +186,9 @@ ol.linenums li:last-child {
         margin-bottom: 30px;
         p {
             font-size: 14px;
+            code {
+                font-size: 13px;
+            }
         }
     }
     .link-holder {
@@ -205,7 +208,8 @@ ol.linenums li:last-child {
     .docs-subtitle {
         font-weight: 600;
         padding-bottom: 8px;
-        margin-bottom: 13px;
+        margin-bottom: 15px;
+        margin-top: 30px;
         border-bottom: 1px solid #d0d0d0;
         font-size: 18px;
         line-height: 25px;
@@ -258,6 +262,33 @@ ol.linenums li:last-child {
         p {
             padding: 0 2px 7px 2px;
             line-height: 22px;
+        }
+    }
+}
+
+.simple-list {
+    li {
+        line-height: 22px;
+    }
+}
+
+.docs-navbar {
+    padding: 10px 20px !important;
+    height: 28px;
+}
+.avatar-docs {
+    .avatar-types {
+        .preview-area {
+            > div {
+                margin-bottom: 12px;
+                .clearfix();
+                > figure {
+                    margin-right: 10px;
+                }
+                > span {
+                    vertical-align: sub;
+                }
+            }
         }
     }
 }

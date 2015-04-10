@@ -11,6 +11,7 @@
 
 import os
 from datetime import datetime, timedelta
+from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -36,6 +37,7 @@ from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
 from eve.utils import ParsedRequest
 import shutil
+from apps.dictionaries.resource import DICTIONARY_FILE
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -284,7 +286,8 @@ def step_impl_fetch_from_provider_ingest_using_routing(context, provider_name, g
 
 
 def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
-    provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+    ingest_provider_service = get_resource_service('ingest_providers')
+    provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
     provider_service = context.provider_services[provider.get('type')]
     provider_service.provider = provider
@@ -301,6 +304,10 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
     failed = context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
                                   routing_scheme=provider.get('routing_scheme'))
     assert len(failed) == 0, failed
+
+    provider = ingest_provider_service.find_one(name=provider_name, req=None)
+    ingest_provider_service.system_update(provider['_id'], {LAST_ITEM_UPDATE: utcnow()}, provider)
+
     for item in items:
         set_placeholder(context, '{}.{}'.format(provider_name, item['guid']), item['_id'])
 
@@ -311,7 +318,7 @@ def step_impl_when_post_url(context, url):
         data = apply_placeholders(context, context.text)
         url = apply_placeholders(context, url)
 
-        if url in ('/users', 'users'):
+        if is_user_resource(url):
             user = json.loads(data)
             user.setdefault('needs_activation', False)
             data = json.dumps(user)
@@ -529,7 +536,7 @@ def step_impl_when_upload_image_with_guid(context, file_name, destination, guid)
 @when('we upload a new dictionary with success')
 def when_upload_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
-    upload_file(context, '/dictionary_upload', 'test_dict.txt', 'dictionary_file', data)
+    upload_file(context, '/dictionary_upload', 'test_dict.txt', DICTIONARY_FILE, data)
     assert_ok(context.response)
 
 
@@ -538,7 +545,7 @@ def when_upload_patch_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
     url = apply_placeholders(context, '/dictionary_upload/#dictionary_upload._id#')
     etag = apply_placeholders(context, '#dictionary_upload._etag#')
-    upload_file(context, url, 'test_dict2.txt', 'dictionary_file', data, 'patch', [('If-Match', etag)])
+    upload_file(context, url, 'test_dict2.txt', DICTIONARY_FILE, data, 'patch', [('If-Match', etag)])
     assert_ok(context.response)
 
 
@@ -1443,3 +1450,18 @@ def assert_items_in_package(item, state, desk, stage):
             assert item.get('state') == state
             assert item.get('task', {}).get('desk') == desk
             assert item.get('task', {}).get('stage') == stage
+
+
+@given('I logout')
+def logout(context):
+    we_have_sessions_get_id(context, '/sessions')
+    step_impl_when_delete_url(context, '/auth/{}'.format(context.session_id))
+    assert_200(context.response)
+
+
+@then('we get "{url}" and match')
+def we_get_and_match(context, url):
+    response_data = get_res(url, context)
+    context_data = json.loads(apply_placeholders(context, context.text))
+    assert_equal(json_match(context_data, response_data), True,
+                 msg=str(context_data) + '\n != \n' + str(response_data))

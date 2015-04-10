@@ -1,0 +1,119 @@
+// users.less
+// Styling for the superdesk users page (list, prevew, profile)
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+// User roles
+// -------------------------------------
+
+@roles-border: 1px solid #f0f0f0;
+
+.user-roles-settings {
+
+	// ROLES TAB
+
+	.new-role-modal {
+		width: 299px;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		margin-left: -150px;
+		.content {
+			.field {
+				margin-bottom: 10px;
+				textarea {
+					height: 22px;
+				}
+			}
+		}
+	}
+
+	.label.default {
+		font-size: 10px;
+		font-weight: normal;
+		padding: 0px 5px;
+		line-height: 12px;
+		margin-left: 5px;
+	}
+}
+
+// PRIVILEGES SETTINGS
+
+.privileges-settings {
+	.horizontal {
+		padding-top:5px;
+		overflow: auto;
+	}
+	.roles-list {
+		.action-line {
+			display: table-row;
+			&:hover {
+				background: #f8f8f8;
+			}
+		}
+		.td {
+			display: table-cell;
+    		min-width:80px;
+			padding: 10px 16px;
+			border-bottom: @roles-border;
+			text-align: center;
+			border-left: @roles-border;
+			word-wrap: break-word;
+			.user-select(none);
+			.label {
+				font-size: 80%;
+			}
+		}
+		.name {
+			border-left: 0;
+			text-align: left;
+			padding: 10px 40px 10px 10px;
+			text-transform: uppercase;
+			.text-semibold();
+			font-size: 11px;
+			white-space: nowrap;
+			color: #666;
+		}
+		.blank {
+			width: 100%;
+			border-bottom: @roles-border;
+			text-align: left;
+		}
+
+		.initial {
+			background: #f2f2f2;
+			.label {
+				position: absolute;
+				top: -6px;
+				left: 17%;
+				text-transform: uppercase;
+				font-weight: normal;
+				font-size: 9px;
+				line-height: 11px;
+				height: 13px;
+				letter-spacing: 0.1em;
+				box-sizing:border-box;
+			}
+			&:hover {
+				background: #eaeaea;
+			}
+			.td {
+				font-size: 13px;
+				width: 100px;
+				word-wrap: break-word;
+				border-top: @roles-border;
+				border-color: #e5e5e5 !important;
+				padding: 10px 16px;
+				position: relative;
+			}
+			.create-role {
+				padding: 10px;
+				position: absolute;
+				background: none;
+				border: 0;
+			}
+		}
+
+	}
+}

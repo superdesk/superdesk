@@ -88,6 +88,10 @@ class PreferencesResource(Resource):
         'providers': []
     })
 
+    superdesk.register_default_user_preference('agg:view', {
+        'active': {},
+    })
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])
@@ -101,9 +105,13 @@ class PreferencesService(BaseService):
         service = get_resource_service('users')
         user_doc = service.find_one(req=None, _id=user_id)
         session_prefs = user_doc.get(_session_preferences_key, {}).copy()
+
+        if not isinstance(session_id, str):
+            session_id = str(session_id)
+
         if session_id in session_prefs:
             del session_prefs[session_id]
-            service.patch(user_id, session_prefs)
+            service.patch(user_id, {_session_preferences_key: session_prefs})
 
     def set_session_based_prefs(self, session_id, user_id):
         user_doc = get_resource_service('users').find_one(req=None, _id=user_id)

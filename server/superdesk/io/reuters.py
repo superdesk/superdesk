@@ -24,9 +24,16 @@ from superdesk.io import register_provider
 from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 from superdesk.errors import IngestApiError
+from flask import current_app as app
 
 
 PROVIDER = 'reuters'
+errors = [IngestApiError.apiTimeoutError().get_error_description(),
+          IngestApiError.apiRedirectError().get_error_description(),
+          IngestApiError.apiRequestError().get_error_description(),
+          IngestApiError.apiUnicodeError().get_error_description(),
+          IngestApiError.apiParseError().get_error_description(),
+          IngestApiError.apiGeneralError().get_error_description()]
 
 
 class ReutersIngestService(IngestService):
@@ -51,8 +58,9 @@ class ReutersIngestService(IngestService):
         updated = utcnow()
 
         last_updated = provider.get('last_updated')
-        if not last_updated or last_updated < updated - datetime.timedelta(days=7):
-            last_updated = updated - datetime.timedelta(hours=1)
+        ttl_minutes = app.config['INGEST_EXPIRY_MINUTES']
+        if not last_updated or last_updated < updated - datetime.timedelta(minutes=ttl_minutes):
+            last_updated = updated - datetime.timedelta(minutes=ttl_minutes)
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
@@ -128,7 +136,7 @@ class ReutersIngestService(IngestService):
             raise IngestApiError.apiRequestError(ex, self.provider)
         except Exception as error:
             traceback.print_exc()
-            raise IngestApiError(error, self.provider)
+            raise IngestApiError.apiGeneralError(error, self.provider)
 
         if response.status_code == 404:
             raise LookupError('Not found %s' % payload)
@@ -145,7 +153,7 @@ class ReutersIngestService(IngestService):
             raise IngestApiError.apiParseError(error, self.provider)
         except Exception as error:
             traceback.print_exc()
-            raise IngestApiError(error, self.provider)
+            raise IngestApiError.apiGeneralError(error, self.provider)
 
     def get_url(self, endpoint):
         """Get API url for given endpoint."""
@@ -161,4 +169,4 @@ class ReutersIngestService(IngestService):
         return '%s?auth_token=%s' % (new_href, self.get_token())
 
 
-register_provider(PROVIDER, ReutersIngestService())
+register_provider(PROVIDER, ReutersIngestService(), errors)

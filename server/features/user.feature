@@ -16,6 +16,15 @@ Feature: User Resource
         And we get activation email
 
     @auth
+    Scenario: Create user with valid email
+        Given empty "users"
+        When we post to "/users"
+        """
+        {"username": "foo", "password": "barbar", "email": "foo@bar.com.au"}
+        """
+        Then we get response code 201
+
+    @auth
     Scenario: Test email validation
         Given empty "users"
         When we post to "/users"

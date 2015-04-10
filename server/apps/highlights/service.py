@@ -60,6 +60,7 @@ class HighlightsService(BaseService):
 
 class MarkedForHighlightsService(BaseService):
     def create(self, docs, **kwargs):
+        """Toggle highlight status for given highlight and item."""
         service = get_resource_service('archive')
         ids = []
         for doc in docs:
@@ -73,8 +74,15 @@ class MarkedForHighlightsService(BaseService):
                 highlights = []
             if doc['highlights'] not in highlights:
                 highlights.append(doc['highlights'])
-                service.update(item['_id'], {'highlights': highlights}, item)
-            push_notification('item:mark', marked=1)
+            else:
+                highlights = [h for h in highlights if h != doc['highlights']]
+            updates = {
+                'highlights': highlights,
+                '_updated': item['_updated'],
+                '_etag': item['_etag']
+            }
+            service.update(item['_id'], updates, item)
+        push_notification('item:mark', marked=1)
         return ids
 
 package.package_create_signal.connect(on_create_package)

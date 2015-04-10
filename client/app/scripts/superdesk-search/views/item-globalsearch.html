@@ -4,12 +4,14 @@
         <div class="content dropdown">
             <div class="advanced" ng-click="$event.stopPropagation()">
             	<button class="close" tabindex="4" ng-click="close();"><i class="icon-close-small"></i></button>
-        		<div class="content"> 
+        		<div class="content">
         			<form>
-                        <fieldset class="span-2">
+                        <fieldset>
                             <div class="field">
                                <label>Story Name</label>
-                               <input type="text" ng-keyup="openOnEnter($event)" ng-model="meta.unique_name" tabindex="1" sd-autofocus ng-if="flags.enabled">
+                               <div class="control">
+                                   <input type="text" ng-keyup="openOnEnter($event)" ng-model="meta.unique_name" tabindex="1" sd-autofocus ng-if="flags.enabled">
+                               </div>
                             </div>
                         </fieldset>
         			</form>

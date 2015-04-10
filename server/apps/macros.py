@@ -14,17 +14,9 @@ import superdesk
 from superdesk.utils import ListCursor
 from superdesk.macro_register import macros
 
-from superdesk.celery_app import celery
-
 
 def get_public_props(item):
     return {k: v for k, v in item.items() if k != 'callback'}
-
-
-@celery.task()
-def print_macros():
-    for macro in macros:
-        print(get_public_props(macro))
 
 
 class MacrosService(superdesk.Service):

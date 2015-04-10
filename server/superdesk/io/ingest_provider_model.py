@@ -10,6 +10,7 @@
 
 import logging
 from flask import g
+from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.io import allowed_providers
@@ -100,11 +101,17 @@ class IngestProviderResource(Resource):
                 'opened_at': {'type': 'datetime'},
                 'opened_by': Resource.rel('users', nullable=True)
             }
+        },
+        'critical_errors': {
+            'type': 'dict',
+            'keyschema': {
+                'type': 'boolean'
+            }
         }
     }
 
-    item_methods = ['GET', 'PATCH']
-    privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers'}
+    item_methods = ['GET', 'PATCH', 'DELETE']
+    privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}
     etag_ignore_fields = ['last_updated', 'last_item_update', 'last_closed', 'last_opened']
 
 
@@ -181,3 +188,11 @@ class IngestProviderService(BaseService):
 
         push_notification('ingest_provider:update', provider_id=str(original.get('_id')))
         logger.info("Updated Ingest Channel. Data: {}".format(updates))
+
+    def on_delete(self, doc):
+        """
+        Overriding to check if the Ingest Source which has received item being deleted.
+        """
+
+        if doc.get('last_item_update'):
+            raise SuperdeskApiError.forbiddenError("Deleting an Ingest Source after receiving items is prohibited.")

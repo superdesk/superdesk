@@ -5,6 +5,9 @@
 *.swp
 *.swo
 *.pid
+*#
+.#*
+*TAGS
 .ropeproject
 data/
 static/*

@@ -15,7 +15,8 @@ define(['angular', 'lodash'], function(angular, _) {
                         'archive:view': 1,
                         'email:notification': 1,
                         'workqueue:items': 1,
-                        'dashboard:ingest': 1
+                        'dashboard:ingest': 1,
+                        'agg:view': 1
                     },
                     original_preferences = null,
                     defaultPreferences = {};

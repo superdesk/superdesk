@@ -17,6 +17,8 @@ from superdesk.errors import IngestEmailError
 from superdesk.io.rfc822 import rfc822Parser
 
 PROVIDER = 'email'
+errors = [IngestEmailError.emailError().get_error_description(),
+          IngestEmailError.emailLoginError().get_error_description()]
 
 
 class EmailReaderService(IngestService):
@@ -57,4 +59,4 @@ class EmailReaderService(IngestService):
     def prepare_href(self, href):
         return url_for_media(href)
 
-register_provider(PROVIDER, EmailReaderService())
+register_provider(PROVIDER, EmailReaderService(), errors)

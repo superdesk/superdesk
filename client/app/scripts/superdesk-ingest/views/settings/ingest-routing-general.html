@@ -10,8 +10,7 @@
         <div class="field">
             <label translate>Summary</label>
             <fieldset>
-                <div class="split summary">
-                <div>
+                <div class="multiple summary">
                     <div class="field">
                         <label translate>Filter</label>
                         <div ng-show="rule.filter.headline">
@@ -56,8 +55,6 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div class="field">
                         <label translate>Action</label>
                         <div ng-show="rule.actions.fetch">
@@ -82,8 +79,6 @@
                             <span ng-hide="rule.actions.exit" translate>Off</span>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div class="field">
                         <label translate>Schedule</label>
                         <div ng-show="rule.schedule.day_of_week">
@@ -103,7 +98,6 @@
                             <span translate>{{rule.schedule.hour_of_day_to|insert:2:':'}}</span>
                         </div>
                     </div>
-                </div>
                 </div>
             </fieldset>
         </div>

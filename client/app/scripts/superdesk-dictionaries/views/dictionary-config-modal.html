@@ -1,0 +1,53 @@
+<div sd-modal data-model="modalActive" class="add-dictionary-popup" >
+
+	<div class="modal-header">
+		<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+		<h3 ng-show="!dictionary._id" translate>Add New Dictionary</h3>
+		<h3 ng-show="dictionary._id" translate>Edit Dictionary</h3>
+	</div>
+
+	<div class="modal-body">
+		<form novalidate>
+			<ng-form name="dictionaryForm">
+				<fieldset>
+					<div class="field">
+						<label translate>Dictionary name</label>
+						<input type="text" ng-model="dictionary.name" ng-keyup="handleEdit($event);" required>
+					</div>
+					<div class="field">
+						<label translate>Language code</label>
+						<input type="text" ng-model="dictionary.language_id" required>
+					</div>
+					<div class="field">
+						<label translate ng-show="!dictionary._id">Dictionary file</label>
+						<input type="file" file-upload accept="text/*" ng-show="!dictionary._id">
+					</div>
+				</fieldset>
+				<fieldset>
+					<button id="save-edit-btn" type="submit" class="btn btn-info pull-right" ng-click="save()" ng-disabled="!canSave(dictionaryForm)" translate>Save</button>
+		        	<button id="cancel-edit-btn" type="button" class="btn pull-right" ng-click="cancel()" translate>Cancel</button>
+				</fieldset>
+				<p ng-if="message">{{ message }}</p>
+				<span ng-show="_errorUniqueness" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
+				<p ng-show="_errorLimits" translate>Character limit exceeded, dictionary can not be created/updated.</p>
+				<span ng-show="_error" translate>There was a problem, dictionary not created/updated.</span>
+			</ng-form>
+
+			<div class="form-break"></div>
+
+			<ng-form name="wordForm" ng-show="dictionary._id">
+				<label translate>Add word</label>
+				<fieldset>
+					<div class="multiple">
+						<div class="field">
+							<input type="text" ng-model="word.key" required>
+						</div>
+						<button id="add-word-btn" type="submit" class="btn btn-info flex-field no-shrink" ng-click="addWord()" ng-disabled="wordForm.$invalid" >Add word</button>
+					</div>
+				</fieldset>
+		    </ng-form>
+		</form>
+
+	</div>
+
+</div>

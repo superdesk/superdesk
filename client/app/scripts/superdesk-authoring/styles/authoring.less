@@ -23,7 +23,8 @@
 		padding: 8px 25px;
 		height: 28px;
 	}
-	.page-title-wrapper {
+	.authoring-topbar {
+		height: 30px;
 		.lock-info {
 			background: rgba(229,28,35,0.3);
 			width: 30px;
@@ -32,13 +33,6 @@
 			text-align: center;
 			.border-radius(50%);
 			margin-right: 10px;
-		}
-		.page-nav-title {
-			max-width: 400px;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			padding-right: 15px;
 		}
 		.lock-text {
 			color: #e51c23;
@@ -71,6 +65,7 @@
 			padding: 4px 10px 3px;
 			margin-top: 5px;
 			margin-right: 20px;
+			float: none;
 		}
 	}
 	&.auth-sendto {
@@ -103,7 +98,7 @@
 .medium-editor-toolbar-actions {
 	li button {
 		height: 40px !important;
-		min-width: 40px !important; 
+		min-width: 40px !important;
 		padding-top: 10px !important;
 	}
 }
@@ -178,7 +173,7 @@
 		}
 		> li {
 			float: left;
-			border-right: 1px solid #333;	
+			border-right: 1px solid #333;
 		}
 	}
 	.multiedit-item {
@@ -221,7 +216,7 @@
 .authoring-dashboard {
 	padding: 40px;
 	overflow: auto;
-	
+
 	.card-list {
 		width: 0;
 		margin: 0 auto;
@@ -354,7 +349,7 @@
 		border-bottom: 1px solid #424242;
 		padding: 0 20px;
 		h3 {
-			color: @white;	
+			color: @white;
 			line-height: @nav-height;
 			font-size: 20px;
 			.text-light();
@@ -397,7 +392,7 @@
 				padding: 0 0 15px;
 
 				&:nth-child(2n) {
-					margin-left: 15px; 
+					margin-left: 15px;
 				}
 
 				button {
@@ -511,7 +506,7 @@
 // }
 
 // @media (max-width: 480px) {
-	
+
 // 	.main-article-title {
 // 		display:none;
 // 	}

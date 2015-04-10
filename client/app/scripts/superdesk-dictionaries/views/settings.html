@@ -1,0 +1,36 @@
+<div sd-settings-view>
+
+	<div class="split-content" sd-dictionary-config>
+
+		<div class="header">
+			<h2 translate>Dictionary management</h2>
+			<button class="btn btn-info pull-right" ng-click="createDictionary()">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Dictionary' | translate }}
+		    </button>
+		</div>
+
+	    <div class="content dictionary-settings">
+	    	<div sd-shadow>
+	    		<ul class="pills-list">
+					<li ng-repeat="dictionary in dictionaries._items track by dictionary._id">
+						<h6>{{ dictionary.name }}</h6>&nbsp;<em><strong>({{ dictionary.language_id }})</strong></em>
+						<div class="actions">
+							<button ng-click="openDictionary(dictionary)" title="{{:: 'Edit dictionary' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(dictionary)" title="{{:: 'Remove dictionary' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+	                </li>
+				</ul>
+			</div>
+	    </div>
+
+		<div sd-dictionary-config-modal
+			data-active="modalActive"
+			data-dictionary="dictionary"
+			data-orig-dictionary="origDictionary"
+			data-dictionaries="dictionaries"
+			data-word="word"
+			data-cancel="cancel()"
+		></div>
+	</div>
+
+</div>

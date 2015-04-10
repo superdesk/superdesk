@@ -3,10 +3,62 @@ define([
     'require',
     './controllers/list',
     './controllers/upload',
-    './archive-widget/archive',
-    './directives'
+    './archive-widget/archive'
 ], function(angular, require) {
     'use strict';
+
+    MultiService.$inject = ['$rootScope'];
+    function MultiService($rootScope) {
+
+        var items = [];
+
+        /**
+         * Test if given item is selected
+         *
+         * @param {Object} item
+         */
+        this.isSelected = function isSelected(item) {
+            return !!_.find(items, {_id: item._id});
+        };
+
+        /**
+         * Toggle item selected state
+         *
+         * @param {Object} item
+         */
+        this.toggle = function toggle(item) {
+            item.selected = !this.isSelected(item);
+            if (item.selected) {
+                items = _.union(items, [item]);
+            } else {
+                items = _.without(items, item);
+            }
+            this.count = items.length;
+        };
+
+        /**
+         * Get list of selected items
+         */
+        this.getQueue = function getQueue() {
+            return _.map(items, '_id');
+        };
+
+        /**
+         * Reset to empty
+         */
+        this.reset = function reset() {
+            _.each(items, function(item) {
+                item.selected = false;
+            });
+
+            items = [];
+            this.count = 0;
+        };
+
+        // main
+        this.reset();
+        $rootScope.$on('$routeChangeStart', angular.bind(this, this.reset));
+    }
 
     SpikeService.$inject = ['$location', 'api', 'notify', 'gettext'];
     function SpikeService($location, api, notify, gettext) {
@@ -54,12 +106,13 @@ define([
 
     return angular.module('superdesk.archive', [
         'superdesk.search',
-        require('./directives').name,
+        'superdesk.archive.directives',
         'superdesk.dashboard',
         'superdesk.widgets.archive'
     ])
 
         .service('spike', SpikeService)
+        .service('multi', MultiService)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -77,7 +130,7 @@ define([
                 .activity('upload.media', {
                     label: gettext('Upload media'),
                     modal: true,
-                    cssClass: 'upload-media responsive',
+                    cssClass: 'upload-media modal-responsive',
                     controller: require('./controllers/upload'),
                     templateUrl: require.toUrl('./views/upload.html'),
                     filters: [

@@ -47,6 +47,9 @@ define([
         dpa: {
             label: 'DPA',
             templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
+        },
+        search: {
+            label: 'Search provider'
         }
     });
 
@@ -306,8 +309,8 @@ define([
         };
     }
 
-    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location'];
-    function IngestSourcesContent(providerTypes, gettext, notify, api, $location) {
+    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', 'modal'];
+    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, modal) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
@@ -339,6 +342,14 @@ define([
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
                             $scope.providers = result;
+                        });
+                }
+
+                function fetchSourceErrors(source_type) {
+                    return api('ingest_errors').query({'source_type': source_type})
+                        .then(function(result) {
+                            $scope.provider.source_errors = result._items[0].source_errors;
+                            $scope.provider.all_errors = result._items[0].all_errors;
                         });
                 }
 
@@ -377,10 +388,23 @@ define([
                 });
 
                 $scope.remove = function(provider) {
-                    api.ingestProviders.remove(provider)
-                    .then(function() {
-                        notify.success(gettext('Provider deleted.'));
-                    }).then(fetchProviders);
+                    modal.confirm(gettext('Are you sure you want to delete Ingest Source?')).then(
+                        function removeIngestProviderChannel() {
+                            api.ingestProviders.remove(provider)
+                                .then(
+                                    function () {
+                                        notify.success(gettext('Ingest Source deleted.'));
+                                    },
+                                    function(response) {
+                                        if (angular.isDefined(response.data._message)) {
+                                            notify.error(response.data._message);
+                                        } else {
+                                            notify.error(gettext('Error: Unable to delete Ingest Source'));
+                                        }
+                                    }
+                                ).then(fetchProviders);
+                        }
+                    );
                 };
 
                 $scope.edit = function(provider) {
@@ -395,7 +419,7 @@ define([
 
                     // init the lists of field aliases and non-selected fields
                     $scope.fieldAliases = [];
-                    aliases = $scope.origProvider.config.field_aliases || [];
+                    aliases = (angular.isDefined($scope.origProvider.config) && $scope.origProvider.config.field_aliases) || [];
 
                     var aliasObj = {};
                     aliases.forEach(function (item) {
@@ -412,6 +436,8 @@ define([
                             return !(fieldName in aliasObj);
                         }
                     );
+
+                    fetchSourceErrors(provider.type);
                 };
 
                 $scope.cancel = function() {
@@ -518,7 +544,11 @@ define([
                         }
                     });
 
-                    $scope.provider.config.field_aliases = newAliases;
+                    if (typeof($scope.provider.config) !== 'undefined') {
+                        $scope.provider.config.field_aliases = newAliases;
+                    }
+                    delete $scope.provider.all_errors;
+                    delete $scope.provider.source_errors;
 
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {
@@ -1276,6 +1306,28 @@ define([
                 ],
                 privileges: {fetch: 1},
                 key: 'f'
+            })
+            .activity('externalsource', {
+                label: gettext('Get from external source'),
+                icon: 'archive',
+                monitor: true,
+                controller: ['api', 'data', 'desks', function(api, data, desks) {
+                    desks.fetchCurrentDeskId().then(function(deskid) {
+                        api(data.item.fetch_endpoint).save({
+                            guid: data.item.guid,
+                            desk: deskid
+                        })
+                        .then(
+                            function(response) {
+                                data.item.error = response;
+                            })
+                        ['finally'](function() {
+                            data.item.actioning.externalsource = false;
+                        });
+                    });
+                }],
+                filters: [{action: 'list', type: 'externalsource'}],
+                privileges: {fetch: 1}
             });
     }]);
 

@@ -26,6 +26,11 @@ PROVIDER = 'rss'
 
 utcfromtimestamp = datetime.utcfromtimestamp
 
+errors = [IngestApiError.apiAuthError().get_error_description(),
+          IngestApiError.apiNotFoundError().get_error_description(),
+          IngestApiError.apiGeneralError().get_error_description(),
+          ParserError.parseMessageError().get_error_description()]
+
 
 class RssIngestService(IngestService):
     """Ingest service for providing feeds received in RSS 2.0 format.
@@ -160,4 +165,4 @@ class RssIngestService(IngestService):
         return item
 
 
-register_provider(PROVIDER, RssIngestService())
+register_provider(PROVIDER, RssIngestService(), errors)

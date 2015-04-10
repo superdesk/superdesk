@@ -39,7 +39,7 @@ function Workspace() {
         return this.switchToDesk(desk || 'PERSONAL').then(
             content.setListView
         ).then(function() {
-            return content.actionOnItem('Edit item', itemIndex || 1);
+            return content.actionOnItem('Edit item', itemIndex == null ? 1 : itemIndex);
         });
     };
 }

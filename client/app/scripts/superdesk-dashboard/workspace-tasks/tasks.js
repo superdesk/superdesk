@@ -66,10 +66,11 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
     };
 }
 
-TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks'];
-function TasksController($scope, api, notify, desks, tasks) {
+TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks'];
+function TasksController($scope, $timeout, api, notify, desks, tasks) {
 
-    var KANBAN_VIEW = 'kanban';
+    var KANBAN_VIEW = 'kanban',
+        timeout;
 
     $scope.selected = {};
     $scope.newTask = null;
@@ -84,7 +85,10 @@ function TasksController($scope, api, notify, desks, tasks) {
         fetchTasks();
     });
 
-    var fetchTasks = _.debounce(fetch, 300);
+    function fetchTasks() {
+        $timeout.cancel(timeout);
+        timeout = $timeout(fetch, 300, false);
+    }
 
     function fetch() {
         var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
@@ -112,7 +116,6 @@ function TasksController($scope, api, notify, desks, tasks) {
         .then(function(result) {
             notify.success(gettext('Item saved.'));
             $scope.close();
-            fetchTasks();
         });
     };
 
@@ -135,6 +138,8 @@ function TasksController($scope, api, notify, desks, tasks) {
             fetchTasks();
         }
     };
+
+    $scope.$on('task:new', fetchTasks);
 }
 
 TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];

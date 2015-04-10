@@ -17,7 +17,7 @@ from nose.tools import assert_raises
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from superdesk.tests import setup
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
@@ -30,7 +30,7 @@ class TestProviderService(IngestService):
         return []
 
 
-register_provider('test', TestProviderService())
+register_provider('test', TestProviderService(), [ProviderError.anpaError(None, None).get_error_description()])
 
 
 class UpdateIngestTest(TestCase):
@@ -108,6 +108,33 @@ class UpdateIngestTest(TestCase):
             aap.update(provider)
         ex = error_context.exception
         self.assertTrue(ex.status_code == 500)
+
+    def test_ingest_provider_closed_when_critical_error_raised(self):
+        provider_name = 'AAP'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            self.assertFalse(provider.get('is_closed'))
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            provider_service.close_provider(provider, ProviderError.anpaError())
+            provider = self._get_provider(provider_name)
+            self.assertTrue(provider.get('is_closed'))
+
+    def test_ingest_provider_calls_close_provider(self):
+        def mock_update(provider):
+            raise ProviderError.anpaError()
+
+        provider_name = 'AAP'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            self.assertFalse(provider.get('is_closed'))
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            provider_service._update = mock_update
+            with assert_raises(ProviderError):
+                provider_service.update(provider)
+            provider = self._get_provider(provider_name)
+            self.assertTrue(provider.get('is_closed'))
 
     def test_is_scheduled(self):
         self.assertTrue(ingest.is_scheduled({}), 'run after create')

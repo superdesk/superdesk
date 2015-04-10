@@ -113,4 +113,9 @@ function Authoring() {
     this.getSubnav = function() {
         return element(by.id('subnav'));
     };
+
+    this.checkMarkedForHighlight = function(highlight, item) {
+        expect(element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
+        expect(element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe')).toContain(highlight);
+    };
 }

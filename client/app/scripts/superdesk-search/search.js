@@ -354,7 +354,16 @@
             }
 
             var criteria = search.query($location.search()).getCriteria(true);
-            api.query('search', criteria).then(function(result) {
+            var provider = 'search';
+            if (criteria.repo) {
+                provider = criteria.repo;
+            }
+
+            if ($scope.repo.search && $scope.repo.search !== 'local') {
+                provider = $scope.repo.search;
+            }
+
+            api.query(provider, criteria).then(function(result) {
                 $scope.items = result;
             });
 
@@ -367,7 +376,13 @@
         }, refresh, true);
     }
 
-    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
+    angular.module('superdesk.search', [
+        'superdesk.api',
+        'superdesk.desks',
+        'superdesk.activity',
+        'superdesk.list',
+        'superdesk.keyboard'
+    ])
         .service('search', SearchService)
         .service('tags', TagService)
         .filter('FacetLabels', function() {
@@ -692,7 +707,9 @@
                                 }
                             });
                         } else {
-                            scope.item.container = 'location:workspace';
+                            if (scope.item._type === 'archive') {
+                                scope.item.container = 'location:workspace';
+                            }
                         }
                     }
                 }
@@ -853,7 +870,7 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', function($location, $timeout, asset) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', function($location, $timeout, asset, api) {
             return {
                 scope: {
                     repo: '=',
@@ -870,13 +887,28 @@
                         scope.flags = false;
                         scope.meta = {};
 
+                        fetchProviders();
+
                         if (params.repo) {
                             scope.repo.archive = params.repo.indexOf('archive') >= 0;
                             scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
                         }
+
+                        if (!scope.repo.archive && !scope.repo.ingest) {
+                            scope.repo.search = params.repo;
+                        } else {
+                            scope.repo.search = 'local';
+                        }
                     }
 
                     init();
+
+                    function fetchProviders() {
+                        return api.ingestProviders.query({max_results: 200})
+                            .then(function(result) {
+                                scope.providers = result._items;
+                            });
+                    }
 
                     scope.$on('$locationChangeSuccess', function() {
                         if (scope.query !== $location.search().q) {
@@ -886,13 +918,19 @@
 
                     function getActiveRepos() {
                         var repos = [];
-                        angular.forEach(scope.repo, function(val, key) {
-                            if (val) {
-                                repos.push(key);
-                            }
-                        });
 
-                        return repos.length ? repos.join(',') : null;
+                        if (scope.repo.search === 'local') {
+                            angular.forEach(scope.repo, function(val, key) {
+                                if (val && val !== 'local') {
+                                    repos.push(key);
+                                }
+                            });
+
+                            return repos.length ? repos.join(',') : null;
+
+                        } else {
+                            return scope.repo.search;
+                        }
                     }
 
                     function getFirstKey(data) {
@@ -1065,6 +1103,21 @@
                 }]
             };
         })
+
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
+        function(asset, multi, multiEdit) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                link: function(scope) {
+                    scope.multi = multi;
+
+                    scope.multiedit = function() {
+                        multiEdit.create(multi.getQueue());
+                        multiEdit.open();
+                    };
+                }
+            };
+        }])
 
         .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk.activity('/search', {

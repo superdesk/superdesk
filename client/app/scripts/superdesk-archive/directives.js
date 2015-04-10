@@ -1,11 +1,11 @@
-define([
-    'lodash',
-    'angular',
-    'require'
-], function(_, angular, require) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.archive.directives', ['superdesk.authoring'])
+    return angular.module('superdesk.archive.directives', [
+        'superdesk.authoring',
+        'superdesk.ingest',
+        'superdesk.workflow'
+    ])
         .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
@@ -64,7 +64,7 @@ define([
         }])
         .directive('sdInlineMeta', function() {
             return {
-                templateUrl: require.toUrl('./views/inline-meta.html'),
+                templateUrl: 'scripts/superdesk-archive/views/inline-meta.html',
                 scope: {
                     'placeholder': '@',
                     'showmeta': '=',
@@ -262,7 +262,7 @@ define([
         .directive('sdSingleItem', [ function() {
 
             return {
-                templateUrl: require.toUrl('./views/single-item-preview.html'),
+                templateUrl: 'scripts/superdesk-archive/views/single-item-preview.html',
                 scope: {
                     item: '=',
                     contents: '=',
@@ -270,10 +270,10 @@ define([
                 }
             };
         }])
-        .directive('sdMediaBox', ['lock', function(lock) {
+        .directive('sdMediaBox', ['lock', 'multi', function(lock, multi) {
             return {
                 restrict: 'A',
-                templateUrl: require.toUrl('./views/media-box.html'),
+                templateUrl: 'scripts/superdesk-archive/views/media-box.html',
                 link: function(scope, element, attrs) {
                     scope.lock = {isLocked: false};
 
@@ -281,10 +281,10 @@ define([
                         switch (view) {
                         case 'mlist':
                         case 'compact':
-                            scope.itemTemplate = require.toUrl('./views/media-box-list.html');
+                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
                             break;
                         default:
-                            scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
+                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
                         }
                     });
 
@@ -329,12 +329,21 @@ define([
                         }
                         return false;
                     };
+
+                    // here we make a copy which we can modify without affecting data
+                    scope.multi = angular.extend({
+                        selected: multi.isSelected(scope.item)
+                    }, scope.item);
+
+                    scope.toggleSelected = function() {
+                        multi.toggle(scope.multi);
+                    };
                 }
             };
         }])
         .directive('sdItemRendition', function() {
             return {
-                templateUrl: require.toUrl('./views/item-rendition.html'),
+                templateUrl: 'scripts/superdesk-archive/views/item-rendition.html',
                 scope: {
                     item: '=',
                     rendition: '@',
@@ -425,7 +434,7 @@ define([
         .directive('sdProviderMenu', ['$location', function($location) {
             return {
                 scope: {items: '='},
-                templateUrl: require.toUrl('./views/provider-menu.html'),
+                templateUrl: 'scripts/superdesk-archive/views/provider-menu.html',
                 link: function(scope, element, attrs) {
 
                     scope.setProvider = function(provider) {
@@ -480,7 +489,7 @@ define([
                 });
             };
             this.fetchDesks = function(item, excludeSelf) {
-                return this.fetchItems(item.family_id || item._id, excludeSelf ? item : undefined)
+                return this.fetchItems(item.state === 'ingested' ? item._id : item.family_id, excludeSelf ? item : undefined)
                 .then(function(items) {
                     var deskList = [];
                     var deskIdList = [];
@@ -498,4 +507,4 @@ define([
                 });
             };
         }]);
-});
+})();

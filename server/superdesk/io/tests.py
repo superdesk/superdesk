@@ -38,7 +38,8 @@ def setup_providers(context):
              'config': {'username': app.config['REUTERS_USERNAME'],
                         'password': app.config['REUTERS_PASSWORD']}},
             {'name': 'AAP', 'type': 'aap', 'source': 'AAP Ingest', 'is_closed': False,
-             'config': {'path': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')}},
+             'config': {'path': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')},
+             'critical_errors': {'2005': True}},
             {'name': 'teletype', 'type': 'teletype', 'source': 'AAP Teletype', 'is_closed': False,
              'config': {'path': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')}}
         ]

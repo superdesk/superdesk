@@ -105,10 +105,17 @@
 				margin-right: 10px;
 				margin-top: -2px;
 			}
+			&.disabled, &[disabled] {
+				.opacity(50);
+			}
 		}
 		> a, > button {
 			&:hover {
 				background: @dropdownLinkBackgroundHover;
+			}
+			&.disabled:hover, &[disabled]:hover {
+				background: none;
+				cursor: default;
 			}
 		}
 	}
@@ -192,7 +199,7 @@
 //navigation big dropdown
 .dropdown.dropdown-big, .navbtn.dropdown {
 	.dropdown-toggle {
-		padding: 0 15px 0 25px;
+		padding: 0 15px;
 		display: block;
 		color:@sd-text;
 		height: @subnav-height;

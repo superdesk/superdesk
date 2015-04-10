@@ -280,7 +280,8 @@ define([
         'superdesk.translate',
         'superdesk.services.beta',
         'superdesk.services.modal',
-        'superdesk.privileges'
+        'superdesk.privileges',
+        'superdesk.keyboard'
     ]);
 
     module.provider('superdesk', SuperdeskProvider);

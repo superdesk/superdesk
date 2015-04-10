@@ -33,6 +33,8 @@ tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
 tests.push('superdesk/itemList/itemList');
 tests.push('superdesk/ui/ui');
+tests.push('superdesk/list/list');
+tests.push('superdesk/keyboard/keyboard');
 
 // apps
 tests.push('superdesk-authoring/authoring');
@@ -62,6 +64,7 @@ tests.push('superdesk-dashboard/module');
 tests.push('superdesk-dashboard/workspace-tasks/tasks');
 
 tests.push('superdesk-archive/module');
+tests.push('superdesk-archive/directives');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');

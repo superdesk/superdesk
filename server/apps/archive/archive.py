@@ -112,6 +112,7 @@ class ArchiveResource(Resource):
         'default_sort': [('_updated', -1)],
         'elastic_filter_callback': private_content_filter
     }
+    etag_ignore_fields = ['highlights']
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'PUT']
     versioning = True

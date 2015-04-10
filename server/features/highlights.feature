@@ -55,7 +55,8 @@ Feature: Highlights
         """
         {"_items": [{"name": "highlight changed", "desks": ["#desks._id#"]}]}
         """
-        
+   
+      
     @auth
     Scenario: Mark item for highlights
         Given "desks"
@@ -85,7 +86,18 @@ Feature: Highlights
         When we get "archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "test", "highlights": ["#highlights._id#"]}]}
+        {"_items": [{"headline": "test", "highlights": ["#highlights._id#"], 
+                    "_updated": "#archive._updated#", "_etag": "#archive._etag#"}]}
+        """
+
+        When we post to "marked_for_highlights"
+        """
+        [{"highlights": "#highlights._id#", "marked_item": "marked_item": "#archive._id#"}]
+        """
+        And we get "archive"
+        Then we get list with 1 items
+        """
+        {"_items": [{"highlights": [], "_updated": "#archive._updated#", "_etag": "#archive._etag#"}]}
         """
 
     @auth

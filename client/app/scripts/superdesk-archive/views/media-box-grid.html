@@ -3,18 +3,20 @@
 <div ng-click="clickAction(item)">
     <div class="error-box" ng-show="item.archiveError">
         <p class="message" translate>There was an error archiving this item</p>
-        <div class="buttons">
-
-        </div>
+        <div class="buttons"></div>
     </div>
 
-    <div class="media" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'">
+    <div class="media" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
         <span class="text">
-            <small title="{{ item.headline }}">{{item.headline | truncateString: 90}}</small>
+            <small title="{{ item.headline }}">{{item.headline | limitTo: 90}}</small>
             <span sd-item-container data-item="item" class="container"></span>
         </span>
-    </div>  
+
+        <div class="selectbox" ng-show="hover || multi.selected">
+            <span sd-check ng-model="multi.selected" ng-change="toggleSelected()"></span>
+        </div>
+    </div>
 
     <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
         <i class="filetype-icon-large-{{ item.type}}"></i>
@@ -22,7 +24,7 @@
 
     <div class="media-info">
 
-        <span ng-show="item.highlights" class="highlights-title" sd-highlights-title data-highlights="item.highlights"></span>
+        <span ng-if="item.highlights" sd-highlights-title data-item="item"></span>
 
         <h5 ng-class="{'shifted' : item.highlights}">
             <span ng-show="item.slugline">{{ item.slugline }}</span>

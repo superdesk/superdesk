@@ -24,6 +24,9 @@ from superdesk.errors import ParserError, ProviderError
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'aap'
+errors = [ParserError.nitfParserError().get_error_description(),
+          ProviderError.ingestError().get_error_description(),
+          ParserError.parseFileError().get_error_description()]
 
 
 class AAPIngestService(FileIngestService):
@@ -83,4 +86,4 @@ class AAPIngestService(FileIngestService):
             self.move_file(self.path, filename, provider=provider, success=False)
             raise ParserError.parseFileError('AAP', filename, ex, provider)
 
-register_provider(PROVIDER, AAPIngestService())
+register_provider(PROVIDER, AAPIngestService(), errors)

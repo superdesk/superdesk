@@ -34,6 +34,31 @@
                 scope.closeModal = function() {
                     scope.isModalOpen = false;
                 };
+
+                //Select boxes
+                scope.opts = ['Serbia', 'Czech Republic', 'Germany', 'Australia'];
+
+                //Typeahead
+                scope.taTerms = ['Serbia', 'Czech Republic', 'Germany', 'Australia', 'Canada', 'Russia', 'Italy', 'Egypt', 'China'];
+                scope.taSelected = null;
+                scope.taItems = [];
+
+                scope.taSearch = function(term) {
+                    scope.taItems = _.filter(scope.taTerms, function(t) {
+                        return t.toLowerCase().indexOf(term.toLowerCase()) !== -1;
+                    });
+                    return scope.taItems;
+                };
+
+                scope.taSelect = function(term) {
+                    scope.taSelected = term;
+                };
+
+                //datepicker
+                scope.dateNow = moment().utc().format();
+
+                //timepicker
+                scope.timeNow = moment().utc().format('HH:mm:ss');
             }
         };
     }

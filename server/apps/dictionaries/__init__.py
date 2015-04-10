@@ -9,8 +9,10 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import superdesk
-from apps.dictionaries.resource import DictionariesResource, DictionaryUploadResource
-from apps.dictionaries.service import DictionaryUploadService
+from apps.dictionaries.resource import DictionariesResource, DictionaryUploadResource,\
+    DictionaryAddWordResource
+from apps.dictionaries.service import DictionaryUploadService,\
+    DictionaryAddWordService
 from superdesk.services import BaseService
 
 
@@ -22,6 +24,10 @@ def init_app(app):
     endpoint_name = 'dictionary_upload'
     service = DictionaryUploadService(endpoint_name, backend=superdesk.get_backend())
     DictionaryUploadResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'dictionaries_addword'
+    service = DictionaryAddWordService(endpoint_name, backend=superdesk.get_backend())
+    DictionaryAddWordResource(endpoint_name, app=app, service=service)
 
     superdesk.privilege(name='dictionaries', label='Dictionaries List Management',
                         description='User can manage dictionaries lists.')

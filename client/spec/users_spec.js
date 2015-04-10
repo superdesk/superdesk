@@ -147,6 +147,27 @@ describe('Users', function() {
         });
     });
 
+    describe('default desk field should not be visible', function() {
+        beforeEach(function(done) {
+            openUrl('/#/users').then(done);
+        });
+
+        it('while creating a new user', function() {
+            var buttonCreate = element(by.className('sd-create-btn'));
+
+            buttonCreate.click();
+            expect(browser.driver.isElementPresent(by.id('user_default_desk'))).toBe(false);
+        });
+
+        it('while pre-viewing and user clicks on create new user', function() {
+            var buttonCreate = element(by.className('sd-create-btn'));
+            element.all(by.repeater('users')).first().click();
+
+            buttonCreate.click();
+            expect(browser.driver.isElementPresent(by.id('user_default_desk'))).toBe(false);
+        });
+    });
+
     function bindingValue(binding) {
         return element(by.binding(binding)).getText();
     }

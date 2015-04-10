@@ -104,8 +104,8 @@
         .directive('sdGroupeditBasic', GroupeditBasicDirective)
         .directive('sdGroupeditPeople', GroupeditPeopleDirective);
 
-    GroupsSettingsController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler'];
-    function GroupsSettingsController($scope, gettext, notify, api, groups, WizardHandler) {
+    GroupsSettingsController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler', 'modal'];
+    function GroupsSettingsController($scope, gettext, notify, api, groups, WizardHandler, modal) {
 
         $scope.modalActive = false;
         $scope.step = {
@@ -134,10 +134,14 @@
         };
 
         $scope.remove = function(group) {
-            api.groups.remove(group).then(function() {
-                _.remove($scope.groups._items, group);
-                notify.success(gettext('Group deleted.'), 3000);
-            });
+            modal.confirm(gettext('Are you sure you want to delete group?')).then(
+                function removeGroup() {
+                    api.groups.remove(group).then(function() {
+                        _.remove($scope.groups._items, group);
+                        notify.success(gettext('Group deleted.'), 3000);
+                    });
+                }
+            );
         };
     }
 

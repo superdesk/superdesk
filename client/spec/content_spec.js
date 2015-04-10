@@ -2,7 +2,8 @@
 'use strict';
 
 var openUrl = require('./helpers/utils').open,
-    workspace = require('./helpers/pages').workspace;
+    workspace = require('./helpers/pages').workspace,
+    content = require('./helpers/content');
 
 describe('Content', function() {
 
@@ -57,5 +58,26 @@ describe('Content', function() {
         expect(element.all(by.css('.state-border')).count()).toBe(3);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
+    });
+
+    function toggle(selectbox) {
+        browser.actions().mouseMove(selectbox).perform();
+        selectbox.element(by.css('.sd-checkbox')).click();
+    }
+
+    it('can select multiple items', function() {
+        content.setListView();
+        var count = element(by.id('multi-select-count')),
+            boxes = element.all(by.css('.list-field.type-icon'));
+
+        toggle(boxes.first());
+        expect(count.getText()).toBe('1 ITEM SELECTED');
+
+        toggle(boxes.last());
+        expect(count.getText()).toBe('2 ITEMS SELECTED');
+
+        element(by.css('.big-icon-multiedit')).click();
+        expect(browser.getCurrentUrl()).toMatch(/multiedit$/);
+        expect(element.all(by.repeater('board in boards')).count()).toBe(2);
     });
 });

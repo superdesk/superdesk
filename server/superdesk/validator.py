@@ -47,7 +47,7 @@ class SuperdeskValidator(Validator):
             :param value: field value.
         """
         regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" \
-                "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+(?:\.[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9])?)?$"
+                "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+(?:\.[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9])?)*$"
         if not re.match(regex, value, re.IGNORECASE):
             self._error(field, ERROR_PATTERN)
 

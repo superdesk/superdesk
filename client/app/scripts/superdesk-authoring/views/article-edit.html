@@ -33,9 +33,34 @@
         ng-trim="false"></textarea>
 	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
 </div>
-<div class="field">
+<div class="field" ng-if="!isMediaType">
 	<label translate>Body</label>
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
     <div sd-text-editor ng-model="item.body_html" ng-if="_editable" ng-change="autosave(item)" data-type="item.type"></div>
     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
+</div>
+
+<div ng-if="isMediaType" class="field abstract">
+  <label translate>Description</label>
+  <textarea class="abstract"
+        sd-auto-height
+        ng-model="item.description"
+        ng-change="autosave(item)"
+        ng-if="_editable"
+        ng-trim="false"></textarea>
+	<div class="abstract" ng-if="!_editable">{{item.description}}</div>
+</div>
+
+<div class="field" ng-if="isMediaType">
+  <div class="full-preview" ng-if="item.type == 'picture'" sd-ratio-calc>
+    <div class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
+  </div>
+  <div ng-if="item.type == 'audio'">
+    <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+  </div>
+
+  <div ng-if="item.type == 'video'">
+    <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+  </div>
+
 </div>

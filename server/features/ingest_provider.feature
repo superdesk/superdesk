@@ -121,6 +121,29 @@ Feature: Ingest Provider
 
     @auth
     @notification
+    Scenario: Update critical errors for ingest_provider
+        Given "ingest_providers"
+	    """
+        [{
+        "type": "reuters",
+        "name": "reuters 4",
+        "source": "reuters",
+        "is_closed": false,
+        "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+        Then we get updated response
+        """
+        {"critical_errors":{"6000":true, "6001":true}}
+        """
+
+
+    @auth
+    @notification
     Scenario: Open/Close ingest_provider
         Given "ingest_providers"
 	    """
@@ -231,3 +254,18 @@ Feature: Ingest Provider
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "opened"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
         Then we get no email
+
+    @auth
+    @notification
+    Scenario: Delete an Ingest Provider which hasn't received items
+        Given empty "ingest_providers"
+        When we post to "ingest_providers"
+	    """
+        [{
+          "type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false
+        }]
+	    """
+        And we get "/ingest_providers"
+        Then we get list with 1 items
+        When we delete "/ingest_providers/#ingest_providers._id#"
+        Then we get deleted response
