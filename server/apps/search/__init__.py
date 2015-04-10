@@ -12,7 +12,6 @@
 import superdesk
 from flask import current_app as app, json, g
 from apps.archive.common import aggregations
-from apps.archive.common import aggregations
 from eve_elastic.elastic import set_filters
 
 

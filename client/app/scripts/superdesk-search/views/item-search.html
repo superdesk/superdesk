@@ -1,15 +1,29 @@
 <form>
     <fieldset ng-if="context">
-        <div class="field">
-            <label for="ingest-collection">
-                {{:: 'Ingest' | translate}}
-                <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
-            </label>
+        <label> 
+            <input type="radio" value="local" ng-model="repo.search"> 
+            In Superdesk
+        </label>
+        <div ng-show="repo.search == 'local'">
+            <div class="field">
+                <label for="ingest-collection">
+                    {{:: 'Ingest' | translate}}
+                    <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
+                </label>
+            </div>
+            <div class="field">
+                <label for="archive-collection">
+                    {{:: 'Content' | translate}}
+                    <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
+                </label>
+            </div>
         </div>
-        <div class="field">
-            <label for="archive-collection">
-                {{:: 'Content' | translate}}
-                <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
+    </fieldset>
+    <fieldset ng-if="context">
+        <div ng-repeat="provider in providers">
+            <label ng-if="provider.type == 'search'"> 
+                <input type="radio" ng-value="provider.source" ng-model="repo.search"> 
+                {{:: provider.name}}
             </label>
         </div>
     </fieldset>

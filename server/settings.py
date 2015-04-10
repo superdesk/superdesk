@@ -155,7 +155,8 @@ INSTALLED_APPS = [
     'apps.publish',
     'apps.macros',
     'apps.dictionaries',
-    'apps.duplication'
+    'apps.duplication',
+    'apps.aap_mm'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -250,3 +251,6 @@ MACROS_MODULE = env('MACROS_MODULE', 'macros')
 
 WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
+
+AAP_MM_USER = env('AAP_MM_USER', None)
+AAP_MM_PASSWORD = env('AAP_MM_PASSWORD', None)

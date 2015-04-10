@@ -47,6 +47,9 @@ define([
         dpa: {
             label: 'DPA',
             templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
+        },
+        search: {
+            label: 'Search provider'
         }
     });
 
@@ -541,7 +544,9 @@ define([
                         }
                     });
 
-                    $scope.provider.config.field_aliases = newAliases;
+                    if (typeof($scope.provider.config) !== 'undefined') {
+                        $scope.provider.config.field_aliases = newAliases;
+                    }
                     delete $scope.provider.all_errors;
                     delete $scope.provider.source_errors;
 
@@ -1301,6 +1306,28 @@ define([
                 ],
                 privileges: {fetch: 1},
                 key: 'f'
+            })
+            .activity('externalsource', {
+                label: gettext('Get from external source'),
+                icon: 'archive',
+                monitor: true,
+                controller: ['api', 'data', 'desks', function(api, data, desks) {
+                    desks.fetchCurrentDeskId().then(function(deskid) {
+                        api(data.item.fetch_endpoint).save({
+                            guid: data.item.guid,
+                            desk: deskid
+                        })
+                        .then(
+                            function(response) {
+                                data.item.error = response;
+                            })
+                        ['finally'](function() {
+                            data.item.actioning.externalsource = false;
+                        });
+                    });
+                }],
+                filters: [{action: 'list', type: 'externalsource'}],
+                privileges: {fetch: 1}
             });
     }]);
 

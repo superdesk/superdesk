@@ -15,6 +15,7 @@ from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
 from .utils import import_by_path
 from flask import current_app as app
+from superdesk.aap_mm_datalayer import AAPMMDatalayer
 
 
 class SuperdeskDataLayer(DataLayer):
@@ -26,6 +27,7 @@ class SuperdeskDataLayer(DataLayer):
     def init_app(self, app):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
+        self.aapmm = AAPMMDatalayer(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
             self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()
