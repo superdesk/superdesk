@@ -90,6 +90,16 @@ Feature: Highlights
                     "_updated": "#archive._updated#", "_etag": "#archive._etag#"}]}
         """
 
+        When we post to "marked_for_highlights"
+        """
+        [{"highlights": "#highlights._id#", "marked_item": "marked_item": "#archive._id#"}]
+        """
+        And we get "archive"
+        Then we get list with 1 items
+        """
+        {"_items": [{"highlights": [], "_updated": "#archive._updated#", "_etag": "#archive._etag#"}]}
+        """
+
     @auth
     Scenario: Mark not available item for highlights
         Given "desks"
