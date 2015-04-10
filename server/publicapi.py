@@ -8,11 +8,22 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+"""
+A module that runs the Superdesk public API.
+
+The API is built using the `Eve framework <http://python-eve.org/>`_ and is
+thus essentially just a normal `Flask <http://flask.pocoo.org/>`_ application.
+
+.. note:: The public API should not be confused with the "internal" API that
+    is meant to be used by the Superdesk browser client only.
+"""
+
+
 from publicapi import app
 
 
 if __name__ == '__main__':
     app.run(
         port=5050,  # XXX: have PUBAPI_PORT in config... and other things
-        debug=True
+        debug=True  # TODO: remove before pushing to production (+ have in cfg)
     )
