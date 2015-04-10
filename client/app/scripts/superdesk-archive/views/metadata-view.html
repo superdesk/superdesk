@@ -3,7 +3,7 @@
         <dt translate>State</dt>
         <dd><div class="state-label state-{{item.state}}">{{item.state}}</div></dd>
     </dl>
-    <dl ng-if="item.guid">
+    <dl ng-if="item.guid" ng-hide="true">
         <dt translate>GUID</dt>
         <dd>{{ item.guid }}</dd>
     </dl>
