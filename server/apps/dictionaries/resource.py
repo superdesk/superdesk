@@ -11,24 +11,30 @@
 from superdesk.resource import Resource
 
 
-base_dictionary_schema = {
-    'name': {
-        'type': 'string',
-        'required': True
-    },
-    'language_id': {
-        'type': 'string',
-        'required': True
-    }
-}
+DICTIONARY_FILE = 'file'
 
 
 class DictionariesResource(Resource):
     '''
     Dictionaries schema
     '''
-    schema = base_dictionary_schema
-    schema.update({'content': {'type': 'list'}})
+    schema = {
+        'name': {
+            'type': 'string',
+            'required': True
+        },
+        'language_id': {
+            'type': 'string',
+            'required': True
+        },
+        'content': {
+            'type': 'list'
+        },
+        DICTIONARY_FILE: {
+            'type': 'file',
+            'required': True
+        }
+    }
     item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
     privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries', 'DELETE': 'dictionaries'}
@@ -42,17 +48,3 @@ class DictionaryAddWordResource(Resource):
     resource_methods = ['POST']
     resource_title = endpoint_name
     privileges = {'POST': 'dictionaries'}
-
-
-DICTIONARY_FILE = 'file'
-
-
-class DictionaryUploadResource(Resource):
-    schema = base_dictionary_schema
-    schema.update({DICTIONARY_FILE: {'type': 'file', 'required': True}})
-    datasource = {
-        'source': 'dictionaries'
-    }
-    item_methods = ['PATCH', 'GET', 'DELETE']
-    resource_methods = ['POST']
-    privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries'}

@@ -21,11 +21,11 @@ from eve import ETAG
 logger = logging.getLogger(__name__)
 
 
-class DictionaryUploadService(BaseService):
-
+class DictionaryService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            self._read_from_file(doc)
+            if doc.get(DICTIONARY_FILE):
+                self._read_from_file(doc)
 
     def on_created(self, docs):
         for doc in docs:
@@ -33,17 +33,17 @@ class DictionaryUploadService(BaseService):
 
     def on_update(self, updates, original):
         if updates.get(DICTIONARY_FILE):
-            self._read_from_file(updates)
+            words = Counter(original['content'])
+            self._read_from_file(updates, words)
 
-    def _read_from_file(self, doc):
+    def _read_from_file(self, doc, words=Counter()):
         content = doc[DICTIONARY_FILE]
         if 'text/' not in content.mimetype:
             raise SuperdeskApiError.badRequestError('A text dictionary file is required')
-        doc['content'] = self._read_from_stream(read_line_from_stream(content))
+        doc['content'] = self._read_from_stream(read_line_from_stream(content), words)
         del doc[DICTIONARY_FILE]
 
-    def _read_from_stream(self, stream):
-        words = Counter()
+    def _read_from_stream(self, stream, words=Counter()):
         for line in stream:
             line = line.strip()
             if line:

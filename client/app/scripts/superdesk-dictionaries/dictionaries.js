@@ -24,15 +24,27 @@
             api.find('dictionaries', dictionary._id, {projection: {content: 0}}).then(success, error);
         };
 
-        this.create = function create(dictionary, file, success, error) {
-            urls.resource('dictionary_upload').then(function(uploadURL) {
+        this.upload = function create(dictionary, file, success, error) {
+            var hasId = _.has(dictionary, '_id') && dictionary._id !== null;
+            var method = hasId ? 'PATCH' : 'POST';
+            var headers = hasId ? {'If-Match': dictionary._etag} : {};
+            var data = {
+                'name': dictionary.name,
+                'language_id': dictionary.language_id
+            };
+
+            urls.resource('dictionaries').then(function(uploadURL) {
+                if (hasId) {
+                    uploadURL += '/' + dictionary._id;
+                }
                 return $upload.upload({
                     url: uploadURL,
-                    method: 'POST',
-                    data: dictionary,
-                    file: file
+                    method: method,
+                    data: data,
+                    file: file,
+                    headers: headers
                 }).then(success, error);
-            });
+            }, error);
         };
 
         this.update = function update(dictionary, data, success, error) {
@@ -130,12 +142,12 @@
 
         $scope.canSave = function(form) {
             var hasId = _.has($scope.dictionary, '_id') && $scope.dictionary._id !== null;
-            return form.$valid && form.$dirty && (!hasId && $scope.file !== null || hasId);
+            return form.$valid && (form.$dirty || $scope.file !== null) && (!hasId && $scope.file !== null || hasId);
         };
 
         $scope.save = function() {
-            if (!_.has($scope.dictionary, '_id') || $scope.dictionary._id === null) {
-                dictionaries.create($scope.dictionary, $scope.file, onSuccess, onError);
+            if ($scope.file) {
+                dictionaries.upload($scope.dictionary, $scope.file, onSuccess, onError);
             } else {
                 dictionaries.update($scope.origDictionary, $scope.dictionary, onSuccess, onError);
             }
@@ -148,8 +160,7 @@
         $scope.addWord = function() {
             dictionaries.addWord($scope.dictionary, $scope.word.key,
                 function(updated, updates) {
-                    _.assign($scope.dictionary, _.omit(updated, 'content'));
-                    _.assign($scope.dictionary, _.omit(updates, 'word'));
+                    _.assign($scope.dictionary, _.omit(updated, ['content', 'word']));
                     $scope.word.key = null;
                     notify.success(gettext('Word added succesfully: ') + updates.word);
                 }, onError);
