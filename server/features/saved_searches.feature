@@ -29,7 +29,7 @@ Feature: Saved Searches
         Given empty "saved_searches"
         When we post to "/users"
         """
-        {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
+        {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
         """
         And we post to "/users/#users._id#/saved_searches"
         """
