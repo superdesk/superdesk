@@ -170,7 +170,8 @@
                 elem.on('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var highlight = e.target.parentNode.attributes['data-highlight'];
+                    var btn = e.target.nodeName === 'BUTTON' ? e.target : e.target.parentNode;
+                    var highlight = btn.attributes['data-highlight'];
                     if (highlight) {
                         unmarkHighlight(highlight.value);
                     }
