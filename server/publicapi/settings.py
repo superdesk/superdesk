@@ -19,12 +19,20 @@ The meaning of configuration options is described in the Eve framework
 MONGO_DBNAME = 'superdesk'  # XXX: read from superdesk settings?
 
 DOMAIN = {
-
-    # TODO: add endpoint for packages (type: composite)
-
+    # Superdesk content items, e.g. text, video, sound clip, etc.
     'items': {
         'datasource': {
-            'source': 'archive'
+            'source': 'archive',
+            'filter': {'type': 'text'}
+        }
+    },
+
+    # Superdesk packages, i.e. groups of logically related content items
+    # as created by the news editors / publishers
+    'packages': {
+        'datasource': {
+            'source': 'archive',
+            'filter': {'type': 'composite'}
         }
     },
 
