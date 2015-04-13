@@ -2,7 +2,7 @@
     <div class="search-container">
         <div class="search-box">
             <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query">
-            <div ng-if="highlight" align="right" left sd-search-highlights data-highlight="highlight"></div>
+            <div ng-show="highlight" align="right" left sd-search-highlights data-highlight="highlight"></div>
         </div>
 
         <div class="filter-list">

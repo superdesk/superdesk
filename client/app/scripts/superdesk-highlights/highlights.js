@@ -79,22 +79,13 @@
                 highlight: highlight._id
             };
 
-            if (highlight.groups && highlight.groups.length > 0) {
-                var groups = [{
-                    role: 'grpRole:NEP',
-                    refs: [{idRef: highlight.groups[0]}],
-                    id: 'root'
-                },
-                {
-                    refs: [],
-                    id: highlight.groups[0],
-                    role: 'grpRole:' + highlight.groups[0]
-                }];
+            var group = null;
 
-                pkg_defaults.groups = groups;
+            if (highlight.groups && highlight.groups.length > 0) {
+                group =  highlight.groups[0];
             }
 
-            return packages.createEmptyPackage(pkg_defaults);
+            return packages.createEmptyPackage(pkg_defaults, group);
         };
 
         return service;
@@ -372,7 +363,6 @@
 
         $scope.removeGroup = function(group) {
             $scope.configEdit.groups.splice($scope.configEdit.groups.indexOf(group), 1);
-            console.log('after remove: ', $scope.configEdit.groups);
         };
 
         $scope.cancelGroup = function() {
