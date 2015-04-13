@@ -27,6 +27,6 @@ Feature: Privilege
         Given we have "user" as type of user
         When we post to "/users"
             """
-            {"username": "foo", "email": "foo@example.com"}
+            {"username": "foo", "email": "foo@example.com", "sign_off": "abc"}
             """
         Then we get response code 201

@@ -106,7 +106,12 @@ class UsersResource(Resource):
             'type': 'boolean',
             'default': True
         },
-        'desk': Resource.rel('desks')  # Default desk of the user, which would be selected when logged-in.
+        'desk': Resource.rel('desks'),  # Default desk of the user, which would be selected when logged-in.
+        # Used for putting a sign-off on published content
+        'sign_off': {
+            'type': 'string',
+            'required': True
+        }
     }
 
     extra_response_fields = [
