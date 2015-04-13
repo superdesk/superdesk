@@ -316,6 +316,7 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
 def step_impl_when_post_url(context, url):
     post_data(context, url)
 
+
 def set_user_default(url, data):
     if is_user_resource(url):
         user = json.loads(data)

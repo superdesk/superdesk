@@ -37,6 +37,10 @@ class SubscribersResource(Resource):
                     'config': {'type': 'dict'}
                 }
             }
+        },
+        'is_active': {
+            'type': 'boolean',
+            'default': True
         }
     }
 
