@@ -18,14 +18,14 @@ describe('DICTIONARIES', function() {
             expect(dictionaries.getRow('Test 1').count()).toBe(0);
         });
 
-        it('add a word to dictionary', function() {
+        it('add/remove word in dictionary', function() {
             dictionaries.edit('Test 1');
-            dictionaries.addWord('theta');
+            dictionaries.search('theta');
+            expect(dictionaries.getWordsCount()).toBe(0);
             dictionaries.saveWord();
-            expect(dictionaries.getWord().getText()).toBe('');
-            dictionaries.getAddWordButton().isEnabled().then(
-                function(enabled) { expect(enabled).toBe(false); }
-            );
+            expect(dictionaries.getWordsCount()).toBe(1);
+            dictionaries.removeWord();
+            expect(dictionaries.getWordsCount()).toBe(0);
         });
     });
 

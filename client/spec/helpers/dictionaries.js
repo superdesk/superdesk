@@ -8,7 +8,6 @@ module.exports = new Dictionaries();
 function Dictionaries() {
     this.list = element.all(by.repeater('dictionary in dictionaries._items'));
     this.name = element(by.model('dictionary.name'));
-    this.word = element(by.model('word.key'));
 
     this.get = function() {
         openUrl('/#/settings/dictionaries');
@@ -52,9 +51,8 @@ function Dictionaries() {
         this.name.sendKeys(name);
     };
 
-    this.addWord = function(word) {
-        this.word.clear();
-        this.word.sendKeys(word);
+    this.search = function(word) {
+        element(by.id('words-search')).sendKeys(word);
     };
 
     this.save = function() {
@@ -66,7 +64,7 @@ function Dictionaries() {
     };
 
     this.saveWord = function() {
-        element(by.css('[ng-click="addWord()"]')).click();
+        element(by.buttonText('ADD WORD')).click();
     };
 
     this.getWord = function() {
@@ -75,5 +73,13 @@ function Dictionaries() {
 
     this.getAddWordButton = function() {
         return element(by.id('add-word-btn'));
+    };
+
+    this.getWordsCount = function () {
+        return element.all(by.repeater('word in words')).count();
+    };
+
+    this.removeWord = function(index) {
+        return element.all(by.repeater('word in words')).get(index || 0).element(by.css('button')).click();
     };
 }

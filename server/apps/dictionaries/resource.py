@@ -30,6 +30,9 @@ class DictionariesResource(Resource):
         'content': {
             'type': 'list'
         },
+        'content_list': {
+            'type': 'string',
+        },
         DICTIONARY_FILE: {
             'type': 'file',
             'required': True
