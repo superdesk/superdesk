@@ -33,7 +33,7 @@ Feature: Default Comments
         Given empty "comments"
         When we post to "users" with success
         """
-        {"username": "foo", "email": "foo@bar.com", "is_active": true}
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
         """
         When we post to "/comments"
         """
@@ -44,14 +44,14 @@ Feature: Default Comments
         {"_status": "ERR", "_message": "Commenting on behalf of someone else is prohibited."}
         """
 
-        
+
     @auth
     @notification
     Scenario: Create comment with one user mention
         Given empty "comments"
         When we post to "/users"
         """
-        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
         """
         Then we get new resource
         """
@@ -65,7 +65,7 @@ Feature: Default Comments
         Then we get list with 1 items
         """
         {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#users._id#"}}]}
-        """ 
+        """
         When we get "/users/test_user"
         Then we get "_id"
         And we get notifications
