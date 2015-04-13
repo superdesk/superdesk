@@ -536,15 +536,15 @@ def step_impl_when_upload_image_with_guid(context, file_name, destination, guid)
 @when('we upload a new dictionary with success')
 def when_upload_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
-    upload_file(context, '/dictionary_upload', 'test_dict.txt', DICTIONARY_FILE, data)
+    upload_file(context, '/dictionaries', 'test_dict.txt', DICTIONARY_FILE, data)
     assert_ok(context.response)
 
 
 @when('we upload to an existing dictionary with success')
 def when_upload_patch_dictionary(context):
     data = json.loads(apply_placeholders(context, context.text))
-    url = apply_placeholders(context, '/dictionary_upload/#dictionary_upload._id#')
-    etag = apply_placeholders(context, '#dictionary_upload._etag#')
+    url = apply_placeholders(context, '/dictionaries/#dictionaries._id#')
+    etag = apply_placeholders(context, '#dictionaries._etag#')
     upload_file(context, url, 'test_dict2.txt', DICTIONARY_FILE, data, 'patch', [('If-Match', etag)])
     assert_ok(context.response)
 

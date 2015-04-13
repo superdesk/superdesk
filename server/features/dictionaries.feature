@@ -17,5 +17,5 @@ Feature: Upload
         """
         Then we get existing resource
         """
-        {"name": "test", "language_id": "en", "content": ["alpha", "beta", "gamma"]}
+        {"name": "test", "language_id": "en", "content": [ "alpha", "beta", "first", "gamma", "second", "third" ]}
         """
