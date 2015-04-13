@@ -36,6 +36,10 @@ class OutputChannelsResource(Resource):
         'destinations': {
             'type': 'list',
             'schema': Resource.rel('subscribers', True)
+        },
+        'is_active': {
+            'type': 'boolean',
+            'default': True
         }
     }
 
