@@ -9,6 +9,7 @@
 
         $scope.showOutputChannels   = Boolean(user_privileges.output_channels);
         $scope.showDestinationGroups  = Boolean(user_privileges.destination_groups);
+        $scope.showSubscribers  = Boolean(user_privileges.subscribers);
     }
 
     AdminPublishSettingsService.$inject = ['api', '$q'];
@@ -18,6 +19,32 @@
         };
 
         var service = {
+            fetchSubscribers: function(criteria) {
+                criteria = criteria || {};
+                criteria.max_results = 200;
+                return _fetch('subscribers', criteria);
+            },
+
+            fetchSubscribersByKeyword: function(keyword) {
+                return this.fetchSubscribers({
+                    where: JSON.stringify({
+                        '$or': [
+                            {name: {'$regex': keyword, '$options': '-i'}}
+                        ]
+                    })
+                });
+            },
+
+            fetchSubscribersByIds: function(ids) {
+                var parts = [];
+                _.each(ids, function(id) {
+                    parts.push({_id: id});
+                });
+                return this.fetchSubscribers({
+                    where: JSON.stringify({'$or': parts})
+                });
+            },
+
             fetchOutputChannels: function(criteria) {
                 criteria = criteria || {};
                 criteria.max_results = 200;
@@ -72,6 +99,106 @@
         };
 
         return service;
+    }
+
+    DestinationDirective.$inject = [];
+    function DestinationDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-publish/views/destination.html',
+            scope: {
+                destination: '=',
+                actions: '='
+            },
+            link: function ($scope) {
+            }
+        };
+    }
+
+    SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
+    function SubscribersDirective(gettext, notify, api, adminPublishSettingsService, modal) {
+        return {
+            templateUrl: 'scripts/superdesk-publish/views/subscribers.html',
+            link: function ($scope) {
+                $scope.subscriber = null;
+                $scope.origSubscriber = null;
+                $scope.subscribers = null;
+                $scope.newDestination = null;
+
+                function fetchSubscribers() {
+                    adminPublishSettingsService.fetchSubscribers().then(
+                        function(result) {
+                            $scope.subscribers = result;
+                        }
+                    );
+                }
+
+                $scope.addNewDestination = function() {
+                    $scope.newDestination = {};
+                };
+
+                $scope.cancelNewDestination = function() {
+                    $scope.newDestination = null;
+                };
+
+                $scope.saveNewDestination = function() {
+                    $scope.subscriber.destinations = $scope.subscriber.destinations || [];
+                    $scope.subscriber.destinations.push($scope.newDestination);
+                    $scope.newDestination = null;
+                };
+
+                $scope.deleteDestination = function(destination) {
+                    _.remove($scope.subscriber.destinations, destination);
+                };
+
+                $scope.save = function() {
+                    $scope.subscriber.destinations = $scope.subscriber.destinations;
+                    api.subscribers.save($scope.origSubscriber, $scope.subscriber)
+                        .then(
+                            function() {
+                                notify.success(gettext('Subscriber saved.'));
+                                $scope.cancel();
+                            },
+                            function(response) {
+                                if (angular.isDefined(response.data._issues) &&
+                                        angular.isDefined(response.data._issues['validator exception'])) {
+                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                } else {
+                                    notify.error(gettext('Error: Failed to save Subscriber.'));
+                                }
+                            }
+                        ).then(fetchSubscribers);
+                };
+
+                $scope.edit = function(subscriber) {
+                    $scope.origSubscriber = subscriber || {};
+                    $scope.subscriber = _.create($scope.origSubscriber);
+                };
+
+                $scope.remove = function(subscriber) {
+                    modal.confirm(gettext('Are you sure you want to delete subscriber?'))
+                    .then(function() {
+                        api.subscribers.remove(subscriber)
+                        .then(function(result) {
+                            _.remove($scope.subscribers, subscriber);
+                        }, function(response) {
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
+                            } else {
+                                notify.error(gettext('There is an error. Subscriber cannot be deleted.'));
+                            }
+                        }).then(fetchSubscribers);
+                    });
+                };
+
+                $scope.cancel = function() {
+                    $scope.origSubscriber = null;
+                    $scope.subscriber = null;
+                    $scope.newDestination = null;
+                };
+
+                fetchSubscribers();
+            }
+        };
     }
 
     OutputChannelsDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
@@ -398,10 +525,12 @@
 
     app
         .service('adminPublishSettingsService', AdminPublishSettingsService)
+        .directive('sdAdminPubSubscribers', SubscribersDirective)
         .directive('sdAdminPubOutputChannels', OutputChannelsDirective)
         .directive('sdAdminPubDestinationGroups', DestinationGroupsDirective)
         .directive('sdOutputChannelsList', OutputChannelsListDirective)
-        .directive('sdDestinationGroupsList', DestinationGroupsListDirective);
+        .directive('sdDestinationGroupsList', DestinationGroupsListDirective)
+        .directive('sdDestination', DestinationDirective);
 
     app
         .config(['superdeskProvider', function(superdesk) {
@@ -427,6 +556,12 @@
                 type: 'http',
                 backend: {
                     rel: 'destination_groups'
+                }
+            });
+            apiProvider.api('subscribers', {
+                type: 'http',
+                backend: {
+                    rel: 'subscribers'
                 }
             });
         }]);
