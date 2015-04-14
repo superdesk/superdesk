@@ -1,5 +1,5 @@
 <div class="subnav">
-	
+
 	<div class="button-stack" ng-if="privileges.users">
         <a class="navbtn navbtn-info navbtn-hover" href="" ng-click="intent('list', 'user')">
             <i class="svg-icon-left inverse"></i> <span class="title" translate>Back to Users list</span>
@@ -32,22 +32,6 @@
 		    </div>
 		</div>
 	</div>
-	<!-- 
-	<div class="other-content" sd-beta>
-		<div class="tablist-container">
-			<ul>
-				<li class="active">Activity log</li>
-				<li>Analytics</li>
-				<li>Contributions</li>
-				<li>Payment</li>
-				<li>Biography</li>
-			</ul>
-		</div>
-		<div class="tabcontent-container">
-			<div class="profile-activity-container" data-user="user"></div>
-		</div>
-	</div>
-	 -->
 	<div class="other-content">
 		<div sd-user-activity data-user="user"></div>
 	</div>
