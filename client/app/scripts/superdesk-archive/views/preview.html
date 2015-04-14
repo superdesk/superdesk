@@ -4,7 +4,7 @@
         <div class="composite-nav" ng-if="selected.preview.type === 'composite'">
            <div class="top">
                <span><i class="filetype-icon-large-composite"></i> {{ selected.preview.slugline }}</span>
-           </div> 
+           </div>
         </div>
 
         <div class="action-menu">
@@ -28,7 +28,7 @@
         <p class="title" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
         <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
-        
+
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
 		<div ng-if="selected.preview.highlights">
@@ -40,10 +40,10 @@
 			<p ng-if="selected.preview.is_spiked" class="alert alert-warning expires">
                 <span translate>expires</span> <time sd-datetime data-date="selected.preview.expiry"></time>
 			</p>
-            
+
             <!-- item rendition -->
             <div class="picture-preview" sd-item-rendition data-item="selected.preview" data-rendition="viewImage"></div>
-            
+
             <div ng-if="selected.preview.type == 'audio'">
                 <audio controls="controls" sd-sources data-renditions="selected.preview.renditions"></audio>
             </div>
@@ -54,13 +54,9 @@
 
             <div class="text abstract" ng-show="selected.preview.abstract" sd-html-preview="selected.preview.abstract"></div>
 
-            <div class="text" ng-show="selected.preview.type !== 'preformatted' && selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
+            <div class="text body-text" ng-show="selected.preview.type !== 'preformatted' && selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
 
-            <div class="text" ng-show="selected.preview.type === 'preformatted' && selected.preview.body_html" sd-html-preview="'<pre class=wrap>' + selected.preview.body_html + '</pre>'"></div>
-            <div class="text body-text" ng-show="selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
-            <div class="text" ng-show="selected.preview.type !== 'preformatted' && selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
-            <div class="text" ng-show="selected.preview.type === 'preformatted' && selected.preview.body_html" sd-html-preview="'<pre class=wrap>' + selected.preview.body_html + '</pre>'"></div>
-            <div class="text body-text" ng-show="selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
+            <div class="text body-text" ng-show="selected.preview.type === 'preformatted' && selected.preview.body_html" sd-html-preview="'<pre class=wrap>' + selected.preview.body_html + '</pre>'"></div>
 
             <div class="composite-preview" ng-if="selected.preview.type === 'composite'">
                 <div sd-package data-item="selected.preview" data-setitem="openSingleItem(selected)"></div>
