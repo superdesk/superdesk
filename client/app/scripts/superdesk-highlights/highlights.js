@@ -347,13 +347,6 @@
                 $scope.configEdit.groups[$scope.editingGroup.id - 1] === group;
         };
 
-        $scope.selectGroup = function(group) {
-            if ($scope.editingGroup && $scope.editingGroup.name !== group) {
-                return false;
-            }
-            $scope.selectedGroup = group;
-        };
-
         $scope.editGroup = function(group) {
             if (group !== '') {
                 $scope.editingGroup = {'name': group, 'id': $scope.configEdit.groups.indexOf(group) + 1};
