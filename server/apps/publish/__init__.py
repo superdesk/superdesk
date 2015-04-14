@@ -16,6 +16,7 @@ from apps.publish.archive_publish import ArchivePublishResource, ArchivePublishS
 from apps.publish.destination_groups import DestinationGroupsResource, DestinationGroupsService
 from apps.publish.output_channels import OutputChannelsResource, OutputChannelsService
 from apps.publish.subscribers import SubscribersResource, SubscribersService
+from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
 from superdesk import get_backend
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,10 @@ def init_app(app):
     endpoint_name = 'subscribers'
     service = SubscribersService(endpoint_name, backend=get_backend())
     SubscribersResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'publish_queue'
+    service = PublishQueueService(endpoint_name, backend=get_backend())
+    PublishQueueResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'output_channels'
     service = OutputChannelsService(endpoint_name, backend=get_backend())
@@ -46,3 +51,5 @@ def init_app(app):
                         description='User can manage output channels')
     superdesk.privilege(name='subscribers', label='Subscribers',
                         description='User can manage subscribers')
+    superdesk.privilege(name='publish_queue', label='Publish Queue',
+                        description='User can update publish queue')

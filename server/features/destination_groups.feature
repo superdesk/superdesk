@@ -60,7 +60,7 @@ Feature:Destination Groups
     """
     [{
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}]
     }]
     """
@@ -68,7 +68,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}]
     }
     """
@@ -126,7 +126,7 @@ Feature:Destination Groups
     """
     [{
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": []
     }]
     """
@@ -134,7 +134,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": []
     }
     """
@@ -170,7 +170,7 @@ Feature:Destination Groups
     """
     [{
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": []
     }]
     """
@@ -178,7 +178,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 2", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup1#"}],
+      "destination_groups": ["#destgroup1#"],
       "output_channels": []
     }
     """
@@ -186,7 +186,7 @@ Feature:Destination Groups
     """
     [{
       "name":"Group 3", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup2#"}],
+      "destination_groups": ["#destgroup2#"],
       "output_channels": []
     }]
     """
@@ -194,7 +194,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 3", "description": "new stuff",
-      "destination_groups": [{"group":"#destgroup2#"}],
+      "destination_groups": ["#destgroup2#"],
       "output_channels": []
     }
     """
@@ -202,7 +202,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 1 testing",
-      "destination_groups": [{"group":"#destgroup2#"}]
+      "destination_groups": ["#destgroup2#"]
     }
     """
     Then we get error 400
@@ -213,7 +213,7 @@ Feature:Destination Groups
     """
     {
       "name":"Group 1 testing",
-      "destination_groups": [{"group":"#destgroup1#"}, {"group": "#destgroup3#"}]
+      "destination_groups": ["#destgroup1#", "#destgroup3#"]
     }
     """
     Then we get error 400
@@ -264,9 +264,9 @@ Feature:Destination Groups
             },
             "actions": {
               "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#",
-                        "destination_groups": [{"group": "#destgroup1#"}]}],
+                        "destination_groups": ["#destgroup1#"]}],
               "publish": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#",
-                        "destination_groups": [{"group": "#destgroup2#"}]}],
+                        "destination_groups": ["#destgroup2#"]}],
               "exit": false
             }
           }
@@ -311,9 +311,8 @@ Feature:Destination Groups
     [
       {
         "guid": "tag:example.com,0000:newsml_BRE9A605",
-        "destination_groups": [
-          {"group": "#destgroup1#"}
-        ], "task" : {"desk": "#sportsdesk#", "user": "#CONTEXT_USER_ID#"}
+        "destination_groups": ["#destgroup1#"],
+        "task" : {"desk": "#sportsdesk#", "user": "#CONTEXT_USER_ID#"}
       }
     ]
     """
@@ -322,9 +321,7 @@ Feature:Destination Groups
     Then we get existing resource
     """
     {"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "draft",
-        "destination_groups": [
-          {"group": "#destgroup1#"}
-        ]
+        "destination_groups": ["#destgroup1#"]
     }
     """
     When we delete "/destination_groups/#destgroup1#"

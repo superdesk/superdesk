@@ -99,12 +99,7 @@ class ArchiveResource(Resource):
         'task': {'type': 'dict'},
         'destination_groups': {
             'type': 'list',
-            'schema': {
-                'type': 'dict',
-                'schema': {
-                    'group': Resource.rel('destination_groups', True)
-                }
-            }
+            'schema': Resource.rel('destination_groups', True)
         }
     }
 
