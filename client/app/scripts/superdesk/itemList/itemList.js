@@ -6,7 +6,7 @@ var DEFAULT_OPTIONS = {
     endpoint: 'search',
     pageSize: 25,
     page: 1,
-    sort: [{versioncreated: 'desc'}]
+    sort: [{_updated: 'desc'}]
 };
 
 angular.module('superdesk.itemList', ['superdesk.search'])
@@ -66,7 +66,7 @@ angular.module('superdesk.itemList', ['superdesk.search'])
             query.source.query.filtered.filter.and.push({or: stateQuery});
         }
         // process creation date
-        var dateKeys = {creationDate: 'firstcreated', modificationDate: 'versioncreated'};
+        var dateKeys = {creationDate: '_created', modificationDate: '_updated'};
         var dateQuery = null;
         _.each(dateKeys, function(key, field) {
             if (options[field + 'Before'] || options[field + 'After']) {
