@@ -111,16 +111,11 @@ class PreferencesService(BaseService):
 
         if session_id in session_prefs:
             del session_prefs[session_id]
-            service.patch(user_id, {_session_preferences_key: session_prefs})
+            service.system_update(user_id, {_session_preferences_key: session_prefs}, user_doc)
 
     def set_session_based_prefs(self, session_id, user_id):
-        user_doc = get_resource_service('users').find_one(req=None, _id=user_id)
-        updates = {}
-        if _user_preferences_key not in user_doc:
-            orig_user_prefs = user_doc.get(_preferences_key, {})
-            available = dict(superdesk.default_user_preferences)
-            available.update(orig_user_prefs)
-            updates[_user_preferences_key] = available
+        service = get_resource_service('users')
+        user_doc = service.find_one(req=None, _id=user_id)
 
         session_prefs = user_doc.get(_session_preferences_key, {})
         available = dict(superdesk.default_session_preferences)
@@ -128,9 +123,7 @@ class PreferencesService(BaseService):
             available['desk:last_worked'] = user_doc.get('desk')
 
         session_prefs.setdefault(str(session_id), available)
-        updates[_session_preferences_key] = session_prefs
-
-        self.backend.update(self.datasource, user_id, updates, user_doc)
+        service.system_update(user_id, {_session_preferences_key: session_prefs}, user_doc)
 
     def set_user_initial_prefs(self, user_doc):
         if _user_preferences_key not in user_doc:
@@ -155,7 +148,6 @@ class PreferencesService(BaseService):
         self.enhance_document_with_user_privileges(doc)
 
     def on_update(self, updates, original):
-        # Beware, dragons ahead
         existing_user_preferences = original.get(_user_preferences_key, {}).copy()
         existing_session_preferences = original.get(_session_preferences_key, {}).copy()
 

@@ -122,7 +122,7 @@ class UsersResource(Resource):
         'desk'
     ]
 
-    etag_ignore_fields = ['session_preferences']
+    etag_ignore_fields = ['session_preferences', '_etag']
 
     datasource = {
         'projection': {
