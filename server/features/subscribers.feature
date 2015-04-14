@@ -73,7 +73,7 @@ Feature: Subscribers
       "name":"Channel 3"
     }
     """
-    When we post to "/output_channels"
+    When we post to "/output_channels" with success
     """
     [
       {
