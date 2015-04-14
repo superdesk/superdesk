@@ -25,8 +25,6 @@
               <span sd-switch ng-model="$parent._active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
-
-        
         <div class="details-info form-flat" ng-class="{shifted : error}">
             <div class="title">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
             <fieldset class="label-light">
@@ -64,6 +62,12 @@
                     <i class="icon-info-sign-warning"></i>
                     <span translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.)</span>
                   </div>
+                </div>
+
+                <div sd-info-item>
+                  <label for="sign_off" translate>sign off</label>
+                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" required ng-readonly="user._readonly">
+                  <i ng-show="userForm.sign_off.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && user.is_enabled && _active" id="password-reset-trigger">
@@ -152,7 +156,7 @@
     </div>
     <form name="changePasswordForm">
       <div class="content">
-          
+
         <div class="field">
           <label translate>current</label>
           <input name="old" type="password" ng-model="oldPwd" required>
@@ -171,7 +175,7 @@
             sd-password-confirm ng-model="_confirm" data-password="newPwd">
           <p sd-valid-error ng-show="changePasswordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
         </div>
-          
+
       </div>
       <div class="foooter">
           <button class="btn btn-small" ng-click="show.change_password = false" translate>Cancel</button>
