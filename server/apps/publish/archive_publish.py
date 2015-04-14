@@ -20,8 +20,10 @@ from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 import superdesk
+from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
+import itertools
 
 
 logger = logging.getLogger(__name__)
@@ -69,6 +71,85 @@ class ArchivePublishService(BaseService):
         except Exception as e:
             logger.error("Something bad happened while publishing %s".format(id), e)
             raise SuperdeskApiError.internalError(message="Failed to publish the item")
+
+    def queue_transmission(self, doc):
+        if doc.get('destination_groups'):
+            destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
+            output_channels, selector_codes, formatters = self.resolve_output_channels(destination_groups.values())
+
+            for output_channel in output_channels.values():
+                subscribers = self.get_subscribers(output_channel)
+                if subscribers.count() > 0:
+                    # format the doc
+                    # formatted_item = format(doc)
+                    formatted_item = str(doc['body_html'])
+                    publish_queue_items = []
+
+                    for subscriber in subscribers:
+                        for destination in subscriber.get('destinations', []):
+                            publish_queue_item = {}
+                            publish_queue_item['formatted_item'] = formatted_item
+                            publish_queue_item['destination'] = destination
+                            publish_queue_item['item_id'] = doc['_id']
+                            publish_queue_item['item_id'] = doc.get('last_version', 0)
+                            publish_queue_item['subscriber_id'] = subscriber['_id']
+                            publish_queue_item['output_channel_id'] = output_channel['_id']
+                            publish_queue_items.append(publish_queue_item)
+
+                    get_resource_service('publish_queue').post(publish_queue_items)
+
+    def resolve_destination_groups(self, dg_ids, destination_groups=None):
+        '''
+        This function flattens and returns the unique list of destination_groups
+        :param dg_ids: initial list of destination group ids to be resolved and flatten
+        :param destination_groups: dictionary of resolved id, destination_group
+        :return: destination_groups
+        '''
+        if destination_groups is None:
+            destination_groups = {}
+
+        lookup = {'_id': {'$in': dg_ids}}
+        dgs = get_resource_service('destination_groups').get(req=None, lookup=lookup)
+        for dg in dgs:
+            if dg.get('destination_groups'):
+                self.resolve_destination_groups(dg.get('destination_groups'), destination_groups)
+            destination_groups[dg['_id']] = dg
+        return destination_groups
+
+    def resolve_output_channels(self, destination_groups):
+        '''
+        This function returns the flattened list of output channels for a given unique
+        list of destination groups
+        :param destination_groups: unique list of destinations groups
+        :return: output_channels:dictionary of resolved id, output_channel,
+        lis of selector_codes, list of resolved formatters
+        '''
+        output_channels = {}
+        selector_codes = []
+        formatters = []
+        for destination_group in destination_groups:
+            if destination_group.get('output_channels'):
+                oc_ids = [oc['channel'] for oc in destination_group.get('output_channels', [])]
+                lookup = {'_id': {'$in': oc_ids}}
+                ocs = get_resource_service('output_channels').get(req=None, lookup=lookup)
+                for oc in ocs:
+                    output_channels[oc['_id']] = oc
+                    formatters.append(oc['format'])
+                selector_codes.extend(oc['selector_codes'] for oc in destination_group.get('output_channels'))
+        return output_channels, list(set(itertools.chain(*selector_codes))), list(set(formatters))
+
+    def get_subscribers(self, output_channel):
+        '''
+        Returns the list of subscribers for a given output channel
+        :param output_channel: an output channel
+        :return:list of subscribers
+        '''
+        if output_channel['destinations']:
+            subscriber_ids = output_channel['destinations']
+            lookup = {'_id': {'$in': subscriber_ids}}
+            return get_resource_service('subscribers').get(req=None, lookup=lookup)
+        else:
+            return None
 
     def __publish_package_items(self, package, last_updated):
         """

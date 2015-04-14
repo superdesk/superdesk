@@ -38,8 +38,8 @@ Feature: Routing Scheme and Routing Rules
                               "stage": "#desks.incoming_stage#",
                               "macro": "transform",
                               "destination_groups":[
-                                {"group": "#dest_groups1#"},
-                                {"group": "#dest_groups2#"}
+                                "#dest_groups1#",
+                                "#dest_groups2#"
                               ]}]
               }
             }

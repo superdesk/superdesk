@@ -34,10 +34,7 @@ Feature: Auto Routing
                     {
                       "desk": "#desks._id#",
                       "stage": "#desks.incoming_stage#",
-                      "destination_groups": [
-                        {"group": "#dest_groups1#"},
-                        {"group": "#dest_groups2#"}
-                      ]
+                      "destination_groups": ["#dest_groups1#","#dest_groups2#"]
                     }],
                   "exit": false
                 }
