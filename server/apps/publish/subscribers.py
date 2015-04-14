@@ -17,25 +17,26 @@ from superdesk.errors import SuperdeskApiError
 logger = logging.getLogger(__name__)
 
 
-class OutputChannelsResource(Resource):
+class SubscribersResource(Resource):
     schema = {
         'name': {
             'type': 'string',
             'iunique': True,
             'required': True,
         },
-        'description': {
-            'type': 'string'
-        },
-        'format': {
-            'type': 'string'
-        },
-        'channel_type': {
+        'subscriber_type': {
             'type': 'string'
         },
         'destinations': {
             'type': 'list',
-            'schema': Resource.rel('subscribers', True)
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string'},
+                    'delivery_type': {'type': 'string'},
+                    'config': {'type': 'dict'}
+                }
+            }
         },
         'is_active': {
             'type': 'boolean',
@@ -44,13 +45,13 @@ class OutputChannelsResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
-    privileges = {'POST': 'output_channels', 'DELETE': 'output_channels', 'PATCH': 'output_channels'}
+    privileges = {'POST': 'subscribers', 'DELETE': 'subscribers', 'PATCH': 'subscribers'}
 
 
-class OutputChannelsService(BaseService):
+class SubscribersService(BaseService):
     def on_delete(self, doc):
-        lookup = {'output_channels.channel': str(doc.get('_id'))}
-        dest_groups = get_resource_service('destination_groups').get(req=None, lookup=lookup)
-        if dest_groups and dest_groups.count() > 0:
+        lookup = {'destinations': str(doc.get('_id'))}
+        subscribers = get_resource_service('output_channels').get(req=None, lookup=lookup)
+        if subscribers and subscribers.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
-                message='Output Channel is associated with Destination Groups.')
+                message='Subscriber is associated with Output Channel.')
