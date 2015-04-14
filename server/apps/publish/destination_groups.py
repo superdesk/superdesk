@@ -33,12 +33,7 @@ class DestinationGroupsResource(Resource):
         },
         'destination_groups': {
             'type': 'list',
-            'schema': {
-                'type': 'dict',
-                'schema': {
-                    'group': Resource.rel('destination_groups', True)
-                }
-            }
+            'schema': Resource.rel('destination_groups', True)
         },
         'output_channels': {
             'type': 'list',
@@ -69,7 +64,7 @@ class DestinationGroupsService(BaseService):
                 "filtered": {
                     "filter": {
                         "term": {
-                            "destination_groups.group": str(doc_id)
+                            "destination_groups": str(doc_id)
                         }
                     }
                 }
@@ -85,7 +80,7 @@ class DestinationGroupsService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by items.')
 
-        dest_groups = self.get(req=None, lookup={'destination_groups.group': doc_id})
+        dest_groups = self.get(req=None, lookup={'destination_groups': doc_id})
         if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Destination Group is referenced by other Destination Group/s.')
@@ -93,8 +88,8 @@ class DestinationGroupsService(BaseService):
         dest_groups = get_resource_service('routing_schemes') \
             .get(req=None,
                  lookup={'$or': [
-                     {'rules.actions.fetch.destination_groups.group': doc_id},
-                     {'rules.actions.publish.destination_groups.group': doc_id}
+                     {'rules.actions.fetch.destination_groups': doc_id},
+                     {'rules.actions.publish.destination_groups': doc_id}
                  ]})
 
         if dest_groups and dest_groups.count() > 0:
@@ -107,13 +102,14 @@ class DestinationGroupsService(BaseService):
                 raise SuperdeskApiError.badRequestError(
                     message='Circular dependency in Destination Group.')
 
-    def __is_self_referenced(self, dest_group_id, dest_groups=[]):
+    def __is_self_referenced(self, dest_group_id, dest_groups):
         dest_groups = dest_groups or []
-        for dest_group in dest_groups:
-            if str(dest_group_id) == str(dest_group['group']):
-                return True
 
-            group = self.find_one(req=None, _id=dest_group['group'])
+        if dest_group_id in dest_groups:
+            return True
+
+        for id in dest_groups:
+            group = self.find_one(req=None, _id=id)
             referenced_groups = group.get('destination_groups', [])
             if referenced_groups:
                 return self.__is_self_referenced(dest_group_id, referenced_groups)

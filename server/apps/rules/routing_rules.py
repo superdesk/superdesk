@@ -57,12 +57,7 @@ class RoutingRuleSchemeResource(Resource):
                                         'macro': {'type': 'string'},
                                         'destination_groups': {
                                             'type': 'list',
-                                            'schema': {
-                                                'type': 'dict',
-                                                'schema': {
-                                                    'group': Resource.rel('destination_groups', True)
-                                                }
-                                            }
+                                            'schema': Resource.rel('destination_groups', True)
                                         }
                                     }
                                 }
@@ -77,12 +72,7 @@ class RoutingRuleSchemeResource(Resource):
                                         'macro': {'type': 'string'},
                                         'destination_groups': {
                                             'type': 'list',
-                                            'schema': {
-                                                'type': 'dict',
-                                                'schema': {
-                                                    'group': Resource.rel('destination_groups', True)
-                                                }
-                                            }
+                                            'schema': Resource.rel('destination_groups', True)
                                         }
                                     }
                                 }
