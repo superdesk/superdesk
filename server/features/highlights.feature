@@ -8,18 +8,19 @@ Feature: Highlights
 		"""	
         When we post to "highlights"
         """
-        {"name": "highlight1", "desks": ["#desks._id#"]}
+        {"name": "highlight1", "desks": ["#desks._id#"], "groups": ["group one", "group two"]}
         """
+        Then we get response code 201
         Then we get new resource
         """
-        {"name": "highlight1", "desks": ["#desks._id#"]}
+        {"name": "highlight1", "desks": ["#desks._id#"], "groups": ["group one", "group two"]}
         """
         When we get "highlights"
         Then we get list with 1 items
         """
-        {"_items": [{"name": "highlight1", "desks": ["#desks._id#"]}]}
+        {"_items": [{"name": "highlight1", "desks": ["#desks._id#"], "groups": ["group one", "group two"]}]}
         """
-        
+                
     @auth
     Scenario: Create duplicate highlight
         Given "desks"
@@ -48,12 +49,12 @@ Feature: Highlights
         """
         When we patch "highlights/#highlights._id#"
         """
-        {"name": "highlight changed", "desks": ["#desks._id#"]}
+        {"name": "highlight changed", "desks": ["#desks._id#"], "groups": ["group one", "group two"]}
         """
         When we get "highlights"
         Then we get list with 1 items
         """
-        {"_items": [{"name": "highlight changed", "desks": ["#desks._id#"]}]}
+        {"_items": [{"name": "highlight changed", "desks": ["#desks._id#"], "groups": ["group one", "group two"]}]}
         """
    
       

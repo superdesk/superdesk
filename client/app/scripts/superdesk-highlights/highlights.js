@@ -79,7 +79,13 @@
                 highlight: highlight._id
             };
 
-            return packages.createEmptyPackage(pkg_defaults);
+            var group = null;
+
+            if (highlight.groups && highlight.groups.length > 0) {
+                group =  highlight.groups[0];
+            }
+
+            return packages.createEmptyPackage(pkg_defaults, group);
         };
 
         return service;
@@ -246,6 +252,8 @@
         $scope.modalActive = false;
         $scope.hours = _.range(1, 25);
         $scope.auto = {day: 'now/d', week: 'now/w'};
+        $scope.limits = 45;
+
         var _config;
 
         $scope.edit = function(config) {
@@ -253,9 +261,14 @@
             $scope.modalActive = true;
             $scope.configEdit = _.create(config);
             $scope.assignedDesks = deskList(config.desks);
+            $scope.editingGroup = null;
+            $scope.selectedGroup = null;
             _config = config;
             if (!$scope.configEdit.auto_insert) {
                 $scope.configEdit.auto_insert = 'now/d'; // today
+            }
+            if (!$scope.configEdit.groups) {
+                $scope.configEdit.groups = [];
             }
         };
 
@@ -266,6 +279,11 @@
         $scope.save = function() {
             var _new = !_config._id;
             $scope.configEdit.desks = assignedDesks();
+            if ($scope.configEdit.groups.length === 0) {
+                $scope.configEdit.groups = ['main'];
+            } else {
+                $scope.configEdit.groups = $scope.configEdit.groups.slice(0);
+            }
             api.highlights.save(_config, $scope.configEdit)
             .then(function(item) {
                 $scope.message = null;
@@ -324,6 +342,50 @@
                 });
         }
 
+        $scope.isActiveGroup = function(group) {
+            return $scope.editingGroup && $scope.editingGroup.id &&
+                $scope.configEdit.groups[$scope.editingGroup.id - 1] === group;
+        };
+
+        $scope.selectGroup = function(group) {
+            if ($scope.editingGroup && $scope.editingGroup.name !== group) {
+                return false;
+            }
+            $scope.selectedGroup = group;
+        };
+
+        $scope.editGroup = function(group) {
+            if (group !== '') {
+                $scope.editingGroup = {'name': group, 'id': $scope.configEdit.groups.indexOf(group) + 1};
+            } else {
+                $scope.editingGroup = {'name': '', 'id': 0};
+            }
+        };
+
+        $scope.removeGroup = function(group) {
+            $scope.configEdit.groups.splice($scope.configEdit.groups.indexOf(group), 1);
+        };
+
+        $scope.cancelGroup = function() {
+            $scope.editingGroup = null;
+            $scope.selectedGroup = null;
+        };
+
+        $scope.saveGroup = function() {
+            if ($scope.editingGroup.id === 0) {
+                $scope.configEdit.groups.push($scope.editingGroup.name);
+            } else if ($scope.editingGroup.id > 0) {
+                $scope.configEdit.groups[$scope.editingGroup.id - 1] = $scope.editingGroup.name;
+            }
+            $scope.cancelGroup();
+        };
+
+        $scope.handleGroupEdit = function($event) {
+            $scope._errorLimits = null;
+            if ($scope.editingGroup && $scope.editingGroup.name) {
+                $scope._errorLimits = $scope.editingGroup.name.length > $scope.limits ? true : null;
+            }
+        };
     }
 
     var app = angular.module('superdesk.highlights', [

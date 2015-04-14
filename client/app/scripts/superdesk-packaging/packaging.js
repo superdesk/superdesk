@@ -46,8 +46,8 @@
             return api.archive.save(new_package);
         };
 
-        this.createEmptyPackage = function createEmptyPackage(defaults) {
-            var idRef = 'main';
+        this.createEmptyPackage = function createEmptyPackage(defaults, idRef) {
+            idRef = idRef || 'main';
             var new_package = {
                 headline: '',
                 slugline: '',
@@ -217,7 +217,20 @@
 
         $scope.$watch('item', function(item) {
             $scope.highlight = item.highlight;
-            init = true;
+            if ($scope.highlight) {
+                api('highlights').getById($scope.highlight)
+                .then(function(result) {
+                    $scope.groupList = result.groups;
+                    init = true;
+                    fetchContentItems();
+                }, function(response) {
+                    init = true;
+                    fetchContentItems();
+                });
+            } else {
+                init = true;
+                fetchContentItems();
+            }
         });
 
         $scope.$watch('item.groups', function() {
