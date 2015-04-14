@@ -21,7 +21,7 @@ from superdesk.notification import push_notification
 from superdesk.activity import ACTIVITY_EVENT, notify_and_add_activity
 from superdesk.io import providers
 from superdesk.celery_app import celery
-from superdesk.utc import utcnow, get_expiry_date
+from superdesk.utc import utcnow, get_expiry_date, get_date
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
@@ -30,6 +30,8 @@ from superdesk.media.media_operations import download_file_from_url, process_fil
 from superdesk.media.renditions import generate_renditions
 from superdesk.io.iptc import subject_codes
 from apps.archive.common import generate_guid, GUID_NEWSML, GUID_FIELD, FAMILY_ID
+from eve.utils import date_to_str
+
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
@@ -60,6 +62,70 @@ def is_valid_type(provider, provider_type_filter=None):
     if provider_type_filter and provider_type != provider_type_filter:
         return False
     return True
+
+
+def get_ingest_running_key(provider):
+    return 'ingest-running-{0}'.format(provider.get(superdesk.config.ID_FIELD))
+
+
+def ingest_for_provider_is_already_running(provider):
+    """
+    Returns False if the provider was never run before or is not currently running.
+    True otherwise.
+    If the provider is not already running, we set it as running using locking.
+    """
+    def set_if_not_running(pipe):
+        last_updated = pipe.get(key)
+        if last_updated:
+            last_updated = get_date(str(last_updated))
+            delta = last_updated + update_schedule
+            if delta < now:
+                logger.warn('Overwritting running key for provider {0}'.format(provider[superdesk.config.ID_FIELD]))
+                pipe.set(key, date_to_str(now))
+                return True
+            else:
+                logger.warn('Update ingest already running for provider {0}, last_updated={1}'.format(provider[superdesk.config.ID_FIELD], last_updated))
+                return False
+        else:
+            pipe.set(key, date_to_str(now))
+            return True
+
+    key = get_ingest_running_key(provider)
+    now = utcnow()
+    update_schedule = provider.get('update_schedule', UPDATE_SCHEDULE_DEFAULT)
+    update_schedule = timedelta(minutes=update_schedule.get('minutes', 5))
+    is_set = redis_transaction(set_if_not_running, key)
+    return not is_set
+
+
+def mark_provider_as_not_running(provider):
+    def remove_key(pipe):
+        is_removed = pipe.delete(key)
+        return True if is_removed > 0 else False
+
+    key = get_ingest_running_key(provider)
+    if not redis_transaction(remove_key, key):
+        logger.error('Failed to set provider {0} as not running'.format(provider[superdesk.config.ID_FIELD]))
+
+
+def redis_transaction(func, key):
+    """
+    Modified version of the transaction class from the Redis library.
+    We want to exit if someone else is modifying the value.
+    Convenience method for executing the callable `func` as a transaction
+    while watching all keys specified in `watches`. The 'func' callable
+    should expect a single argument which is a Pipeline object.
+    """
+    with app.redis.pipeline(True, None) as pipe:
+        try:
+            if key:
+                pipe.watch(key)
+            func_value = func(pipe)
+            pipe.execute()
+            return func_value
+        except Exception as ex:
+            print(ex)
+            return False
 
 
 def is_scheduled(provider):
@@ -159,29 +225,35 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
     """
-    update = {
-        LAST_UPDATED: utcnow()
-    }
+    if ingest_for_provider_is_already_running(provider):
+        return
 
-    for items in providers[provider.get('type')].update(provider):
-        ingest_items(items, provider, rule_set, routing_scheme)
-        stats.incr('ingest.ingested_items', len(items))
-        if items:
-            update[LAST_ITEM_UPDATE] = utcnow()
-    ingest_service = superdesk.get_resource_service('ingest_providers')
-    ingest_service.system_update(provider[superdesk.config.ID_FIELD], update, provider)
+    try:
+        update = {
+            LAST_UPDATED: utcnow()
+        }
 
-    if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
-        notify_and_add_activity(
-            ACTIVITY_EVENT,
-            'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
-            resource='ingest_providers',
-            user_list=ingest_service._get_administrators(),
-            name=provider.get('name'),
-            last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
+        for items in providers[provider.get('type')].update(provider):
+            ingest_items(items, provider, rule_set, routing_scheme)
+            stats.incr('ingest.ingested_items', len(items))
+            if items:
+                update[LAST_ITEM_UPDATE] = utcnow()
+        ingest_service = superdesk.get_resource_service('ingest_providers')
+        ingest_service.system_update(provider[superdesk.config.ID_FIELD], update, provider)
 
-    logger.info('Provider {0} updated'.format(provider[superdesk.config.ID_FIELD]))
-    push_notification('ingest:update', provider_id=str(provider[superdesk.config.ID_FIELD]))
+        if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
+            notify_and_add_activity(
+                ACTIVITY_EVENT,
+                'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
+                resource='ingest_providers',
+                user_list=ingest_service._get_administrators(),
+                name=provider.get('name'),
+                last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
+
+        logger.info('Provider {0} updated'.format(provider[superdesk.config.ID_FIELD]))
+        push_notification('ingest:update', provider_id=str(provider[superdesk.config.ID_FIELD]))
+    finally:
+        mark_provider_as_not_running(provider)
 
 
 def process_anpa_category(item, provider):

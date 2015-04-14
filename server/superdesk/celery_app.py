@@ -116,6 +116,7 @@ celery.Task = AppContextTask
 def init_celery(app):
     celery.conf.update(app.config)
     app.celery = celery
+    app.redis = __get_redis(app)
 
 
 def add_subtask_to_progress(task_id):
@@ -130,19 +131,19 @@ def finish_task_for_progress(task_id):
     return _update_subtask_progress(task_id, done=True)
 
 
-def get_redis():
+def __get_redis(app_ctx):
     """
     Constructs Redis Client object.
     :return: Redis Client object
     """
 
-    return redis.from_url(app.config['REDIS_URL'])
+    return redis.from_url(app_ctx.config['REDIS_URL'])
 
 
 def update_key(key, flag=False, db=None):
 
     if db is None:
-        db = get_redis()
+        db = app.redis
 
     if flag:
         crt_value = db.incr(key)
@@ -185,6 +186,6 @@ def set_key(key, value=0, db=None):
     """
 
     if db is None:
-        db = get_redis()
+        db = app.redis
 
     db.set(key, value)
