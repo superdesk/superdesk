@@ -29,7 +29,7 @@ define([
                 notStates: ['spiked'],
                 types: ['text', 'picture', 'audio', 'video', 'composite'],
                 page: 1,
-                creationDateAfter: before24HrDateTime
+                modificationDateAfter: before24HrDateTime
             };
             $scope.options = {
                 searchEnabled: true,
