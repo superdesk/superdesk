@@ -1,0 +1,28 @@
+<div class="destination-box">
+    <fieldset>
+        <div class="field">
+            <label for="destination-name" translate>Name</label>
+            <input type="text" id="destination-name" ng-model="destination.name">
+        </div>
+        <div class="field">
+            <label for="destination-delivery-type" translate>Delivery type</label>
+            <select id="destination-delivery-type" class="input" required ng-model="destination.delivery_type">
+                <option value="filesystem" translate>File system</option>
+                <option value="database" translate>Database</option>
+            </select>
+        </div>
+        <div class="field" ng-show="destination.delivery_type === 'filesystem'">
+            <label translate>Path</label>
+            <input type="text" ng-model="destination.config.path">
+        </div>
+        <div class="field" ng-show="destination.delivery_type === 'database'">
+            <label translate>Connection string</label>
+            <input type="text" ng-model="destination.config.connection_string">
+        </div>
+        <div class="field" ng-if="actions">
+            <button type="button" class="btn btn-info" ng-repeat="action in actions" ng-click="action.fn(destination)">
+                <span translate>{{action.label}}</span>
+            </button>
+        </div>
+    </fieldset>
+</div>
