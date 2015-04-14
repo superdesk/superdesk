@@ -416,6 +416,7 @@ define([
                     $scope.provider.idle_time = $scope.origProvider.idle_time || DEFAULT_IDLE_TIME;
                     $scope.provider.notifications = $scope.origProvider.notifications;
                     $scope.provider.config = $scope.origProvider.config;
+                    $scope.provider.critical_errors = $scope.origProvider.critical_errors;
 
                     // init the lists of field aliases and non-selected fields
                     $scope.fieldAliases = [];
