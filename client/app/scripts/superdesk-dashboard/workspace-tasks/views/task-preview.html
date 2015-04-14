@@ -19,9 +19,9 @@
 	            <button class="dropdown-toggle condensed" dropdown-toggle><i class="icon-dots-vertical"></i></button>
 	            <div class="dropdown-menu pull-right"
 	                sd-activity-list
-                    data-item="task"
-                    data-data="item"
-	                data-type="task">
+                    data-item="item"
+	                data-type="task"
+	                data-action="edit">
 	            </div>
 	        </div>
 		</div>
@@ -49,7 +49,7 @@
 	        </div>
 		</div>
 		<div ng-if="editmode" sd-assignee-box data-desk-id="task_details.desk" data-user-id="task_details.user"></div>
-        
+
         <div ng-if="!editmode" class="title">{{ task.slugline }}</div>
 		<textarea ng-if="editmode" class="title" sd-auto-height ng-model="task.slugline" placeholder="{{ :: 'Add title' | translate }}" required></textarea>
 

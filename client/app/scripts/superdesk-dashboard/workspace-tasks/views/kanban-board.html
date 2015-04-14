@@ -11,6 +11,14 @@
 					<li ng-if="item.task.due_date"><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
 				</ul>
         	</div>
+        	<div class="action">
+	        	<ul class="item-functions"
+	                sd-activity-list
+	                data-item="item"
+	                data-type="task"
+	                data-action="edit">
+	            </ul>
+            </div>
 		</li>
 	<ul>
 </div>
