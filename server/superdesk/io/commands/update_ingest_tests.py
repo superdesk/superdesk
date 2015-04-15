@@ -22,6 +22,7 @@ from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
 from superdesk.io.commands.remove_expired_content import get_expired_items
+from superdesk.io.commands.update_ingest import ingest_for_provider_is_already_running, mark_provider_as_not_running
 
 
 class TestProviderService(IngestService):
@@ -31,6 +32,26 @@ class TestProviderService(IngestService):
 
 
 register_provider('test', TestProviderService(), [ProviderError.anpaError(None, None).get_error_description()])
+
+
+class CeleryTaskRaceTest(TestCase):
+    def setUp(self):
+        setup(context=self)
+
+    def test_the_second_update_fails_if_already_running(self):
+        provider = {'_id': 'abc', 'update_schedule': {'minutes': 1}}
+        with self.app.app_context():
+            removed = mark_provider_as_not_running(provider)
+            self.assertFalse(removed)
+
+            failed_to_mark_as_running = ingest_for_provider_is_already_running(provider)
+            self.assertFalse(failed_to_mark_as_running, 'Failed to mark ingest update as running')
+
+            failed_to_mark_as_running = ingest_for_provider_is_already_running(provider)
+            self.assertTrue(failed_to_mark_as_running, 'Ingest update marked as running, possible race condition')
+
+            removed = mark_provider_as_not_running(provider)
+            self.assertTrue(removed, 'Failed to mark ingest update as not running.')
 
 
 class UpdateIngestTest(TestCase):
