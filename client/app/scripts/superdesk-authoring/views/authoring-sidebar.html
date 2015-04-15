@@ -1,7 +1,9 @@
-<div ng-if="views.send">
-   <div sd-send-item
-        data-item="item"
-        data-view="views.send"
-        data-before-send="beforeSend">
+<div class="pane-holder" ng-class="{show: views.send}">
+    <div ng-if="views.send">
+        <div sd-send-item
+             data-item="item"
+             data-view="views.send"
+             data-before-send="beforeSend">
+        </div>
     </div>
 </div>
