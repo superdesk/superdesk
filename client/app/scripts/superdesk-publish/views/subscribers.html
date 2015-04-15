@@ -10,7 +10,7 @@
         <ul class="pills-list provider-list">
             <li ng-repeat="subscriber in subscribers._items" class="clearfix">
                 <div class="header">
-                    <h6>{{ subscriber.name }}</h6>
+                    <h6>{{:: subscriber.name }}</h6>
                     <div class="actions">
                         <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
                         <button ng-click="remove(subscriber)" title="{{:: 'Remove Subscriber' | translate }}"><i class="icon-trash"></i></button>
