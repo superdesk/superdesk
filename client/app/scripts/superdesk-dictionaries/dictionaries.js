@@ -24,7 +24,7 @@
             api.find('dictionaries', dictionary._id).then(success, error);
         };
 
-        this.upload = function create(dictionary, data, file, success, error) {
+        this.upload = function create(dictionary, data, file, success, error, progress) {
             var hasId = _.has(dictionary, '_id') && dictionary._id !== null;
             var method = hasId ? 'PATCH' : 'POST';
             var headers = hasId ? {'If-Match': dictionary._etag} : {};
@@ -53,7 +53,7 @@
                     data: sendData,
                     file: file,
                     headers: headers
-                }).then(success, error);
+                }).then(success, error, progress);
             }, error);
         };
 
@@ -124,6 +124,7 @@
             $scope.closeDictionary();
             $scope.fetchDictionaries();
             notify.success(gettext('Dictionary saved succesfully'));
+            $scope.progress = null;
             return result;
         }
 
@@ -134,6 +135,7 @@
             } else {
                 notify.error(gettext('Error. Dictionary not saved.'));
             }
+            $scope.progress = null;
         }
 
         // listen for the file selected event
@@ -144,8 +146,11 @@
         });
 
         $scope.save = function() {
+            $scope.progress = {width: 1};
             if ($scope.file) {
-                dictionaries.upload($scope.origDictionary, $scope.dictionary, $scope.file, onSuccess, onError);
+                dictionaries.upload($scope.origDictionary, $scope.dictionary, $scope.file, onSuccess, onError, function(update) {
+                    $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                });
             } else {
                 dictionaries.update($scope.origDictionary, $scope.dictionary, onSuccess, onError);
             }
