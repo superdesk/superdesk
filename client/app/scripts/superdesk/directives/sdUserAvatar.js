@@ -7,8 +7,8 @@ define(['angular'], function (angular) {
             return {
                 scope: {src: '='},
                 link: function (scope, element, attrs) {
-                    
-                    var figure = element.parents("figure");
+
+                    var figure = element.parents('figure');
 
                     element.on('error', function (e) {
                         element.hide();
@@ -17,10 +17,10 @@ define(['angular'], function (angular) {
                     scope.$watch('src', function (src) {
                         if (src) {
                             element.attr('src', src).show();
-                            figure.addClass("no-bg");
+                            figure.addClass('no-bg');
                         } else {
                             element.hide();
-                            figure.removeClass("no-bg");
+                            figure.removeClass('no-bg');
                         }
                     });
                 }
