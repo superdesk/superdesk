@@ -21,7 +21,6 @@
         var service = {
             fetchSubscribers: function(criteria) {
                 criteria = criteria || {};
-                criteria.max_results = 200;
                 return _fetch('subscribers', criteria);
             },
 
