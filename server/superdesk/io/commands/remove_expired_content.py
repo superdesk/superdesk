@@ -10,7 +10,7 @@
 
 import logging
 import superdesk
-from eve.utils import ParsedRequest, date_to_str
+from eve.utils import date_to_str
 from datetime import timedelta
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
@@ -55,43 +55,56 @@ def remove_expired_data(provider):
     expiration_date = utcnow() - timedelta(minutes=minutes_to_keep_content)
 
     items = get_expired_items(provider, expiration_date)
-    if items.count() > 0:
-        for item in items:
-            print('Removing item %s' % item['_id'])
-            superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
-            if not item.get('archived'):
-                for file_id in [rend.get('media') for rend in item.get('renditions', {}).values()
-                                if rend.get('media')]:
-                    print('Deleting file: ', file_id)
-                    superdesk.app.media.delete(file_id)
 
-    stats.incr('ingest.expired_items', items.count())
-    print('Removed expired content for provider: %s' % provider.get('_id', 'Detached items'))
+    ids = [item['_id'] for item in items]
+    file_ids = [rend.get('media')
+                for item in items
+                for rend in item.get('renditions', {}).values()
+                if not item.get('archived') and rend.get('media')]
+
+    if ids:
+        print('Removing items %s' % ids)
+        superdesk.app.data._backend('ingest').remove('ingest', {'_id': {'$in': ids}})
+        remove_items_from_elastic(ids)
+
+    for file_id in file_ids:
+        print('Deleting file: ', file_id)
+        superdesk.app.media.delete(file_id)
+
+    stats.incr('ingest.expired_items', len(ids))
+    print('Removed expired content for provider: {0} count: {1}'
+          .format(provider.get('_id', 'Detached items'), len(ids)))
 
 
 def get_expired_items(provider_id, expiration_date):
     query_filter = get_query_for_expired_items(provider_id, expiration_date)
-    req = ParsedRequest()
-    req.max_results = 25
-    req.args = {'filter': query_filter}
-    return superdesk.get_resource_service('ingest').get(req, None)
+    return superdesk.get_resource_service('ingest').get_from_mongo(lookup=query_filter, req=None)
+
+
+def remove_items_from_elastic(ids):
+    query = {'query': {'terms': {'ingest._id': ids}}}
+    superdesk.app.data._search_backend('ingest').remove('ingest', query)
 
 
 def get_query_for_expired_items(provider, expiration_date):
     """Find all ingest items with given provider id and
     (expiry is past or
     (no expiry assigned and versioncreated is less then calculated expiry date))"""
-    query = {'should': [
-        {'range': {'ingest.expiry': {'lte': date_to_str(utcnow())}}},
-        {'and': [{'missing': {'field': 'ingest.expiry'}},
-                 {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}}]},
-    ]}
+    query = {
+        '$or': [
+            {'expiry': {'$lte': date_to_str(utcnow())}},
+            {
+                'versioncreated': {'$lte': date_to_str(expiration_date)},
+                'expiry': {'$exists': False}
+            }
+        ]
+    }
 
     if provider.get('_id'):
-        query['must'] = {'term': {'ingest.ingest_provider': str(provider.get('_id'))}}
+        query['ingest_provider'] = {'$eq': str(provider.get('_id'))}
 
     if provider.get('exclude'):
         excluded = provider.get('exclude')
-        query['must_not'] = {'terms': {'ingest.ingest_provider': excluded}}
+        query['ingest_provider'] = {'$nin': excluded}
 
-    return superdesk.json.dumps({'bool': query})
+    return query
