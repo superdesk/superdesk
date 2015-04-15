@@ -30,6 +30,9 @@
         <form name="editForm" ng-submit="save()">
             <fieldset>
                 <div class="field">
+                    <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                </div>
+                <div class="field">
                     <label for="subscriber-name" translate>Name</label>
                     <input type="text" id="subscriber-name" required ng-model="subscriber.name">
                 </div>
@@ -39,10 +42,6 @@
                         <option value="media" translate>Media</option>
                         <option value="nonmedia" translate>Non-media</option>
                     </select>
-                </div>
-                <div class="field">
-                    <label for="subscriber-active" translate>Active</label>
-                    <span id="subscriber-active" sd-switch ng-model="subscriber.is_active"></span>
                 </div>
                 <div class="field">
                     <label translate>Destinations</label>
