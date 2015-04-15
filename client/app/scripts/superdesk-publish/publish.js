@@ -176,17 +176,18 @@
                 $scope.remove = function(subscriber) {
                     modal.confirm(gettext('Are you sure you want to delete subscriber?'))
                     .then(function() {
-                        api.subscribers.remove(subscriber)
-                        .then(function(result) {
-                            _.remove($scope.subscribers, subscriber);
-                        }, function(response) {
-                            if (angular.isDefined(response.data._message)) {
-                                notify.error(gettext('Error: ' + response.data._message));
-                            } else {
-                                notify.error(gettext('There is an error. Subscriber cannot be deleted.'));
-                            }
-                        }).then(fetchSubscribers);
-                    });
+                        api.subscribers.remove(subscriber);
+                    })
+                    .then(function(result) {
+                        _.remove($scope.subscribers, subscriber);
+                    }, function(response) {
+                        if (angular.isDefined(response.data._message)) {
+                            notify.error(gettext('Error: ' + response.data._message));
+                        } else {
+                            notify.error(gettext('There is an error. Subscriber cannot be deleted.'));
+                        }
+                    })
+                    .then(fetchSubscribers);
                 };
 
                 $scope.cancel = function() {
@@ -207,6 +208,10 @@
             link: function ($scope) {
                 $scope.outputChannel = null;
                 $scope.origOutputChannel = null;
+                $scope.outputChannels = null;
+                $scope.subscribers = null;
+                $scope.subscriberLookup = {};
+                $scope.newSubscriber = {_id: null};
 
                 function fetchOutputChannels() {
                     adminPublishSettingsService.fetchOutputChannels().then(
@@ -216,9 +221,38 @@
                     );
                 }
 
-                function confirm() {
-                    return modal.confirm(gettext('Are you sure you want to delete output channel?'));
+                function fetchSubscribers() {
+                    adminPublishSettingsService.fetchSubscribers().then(
+                        function(result) {
+                            $scope.subscribers = result;
+                            _.each(result._items, function(item) {
+                                $scope.subscriberLookup[item._id] = item;
+                            });
+                        }
+                    );
                 }
+
+                $scope.isIncluded = function(subscriber) {
+                    return $scope.outputChannel.destinations.indexOf(subscriber._id) !== -1;
+                };
+
+                $scope.addNewSubscriber = function() {
+                    $scope.newSubscriber._id = true;
+                };
+
+                $scope.saveNewSubscriber = function() {
+                    $scope.outputChannel.destinations = $scope.outputChannel.destinations || [];
+                    $scope.outputChannel.destinations.push($scope.newSubscriber._id);
+                    $scope.newSubscriber._id = null;
+                };
+
+                $scope.cancelNewSubscriber = function() {
+                    $scope.newSubscriber._id = null;
+                };
+
+                $scope.removeSubscriber = function(subscriberId) {
+                    $scope.outputChannel.destinations = _.without($scope.outputChannel.destinations, subscriberId);
+                };
 
                 $scope.save = function() {
                     api.output_channels.save($scope.origOutputChannel, $scope.outputChannel)
@@ -244,18 +278,20 @@
                 };
 
                 $scope.remove = function(outputChannel) {
-                    confirm().then(function() {
-                        api.output_channels.remove(outputChannel)
-                        .then(function(result) {
-                            _.remove($scope.outputChannels, outputChannel);
-                        }, function(response) {
-                            if (angular.isDefined(response.data._message)) {
-                                notify.error(gettext('Error: ' + response.data._message));
-                            } else {
-                                notify.error(gettext('There is an error. Output Channel cannot be deleted.'));
-                            }
-                        }).then(fetchOutputChannels);
-                    });
+                    modal.confirm(gettext('Are you sure you want to delete output channel?'))
+                    .then(function() {
+                        api.output_channels.remove(outputChannel);
+                    })
+                    .then(function(result) {
+                        _.remove($scope.outputChannels, outputChannel);
+                    }, function(response) {
+                        if (angular.isDefined(response.data._message)) {
+                            notify.error(gettext('Error: ' + response.data._message));
+                        } else {
+                            notify.error(gettext('There is an error. Output Channel cannot be deleted.'));
+                        }
+                    })
+                    .then(fetchOutputChannels);
                 };
 
                 $scope.cancel = function() {
@@ -264,6 +300,7 @@
                 };
 
                 fetchOutputChannels();
+                fetchSubscribers();
             }
         };
     }
@@ -354,16 +391,16 @@
                 $scope.remove = function(destinationGroup) {
                     modal.confirm(gettext('Are you sure you want to delete destination group?'))
                     .then(function() {
-                        return api.destination_groups.remove(destinationGroup)
-                        .then(function(result) {
-                            _.remove($scope.destinationGroups._items, destinationGroup);
-                        }, function(response) {
-                            if (angular.isDefined(response.data._message)) {
-                                notify.error(gettext('Error: ' + response.data._message));
-                            } else {
-                                notify.error(gettext('There is an error. Destination Group cannot be deleted.'));
-                            }
-                        });
+                        return api.destination_groups.remove(destinationGroup);
+                    })
+                    .then(function(result) {
+                        _.remove($scope.destinationGroups._items, destinationGroup);
+                    }, function(response) {
+                        if (angular.isDefined(response.data._message)) {
+                            notify.error(gettext('Error: ' + response.data._message));
+                        } else {
+                            notify.error(gettext('There is an error. Destination Group cannot be deleted.'));
+                        }
                     })
                     .then(fetchDestinationGroups);
                 };
