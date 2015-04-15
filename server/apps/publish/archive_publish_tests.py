@@ -12,6 +12,8 @@
 from superdesk.tests import TestCase
 from apps.publish import archive_publish
 from apps.publish import init_app
+from superdesk.utc import utcnow
+from datetime import timedelta
 
 
 class ArchivePublishTestCase(TestCase):
@@ -27,7 +29,7 @@ class ArchivePublishTestCase(TestCase):
                        'delivery_type': 'Email',
                        'config': {'address': 'send@gmail.com'}}]}]
 
-    output_channels = [{'_id': 1, 'name': 'oc1', 'is_active': True, 'format': 'xml', 'destinations': [1]},
+    output_channels = [{'_id': 1, 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': [1]},
                        {'_id': 2, 'name': 'oc2', 'is_active': False, 'format': 'nitf', 'destinations': [1, 2]},
                        {'_id': 3, 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': [2]}]
 
@@ -42,7 +44,22 @@ class ArchivePublishTestCase(TestCase):
                            'output_channels': [{'channel': 2, 'selector_codes': ['A']},
                                                {'channel': 3, 'selector_codes': ['X', 'y']}]}]
 
-    articles = [{'_id': 1, 'last_version': 3, 'body_html': 'Test body', 'destination_groups': [4]}]
+    articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
+                 '_id': 1,
+                 'last_version': 3,
+                 'body_html': 'Test body',
+                 'destination_groups': [4],
+                 'urgency': 4,
+                 'headline': 'Two students missing',
+                 'pubstatus': 'done',
+                 'firstcreated': utcnow(),
+                 'byline': 'By Alan Karben',
+                 'ednote': 'Andrew Marwood contributed to this article',
+                 'dateline': 'Sydney',
+                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
+                            {'qcode': '04001002', 'name': 'Weather'}],
+                 'expiry': utcnow() + timedelta(minutes=20)}]
 
     def setUp(self):
         super().setUp()
@@ -72,8 +89,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertTrue('X' in selector_codes)
             self.assertTrue('B' in selector_codes)
 
-            self.assertEquals(2, len(formatters))
-            self.assertTrue('xml' in formatters)
+            self.assertEquals(1, len(formatters))
             self.assertTrue('nitf' in formatters)
 
     def test_resolve_output_channels_flattened(self):
@@ -90,7 +106,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertTrue('B' in selector_codes)
 
             self.assertEquals(1, len(formatters))
-            self.assertTrue('xml' in formatters)
+            self.assertTrue('nitf' in formatters)
 
     def test_get_subscribers(self):
         with self.app.app_context():
