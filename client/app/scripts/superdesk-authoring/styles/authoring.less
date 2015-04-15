@@ -336,14 +336,10 @@
 
 .send-to-pane {
 	width: @send-to-pane-width;
-	background: #3b3b3b;
 	position: absolute;
-	top: @nav-height; bottom: 0;
-	right: -@send-to-pane-width;
-	.transition(all ease 0.3s);
-	&.show {
-		right: 0;
-	}
+	top: 0; bottom: 0;
+        right: 0;
+	
 	header {
 		height: @nav-height;
 		border-bottom: 1px solid #424242;
@@ -451,6 +447,18 @@
 			}
 		}
 	}
+}
+
+.pane-holder {
+    position: absolute;
+    background: #3b3b3b;
+    width: @send-to-pane-width;
+    height: 100%;
+    right: -@send-to-pane-width;
+    .transition(all ease 0.3s);
+    &.show {
+        right: 0;
+    }
 }
 
 .widget {
