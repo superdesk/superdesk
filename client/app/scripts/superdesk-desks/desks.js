@@ -555,6 +555,9 @@
                     fetchCurrentDesk: function() {
                         return api.desks.getById(this.getCurrentDeskId());
                     },
+                    fetchDeskById: function(Id) {
+                        return api.desks.getById(Id);
+                    },
                     setCurrentDesk: function(desk) {
                         this.setCurrentDeskId(desk ? desk._id : null);
                     },
@@ -784,8 +787,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope',
-            function(gettext, api, WizardHandler, tasks, $rootScope) {
+        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope', 'desks',
+            function(gettext, api, WizardHandler, tasks, $rootScope, desks) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -803,18 +806,21 @@
                             scope.stages = [];
                             scope.selected = null;
                             scope.message = null;
+                            scope.getstages(previous);
+                        }
+                    });
 
-                            if (scope.desk.edit && scope.desk.edit._id) {
-                                scope.message = null;
-                                api('stages').query({where: {desk: scope.desk.edit._id}})
+                    scope.getstages = function(previous) {
+                        if (scope.desk.edit && scope.desk.edit._id) {
+                            scope.message = null;
+                            api('stages').query({where: {desk: scope.desk.edit._id}})
                                 .then(function(result) {
                                     scope.stages = result._items;
                                 });
-                            } else {
-                                WizardHandler.wizard('desks').goTo(previous);
-                            }
+                        } else {
+                            WizardHandler.wizard('desks').goTo(previous);
                         }
-                    });
+                    };
 
                     scope.previous = function() {
                         WizardHandler.wizard('desks').previous();
@@ -870,6 +876,10 @@
                                 scope.select(item);
                                 scope.message = null;
                                 broadcastChange();
+                                scope.getstages();
+                                desks.fetchDeskById(item.desk).then(function(desk) {
+                                    scope.desk.edit = desk;
+                                });
                             }, errorMessage);
                         } else {
                             api('stages').save(orig, scope.editStage)
@@ -878,6 +888,10 @@
                                 scope.message = null;
                                 scope.select(item);
                                 broadcastChange();
+                                scope.getstages();
+                                desks.fetchDeskById(item.desk).then(function(desk) {
+                                    scope.desk.edit = desk;
+                                });
                             }, errorMessage);
                         }
                     };
@@ -915,6 +929,9 @@
                             _.remove(scope.stages, stage);
                             scope.message = null;
                             broadcastChange(stage._id);
+                            desks.fetchDeskById(stage.desk).then(function(desk) {
+                                scope.desk.edit = desk;
+                            });
                         }, function(result) {
                             scope.message = gettext('There was a problem, stage was not deleted.');
                         });
