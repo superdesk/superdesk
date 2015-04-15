@@ -10,7 +10,6 @@
 
 import logging
 import superdesk
-from eve.utils import date_to_str
 from datetime import timedelta
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
@@ -92,16 +91,16 @@ def get_query_for_expired_items(provider, expiration_date):
     (no expiry assigned and versioncreated is less then calculated expiry date))"""
     query = {
         '$or': [
-            {'expiry': {'$lte': date_to_str(utcnow())}},
+            {'expiry': {'$lte': utcnow()}},
             {
-                'versioncreated': {'$lte': date_to_str(expiration_date)},
+                'versioncreated': {'$lte': expiration_date},
                 'expiry': {'$exists': False}
             }
         ]
     }
 
     if provider.get('_id'):
-        query['ingest_provider'] = {'$eq': str(provider.get('_id'))}
+        query['ingest_provider'] = str(provider.get('_id'))
 
     if provider.get('exclude'):
         excluded = provider.get('exclude')
