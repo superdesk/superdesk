@@ -443,6 +443,16 @@
 					&.save {
 						background: #5ea9c8;
 					}
+
+					&[disabled] {
+						&:not(.active) {
+							background: #496773 !important;
+						}
+						&:hover {
+							cursor: default;
+						}
+						.opacity(80);
+					}
 				}
 			}
 		}
