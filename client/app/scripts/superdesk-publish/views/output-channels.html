@@ -30,6 +30,10 @@
         <form name="editForm" ng-submit="save()">
             <fieldset>
                 <div class="field">
+                    <span class="pull-right" id="outputChannel-active" sd-switch ng-model="outputChannel.is_active"></span>
+                </div>
+
+                <div class="field">
                     <label for="outputChannel-name" translate>Name</label>
                     <input type="text" id="outputChannel-name" required ng-model="outputChannel.name">
                 </div>
@@ -37,6 +41,44 @@
                 <div class="field">
                     <label for="outputChannel-description" translate>Description</label>
                     <input type="text" id="outputChannel-description" ng-model="outputChannel.description">
+                </div>
+
+                <div class="field">
+                    <label translate>Format</label>
+                    <select id="outputChannel-format" class="input" required ng-model="outputChannel.format">
+                        <option value="nitf" translate>NITF</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label translate>Type</label>
+                    <select id="outputChannel-type" class="input" required ng-model="outputChannel.channel_type">
+                        <option value="metadata" translate>Metadata</option>
+                        <option value="address" translate>Address</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>
+                        <span translate>Subscribers</span>
+                        <a class="btn btn-info add" ng-click="addNewSubscriber()" ng-hide="newSubscriber._id">
+                            <i class="icon-plus-small icon-white"></i>
+                        </a>
+                    </label>
+                    <ul class="pills-list clearfix">
+                        <li class="pull-left" ng-repeat="subscriber in outputChannel.destinations">
+                            <div class="name right-pad">{{subscriberLookup[subscriber].name}}</div>
+                            <div class="actions">
+                                <button type="button" ng-click="removeSubscriber(subscriber)" title="{{:: 'Remove subscriber' | translate }}"><i class="icon-trash"></i></button>
+                            </div>
+                        </li>
+                    </ul>
+                    <select ng-show="newSubscriber._id" class="input" ng-model="newSubscriber._id" ng-change="saveNewSubscriber()">
+                        <option ng-repeat="s in subscribers._items" ng-if="!isIncluded(s)" value="{{s._id}}" translate>{{:: s.name}}</option>
+                    </select>
+                    <button type="button" class="btn btn-info" ng-click="cancelNewSubscriber()" ng-show="newSubscriber._id">
+                        <span translate>Cancel</span>
+                    </button>
                 </div>
             </fieldset>
         </form>
