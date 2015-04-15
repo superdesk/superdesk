@@ -84,7 +84,8 @@ def ingest_for_provider_is_already_running(provider):
                 pipe.set(key, date_to_str(now))
                 return True
             else:
-                logger.warn('Update ingest already running for provider {0}, last_updated={1}'.format(provider[superdesk.config.ID_FIELD], last_updated))
+                logger.warn('Update ingest already running for provider {0}, last_updated={1}'.
+                            format(provider[superdesk.config.ID_FIELD], last_updated))
                 return False
         else:
             pipe.set(key, date_to_str(now))
@@ -104,8 +105,10 @@ def mark_provider_as_not_running(provider):
         return True if is_removed > 0 else False
 
     key = get_ingest_running_key(provider)
-    if not redis_transaction(remove_key, key):
+    removed = redis_transaction(remove_key, key)
+    if not removed:
         logger.error('Failed to set provider {0} as not running'.format(provider[superdesk.config.ID_FIELD]))
+    return removed
 
 
 def redis_transaction(func, key):
