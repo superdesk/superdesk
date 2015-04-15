@@ -111,6 +111,12 @@
 							<label translate>Global Read: <label class="label globalread">
 								{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
 							</label></label>
+							<label class="label globalread" ng-if="selected.default_incoming == null || selected.default_incoming">
+								{{:: 'Default incomming stage' }}
+							</label>
+							<label class="label globalread" ng-if="selected.published_stage !== null && selected.published_stage">
+								{{:: 'Published Stage' }}
+							</label>
 							<label translate>Stage description: {{ selected.description}}</label>
 							<div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
 						</div>
@@ -120,6 +126,14 @@
 							<div class="field">
 								<label translate>Global Read</label>
 								<span sd-switch ng-model="editStage.is_visible"></span>
+							</div>
+							<div class="field">
+								<label>{{:: 'Default incoming stage' | translate }}</label>
+								<span sd-switch ng-model="editStage.default_incoming"></span>
+							</div>
+							<div class="field">
+								<label>{{:: 'Default published stage' | translate }}</label>
+								<span sd-switch ng-model="editStage.published_stage"></span>
 							</div>
 							<div class="field">
 								<label translate>Stage description</label>
