@@ -350,3 +350,35 @@ class IngestEmailError(SuperdeskIngestError):
     @classmethod
     def emailError(cls, exception=None, provider=None):
         return IngestEmailError(6002, exception, provider)
+
+
+class SuperdeskPublishError(SuperdeskError):
+    def __init__(self, code, exception, destination=None):
+        super().__init__(code)
+        self.system_exception = exception
+        destination = destination or {}
+        self.destination_name = destination.get('name', 'Unknown destination') \
+            if destination else 'Unknown destination'
+
+        if exception:
+            exception_msg = str(exception)[-200:]
+            update_notifiers('error',
+                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
+                             resource='ingest_providers' if destination else None,
+                             name=self.destination_name,
+                             provider_id=destination.get('_id', ''))
+
+            if destination:
+                logger.error("{}: {} on channel {}".format(self, exception, self.destination_name))
+            else:
+                logger.error("{}: {}".format(self, exception))
+
+
+class FormatterError(SuperdeskPublishError):
+    _codes = {
+        7001: 'Article couldn"t be converted to NITF format'
+    }
+
+    @classmethod
+    def nitfFormatterError(cls, exception=None, destination=None):
+        return FormatterError(7001, exception, destination)

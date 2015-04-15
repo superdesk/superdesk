@@ -16,7 +16,7 @@ from flask import current_app as app
 from eve.utils import config, document_etag
 from copy import copy
 from apps.archive.common import item_url, get_user, insert_into_versions
-from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError
+from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, FormatterError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 import superdesk
@@ -24,6 +24,7 @@ from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 import itertools
+from apps.publish.formatters import get_formatter
 
 
 logger = logging.getLogger(__name__)
@@ -73,30 +74,33 @@ class ArchivePublishService(BaseService):
             raise SuperdeskApiError.internalError(message="Failed to publish the item")
 
     def queue_transmission(self, doc):
-        if doc.get('destination_groups'):
-            destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
-            output_channels, selector_codes, formatters = self.resolve_output_channels(destination_groups.values())
+        try:
+            if doc.get('destination_groups'):
+                destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
+                output_channels, selector_codes, format_types = \
+                    self.resolve_output_channels(destination_groups.values())
 
-            for output_channel in output_channels.values():
-                subscribers = self.get_subscribers(output_channel)
-                if subscribers.count() > 0:
-                    # format the doc
-                    # formatted_item = format(doc)
-                    formatted_item = str(doc['body_html'])
-                    publish_queue_items = []
+                for output_channel in output_channels.values():
+                    subscribers = self.get_subscribers(output_channel)
+                    if subscribers.count() > 0:
+                        formatter = get_formatter(output_channel['format'])
+                        formatted_item = formatter.format(doc, output_channel)
+                        publish_queue_items = []
 
-                    for subscriber in subscribers:
-                        for destination in subscriber.get('destinations', []):
-                            publish_queue_item = {}
-                            publish_queue_item['formatted_item'] = formatted_item
-                            publish_queue_item['destination'] = destination
-                            publish_queue_item['item_id'] = doc['_id']
-                            publish_queue_item['item_id'] = doc.get('last_version', 0)
-                            publish_queue_item['subscriber_id'] = subscriber['_id']
-                            publish_queue_item['output_channel_id'] = output_channel['_id']
-                            publish_queue_items.append(publish_queue_item)
+                        for subscriber in subscribers:
+                            for destination in subscriber.get('destinations', []):
+                                publish_queue_item = {}
+                                publish_queue_item['formatted_item'] = formatted_item
+                                publish_queue_item['destination'] = destination
+                                publish_queue_item['item_id'] = doc['_id']
+                                publish_queue_item['item_id'] = doc.get('last_version', 0)
+                                publish_queue_item['subscriber_id'] = subscriber['_id']
+                                publish_queue_item['output_channel_id'] = output_channel['_id']
+                                publish_queue_items.append(publish_queue_item)
 
-                    get_resource_service('publish_queue').post(publish_queue_items)
+                        get_resource_service('publish_queue').post(publish_queue_items)
+        except FormatterError:
+            raise
 
     def resolve_destination_groups(self, dg_ids, destination_groups=None):
         '''
@@ -122,11 +126,11 @@ class ArchivePublishService(BaseService):
         list of destination groups
         :param destination_groups: unique list of destinations groups
         :return: output_channels:dictionary of resolved id, output_channel,
-        lis of selector_codes, list of resolved formatters
+        lis of selector_codes, list of resolved format_types
         '''
         output_channels = {}
         selector_codes = []
-        formatters = []
+        format_types = []
         for destination_group in destination_groups:
             if destination_group.get('output_channels'):
                 oc_ids = [oc['channel'] for oc in destination_group.get('output_channels', [])]
@@ -134,9 +138,9 @@ class ArchivePublishService(BaseService):
                 ocs = get_resource_service('output_channels').get(req=None, lookup=lookup)
                 for oc in ocs:
                     output_channels[oc['_id']] = oc
-                    formatters.append(oc['format'])
+                    format_types.append(oc['format'])
                 selector_codes.extend(oc['selector_codes'] for oc in destination_group.get('output_channels'))
-        return output_channels, list(set(itertools.chain(*selector_codes))), list(set(formatters))
+        return output_channels, list(set(itertools.chain(*selector_codes))), list(set(format_types))
 
     def get_subscribers(self, output_channel):
         '''
