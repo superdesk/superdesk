@@ -15,6 +15,7 @@ from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
+from superdesk import get_resource_service
 from eve.utils import ParsedRequest
 from apps.tasks import task_statuses
 from superdesk.utc import get_expiry_date
@@ -45,6 +46,10 @@ class StagesResource(Resource):
             'type': 'boolean',
             'default': False
         },
+        'published_stage': {
+            'type': 'boolean',
+            'default': False
+        },
         'task_status': {
             'type': 'string',
             'allowed': task_statuses,
@@ -61,15 +66,6 @@ class StagesResource(Resource):
         'is_visible': {
             'type': 'boolean',
             'default': True
-        },
-        'outgoing': {
-            'type': 'list',
-            'schema': {
-                'type': 'dict',
-                'schema': {
-                    'stage': Resource.rel('stages', True)
-                }
-            }
         }
     }
 
@@ -94,12 +90,21 @@ class StagesService(BaseService):
                 doc['desk_order'] = 1
             else:
                 doc['desk_order'] = prev_stage[0].get('desk_order', 1) + 1
+            # if this new one is default need to remove the old default
+            if doc.get('published_stage', False):
+                self.remove_old_default(doc.get('desk'), 'published_stage')
+            if doc.get('default_incoming', False):
+                self.remove_old_default(doc.get('desk'), 'default_incoming')
 
     def on_created(self, docs):
         for doc in docs:
             if 'desk' in doc:
                 push_notification(self.notification_key, created=1, stage_id=str(doc.get('_id')),
                                   desk_id=str(doc.get('desk')), is_visible=doc.get('is_visible', True))
+            if doc.get('published_stage', False):
+                self.set_desk_ref(doc, 'published_stage')
+            if doc.get('default_incoming', False):
+                self.set_desk_ref(doc, 'incoming_stage')
 
     def on_delete(self, doc):
         if doc['default_incoming'] is True:
@@ -125,6 +130,19 @@ class StagesService(BaseService):
                 expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
                 item_model = get_model(ItemModel)
                 item_model.update({'_id': doc['_id']}, {'expiry': expiry})
+
+        if updates.get('published_stage', False):
+            if not original.get('published_stage'):
+                self.remove_old_default(original.get('desk'), 'published_stage')
+                self.set_desk_ref(original, 'published_stage')
+
+        if updates.get('default_incoming', False):
+            if not original.get('default_incoming'):
+                self.remove_old_default(original.get('desk'), 'default_incoming')
+                self.set_desk_ref(original, 'incoming_stage')
+        else:
+            if original.get('default_incoming') and 'default_incoming' in updates:
+                raise SuperdeskApiError.forbiddenError(message='Must have one incoming stage in a desk')
 
     def on_updated(self, updates, original):
         if ('content_expiry' in updates and updates['content_expiry'] != original.get('content_expiry', None)) or \
@@ -153,3 +171,14 @@ class StagesService(BaseService):
                 lookup['desk'] = {'$nin': user_desk_ids}
 
         return list(self.get(req=None, lookup=lookup))
+
+    def set_desk_ref(self, doc, field):
+        desk = get_resource_service('desks').find_one(_id=doc.get('desk'), req=None)
+        if desk:
+            get_resource_service('desks').update(doc.get('desk'), {field: doc.get('_id')}, desk)
+
+    def remove_old_default(self, desk, field):
+        lookup = {'$and': [{field: True}, {'desk': str(desk)}]}
+        stages = self.get(req=None, lookup=lookup)
+        for stage in stages:
+            get_resource_service('stages').update(stage.get('_id'), {field: False}, stage)
