@@ -27,7 +27,13 @@ class PublishQueueResource(Resource):
             'type': 'string',
             'nullable': False,
         },
+        'format': {
+            'type': 'string'
+        },
         'queued_at': {
+            'type': 'datetime'
+        },
+        'transmit_started_at': {
             'type': 'datetime'
         },
         'completed_at': {
@@ -47,6 +53,9 @@ class PublishQueueResource(Resource):
                 'delivery_type': {'type': 'string'},
                 'config': {'type': 'dict'}
             }
+        },
+        'error_message': {
+            'type': 'string'
         }
     }
 
