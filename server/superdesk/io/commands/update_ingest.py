@@ -362,6 +362,9 @@ def ingest_items(items, provider, rule_set=None, routing_scheme=None):
         ingested = ingest_item(item, provider, rule_set, routing_scheme)
         if not ingested:
             failed_items.add(item[GUID_FIELD])
+
+    app.data._search_backend('ingest').bulk_insert('ingest', [item for item in all_items
+                                                              if item[GUID_FIELD] not in failed_items])
     if failed_items:
         logger.error('Failed to ingest the following items: %s', failed_items)
     return failed_items
@@ -404,10 +407,10 @@ def ingest_item(item, provider, rule_set=None, routing_scheme=None):
         if old_item:
             # In case we already have the item, preserve the _id
             item[superdesk.config.ID_FIELD] = old_item[superdesk.config.ID_FIELD]
-            ingest_service.put(item[superdesk.config.ID_FIELD], item)
+            ingest_service.put_in_mongo(item[superdesk.config.ID_FIELD], item)
         else:
             try:
-                ingest_service.post([item])
+                ingest_service.post_in_mongo([item])
             except HTTPException as e:
                 logger.error("Exception while persisting item in ingest collection", e)
 
