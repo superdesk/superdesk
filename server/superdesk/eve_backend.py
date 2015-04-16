@@ -10,8 +10,9 @@
 
 
 from flask import current_app as app
-from eve.utils import document_etag
+from eve.utils import document_etag, config
 from superdesk.utc import utcnow
+from eve.methods.common import resolve_document_etag
 
 
 class EveBackend():
@@ -74,7 +75,11 @@ class EveBackend():
         """
         # change etag on update so following request will refetch it
         updates.setdefault(app.config['LAST_UPDATED'], utcnow())
-        updates.setdefault(app.config['ETAG'], document_etag(updates))
+        if config.ETAG not in updates:
+            updated = original.copy()
+            updated.update(updates)
+            resolve_document_etag(updated, endpoint_name)
+            updates[config.ETAG] = updated[config.ETAG]
         return self.system_update(endpoint_name, id, updates, original)
 
     def system_update(self, endpoint_name, id, updates, original):
