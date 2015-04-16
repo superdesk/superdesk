@@ -33,7 +33,7 @@
     <div class="docs-content-main">
         <div class="docs-content-scroller">
             <ul class="docs-main-list">
-            	<li>
+                <li>
                     <a class="link-holder" id="buttons-global"></a>
                     <div class="docs-title">Buttons</div>
 
@@ -342,6 +342,53 @@
                             </div>
                         </pre>
                     </div>
+                    
+                    <p>For creating nested dropdown menus, create same structure for dropdown in <code>li</code> where you want nested dropdown, and add class <code>left-submenu</code> or <code>right-submenu</code> near<code>dropdown-menu</code>. Example:</p>
+
+                    <div class="docs-preview">
+                        <div class="preview-area clearfix" style="padding:0;height:48px">
+                            <div class="dropdown dropdown-big" dropdown>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                     <i class="svg-icon-settings"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li>
+                                        <div class="dropdown" dropdown>
+                                            <button class="dropdown-toggle" dropdown-toggle>Action 3</button>
+                                            <ul class="dropdown-menu left-submenu">
+                                                <li><button>Action Submenu 1</button></li>
+                                                <li><button>Action Submenu 2</button></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <pre class="prettyprint lang-html linenums">
+                            <div class="dropdown dropdown-big" dropdown ng-non-bindable>
+                                <button class="dropdown-toggle" dropdown-toggle>
+                                     <i class="svg-icon-settings"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button>Action 1</button></li>
+                                    <li><button>Action 2</button></li>
+                                    <li>
+                                        <div class="dropdown" dropdown>
+                                            <button class="dropdown-toggle" dropdown-toggle>Action 3</button>
+                                            <ul class="dropdown-menu left-submenu">
+                                                <li><button>Action Submenu 1</button></li>
+                                                <li><button>Action Submenu 2</button></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </pre>
+                    </div>                    
+                    
                 </li>
 
                 <li>
@@ -509,7 +556,7 @@
                         <div class="preview-area clearfix">
                             <div sd-typeahead items="taItems" term="taSelected" search="taSearch(term)" select="taSelect(item)" style="width:200px; float: left; margin-right: 10px;">
                                 <ul>
-                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem }}</li>
+                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem}}</li>
                                 </ul>
                             </div>
                             <span>My favourite country is: {{taSelected}}</span>
@@ -518,7 +565,7 @@
                         <pre class="prettyprint lang-html linenums">
                             <div sd-typeahead items="taItems" term="taSelected" search="taSearch(term)" select="taSelect(item)" ng-non-bindable>
                                 <ul>
-                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem }}</li>
+                                    <li typeahead-item="taItem" ng-repeat="taItem in taItems">{{ taItem}}</li>
                                 </ul>
                             </div>
                             <span ng-non-bindable>My favourite country is: {{taSelected}}</span>
