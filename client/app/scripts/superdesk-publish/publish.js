@@ -3,6 +3,21 @@
 
     var app = angular.module('superdesk.publish', ['superdesk.users']);
 
+    app.value('transmissionTypes', {
+        ftp: {
+            label: 'FTP',
+            templateUrl: 'scripts/superdesk-publish/views/ftp-config.html'
+        },
+        teletype: {
+            label: 'Teletype',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
+        },
+        email: {
+            label: 'Email',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
+        }
+    });
+
     AdminPublishSettingsController.$inject = ['$scope', 'privileges'];
     function AdminPublishSettingsController($scope, privileges) {
         var user_privileges = privileges.privileges;
@@ -100,8 +115,8 @@
         return service;
     }
 
-    DestinationDirective.$inject = [];
-    function DestinationDirective() {
+    DestinationDirective.$inject = ['transmissionTypes'];
+    function DestinationDirective(transmissionTypes) {
         return {
             templateUrl: 'scripts/superdesk-publish/views/destination.html',
             scope: {
@@ -109,6 +124,7 @@
                 actions: '='
             },
             link: function ($scope) {
+                $scope.types = transmissionTypes;
             }
         };
     }
