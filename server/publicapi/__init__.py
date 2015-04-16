@@ -22,7 +22,9 @@ from eve import Eve
 from publicapi.datalayer import ApiDataLayer
 
 
+_script_directory = os.path.dirname(os.path.realpath(__file__))
+
 app = Eve(
-    settings=os.path.join(__name__, 'settings.py'),
+    settings=os.path.join(_script_directory, 'settings.py'),
     data=ApiDataLayer,
 )
