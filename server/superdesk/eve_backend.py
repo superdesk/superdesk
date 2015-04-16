@@ -39,14 +39,9 @@ class EveBackend():
             return backend.find(endpoint_name, req, lookup)
 
     def get_from_mongo(self, endpoint_name, req, lookup):
+        req.if_modified_since = None
         backend = self._backend(endpoint_name)
-        cursor = backend.find(endpoint_name, req, lookup)
-        if not cursor.count():
-            return cursor  # return 304 if not modified
-        else:
-            # but fetch without filter if there is a change
-            req.if_modified_since = None
-            return backend.find(endpoint_name, req, lookup)
+        return backend.find(endpoint_name, req, lookup)
 
     def create(self, endpoint_name, docs, **kwargs):
         """Insert documents into given collection.

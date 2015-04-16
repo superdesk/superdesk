@@ -212,16 +212,18 @@ class UpdateIngestTest(TestCase):
 
             items = provider_service.fetch_ingest(guid)
             for item in items:
-                item['ingest_provider'] = str(provider['_id'])
+                item['ingest_provider'] = provider['_id']
 
-            items[0]['expiry'] = utcnow() - timedelta(minutes=11)
-            items[1]['expiry'] = utcnow() + timedelta(minutes=11)
-            items[2]['expiry'] = utcnow() + timedelta(minutes=11)
-            items[5]['versioncreated'] = utcnow() + timedelta(minutes=11)
+            now = utcnow()
+            items[0]['expiry'] = now - timedelta(hours=11)
+            items[1]['expiry'] = now - timedelta(hours=11)
+            items[2]['expiry'] = now + timedelta(hours=11)
+            items[5]['versioncreated'] = now + timedelta(minutes=11)
 
-            self.app.data.insert('ingest', items)
-            expiredItems = get_expired_items(provider, utcnow() - timedelta(minutes=2880))
-            self.assertEquals(3, expiredItems.count())
+            service = get_resource_service('ingest')
+            service.post(items)
+            expiredItems = get_expired_items(provider, now)
+            self.assertEquals(4, expiredItems.count())
 
     def test_apply_rule_set(self):
         with self.app.app_context():
