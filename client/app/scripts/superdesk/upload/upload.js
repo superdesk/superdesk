@@ -49,7 +49,7 @@ define([
         };
     }
 
-    return angular.module('superdesk.upload', [])
+    return angular.module('superdesk.upload', ['angularFileUpload'])
         .service('upload', require('./upload-service'))
         .directive('sdImagePreview', require('./image-preview-directive'))
         .directive('sdVideoCapture', require('./video-capture-directive'))

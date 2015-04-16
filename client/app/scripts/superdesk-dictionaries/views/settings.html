@@ -5,7 +5,7 @@
 		<div class="header">
 			<h2 translate>Dictionary management</h2>
 			<button class="btn btn-info pull-right" ng-click="createDictionary()">
-		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Dictionary' | translate }}
+		        <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Dictionary' | translate }}
 		    </button>
 		</div>
 
@@ -23,14 +23,6 @@
 			</div>
 	    </div>
 
-		<div sd-dictionary-config-modal
-			data-active="modalActive"
-			data-dictionary="dictionary"
-			data-orig-dictionary="origDictionary"
-			data-dictionaries="dictionaries"
-			data-word="word"
-			data-cancel="cancel()"
-		></div>
+		<div sd-dictionary-config-modal ng-if="dictionary"></div>
 	</div>
-
 </div>

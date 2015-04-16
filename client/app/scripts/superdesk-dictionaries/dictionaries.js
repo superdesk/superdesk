@@ -11,8 +11,8 @@
 (function() {
     'use strict';
 
-    DictionaryService.$inject = ['api', 'urls', '$resource', '$upload'];
-    function DictionaryService(api, urls, $resource, $upload) {
+    DictionaryService.$inject = ['api', 'urls', '$upload'];
+    function DictionaryService(api, urls, $upload) {
         this.dictionaries = null;
         this.currDictionary = null;
 
@@ -21,17 +21,27 @@
         };
 
         this.open = function open(dictionary, success, error) {
-            api.find('dictionaries', dictionary._id, {projection: {content: 0}}).then(success, error);
+            api.find('dictionaries', dictionary._id).then(success, error);
         };
 
-        this.upload = function create(dictionary, file, success, error) {
+        this.upload = function create(dictionary, data, file, success, error, progress) {
             var hasId = _.has(dictionary, '_id') && dictionary._id !== null;
             var method = hasId ? 'PATCH' : 'POST';
             var headers = hasId ? {'If-Match': dictionary._etag} : {};
-            var data = {
-                'name': dictionary.name,
-                'language_id': dictionary.language_id
-            };
+            var sendData = {};
+
+            // pick own properties
+            angular.forEach(data, function(val, key) {
+                if (key !== 'content') {
+                    sendData[key] = val;
+                }
+            });
+
+            // send content as content_list which will accept string and will json.parse it later
+            // (we send it as form data so each field is not parsed and it would fail list validation)
+            if (data.hasOwnProperty('content')) {
+                sendData.content_list = angular.toJson(data.content);
+            }
 
             urls.resource('dictionaries').then(function(uploadURL) {
                 if (hasId) {
@@ -40,10 +50,10 @@
                 return $upload.upload({
                     url: uploadURL,
                     method: method,
-                    data: data,
+                    data: sendData,
                     file: file,
                     headers: headers
-                }).then(success, error);
+                }).then(success, error, progress);
             }, error);
         };
 
@@ -71,7 +81,7 @@
         $scope.origDictionary = null;
         $scope.dictionary = null;
 
-        var fetchDictionaries = function() {
+        $scope.fetchDictionaries = function() {
             dictionaries.fetch(function(result) {
                 $scope.dictionaries = result;
             });
@@ -80,15 +90,17 @@
         $scope.createDictionary = function() {
             $scope.dictionary = {};
             $scope.origDictionary = {};
-            $scope.modalActive = true;
         };
 
         $scope.openDictionary = function(dictionary) {
             dictionaries.open(dictionary, function(result) {
-                $scope.dictionary = result;
-                $scope.origDictionary = angular.copy($scope.dictionary);
-                $scope.modalActive = true;
+                $scope.origDictionary = result;
+                $scope.dictionary = _.create(result);
             });
+        };
+
+        $scope.closeDictionary = function() {
+            $scope.dictionary = $scope.origDictionary = null;
         };
 
         $scope.remove = function(dictionary) {
@@ -102,74 +114,98 @@
             );
         };
 
-        fetchDictionaries();
+        $scope.fetchDictionaries();
     }
 
-    DictionaryConfigModalController.$inject = ['$scope', 'dictionaries', 'upload', 'gettext', 'notify', 'modal'];
-    function DictionaryConfigModalController ($scope, dictionaries, upload, gettext, notify, modal) {
-        function reset() {
-            $scope.dictionary = null;
-            $scope.origDictionary = null;
-            $scope.word = {};
-            $scope.file = null;
-            $scope.modalActive = false;
+    DictionaryEditController.$inject = ['$scope', 'dictionaries', 'upload', 'gettext', 'notify', 'modal'];
+    function DictionaryEditController ($scope, dictionaries, upload, gettext, notify, modal) {
+
+        function onSuccess(result) {
+            $scope.closeDictionary();
+            $scope.fetchDictionaries();
+            notify.success(gettext('Dictionary saved succesfully'));
+            $scope.progress = null;
+            return result;
         }
 
-        var onSuccess = function(result) {
-            reset();
-            dictionaries.fetch(function(result) {
-                $scope.dictionaries = result;
-            });
-            notify.success(gettext('Dictionary saved succesfully'));
-            return result;
-        };
-
-        var onError = function(response) {
+        function onError(response) {
             if (angular.isDefined(response.data._issues) &&
                     angular.isDefined(response.data._issues['validator exception'])) {
                 notify.error(gettext('Error: ' + response.data._issues['validator exception']));
             } else {
                 notify.error(gettext('Error. Dictionary not saved.'));
             }
-        };
+            $scope.progress = null;
+        }
 
-        //listen for the file selected event
+        // listen for the file selected event
         $scope.$on('fileSelected', function (event, args) {
             $scope.$apply(function() {
                 $scope.file = args.file;
             });
         });
 
-        $scope.canSave = function(form) {
-            var hasId = _.has($scope.dictionary, '_id') && $scope.dictionary._id !== null;
-            return form.$valid && (form.$dirty || $scope.file !== null) && (!hasId && $scope.file !== null || hasId);
-        };
-
         $scope.save = function() {
+            $scope.progress = {width: 1};
             if ($scope.file) {
-                dictionaries.upload($scope.dictionary, $scope.file, onSuccess, onError);
+                dictionaries.upload($scope.origDictionary, $scope.dictionary, $scope.file, onSuccess, onError, function(update) {
+                    $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                });
             } else {
                 dictionaries.update($scope.origDictionary, $scope.dictionary, onSuccess, onError);
             }
         };
 
         $scope.cancel = function() {
-            reset();
+            $scope.closeDictionary();
         };
 
-        $scope.addWord = function() {
-            dictionaries.addWord($scope.dictionary, $scope.word.key,
-                function(updated, updates) {
-                    _.assign($scope.dictionary, _.omit(updated, ['content', 'word']));
-                    $scope.word.key = null;
-                    notify.success(gettext('Word added succesfully: ') + updates.word);
-                }, onError);
+        $scope.addWord = function(word) {
+            $scope.dictionary.content = $scope.dictionary.content || [];
+            $scope.dictionary.content.push(word);
+            $scope.filterWords(word);
         };
 
-        reset();
+        $scope.removeWord = function(wordModel, search) {
+            $scope.dictionary.content = $scope.dictionary.content || [];
+            $scope.dictionary.content.splice(wordModel.index, 1);
+            $scope.filterWords(search);
+        };
+
+        function sortWords(a, b) {
+            if (a.word > b.word) {
+                return 1;
+            } else if (a.word < b.word) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+
+        $scope.filterWords = function filterWords(search) {
+            $scope.words = [];
+            $scope.isNew = !!search;
+            if (search) {
+                var words = $scope.dictionary.content || [],
+                    length = words.length;
+                for (var i = 0; i < length; i++) {
+                    if (words[i].indexOf(search) === 0) {
+                        $scope.words.push({word: words[i], index: i});
+                        if (words[i].length === search.length) {
+                            $scope.isNew = false;
+                        }
+                    }
+                }
+            }
+
+            $scope.words.sort(sortWords);
+        };
     }
 
-    var app = angular.module('superdesk.dictionaries', []);
+    var app = angular.module('superdesk.dictionaries', [
+        'superdesk.activity',
+        'superdesk.upload'
+    ]);
 
     app
         .config(['superdeskProvider', function(superdesk) {
@@ -192,26 +228,15 @@
             });
         }])
         .service('dictionaries', DictionaryService)
+        .controller('DictionaryEdit', DictionaryEditController)
         .directive('sdDictionaryConfig', function() {
-            return {
-                controller: DictionaryConfigController
-            };
+            return {controller: DictionaryConfigController};
         })
         .directive('sdDictionaryConfigModal', function() {
             return {
-                scope: {
-                    modalActive: '=active',
-                    dictionaries: '=',
-                    dictionary: '=',
-                    origDictionary: '=',
-                    word: '=',
-                    cancel: '&'
-                },
-                controller: DictionaryConfigModalController,
+                controller: 'DictionaryEdit',
                 require: '^sdDictionaryConfig',
-                templateUrl: 'scripts/superdesk-dictionaries/views/dictionary-config-modal.html',
-                link: function(scope, elem, attrs, ctrl) {
-                }
+                templateUrl: 'scripts/superdesk-dictionaries/views/dictionary-config-modal.html'
             };
         }).directive('fileUpload', function () {
             return {

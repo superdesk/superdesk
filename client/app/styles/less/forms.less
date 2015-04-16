@@ -524,33 +524,33 @@ form, ng-form {
             margin-bottom: 15px;
             width: 100%;
             .border-box();
-            label {
-                font-size: 11px;
-                .text-semibold();
-                color: @grayLight;
-                text-transform: uppercase;
-                height: 18px;
-
-                input[type="checkbox"],
-                input[type="radio"],
-                .sd-checkbox,
-                .sd-toggle {
-                    float: left;
-                    margin-right: 10px;
-                }
-
-                &.right {
-                    input[type="checkbox"],
-                    input[type="radio"],
-                    .sd-checkbox,
-                    .sd-toggle {
-                        float: right;
-                        margin-left: 10px;
-                    }
-                }
+                        .control {
             }
-            .control {
-            }
+        }
+        label {
+              font-size: 11px;
+              .text-semibold();
+              color: @grayLight;
+              text-transform: uppercase;
+              height: 18px;
+
+              input[type="checkbox"],
+              input[type="radio"],
+              .sd-checkbox,
+              .sd-toggle {
+                  float: left;
+                  margin-right: 10px;
+              }
+
+              &.right {
+                  input[type="checkbox"],
+                  input[type="radio"],
+                  .sd-checkbox,
+                  .sd-toggle {
+                      float: right;
+                      margin-left: 10px;
+                  }
+              }
         }
         .multiple {
             display: flex;

@@ -33,6 +33,7 @@ tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
 tests.push('superdesk/itemList/itemList');
 tests.push('superdesk/ui/ui');
+tests.push('superdesk/upload/upload');
 tests.push('superdesk/list/list');
 tests.push('superdesk/keyboard/keyboard');
 
@@ -66,11 +67,14 @@ tests.push('superdesk-dashboard/workspace-tasks/tasks');
 tests.push('superdesk-archive/module');
 tests.push('superdesk-archive/directives');
 
+tests.push('superdesk-dictionaries/dictionaries');
+
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-gettext');
 tests.push('angular-ui');
 tests.push('angular-route');
+tests.push('angular-file-upload');
 tests.push('moment');
 
 requirejs.config({
@@ -94,6 +98,7 @@ requirejs.config({
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
+        'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
 
@@ -111,6 +116,7 @@ requirejs.config({
         'angular-gettext': ['angular'],
         'angular-route': ['angular'],
         'angular-mocks': ['angular'],
-        'angular-ui': ['angular']
+        'angular-ui': ['angular'],
+        'angular-file-upload': ['angular']
     }
 });
