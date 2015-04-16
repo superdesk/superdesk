@@ -16,24 +16,20 @@
 
             <div sd-multi-action-bar></div>
         </header>
-
-
-
-        <div class="content" sd-updown data-items="items._items" data-select="preview(item)">
-            <div class="loading-indicator" ng-show="loading" translate>loading</div>
-
-            <div sd-search-tags></div>
-
-            <div sd-shadow>
-                <ul class="{{view}}-view list-view">
-                    <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
-                        <div sd-media-box></div>
-                    </li>
-                </ul>
+        <div class="content" sd-scrolled data-next-action="fetchNext" data-previous-action="fetchPrevious">
+            <div sd-updown data-items="items._items" data-select="preview(item)">
+                <div class="loading-indicator" ng-show="loading" translate>loading</div>
+                <div sd-search-tags></div>
+                <div sd-shadow>
+                    <ul class="{{view}}-view list-view">
+                        <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
+                            <div sd-media-box></div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-
     <div class="preview-pane content-item-preview" ng-if="!selected.fetch" ng-init="tab = 'content'">
         <header>
             <ul class="nav nav-tabs">

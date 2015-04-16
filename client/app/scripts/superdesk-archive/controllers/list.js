@@ -32,6 +32,7 @@ define([
             $location.search('_id', null);
             $scope.stages.select(null);
         };
+        $scope.fetching = false;
 
         $scope.stageSelect = function(stage) {
             if ($scope.spike) {
@@ -43,15 +44,16 @@ define([
         $scope.openUpload = function openUpload() {
             superdesk.intent('upload', 'media');
         };
-
         this.fetchItems = function fetchItems(criteria) {
             if (resource == null) {
                 return;
             }
             $scope.loading = true;
-            resource.query(criteria).then(function(items) {
+            resource.query(criteria)
+            .then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
+                $scope.page = 1;
             }, function() {
                 $scope.loading = false;
             });
@@ -66,14 +68,36 @@ define([
                 $scope.selected.fetch = item;
             });
         };
+        $scope.fetchNext = function() {
+            if (!$scope.fetching) {
+                $scope.fetching = true;
+                var resource = self.getResource();
+                $scope.page = $scope.page + 1;
+                var query = self.getQuery(_.omit($location.search(), '_id'), true);
+                query.from = ($scope.page - 1) * query.size;
+                var criteria = {source: query};
+                $scope.loading = true;
+                resource.query(criteria)
+                .then(function(items) {
+                    $scope.loading = false;
+                    $scope.items._items = $scope.items._items.concat(items._items);
+                    $scope.fetching = false;
+                }, function() {
+                    $scope.loading = false;
+                });
+            }
+        };
+        this.getResource  = function getResource() {
+            return desks.activeDeskId ? api('archive') : api('user_content', session.identity);
+        };
+        function refreshItems() {
+            $timeout.cancel(timeout);
+            timeout = $timeout(_refresh, 100, false);
+        }
 
         var refreshItems = _.debounce(_refresh, 100);
         function _refresh() {
-            if (desks.activeDeskId) {
-                resource = api('archive');
-            } else {
-                resource = api('user_content', session.identity);
-            }
+            resource = self.getResource();
             self.refresh(true);
         }
 
@@ -116,7 +140,6 @@ define([
                     $location.search('page', null);
                     return; // will reload via $routeUpdate
                 }
-
                 refreshItems();
             });
         });
