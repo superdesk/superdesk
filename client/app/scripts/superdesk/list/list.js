@@ -227,7 +227,6 @@
                         }
                     }
                 });
-
                 /**
                  * Set page
                  *
@@ -253,7 +252,28 @@
             }
         };
     }]);
-
+    mod.directive('sdScrolled', ['$location', function($location) {
+        return {
+            scope: {
+                nextAction: '=',
+                previousAction: '='
+            },
+            link: function(scope, elm, attr) {
+                var page = 1;
+                if ($location.search().page) {
+                    page = $location.search().page;
+                }
+                var container = elm[0];
+                elm.bind('scroll', function() { console.log('scrolled');
+                    if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
+                        if (scope.nextAction) {
+                            scope.nextAction();
+                        }
+                    }
+                });
+            }
+        };
+    }]);
     // Alternative sdPagination, doesn't use $location.
     // Should replace sdPagination.
     mod.directive('sdPaginationAlt', [function() {
