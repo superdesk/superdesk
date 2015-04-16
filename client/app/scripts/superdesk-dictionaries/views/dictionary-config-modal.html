@@ -34,7 +34,7 @@
 
 		<ng-form ng-if="dictionary._id">
 	    <fieldset>
-	    	<label for="words-search" translate>Search Words ({{ dictionary.content.length }} total)</label>
+	    	<label for="words-search" translate>Search Words</label>
 		    <div class="multiple">
 		    	<div class="field">
 			    	<input id="words-search"
@@ -52,11 +52,11 @@
 			</div>
 
 		    <ul class="words-list" ng-show="words.length">
-		    	<li ng-repeat="word in words track by word.word">
+		    	<li ng-repeat="word in words track by word">
 		    		<button class="btn btn-light btn-mini pull-right"
 		    			ng-click="removeWord(word, search)"
 		    			><i class="icon-small icon-trash"></i></button>
-		    		{{ :: word.word }}
+		    		{{ :: word }}
 		    	</li>
 		    </ul>
 		</fieldset>

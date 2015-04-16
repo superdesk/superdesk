@@ -10,19 +10,39 @@
 
 import re
 import logging
-from flask import request, json
+import collections
+from flask import json
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
-from superdesk import get_resource_service
 from apps.dictionaries.resource import DICTIONARY_FILE
-from eve import ETAG
 
 
 logger = logging.getLogger(__name__)
 
 
+def encode_dict(words_dict):
+    return json.dumps(words_dict)
+
+
+def decode_dict(words_list):
+    return json.loads(words_list)
+
+
+def train(features):
+    model = collections.defaultdict(lambda: 1)
+    for f in features:
+        model[f] += 1
+    return model
+
+
 def words(text):
-    return re.findall('[a-z]+', text.lower())
+    return re.findall('[^\d\W_]+', text.lower())
+
+
+def add_words(nwords, text, val=1):
+    for word in words(text):
+        nwords.setdefault(word, 0)
+        nwords[word] += val
 
 
 def read(stream):
@@ -30,14 +50,17 @@ def read(stream):
 
 
 def merge(doc, words):
-    doc['content'] = list(set(doc.get('content', []) + words))
+    doc.setdefault('content', {})
+    for word, count in words.items():
+        doc['content'].setdefault(word, 0)
+        doc['content'][word] += count
 
 
 def read_from_file(doc):
     content = doc.pop(DICTIONARY_FILE)
     if 'text/' not in content.mimetype:
         raise SuperdeskApiError.badRequestError('A text dictionary file is required')
-    return words(read(content))
+    return train(words(read(content)))
 
 
 class DictionaryService(BaseService):
@@ -46,40 +69,41 @@ class DictionaryService(BaseService):
             if doc.get(DICTIONARY_FILE):
                 words = read_from_file(doc)
                 merge(doc, words)
+            if 'content' in doc:
+                doc['content'] = encode_dict(doc['content'])
 
     def on_created(self, docs):
         for doc in docs:
-            del doc['content']
+            doc.pop('content', None)
+
+    def on_updated(self, updates, original):
+        updates.pop('content', None)
+
+    def find_one(self, req, **lookup):
+        doc = super().find_one(req, **lookup)
+        if doc and 'content':
+            doc['content'] = decode_dict(doc['content'])
+        return doc
 
     def on_update(self, updates, original):
         # parse json list
         if updates.get('content_list'):
             updates['content'] = json.loads(updates.pop('content_list'))
 
-        if not updates.get('content'):
-            # append to existing content when uploading without other changes
-            updates['content'] = original.get('content', [])
+        # handle manual changes
+        nwords = original.get('content', {}).copy()
+        for word, val in updates.get('content', {}).items():
+            if val:
+                add_words(nwords, word, val)
+            else:
+                nwords.pop(word, None)
+        updates['content'] = nwords
 
+        # handle uploaded file
         if updates.get(DICTIONARY_FILE):
-            words = read_from_file(updates)
-            merge(updates, words)
+            file_words = read_from_file(updates)
+            merge(updates, file_words)
 
-        if updates.get('content'):
-            updates['content'] = sorted(updates.get('content'))
-
-
-class DictionaryAddWordService(BaseService):
-
-    def create(self, docs, **kwargs):
-        dict_id = request.view_args['dict_id']
-        dict_service = get_resource_service('dictionaries')
-        dictionary = dict_service.find_one(req=None, _id=dict_id)
-        if not dictionary:
-            raise SuperdeskApiError.notFoundError('Invalid dictionary identifier: ' + dict_id)
-        for doc in docs:
-            if 'word' in doc:
-                dictionary['content'].append(doc['word'])
-                dictionary['content'] = sorted(dictionary['content'])
-                dict_service.put(dictionary['_id'], dictionary)
-                doc[ETAG] = dictionary[ETAG]
-        return [dict_id]
+        # save it as string, otherwise it would order keys and it takes forever
+        if 'content' in updates:
+            updates['content'] = encode_dict(updates['content'])

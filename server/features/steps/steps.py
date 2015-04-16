@@ -638,7 +638,7 @@ def step_impl_then_get_existing(context):
 
 @then('we get OK response')
 def step_impl_then_get_ok(context):
-    assert_ok(context.response)
+    assert_200(context.response)
 
 
 @then('we get response code {code}')

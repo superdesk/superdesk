@@ -28,7 +28,7 @@ class DictionariesResource(Resource):
             'required': True
         },
         'content': {
-            'type': 'list'
+            'type': 'dict'
         },
         'content_list': {
             'type': 'string',
@@ -41,13 +41,4 @@ class DictionariesResource(Resource):
     item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
     privileges = {'POST': 'dictionaries', 'PATCH': 'dictionaries', 'DELETE': 'dictionaries'}
-
-
-class DictionaryAddWordResource(Resource):
-    endpoint_name = 'dictionary_addword'
-    url = 'dictionaries/<{0}:dict_id>/addword'.format('regex("[\w,.:_-]+")')
-    schema = {'word': {'type': 'string'}}
-    datasource = {'source': 'dictionaries'}
-    resource_methods = ['POST']
-    resource_title = endpoint_name
-    privileges = {'POST': 'dictionaries'}
+    etag_ignore_fields = ['content', 'content_list']

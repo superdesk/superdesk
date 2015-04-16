@@ -19,7 +19,7 @@
     "ng-file-upload": "1.6.12",
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
-    "medium-editor": "2.1.3",
+    "medium-editor": "4.5.2",
     "ment.io": "0.9.22"
   },
   "ignore": [

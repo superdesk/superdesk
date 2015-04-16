@@ -1,6 +1,5 @@
 Feature: User Content
 
-    @wip
     @auth
     Scenario: List my new content
         Given empty "archive"

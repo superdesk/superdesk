@@ -1,4 +1,3 @@
-@wip
 Feature: Content Autosave
 
     @auth

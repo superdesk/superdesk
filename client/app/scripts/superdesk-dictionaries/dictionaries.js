@@ -17,11 +17,11 @@
         this.currDictionary = null;
 
         this.fetch = function fetch(success, error) {
-            api.dictionaries.query({projection: {content: 0}}).then(success, error);
+            return api.dictionaries.query({projection: {content: 0}}).then(success, error);
         };
 
         this.open = function open(dictionary, success, error) {
-            api.find('dictionaries', dictionary._id).then(success, error);
+            return api.find('dictionaries', dictionary._id).then(success, error);
         };
 
         this.upload = function create(dictionary, data, file, success, error, progress) {
@@ -61,15 +61,6 @@
             return api.save('dictionaries', dictionary, data).then(success, error);
         };
 
-        this.addWord = function addWord(dictionary, word, success, error) {
-            return api.save('dictionary_addword', {}, {word:word}, dictionary)
-                .then(function(updates) {
-                    api.find('dictionaries', dictionary._id).then(function(doc) {
-                        return success(doc, updates);
-                    }, error);
-                }, error);
-        };
-
         this.remove = function remove(dictionary, success, error) {
             return api.remove(dictionary).then(success, error);
         };
@@ -96,6 +87,7 @@
             dictionaries.open(dictionary, function(result) {
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
+                $scope.dictionary.content = _.create(result.content || {});
             });
         };
 
@@ -161,45 +153,63 @@
         };
 
         $scope.addWord = function(word) {
-            $scope.dictionary.content = $scope.dictionary.content || [];
-            $scope.dictionary.content.push(word);
+            if (!$scope.dictionary.content.hasOwnProperty(word)) {
+                addWordToTrie(word);
+            }
+
+            $scope.dictionary.content[word] = 1;
             $scope.filterWords(word);
         };
 
-        $scope.removeWord = function(wordModel, search) {
-            $scope.dictionary.content = $scope.dictionary.content || [];
-            $scope.dictionary.content.splice(wordModel.index, 1);
+        $scope.removeWord = function(word, search) {
+            $scope.dictionary.content[word] = 0;
             $scope.filterWords(search);
         };
 
-        function sortWords(a, b) {
-            if (a.word > b.word) {
-                return 1;
-            } else if (a.word < b.word) {
-                return -1;
-            } else {
-                return 0;
-            }
+        function isPrefix(prefix, word) {
+            return word.length >= prefix.length && word.substr(0, prefix.length) === prefix;
         }
 
         $scope.filterWords = function filterWords(search) {
             $scope.words = [];
             $scope.isNew = !!search;
-            if (search) {
-                var words = $scope.dictionary.content || [],
-                    length = words.length;
+            if (search && wordsTrie[search[0]]) {
+                var searchWords = wordsTrie[search[0]],
+                    length = searchWords.length,
+                    words = [],
+                    word;
                 for (var i = 0; i < length; i++) {
-                    if (words[i].indexOf(search) === 0) {
-                        $scope.words.push({word: words[i], index: i});
-                        if (words[i].length === search.length) {
+                    word = searchWords[i];
+                    if ($scope.dictionary.content[word] > 0 && isPrefix(search, word)) {
+                        words.push(word);
+                        if (word.length === search.length) {
                             $scope.isNew = false;
                         }
                     }
                 }
-            }
 
-            $scope.words.sort(sortWords);
+                var LIMIT = 10;
+                words.sort();
+                words.splice(LIMIT, words.length - LIMIT);
+                $scope.words = words;
+            }
         };
+
+        var wordsTrie = {};
+
+        function addWordToTrie(word) {
+            if (wordsTrie.hasOwnProperty(word[0])) {
+                wordsTrie[word[0]].push(word);
+            } else {
+                wordsTrie[word[0]] = [word];
+            }
+        }
+
+        for (var word in $scope.dictionary.content) {
+            if ($scope.dictionary.content.hasOwnProperty(word) || $scope.origDictionary.content.hasOwnProperty(word)) {
+                addWordToTrie(word);
+            }
+        }
     }
 
     var app = angular.module('superdesk.dictionaries', [

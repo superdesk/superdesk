@@ -18,7 +18,6 @@ Feature: News Items Archive Comments
         """
 
     @auth
-    @wip
     Scenario: Create comments for item
         Given "archive"
         """

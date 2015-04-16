@@ -14,7 +14,6 @@ Feature: Default Comments
         """
 
     @auth
-    @wip
     Scenario: Create comments
         Given empty "comments"
         When we post to "/comments" with success

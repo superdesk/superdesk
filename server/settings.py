@@ -156,7 +156,8 @@ INSTALLED_APPS = [
     'apps.macros',
     'apps.dictionaries',
     'apps.duplication',
-    'apps.aap_mm'
+    'apps.aap_mm',
+    'apps.spellcheck',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

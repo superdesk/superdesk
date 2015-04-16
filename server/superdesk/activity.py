@@ -48,7 +48,7 @@ class AuditResource(Resource):
         'extra': {'type': 'dict'},
         'user': Resource.rel('users', False)
     }
-    exclude = {endpoint_name, 'activity'}
+    exclude = {endpoint_name, 'activity', 'dictionaries'}
 
 
 class AuditService(BaseService):

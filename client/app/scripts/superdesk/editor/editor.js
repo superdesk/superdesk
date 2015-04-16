@@ -11,9 +11,40 @@
 
 'use strict';
 
-var TEXT_TYPE = 3;
+var TEXT_TYPE = 3,
+    MARKER_CLASS = 'sdmark';
+
+function click(target) {
+    target.dispatchEvent(new MouseEvent('click'));
+}
 
 function EditorService() {
+
+    this.storeSelection = function storeSelection(node) {
+        var selection = document.getSelection();
+        if (!selection.anchorNode) {
+            return;
+        }
+
+        var span = document.createElement('span'),
+            range = document.createRange();
+        range.setStart(selection.anchorNode, selection.anchorOffset);
+        span.classList.add(MARKER_CLASS);
+        range.insertNode(span);
+    };
+
+    this.resetSelection = function resetSelection(node, data) {
+        var marks = node.getElementsByClassName(MARKER_CLASS),
+            selection = document.getSelection(),
+            range = document.createRange();
+        selection.removeAllRanges();
+        while (marks.length) {
+            var mark = marks.item(0);
+            range.setStartBefore(mark);
+            selection.addRange(range);
+            mark.parentNode.removeChild(mark);
+        }
+    };
 
     this.clear = function() {
         this.elem = null;
@@ -203,7 +234,7 @@ angular.module('superdesk.editor', [])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['editor', function (editor) {
+    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
@@ -271,36 +302,82 @@ angular.module('superdesk.editor', [])
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             link: function(scope, elem, attrs, ngModel) {
 
-                var editorElem;
+                var editorElem,
+                    spelling = false,
+                    timeout;
 
-                function updateModel() {
-                    if (editor.readOnly) {
+                function updateModel(event) {
+                    if (editor.readOnly || spelling) {
                         return;
                     }
 
-                    scope.$apply(function editorModelUpdate() {
-                        ngModel.$setViewValue(editorElem.html());
+                    var selection = editor.storeSelection(editorElem[0]),
+                        editHtml = spellcheck.clean(editorElem[0]);
+                    editorElem[0].innerHTML = editHtml;
+                    editor.resetSelection(editorElem[0], selection);
+                    var html = editorElem[0].innerHTML;
+                    scope.$applyAsync(function() {
+                        ngModel.$setViewValue(html);
                     });
                 }
 
+                // 2s after model change - render errors again
+                ngModel.$viewChangeListeners.push(_.debounce(function renderSpellcheck() {
+                    spelling = true;
+                    spellcheck.render(editorElem[0]);
+                    $timeout(function() {
+                        spelling = false;
+                        $timeout.cancel(timeout); // stop pending updates (triggered by hilite)
+                    }, 1, false);
+                }, 800));
+
                 ngModel.$render = function renderEditor() {
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
+
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '<p><br></p>');
 
                     editor.elem = editorElem[0];
                     editor.editor = new window.MediumEditor(editor.elem, config);
 
-                    editorElem.on('blur', updateModel);
-                    editorElem.on('input', updateModel);
-
-                    if (scope.type === 'preformatted') {
-                        editorElem.on('keydown keyup click', function() {
-                            scope.$apply(function() {
-                                angular.extend(scope.cursor, getLineColumn());
-                            });
+                    spellcheck.render(editorElem[0]).then(function() {
+                        editorElem.on('input', function() {
+                            $timeout.cancel(timeout);
+                            timeout = $timeout(updateModel, 200, false);
                         });
-                    }
+
+                        editorElem.on('contextmenu', function(event) {
+                            if (spellcheck.isErrorNode(event.target)) {
+                                var menu = elem[0].getElementsByClassName('dropdown-menu')[0],
+                                    toggle = elem[0].getElementsByClassName('dropdown-toggle')[0];
+                                if (elem.find('.dropdown.open').length) {
+                                    click(toggle);
+                                }
+
+                                scope.suggestions = null;
+                                spellcheck.suggest(event.target.textContent).then(function(suggestions) {
+                                    scope.suggestions = suggestions;
+                                    scope.replaceTarget = event.target;
+                                    $timeout(function() {
+                                        menu.style.left = (event.target.offsetLeft) + 'px';
+                                        menu.style.top = (event.target.offsetTop + event.target.offsetHeight) + 'px';
+                                        menu.style.position = 'absolute';
+                                        click(toggle);
+                                    }, 0, false);
+                                });
+
+                                return false;
+                            }
+                        });
+
+                        if (scope.type === 'preformatted') {
+                            editorElem.on('keydown keyup click', function() {
+                                scope.$apply(function() {
+                                    angular.extend(scope.cursor, getLineColumn());
+                                });
+                            });
+                        }
+                    });
 
                     scope.$on('$destroy', function() {
                         editorElem.off();
@@ -308,6 +385,10 @@ angular.module('superdesk.editor', [])
                     });
 
                     scope.cursor = {};
+                };
+
+                scope.replace = function(text) {
+                    scope.replaceTarget.parentNode.replaceChild(document.createTextNode(text), scope.replaceTarget);
                 };
             }
         };

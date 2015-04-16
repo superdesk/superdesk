@@ -11,7 +11,7 @@ describe('dictionaries', function() {
 
         beforeEach(inject(function($rootScope, $controller) {
             scope = $rootScope.$new();
-            scope.dictionary = {content: ['foo', 'bar']};
+            scope.dictionary = {content: {foo: 1, bar: 1}};
             $controller('DictionaryEdit', {$scope: scope});
         }));
 
@@ -22,7 +22,7 @@ describe('dictionaries', function() {
 
         it('can add words', function() {
             scope.addWord('test');
-            expect(scope.dictionary.content).toContain('test');
+            expect(scope.dictionary.content.test).toBe(1);
             expect(scope.words.length).toBe(1);
         });
 
@@ -30,9 +30,9 @@ describe('dictionaries', function() {
             scope.filterWords('foo');
             expect(scope.isNew).toBe(false);
             expect(scope.words.length).toBe(1);
-            expect(scope.words[0].word).toBe('foo');
+            expect(scope.words[0]).toBe('foo');
 
-            scope.removeWord(scope.words[0], 'foo');
+            scope.removeWord('foo', 'foo');
             expect(scope.isNew).toBe(true);
             expect(scope.words.length).toBe(0);
         });

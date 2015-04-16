@@ -61,7 +61,7 @@ Feature: Content Locking
         Then we get error 403
 
 
-    @auth @wip
+    @auth
     Scenario: Force unlock other user content on a desk with desk membership.
         Given "desks"
         """
