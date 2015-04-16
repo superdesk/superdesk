@@ -53,16 +53,23 @@ class EveBackend():
         :param endpoint_name: api resource name
         :param docs: list of docs to be inserted
         """
+        ids = self.create_in_mongo(endpoint_name, docs, **kwargs)
+        self.create_in_search(endpoint_name, docs, **kwargs)
+        return ids
+
+    def create_in_mongo(self, endpoint_name, docs, **kwargs):
         for doc in docs:
             doc.setdefault(app.config['ETAG'], document_etag(doc))
             self.set_default_dates(doc)
 
         backend = self._backend(endpoint_name)
         ids = backend.insert(endpoint_name, docs)
+        return ids
+
+    def create_in_search(self, endpoint_name, docs, **kwargs):
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend:
             search_backend.insert(endpoint_name, docs, **kwargs)
-        return ids
 
     def update(self, endpoint_name, id, updates, original):
         """Update document with given id.
@@ -98,13 +105,19 @@ class EveBackend():
         return res if res is not None else updates
 
     def replace(self, endpoint_name, id, document, original):
+        res = self.replace_in_mongo(endpoint_name, id, document, original)
+        self.replace_in_search(endpoint_name, id, document, original)
+        return res
+
+    def replace_in_mongo(self, endpoint_name, id, document, original):
         backend = self._backend(endpoint_name)
         res = backend.replace(endpoint_name, id, document, original)
+        return res
 
+    def replace_in_search(self, endpoint_name, id, document, original):
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:
             search_backend.replace(endpoint_name, id, document)
-        return res
 
     def delete(self, endpoint_name, lookup):
         backend = self._backend(endpoint_name)

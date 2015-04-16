@@ -15,6 +15,9 @@ from superdesk.services import BaseService
 from superdesk.workflow import set_default_state
 from apps.content import metadata_schema
 from .common import extra_response_fields, item_url, aggregations, on_create_item
+from eve.defaults import resolve_default_values
+from eve.methods.common import resolve_document_etag
+from flask import current_app as app
 
 
 STATE_INGESTED = 'ingested'
@@ -38,11 +41,28 @@ class IngestResource(Resource):
 
 class IngestService(BaseService):
 
-    def create(self, docs):
+    def on_create(self, docs):
         for doc in docs:
             set_default_state(doc, STATE_INGESTED)
         on_create_item(docs)  # do it after setting the state otherwise it will make it draft
-        return super().create(docs)
+
+    def post_in_mongo(self, docs, **kwargs):
+        for doc in docs:
+            resolve_default_values(doc, app.config['DOMAIN'][self.datasource]['defaults'])
+        self.on_create(docs)
+        resolve_document_etag(docs, self.datasource)
+        ids = self.backend.create_in_mongo(self.datasource, docs, **kwargs)
+        self.on_created(docs)
+        return ids
+
+    def put_in_mongo(self, id, document):
+        resolve_default_values(document, app.config['DOMAIN'][self.datasource]['defaults'])
+        original = self.find_one(req=None, _id=id)
+        self.on_replace(document, original)
+        resolve_document_etag(document, self.datasource)
+        res = self.backend.replace_in_mongo(self.datasource, id, document, original)
+        self.on_replaced(document, original)
+        return res
 
     def set_ingest_provider_sequence(self, item, provider):
         """
@@ -50,7 +70,6 @@ class IngestService(BaseService):
         :param item: object to which ingest_provider_sequence to be set
         :param provider: ingest_provider object, used to build the key name of sequence
         """
-
         sequence_key_name = "{provider_type}_{provider_id}_ingest_seq".format(provider_type=provider.get('type'),
                                                                               provider_id=str(provider.get('_id')))
         sequence_number = update_key(sequence_key_name, flag=True)
