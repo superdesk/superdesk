@@ -176,7 +176,7 @@
                 $scope.remove = function(subscriber) {
                     modal.confirm(gettext('Are you sure you want to delete subscriber?'))
                     .then(function() {
-                        api.subscribers.remove(subscriber);
+                        return api.subscribers.remove(subscriber);
                     })
                     .then(function(result) {
                         _.remove($scope.subscribers, subscriber);
@@ -280,7 +280,7 @@
                 $scope.remove = function(outputChannel) {
                     modal.confirm(gettext('Are you sure you want to delete output channel?'))
                     .then(function() {
-                        api.output_channels.remove(outputChannel);
+                        return api.output_channels.remove(outputChannel);
                     })
                     .then(function(result) {
                         _.remove($scope.outputChannels, outputChannel);
