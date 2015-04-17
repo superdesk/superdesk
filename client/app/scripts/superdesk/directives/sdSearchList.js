@@ -54,7 +54,7 @@ define([
                     scope.items = null;
                     scope.keyword = null;
 
-                    var update = function() {
+                    var _update = function() {
                         var criteria = scope.criteria || {};
                         if (scope.keyword && scope.searchKey) {
                             var search = {};
@@ -71,10 +71,12 @@ define([
                             scope.items = result._items;
                         });
                     };
-                    scope.$watchGroup([
-                        'keyword',
-                        'page'
-                    ], _.debounce(update, 500));
+                    var update = _.debounce(_update, 500);
+                    scope.$watch('keyword', function() {
+                        scope.page = 1;
+                        update();
+                    });
+                    scope.$watch('page', update);
 
                     scope.$watch('selectedItems', function() {
                         if (!Array.isArray(scope.selectedItems)) {
