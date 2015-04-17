@@ -10,7 +10,7 @@
 
 import logging
 from superdesk.celery_app import celery
-from superdesk.publish import publish_content
+from superdesk.publish.publish_content import PublishContent
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,10 @@ def register_transmitter(transmitter_type, transmitter, errors):
     transmitter_errors[transmitter_type] = dict(errors)
 
 
-#@celery.task()
+@celery.task()
 def transmit():
-    publish_content().run()
+    PublishContent().run()
+
+
+# must be imported for registration
+import superdesk.publish.ftp  # NOQA

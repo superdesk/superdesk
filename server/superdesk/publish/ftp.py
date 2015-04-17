@@ -10,7 +10,7 @@
 
 import ftplib
 from superdesk.publish import register_transmitter
-from io import StringIO, BytesIO
+from io import BytesIO
 from superdesk.publish.publish_service import PublishService, get_file_extension
 from superdesk.errors import PublishFtpError
 errors = [PublishFtpError.ftpError().get_error_description()]
@@ -25,7 +25,7 @@ class FTPPublishService(PublishService):
     """FTP Ingest Service."""
 
     def config_from_url(self, url):
-        """Parse given url into ftp config.
+        """Parse given url into ftp config. Used for tests.
 
         :param url: url in form `ftp://username:password@host:port/dir`
         """
@@ -38,16 +38,15 @@ class FTPPublishService(PublishService):
         }
 
     def _transmit(self, item, subscriber, destination):
-        config = self.config_from_url(destination.get('config', {}))
+        config = destination.get('config', {})
 
         try:
             with ftplib.FTP(config.get('host')) as ftp:
                 ftp.login(config.get('username'), config.get('password'))
-                ftp.cwd(config.get('path', ''))
+                ftp.cwd(config.get('path', '').lstrip('/'))
                 ftp.set_pasv(config.get('passive', False))
 
-                filename = '{}.{}'.format(item['item_id'], get_file_extension(item))
-                f = StringIO(item['formatted_item'])
+                filename = '{}.{}'.format(item['item_id'].replace(':', '-'), get_file_extension(item))
                 b = BytesIO(bytes(item['formatted_item'], 'UTF-8'))
                 ftp.storbinary("STOR " + filename, b)
 

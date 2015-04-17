@@ -12,8 +12,11 @@ import logging
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
 import superdesk.publish
+from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
 
 logger = logging.getLogger(__name__)
+
+UPDATE_SCHEDULE_DEFAULT = {'seconds': 10}
 
 
 class PublishContent(superdesk.Command):
@@ -28,32 +31,33 @@ class PublishContent(superdesk.Command):
                         'destination': destination
                     }
 
-                    publish(subscriber, destination)
-                    # publish.apply_async(
-                    #     expires=10,
-                    #     kwargs=kwargs)
+                    publish.apply_async(
+                        expires=10,
+                        kwargs=kwargs)
 
 
-#@celery.task(soft_time_limit=1800)
+@celery.task(soft_time_limit=1800)
 def publish(subscriber, destination):
     """
     Fetches items from publish queue as per the configuration,
     calls the transmit function.
     """
+    if is_task_running(destination['name'],
+                       subscriber[superdesk.config.ID_FIELD],
+                       UPDATE_SCHEDULE_DEFAULT):
+        return
 
-    lookup = {'subscriber_id': subscriber.get('_id'),
-              'destination.name': destination.get('name'),
-              'state': 'pending'}
+    try:
+        lookup = {'subscriber_id': subscriber.get('_id'),
+                  'destination.name': destination.get('name'),
+                  'state': 'pending'}
 
-    items = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
-    if items.count() > 0:
-        for item in items:
-            # update the status of the item to in-progress
-            queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
-            superdesk.get_resource_service('publish_queue').patch(item.get('_id'), queue_update)
-
-        #start transmission
-        transmit_items(items, subscriber, destination)
+        items = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
+        if items.count() > 0:
+            transmit_items(items, subscriber, destination)
+    finally:
+        mark_task_as_not_running(destination['name'],
+                                 subscriber[superdesk.config.ID_FIELD])
 
 
 def transmit_items(items, subscriber, destination):
@@ -61,6 +65,10 @@ def transmit_items(items, subscriber, destination):
 
     for item in items:
         try:
+            # update the status of the item to in-progress
+            queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
+            superdesk.get_resource_service('publish_queue').patch(item.get('_id'), queue_update)
+
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
             transmitter.transmit(item, subscriber, destination)
         except:

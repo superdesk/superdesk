@@ -385,7 +385,11 @@ class AutoSaveResource(Resource):
     endpoint_name = 'archive_autosave'
     item_url = item_url
     schema = {
-        '_id': {'type': 'string'}
+        '_id': {'type': 'string'},
+        'destination_groups': {
+            'type': 'list',
+            'schema': Resource.rel('destination_groups', True)
+        }
     }
     schema.update(metadata_schema)
     resource_methods = ['POST']
