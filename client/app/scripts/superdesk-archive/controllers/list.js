@@ -34,6 +34,7 @@ define([
             $scope.stages.select(null);
         };
         $scope.fetching = false;
+        $scope.page = 1;
 
         $scope.stageSelect = function(stage) {
             if ($scope.spike) {
@@ -54,7 +55,6 @@ define([
             .then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
-                $scope.page = 1;
             }, function() {
                 $scope.loading = false;
             });
@@ -70,10 +70,12 @@ define([
                 $scope.loading = true;
                 resource.query(criteria)
                 .then(function(items) {
-                    $scope.loading = false;
                     $scope.items._items = $scope.items._items.concat(items._items);
                     $scope.fetching = false;
                 }, function() {
+                    //
+                })
+                ['finally'](function() {
                     $scope.loading = false;
                 });
             }
