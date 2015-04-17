@@ -90,18 +90,23 @@ class ArchivePublishService(BaseService):
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers.count() > 0:
                         formatter = get_formatter(output_channel['format'])
-                        formatted_item = formatter.format(doc, output_channel)
+
+                        formatted_item = {}
+                        formatted_item['formatted_item'] = formatter.format(doc, output_channel)
+                        formatted_item['format'] = output_channel['format']
+                        formatted_item['item_id'] = doc['_id']
+                        formatted_item['item_version'] = doc.get('last_version', 0)
+                        formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
+
                         publish_queue_items = []
 
                         for subscriber in subscribers:
                             for destination in subscriber.get('destinations', []):
                                 publish_queue_item = {}
-                                publish_queue_item['formatted_item'] = formatted_item
-                                publish_queue_item['format'] = output_channel['format']
-                                publish_queue_item['destination'] = destination
                                 publish_queue_item['item_id'] = doc['_id']
-                                publish_queue_item['item_version'] = doc.get('last_version', 0)
+                                publish_queue_item['formatted_item_id'] = formatted_item_id
                                 publish_queue_item['subscriber_id'] = subscriber['_id']
+                                publish_queue_item['destination'] = destination
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
                                 publish_queue_items.append(publish_queue_item)
 
