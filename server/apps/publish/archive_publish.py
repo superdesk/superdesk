@@ -65,6 +65,12 @@ class ArchivePublishService(BaseService):
             user = get_user()
             updates[config.CONTENT_STATE] = 'published'
             item = self.backend.update(self.datasource, id, updates, original)
+            original.update(updates)
+
+            if archived_item['type'] != 'composite':
+                # queue only text items
+                self.queue_transmission(original)
+
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             return item
         except KeyError:
@@ -91,9 +97,10 @@ class ArchivePublishService(BaseService):
                             for destination in subscriber.get('destinations', []):
                                 publish_queue_item = {}
                                 publish_queue_item['formatted_item'] = formatted_item
+                                publish_queue_item['format'] = output_channel['format']
                                 publish_queue_item['destination'] = destination
                                 publish_queue_item['item_id'] = doc['_id']
-                                publish_queue_item['item_id'] = doc.get('last_version', 0)
+                                publish_queue_item['item_version'] = doc.get('last_version', 0)
                                 publish_queue_item['subscriber_id'] = subscriber['_id']
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
                                 publish_queue_items.append(publish_queue_item)
@@ -139,7 +146,7 @@ class ArchivePublishService(BaseService):
                 for oc in ocs:
                     output_channels[oc['_id']] = oc
                     format_types.append(oc['format'])
-                selector_codes.extend(oc['selector_codes'] for oc in destination_group.get('output_channels'))
+                selector_codes.extend(oc.get('selector_codes', []) for oc in destination_group.get('output_channels'))
         return output_channels, list(set(itertools.chain(*selector_codes))), list(set(format_types))
 
     def get_subscribers(self, output_channel):

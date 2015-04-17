@@ -10,18 +10,15 @@
 
 
 import os
-import glob
-import shutil
 import unittest
 import ftplib
 
 from superdesk.publish.ftp import FTPPublishService
 
 
-
 class FTPPublishTestCase(unittest.TestCase):
 
-    item = {'item_id':'abc',
+    item = {'item_id': 'abc',
             'format': 'NITF',
             'formatted_item': '1234567890'}
 
@@ -49,4 +46,3 @@ class FTPPublishTestCase(unittest.TestCase):
 
         service._transmit(self.item, {}, destination={'config': config})
         self.assertTrue(self.is_item_loaded(config, 'abc.ntf'))
-
