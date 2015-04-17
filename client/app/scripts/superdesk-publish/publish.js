@@ -325,7 +325,7 @@
                     $scope.selectorCodes = {};
                     var destinationGroupIds = [];
                     _.each($scope.destinationGroup.destination_groups, function(item) {
-                        destinationGroupIds.push(item.group);
+                        destinationGroupIds.push(item);
                     });
                     if (destinationGroupIds.length) {
                         adminPublishSettingsService.fetchDestinationGroupsByIds(destinationGroupIds)
@@ -357,9 +357,7 @@
                 $scope.save = function() {
                     $scope.destinationGroup.destination_groups = [];
                     _.each($scope.selectedDestinationGroups, function(group) {
-                        $scope.destinationGroup.destination_groups.push({
-                            group: group._id
-                        });
+                        $scope.destinationGroup.destination_groups.push(group._id);
                     });
                     $scope.destinationGroup.output_channels = [];
                     _.each($scope.selectedOutputChannels, function(channel) {

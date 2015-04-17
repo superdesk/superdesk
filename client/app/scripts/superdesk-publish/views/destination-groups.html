@@ -47,7 +47,13 @@
 
                 <div class="field">
                     <label translate>Destination groups</label>
-                    <div sd-destination-groups-list data-target="selectedDestinationGroups" data-exclude="[destinationGroup]">
+                    <div sd-search-list
+                        data-endpoint="destination_groups"
+                        data-label-key="name"
+                        data-search-key="name"
+                        data-disabled-items="[destinationGroup]"
+                        data-selected-items="selectedDestinationGroups">
+                    </div>
                 </div>
             </fieldset>
         </form>

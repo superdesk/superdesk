@@ -16,7 +16,7 @@ define([
          * data-search-key="name"
          * data-criteria="criteria"
          * data-max-selected-items="1"
-         * data-disable-items="disableItems"
+         * data-disabled-items="disabledItems"
          * data-selected-items="selectedItems"
          * ></div>
          *
@@ -27,7 +27,7 @@ define([
          * @scope {String} searchKey - object key to search keyword in
          * @scope {Object} criteria - base criteria object to use in queries
          * @scope {Integer} maxSelectedItems - maximum number of items to select
-         * @scope {Array} disableItems - items that will be disabled
+         * @scope {Array} disabledItems - items that will be disabled
          * @scope {Array} selectedItems - target to populate with selected items
          *
          */
@@ -43,7 +43,7 @@ define([
                     searchKey: '@',
                     maxSelectedItems: '=',
                     criteria: '=',
-                    disableItems: '=',
+                    disabledItems: '=',
                     selectedItems: '='
                 },
                 templateUrl: asset.templateUrl('superdesk/views/sdSearchList.html'),
@@ -101,11 +101,11 @@ define([
                     };
 
                     scope.isSelected = function(item) {
-                        return scope.selectedItems ? _.findIndex(scope.selectedItems, {_id: item._id}) !== -1 : false;
+                        return scope.selectedItems ? _.findIndex(scope.selectedItems, function(i) {return i._id === item._id;}) !== -1 : false;
                     };
 
                     scope.isDisabled = function(item) {
-                        return scope.disableItems ? _.findIndex(scope.disableItems, {_id: item._id}) !== -1 : false;
+                        return scope.disabledItems ? _.findIndex(scope.disabledItems, function(i) {return i._id === item._id;}) !== -1 : false;
                     };
                 }
             };
@@ -121,7 +121,7 @@ define([
          * data-label-key="name"
          * data-search-key="name"
          * data-criteria="criteria"
-         * data-disable-items="disableItems"
+         * data-disabled-items="disabledItems"
          * data-selected-item="selectedItem"
          * ></div>
          *
@@ -132,7 +132,7 @@ define([
          * @scope {String} searchKey - object key to search keyword in
          * @scope {Object} criteria - base criteria object to use in queries
          * @scope {Integer} maxSelectedItems - maximum number of items to select
-         * @scope {Array} disableItems - items that will be disabled
+         * @scope {Array} disabledItems - items that will be disabled
          * @scope {Object} selectedItem - target to populate with selected item
          *
          */
@@ -144,7 +144,7 @@ define([
                     labelKey: '@',
                     searchKey: '@',
                     criteria: '=',
-                    disableItems: '=',
+                    disabledItems: '=',
                     selectedItem: '='
                 },
                 templateUrl: asset.templateUrl('superdesk/views/sdSearchListSingle.html'),
