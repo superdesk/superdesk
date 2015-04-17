@@ -183,13 +183,13 @@
 	<div sd-toggle-box data-title="Publishing" data-open="true">
 		<ul class="basic-list">
 			<li class="auto">
-				<label translate>Destination group</label>
-				<div sd-search-list-single
+				<label translate>Destination groups</label>
+				<div sd-search-list
+					ng-disabled="!_editable"
 					data-endpoint="destination_groups"
 					data-label-key="name"
 					data-search-key="name"
-					data-page-size="3"
-					data-selected-item="destinationGroup">
+					data-selected-items="vars.destinationGroups">
 				</div>
 			</li>
 		</ul>
