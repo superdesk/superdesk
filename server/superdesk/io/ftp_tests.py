@@ -30,7 +30,7 @@ class FTPTestCase(unittest.TestCase):
         if 'FTP_URL' not in os.environ:
             return
 
-        config = service.configFromURL(os.environ['FTP_URL'])
+        config = service.config_from_url(os.environ['FTP_URL'])
         self.assertEqual('test', config['path'])
         self.assertEqual('localhost', config['host'])
 

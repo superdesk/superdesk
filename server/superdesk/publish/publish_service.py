@@ -20,22 +20,22 @@ logger = logging.getLogger(__name__)
 class PublishService():
     """Base publish service class."""
 
-    def _transmit(self, item, subscriber, destination):
+    def _transmit(self, queue_item, formatted_item, subscriber, destination):
         raise NotImplementedError()
 
-    def transmit(self, item, subscriber, destination):
+    def transmit(self, queue_item, formatted_item, subscriber, destination):
         if not subscriber.get('is_active'):
             raise SubscriberError.subscriber_inactive_error(Exception('Subscriber inactive'), subscriber)
         else:
             try:
-                self._transmit(item, subscriber, destination) or []
-                update_item_status(item, 'success')
+                self._transmit(formatted_item, subscriber, destination) or []
+                update_item_status(queue_item, 'success')
             except SuperdeskPublishError as error:
-                update_item_status(item, 'error', error)
+                update_item_status(queue_item, 'error', error)
                 raise error
 
 
-def update_item_status(item, status, error=None):
+def update_item_status(queue_item, status, error=None):
     try:
         item_update = {'state': status}
         if status == 'in-progress':
@@ -45,14 +45,14 @@ def update_item_status(item, status, error=None):
         elif status == 'error' and error:
             item_update['error_message'] = str(error)
 
-        superdesk.get_resource_service('publish_queue').patch(item.get('_id'), item_update)
+        superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), item_update)
     except Exception as ex:
         raise PublishQueueError.item_update_error(ex)
 
 
-def get_file_extension(item):
+def get_file_extension(formatted_item):
     try:
-        format = item['format'].upper()
+        format = formatted_item['format'].upper()
         if format == 'NITF':
             return 'ntf'
         if format == 'XML':
