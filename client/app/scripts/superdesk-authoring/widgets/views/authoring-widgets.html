@@ -10,7 +10,7 @@
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='left' && widget.display[widget_target]"
                 ng-class="{active: widget === active.left}">
-                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" id="{{ widget.label }}">
+                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" id="{{ widget.label }}" tooltip="{{ widget.label }}" tooltip-placement="right">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
             </li>
@@ -30,8 +30,8 @@
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='right' && widget.display[widget_target]"
                 ng-class="{active: widget === active.right}">
-                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked">
-                    <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
+                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" tooltip="{{ widget.label }}" tooltip-placement="left">
+                    <i class="big-icon-{{ widget.icon }}"></i>
                 </button>
             </li>
         </ul>
