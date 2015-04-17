@@ -37,7 +37,7 @@ class FTPPublishService(PublishService):
             'path': url_parts.path.lstrip('/'),
         }
 
-    def _transmit(self, item, subscriber, destination):
+    def _transmit(self, formatted_item, subscriber, destination):
         config = destination.get('config', {})
 
         try:
@@ -46,8 +46,9 @@ class FTPPublishService(PublishService):
                 ftp.cwd(config.get('path', '').lstrip('/'))
                 ftp.set_pasv(config.get('passive', False))
 
-                filename = '{}.{}'.format(item['item_id'].replace(':', '-'), get_file_extension(item))
-                b = BytesIO(bytes(item['formatted_item'], 'UTF-8'))
+                filename = '{}.{}'.format(formatted_item['item_id'].replace(':', '-'),
+                                          get_file_extension(formatted_item))
+                b = BytesIO(bytes(formatted_item['formatted_item'], 'UTF-8'))
                 ftp.storbinary("STOR " + filename, b)
 
         except PublishFtpError:
