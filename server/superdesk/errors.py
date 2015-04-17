@@ -160,8 +160,6 @@ class SuperdeskIngestError(SuperdeskError):
                 logger.error("{}: {}".format(self, exception))
 
 
-
-
 class ProviderError(SuperdeskIngestError):
     _codes = {
         2001: 'Provider could not be saved',
@@ -394,6 +392,7 @@ class SubscriberError(SuperdeskPublishError):
     @classmethod
     def subscriber_inactive_error(cls, exception=None, destination=None):
         return FormatterError(8001, exception, destination)
+
 
 class PublishQueueError(SuperdeskPublishError):
     _codes = {

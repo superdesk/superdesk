@@ -24,7 +24,7 @@ class PublishService():
         raise NotImplementedError()
 
     def transmit(self, item, subscriber, destination):
-        if subscriber.get('is_active'):
+        if not subscriber.get('is_active'):
             raise SubscriberError.subscriber_inactive_error(Exception('Subscriber inactive'), subscriber)
         else:
             try:
@@ -35,7 +35,7 @@ class PublishService():
                 raise error
 
 
-def update_item_status(item, status, error):
+def update_item_status(item, status, error=None):
     try:
         item_update = {'state': status}
         if status == 'in-progress':
@@ -49,6 +49,7 @@ def update_item_status(item, status, error):
     except Exception as ex:
         raise PublishQueueError.item_update_error(ex)
 
+
 def get_file_extension(item):
     try:
         format = item['format'].upper()
@@ -58,4 +59,3 @@ def get_file_extension(item):
             return 'xml'
     except Exception as ex:
         raise PublishQueueError.item_update_error(ex)
-
