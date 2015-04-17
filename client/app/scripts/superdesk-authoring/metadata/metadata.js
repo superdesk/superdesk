@@ -3,8 +3,10 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService) {
+    $scope.vars = {destinationGroups: []};
+
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -26,6 +28,21 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
             return _.pick(g, 'name');
         });
     };
+
+    if ($scope.item.destination_groups && $scope.item.destination_groups.length) {
+        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.item.destination_groups)
+        .then(function(result) {
+            _.each(result._items, function(item) {
+                $scope.vars.destinationGroups.push(item);
+            });
+        });
+    }
+
+    $scope.$watch('vars.destinationGroups', function() {
+        $scope.item.destination_groups = _.pluck($scope.vars.destinationGroups, '_id');
+        $scope.autosave($scope.item);
+    });
+
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
 

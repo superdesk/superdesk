@@ -22,7 +22,8 @@
         language: null,
         unique_name: '',
         keywords: [],
-        description: null
+        description: null,
+        destination_groups: null
     };
 
     /**
