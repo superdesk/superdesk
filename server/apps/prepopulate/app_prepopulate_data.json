@@ -203,25 +203,25 @@
     },
 
     {
-    	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"]}, 
+    	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight one-"
     },
     
     {	
-    	"data": {"name": "Highlight two", "desks": ["-id desk Sport Desks-", "-id desk Politic Desks-"]}, 
+    	"data": {"name": "Highlight two", "desks": ["-id desk Sport Desks-", "-id desk Politic Desks-"], "groups": ["one", "two"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight two-"
     },
     
     {	
-    	"data": {"name": "Highlight three", "desks": ["-id desk Politic Desks-"]}, 
+    	"data": {"name": "Highlight three", "desks": ["-id desk Politic Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight three-"
     },
     
     {	
-    	"data": {"name": "Highlight four", "desks": ["-id desk Politic Desks-"]}, 
+    	"data": {"name": "Highlight four", "desks": ["-id desk Politic Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight four-"
     },

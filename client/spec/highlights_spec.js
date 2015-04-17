@@ -37,6 +37,25 @@ describe('HIGHLIGHTS', function() {
             highlights.save();
             expect(highlights.getRow('highlight new').count()).toBe(1);
         });
+
+        it('add highlights configuration with no group', function() {
+            highlights.add();
+            highlights.setName('highlight new');
+            highlights.save();
+            highlights.edit('highlight new');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('main').count()).toBe(1);
+        });
+
+        it('add highlights configuration with group first', function() {
+            highlights.add();
+            highlights.setName('highlight new');
+            highlights.addGroup('first');
+            highlights.save();
+            highlights.edit('highlight new');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('first').count()).toBe(1);
+        });
     });
 
     describe('edit highlights configuration:', function() {
@@ -66,6 +85,54 @@ describe('HIGHLIGHTS', function() {
             highlights.save();
             highlights.edit('highlight one');
             highlights.expectDeskSelection('Sports Desk', false);
+        });
+
+        it('add a group to highlight configuration', function() {
+            highlights.edit('highlight one');
+            highlights.addGroup('last');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(2);
+            expect(highlights.getGroup('main').count()).toBe(1);
+            expect(highlights.getGroup('last').count()).toBe(1);
+        });
+
+        it('edit group from highlight configuration', function() {
+            highlights.edit('highlight one');
+            highlights.editGroup('main', 'first');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('first').count()).toBe(1);
+        });
+
+        it('delete the single group from highlight configuration', function() {
+            highlights.edit('highlight one');
+            highlights.editGroup('main', 'first');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('first').count()).toBe(1);
+            highlights.deleteGroup('first');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('main').count()).toBe(1);
+        });
+
+        it('delete one group from highlight configuration', function() {
+            highlights.edit('highlight one');
+            highlights.addGroup('last');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(2);
+            expect(highlights.getGroup('main').count()).toBe(1);
+            expect(highlights.getGroup('last').count()).toBe(1);
+            highlights.deleteGroup('main');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('last').count()).toBe(1);
         });
     });
 
@@ -119,10 +186,11 @@ describe('HIGHLIGHTS', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight one');
-            highlights.createHighlightsPackage('HIGHLIGHT ONE');
+            highlights.selectHighlight(content.getItem(0), 'Highlight two');
+            highlights.createHighlightsPackage('HIGHLIGHT TWO');
             authoring.showSearch();
-            authoring.addToGroup(0, 'MAIN');
+            authoring.addToGroup(0, 'ONE');
+            expect(authoring.getGroupItems('ONE').count()).toBe(1);
             authoring.save();
             authoring.close();
             workspace.switchToDesk('PERSONAL');
@@ -159,7 +227,7 @@ describe('HIGHLIGHTS', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight one');
+            highlights.selectHighlight(content.getItem(0), 'Highlight two');
 
             workspace.switchToDesk('PERSONAL');
             content.setListView();
@@ -167,14 +235,16 @@ describe('HIGHLIGHTS', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 1);
-            highlights.selectHighlight(content.getItem(1), 'Highlight one');
+            highlights.selectHighlight(content.getItem(1), 'Highlight two');
 
-            highlights.createHighlightsPackage('HIGHLIGHT ONE');
+            highlights.createHighlightsPackage('HIGHLIGHT TWO');
             authoring.showSearch();
             expect(authoring.getSearchItemCount()).toBe(2);
 
-            authoring.addToGroup(0, 'MAIN');
-            authoring.addToGroup(1, 'STORY');
+            authoring.addToGroup(0, 'ONE');
+            authoring.addToGroup(1, 'TWO');
+            expect(authoring.getGroupItems('ONE').count()).toBe(1);
+            expect(authoring.getGroupItems('TWO').count()).toBe(1);
             authoring.save();
             highlights.exportHighlights();
             authoring.save();
