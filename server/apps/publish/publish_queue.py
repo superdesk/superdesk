@@ -11,7 +11,6 @@
 import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.utc import utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,10 @@ class PublishQueueResource(Resource):
             'type': 'string',
             'nullable': False,
         },
-        'queued_at': {
+        'format': {
+            'type': 'string'
+        },
+        'transmit_started_at': {
             'type': 'datetime'
         },
         'completed_at': {
@@ -47,10 +49,13 @@ class PublishQueueResource(Resource):
                 'delivery_type': {'type': 'string'},
                 'config': {'type': 'dict'}
             }
+        },
+        'error_message': {
+            'type': 'string'
         }
     }
 
-    datasource = {'default_sort': [('_created', -1)]}
+    datasource = {'default_sort': [('_created', 1)]}
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
 
@@ -58,7 +63,6 @@ class PublishQueueService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
-            doc['queued_at'] = utcnow()
             doc['state'] = 'pending'
 
     def on_update(self, updates, original):

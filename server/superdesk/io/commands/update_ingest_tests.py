@@ -22,7 +22,7 @@ from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
 from superdesk.io.commands.remove_expired_content import get_expired_items
-from superdesk.io.commands.update_ingest import ingest_for_provider_is_already_running, mark_provider_as_not_running
+from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
 
 
 class TestProviderService(IngestService):
@@ -39,18 +39,18 @@ class CeleryTaskRaceTest(TestCase):
         setup(context=self)
 
     def test_the_second_update_fails_if_already_running(self):
-        provider = {'_id': 'abc', 'update_schedule': {'minutes': 1}}
+        provider = {'_id': 'abc', 'name': 'test provider', 'update_schedule': {'minutes': 1}}
         with self.app.app_context():
-            removed = mark_provider_as_not_running(provider)
+            removed = mark_task_as_not_running(provider['name'], provider['_id'])
             self.assertFalse(removed)
 
-            failed_to_mark_as_running = ingest_for_provider_is_already_running(provider)
+            failed_to_mark_as_running = is_task_running(provider['name'], provider['_id'], {'minutes': 1})
             self.assertFalse(failed_to_mark_as_running, 'Failed to mark ingest update as running')
 
-            failed_to_mark_as_running = ingest_for_provider_is_already_running(provider)
+            failed_to_mark_as_running = is_task_running(provider['name'], provider['_id'], {'minutes': 1})
             self.assertTrue(failed_to_mark_as_running, 'Ingest update marked as running, possible race condition')
 
-            removed = mark_provider_as_not_running(provider)
+            removed = mark_task_as_not_running(provider['name'], provider['_id'])
             self.assertTrue(removed, 'Failed to mark ingest update as not running.')
 
 
@@ -172,7 +172,7 @@ class UpdateIngestTest(TestCase):
 
     def test_change_last_updated(self):
         with self.app.app_context():
-            ingest_provider = {'type': 'test', '_etag': 'test'}
+            ingest_provider = {'name': 'test', 'type': 'test', '_etag': 'test'}
             self.app.data.insert('ingest_providers', [ingest_provider])
 
             ingest.update_provider(ingest_provider)

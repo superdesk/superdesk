@@ -111,6 +111,10 @@ CELERYBEAT_SCHEDULE = {
     'spike:gc': {
         'task': 'apps.archive.content_purge',
         'schedule': crontab(minute=30)
+    },
+    'publish:transmit': {
+        'task': 'superdesk.publish.transmit',
+        'schedule': timedelta(seconds=10)
     }
 }
 
@@ -133,6 +137,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
+    'superdesk.publish',
     'superdesk.macro_register',
     'superdesk.commands',
 

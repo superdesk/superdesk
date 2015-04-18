@@ -48,6 +48,9 @@ class SuperdeskError(ValidationError):
     def __str__(self):
         return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.message)
 
+    def get_error_description(self):
+        return self.code, self._codes[self.code]
+
 
 class SuperdeskApiError(SuperdeskError):
     """Base class for superdesk API."""
@@ -155,9 +158,6 @@ class SuperdeskIngestError(SuperdeskError):
                 logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
             else:
                 logger.error("{}: {}".format(self, exception))
-
-    def get_error_description(self):
-        return self.code, self._codes[self.code]
 
 
 class ProviderError(SuperdeskIngestError):
@@ -382,3 +382,38 @@ class FormatterError(SuperdeskPublishError):
     @classmethod
     def nitfFormatterError(cls, exception=None, destination=None):
         return FormatterError(7001, exception, destination)
+
+
+class SubscriberError(SuperdeskPublishError):
+    _codes = {
+        8001: 'Subscriber is closed'
+    }
+
+    @classmethod
+    def subscriber_inactive_error(cls, exception=None, destination=None):
+        return FormatterError(8001, exception, destination)
+
+
+class PublishQueueError(SuperdeskPublishError):
+    _codes = {
+        9001: 'Item could not be updated in the queue',
+        9002: 'Item format could not be recognized'
+    }
+
+    @classmethod
+    def item_update_error(cls, exception=None, destination=None):
+        return FormatterError(9001, exception, destination)
+
+    @classmethod
+    def unknown_format_error(cls, exception=None, destination=None):
+        return FormatterError(9002, exception, destination)
+
+
+class PublishFtpError(SuperdeskPublishError):
+    _codes = {
+        10000: "FTP publish error"
+    }
+
+    @classmethod
+    def ftpError(cls, exception=None, provider=None):
+        return PublishFtpError(10000, exception, provider)
