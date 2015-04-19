@@ -23,7 +23,6 @@ import superdesk
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
-import itertools
 from apps.publish.formatters import get_formatter
 
 
@@ -108,6 +107,8 @@ class ArchivePublishService(BaseService):
                                 publish_queue_item['subscriber_id'] = subscriber['_id']
                                 publish_queue_item['destination'] = destination
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
+                                publish_queue_item['selector_codes'] = selector_codes.get(output_channel['_id'], [])
+
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
@@ -141,18 +142,24 @@ class ArchivePublishService(BaseService):
         lis of selector_codes, list of resolved format_types
         '''
         output_channels = {}
-        selector_codes = []
+        selector_codes = {}
         format_types = []
         for destination_group in destination_groups:
             if destination_group.get('output_channels'):
+                selectors = []
                 oc_ids = [oc['channel'] for oc in destination_group.get('output_channels', [])]
                 lookup = {'_id': {'$in': oc_ids}}
                 ocs = get_resource_service('output_channels').get(req=None, lookup=lookup)
                 for oc in ocs:
                     output_channels[oc['_id']] = oc
                     format_types.append(oc['format'])
-                selector_codes.extend(oc.get('selector_codes', []) for oc in destination_group.get('output_channels'))
-        return output_channels, list(set(itertools.chain(*selector_codes))), list(set(format_types))
+                    selectors = next((item.get('selector_codes', [])
+                                      for item in destination_group.get('output_channels')
+                                      if item['channel'] == oc['_id']), [])
+                    selectors += selector_codes.get(oc['_id'], [])
+                    selector_codes[oc['_id']] = list(set(selectors))
+
+        return output_channels, selector_codes, list(set(format_types))
 
     def get_subscribers(self, output_channel):
         '''
