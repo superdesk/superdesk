@@ -9,6 +9,7 @@ function Highlights() {
     this.list = element.all(by.repeater('config in configurations._items'));
     this.name = element(by.model('configEdit.name'));
     this.desks = element.all(by.repeater('desk in assignedDesks'));
+    this.groups = element.all(by.repeater('group in configEdit.groups'));
 
     this.get = function() {
         openUrl('/#/settings/highlights');
@@ -78,6 +79,37 @@ function Highlights() {
             } else {
                 expect(desks[0].element(by.className('sd-checkbox')).getAttribute('checked')).toBe(null);
             }
+        });
+    };
+
+    this.getGroup = function(name) {
+        return this.groups.filter(function(elem, index) {
+            return elem.element(by.binding('group')).getText().then(function(text) {
+                return text.toUpperCase() === name.toUpperCase();
+            });
+        });
+    };
+
+    this.addGroup = function(name) {
+        element(by.css('[ng-click="editGroup(\'\'); selectedGroup = null"]')).click();
+        element(by.id('insert-group')).sendKeys(name);
+        element(by.css('[ng-click="saveGroup()"]')).click();
+    };
+
+    this.editGroup = function(name, newName) {
+        this.getGroup(name).click();
+        this.getGroup(name).then(function(groups) {
+            groups[0].element(by.css('[ng-click="editGroup(group)"]')).click();
+        });
+        element(by.id('edit-group')).clear();
+        element(by.id('edit-group')).sendKeys(newName);
+        element(by.css('[ng-click="saveGroup()"]')).click();
+    };
+
+    this.deleteGroup = function(name) {
+        this.getGroup(name).click();
+        this.getGroup(name).then(function(groups) {
+            groups[0].element(by.css('[ng-click="removeGroup(group)"]')).click();
         });
     };
 
