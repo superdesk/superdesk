@@ -129,6 +129,44 @@
         };
     }
 
+    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q'];
+    function PublishQueueController($scope, adminPublishSettingsService, api, $q) {
+        $scope.subscribers = null;
+        $scope.subscriberLookup = {};
+        $scope.outputChannels = null;
+        $scope.outputChannelLookup = {};
+        $scope.publish_queue = null;
+
+        var promises = [];
+
+        promises.push(adminPublishSettingsService.fetchSubscribers().then(function(items) {
+            $scope.subscribers = items._items;
+            _.each(items._items, function(item) {
+                $scope.subscriberLookup[item._id] = item;
+            });
+        }));
+
+        promises.push(adminPublishSettingsService.fetchOutputChannels().then(function(items) {
+            $scope.outputChannels = items._items;
+            _.each(items._items, function(item) {
+                $scope.outputChannelLookup[item._id] = item;
+            });
+        }));
+
+        function fetchPublishQueue () {
+            var criteria = criteria || {};
+            criteria.max_results = 200;
+            criteria.sort = '[(\'_created\',-1)]';
+            return api.publish_queue.query(criteria);
+        }
+
+        $q.all(promises).then(function() {
+            fetchPublishQueue().then(function(queue) {
+                $scope.publish_queue = queue._items;
+            });
+        });
+    }
+
     SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
     function SubscribersDirective(gettext, notify, api, adminPublishSettingsService, modal) {
         return {
@@ -461,7 +499,14 @@
                         privileges: {output_channels: 1, destination_groups: 1},
                         priority: 2000,
                         beta: true
-                    });
+                    })
+                .activity('/publish_queue', {
+                    label: gettext('Publish Queue'),
+                    templateUrl: 'scripts/superdesk-publish/views/publish-queue.html',
+                    controller: PublishQueueController,
+                    category: superdesk.MENU_MAIN,
+                    privileges: {publish_queue: 1}
+                });
         }])
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('output_channels', {
@@ -480,6 +525,12 @@
                 type: 'http',
                 backend: {
                     rel: 'subscribers'
+                }
+            });
+            apiProvider.api('publish_queue', {
+                type: 'http',
+                backend: {
+                    rel: 'publish_queue'
                 }
             });
         }]);
