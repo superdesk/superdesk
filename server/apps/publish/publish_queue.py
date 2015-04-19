@@ -40,6 +40,9 @@ class PublishQueueResource(Resource):
                 'config': {'type': 'dict'}
             }
         },
+        'selector_codes': {
+            'type': 'list'
+        },
         'error_message': {
             'type': 'string'
         }
