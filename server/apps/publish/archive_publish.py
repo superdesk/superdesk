@@ -62,9 +62,9 @@ class ArchivePublishService(BaseService):
         try:
             if archived_item['type'] == 'composite':
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
-            user = get_user()
-            updates[config.CONTENT_STATE] = 'published'
-            item = self.backend.update(self.datasource, id, updates, original)
+
+            # document is saved to keep the initial changes
+            self.backend.update(self.datasource, id, updates, original)
             original.update(updates)
 
             if archived_item['type'] != 'composite':
@@ -72,6 +72,11 @@ class ArchivePublishService(BaseService):
                 self.queue_transmission(original)
                 self.__send_to_publish_stage(original)
 
+            # document is saved to change the status
+            updates[config.CONTENT_STATE] = 'published'
+            item = self.backend.update(self.datasource, id, updates, original)
+            original.update(updates)
+            user = get_user()
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             return item
         except KeyError:
@@ -171,7 +176,7 @@ class ArchivePublishService(BaseService):
         :param output_channel: an output channel
         :return:list of subscribers
         '''
-        if output_channel['destinations']:
+        if output_channel.get('destinations'):
             subscriber_ids = output_channel['destinations']
             lookup = {'_id': {'$in': subscriber_ids}}
             return get_resource_service('subscribers').get(req=None, lookup=lookup)
