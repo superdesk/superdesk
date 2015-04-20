@@ -98,5 +98,16 @@ define([
                     return $filter('date')(input, 'dd.MM.yyyy HH:mm');
                 }
             };
+        }])
+        .filter('queueStatus', ['$filter', function($filter)  {
+            return function(input) {
+                if (input === 'pending') {
+                    return 'warning';
+                } else if (input === 'success') {
+                    return 'success';
+                } else if (input === 'error') {
+                    return 'danger';
+                }
+            };
         }]);
 });

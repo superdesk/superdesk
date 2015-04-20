@@ -31,7 +31,8 @@ class ArchivePublishTestCase(TestCase):
 
     output_channels = [{'_id': 1, 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': [1]},
                        {'_id': 2, 'name': 'oc2', 'is_active': False, 'format': 'nitf', 'destinations': [1, 2]},
-                       {'_id': 3, 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': [2]}]
+                       {'_id': 3, 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': [2]},
+                       {'_id': 4, 'name': 'oc4', 'is_active': True, 'format': 'nitf', 'destinations': [2]}]
 
     destination_groups = [{'_id': 1, 'name': 'dg1'},
                           {'_id': 2, 'name': 'dg2', 'destination_groups': [1]},
@@ -39,7 +40,8 @@ class ArchivePublishTestCase(TestCase):
                            'output_channels': [{'channel': 1, 'selector_codes': ['A', 'B']}]},
                           {'_id': 4, 'name': 'dg4',
                            'output_channels': [{'channel': 1, 'selector_codes': ['Y']},
-                                               {'channel': 2, 'selector_codes': ['X', 'B']}]},
+                                               {'channel': 2, 'selector_codes': ['X', 'B']},
+                                               {'channel': 4}]},
                           {'_id': 5, 'name': 'dg5',
                            'output_channels': [{'channel': 2, 'selector_codes': ['A']},
                                                {'channel': 3, 'selector_codes': ['X', 'y']}]}]
@@ -81,13 +83,14 @@ class ArchivePublishTestCase(TestCase):
             dgs = list(resolved_destination_groups.values())
             resolved_output_channels, selector_codes, formatters = \
                 archive_publish.ArchivePublishService().resolve_output_channels(dgs)
-            self.assertEquals(2, len(resolved_output_channels))
+            self.assertEquals(3, len(resolved_output_channels))
             self.assertTrue(2 in resolved_output_channels)
 
-            self.assertEquals(3, len(selector_codes))
-            self.assertTrue('Y' in selector_codes)
-            self.assertTrue('X' in selector_codes)
-            self.assertTrue('B' in selector_codes)
+            self.assertTrue(1 in selector_codes)
+            self.assertTrue(2 in selector_codes)
+            self.assertTrue('Y' in selector_codes[1])
+            self.assertTrue('X' in selector_codes[2])
+            self.assertTrue('B' in selector_codes[2])
 
             self.assertEquals(1, len(formatters))
             self.assertTrue('nitf' in formatters)
@@ -101,9 +104,9 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals(1, len(resolved_output_channels))
             self.assertTrue(1 in resolved_output_channels)
 
-            self.assertEquals(2, len(selector_codes))
-            self.assertTrue('A' in selector_codes)
-            self.assertTrue('B' in selector_codes)
+            self.assertTrue(1 in selector_codes)
+            self.assertTrue('A' in selector_codes[1])
+            self.assertTrue('B' in selector_codes[1])
 
             self.assertEquals(1, len(formatters))
             self.assertTrue('nitf' in formatters)
@@ -126,4 +129,4 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals(0, queue_items.count())
             archive_publish.ArchivePublishService().queue_transmission(self.articles[0])
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEquals(4, queue_items.count())
+            self.assertEquals(6, queue_items.count())

@@ -417,3 +417,18 @@ class PublishFtpError(SuperdeskPublishError):
     @classmethod
     def ftpError(cls, exception=None, provider=None):
         return PublishFtpError(10000, exception, provider)
+
+
+class PublishEmailError(SuperdeskPublishError):
+    _codes = {
+        11000: "Email publish error",
+        11001: "Recipient could not be found for destination"
+    }
+
+    @classmethod
+    def emailError(cls, exception=None, provider=None):
+        return PublishEmailError(11000, exception, provider)
+
+    @classmethod
+    def recipientNotFoundError(cls, exception=None, provider=None):
+        return PublishEmailError(11001, exception, provider)

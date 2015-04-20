@@ -30,3 +30,4 @@ def transmit():
 
 # must be imported for registration
 import superdesk.publish.ftp  # NOQA
+import superdesk.publish.email  # NOQA

@@ -60,22 +60,26 @@ def publish(subscriber, destination):
                                  subscriber[superdesk.config.ID_FIELD])
 
 
-def transmit_items(items, subscriber, destination):
+def transmit_items(queue_items, subscriber, destination):
     failed_items = []
 
-    for item in items:
+    for queue_item in queue_items:
         try:
             # update the status of the item to in-progress
             queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
-            superdesk.get_resource_service('publish_queue').patch(item.get('_id'), queue_update)
+            superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), queue_update)
+
+            # get the formatted item
+            formatted_item = superdesk.get_resource_service('formatted_item').\
+                find_one(req=None, _id=queue_item['formatted_item_id'])
 
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
-            transmitter.transmit(item, subscriber, destination)
+            transmitter.transmit(queue_item, formatted_item, subscriber, destination)
         except:
-            failed_items.append(item)
+            failed_items.append(queue_item)
 
     if len(failed_items) > 0:
-        logger.error('Failed to ingest the following items: %s', str(failed_items))
+        logger.error('Failed to publish the following items: %s', str(failed_items))
 
 
 superdesk.command('publish:transmit', PublishContent())

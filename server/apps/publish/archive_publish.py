@@ -10,6 +10,7 @@
 
 
 import logging
+import superdesk
 
 from eve.versioning import resolve_document_version
 from flask import current_app as app
@@ -19,12 +20,11 @@ from apps.archive.common import item_url, get_user, insert_into_versions
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, FormatterError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
-import superdesk
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
-import itertools
 from apps.publish.formatters import get_formatter
+from apps.duplication.archive_move import MoveService
 
 
 logger = logging.getLogger(__name__)
@@ -62,15 +62,21 @@ class ArchivePublishService(BaseService):
         try:
             if archived_item['type'] == 'composite':
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
-            user = get_user()
-            updates[config.CONTENT_STATE] = 'published'
-            item = self.backend.update(self.datasource, id, updates, original)
+
+            # document is saved to keep the initial changes
+            self.backend.update(self.datasource, id, updates, original)
             original.update(updates)
 
             if archived_item['type'] != 'composite':
                 # queue only text items
                 self.queue_transmission(original)
+                self.__send_to_publish_stage(original)
 
+            # document is saved to change the status
+            updates[config.CONTENT_STATE] = 'published'
+            item = self.backend.update(self.datasource, id, updates, original)
+            original.update(updates)
+            user = get_user()
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             return item
         except KeyError:
@@ -90,23 +96,32 @@ class ArchivePublishService(BaseService):
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers.count() > 0:
                         formatter = get_formatter(output_channel['format'])
-                        formatted_item = formatter.format(doc, output_channel)
+
+                        formatted_item = {}
+                        formatted_item['formatted_item'] = formatter.format(doc, output_channel)
+                        formatted_item['format'] = output_channel['format']
+                        formatted_item['item_id'] = doc['_id']
+                        formatted_item['item_version'] = doc.get('last_version', 0)
+                        formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
+
                         publish_queue_items = []
 
                         for subscriber in subscribers:
                             for destination in subscriber.get('destinations', []):
                                 publish_queue_item = {}
-                                publish_queue_item['formatted_item'] = formatted_item
-                                publish_queue_item['format'] = output_channel['format']
-                                publish_queue_item['destination'] = destination
                                 publish_queue_item['item_id'] = doc['_id']
-                                publish_queue_item['item_version'] = doc.get('last_version', 0)
+                                publish_queue_item['formatted_item_id'] = formatted_item_id
                                 publish_queue_item['subscriber_id'] = subscriber['_id']
+                                publish_queue_item['destination'] = destination
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
+                                publish_queue_item['selector_codes'] = selector_codes.get(output_channel['_id'], [])
+
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
         except FormatterError:
+            raise
+        except:
             raise
 
     def resolve_destination_groups(self, dg_ids, destination_groups=None):
@@ -136,18 +151,24 @@ class ArchivePublishService(BaseService):
         lis of selector_codes, list of resolved format_types
         '''
         output_channels = {}
-        selector_codes = []
+        selector_codes = {}
         format_types = []
         for destination_group in destination_groups:
             if destination_group.get('output_channels'):
+                selectors = []
                 oc_ids = [oc['channel'] for oc in destination_group.get('output_channels', [])]
                 lookup = {'_id': {'$in': oc_ids}}
                 ocs = get_resource_service('output_channels').get(req=None, lookup=lookup)
                 for oc in ocs:
                     output_channels[oc['_id']] = oc
                     format_types.append(oc['format'])
-                selector_codes.extend(oc.get('selector_codes', []) for oc in destination_group.get('output_channels'))
-        return output_channels, list(set(itertools.chain(*selector_codes))), list(set(format_types))
+                    selectors = next((item.get('selector_codes', [])
+                                      for item in destination_group.get('output_channels')
+                                      if item['channel'] == oc['_id']), [])
+                    selectors += selector_codes.get(oc['_id'], [])
+                    selector_codes[oc['_id']] = list(set(selectors))
+
+        return output_channels, selector_codes, list(set(format_types))
 
     def get_subscribers(self, output_channel):
         '''
@@ -155,7 +176,7 @@ class ArchivePublishService(BaseService):
         :param output_channel: an output channel
         :return:list of subscribers
         '''
-        if output_channel['destinations']:
+        if output_channel.get('destinations'):
             subscriber_ids = output_channel['destinations']
             lookup = {'_id': {'$in': subscriber_ids}}
             return get_resource_service('subscribers').get(req=None, lookup=lookup)
@@ -192,6 +213,12 @@ class ArchivePublishService(BaseService):
                     insert_into_versions(doc=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
+
+    def __send_to_publish_stage(self, doc):
+        desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+        if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
+            doc['task']['stage'] = desk['published_stage']
+            MoveService().move_content(doc['_id'], doc)
 
 
 superdesk.workflow_state('published')
