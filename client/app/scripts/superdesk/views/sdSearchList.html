@@ -1,4 +1,4 @@
-<div>
+<div style="border: 1px solid #404040;">
     <button type="button" ng-click="open = !open" ng-show="!open">
         <span ng-show="selectedItems.length === 0" translate>Select</span>
         <span ng-show="selectedItems.length === 1">{{selectedItems[0][labelKey]}}</span>
@@ -19,11 +19,13 @@
                 <ul ng-show="selectedItems.length">
                     <li ng-repeat="item in selectedItems">
                         <button type="button" ng-click="unselectItem(item)">{{item[labelKey]}}</button>
+                        <div ng-if="selectedItemsHelperTemplate" onload="data = selectedItemsHelperData" ng-include="selectedItemsHelperTemplate">
+                        </div>
                     </li>
                 </ul>
                 <span ng-hide="selectedItems.length" translate>None</span>
             </div>
-            <input type="text" ng-model="keyword">
+            <input type="text" ng-model="keyword" placeholder="{{::'Search'|translate}}">
             <ul>
                 <li ng-repeat="item in items">
                     <button type="button" ng-click="selectItem(item)" ng-disabled="isSelected(item) || isDisabled(item) || selectedItems.length >= maxSelectedItems">{{item[labelKey]}}</button>

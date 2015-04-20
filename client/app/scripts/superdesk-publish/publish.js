@@ -331,14 +331,25 @@
                 $scope.destinationGroup = null;
                 $scope.selectedDestinationGroups = null;
                 $scope.selectedOutputChannels = null;
-                $scope.selectorCodes = null;
+
+                $scope.selectorData = {
+                    add: function(channel, code) {
+                        this.codes[channel].push(code);
+                    },
+                    remove: function(channel, code) {
+                        _.remove(this.codes[channel], function(c) {
+                            return c === code;
+                        });
+                    },
+                    codes: null
+                };
 
                 $scope.edit = function(destinationGroup) {
                     $scope.origDestinationGroup = destinationGroup || {};
                     $scope.destinationGroup = _.create($scope.origDestinationGroup);
                     $scope.selectedDestinationGroups = [];
                     $scope.selectedOutputChannels = [];
-                    $scope.selectorCodes = {};
+                    $scope.selectorData.codes = {};
                     var destinationGroupIds = [];
                     _.each($scope.destinationGroup.destination_groups, function(item) {
                         destinationGroupIds.push(item);
@@ -352,7 +363,7 @@
                     var outputChannelIds = [];
                     _.each($scope.destinationGroup.output_channels, function(item) {
                         outputChannelIds.push(item.channel);
-                        $scope.selectorCodes[item.channel] = item.selector_codes;
+                        $scope.selectorData.codes[item.channel] = item.selector_codes;
                     });
                     if (outputChannelIds.length) {
                         adminPublishSettingsService.fetchOutputChannelsByIds(outputChannelIds)
@@ -367,7 +378,7 @@
                     $scope.destinationGroup = null;
                     $scope.selectedDestinationGroups = null;
                     $scope.selectedOutputChannels = null;
-                    $scope.selectorCodes = null;
+                    $scope.selectorData.codes = null;
                 };
 
                 $scope.save = function() {
@@ -380,8 +391,8 @@
                         var outputChannel = {
                             channel: channel._id
                         };
-                        if ($scope.selectorCodes[channel._id]) {
-                            outputChannel.selector_codes = $scope.selectorCodes[channel._id];
+                        if ($scope.selectorData.codes[channel._id]) {
+                            outputChannel.selector_codes = $scope.selectorData.codes[channel._id];
                         }
                         $scope.destinationGroup.output_channels.push(outputChannel);
                     });
@@ -432,154 +443,11 @@
         };
     }
 
-    OutputChannelsListDirective.$inject = ['adminPublishSettingsService'];
-    function OutputChannelsListDirective(adminPublishSettingsService) {
-        return {
-            templateUrl: 'scripts/superdesk-publish/views/output-channels-list.html',
-            scope: {
-                target: '=',
-                selectorTarget: '=',
-                exclude: '='
-            },
-            link: function ($scope) {
-                $scope.keyword = null;
-                $scope.outputChannels = null;
-                $scope.parentChannel = null;
-                $scope.newSelector = null;
-
-                $scope.isSelected = function(channel) {
-                    return _.findIndex($scope.target, function(selectedChannel) {
-                        return channel._id === selectedChannel._id;
-                    }) === -1;
-                };
-
-                $scope.addChannel = function(channel) {
-                    $scope.target.push(channel);
-                };
-
-                $scope.removeChannel = function(channel) {
-                    _.remove($scope.target, function(selectedChannel) {
-                        return selectedChannel._id === channel._id;
-                    });
-                };
-
-                $scope.addSelector = function(channel, selector) {
-                    $scope.selectorTarget = $scope.selectorTarget || {};
-                    $scope.selectorTarget[channel._id] = $scope.selectorTarget[channel._id] || [];
-                    $scope.selectorTarget[channel._id].push(selector);
-                    $scope.setParentChannel();
-                };
-
-                $scope.removeSelector = function(channel, selector) {
-                    if ($scope.selectorTarget && $scope.selectorTarget[channel._id]) {
-                        $scope.selectorTarget[channel._id] = _.without($scope.selectorTarget[channel._id], selector);
-                    }
-                };
-
-                $scope.setParentChannel = function(channel) {
-                    $scope.parentChannel = channel;
-                    $scope.newSelector = null;
-                };
-
-                $scope.$watch('target', function() {
-                    $scope.target = $scope.target || [];
-                });
-
-                $scope.$watch('selectorTarget', function() {
-                    $scope.selectorTarget = $scope.selectorTarget || [];
-                });
-
-                $scope.$watch('keyword', _.debounce(update, 500));
-                function update() {
-                    $scope.outputChannels = [];
-                    if ($scope.keyword) {
-                        adminPublishSettingsService.fetchOutputChannelsByKeyword($scope.keyword)
-                        .then(function(result) {
-                            if ($scope.exclude) {
-                                _.remove(result._items, function(item) {
-                                    var found = false;
-                                    _.each($scope.exclude, function(excludeItem) {
-                                        if (excludeItem._id === item._id) {
-                                            found = true;
-                                            return false;
-                                        }
-                                    });
-                                    return found;
-                                });
-                            }
-                            $scope.outputChannels = result._items;
-                        });
-                    }
-                }
-            }
-        };
-    }
-
-    DestinationGroupsListDirective.$inject = ['adminPublishSettingsService'];
-    function DestinationGroupsListDirective(adminPublishSettingsService) {
-        return {
-            templateUrl: 'scripts/superdesk-publish/views/destination-groups-list.html',
-            scope: {
-                target: '=',
-                exclude: '='
-            },
-            link: function ($scope) {
-                $scope.keyword = null;
-                $scope.destinationGroups = null;
-
-                $scope.isSelected = function(group) {
-                    return _.findIndex($scope.target, function(selectedGroup) {
-                        return group._id === selectedGroup._id;
-                    }) === -1;
-                };
-
-                $scope.addGroup = function(group) {
-                    $scope.target.push(group);
-                };
-
-                $scope.removeGroup = function(group) {
-                    _.remove($scope.target, function(selectedGroup) {
-                        return selectedGroup._id === group._id;
-                    });
-                };
-
-                $scope.$watch('target', function() {
-                    $scope.target = $scope.target || [];
-                });
-
-                $scope.$watch('keyword', _.debounce(update, 500));
-                function update() {
-                    $scope.destinationGroups = [];
-                    if ($scope.keyword) {
-                        adminPublishSettingsService.fetchDestinationGroupsByKeyword($scope.keyword)
-                        .then(function(result) {
-                            if ($scope.exclude) {
-                                _.remove(result._items, function(item) {
-                                    var found = false;
-                                    _.each($scope.exclude, function(excludeItem) {
-                                        if (excludeItem._id === item._id) {
-                                            found = true;
-                                            return false;
-                                        }
-                                    });
-                                    return found;
-                                });
-                            }
-                            $scope.destinationGroups = result._items;
-                        });
-                    }
-                }
-            }
-        };
-    }
-
     app
         .service('adminPublishSettingsService', AdminPublishSettingsService)
         .directive('sdAdminPubSubscribers', SubscribersDirective)
         .directive('sdAdminPubOutputChannels', OutputChannelsDirective)
         .directive('sdAdminPubDestinationGroups', DestinationGroupsDirective)
-        .directive('sdOutputChannelsList', OutputChannelsListDirective)
-        .directive('sdDestinationGroupsList', DestinationGroupsListDirective)
         .directive('sdDestination', DestinationDirective);
 
     app
