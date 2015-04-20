@@ -1147,6 +1147,19 @@
                         return item.type !== 'composite' && item.state !== 'published';
                     }
                 })
+                .activity('kill.text', {
+                    label: gettext('Kill item'),
+                    href: '/authoring/:_id',
+                    priority: 10,
+                    icon: 'remove',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
+                        superdesk.intent('author', 'article', data.item);
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.type !== 'composite' && item.state === 'published';
+                    }
+                })
                 .activity('view.text', {
                     label: gettext('View item'),
                     priority: 2000,
