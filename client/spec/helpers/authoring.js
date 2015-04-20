@@ -36,7 +36,7 @@ function Authoring() {
     };
 
     this.showVersions = function() {
-        return element(by.css('[title="Versions"]')).click();
+        return element(by.id('Versions')).click();
     };
 
     this.getSearchItem = function(item) {
