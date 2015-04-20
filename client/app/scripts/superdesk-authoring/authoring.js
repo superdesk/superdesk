@@ -1031,8 +1031,8 @@
 
                 function fetchMacros() {
                     if (scope.selectedDesk != null) {
-                            macros.getByDesk(scope.selectedDesk.name)
-                            .then(function(_macros) {
+                        macros.getByDesk(scope.selectedDesk.name)
+                        .then(function(_macros) {
                             scope.macros = _macros;
                         });
                     }
@@ -1122,8 +1122,8 @@
                 .activity('view.text', {
                     label: gettext('View item'),
                     priority: 2000,
-	            	icon: 'fullscreen',
-	            	controller: ['data', 'superdesk', function(data, superdesk) {
+                    icon: 'fullscreen',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
