@@ -71,7 +71,7 @@ def transmit_items(queue_items, subscriber, destination):
 
             # get the formatted item
             formatted_item = superdesk.get_resource_service('formatted_item').\
-                find_one(req=None, _id=queue_item['item_id'])
+                find_one(req=None, _id=queue_item['formatted_item_id'])
 
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
             transmitter.transmit(queue_item, formatted_item, subscriber, destination)

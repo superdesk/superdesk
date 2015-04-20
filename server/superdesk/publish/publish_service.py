@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class PublishService():
     """Base publish service class."""
 
-    def _transmit(self, queue_item, formatted_item, subscriber, destination):
+    def _transmit(self, formatted_item, subscriber, destination):
         raise NotImplementedError()
 
     def transmit(self, queue_item, formatted_item, subscriber, destination):
