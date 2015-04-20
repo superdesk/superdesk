@@ -1,0 +1,17 @@
+<ul>
+    <li ng-repeat="code in data.codes[item._id]">
+        <input style="width: 50px;" maxlength="3" ng-model="code">
+        <button type="button" ng-disabled="data.codes[item._id][$index] === code" ng-click="data.codes[item._id][$index] = code" title="{{::'Update'|translate}}">
+            <i class="icon-pencil"></i>
+        </button>
+        <button type="button" ng-click="data.remove(item._id, code)" title="{{::'Remove'|translate}}">
+            <i class="icon-trash"></i>
+        </button>
+    </li>
+    <li>
+        <input style="width: 50px;" maxlength="3" ng-model="newCode">
+        <button type="button" ng-click="data.add(item._id, newCode);newCode = null" title="{{::'Add'|translate}}">
+            <i class="icon-plus"></i>
+        </button>
+    </li>
+</ul>
