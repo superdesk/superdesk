@@ -79,7 +79,7 @@ def transmit_items(queue_items, subscriber, destination):
             failed_items.append(queue_item)
 
     if len(failed_items) > 0:
-        logger.error('Failed to ingest the following items: %s', str(failed_items))
+        logger.error('Failed to publish the following items: %s', str(failed_items))
 
 
 superdesk.command('publish:transmit', PublishContent())
