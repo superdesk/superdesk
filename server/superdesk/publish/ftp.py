@@ -22,7 +22,7 @@ except ImportError:
 
 
 class FTPPublishService(PublishService):
-    """FTP Ingest Service."""
+    """FTP Publish Service."""
 
     def config_from_url(self, url):
         """Parse given url into ftp config. Used for tests.

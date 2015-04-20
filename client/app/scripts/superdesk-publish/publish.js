@@ -8,13 +8,9 @@
             label: 'FTP',
             templateUrl: 'scripts/superdesk-publish/views/ftp-config.html'
         },
-        teletype: {
-            label: 'Teletype',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
-        },
         email: {
             label: 'Email',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
+            templateUrl: 'scripts/superdesk-publish/views/email-config.html'
         }
     });
 
