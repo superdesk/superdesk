@@ -10,6 +10,7 @@
 
 
 import logging
+import superdesk
 
 from eve.versioning import resolve_document_version
 from flask import current_app as app
@@ -19,11 +20,11 @@ from apps.archive.common import item_url, get_user, insert_into_versions
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, FormatterError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
-import superdesk
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
+from apps.duplication.archive_move import MoveService
 
 
 logger = logging.getLogger(__name__)
@@ -69,6 +70,7 @@ class ArchivePublishService(BaseService):
             if archived_item['type'] != 'composite':
                 # queue only text items
                 self.queue_transmission(original)
+                self.__send_to_publish_stage(original)
 
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             return item
@@ -113,6 +115,8 @@ class ArchivePublishService(BaseService):
 
                         get_resource_service('publish_queue').post(publish_queue_items)
         except FormatterError:
+            raise
+        except:
             raise
 
     def resolve_destination_groups(self, dg_ids, destination_groups=None):
@@ -204,6 +208,12 @@ class ArchivePublishService(BaseService):
                     insert_into_versions(doc=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
+
+    def __send_to_publish_stage(self, doc):
+        desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+        if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
+            doc['task']['stage'] = desk['published_stage']
+            MoveService().move_content(doc['guid'], doc)
 
 
 superdesk.workflow_state('published')

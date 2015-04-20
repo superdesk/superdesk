@@ -8,7 +8,7 @@ Feature: Move or Send Content to another desk
         """
         When we post to "archive"
         """
-        [{"type":"text", "headline": "test1", "guid": "123", "state": "draft", "task": {"user": "#CONTEXT_USER_ID#"}}]
+        [{"guid": "123", "type":"text", "headline": "test1", "guid": "123", "state": "draft", "task": {"user": "#CONTEXT_USER_ID#"}}]
         """
         And we post to "/archive/123/move"
         """
@@ -160,10 +160,7 @@ Feature: Move or Send Content to another desk
         """
         [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
         """
-        Then we get error 412
-        """
-        {"_message": "Workflow transition is invalid.", "_status": "ERR"}
-        """
+        Then we get response code 201
 
     @auth
     Scenario: User can't move content without a privilege
