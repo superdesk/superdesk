@@ -18,6 +18,8 @@ define([
          * data-max-selected-items="1"
          * data-disabled-items="disabledItems"
          * data-selected-items="selectedItems"
+         * data-selected-items-helper-template="helperTemplate.html"
+         * data-selected-items-helper-data="data"
          * ></div>
          *
          * Params:
@@ -29,6 +31,10 @@ define([
          * @scope {Integer} maxSelectedItems - maximum number of items to select
          * @scope {Array} disabledItems - items that will be disabled
          * @scope {Array} selectedItems - target to populate with selected items
+         * @scope {String} selectedItemsHelperTemplate - additional template to
+         *      display for each selected item
+         * @scope {Object} selectedItemsHelperData - additional data to use in
+         *      helper template, which can be accessed by data variable
          *
          */
         .directive('sdSearchList', ['asset', 'api', function(asset, api) {
@@ -44,7 +50,9 @@ define([
                     maxSelectedItems: '=',
                     criteria: '=',
                     disabledItems: '=',
-                    selectedItems: '='
+                    selectedItems: '=',
+                    selectedItemsHelperTemplate: '=',
+                    selectedItemsHelperData: '='
                 },
                 templateUrl: asset.templateUrl('superdesk/views/sdSearchList.html'),
                 link: function(scope, element, attrs) {
@@ -101,11 +109,15 @@ define([
                     };
 
                     scope.isSelected = function(item) {
-                        return scope.selectedItems ? _.findIndex(scope.selectedItems, function(i) {return i._id === item._id;}) !== -1 : false;
+                        return scope.selectedItems ? _.findIndex(scope.selectedItems, function(i) {
+                            return i._id === item._id;
+                        }) !== -1 : false;
                     };
 
                     scope.isDisabled = function(item) {
-                        return scope.disabledItems ? _.findIndex(scope.disabledItems, function(i) {return i._id === item._id;}) !== -1 : false;
+                        return scope.disabledItems ? _.findIndex(scope.disabledItems, function(i) {
+                            return i._id === item._id;
+                        }) !== -1 : false;
                     };
                 }
             };
