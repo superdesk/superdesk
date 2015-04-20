@@ -42,12 +42,25 @@
 
                 <div class="field">
                     <label translate>Output channels</label>
-                    <div sd-output-channels-list data-target="selectedOutputChannels" data-selector-target="selectorCodes">
+                    <div sd-search-list
+                        data-endpoint="output_channels"
+                        data-label-key="name"
+                        data-search-key="name"
+                        data-selected-items="selectedOutputChannels"
+                        data-selected-items-helper-template="'scripts/superdesk-publish/views/output-channels-selectors.html'"
+                        data-selected-items-helper-data="selectorData">
+                    </div>
                 </div>
 
                 <div class="field">
                     <label translate>Destination groups</label>
-                    <div sd-destination-groups-list data-target="selectedDestinationGroups" data-exclude="[destinationGroup]">
+                    <div sd-search-list
+                        data-endpoint="destination_groups"
+                        data-label-key="name"
+                        data-search-key="name"
+                        data-disabled-items="[destinationGroup]"
+                        data-selected-items="selectedDestinationGroups">
+                    </div>
                 </div>
             </fieldset>
         </form>

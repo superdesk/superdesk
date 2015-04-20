@@ -1,0 +1,40 @@
+<div style="border: 1px solid #404040;">
+    <button type="button" ng-click="open = !open" ng-show="!open">
+        <span ng-show="selectedItems.length === 0" translate>Select</span>
+        <span ng-show="selectedItems.length === 1">{{selectedItems[0][labelKey]}}</span>
+        <span ng-show="selectedItems.length > 1">{{selectedItems.length}} {{:: 'selected'|translate}}</span>
+    </button>
+    <div ng-show="open">
+        <div>
+            <div>
+                <div ng-show="maxSelectedItems !== 1">
+                    <span translate>Selected items</span> 
+                    ({{selectedItems.length}} {{::'of'|translate}} 
+                    <span ng-show="maxSelectedItems">{{maxSelectedItems}}</span>
+                    <span ng-hide="maxSelectedItems" translate>many</span>)
+                </div>
+                <div ng-show="maxSelectedItems === 1">
+                    <span translate>Selected item</span>
+                </div>
+                <ul ng-show="selectedItems.length">
+                    <li ng-repeat="item in selectedItems">
+                        <button type="button" ng-click="unselectItem(item)">{{item[labelKey]}}</button>
+                        <div ng-if="selectedItemsHelperTemplate" onload="data = selectedItemsHelperData" ng-include="selectedItemsHelperTemplate">
+                        </div>
+                    </li>
+                </ul>
+                <span ng-hide="selectedItems.length" translate>None</span>
+            </div>
+            <input type="text" ng-model="keyword" placeholder="{{::'Search'|translate}}">
+            <ul>
+                <li ng-repeat="item in items">
+                    <button type="button" ng-click="selectItem(item)" ng-disabled="isSelected(item) || isDisabled(item) || selectedItems.length >= maxSelectedItems">{{item[labelKey]}}</button>
+                </li>
+            </ul>
+            <div sd-pagination-alt data-page="page" data-max-page="maxPage" ng-show="maxPage > 1"></div>
+        </div>
+        <div>
+            <button type="button" ng-click="open = false;" translate>Close</button>
+        </div>
+    </div>
+</div>
