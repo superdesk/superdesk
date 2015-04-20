@@ -1,9 +1,9 @@
-<div ng-if="loading" class="loading"></div>
+<div ng-show="loading" class="loading"></div>
 
-<div ng-if="!loading && !items.length && showEmpty" class="no-items" translate>No items in this stage</div>
+<div ng-show="!loading && !items.length && showEmpty" class="no-items" translate>No items in this stage</div>
 
-<ul ng-if="!loading && items.length" class="inline-content-items" >
-	<li ng-repeat="item in items" class="item"
+<ul class="inline-content-items">
+	<li ng-repeat="item in items track by item._id" class="item"
 		ng-click="action({item: item})" 
 		ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
 		<div class="type"><i class="filetype-icon-{{item.type}}"></i></div>
