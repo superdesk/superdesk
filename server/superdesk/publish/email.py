@@ -28,16 +28,16 @@ class EmailPublishService(PublishService):
                 raise PublishEmailError.recipientNotFoundError(LookupError('recipient field not found!'))
 
             admins = app.config['ADMINS']
+            recipients = config.get('recipients').rstrip(';').split(';')
             subject = "Story: {}".format(formatted_item['item_id'])
-            text_body = formatted_item
-            html_body = formatted_item
+            text_body = formatted_item['formatted_item']
 
             # sending email synchronously
             send_email(subject=subject,
                        sender=admins[0],
-                       recipients=config.get('recipients'),
+                       recipients=recipients,
                        text_body=text_body,
-                       html_body=html_body)
+                       html_body=None)
 
         except PublishEmailError:
             raise
