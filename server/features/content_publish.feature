@@ -1,16 +1,52 @@
 Feature: Content Publishing
 
     @auth
-    Scenario: Publish a user content
+    Scenario: Publish a user content and moves to publish stage
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
       Given "archive"
       """
-      [{"headline": "test", "_version": 1, "state": "fetched"}]
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+
+      When we post to "/stages" with success
+      """
+      [
+        {
+        "name": "another stage",
+        "description": "another stage",
+        "task_status": "in_progress",
+        "desk": "#desks._id#",
+        "published_stage": true
+        }
+      ]
+      """
+      And we publish "#archive._id#"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      """
+
+    @auth
+    Scenario: Publish a user content and stays on the same stage
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we publish "#archive._id#"
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "published"}
+      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
 
     @auth
@@ -37,9 +73,14 @@ Feature: Content Publishing
 
     @auth
     Scenario: User can't update a published item
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
       Given "archive"
       """
-      [{"headline": "test", "_version": 1, "state": "fetched"}]
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we publish "#archive._id#"
       Then we get OK response
