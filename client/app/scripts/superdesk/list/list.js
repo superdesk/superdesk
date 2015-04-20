@@ -259,12 +259,8 @@
                 previousAction: '='
             },
             link: function(scope, elm, attr) {
-                var page = 1;
-                if ($location.search().page) {
-                    page = $location.search().page;
-                }
                 var container = elm[0];
-                elm.bind('scroll', function() { console.log('scrolled');
+                elm.bind('scroll', function() {
                     if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
                         if (scope.nextAction) {
                             scope.nextAction();
