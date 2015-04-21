@@ -22,7 +22,7 @@
                 <div sd-search-tags></div>
                 <div>
                     <ul class="{{view}}-view list-view">
-                        <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}">
+                        <li ng-repeat="item in items._items track by item._id" sd-post-repeat class="list-item-view" ng-class="{active: item === selected.preview}">
                             <div sd-media-box></div>
                         </li>
                     </ul>
