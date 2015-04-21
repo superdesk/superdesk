@@ -32,19 +32,19 @@
             ng-show="_editable"
             translate>Publish</button>
 
-        <div class="navbtn dropdown strict pull-left" dropdown>
+        <div class="navbtn dropdown strict pull-left" tooltip="{{ :: 'Create' | translate }}" tooltip-placement="bottom" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
-       <div class="navbtn dropdown strict highlights-dropdown pull-left" dropdown>
+       <div class="navbtn dropdown strict highlights-dropdown pull-left" tooltip="{{ :: 'Mark item' | translate }}" tooltip-placement="bottom" dropdown>
 			<button class="dropdown-toggle" dropdown-toggle>
 			<i class="svg-icon-add-to-list"></i>
 			</button>
 			<ul class="dropdown-menu pull-right" sd-mark-highlights-dropdown></ul>
 	   </div>
 
-        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" dropdown>
+        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" tooltip="{{ :: 'Multiedit' | translate }}" tooltip-placement="bottom" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
@@ -52,7 +52,8 @@
         </div>
 
         <button id="send-to-btn" ng-show="privileges.move == 1 && _editable && isActionAllowed(item, 'move')"
-            class="navbtn navbtn-hover" ng-click="views.send = !views.send">
+            class="navbtn navbtn-hover" tooltip="{{ :: 'Send to desk' | translate }}" tooltip-placement="left" 
+            ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>
     </div>
