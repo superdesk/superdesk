@@ -12,7 +12,7 @@ redis:
 elastic:
   image: library/elasticsearch
   volumes:
-   - ../data/elastic:/data
+   - ../data/elastic:/usr/share/elasticsearch/data
 
 backend:
   build: ../server
