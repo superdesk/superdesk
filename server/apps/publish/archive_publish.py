@@ -221,7 +221,7 @@ class ArchivePublishService(BaseService):
     def __send_to_publish_stage(self, doc):
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
-            doc['task']['stage'] = desk['published_stage']
+            doc['stage'] = desk['published_stage']
             MoveService().move_content(doc['_id'], doc)
 
 
