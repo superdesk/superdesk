@@ -283,7 +283,7 @@
                 }
 
                 $scope.isIncluded = function(subscriber) {
-                    return $scope.outputChannel.destinations.indexOf(subscriber._id) !== -1;
+                    return $scope.outputChannel.destinations && $scope.outputChannel.destinations.indexOf(subscriber._id) !== -1;
                 };
 
                 $scope.addNewSubscriber = function() {
