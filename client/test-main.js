@@ -68,6 +68,7 @@ tests.push('superdesk-archive/module');
 tests.push('superdesk-archive/directives');
 
 tests.push('superdesk-dictionaries/dictionaries');
+tests.push('superdesk-publish/publish');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
