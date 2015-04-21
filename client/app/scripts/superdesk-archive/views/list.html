@@ -1,11 +1,12 @@
 <div class="subnav">
 	<div class="button-stack right-stack">   
 	    <div class="navbtn dropdown strict highlights-dropdown" 
+            tooltip="{{ :: 'Mark item' | translate}}" tooltip-placement="left"
             dropdown sd-package-highlights-dropdown 
             ng-if="type === 'archive' && selected.desk">
         </div>         
         <div class="navbtn dropdown strict" dropdown ng-if="type === 'archive'">
-            <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+            <button class="dropdown-toggle sd-create-btn" tooltip="{{ :: 'Create' | translate}}" tooltip-placement="left" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
     </div>
