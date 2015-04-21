@@ -3,7 +3,9 @@ define([
     'require',
     './controllers/list',
     './controllers/upload',
-    './archive-widget/archive'
+    './archive-widget/archive',
+    './related-item-widget/relatedItem',
+    './directives'
 ], function(angular, require) {
     'use strict';
 
@@ -108,7 +110,8 @@ define([
         'superdesk.search',
         'superdesk.archive.directives',
         'superdesk.dashboard',
-        'superdesk.widgets.archive'
+        'superdesk.widgets.archive',
+        'superdesk.widgets.relatedItem'
     ])
 
         .service('spike', SpikeService)
@@ -170,7 +173,8 @@ define([
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
                     icon: 'archive',
-                    monitor: true,
+                    //monitor: true,
+                    /*
                     controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
                         api
                             .save('duplicate', {}, {desk: desks.getCurrentDeskId()}, data.item)
@@ -184,6 +188,10 @@ define([
                         ['finally'](function() {
                             data.item.actioning.archiveContent = false;
                         });
+                    }],
+                    */
+                    controller: ['$location', 'data', function($location, data) {
+                        $location.search('fetch', data.item._id);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},

@@ -6,7 +6,7 @@ var DEFAULT_OPTIONS = {
     endpoint: 'search',
     pageSize: 25,
     page: 1,
-    sort: [{versioncreated: 'desc'}]
+    sort: [{_updated: 'desc'}]
 };
 
 angular.module('superdesk.itemList', ['superdesk.search'])
@@ -66,7 +66,7 @@ angular.module('superdesk.itemList', ['superdesk.search'])
             query.source.query.filtered.filter.and.push({or: stateQuery});
         }
         // process creation date
-        var dateKeys = {creationDate: 'firstcreated', modificationDate: 'versioncreated'};
+        var dateKeys = {creationDate: '_created', modificationDate: '_updated'};
         var dateQuery = null;
         _.each(dateKeys, function(key, field) {
             if (options[field + 'Before'] || options[field + 'After']) {
@@ -109,6 +109,31 @@ angular.module('superdesk.itemList', ['superdesk.search'])
                     default_operator: 'AND'
                 }
             };
+        }
+
+        // Process related items only search
+        if (options.related === true) {
+            var queryRelatedItem = [];
+            var queryWords = [];
+            queryWords = options.keyword.split(' ');
+            var length = queryWords.length;
+            queryRelatedItem.push('slugline' + ':("' + options.keyword + '")');
+
+            for (var i = 0; i < length; i++) {
+                if (options.keyword) {
+                    queryRelatedItem.push('slugline' + ':(' + queryWords[i] + ')');
+                }
+            }
+
+            if (queryRelatedItem.length) {
+                query.source.query.filtered.query = {
+                    query_string: {
+                        query: queryRelatedItem.join(' '),
+                        lenient: false,
+                        default_operator: 'OR'
+                    }
+                };
+            }
         }
 
         // process search
@@ -379,6 +404,111 @@ function(ItemList, notify, itemPinService, gettext, $timeout) {
                     }
                 } else {
                     scope.itemListOptions.search = oldSearch || null;
+                }
+            });
+        }
+    };
+}])
+.directive('sdRelatedItemListWidget', ['ItemList', 'notify', 'itemPinService', 'gettext',
+function(ItemList, notify, itemPinService, gettext) {
+    return {
+        scope: {
+            options: '=',
+            itemListOptions: '=',
+            actions: '='
+        },
+        templateUrl: 'scripts/superdesk/itemList/views/relatedItem-list-widget.html',
+        link: function(scope, element, attrs) {
+            scope.items = null;
+            scope.processedItems = null;
+            scope.maxPage = 1;
+            scope.pinnedItems = [];
+            scope.selected = null;
+
+            var oldSearch = null;
+
+            var itemList = new ItemList();
+
+            var _refresh = function() {
+                itemList.fetch();
+            };
+            var refresh = _.debounce(_refresh, 100);
+
+            scope.view = function(item) {
+                scope.selected = item;
+            };
+
+            scope.toggleItemType = function(itemType) {
+                if (scope.itemListOptions.types.indexOf(itemType) > -1) {
+                    scope.itemListOptions.types = _.without(scope.itemListOptions.types, itemType);
+                } else {
+                    scope.itemListOptions.types.push(itemType);
+                }
+            };
+
+            scope.isItemTypeEnabled = function(itemType) {
+                return scope.itemListOptions.types.indexOf(itemType) > -1;
+            };
+
+            scope.pin = function(item) {
+                itemPinService.add(scope.options.pinMode, _.clone(item));
+            };
+
+            scope.unpin = function(item) {
+                itemPinService.remove(item);
+            };
+
+            scope.isPinned = function(item) {
+                return itemPinService.isPinned(scope.options.pinMode, item);
+            };
+
+            var processItems = function() {
+                if (scope.items) {
+                    if (scope.options.pinEnabled) {
+                        scope.processedItems = scope.pinnedItems.concat(scope.items._items);
+                    } else {
+                        scope.processedItems = scope.items._items;
+                    }
+                }
+            };
+
+            var itemListListener = function() {
+                scope.maxPage = itemList.maxPage;
+                scope.items = itemList.result;
+                processItems();
+            };
+            var pinListener = function(pinnedItems) {
+                scope.pinnedItems = pinnedItems;
+                _.each(scope.pinnedItems, function(item) {
+                    item.pinnedInstance = true;
+                });
+                processItems();
+            };
+
+            itemList.addListener(itemListListener);
+            itemPinService.addListener(scope.options.pinMode, pinListener);
+            scope.$on('$destroy', function() {
+                itemList.removeListener(itemListListener);
+                itemPinService.removeListener(pinListener);
+            });
+
+            scope.$watch('itemListOptions', function() {
+                itemList.setOptions(scope.itemListOptions);
+                itemList.setOptions({related: scope.options.related});
+                refresh();
+            }, true);
+
+            scope.$watch('options.related', function() {
+                if (scope.options.related && scope.options.item) {
+                    if (!scope.options.item.slugline) {
+                        notify.error(gettext('Error: Keywords required.'));
+                        scope.options.related = false;
+                    } else {
+                        oldSearch = scope.itemListOptions.keyword;
+                        scope.itemListOptions.keyword = scope.options.item.slugline;
+                    }
+                } else {
+                    scope.itemListOptions.keyword = oldSearch || null;
                 }
             });
         }

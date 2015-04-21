@@ -1,4 +1,4 @@
-<div class="preview-layout" ng-class="{closed: !selected.preview}" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
+<div class="preview-layout" ng-class="{closed: !selected.preview && !selected.fetch}" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
     <div class="list-pane {{ view || 'mgrid' }}-view">
         <header class="search-page-header">
             <div class="fitler-trigger" ng-click="flags.facets = true" ng-class="{hidden: flags.facets}"><i class="icon-filter-large"></i></div>
@@ -26,7 +26,7 @@
 
             <div sd-shadow>
                 <ul class="{{view}}-view list-view">
-                    <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}">
+                    <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
                         <div sd-media-box></div>
                     </li>
                 </ul>
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="preview-pane content-item-preview" ng-init="tab = 'content'">
+    <div class="preview-pane content-item-preview" ng-if="!selected.fetch" ng-init="tab = 'content'">
         <header>
             <ul class="nav nav-tabs">
                 <li ng-class="{active: tab === 'content'}">
@@ -57,4 +57,6 @@
             <div ng-if="tab === 'related'" sd-media-related data-item="selected.preview"></div>
         </div>
     </div>
+
+    <div class="preview-pane content-item-preview" ng-if="selected.fetch" sd-send-item data-item="selected.fetch" data-view="selected.fetch" data-mode="{{type}}"></div>
 </div>

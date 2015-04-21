@@ -34,7 +34,7 @@ describe('itemListService', function() {
                 },
                 size: 25,
                 from: 0,
-                sort: [{versioncreated: 'desc'}]
+                sort: [{_updated: 'desc'}]
             }
         });
     }));
@@ -157,8 +157,8 @@ describe('itemListService', function() {
         });
         $rootScope.$digest();
         expect(queryParams.source.query.filtered.filter.and).toEqual([
-            {range: {firstcreated: {lte: 1, gte: 2}}},
-            {range: {versioncreated: {lte: 3, gte: 4}}}
+            {range: {_created: {lte: 1, gte: 2}}},
+            {range: {_updated: {lte: 3, gte: 4}}}
         ]);
     }));
 

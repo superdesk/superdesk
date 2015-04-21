@@ -128,6 +128,15 @@
 				<input type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
 			</div>
 		</li>
+		<li>
+			<label translate>Associated</label>
+			<a ng-show="associatedItem != null" ng-href="#/authoring/{{item.related_to}}" title="{{ associatedItem.slugline || associatedItem.headline }}">
+	            <div ng-show="associatedItem.slugline || associatedItem.headline">
+	                {{ associatedItem.slugline || associatedItem.headline | uppercase}}
+	            </div>
+	            <div ng-hide="associatedItem.slugline || associatedItem.headline" translate>Blank headline received</div>
+	        </a>
+		</li>
 		<li ng-if="item.copyrightholder">
 			<label translate>Copyright</label>
 			<div class="data">{{item.copyrightholder}}</div>
