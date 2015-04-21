@@ -1,16 +1,16 @@
 cat <<EOF
 mongodb:
-  image: dockerfile/mongodb
+  image: library/mongo
   volumes:
    - ../data/mongodb:/data/db
 
 redis:
-  image: dockerfile/redis
+  image: library/redis
   volumes:
    - ../data/redis:/data
 
 elastic:
-  image: dockerfile/elasticsearch
+  image: library/elasticsearch
   volumes:
    - ../data/elastic:/data
 
