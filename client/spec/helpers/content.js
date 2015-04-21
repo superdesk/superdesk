@@ -6,7 +6,7 @@ module.exports = new Content();
 function Content() {
 
     this.setListView = function() {
-        var list = element(by.css('[title="switch to list view"]'));
+        var list = element(by.css('[tooltip="switch to list view"]'));
         return list.isDisplayed().then(function(isVisible) {
             if (isVisible) {
                 list.click();
@@ -15,7 +15,7 @@ function Content() {
     };
 
     this.setGridView = function() {
-        var grid = element(by.css('[title="switch to grid view"]'));
+        var grid = element(by.css('[tooltip="switch to grid view"]'));
         return grid.then(function(isVisible) {
             if (isVisible) {
                 grid.click();

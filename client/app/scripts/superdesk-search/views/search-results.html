@@ -10,8 +10,8 @@
             <div sd-pagination data-items="items"></div>
 
             <div class="view-select">
-                <button title="{{ :: 'switch to grid view' | translate}}" tooltip="{{ :: 'switch to grid view' | translate}}" tooltip-placement="left" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
-                <button title="{{ :: 'switch to grid view' | translate}}" tooltip="{{ :: 'switch to list view' | translate}}" tooltip-placement="left" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
+                <button tooltip="{{ :: 'switch to grid view' | translate}}" tooltip-placement="left" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
+                <button tooltip="{{ :: 'switch to list view' | translate}}" tooltip-placement="left" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
             </div>
 
             <div sd-multi-action-bar></div>
