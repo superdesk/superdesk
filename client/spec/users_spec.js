@@ -38,6 +38,13 @@ describe('Users', function() {
             expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
         });
 
+        it('list online users', function() {
+            element(by.id('online_users')).click();
+            expect(element.all(by.repeater('user in users')).count()).toBe(2);
+            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
+            expect(element(by.repeater('user in users').row(1).column('username')).getText()).toBe('admin');
+        });
+
         xit('can disable user', function() {
             var user = element.all(by.repeater('users')).first(),
                 activity = user.element(by.className('icon-trash'));
