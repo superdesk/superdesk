@@ -33,7 +33,7 @@ Feature: Content Publishing
         }
       ]
       """
-      And we publish "#archive._id#"
+      And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
       And we get existing resource
       """
@@ -60,12 +60,52 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
-      When we publish "#archive._id#"
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
       And we get existing resource
       """
       {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+
+    @auth
+    Scenario: We can lock a published content and then kill it
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+        """
+        {}
+        """
+      Then we get OK response
+      When we publish "#archive._id#" with "kill" type and "killed" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "killed", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we post to "/archive/#archive._id#/unlock"
+      """
+        {}
+      """
+      Then we get OK response
+
 
     @auth
     Scenario: User can't publish without a privilege
@@ -77,7 +117,7 @@ Feature: Content Publishing
       """
       {"user_type": "user", "email": "foo.bar@foobar.org"}
       """
-      When we publish "#archive._id#"
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 403
 
     @auth
@@ -86,7 +126,7 @@ Feature: Content Publishing
       """
       [{"headline": "test", "_version": 1, "state": "draft"}]
       """
-      When we publish "#archive._id#"
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
 
     @auth
@@ -109,7 +149,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
-      When we publish "#archive._id#"
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
       When we patch "/archive/#archive._id#"
       """
@@ -134,7 +174,7 @@ Feature: Content Publishing
         """
 		And we get "/archive"
         Then we get list with 6 items
-        When we publish "#fetch._id#"
+        When we publish "#fetch._id#" with "publish" type and "published" state
         Then we get OK response
 		When we get "/archive"
         Then we get existing resource
