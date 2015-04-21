@@ -73,29 +73,42 @@
                 allowed: '=',
                 showEmpty: '=?',
                 selected: '=?',
-                action: '&'
+                action: '&',
+                filter: '='
             },
             link: function(scope, elem) {
-
-                var query = search.query({});
-                query.filter({term: {'task.stage': scope.stage}});
-                query.size(10);
-                var criteria = {source: query.getCriteria()};
-
-                scope.loading = true;
-
-                api('archive').query(criteria).then(function(items) {
-                    scope.loading = false;
-                    scope.items = items._items;
-                    scope.total = items._meta.total;
-                }, function() {
-                    scope.loading = false;
-                });
 
                 scope.open = function(item) {
                     desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
                 };
+
+                function queryItems(queryString) {
+                    var query = search.query({});
+                    query.filter({term: {'task.stage': scope.stage}});
+                    query.size(10);
+
+                    if (queryString) {
+                        query.filter({query: {query_string: {
+                            query: queryString,
+                            lenient: false
+                        }}});
+                    }
+
+                    var criteria = {source: query.getCriteria()};
+
+                    scope.loading = true;
+                    scope.items = scope.total = null;
+                    api('archive').query(criteria).then(function(items) {
+                        scope.items = items._items;
+                        scope.total = items._meta.total;
+                    })['finally'](function() {
+                        scope.loading = false;
+                    });
+
+                }
+
+                scope.$watch('filter', queryItems);
             }
         };
     }
@@ -264,7 +277,11 @@
         };
 
         this.isActive = angular.bind(this, function(item) {
-            return this.configured ? !!this.active[item._id] : true;
+            if (this.searchAll || !this.configured) {
+                return true;
+            }
+
+            return !!this.active[item._id];
         });
 
         this.save = function() {
@@ -276,6 +293,12 @@
                     this.closeModal();
                 }));
         };
+
+        this.search = function(query) {
+            this.query = query;
+        };
+
+        this.searchAll = false;
     }
 
     var app = angular.module('superdesk.desks', [

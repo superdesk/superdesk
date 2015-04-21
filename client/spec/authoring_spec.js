@@ -53,5 +53,10 @@ describe('authoring', function() {
             expect(element.all(by.repeater('desk in agg.desks')).count()).toBe(1);
             expect(element.all(by.repeater('stage in agg.deskStages')).count()).toBe(1);
         });
+
+        it('can search content', function() {
+            widget.element(by.model('query')).sendKeys('item5');
+            expect(widget.all(by.repeater('item in items')).count()).toBe(1);
+        });
     });
 });
