@@ -270,6 +270,18 @@
             }
         };
     }]);
+    mod.directive('sdPostRepeat',
+    ['$timeout',
+    function($timeout) {
+        return function(scope) {
+            if (scope.$first)
+                    window.st = new Date();
+            if (scope.$last)
+                $timeout(function(){
+                    console.log("DOM rendering list took: " + (new Date() - window.st) + " ms");
+                });
+        };
+    }]);
     // Alternative sdPagination, doesn't use $location.
     // Should replace sdPagination.
     mod.directive('sdPaginationAlt', [function() {
