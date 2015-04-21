@@ -32,13 +32,13 @@
         <dt translate>Expiry</dt>
         <dd sd-reldate-complex ng-model="item.expiry"></dd>
     </dl>
-    <dl ng-if="original_creator">
+    <dl ng-if="originalCreator">
         <dt translate>Original creator</dt>
-        <dd>{{ original_creator }}</dd>
+        <dd>{{ originalCreator }}</dd>
     </dl>
-    <dl ng-if="version_creator">
+    <dl ng-if="versionCreator">
         <dt translate>Version creator</dt>
-        <dd>{{ version_creator }}</dd>
+        <dd>{{ versionCreator }}</dd>
     </dl>
 
     <!-- ingest details -->
@@ -136,6 +136,14 @@
     <dl ng-if="item.located">
         <dt translate>Location</dt>
         <dd>{{ item.located }}</dd>
+    </dl>
+
+    <!-- publish data -->
+    <dl ng-if="destinationGroups">
+        <dt translate>Destination Groups</dt>
+        <dd ng-repeat="destinationGroup in destinationGroups">
+            {{destinationGroup.name}}
+        </dd>
     </dl>
 
     <!-- file specific data -->

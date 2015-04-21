@@ -178,7 +178,7 @@
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['userList', function(userList) {
+        .directive('sdMediaMetadata', ['userList', 'adminPublishSettingsService', function(userList, adminPublishSettingsService) {
             return {
                 scope: {
                     item: '='
@@ -189,17 +189,26 @@
                     scope.$watch('item', reloadData);
 
                     function reloadData() {
-                        scope.original_creator = null;
-                        scope.version_creator = null;
+                        scope.originalCreator = null;
+                        scope.versionCreator = null;
+                        scope.destinationGroups = null;
 
                         if (scope.item.original_creator) {
-                            userList.getUser(scope.item.original_creator).then(function(user) {
-                                scope.original_creator = user.display_name;
+                            userList.getUser(scope.item.original_creator)
+                            .then(function(user) {
+                                scope.originalCreator = user.display_name;
                             });
                         }
                         if (scope.item.version_creator) {
-                            userList.getUser(scope.item.version_creator).then(function(user) {
-                                scope.version_creator = user.display_name;
+                            userList.getUser(scope.item.version_creator)
+                            .then(function(user) {
+                                scope.versionCreator = user.display_name;
+                            });
+                        }
+                        if (scope.item.destination_groups) {
+                            adminPublishSettingsService.fetchDestinationGroupsByIds(scope.item.destination_groups)
+                            .then(function(result) {
+                                scope.destinationGroups = result._items;
                             });
                         }
                     }
