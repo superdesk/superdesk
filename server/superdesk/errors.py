@@ -397,16 +397,21 @@ class SubscriberError(SuperdeskPublishError):
 class PublishQueueError(SuperdeskPublishError):
     _codes = {
         9001: 'Item could not be updated in the queue',
-        9002: 'Item format could not be recognized'
+        9002: 'Item format could not be recognized',
+        9003: 'Destination group cannot found'
     }
 
     @classmethod
     def item_update_error(cls, exception=None, destination=None):
-        return FormatterError(9001, exception, destination)
+        return PublishQueueError(9001, exception, destination)
 
     @classmethod
     def unknown_format_error(cls, exception=None, destination=None):
-        return FormatterError(9002, exception, destination)
+        return PublishQueueError(9002, exception, destination)
+
+    @classmethod
+    def destination_group_not_found_error(cls, exception=None, destination=None):
+        return PublishQueueError(9003, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):

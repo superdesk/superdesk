@@ -199,6 +199,15 @@ Feature: Auto Routing
           }
         ]
         """
+        When we post to "/destination_groups" with "destgroup1" and success
+        """
+        [
+          {
+            "name":"Group 1", "description": "new stuff",
+            "destination_groups": [], "output_channels": []
+          }
+        ]
+        """
         When we patch routing scheme "/routing_schemes/#routing_schemes._id#"
         """
            {
@@ -208,7 +217,7 @@ Feature: Auto Routing
               },
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#_id#"}],
-                "publish": [{"desk": "#desks._id#", "stage": "#stages._id#"}],
+                "publish": [{"desk": "#desks._id#", "stage": "#stages._id#", "destination_groups": ["#destgroup1#"]}],
                 "exit": false
               }
            }

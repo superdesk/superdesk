@@ -368,6 +368,13 @@ def step_impl_when_post_url_with_tag(context, url, tag):
         set_placeholder(context, tag, item.get('_id'))
 
 
+@given('we have "{url}" with "{tag}" and success')
+def step_impl_given_post_url_with_tag(context, url, tag):
+    item = post_data(context, url, True)
+    if item.get('_id'):
+        set_placeholder(context, tag, item.get('_id'))
+
+
 @when('we post to "{url}" with success')
 def step_impl_when_post_url_with_success(context, url):
     post_data(context, url, True)
