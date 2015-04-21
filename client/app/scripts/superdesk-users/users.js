@@ -152,6 +152,7 @@
                 if (search) {
                     criteria.where = JSON.stringify({
                         '$or': [
+                            {display_name: {'$regex': search, '$options': '-i'}},
                             {username: {'$regex': search, '$options': '-i'}},
                             {first_name: {'$regex': search, '$options': '-i'}},
                             {last_name: {'$regex': search, '$options': '-i'}},
@@ -252,14 +253,7 @@
                 };
 
             if (params.q) {
-                criteria.where = JSON.stringify({
-                    '$or': [
-                        {username: {'$regex': params.q, '$options': '-i'}},
-                        {first_name: {'$regex': params.q, '$options': '-i'}},
-                        {last_name: {'$regex': params.q, '$options': '-i'}},
-                        {email: {'$regex': params.q, '$options': '-i'}}
-                    ]
-                });
+                criteria.where = initCriteria(params.q);
             }
 
             if (params.page) {
@@ -273,6 +267,14 @@
             }
 
             return criteria;
+        }
+
+        function initCriteria(parameter) {
+            return JSON.stringify({
+                '$or': [{display_name: {'$regex': parameter, '$options': '-i'}},
+                        {email: {'$regex': parameter, '$options': '-i'}},
+                        {username: {'$regex': parameter, '$options': '-i'}}
+                ]});
         }
 
         function fetchUsers(criteria) {
