@@ -17,7 +17,7 @@ from flask import current_app as app
 from eve.utils import config, document_etag
 from copy import copy
 from apps.archive.common import item_url, get_user, insert_into_versions
-from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, FormatterError
+from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
@@ -83,7 +83,8 @@ class ArchivePublishService(BaseService):
             raise SuperdeskApiError.badRequestError(message="A non-existent content id is requested to publish")
         except Exception as e:
             logger.error("Something bad happened while publishing %s".format(id), e)
-            raise SuperdeskApiError.internalError(message="Failed to publish the item")
+            raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
+                                                  .format(str(e)))
 
     def queue_transmission(self, doc):
         try:
@@ -119,8 +120,9 @@ class ArchivePublishService(BaseService):
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
-        except FormatterError:
-            raise
+            else:
+                raise PublishQueueError.destination_group_not_found_error(
+                    KeyError('Destination groups empty for article: {}'.format(doc['_id'])), None)
         except:
             raise
 

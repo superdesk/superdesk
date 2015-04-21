@@ -6,9 +6,18 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
 
@@ -37,9 +46,18 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      Given "archive"
+      And we have "/destination_groups" with "destgroup1" and success
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we publish "#archive._id#"
@@ -77,9 +95,18 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      Given "archive"
+      And we have "/destination_groups" with "destgroup1" and success
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched",
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we publish "#archive._id#"
