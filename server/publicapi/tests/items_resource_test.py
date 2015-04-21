@@ -20,7 +20,7 @@ class ItemsResourceTestCase(ApiTestCase):
         Make the test fail immediately if the class cannot be imported.
         """
         try:
-            from publicapi.items.resource import ItemsResource
+            from publicapi.items import ItemsResource
         except ImportError:
             self.fail("Could not import class under test (ItemsResource).")
         else:
