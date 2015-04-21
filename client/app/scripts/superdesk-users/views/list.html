@@ -13,6 +13,10 @@
         <div class="list-pane">
             <header>
                 <div sd-searchbar></div>
+                <div class="search-handler">
+                  <input type="checkbox" ng-model="online_users" name="online_users" id="online_users">  
+                  <label translate>online users</label>
+                </div>  
                 <div sd-pagination data-items="users"></div>
             </header>
             <div class="content">

@@ -199,6 +199,7 @@
 
         $scope.selected = {user: null};
         $scope.createdUsers = [];
+        $scope.online_users = false;
 
         api('roles').query().then(function(result) {
             $scope.roles = _.indexBy(result._items, '_id');
@@ -252,8 +253,8 @@
                     max_results: Number(params.max_results) || DEFAULT_SIZE
                 };
 
-            if (params.q) {
-                criteria.where = initCriteria(params.q);
+            if (params.q || $scope.online_users) {
+                criteria.where = initCriteria(params.q, $scope.online_users);
             }
 
             if (params.page) {
@@ -269,12 +270,35 @@
             return criteria;
         }
 
-        function initCriteria(parameter) {
-            return JSON.stringify({
-                '$or': [{display_name: {'$regex': parameter, '$options': '-i'}},
-                        {email: {'$regex': parameter, '$options': '-i'}},
-                        {username: {'$regex': parameter, '$options': '-i'}}
-                ]});
+        function initCriteria(search, online) {
+            var querySearch = null;
+            var queryOnline = null;
+ 
+            if (search) {
+                querySearch = {
+                    '$or': [
+                        {username: {'$regex': parameter, '$options': '-i'}},
+                        {display_name: {'$regex': parameter, '$options': '-i'}},
+                        {email: {'$regex': parameter, '$options': '-i'}}
+                    ]
+                };
+            }
+
+            if (online) {
+                queryOnline = {
+                        session_preferences: {$exists: true, $nin: [null, {}]}
+                };
+            }
+
+            if (search && online) {
+                return JSON.stringify({ '$and': [querySearch, queryOnline]});
+            } else if (search) {
+                return JSON.stringify(querySearch);
+            } else if (online) {
+                return JSON.stringify(queryOnline);
+            }
+
+            return null;
         }
 
         function fetchUsers(criteria) {
@@ -296,6 +320,7 @@
         }
 
         $scope.$watch(getCriteria, fetchUsers, true);
+        $scope.$watch($scope.online_users, fetchUsers, true);
     }
 
     UserEditController.$inject = ['$scope', 'server', 'superdesk', 'user', 'session'];
