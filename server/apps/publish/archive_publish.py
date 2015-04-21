@@ -30,31 +30,34 @@ from apps.duplication.archive_move import MoveService
 logger = logging.getLogger(__name__)
 
 
-class ArchivePublishResource(ArchiveResource):
+class BasePublishResource(ArchiveResource):
     """
     Resource class for "publish" endpoint.
     """
+    def __init__(self, endpoint_name, app, service, publish_type):
+        self.endpoint_name = 'archive_' + publish_type
+        self.resource_title = endpoint_name
+        self.datasource = {'source': ARCHIVE}
 
-    endpoint_name = 'archive_publish'
-    resource_title = endpoint_name
-    datasource = {'source': ARCHIVE}
+        self.url = "archive/" + publish_type
+        self.item_url = item_url
 
-    url = "archive/publish"
-    item_url = item_url
+        self.resource_methods = []
+        self.item_methods = ['PATCH']
 
-    resource_methods = []
-    item_methods = ['PATCH']
-
-    privileges = {'PATCH': 'publish'}
+        self.privileges = {'PATCH': publish_type}
+        super().__init__(endpoint_name, app=app, service=service)
 
 
-class ArchivePublishService(BaseService):
+class BasePublishService(BaseService):
     """
-    Service class for "publish" endpoint
+    Base service class for "publish" endpoint
     """
+    publish_type = 'publish'
+    published_state = 'published'
 
     def on_update(self, updates, original):
-        if not is_workflow_state_transition_valid('publish', original[app.config['CONTENT_STATE']]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
 
     def update(self, id, updates, original):
@@ -73,11 +76,11 @@ class ArchivePublishService(BaseService):
                 self.__send_to_publish_stage(original)
 
             # document is saved to change the status
-            updates[config.CONTENT_STATE] = 'published'
+            updates[config.CONTENT_STATE] = self.published_state
             item = self.backend.update(self.datasource, id, updates, original)
             original.update(updates)
             user = get_user()
-            push_notification('item:publish', item=str(item.get('_id')), user=str(user))
+            push_notification('item:' + self.publish_type, item=str(item.get('_id')), user=str(user))
             original.update(super().find_one(req=None, _id=id))
         except KeyError as e:
             raise SuperdeskApiError.badRequestError(
@@ -206,7 +209,7 @@ class ArchivePublishService(BaseService):
                         self.__publish_package_items(doc)
 
                     resolve_document_version(document=doc, resource=ARCHIVE, method='PATCH', latest_doc=doc)
-                    doc[config.CONTENT_STATE] = 'published'
+                    doc[config.CONTENT_STATE] = self.published_state
                     doc[config.LAST_UPDATED] = last_updated
                     doc[config.ETAG] = document_etag(doc)
                     self.backend.update(self.datasource, guid, {config.CONTENT_STATE: doc[config.CONTENT_STATE],
@@ -223,6 +226,39 @@ class ArchivePublishService(BaseService):
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
             MoveService().move_content(doc['_id'], doc)
+
+
+class ArchivePublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'publish')
+
+
+class ArchivePublishService(BasePublishService):
+    publish_type = 'publish'
+    published_state = 'published'
+
+
+class KillPublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'kill')
+
+
+class KillPublishService(BasePublishService):
+    publish_type = 'kill'
+    published_state = 'killed'
+
+
+class CorrectPublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'correct')
+
+
+class CorrectPublishService(BasePublishService):
+    publish_type = 'correct'
+    published_state = 'corrected'
 
 
 superdesk.workflow_state('published')

@@ -1356,14 +1356,14 @@ def then_field_is_populated(context, field_name):
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
 
 
-@when('we publish "{item_id}"')
-def step_impl_when_publish_url(context, item_id):
+@when('we publish "{item_id}" with "{pub_type}" type and "{state}" state')
+def step_impl_when_publish_url(context, item_id, pub_type, state):
     item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
-
-    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/publish/' + item_id),
-                                            data='{"state": "published"}', headers=headers)
+    data = json.dumps({"state": state})
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
+                                            data=data, headers=headers)
 
 
 @then('the ingest item is routed based on routing scheme and rule "{rule_name}"')
