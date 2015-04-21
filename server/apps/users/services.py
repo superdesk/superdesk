@@ -198,8 +198,12 @@ class UsersService(BaseService):
         items_locked_by_user = archive_service.get(req=None, lookup={'lock_user': user_id})
         if items_locked_by_user and items_locked_by_user.count():
             for item in items_locked_by_user:
-                archive_service.update(item['_id'], doc_to_unlock, item)
-                archive_autosave_service.delete(lookup={'_id': item['_id']})
+                # delete the item if nothing is saved so far
+                if item['_version'] == 1 and item['state'] == 'draft':
+                    get_resource_service('archive').delete(lookup={'_id': item['_id']})
+                else:
+                    archive_service.update(item['_id'], doc_to_unlock, item)
+                    archive_autosave_service.delete(lookup={'_id': item['_id']})
 
     def on_deleted(self, doc):
         """

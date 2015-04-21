@@ -78,6 +78,12 @@ class ItemLock(BaseComponent):
 
         if can_user_unlock:
             self.app.on_item_unlock(item, user_id)
+
+            # delete the item if nothing is saved so far
+            if item['_version'] == 1 and item['state'] == 'draft':
+                superdesk.get_resource_service('archive').delete(lookup={'_id': item['_id']})
+                return
+
             updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
             item_model.update(item_filter, updates)
             self.app.on_item_unlocked(item, user_id)
