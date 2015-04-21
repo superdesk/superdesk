@@ -9,7 +9,7 @@
 	        </li>
 	    </ul>
 	</div>
-	<button ng-click="toggleDir()" class="pull-left direction" title="{{active.dir}}">
+	<button ng-click="toggleDir()" class="pull-left direction" tooltip="{{active.dir}}" tooltip-placement="bottom">
     	<i class="icon-ascending" ng-if="active.dir === 'asc'"></i>
     	<i class="icon-descending" ng-if="active.dir === 'desc'"></i>
     </button>

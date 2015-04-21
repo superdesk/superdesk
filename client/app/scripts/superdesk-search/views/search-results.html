@@ -1,7 +1,7 @@
 <div class="preview-layout" ng-class="{closed: !selected.preview && !selected.fetch}" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
     <div class="list-pane {{ view || 'mgrid' }}-view">
         <header class="search-page-header">
-            <div class="fitler-trigger" ng-click="flags.facets = true" ng-class="{hidden: flags.facets}"><i class="icon-filter-large"></i></div>
+            <div tooltip="{{ 'Filter' | translate}}" tooltip-placement="right" class="fitler-trigger" ng-click="flags.facets = true" ng-class="{hidden: flags.facets}"><i class="icon-filter-large"></i></div>
 
             <div sd-item-sortbar></div>
 
@@ -10,8 +10,8 @@
             <div sd-pagination data-items="items"></div>
 
             <div class="view-select">
-                <button title="{{ 'switch to grid view' | translate}}" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
-                <button title="{{ 'switch to list view' | translate}}" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
+                <button tooltip="{{ 'switch to grid view' | translate}}" tooltip-placement="left" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
+                <button tooltip="{{ 'switch to list view' | translate}}" tooltip-placement="left" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
             </div>
 
             <div sd-multi-action-bar></div>
