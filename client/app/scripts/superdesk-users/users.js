@@ -273,25 +273,25 @@
         function initCriteria(search, online) {
             var querySearch = null;
             var queryOnline = null;
- 
+
             if (search) {
                 querySearch = {
                     '$or': [
-                        {username: {'$regex': parameter, '$options': '-i'}},
-                        {display_name: {'$regex': parameter, '$options': '-i'}},
-                        {email: {'$regex': parameter, '$options': '-i'}}
+                        {username: {'$regex': search, '$options': '-i'}},
+                        {display_name: {'$regex': search, '$options': '-i'}},
+                        {email: {'$regex': search, '$options': '-i'}}
                     ]
                 };
             }
 
             if (online) {
                 queryOnline = {
-                        session_preferences: {$exists: true, $nin: [null, {}]}
+                    session_preferences: {$exists: true, $nin: [null, {}]}
                 };
             }
 
             if (search && online) {
-                return JSON.stringify({ '$and': [querySearch, queryOnline]});
+                return JSON.stringify({'$and': [querySearch, queryOnline]});
             } else if (search) {
                 return JSON.stringify(querySearch);
             } else if (online) {

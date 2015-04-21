@@ -1,5 +1,5 @@
 <ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
-	<li ng-repeat="item in items track by item._id" class="item">
+	<li ng-repeat="item in items track by item._id" class="item" ng-if="!online || isLoggedIn(item)">
 		<figure class="avatar avatar-with-info small" title="{{item.display_name}}" ng-class="{'user-logged': isLoggedIn(item)}">
 			<div class="logged-info"></div>
 			<div class="user-image">

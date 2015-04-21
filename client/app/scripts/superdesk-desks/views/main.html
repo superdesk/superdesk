@@ -3,6 +3,10 @@
     	<ul>
 	    	<li ng-repeat="v in views" ng-class="{active: v === view}">
 	    		<a href="" id="{{v}}" ng-click="setView(v)" translate>{{v}}</a>
+	    		<div ng-if="v === view && view === 'users'">
+	    			<input type="checkbox" ng-model="online_users" name="online_users" id="online_users" ng-change="changeOnlineUsers(online_users)">
+	    			<label translate>online users</label>
+	    		</div> 
 	    	</li>
 	    </ul>
     </div>

@@ -27,6 +27,7 @@
         });
 
         $scope.statuses = tasks.statuses;
+        $scope.online_users = false;
 
         api('roles').query().then(function(result) {
             $scope.roles = result._items;
@@ -40,6 +41,10 @@
 
         $scope.setView = function(view) {
             $scope.view = view;
+        };
+
+        $scope.changeOnlineUsers = function(value) {
+            $scope.online_users = value;
         };
 
         $scope.isMemberOf = function(desk) {
@@ -137,7 +142,8 @@
             scope: {
                 role: '=',
                 desk: '=',
-                total: '='
+                total: '=',
+                online: '='
             },
             link: function(scope, elem) {
                 scope.users = desks.deskMembers[scope.desk];
