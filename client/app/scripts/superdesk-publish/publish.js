@@ -156,11 +156,16 @@
             return api.publish_queue.query(criteria);
         }
 
-        $q.all(promises).then(function() {
-            fetchPublishQueue().then(function(queue) {
-                $scope.publish_queue = queue._items;
+        $scope.reload = function() {
+            $q.all(promises).then(function() {
+                fetchPublishQueue().then(function(queue) {
+                    $scope.publish_queue = queue._items;
+                    $scope.lastRefreshedAt = new Date();
+                });
             });
-        });
+        };
+
+        $scope.reload();
     }
 
     SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
