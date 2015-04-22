@@ -9,6 +9,7 @@ describe('authoring', function() {
 
     beforeEach(module('superdesk.preferences'));
     beforeEach(module('superdesk.authoring'));
+    beforeEach(module('superdesk.publish'));
     beforeEach(module('superdesk.auth'));
     beforeEach(module('superdesk.workspace.content'));
     beforeEach(module('superdesk.mocks'));
