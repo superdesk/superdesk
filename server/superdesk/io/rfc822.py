@@ -234,8 +234,13 @@ class rfc822Parser(Parser):
                 # blacklisted tags are removed in their entirety
                 tag.extract()
             elif tag.name.lower() in whitelist:
-                # tag is allowed. Make sure all the attributes are allowed.
-                tag.attrs = [(a[0], self.safe_css(a[0], a[1])) for a in tag.attrs if self._attr_name_whitelisted(a[0])]
+                # tag is allowed. Make sure the attributes are allowed.
+                attrs = dict(tag.attrs)
+                for a in attrs:
+                    if self._attr_name_whitelisted(a):
+                        tag.attrs[a] = [self.safe_css(a, tag.attrs[a])]
+                    else:
+                        del tag.attrs[a]
             else:
                 # not a whitelisted tag. I'd like to remove it from the tree
                 # and replace it with its children. But that's hard. It's much
@@ -258,7 +263,7 @@ class rfc822Parser(Parser):
     def _attr_name_whitelisted(self, attr_name):
         return attr_name.lower() in ["href", "style", "color", "size", "bgcolor", "border"]
 
-    def safe_css(attr, css):
+    def safe_css(self, attr, css):
         if attr == "style":
             return re.sub("(width|height):[^;]+;", "", css)
         return css
