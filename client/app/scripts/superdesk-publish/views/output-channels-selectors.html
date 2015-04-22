@@ -10,7 +10,7 @@
     </li>
     <li>
         <input style="width: 50px;" maxlength="3" ng-model="newCode">
-        <button type="button" ng-click="data.add(item._id, newCode);newCode = null" title="{{::'Add'|translate}}">
+        <button type="button" ng-click="data.add(item._id, newCode);newCode = null" title="{{::'Add'|translate}}" ng-disabled="!newCode">
             <i class="icon-plus"></i>
         </button>
     </li>
