@@ -2,6 +2,8 @@
     <h3 class="page-nav-title" translate>Publish Queue</h3>
 </div>
 <section class="main-section ingest-dashboard">
+	<button ng-click="reload()">Refresh</button><i style="float:right;">Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</i>
+	<hr />
 	<table class="table">
 		<thead>
 			<tr>
