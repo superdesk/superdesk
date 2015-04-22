@@ -5,8 +5,6 @@
 
 MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService'];
 function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService) {
-    $scope.vars = {destinationGroups: []};
-
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -26,16 +24,25 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
     if ($scope.item.destination_groups && $scope.item.destination_groups.length) {
         adminPublishSettingsService.fetchDestinationGroupsByIds($scope.item.destination_groups)
         .then(function(result) {
+            var destinationGroups = [];
             _.each(result._items, function(item) {
-                $scope.vars.destinationGroups.push(item);
+                destinationGroups.push(item);
             });
+            $scope.vars = {destinationGroups: destinationGroups};
         });
+    } else {
+        $scope.vars = {destinationGroups: []};
     }
 
-    $scope.$watch('vars.destinationGroups', function() {
-        $scope.item.destination_groups = _.pluck($scope.vars.destinationGroups, '_id');
-        $scope.autosave($scope.item);
-    });
+    $scope.$watch('vars', function() {
+        if ($scope.vars && $scope.vars.destinationGroups) {
+            var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
+            if (!_.isEqual(destinationGroups, $scope.item.destination_groups)) {
+                $scope.item.destination_groups = destinationGroups;
+                $scope.autosave($scope.item);
+            }
+        }
+    }, true);
 
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
