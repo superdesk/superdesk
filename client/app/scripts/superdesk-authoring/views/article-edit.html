@@ -62,5 +62,8 @@
   <div ng-if="item.type == 'video'">
     <video controls="controls" sd-sources data-renditions="item.renditions"></video>
   </div>
+</div>
 
+<div class="composite-preview" ng-if="item.type === 'composite'">
+    <div sd-package data-item="item"></div>
 </div>
