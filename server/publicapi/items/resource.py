@@ -55,6 +55,7 @@ class ItemsResource(Resource):
         'renditions': {'type': 'dict'},
     }
     datasource = {
+        'filter': {'type': 'text'},
         'projection': {
             '_created': 0,
             '_updated': 0,
