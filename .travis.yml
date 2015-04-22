@@ -6,6 +6,7 @@ env:
     - TARGET=client
     - TARGET=server
     - TARGET=server_ldap
+    - TARGET=server_public_api
     - TARGET=e2e_chrome
 #    - TARGET=e2e_firefox
 
@@ -33,7 +34,7 @@ before_install:
       fi
 
 install:
-    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+    - if [ "${TARGET}" != "${TARGET/server/}" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
         pip install -r requirements.txt &&
         cd .. ;
@@ -66,12 +67,17 @@ script:
       fi
     - if [ "${TARGET}" = "server" ]; then
         cd server &&
-        behave --format progress2 --logging-level ERROR &&
+        behave ./features/ --format progress2 --logging-level ERROR &&
         cd .. ;
       fi
     - if [ "${TARGET}" = "server_ldap" ]; then
         cd server &&
-        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR &&
+        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave ./features/ --format progress2 --logging-level ERROR &&
+        cd .. ;
+      fi
+    - if [ "${TARGET}" = "server_public_api" ]; then
+        cd server &&
+        behave ./publicapi/features/ --format progress2 --logging-level ERROR &&
         cd .. ;
       fi
     - if [ "${TARGET}" = "server" ]; then
