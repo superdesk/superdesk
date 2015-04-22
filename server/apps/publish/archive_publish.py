@@ -79,8 +79,10 @@ class ArchivePublishService(BaseService):
             user = get_user()
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             original.update(super().find_one(req=None, _id=id))
-        except KeyError:
-            raise SuperdeskApiError.badRequestError(message="A non-existent content id is requested to publish")
+        except KeyError as e:
+            raise SuperdeskApiError.badRequestError(
+                message="Key is missing on article to be published: {}"
+                .format(str(e)))
         except Exception as e:
             logger.error("Something bad happened while publishing %s".format(id), e)
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
