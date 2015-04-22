@@ -109,6 +109,11 @@
                 }
 
                 scope.$watch('filter', queryItems);
+                scope.$on('task:stage', function(event, data) {
+                    if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
+                        queryItems();
+                    }
+                });
             }
         };
     }
