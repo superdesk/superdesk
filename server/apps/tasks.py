@@ -80,8 +80,12 @@ class TaskResource(Resource):
         'source': 'archive',
         'default_sort': [('_updated', -1)],
         'filter': {'task': {'$exists': True}},
-        'elastic_filter': {'exists': {'field': 'task'}}  # eve-elastic specific filter
+        'elastic_filter': {'bool': {
+            'must': {'exists': {'field': 'task'}},
+            'must_not': {'term': {'state': 'spiked'}},
+        }}
     }
+
     item_url = item_url
     schema = {
         'slugline': metadata_schema['slugline'],
