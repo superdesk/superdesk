@@ -874,10 +874,10 @@
                 };
 
                 scope.send = function send() {
-                    save({
+                    save({task: {
                             desk: scope.desk._id,
                             stage: scope.selectedStage._id || scope.desk.incoming_stage
-                        });
+                        }});
                 };
 
                 scope.$watch('item', fetchDesks);

@@ -78,11 +78,9 @@ class ArchivePublishService(BaseService):
             original.update(updates)
             user = get_user()
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
-            return item
-        except KeyError as e:
-            raise SuperdeskApiError.badRequestError(
-                message="Key is missing on article to be published: {}"
-                .format(str(e)))
+            original.update(super().find_one(req=None, _id=id))
+        except KeyError:
+            raise SuperdeskApiError.badRequestError(message="A non-existent content id is requested to publish")
         except Exception as e:
             logger.error("Something bad happened while publishing %s".format(id), e)
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
@@ -221,7 +219,7 @@ class ArchivePublishService(BaseService):
     def __send_to_publish_stage(self, doc):
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
-            doc['stage'] = desk['published_stage']
+            doc['task']['stage'] = desk['published_stage']
             MoveService().move_content(doc['_id'], doc)
 
 
