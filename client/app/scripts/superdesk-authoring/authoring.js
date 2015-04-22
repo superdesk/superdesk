@@ -192,8 +192,10 @@
 
             return promise;
         };
-        this.publish = function publish(item) {
-            return api.update('archive_publish', item, {})
+        this.publish = function publish(item, action) {
+            action = action || 'publish';
+            var endpoint = 'archive_' + action;
+            return api.update(endpoint, item, {})
             .then(function(result) {
                 return lock.unlock(result)
                     .then(function(result) {
@@ -202,7 +204,6 @@
             }, function(response) {
                 return response;
             });
-
         };
 
         /**
@@ -433,9 +434,11 @@
         };
     }
 
-    AuthoringController.$inject = ['$scope', 'item'];
-    function AuthoringController($scope, item) {
+    AuthoringController.$inject = ['$scope', 'item', 'action'];
+    function AuthoringController($scope, item, action) {
         $scope.origItem = item;
+        $scope.action = action;
+        console.log('Got action:' + action);
 
         $scope.widget_target = 'authoring';
 
@@ -478,6 +481,22 @@
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
+                $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                $scope.publish_enabled = $scope.origItem.task.desk &&
+                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+
+                if ($scope.action === 'kill') {
+                    $scope.origItem.headline = 'Kill/Takedown notice ~~~ Kill/Takedown notice';
+                    $scope.origItem['abstract'] = 'This article has been removed';
+                    $scope.origItem.anpa_take_key = ($scope.origItem.anpa_take_key || '') + 'KILL/TAKEDOWN';
+
+                    var new_body = ' Please kill story slugged ${ keyword } ex ${ dateline } at ${ date_published }.';
+                    var template = _.template(new_body);
+                    $scope.origItem.body_html = template({'keyword': $scope.origItem.slugline,
+                                                          'dateline': $scope.origItem.dateline,
+                                                          'date_published': $scope.origItem.versioncreated});
+                }
 
                 $scope.proofread = false;
 
@@ -528,7 +547,8 @@
                 }
 
                 function publishItem(item) {
-                    authoring.publish(item)
+                    var action = $scope.action === 'kill' ? 'kill' : 'publish';
+                    authoring.publish(item, action)
                     .then(function(response) {
                         if (response) {
                             if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
@@ -539,6 +559,7 @@
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
+                                $location.url($scope.referrerUrl);
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
@@ -554,14 +575,12 @@
                             .then(function(res) {
                                 if (res) {
                                     publishItem(res);
-                                    $location.url($scope.referrerUrl);
                                 }
                             }, function(response) {
                                 notify.error(gettext('Error. Item not published.'));
                             });
                         } else { // Publish
                             publishItem($scope.origItem);
-                            $location.url($scope.referrerUrl);
                         }
                     }, function(res) {
                         notify.error(gettext('Error. Destination groups invalid.'));
@@ -1130,7 +1149,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
-                        }]
+                        }],
+                        action: [function() {return 'edit';}]
                     },
                     authoring: true
                 })
@@ -1149,16 +1169,33 @@
                 })
                 .activity('kill.text', {
                     label: gettext('Kill item'),
-                    href: '/authoring/:_id',
-                    priority: 10,
+                    priority: 100,
                     icon: 'remove',
                     controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('author', 'article', data.item);
+                        superdesk.intent('kill', 'content_article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
                         return item.type !== 'composite' && item.state === 'published';
-                    }
+                    },
+                    privileges: {kill: 1}
+                })
+                .activity('kill.content_article', {
+                    category: '/authoring',
+                    href: '/authoring/:_id/kill',
+                    when: '/authoring/:_id/kill',
+                    label: gettext('Authoring Kill'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    controller: AuthoringController,
+                    filters: [{action: 'kill', type: 'content_article'}],
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id, false);
+                        }],
+                        action: [function() {return 'kill';}]
+                    },
+                    authoring: true
                 })
                 .activity('view.text', {
                     label: gettext('View item'),
@@ -1184,7 +1221,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
-                        }]
+                        }],
+                        action: [function() {return 'view';}]
                     },
                     authoring: true
                 });
