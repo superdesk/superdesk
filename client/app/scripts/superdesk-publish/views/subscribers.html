@@ -45,14 +45,14 @@
                     </select>
                 </div>
                 <div class="field">
-                    <label translate>Destinations</label>
+                    <label translate>Distributions</label>
                     <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination" data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
                     <div sd-destination ng-if="newDestination"
                         data-destination="newDestination"
                         data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"
                     ></div>
                     <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
-                        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Destination</span>
+                        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Distribution</span>
                     </button>
                 </div>
             </fieldset>

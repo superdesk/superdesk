@@ -43,7 +43,7 @@ def update_item_status(queue_item, status, error=None):
         elif status == 'success':
             item_update['completed_at'] = utcnow()
         elif status == 'error' and error:
-            item_update['error_message'] = str(error)
+            item_update['error_message'] = '{}:{}'.format(error, str(error.system_exception))
 
         superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), item_update)
     except Exception as ex:
