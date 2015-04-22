@@ -420,8 +420,8 @@ class PublishFtpError(SuperdeskPublishError):
     }
 
     @classmethod
-    def ftpError(cls, exception=None, provider=None):
-        return PublishFtpError(10000, exception, provider)
+    def ftpError(cls, exception=None, destination=None):
+        return PublishFtpError(10000, exception, destination)
 
 
 class PublishEmailError(SuperdeskPublishError):
@@ -431,9 +431,9 @@ class PublishEmailError(SuperdeskPublishError):
     }
 
     @classmethod
-    def emailError(cls, exception=None, provider=None):
-        return PublishEmailError(11000, exception, provider)
+    def emailError(cls, exception=None, destination=None):
+        return PublishEmailError(11000, exception, destination)
 
     @classmethod
-    def recipientNotFoundError(cls, exception=None, provider=None):
-        return PublishEmailError(11001, exception, provider)
+    def recipientNotFoundError(cls, exception=None, destination=None):
+        return PublishEmailError(11001, exception, destination)
