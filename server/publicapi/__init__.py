@@ -7,7 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from flask.globals import current_app
+
 """
 A module that provides the Superdesk public API application object.
 
@@ -17,6 +17,7 @@ be more specific, an `Eve framework <http://python-eve.org/>`_ application).
 
 from eve import Eve
 from eve.io.mongo.mongo import MongoJSONEncoder
+from flask.globals import current_app
 import importlib
 import os
 
