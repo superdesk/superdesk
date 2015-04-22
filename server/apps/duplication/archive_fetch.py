@@ -19,13 +19,13 @@ from apps.archive.common import item_url, generate_guid, GUID_TAG, generate_uniq
     remove_unwanted, set_original_creator, insert_into_versions
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
-from superdesk.resource import Resource
+from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk import get_resource_service
 
-
+custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 STATE_FETCHED = 'fetched'
 
 
@@ -97,6 +97,8 @@ class FetchService(BaseService):
 
             get_resource_service(ARCHIVE).post([dest_doc])
             insert_into_versions(doc=dest_doc)
+            build_custom_hateoas(custom_hateoas, dest_doc)
+            doc.update(dest_doc)
 
         if kwargs.get('notify', True):
             push_notification('item:fetch', fetched=1)
