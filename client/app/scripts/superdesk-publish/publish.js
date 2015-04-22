@@ -368,7 +368,10 @@
 
                 $scope.selectorData = {
                     add: function(channel, code) {
-                        this.codes[channel].push(code);
+                        if (code) {
+                            this.codes[channel] = this.codes[channel] || [];
+                            this.codes[channel].push(code);
+                        }
                     },
                     remove: function(channel, code) {
                         _.remove(this.codes[channel], function(c) {
