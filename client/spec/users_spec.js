@@ -118,7 +118,7 @@ describe('Users', function() {
     describe('user edit:', function() {
         beforeEach(function(done) {
             openUrl('/#/users').then(function() {
-                return element(by.repeater('user in users').row(1).column('username'))
+                return element(by.repeater('user in users').row(0).column('username'))
                     .waitReady();
             }).then(function(elem) {
                 return elem.click();

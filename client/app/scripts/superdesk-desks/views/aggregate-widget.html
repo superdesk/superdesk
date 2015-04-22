@@ -1,7 +1,10 @@
 <div class="content-search" ng-class="{extended: agg.selected}" ng-controller="AggregateWidgetCtrl as agg">
     <div class="search-container">
         <div class="search-box">
-            <input type="text" placeholder="{{ :: 'Search'|translate }}" ng-model="query">
+            <input type="text" placeholder="{{ :: 'Search' | translate }}"
+                ng-model="query"
+                ng-model-options="{debounce: 500}"
+                ng-change="agg.search(query)">
 
             <div class="dropdown more-actions" dropdown >
                 <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
@@ -17,7 +20,18 @@
             </div>
         </div>
 
-        <div class="filter-list"></div>
+        <div class="filter-list">
+            <div class="btn-group">
+                <button type="button" class="btn btn-light"
+                    ng-class="{active: !agg.searchAll}"
+                    ng-click="agg.searchAll = false"
+                    translate>SELECTED STAGES</button>
+                <button type="button" class="btn btn-light"
+                    ng-class="{active: agg.searchAll}"
+                    ng-click="agg.searchAll = true"
+                    translate>ALL</button>
+            </div>
+        </div>
 
         <div class="content-list">
             <div class="desk" ng-repeat="desk in agg.desks._items | filter: agg.isActive | orderBy:'name' track by desk._id">
@@ -37,7 +51,8 @@
                         data-allowed="true"
                         data-show-empty="false"
                         data-action="agg.preview(item)"
-                        data-selected="agg.selected">
+                        data-selected="agg.selected"
+                        data-filter="agg.query">
                     </div>
                 </div>
             </div>
