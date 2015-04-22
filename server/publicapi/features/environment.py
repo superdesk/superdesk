@@ -9,11 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
-from superdesk import tests
+from publicapi.behave_setup import setup
 
 
 def before_all(context):
-    tests.setup(context)
+    setup(context)
     os.environ['BEHAVE_TESTING'] = '1'
 
 
@@ -26,7 +26,7 @@ def before_scenario(context, scenario):
     if scenario.status != 'skipped' and 'notesting' in scenario.tags:
         config['SUPERDESK_TESTING'] = False
 
-    tests.setup(context, config)
+    setup(context, config)
     context.headers = [
         ('Content-Type', 'application/json'),
         ('Origin', 'localhost')

@@ -23,10 +23,19 @@ from superdesk.resource import Resource
 # byline, located, headline, body_text, renditions
 
 
+# Example of an ID of an object in database (whitout quotes):
+#
+#     "tag:example.com,0000:newsml_BRE9A605"
+#     "tag:localhost:2015:f4b35e12-559b-4a2b-b1f2-d5e64048bde8"
+#
+item_url = 'regex("[\w,.:_-]+")'
+
+
 class ItemsResource(Resource):
     '''
     Dictionaries schema
     '''
+    item_url = item_url
     schema = {
         'guid': {'type': 'string'},
         'type': {'type': 'string'},
@@ -46,7 +55,10 @@ class ItemsResource(Resource):
         'renditions': {'type': 'dict'},
     }
     datasource = {
-        'filter': {'type': 'text'},
+        'projection': {
+            '_created': 0,
+            '_updated': 0,
+        },
 #         'search_backend': 'elastic',
     }
     item_methods = ['GET']
