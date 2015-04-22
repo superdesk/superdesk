@@ -35,8 +35,7 @@ Feature: Content Publishing
       """
       And we publish "#archive._id#"
       Then we get OK response
-      When we get "/archive/#archive._id#"
-      Then we get existing resource
+      And we get existing resource
       """
       {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
       """
