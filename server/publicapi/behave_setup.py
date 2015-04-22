@@ -12,7 +12,7 @@
 import os
 import unittest
 import elasticsearch
-from app import get_app
+from publicapi import get_app
 from settings import ELASTICSEARCH_URL
 from eve_elastic import get_es, get_indices
 
@@ -20,7 +20,7 @@ from eve_elastic import get_es, get_indices
 def get_test_settings():
     test_settings = {}
     test_settings['ELASTICSEARCH_URL'] = ELASTICSEARCH_URL
-    test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
+    test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
     test_settings['MONGO_DBNAME'] = 'sptests'
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
@@ -40,7 +40,7 @@ def drop_elastic(app):
 
 
 def drop_mongo(app):
-    with app.app_context():
+    with app.test_request_context():
         try:
             app.data.mongo.pymongo().cx.drop_database(app.config['MONGO_DBNAME'])
         except AttributeError:
