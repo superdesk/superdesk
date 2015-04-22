@@ -86,17 +86,10 @@ define([
                     });
                     scope.$watch('page', update);
 
-                    scope.$watch('selectedItems', function() {
-                        if (!Array.isArray(scope.selectedItems)) {
-                            scope.selectedItems = [];
-                        }
-                    });
-
                     scope.selectItem = function(item) {
-                        if (scope.selectedItems) {
-                            scope.selectedItems.push(item);
-                            scope.selectedItems = _.uniq(scope.selectedItems);
-                        }
+                        scope.selectedItems = scope.selectedItems || [];
+                        scope.selectedItems.push(item);
+                        scope.selectedItems = _.uniq(scope.selectedItems);
                         if (scope.maxSelectedItems === 1) {
                             scope.open = false;
                         }
