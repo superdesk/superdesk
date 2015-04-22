@@ -58,7 +58,6 @@ define(['lodash'], function(_) {
                 item.cssType = item.file.type.split('/')[0];
                 $scope.items.unshift(item);
             });
-            $scope.upload();
         };
 
         $scope.upload = function() {
