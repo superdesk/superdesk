@@ -58,5 +58,13 @@ describe('authoring', function() {
             widget.element(by.model('query')).sendKeys('item5');
             expect(widget.all(by.repeater('item in items')).count()).toBe(1);
         });
+
+        it('can preview content', function() {
+            widget.all(by.repeater('item in items')).first().click();
+            expect(widget
+                .element(by.css('.preview-container'))
+                .element(by.binding('item.headline'))
+                .getText()).toBe('item5');
+        });
     });
 });
