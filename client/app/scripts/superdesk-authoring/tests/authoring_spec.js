@@ -229,7 +229,7 @@ describe('authoring', function() {
                 state: 'submitted'
             });
 
-            authoring.publishConfirmation(edit, true);
+            authoring.publishConfirmation(item, edit, true);
             $rootScope.$digest();
 
             expect(confirm.confirmPublish).toHaveBeenCalled();
@@ -239,7 +239,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(edit);
+            expect(authoring.save).toHaveBeenCalledWith(item, edit);
 
             spyOn(api, 'update').and.returnValue($q.when(_.extend({}, edit, {})));
             authoring.publish(edit);
