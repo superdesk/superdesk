@@ -276,5 +276,5 @@ def is_update_allowed(archive_doc):
     """
 
     state = archive_doc.get(config.CONTENT_STATE)
-    if state in ['published']:
+    if state in ['killed']:
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
