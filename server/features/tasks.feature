@@ -153,3 +153,17 @@ Feature: Tasks
 	    """
         And we delete latest
         Then we get deleted response
+
+    @auth
+    Scenario: Filter out tasks for spiked items
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60}]
+        """
+        And "archive"
+        """
+        [{"_id": "task-1", "guid": "task-1", "slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]
+        """
+        When we spike "task-1"
+        And we get "/tasks"
+        Then we get list with 0 items
