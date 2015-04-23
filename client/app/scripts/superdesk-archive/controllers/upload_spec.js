@@ -49,17 +49,22 @@ define(['./upload'], function(UploadController) {
 
             $rootScope.$digest();
 
+            expect(scope.items.length).toBe(1);
+            expect(scope.items[0].file.type).toBe('text/plain');
+            expect(scope.items[0].meta).not.toBe(undefined);
+            expect(scope.items[0].progress).toBe(0);
+
+            scope.items[0].meta.Description = 'test';
+
+            scope.save();
+            $rootScope.$digest();
+
             expect(upload.start).toHaveBeenCalledWith({
                 method: 'POST',
                 url: UPLOAD_URL,
                 data: {media: files[0]},
                 headers: api.archive.getHeaders()
             });
-
-            expect(scope.items.length).toBe(1);
-            expect(scope.items[0].file.type).toBe('text/plain');
-            expect(scope.items[0].meta).not.toBe(undefined);
-            expect(scope.items[0].progress).toBe(0);
 
             upload.defer.notify({
                 total: 100,
@@ -70,10 +75,6 @@ define(['./upload'], function(UploadController) {
 
             expect(scope.items[0].progress).toBe(50);
 
-            scope.items[0].meta.Description = 'test';
-
-            scope.save();
-            $rootScope.$digest();
             upload.defer.resolve({data: {}});
             $rootScope.$digest();
 

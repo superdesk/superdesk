@@ -139,7 +139,7 @@ class TasksService(BaseService):
         Checks if the content is assigned to a new desk.
         :return: True if the content is being moved to a new desk. False otherwise.
         """
-        return original.get('task', {}).get('desk', '') != str(updates.get('task', {}).get('desk', ''))
+        return original.get('task', {}).get('desk', '') != updates.get('task', {}).get('desk', '')
 
     def __update_state(self, updates, original):
         if self.__is_content_assigned_to_new_desk(original, updates):

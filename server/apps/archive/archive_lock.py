@@ -62,4 +62,9 @@ class ArchiveUnlockService(BaseService):
         auth = get_auth()
         item_id = request.view_args['item_id']
         item = get_component(ItemLock).unlock({'_id': item_id}, user['_id'], auth['_id'], None)
+
+        if item is None:
+            # version 1 item must have been deleted by now
+            return [0]
+
         return _update_returned_document(docs[0], item)
