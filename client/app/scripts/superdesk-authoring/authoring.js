@@ -281,9 +281,8 @@
         };
     }
 
-    LockService.$inject = ['$q', 'api', 'session', 'privileges'];
-    function LockService($q, api, session, privileges) {
-
+    LockService.$inject = ['$q', 'api', 'session', 'privileges', 'notify'];
+    function LockService($q, api, session, privileges, notify) {
         /**
          * Lock an item
          */
@@ -296,7 +295,10 @@
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
+                    console.error(err);
+                    notify.error(gettext('Failed to get a lock on the item!'));
                     item._locked = true;
+                    item._editable = false;
                     return item;
                 });
             } else {
@@ -485,6 +487,7 @@
                 $scope.publish_enabled = $scope.origItem.task.desk &&
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
 
                 if ($scope.action === 'kill') {
                     $scope.origItem.headline = 'Kill/Takedown notice ~~~ Kill/Takedown notice';
@@ -1164,7 +1167,7 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published';
+                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'killed';
                     }
                 })
                 .activity('kill.text', {
