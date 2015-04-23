@@ -135,7 +135,7 @@ class TasksService(BaseService):
         Checks if the content is assigned to a new desk.
         :return: True if the content is being moved to a new desk. False otherwise.
         """
-        return original.get('task', {}).get('desk', '') != str(updates.get('task', {}).get('desk', ''))
+        return str(original.get('task', {}).get('desk', '')) != str(updates.get('task', {}).get('desk', ''))
 
     def __update_state(self, updates, original):
         if self.__is_content_assigned_to_new_desk(original, updates):
@@ -171,6 +171,7 @@ class TasksService(BaseService):
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
+        import pdb; pdb.set_trace();
         self.update_times(updates)
         if is_assigned_to_a_desk(updates):
             self.__update_state(updates, original)
@@ -206,6 +207,7 @@ class TasksService(BaseService):
         push_notification(self.datasource, deleted=1)
 
     def assign_user(self, item_id, user):
+        print(item_id, user)
         return self.patch(item_id, {'task': user})
 
 superdesk.privilege(name='tasks', label='Tasks Management', description='Tasks Management')
