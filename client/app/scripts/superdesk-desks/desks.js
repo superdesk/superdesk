@@ -1099,8 +1099,8 @@
                 }
             };
         }])
-        .directive('sdActionPicker', ['desks', 'macros', 'adminPublishSettingsService',
-            function(desks, macros, adminPublishSettingsService) {
+        .directive('sdActionPicker', ['desks', 'macros',
+            function(desks, macros) {
             return {
                 scope: {
                     desk: '=',
