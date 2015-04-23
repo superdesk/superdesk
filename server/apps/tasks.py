@@ -175,6 +175,7 @@ class TasksService(BaseService):
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
+        import pdb; pdb.set_trace();
         self.update_times(updates)
         if is_assigned_to_a_desk(updates):
             self.__update_state(updates, original)
@@ -216,6 +217,7 @@ class TasksService(BaseService):
         push_notification(self.datasource, deleted=1)
 
     def assign_user(self, item_id, user):
+        print(item_id, user)
         return self.patch(item_id, {'task': user})
 
 superdesk.privilege(name='tasks', label='Tasks Management', description='Tasks Management')
