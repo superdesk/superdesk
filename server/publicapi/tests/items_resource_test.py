@@ -60,11 +60,11 @@ class ResourceConfigTestCase(ItemsResourceTestCase):
             else:
                 self.assertEqual(field_info.get('type'), field_type)
 
-    def test_datasource_filter_is_set_to_items_of_type_text(self):
+    def test_datasource_filter_is_set_to_non_composite_types(self):
         klass = self._get_target_class()
         datasource = klass.datasource or {}
         filter_config = datasource.get('filter')
-        self.assertEqual(filter_config, {'type': 'text'})
+        self.assertEqual(filter_config, {'type': {'$ne': 'composite'}})
 
     def test_allowed_item_methods(self):
         klass = self._get_target_class()
