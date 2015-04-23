@@ -76,8 +76,6 @@ class PreferencesResource(Resource):
     superdesk.register_default_user_preference('editor:theme', {
         'type': 'string',
         'theme': '',
-        'label': 'Users article edit screen editor theme',
-        'category': 'editor'
     })
 
     superdesk.register_default_user_preference('workqueue:items', {
@@ -144,8 +142,8 @@ class PreferencesService(BaseService):
         session_id = request.view_args['_id']
         session_prefs = doc.get(_session_preferences_key, {}).get(session_id, {})
         doc[_session_preferences_key] = session_prefs
-
         self.enhance_document_with_user_privileges(doc)
+        self.enhance_document_with_default_prefs(doc)
 
     def on_update(self, updates, original):
         existing_user_preferences = original.get(_user_preferences_key, {}).copy()
@@ -190,20 +188,23 @@ class PreferencesService(BaseService):
         self.enhance_document_with_user_privileges(updates)
         return res
 
-    def enhance_document_with_default_prefs(self, session_doc, user_doc):
-        orig_user_prefs = user_doc.get(_preferences_key, {})
+    def enhance_document_with_default_prefs(self, session_doc):
+        user_prefs = session_doc.get(_user_preferences_key, {})
         available = dict(superdesk.default_user_preferences)
-        available.update(orig_user_prefs)
+        available.update(user_prefs)
+
+        def sync_field(field, dest, default):
+            if default.get(field):
+                dest[field] = default[field]
+            else:
+                dest.pop(field, None)
+
+        # make sure label and category are up-to-date
+        for k, v in available.items():
+            default = superdesk.default_user_preferences[k]
+            sync_field('label', v, default)
+            sync_field('category', v, default)
         session_doc[_user_preferences_key] = available
-
-        orig_session_prefs = session_doc.get(_session_preferences_key, {})
-        available = dict(superdesk.default_session_preferences)
-        available.update(orig_session_prefs)
-
-        if available.get('desk:last_worked') == '' and user_doc.get('desk'):
-            available['desk:last_worked'] = user_doc.get('desk')
-
-        session_doc[_session_preferences_key] = available
 
     def enhance_document_with_user_privileges(self, user_doc):
         role_doc = get_resource_service('users').get_role(user_doc)

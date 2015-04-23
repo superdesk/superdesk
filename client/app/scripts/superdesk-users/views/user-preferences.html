@@ -6,14 +6,14 @@
 <div class="preferences form-flat inner-content" ng-init="val = true"> 
 	<div class="title">User settings</div>
 	<ul>
-		<li class="fieldset" ng-repeat="p in preferences">
+		<li class="fieldset" ng-repeat="(id, p) in preferences track by id">
 			<div class="legend">{{ p.category }}</div>
-			<div sd-info-item ng-show="p.label">
-				  <label translate>{{ p.label }}</label>
+			<div sd-info-item>
+				  <label translate>{{ :: p.label }}</label>
 				  <span ng-hide="p.allowed" sd-switch ng-model="p.enabled"></span>
 				  <span ng-show="p.allowed">
 				      <label ng-repeat="i in p.allowed">
-				          <input name="allowed" type="radio" ng-model="p.view" ng-value="i">{{i}}
+				          <input name="allowed" type="radio" ng-model="p.view" ng-value="i">{{ i }}
 				      </label>
 				  </span>
 			  </div>

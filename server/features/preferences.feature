@@ -98,7 +98,7 @@ Feature: User preferences
 
         When we patch "/preferences/#SESSION_ID#"
         """
-        {"user_preferences": {"editor:theme": {"theme": "railscast"}}}
+        {"user_preferences": {"editor:theme": {"theme": "railscast", "category": "editor"}}}
         """
 
         When we get "/preferences/#SESSION_ID#"
@@ -107,8 +107,6 @@ Feature: User preferences
         {
             "user_preferences": {
                 "editor:theme": {
-                    "category": "editor",
-                    "label": "Users article edit screen editor theme",
                     "theme": "railscast",
                     "type": "string"
                 }

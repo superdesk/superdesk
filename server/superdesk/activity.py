@@ -128,7 +128,7 @@ class ActivityResource(Resource):
         'enabled': True,
         'default': True,
         'label': 'Send notifications via email',
-        'category': 'notifications'
+        'category': 'notifications',
     })
 
 

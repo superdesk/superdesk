@@ -71,7 +71,7 @@ define(['angular', 'lodash'], function(angular, _) {
                         return $q.reject();
                     }
 
-                    return api.find('preferences', sessionId).then(function(preferences) {
+                    return api.find('preferences', sessionId, null, true).then(function(preferences) {
                         _.defaults(preferences, defaultPreferences);
                         saveLocally(preferences);
                         return processPreferences(preferences, key);

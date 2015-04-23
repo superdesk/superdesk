@@ -197,8 +197,8 @@ define([
             /**
              * @alias api(resource).getById(id)
              */
-            api.find = function apiFind(resource, id, params) {
-                return api(resource).getById(id, params);
+            api.find = function apiFind(resource, id, params, cache) {
+                return api(resource).getById(id, params, cache);
             };
 
             /**
