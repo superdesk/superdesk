@@ -26,7 +26,7 @@ if __name__ == '__main__':
     app = get_app()
     app.run(
         host='0.0.0.0',
-        port=5050,  # XXX: have PUBAPI_PORT in config... and other things
-        debug=True, # TODO: remove before pushing to production (+ have in cfg)
+        port=5050,   # XXX: have PUBAPI_PORT in config... and other things
+        debug=True,  # TODO: remove before pushing to production (+ have in cfg)
         use_reloader=False
     )
