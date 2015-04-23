@@ -37,7 +37,8 @@
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
-       <div class="navbtn dropdown strict highlights-dropdown pull-left" tooltip="{{ :: 'Mark item' | translate }}" tooltip-placement="bottom" dropdown>
+       <div class="navbtn dropdown strict highlights-dropdown pull-left" ng-if="item.task && item.task.desk"
+            tooltip="{{ :: 'Mark item' | translate }}" tooltip-placement="bottom" dropdown>
 			<button class="dropdown-toggle" dropdown-toggle>
 			<i class="svg-icon-add-to-list"></i>
 			</button>
