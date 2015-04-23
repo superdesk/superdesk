@@ -17,9 +17,7 @@ be more specific, an `Eve framework <http://python-eve.org/>`_ application).
 
 from eve import Eve
 from eve.io.mongo.mongo import MongoJSONEncoder
-from flask.globals import current_app
 import importlib
-import os
 
 from publicapi import settings
 import superdesk
@@ -27,7 +25,8 @@ from superdesk.datalayer import SuperdeskDataLayer
 
 
 def get_app(config=None):
-    """App factory.
+    """
+    App factory.
 
     :param config: configuration that can override config from `settings.py`
     :return: a new SuperdeskEve app instance

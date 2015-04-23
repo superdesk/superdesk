@@ -9,4 +9,4 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-import features.steps.steps
+import features.steps.steps  # NOQA

@@ -55,12 +55,11 @@ class ItemsResource(Resource):
         'renditions': {'type': 'dict'},
     }
     datasource = {
-        'filter': {'type': 'text'},
+        'filter': {'type': {'$ne': 'composite'}},
         'projection': {
             '_created': 0,
             '_updated': 0,
-        },
-#         'search_backend': 'elastic',
+        }
     }
     item_methods = ['GET']
     resource_methods = ['GET']
