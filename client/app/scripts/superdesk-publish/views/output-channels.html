@@ -61,9 +61,6 @@
                 <div class="field">
                     <label>
                         <span translate>Subscribers</span>
-                        <a class="btn btn-info add" ng-click="addNewSubscriber()" ng-hide="newSubscriber._id">
-                            <i class="icon-plus-small icon-white"></i>
-                        </a>
                     </label>
                     <ul class="pills-list clearfix">
                         <li class="pull-left" ng-repeat="subscriber in outputChannel.destinations">
@@ -78,6 +75,10 @@
                     </select>
                     <button type="button" class="btn btn-info" ng-click="cancelNewSubscriber()" ng-show="newSubscriber._id">
                         <span translate>Cancel</span>
+                    </button>
+                    <button type="button" class="btn btn-info" ng-click="addNewSubscriber()" ng-hide="newSubscriber._id">
+                        <i class="icon-plus-sign icon-white"></i>
+                        <span translate>Add</span>
                     </button>
                 </div>
             </fieldset>
