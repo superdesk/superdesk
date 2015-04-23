@@ -1,12 +1,33 @@
 <div class="term-editor data visible">
-	<div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
-		<ul>
-			<li typeahead-item="t" ng-repeat="t in terms">{{ t.name }}</li>
-		</ul>
-	</div>
+    <div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
+        <ul>
+            <li typeahead-item="t" ng-repeat="t in terms">{{ t.name}}</li>
+        </ul>
+    </div>
+</div>
+<div class="dropdown dropdown-noarrow" dropdown>
+    <button class="dropdown-toggle" dropdown-toggle>
+        <i class="svg-icon-settings"></i>
+    </button>
+    <ul class="dropdown-menu">
+        <li><button>Action 1</button></li>
+        <li><button>Action 2</button></li>
+        <li>
+            <div class="dropdown" dropdown>
+                <button class="dropdown-toggle" dropdown-toggle>
+                    Action 3
+                    <i class="icon-chevron-right-thin submenu-icon"></i>
+                </button>
+                <ul class="dropdown-menu left-submenu">
+                    <li><button>Action Submenu 1</button></li>
+                    <li><button>Action Submenu 2</button></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
 </div>
 <div class="terms" ng-if="item[field].length">
-	<ul>
-		<li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t.name }}</li>
-	</ul>
+    <ul>
+        <li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t.name}}</li>
+    </ul>
 </div>
