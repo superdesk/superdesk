@@ -175,15 +175,16 @@
          *
          *   and save it if dirty
          *
+         * @param {Object} orig original item.
          * @param {Object} diff Edits.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.publishConfirmation = function publishAuthoring(diff, isDirty) {
+        this.publishConfirmation = function publishAuthoring(orig, diff, isDirty) {
             var promise = $q.when();
             if (this.isEditable(diff) && isDirty) {
                 promise = confirm.confirmPublish()
                     .then(angular.bind(this, function save() {
-                        return this.save(diff);
+                        return this.save(orig, diff);
                     }), function() { // cancel
                         return false;
                     });
@@ -543,7 +544,7 @@
                     validateDestinationGroups($scope.item)
                     .then(function() {
                         if ($scope.dirty) { // save dialog & then publish if confirm
-                            authoring.publishConfirmation($scope.item, $scope.dirty)
+                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
                             .then(function(res) {
                                 if (res) {
                                     publishItem(res);
