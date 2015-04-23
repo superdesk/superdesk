@@ -23,7 +23,8 @@
         unique_name: '',
         keywords: [],
         description: null,
-        destination_groups: null
+        destination_groups: null,
+        sign_off: null
     };
 
     /**
@@ -184,7 +185,7 @@
             if (this.isEditable(diff) && isDirty) {
                 promise = confirm.confirmPublish()
                     .then(angular.bind(this, function save() {
-                        return this.save(orig, diff);
+                        return true;
                     }), function() { // cancel
                         return false;
                     });
@@ -194,8 +195,9 @@
         };
         this.publish = function publish(item, action) {
             action = action || 'publish';
+            var diff = extendItem({}, item);
             var endpoint = 'archive_' + action;
-            return api.update(endpoint, item, {})
+            return api.update(endpoint, item, diff)
             .then(function(result) {
                 return lock.unlock(result)
                     .then(function(result) {
@@ -293,7 +295,6 @@
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
-                    console.error(err);
                     notify.error(gettext('Failed to get a lock on the item!'));
                     item._locked = true;
                     item._editable = false;
@@ -438,7 +439,6 @@
     function AuthoringController($scope, item, action) {
         $scope.origItem = item;
         $scope.action = action;
-        console.log('Got action:' + action);
 
         $scope.widget_target = 'authoring';
 
