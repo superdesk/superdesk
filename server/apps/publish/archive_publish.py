@@ -39,7 +39,7 @@ class BasePublishResource(ArchiveResource):
         self.resource_title = endpoint_name
         self.datasource = {'source': ARCHIVE}
 
-        self.url = "archive/" + publish_type
+        self.url = 'archive/' + publish_type
         self.item_url = item_url
 
         self.resource_methods = []
