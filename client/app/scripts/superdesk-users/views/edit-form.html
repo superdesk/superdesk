@@ -26,7 +26,8 @@
             </div>
         </div>
         <div class="error-holder">
-          <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
+          <p class="alert alert-error" ng-show="error && !error.message" translate>Please fix the issues below.</p>
+          <p class="alert alert-error" ng-show="error && error.message" translate>{{error.message}}</p>
         </div>
         
         <div class="details-info form-flat" ng-class="{shifted : error}">
