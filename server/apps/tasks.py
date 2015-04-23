@@ -185,10 +185,15 @@ class TasksService(BaseService):
                 updates['task']['status'] = new_stage['task_status']
 
     def on_updated(self, updates, original):
-        new_stage = updates.get('task', {}).get('stage', '')
-        old_stage = original.get('task', {}).get('stage', '')
-        if new_stage != old_stage:
-            push_notification('task:stage', new_stage=str(new_stage), old_stage=str(old_stage))
+        new_task = updates.get('task', {})
+        old_task = original.get('task', {})
+        if new_task.get('stage') != old_task.get('stage'):
+            push_notification('task:stage',
+                              new_stage=str(new_task.get('stage', '')),
+                              old_stage=str(old_task.get('stage', '')),
+                              new_desk=str(new_task.get('desk', '')),
+                              old_desk=str(old_task.get('desk', ''))
+                              )
         else:
             push_notification(self.datasource, updated=1)
         updated = copy(original)

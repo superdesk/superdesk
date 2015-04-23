@@ -40,7 +40,7 @@ python3-ldap==0.9.7
 behave==1.2.5
 wooper==0.4.2
 
-git+git://github.com/superdesk/eve@6624770#egg=Eve==0.6-dev
+git+git://github.com/superdesk/eve@f88946#egg=Eve==0.6-dev
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
 git+git://github.com/amagdas/eve-elastic@enhance-delete#egg=Eve-Elastic==0.2.7
 -e hg+http://bitbucket.org/haypo/hachoir3/#egg=hachoir3

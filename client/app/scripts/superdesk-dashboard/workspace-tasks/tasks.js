@@ -140,6 +140,12 @@ function TasksController($scope, $timeout, api, notify, desks, tasks) {
     };
 
     $scope.$on('task:new', fetchTasks);
+    $scope.$on('task:stage', function(event, data) {
+        var deskId = desks.getCurrentDeskId();
+        if (deskId === data.old_desk || deskId === data.new_desk) {
+            fetchTasks();
+        }
+    });
 }
 
 TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
