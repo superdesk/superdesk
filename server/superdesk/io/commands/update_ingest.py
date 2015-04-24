@@ -202,6 +202,15 @@ def get_task_id(provider):
     return 'update-ingest-{0}-{1}'.format(provider.get('name'), provider.get(superdesk.config.ID_FIELD))
 
 
+def is_updatable(provider):
+    """Test if given provider has service that can update it.
+
+    :param provider
+    """
+    service = providers.get(provider.get('type'))
+    return hasattr(service, 'update')
+
+
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
 
@@ -211,7 +220,8 @@ class UpdateIngest(superdesk.Command):
 
     def run(self, provider_type=None):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
-            if is_valid_type(provider, provider_type) and is_scheduled(provider) and not is_closed(provider):
+            if (is_valid_type(provider, provider_type) and is_updatable(provider)
+               and is_scheduled(provider) and not is_closed(provider)):
                 kwargs = {
                     'provider': provider,
                     'rule_set': get_provider_rule_set(provider),
@@ -229,6 +239,9 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     updates the provider.
     """
     if ingest_for_provider_is_already_running(provider):
+        return
+
+    if not is_updatable(provider):
         return
 
     try:
