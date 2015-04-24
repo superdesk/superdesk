@@ -15,9 +15,9 @@ from superdesk.services import BaseService
 logger = logging.getLogger(__name__)
 
 
-class ItemsService(BaseService):
+class PackagesService(BaseService):
     """
-    A service that knows how to perform CRUD operations on the `item`
+    A service that knows how to perform CRUD operations on the `package`
     content types.
 
     Serves mainly as a proxy to the data layer.
