@@ -10,32 +10,17 @@
 
 from superdesk.resource import Resource
 
-# admin metadata
-# uri, representationtype, profile, embargoed, copyrightholder, copyrightnotice
-# type, mimetype, version, versioncreated, pubstatus, usageterms
-
-# desc metadata
-# person, organisation, event, object, geometry_
-# language, place, subject, urgency
-
-# content
-# body_xhtml, description_text, description_xhtml
-# byline, located, headline, body_text, renditions
-
-
-# Example of an ID of an object in database (whitout quotes):
-#
-#     "tag:example.com,0000:newsml_BRE9A605"
-#     "tag:localhost:2015:f4b35e12-559b-4a2b-b1f2-d5e64048bde8"
-#
-item_url = 'regex("[\w,.:_-]+")'
-
 
 class ItemsResource(Resource):
-    '''
-    Dictionaries schema
-    '''
-    item_url = item_url
+    """A class defining and configuring the /items API endpoint."""
+
+    # Example of an ID of an object in database (whitout quotes):
+    #
+    #     "tag:example.com,0000:newsml_BRE9A605"
+    #     "tag:localhost:2015:f4b35e12-559b-4a2b-b1f2-d5e64048bde8"
+    #
+    item_url = 'regex("[\w,.:-]+")'
+
     schema = {
         'guid': {'type': 'string'},
         'type': {'type': 'string'},
