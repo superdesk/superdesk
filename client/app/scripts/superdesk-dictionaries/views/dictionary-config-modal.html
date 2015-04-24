@@ -23,7 +23,14 @@
 				</div>
 				<div class="field">
 					<label for="dict-file" translate>Dictionary file</label>
-					<input id="dict-file" type="file" file-upload accept="text/*">
+					<input id="dict-file"
+						name="upload"
+						type="file"
+						accept="text/plain"
+						file-upload
+						ng-model="file"
+						sd-file-type-validator>
+					<div class="error" ng-show="editForm.$error.fileType" translate>Please use plain text dictionary.</div>
 				</div>
 			</fieldset>
 			<p ng-if="message">{{ message }}</p>
