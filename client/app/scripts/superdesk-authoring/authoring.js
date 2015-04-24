@@ -193,11 +193,12 @@
 
             return promise;
         };
-        this.publish = function publish(item, action) {
+
+        this.publish = function publish(orig, diff, action) {
             action = action || 'publish';
-            var diff = extendItem({}, item);
+            diff = extendItem({}, diff);
             var endpoint = 'archive_' + action;
-            return api.update(endpoint, item, diff)
+            return api.update(endpoint, orig, diff)
             .then(function(result) {
                 return lock.unlock(result)
                     .then(function(result) {
@@ -547,9 +548,9 @@
                     });
                 }
 
-                function publishItem(item) {
+                function publishItem(orig, item) {
                     var action = $scope.action === 'kill' ? 'kill' : 'publish';
-                    authoring.publish(item, action)
+                    authoring.publish(orig, item, action)
                     .then(function(res) {
                         if (res) {
                             notify.success(gettext('Item published.'));
@@ -569,13 +570,13 @@
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
                             .then(function(res) {
                                 if (res) {
-                                    publishItem(res);
+                                    publishItem($scope.origItem, $scope.item);
                                 }
                             }, function(response) {
                                 notify.error(gettext('Error. Item not published.'));
                             });
                         } else { // Publish
-                            publishItem($scope.origItem);
+                            publishItem($scope.origItem, $scope.item);
                         }
                     }, function(res) {
                         notify.error(gettext('Error. Destination groups invalid.'));
