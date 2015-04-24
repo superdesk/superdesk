@@ -17,5 +17,8 @@ logger = logging.getLogger(__name__)
 
 class ItemsService(BaseService):
     """
-    Data layer providing the CRUD functionality for the `item` content type.
+    A service that knows how to perform CRUD operations on the `item`
+    content types.
+
+    Serves mainly as a proxy to the data layer.
     """
