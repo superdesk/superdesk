@@ -161,12 +161,14 @@
                 role: '=',
                 desk: '=',
                 total: '=',
-                online: '='
+                online: '=',
+                privilege: '='
             },
             link: function(scope, elem) {
                 scope.users = desks.deskMembers[scope.desk];
                 scope.total = 0;
                 scope.items = [];
+                scope.user = null;
                 _.each(scope.users, function(user, index) {
                     if (scope.role === user.role) {
                         scope.items.push(user);
@@ -176,6 +178,14 @@
 
                 scope.isLoggedIn = function(user) {
                     return usersService.isLoggedIn(user);
+                };
+
+                scope.openEditUser = function(user) {
+                    scope.user = user;
+                };
+
+                scope.closeEditUser = function() {
+                    scope.user = null;
                 };
             }
         };
