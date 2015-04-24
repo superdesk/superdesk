@@ -1045,7 +1045,9 @@
                     function buildPreferences(struct) {
                         scope.preferences = {};
                         _.each(struct, function(val, key) {
-                            scope.preferences[key] = _.create(val);
+                            if (val.label && val.category) {
+                                scope.preferences[key] = _.create(val);
+                            }
                         });
                     }
 

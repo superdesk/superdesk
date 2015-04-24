@@ -90,7 +90,7 @@ define([
             expect(preferences).not.toBe(null);
             expect(preferences).not.toBe(undefined);
             expect(storage.getItem('preferences')).not.toBe(null);
-            expect(api.find).toHaveBeenCalledWith('preferences', 1);
+            expect(api.find).toHaveBeenCalledWith('preferences', 1, null, true);
 
         }));
 
