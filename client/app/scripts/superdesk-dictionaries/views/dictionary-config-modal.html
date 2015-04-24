@@ -29,6 +29,7 @@
 						accept="text/plain"
 						file-upload
 						ng-model="file"
+						ng-required="!dictionary._id"
 						sd-file-type-validator>
 					<div class="error" ng-show="editForm.$error.fileType" translate>Please use plain text dictionary.</div>
 				</div>
@@ -41,7 +42,7 @@
 
 		<ng-form ng-if="dictionary._id">
 	    <fieldset>
-	    	<label for="words-search" translate>Search Words</label>
+	    	<label for="words-search">{{ :: 'Search' | translate }} (<span translate translate-n="wordsCount" translate-plural="{{ $count }} words">{{ wordsCount }} word</span>)</label>
 		    <div class="multiple">
 		    	<div class="field">
 			    	<input id="words-search"

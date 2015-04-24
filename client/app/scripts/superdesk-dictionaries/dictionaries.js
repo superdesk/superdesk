@@ -159,11 +159,13 @@
 
             $scope.dictionary.content[word] = 1;
             $scope.filterWords(word);
+            $scope.wordsCount++;
         };
 
         $scope.removeWord = function(word, search) {
             $scope.dictionary.content[word] = 0;
             $scope.filterWords(search);
+            $scope.wordsCount--;
         };
 
         function isPrefix(prefix, word) {
@@ -196,6 +198,7 @@
         };
 
         var wordsTrie = {};
+        $scope.wordsCount = 0;
 
         function addWordToTrie(word) {
             if (wordsTrie.hasOwnProperty(word[0])) {
@@ -208,6 +211,7 @@
         for (var word in $scope.dictionary.content) {
             if ($scope.dictionary.content.hasOwnProperty(word) || $scope.origDictionary.content.hasOwnProperty(word)) {
                 addWordToTrie(word);
+                $scope.wordsCount++;
             }
         }
     }
