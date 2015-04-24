@@ -30,7 +30,7 @@ class ItemsResourceTestCase(ApiTestCase):
 class ResourceConfigTestCase(ItemsResourceTestCase):
     """Tests for the configuration of the `items` resource."""
 
-    def test_schema_field_types(self):
+    def test_schema(self):
         field_types = {
             'body_text': 'string',
             'byline': 'string',
@@ -51,7 +51,10 @@ class ResourceConfigTestCase(ItemsResourceTestCase):
         }
 
         klass = self._get_target_class()
-        schema = klass.schema
+        schema = klass.schema or {}
+
+        if (len(schema) > len(field_types)):
+            self.fail("Schema contains some unexpected fields")
 
         for field_name, field_type in field_types.items():
             field_info = schema.get(field_name)
@@ -66,10 +69,10 @@ class ResourceConfigTestCase(ItemsResourceTestCase):
         filter_config = datasource.get('filter')
         self.assertEqual(filter_config, {'type': {'$ne': 'composite'}})
 
-    def test_allowed_item_methods(self):
+    def test_allowed_item_http_methods(self):
         klass = self._get_target_class()
         self.assertEqual(klass.item_methods, ['GET'])
 
-    def test_allowed_resource_methods(self):
+    def test_allowed_resource_http_methods(self):
         klass = self._get_target_class()
         self.assertEqual(klass.resource_methods, ['GET'])
