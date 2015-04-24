@@ -196,7 +196,7 @@ class PreferencesService(BaseService):
         def sync_field(field, dest, default):
             if default.get(field):
                 dest[field] = default[field]
-            else:
+            elif dest.get(field):
                 dest.pop(field, None)
 
         # make sure label and category are up-to-date
