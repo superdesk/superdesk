@@ -38,7 +38,7 @@ class BasePublishResource(ArchiveResource):
         self.resource_title = endpoint_name
         self.datasource = {'source': ARCHIVE}
 
-        self.url = 'archive/' + publish_type
+        self.url = 'archive/{}'.format(publish_type)
         self.item_url = item_url
 
         self.resource_methods = []
@@ -69,6 +69,7 @@ class BasePublishService(BaseService):
 
             # document is saved to keep the initial changes
             self.backend.update(self.datasource, id, updates, original)
+            updates[config.CONTENT_STATE] = self.published_state
             original.update(updates)
 
             if archived_item['type'] != 'composite':
@@ -79,12 +80,10 @@ class BasePublishService(BaseService):
                     updates['task'] = task
 
             # document is saved to change the status
-            updates[config.CONTENT_STATE] = self.published_state
             item = self.backend.update(self.datasource, id, updates, original)
-            original.update(updates)
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
-                              item=str(item.get('_id')), user=str(user))
+                              item=str(id), user=str(user))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
