@@ -11,7 +11,8 @@ describe('Users', function() {
                 'first_name': 'foo',
                 'last_name': 'bar',
                 'username': 'spam',
-                'email': 'foo@bar.com'
+                'email': 'foo@bar.com',
+                'sign_off': 'foobar'
             }
         }, done);
     });
@@ -25,6 +26,7 @@ describe('Users', function() {
             expect(modelValue('user.first_name')).toBe('first name');
             expect(modelValue('user.last_name')).toBe('last name');
             expect(modelValue('user.email')).toBe('a@a.com');
+            expect(modelValue('user.sign_off')).toBe('foobar');
         });
     });
 

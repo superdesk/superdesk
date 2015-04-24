@@ -16,6 +16,7 @@
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="save(item)"
             ng-show="_editable"
+            ng-if = "save_visible"
             ng-disabled="!save_enabled()"
             translate>Save</button>
 
@@ -27,8 +28,7 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "privileges.publish == 1 && item.task.desk"
-            ng-disabled="item.state ==='published'"
+            ng-if = "publish_enabled"
             ng-show="_editable"
             translate>Publish</button>
 
@@ -52,7 +52,7 @@
         </div>
 
         <button id="send-to-btn" ng-show="privileges.move == 1 && _editable && isActionAllowed(item, 'move')"
-            class="navbtn navbtn-hover" tooltip="{{ :: 'Send to desk' | translate }}" tooltip-placement="left" 
+            class="navbtn navbtn-hover" tooltip="{{ :: 'Send to desk' | translate }}" tooltip-placement="left"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>

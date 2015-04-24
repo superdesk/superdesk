@@ -83,9 +83,9 @@ class MoveService(BaseService):
         del archived_doc['_id']
         archive_service.update(original['_id'], archived_doc, original)
 
-        insert_into_versions(guid=original['_id'])
+        insert_into_versions(id_=original['_id'])
 
-        return archived_doc['guid']
+        return original['_id']
 
 
 superdesk.workflow_action(

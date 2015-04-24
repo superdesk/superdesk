@@ -23,7 +23,8 @@
         unique_name: '',
         keywords: [],
         description: null,
-        destination_groups: null
+        destination_groups: null,
+        sign_off: null
     };
 
     /**
@@ -184,7 +185,7 @@
             if (this.isEditable(diff) && isDirty) {
                 promise = confirm.confirmPublish()
                     .then(angular.bind(this, function save() {
-                        return this.save(orig, diff);
+                        return true;
                     }), function() { // cancel
                         return false;
                     });
@@ -192,17 +193,18 @@
 
             return promise;
         };
-        this.publish = function publish(item) {
-            return api.update('archive_publish', item, {})
+
+        this.publish = function publish(orig, diff, action) {
+            action = action || 'publish';
+            diff = extendItem({}, diff);
+            var endpoint = 'archive_' + action;
+            return api.update(endpoint, orig, diff)
             .then(function(result) {
                 return lock.unlock(result)
                     .then(function(result) {
                         return result;
                     });
-            }, function(response) {
-                //notify.error(gettext('Error. Item not updated.'));
             });
-
         };
 
         /**
@@ -280,9 +282,8 @@
         };
     }
 
-    LockService.$inject = ['$q', 'api', 'session', 'privileges'];
-    function LockService($q, api, session, privileges) {
-
+    LockService.$inject = ['$q', 'api', 'session', 'privileges', 'notify'];
+    function LockService($q, api, session, privileges, notify) {
         /**
          * Lock an item
          */
@@ -295,7 +296,9 @@
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
+                    notify.error(gettext('Failed to get a lock on the item!'));
                     item._locked = true;
+                    item._editable = false;
                     return item;
                 });
             } else {
@@ -433,9 +436,10 @@
         };
     }
 
-    AuthoringController.$inject = ['$scope', 'item'];
-    function AuthoringController($scope, item) {
+    AuthoringController.$inject = ['$scope', 'item', 'action'];
+    function AuthoringController($scope, item, action) {
         $scope.origItem = item;
+        $scope.action = action;
 
         $scope.widget_target = 'authoring';
 
@@ -478,6 +482,23 @@
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
+                $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                $scope.publish_enabled = $scope.origItem.task.desk &&
+                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
+
+                if ($scope.action === 'kill') {
+                    $scope.origItem.headline = 'Kill/Takedown notice ~~~ Kill/Takedown notice';
+                    $scope.origItem['abstract'] = 'This article has been removed';
+                    $scope.origItem.anpa_take_key = ($scope.origItem.anpa_take_key || '') + 'KILL/TAKEDOWN';
+
+                    var new_body = ' Please kill story slugged ${ keyword } ex ${ dateline } at ${ date_published }.';
+                    var template = _.template(new_body);
+                    $scope.origItem.body_html = template({'keyword': $scope.origItem.slugline,
+                                                          'dateline': $scope.origItem.dateline,
+                                                          'date_published': $scope.origItem.versioncreated});
+                }
 
                 $scope.proofread = false;
 
@@ -527,13 +548,15 @@
                     });
                 }
 
-                function publishItem(item) {
-                    authoring.publish(item)
+                function publishItem(orig, item) {
+                    var action = $scope.action === 'kill' ? 'kill' : 'publish';
+                    authoring.publish(orig, item, action)
                     .then(function(res) {
                         if (res) {
                             notify.success(gettext('Item published.'));
                             $scope.item = res;
                             $scope.dirty = false;
+                            $location.url($scope.referrerUrl);
                         }
                     }, function(response) {
                         notify.error(gettext('Error. Item not published.'));
@@ -547,15 +570,13 @@
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
                             .then(function(res) {
                                 if (res) {
-                                    publishItem(res);
-                                    $location.url($scope.referrerUrl);
+                                    publishItem($scope.origItem, $scope.item);
                                 }
                             }, function(response) {
                                 notify.error(gettext('Error. Item not published.'));
                             });
                         } else { // Publish
-                            publishItem($scope.origItem);
-                            $location.url($scope.referrerUrl);
+                            publishItem($scope.origItem, $scope.item);
                         }
                     }, function(res) {
                         notify.error(gettext('Error. Destination groups invalid.'));
@@ -1124,7 +1145,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
-                        }]
+                        }],
+                        action: [function() {return 'edit';}]
                     },
                     authoring: true
                 })
@@ -1138,8 +1160,38 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published';
+                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'killed';
                     }
+                })
+                .activity('kill.text', {
+                    label: gettext('Kill item'),
+                    priority: 100,
+                    icon: 'remove',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
+                        superdesk.intent('kill', 'content_article', data.item);
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.type !== 'composite' && item.state === 'published';
+                    },
+                    privileges: {kill: 1}
+                })
+                .activity('kill.content_article', {
+                    category: '/authoring',
+                    href: '/authoring/:_id/kill',
+                    when: '/authoring/:_id/kill',
+                    label: gettext('Authoring Kill'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    controller: AuthoringController,
+                    filters: [{action: 'kill', type: 'content_article'}],
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id, false);
+                        }],
+                        action: [function() {return 'kill';}]
+                    },
+                    authoring: true
                 })
                 .activity('view.text', {
                     label: gettext('View item'),
@@ -1165,7 +1217,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
-                        }]
+                        }],
+                        action: [function() {return 'view';}]
                     },
                     authoring: true
                 });

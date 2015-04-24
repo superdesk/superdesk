@@ -12,7 +12,7 @@ Feature: Planning Item Coverages
         Given empty "coverages"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com", "is_active": true}
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
         """
         When we post to "coverages"
 	    """

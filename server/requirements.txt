@@ -1,5 +1,6 @@
 Cerberus==0.8
 Events==0.2.1
+Eve-Elastic==0.2.7
 Flask==0.10.1
 Flask-Mail==0.9.1
 Flask-PyMongo==0.3.0
@@ -42,5 +43,4 @@ wooper==0.4.2
 
 git+git://github.com/superdesk/eve@6624770#egg=Eve==0.6-dev
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
-git+git://github.com/amagdas/eve-elastic@enhance-delete#egg=Eve-Elastic==0.2.7
 -e hg+http://bitbucket.org/haypo/hachoir3/#egg=hachoir3

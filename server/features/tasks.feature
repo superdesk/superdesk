@@ -44,7 +44,7 @@ Feature: Tasks
 	    """
         {"_items": [{"slugline": "testtask changed"}]}
 	    """
-    
+
     @auth
     Scenario: Update multiple task description
         Given "tasks"
@@ -67,7 +67,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "desks"
         """
@@ -89,7 +89,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "planning"
         """
@@ -120,7 +120,7 @@ Feature: Tasks
         """
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "tasks"
 	    """
@@ -145,7 +145,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "abc"}
         """
         When we post to "tasks"
 	    """

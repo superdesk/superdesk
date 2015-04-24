@@ -210,7 +210,8 @@ metadata_schema = {
         'nullable': True,
     },
     'dateline': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'expiry': {
         'type': 'datetime'
@@ -248,10 +249,6 @@ metadata_schema = {
     'creditline': {
         'type': 'string'
     },
-    'dateline': {
-        'type': 'string',
-        'nullable': True,
-    },
     LINKED_IN_PACKAGES: {
         'type': 'list',
         'readonly': True,
@@ -266,6 +263,11 @@ metadata_schema = {
     'highlights': {
         'type': 'list',
         'schema': Resource.rel('highlights', True)
+    },
+    'more_coming': {'type': 'boolean', 'default': False},
+    # Field which contains all the sign-offs done on this article, eg. twd/jwt/ets
+    'sign_off': {
+        'type': 'string'
     },
 
     # Task and Lock Details

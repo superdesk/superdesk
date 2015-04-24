@@ -144,7 +144,7 @@ def generate_unique_id_and_name(item):
         raise IdentifierGenerationError() from e
 
 
-def insert_into_versions(guid=None, doc=None):
+def insert_into_versions(id_=None, doc=None):
     """
     There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
     manually manage versions. Below are some scenarios:
@@ -156,8 +156,8 @@ def insert_into_versions(guid=None, doc=None):
         in the package is not handled by eve.
     """
 
-    if guid:
-        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    if id_:
+        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=id_)
     else:
         doc_in_archive_collection = doc
 
@@ -270,5 +270,5 @@ def is_update_allowed(archive_doc):
     """
 
     state = archive_doc.get(config.CONTENT_STATE)
-    if state in ['published']:
+    if state in ['killed']:
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
