@@ -6,31 +6,31 @@
 				<img sd-user-avatar data-src="item.picture_url">
 			</div>
 		</figure>
-		<div class="text">
+		<div class="text pull-left">
 			{{item.display_name}}
 		</div>
 		<div class="pull-right dropdown" dropdown ng-if="privilege">
-	        <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots"></i></button>
+	        <button class="dropdown-toggle animate-icon" dropdown-toggle><i class="icon-dots-vertical"></i></button>
 	        <ul class="dropdown-menu">
 	            <li><button ng-click="openEditUser(item)"><i class="icon-pencil"></i> {{ :: 'Edit user' | translate }}</button></li>
 	        </ul>
         </div>
 	</li>
 </ul>
-<div sd-modal data-model="user" class="highlights-config-popup responsive-popup hide" >
-<section class="main-section user-profile-page">
-    <div class="form-content">
-        <div class="user-details-pane" >
-            <header>
-		        <div class="modal-header">
-		            <a href="" class="close" ng-click="closeEditUser()"><i class="icon-close-small"></i></a>
-		            <h3 translate>Edit user</h3>
-		        </div>
-            </header>
-            <div class="content">
-                <div sd-user-edit data-user="user" data-oncancel="closeEditUser()" data-onsave="closeEditUser()"></div>
+<div sd-modal data-model="user" class="highlights-config-popup responsive-popup hide child-shadow" >
+    <section class="main-section user-profile-page">
+        <div class="form-content">
+            <div class="user-details-pane" >
+                <header>
+                    <div class="modal-header">
+                        <a href="" class="close" ng-click="closeEditUser()"><i class="icon-close-small"></i></a>
+                        <h3 translate>Edit user</h3>
+                    </div>
+                </header>
+                <div class="content">
+                    <div sd-user-edit data-user="user" data-oncancel="closeEditUser()" data-onsave="closeEditUser()"></div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </div>

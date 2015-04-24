@@ -20,6 +20,13 @@
 	*margin-bottom: -3px;
 	background: transparent;
         i { vertical-align: sub; }
+        &.animate-icon {
+            .opacity(50);
+            .transition(.5s);
+        }
+        &.animate-icon:hover {
+            .opacity(100);
+        }
 }
 .dropdown-toggle:active,
 .open .dropdown-toggle {
