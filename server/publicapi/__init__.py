@@ -28,7 +28,8 @@ def get_app(config=None):
     """
     App factory.
 
-    :param config: configuration that can override config from `settings.py`
+    :param dict config: configuration that can override config
+        from `settings.py`
     :return: a new SuperdeskEve app instance
     """
     if config is None:
