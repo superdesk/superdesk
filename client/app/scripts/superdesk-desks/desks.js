@@ -168,7 +168,6 @@
                 scope.users = desks.deskMembers[scope.desk];
                 scope.total = 0;
                 scope.items = [];
-                scope.modalActive = false;
                 scope.user = null;
                 _.each(scope.users, function(user, index) {
                     if (scope.role === user.role) {
@@ -182,12 +181,10 @@
                 };
 
                 scope.openEditUser = function(user) {
-                    scope.modalActive = true;
                     scope.user = user;
                 };
 
                 scope.closeEditUser = function() {
-                    scope.modalActive = false;
                     scope.user = null;
                 };
             }
