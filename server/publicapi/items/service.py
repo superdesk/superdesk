@@ -16,4 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class ItemsService(BaseService):
-    pass
+    """
+    Data layer providing the CRUD functionality for the `item` content type.
+    """
