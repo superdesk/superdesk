@@ -25,10 +25,7 @@
               <span sd-switch ng-model="$parent._active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
-        <div class="error-holder">
-          <p class="alert alert-error" ng-show="error && !error.message" translate>Please fix the issues below.</p>
-          <p class="alert alert-error" ng-show="error && error.message" translate>{{error.message}}</p>
-        </div>
+
         
         <div class="details-info form-flat" ng-class="{shifted : error}">
             <div class="title">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
