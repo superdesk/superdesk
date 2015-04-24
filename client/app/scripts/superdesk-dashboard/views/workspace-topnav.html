@@ -1,7 +1,7 @@
 <div sd-desk-dropdown class="navbtn dropdown"></div>
 
 <ul class="top-links">
-    <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}" sd-beta ng-if="privileges.tasks">
+    <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks" ng-show="selected.name">
         <a href="#/workspace/tasks" translate>TASKS</a>
     </li>
     <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}" ng-if="privileges.ingest" ng-show="selected.name">
@@ -10,7 +10,7 @@
     <li ng-class="{selected: currentRoute.href == '/workspace/content'}" ng-if="privileges.archive">
         <a href="#/workspace/content" translate>CONTENT</a>
     </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" sd-beta>
+    <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" ng-show="selected.name">
         <a href="#/workspace/stream" translate>ACTIVITY STREAM</a>
     </li>
 </ul>
