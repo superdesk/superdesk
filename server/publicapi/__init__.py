@@ -17,11 +17,18 @@ be more specific, an `Eve framework <http://python-eve.org/>`_ application).
 
 from eve import Eve
 from eve.io.mongo.mongo import MongoJSONEncoder
+from eve.render import send_response
 import importlib
+import logging
+import os
 
 from publicapi import settings
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
+from superdesk.errors import SuperdeskError, SuperdeskApiError
+
+
+logger = logging.getLogger('superdesk')
 
 
 def get_app(config=None):
@@ -35,6 +42,7 @@ def get_app(config=None):
     if config is None:
         config = {}
 
+    config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
     for key in dir(settings):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
@@ -46,6 +54,22 @@ def get_app(config=None):
     )
 
     superdesk.app = app
+
+    @app.errorhandler(SuperdeskError)
+    def client_error_handler(error):
+        """Return json error response.
+
+        :param error: an instance of :attr:`superdesk.SuperdeskError` class
+        """
+        return send_response(None, (error.to_dict(), None, None, error.status_code))
+
+    @app.errorhandler(500)
+    def server_error_handler(error):
+        """Log server errors."""
+        app.sentry.captureException()
+        logger.exception(error)
+        return_error = SuperdeskApiError.internalError()
+        return client_error_handler(return_error)
 
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
