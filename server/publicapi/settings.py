@@ -18,6 +18,12 @@ The meaning of configuration options is described in the Eve framework
 
 MONGO_DBNAME = 'publicapi'
 
-INSTALLED_APPS = ['publicapi.items', 'publicapi.packages']
+INSTALLED_APPS = [
+    'publicapi.items',
+    'publicapi.packages',
+    'publicapi.prepopulate'
+]
 
 DOMAIN = {}
+
+SUPERDESK_PUBLICAPI_TESTING = True
