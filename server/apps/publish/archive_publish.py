@@ -70,7 +70,9 @@ class ArchivePublishService(BaseService):
             if archived_item['type'] != 'composite':
                 # queue only text items
                 self.queue_transmission(original)
-                self.__send_to_publish_stage(original)
+                task = self.__send_to_publish_stage(original)
+                if task:
+                    updates['task'] = task
 
             # document is saved to change the status
             updates[config.CONTENT_STATE] = 'published'
@@ -222,7 +224,7 @@ class ArchivePublishService(BaseService):
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
-            MoveService().move_content(doc['_id'], doc)
+            return MoveService().move_content(doc['_id'], doc)['task']
 
 
 superdesk.workflow_state('published')

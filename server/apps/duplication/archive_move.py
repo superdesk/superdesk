@@ -53,7 +53,7 @@ class MoveService(BaseService):
         guid_of_moved_items = []
 
         for doc in docs:
-            guid_of_moved_items.append(self.move_content(guid_of_item_to_be_moved, doc))
+            guid_of_moved_items.append(self.move_content(guid_of_item_to_be_moved, doc)['guid'])
 
         return guid_of_moved_items
 
@@ -85,7 +85,7 @@ class MoveService(BaseService):
 
         insert_into_versions(guid=original['_id'])
 
-        return archived_doc['guid']
+        return archived_doc
 
 
 superdesk.workflow_action(
