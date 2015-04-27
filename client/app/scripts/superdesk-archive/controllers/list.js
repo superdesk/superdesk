@@ -5,10 +5,11 @@ define([
     'use strict';
 
     ArchiveListController.$inject = [
-        '$scope', '$injector', '$location', 'superdesk',
-        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl'
+        '$scope', '$injector', '$location', '$timeout', '$q',
+        'superdesk', 'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', '$anchorScroll'
     ];
-    function ArchiveListController($scope, $injector, $location, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
+    function ArchiveListController($scope, $injector, $location, $timeout, $q, superdesk, session, api, desks, ContentCtrl, StagesCtrl,
+        $anchorScroll) {
 
         var resource,
             self = this;
@@ -34,6 +35,8 @@ define([
         };
         $scope.fetching = false;
         $scope.page = 1;
+        $scope.cacheNextItems = [];
+        $scope.cachePreviousItems = [];
 
         $scope.stageSelect = function(stage) {
             if ($scope.spike) {
@@ -54,6 +57,9 @@ define([
             .then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
+
+                $scope.cachePreviousItems = items._items;
+                setNextItems(criteria);
             }, function() {
                 $scope.loading = false;
             });
@@ -70,16 +76,75 @@ define([
         };
         $scope.fetchNext = function() {
             if (!$scope.fetching) {
+
+                if ($scope.cacheNextItems.length > 0) {
+                    $scope.fetching = true;
+                    var resource = self.getResource();
+                    $scope.page = $scope.page + 1;
+                    var query = self.getQuery(_.omit($location.search(), '_id'), true);
+                    query.from = ($scope.page) * query.size;
+
+                    var criteria = {source: query};
+                    $scope.loading = true;
+
+                    if ($scope.items._items.length > query.size){
+                        $scope.cachePreviousItems = _.slice($scope.items._items, 0, query.size);
+                        $scope.items._items.splice(0, query.size);
+                    }
+                    $timeout(function() {$scope.items._items = $scope.items._items.concat($scope.cacheNextItems);}, 150);
+
+                    resource.query(criteria)
+                    .then(function(items) {
+                        $scope.cacheNextItems = items._items;
+                        $scope.fetching = false;
+                        return true;
+                    }, function() {
+                        //
+                    })
+                    ['finally'](function() {
+                        $scope.loading = false;
+                    });
+                }
+            } else {
+                return $q.when(false);
+            }
+        };
+
+        function scrollList(id) {
+            $location.hash(id);
+            $anchorScroll();
+        }
+
+        $scope.fetchPrevious = function() {
+            if (!$scope.fetching && $scope.page > 2) {
                 $scope.fetching = true;
                 var resource = self.getResource();
-                $scope.page = $scope.page + 1;
+                $scope.page = $scope.page - 1;
                 var query = self.getQuery(_.omit($location.search(), '_id'), true);
-                query.from = ($scope.page - 1) * query.size;
+                if ($scope.page > 2) {
+                    query.from = ($scope.page - 3) * query.size;
+                } else {
+                    query.from = 0;
+                }
                 var criteria = {source: query};
                 $scope.loading = true;
+
+                if ($scope.items._items.length > query.size) {
+                    $scope.cacheNextItems = _.slice($scope.items._items,
+                        $scope.items._items.length - ($scope.items._items.length - query.size), $scope.items._items.length);
+                    $scope.items._items.splice($scope.items._items.length - ($scope.items._items.length - query.size), query.size);
+                }
+
+                $timeout(function() {
+                    $scope.items._items.unshift.apply($scope.items._items, $scope.cachePreviousItems);
+                    if ($scope.items._items.length > 0) {
+                        scrollList($scope.items._items[parseInt((($scope.items._items.length - 1) / 2), 10)]._id);
+                    }
+                }, 150);
+
                 resource.query(criteria)
                 .then(function(items) {
-                    $scope.items._items = $scope.items._items.concat(items._items);
+                    $scope.cachePreviousItems = items._items;
                     $scope.fetching = false;
                 }, function() {
                     //
@@ -89,6 +154,17 @@ define([
                 });
             }
         };
+
+        function setNextItems(criteria) {
+            criteria.source.from = $scope.page * criteria.source.size;
+            return resource.query(criteria)
+                .then(function(items) {
+                    $scope.cacheNextItems = items._items;
+                }, function() {
+                    //
+                });
+        }
+
         this.getResource  = function getResource() {
             return desks.activeDeskId ? api('archive') : api('user_content', session.identity);
         };
