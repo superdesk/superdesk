@@ -81,6 +81,7 @@ function removeClass(elem, className) {
     return node.innerHTML;
 }
 
+SpellcheckService.$inject = ['$q', 'api', 'dictionaries', 'editor'];
 function SpellcheckService($q, api, dictionaries, editor) {
 
     var dict,
