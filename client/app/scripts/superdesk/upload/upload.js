@@ -49,10 +49,29 @@ define([
         };
     }
 
+    function FileValidatorDirective() {
+
+        function isAcceptedFileType(file, accept) {
+            return file.type.indexOf(accept.replace('*', '')) === 0;
+        }
+
+        return {
+            require: 'ngModel',
+            link: function(scope, elem, attrs, ngModel) {
+                ngModel.$validators.fileType = function(modelValue, viewValue) {
+                    var value = modelValue || viewValue;
+                    return !value || !attrs.accept || isAcceptedFileType(value, attrs.accept);
+                };
+            }
+        };
+    }
+
     return angular.module('superdesk.upload', ['angularFileUpload'])
         .service('upload', require('./upload-service'))
         .directive('sdImagePreview', require('./image-preview-directive'))
         .directive('sdVideoCapture', require('./video-capture-directive'))
         .directive('sdCrop', require('./crop-directive'))
-        .directive('sdSources', SourcesDirective);
+        .directive('sdSources', SourcesDirective)
+        .directive('sdFileTypeValidator', FileValidatorDirective)
+        ;
 });

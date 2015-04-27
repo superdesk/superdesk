@@ -18,12 +18,14 @@ describe('dictionaries', function() {
         it('can search words', function() {
             scope.filterWords('test');
             expect(scope.isNew).toBe(true);
+            expect(scope.wordsCount).toBe(2);
         });
 
         it('can add words', function() {
             scope.addWord('test');
             expect(scope.dictionary.content.test).toBe(1);
             expect(scope.words.length).toBe(1);
+            expect(scope.wordsCount).toBe(3);
         });
 
         it('can remove words', function() {
@@ -35,6 +37,7 @@ describe('dictionaries', function() {
             scope.removeWord('foo', 'foo');
             expect(scope.isNew).toBe(true);
             expect(scope.words.length).toBe(0);
+            expect(scope.wordsCount).toBe(1);
         });
     });
 });
