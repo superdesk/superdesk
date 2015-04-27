@@ -255,31 +255,33 @@
     mod.directive('sdScrolled', ['$location', function($location) {
         return {
             scope: {
+                'items': '=',
                 nextAction: '=',
                 previousAction: '='
             },
             link: function(scope, elm, attr) {
                 var container = elm[0];
+                var lastScrollTop = 0;
                 elm.bind('scroll', function() {
-                    if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
-                        if (scope.nextAction) {
-                            scope.nextAction();
+                    var st = elm.scrollTop();
+                    if (st > lastScrollTop){
+                       // downscroll code
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
+                            if (scope.nextAction) {
+                                scope.nextAction();
+                            }
+                        }
+                    } else {
+                        // upscroll code
+                        if (lastScrollTop <= 150) {
+                            if (scope.previousAction) {
+                                scope.previousAction();
+                            }
                         }
                     }
+                    lastScrollTop = st;
                 });
             }
-        };
-    }]);
-    mod.directive('sdPostRepeat',
-    ['$timeout',
-    function($timeout) {
-        return function(scope) {
-            if (scope.$first)
-                    window.st = new Date();
-            if (scope.$last)
-                $timeout(function(){
-                    console.log("DOM rendering list took: " + (new Date() - window.st) + " ms");
-                });
         };
     }]);
     // Alternative sdPagination, doesn't use $location.
