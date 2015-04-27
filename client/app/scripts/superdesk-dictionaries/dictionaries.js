@@ -121,9 +121,13 @@
         }
 
         function onError(response) {
-            if (angular.isDefined(response.data._issues) &&
-                    angular.isDefined(response.data._issues['validator exception'])) {
-                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+            if (angular.isDefined(response.data._issues)) {
+                if (angular.isDefined(response.data._issues['validator exception'])) {
+                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                } else if (angular.isDefined(response.data._issues.file)) {
+                    notify.error(gettext('Error: Dictionary File is required.'));
+                }
+
             } else {
                 notify.error(gettext('Error. Dictionary not saved.'));
             }
