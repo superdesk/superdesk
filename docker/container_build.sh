@@ -38,9 +38,12 @@ mkdir -p $CLIENT_RESULTS_DIR/unit &&
 sudo rm -r $SCREENSHOTS_DIR
 mkdir -p $SCREENSHOTS_DIR
 
-# reset repo files' dates:
-cd $BAMBOO_DIR
-find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
+if [ -n $bamboo_buildKey ]
+	then
+		# reset repo files' dates:
+		cd $BAMBOO_DIR
+		find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
+fi
 
 # build container:
 cd $SCRIPT_DIR &&
@@ -50,7 +53,7 @@ docker-compose up -d &&
 
 (
 	# run backend unit tests:
-	docker-compose run backend ./scripts/fig_wrapper.sh nosetests -sv --with-xunit --xunit-file=./results-unit/unit.xml ;
+	docker-compose run backend ./scripts/fig_wrapper.sh nosetests -sv --with-xunit --xunit-file=./results-unit/unit.xml --logging-level ERROR ;
 
 	# run backend behavior tests:
 	docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR ;

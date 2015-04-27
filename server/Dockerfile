@@ -4,7 +4,7 @@ FROM ubuntu:trusty
 # install python3 and the build-time dependencies for c modules
 RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-python3 python3-dev python3-pip \
+python3 python3-dev python3-pip python3-lxml \
 build-essential libffi-dev git mercurial \
 libtiff5-dev libjpeg8-dev zlib1g-dev \
 libfreetype6-dev liblcms2-dev libwebp-dev \

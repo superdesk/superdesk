@@ -1,12 +1,15 @@
 # import base image
-FROM dockerfile/nodejs
+FROM ubuntu:trusty
 
 # install system-wide dependencies
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libfreetype6 libfontconfig nginx && \
-    echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
-    rm /etc/nginx/sites-enabled/default && \
-    npm -g install grunt-cli bower
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+libfreetype6 libfontconfig nodejs npm nginx git \
+&& echo "\ndaemon off;" >> /etc/nginx/nginx.conf \
+&& rm /etc/nginx/sites-enabled/default \
+&& ln --symbolic /usr/bin/nodejs /usr/bin/node
+
+RUN npm -g install grunt-cli bower
 
 # setup the environment
 WORKDIR	/opt/superdesk-client/
