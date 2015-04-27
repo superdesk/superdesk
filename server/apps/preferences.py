@@ -36,6 +36,28 @@ def init_app(app):
     superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
 
+def enhance_document_with_default_prefs(session_doc):
+    user_prefs = session_doc.get(_user_preferences_key, {})
+    available = dict(superdesk.default_user_preferences)
+    available.update(user_prefs)
+
+    def sync_field(field, dest, default):
+        if not isinstance(dest, dict) or not isinstance(default, dict):
+            return
+        if default.get(field):
+            dest[field] = default[field]
+        elif dest.get(field):
+            dest.pop(field, None)
+
+    # make sure label and category are up-to-date
+    for k, v in available.items():
+        default = superdesk.default_user_preferences.get(k)
+        if default:
+            sync_field('label', v, default)
+            sync_field('category', v, default)
+    session_doc[_user_preferences_key] = available
+
+
 class PreferencesResource(Resource):
     datasource = {
         'source': 'users',
@@ -143,7 +165,7 @@ class PreferencesService(BaseService):
         session_prefs = doc.get(_session_preferences_key, {}).get(session_id, {})
         doc[_session_preferences_key] = session_prefs
         self.enhance_document_with_user_privileges(doc)
-        self.enhance_document_with_default_prefs(doc)
+        enhance_document_with_default_prefs(doc)
 
     def on_update(self, updates, original):
         existing_user_preferences = original.get(_user_preferences_key, {}).copy()
@@ -187,24 +209,6 @@ class PreferencesService(BaseService):
         updates[_session_preferences_key] = session_prefs
         self.enhance_document_with_user_privileges(updates)
         return res
-
-    def enhance_document_with_default_prefs(self, session_doc):
-        user_prefs = session_doc.get(_user_preferences_key, {})
-        available = dict(superdesk.default_user_preferences)
-        available.update(user_prefs)
-
-        def sync_field(field, dest, default):
-            if default.get(field):
-                dest[field] = default[field]
-            elif dest.get(field):
-                dest.pop(field, None)
-
-        # make sure label and category are up-to-date
-        for k, v in available.items():
-            default = superdesk.default_user_preferences[k]
-            sync_field('label', v, default)
-            sync_field('category', v, default)
-        session_doc[_user_preferences_key] = available
 
     def enhance_document_with_user_privileges(self, user_doc):
         role_doc = get_resource_service('users').get_role(user_doc)
