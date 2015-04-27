@@ -255,17 +255,31 @@
     mod.directive('sdScrolled', ['$location', function($location) {
         return {
             scope: {
+                'items': '=',
                 nextAction: '=',
                 previousAction: '='
             },
             link: function(scope, elm, attr) {
                 var container = elm[0];
+                var lastScrollTop = 0;
                 elm.bind('scroll', function() {
-                    if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
-                        if (scope.nextAction) {
-                            scope.nextAction();
+                    var st = elm.scrollTop();
+                    if (st > lastScrollTop){
+                       // downscroll code
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
+                            if (scope.nextAction) {
+                                scope.nextAction();
+                            }
+                        }
+                    } else {
+                        // upscroll code
+                        if (lastScrollTop <= 150) {
+                            if (scope.previousAction) {
+                                scope.previousAction();
+                            }
                         }
                     }
+                    lastScrollTop = st;
                 });
             }
         };
