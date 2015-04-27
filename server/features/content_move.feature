@@ -8,11 +8,11 @@ Feature: Move or Send Content to another desk
         """
         When we post to "archive"
         """
-        [{"type":"text", "headline": "test1", "guid": "123", "state": "draft", "task": {"user": "#CONTEXT_USER_ID#"}}]
+        [{"guid": "123", "type":"text", "headline": "test1", "guid": "123", "state": "draft", "task": {"user": "#CONTEXT_USER_ID#"}}]
         """
         And we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get OK response
         When we get "/archive/123?version=all"
@@ -41,7 +41,7 @@ Feature: Move or Send Content to another desk
         """
         And we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get OK response
         When we get "/archive/123"
@@ -75,7 +75,7 @@ Feature: Move or Send Content to another desk
         """
         And we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#", "stage": "#stages._id#"}]
+        [{"task": {"desk": "#desks._id#", "stage": "#stages._id#"}}]
         """
         Then we get OK response
         When we get "/archive/123"
@@ -94,11 +94,11 @@ Feature: Move or Send Content to another desk
         """
         When we post to "/archive/123/move"
         """
-        [{}]
+        [{"task": {}}]
         """
         Then we get error 400
         """
-        {"_issues": {"desk": {"required": 1}}}
+        {"_issues": {"task": {"stage": {"required": 1}, "desk": {"required": 1}}}}
         """
 
     @auth
@@ -114,11 +114,11 @@ Feature: Move or Send Content to another desk
         """
         When we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#"}]
+        [{"task": {"desk": "#desks._id#"}}]
         """
         Then we get error 400
         """
-        {"_issues": {"stage": {"required": 1}}}
+        {"_issues": {"task": {"stage": {"required": 1}}}}
         """
 
     @auth
@@ -134,7 +134,7 @@ Feature: Move or Send Content to another desk
         """
         When we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get error 412
         """
@@ -158,12 +158,9 @@ Feature: Move or Send Content to another desk
         """
         And we post to "/archive/123/move"
         """
-        [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
-        Then we get error 412
-        """
-        {"_message": "Workflow transition is invalid.", "_status": "ERR"}
-        """
+        Then we get response code 201
 
     @auth
     Scenario: User can't move content without a privilege

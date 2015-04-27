@@ -179,4 +179,20 @@
 			</li>
 		</ul>
 	</div>
+
+	<div sd-toggle-box data-title="Publishing" data-open="true">
+		<ul class="basic-list">
+			<li class="auto">
+				<label translate>Destination groups</label>
+				<div sd-search-list
+					ng-disabled="!_editable"
+					data-endpoint="destination_groups"
+					data-label-key="name"
+					data-search-key="name"
+					data-page-size="5"
+					data-selected-items="vars.destinationGroups">
+				</div>
+			</li>
+		</ul>
+	</div>
 </div>

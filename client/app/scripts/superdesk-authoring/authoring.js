@@ -22,7 +22,8 @@
         language: null,
         unique_name: '',
         keywords: [],
-        description: null
+        description: null,
+        destination_groups: null
     };
 
     /**
@@ -174,15 +175,16 @@
          *
          *   and save it if dirty
          *
+         * @param {Object} orig original item.
          * @param {Object} diff Edits.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.publishConfirmation = function publishAuthoring(diff, isDirty) {
+        this.publishConfirmation = function publishAuthoring(orig, diff, isDirty) {
             var promise = $q.when();
             if (this.isEditable(diff) && isDirty) {
                 promise = confirm.confirmPublish()
                     .then(angular.bind(this, function save() {
-                        return this.save(diff);
+                        return this.save(orig, diff);
                     }), function() { // cancel
                         return false;
                     });
@@ -447,6 +449,7 @@
         'superdesk',
         'notify',
         'gettext',
+        'adminPublishSettingsService',
         'desks',
         'authoring',
         'api',
@@ -457,11 +460,12 @@
         '$location',
         'referrer',
         'macros',
-        '$timeout'
+        '$timeout',
+        '$q'
     ];
-    function AuthoringDirective(superdesk, notify, gettext,
+    function AuthoringDirective(superdesk, notify, gettext, adminPublishSettingsService,
                                 desks, authoring, api, session, lock, privileges,
-                                ContentCtrl, $location, referrer, macros, $timeout) {
+                                ContentCtrl, $location, referrer, macros, $timeout, $q) {
         return {
             link: function($scope) {
                 var _closing;
@@ -510,6 +514,19 @@
                     });
                 };
 
+                function validateDestinationGroups(item) {
+                    if (!item.destination_groups || !item.destination_groups.length) {
+                        return $q.reject();
+                    }
+                    return adminPublishSettingsService.fetchDestinationGroupsByIds(item.destination_groups)
+                    .then(function(result) {
+                        if (result._items.length !== item.destination_groups.length) {
+                            return $q.reject();
+                        }
+                        return true;
+                    });
+                }
+
                 function publishItem(item) {
                     authoring.publish(item)
                     .then(function(res) {
@@ -524,20 +541,25 @@
                 }
 
                 $scope.publish = function() {
-                    if ($scope.dirty) { // save dialog & then publish if confirm
-                        authoring.publishConfirmation($scope.item, $scope.dirty)
-                        .then(function(res) {
-                            if (res) {
-                                publishItem(res);
-                                $location.url($scope.referrerUrl);
-                            }
-                        }, function(response) {
-                            notify.error(gettext('Error. Item not published.'));
-                        });
-                    } else { // Publish
-                        publishItem($scope.origItem);
-                        $location.url($scope.referrerUrl);
-                    }
+                    validateDestinationGroups($scope.item)
+                    .then(function() {
+                        if ($scope.dirty) { // save dialog & then publish if confirm
+                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
+                            .then(function(res) {
+                                if (res) {
+                                    publishItem(res);
+                                    $location.url($scope.referrerUrl);
+                                }
+                            }, function(response) {
+                                notify.error(gettext('Error. Item not published.'));
+                            });
+                        } else { // Publish
+                            publishItem($scope.origItem);
+                            $location.url($scope.referrerUrl);
+                        }
+                    }, function(res) {
+                        notify.error(gettext('Error. Destination groups invalid.'));
+                    });
                 };
 
                 /**

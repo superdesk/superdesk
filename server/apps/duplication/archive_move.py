@@ -29,8 +29,14 @@ class MoveResource(Resource):
     resource_title = endpoint_name
 
     schema = {
-        'desk': Resource.rel('desks', False, required=True),
-        'stage': Resource.rel('stages', False, required=True)
+        'task': {
+            'type': 'dict',
+            'required': True,
+            'schema': {
+                'desk': Resource.rel('desks', False, required=True),
+                'stage': Resource.rel('stages', False, required=True)
+            }
+        }
     }
 
     url = 'archive/<{0}:guid>/move'.format(item_url)
@@ -44,42 +50,46 @@ class MoveResource(Resource):
 class MoveService(BaseService):
     def create(self, docs, **kwargs):
         guid_of_item_to_be_moved = request.view_args['guid']
-
         guid_of_moved_items = []
 
         for doc in docs:
-            archive_service = get_resource_service(ARCHIVE)
-
-            archived_doc = archive_service.find_one(req=None, _id=guid_of_item_to_be_moved)
-            if not archived_doc:
-                raise SuperdeskApiError.notFoundError('Fail to found item with guid: %s' %
-                                                      guid_of_item_to_be_moved)
-
-            current_stage_of_item = archived_doc.get('task', {}).get('stage')
-            if current_stage_of_item and str(current_stage_of_item) == str(doc.get('stage')):
-                raise SuperdeskApiError.preconditionFailedError(message='Move is not allowed within the same stage.')
-
-            if not is_workflow_state_transition_valid('submit_to_desk', archived_doc[config.CONTENT_STATE]):
-                raise InvalidStateTransitionError()
-
-            original = dict(archived_doc)
-
-            send_to(archived_doc, doc.get('desk'), doc.get('stage'))
-            archived_doc[config.CONTENT_STATE] = 'submitted'
-            resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
-
-            del archived_doc['_id']
-            archive_service.update(original['_id'], archived_doc, original)
-
-            insert_into_versions(guid=original['_id'])
-
-            guid_of_moved_items.append(archived_doc['guid'])
+            guid_of_moved_items.append(self.move_content(guid_of_item_to_be_moved, doc)['guid'])
 
         return guid_of_moved_items
+
+    def move_content(self, id, doc):
+        archive_service = get_resource_service(ARCHIVE)
+        archived_doc = archive_service.find_one(req=None, _id=id)
+
+        if not archived_doc:
+            raise SuperdeskApiError.notFoundError('Fail to found item with guid: %s' % id)
+
+        current_stage_of_item = archived_doc.get('task', {}).get('stage')
+        if current_stage_of_item and str(current_stage_of_item) == str(doc.get('task', {}).get('stage')):
+            raise SuperdeskApiError.preconditionFailedError(message='Move is not allowed within the same stage.')
+
+        if not is_workflow_state_transition_valid('submit_to_desk', archived_doc[config.CONTENT_STATE]):
+            raise InvalidStateTransitionError()
+
+        original = dict(archived_doc)
+
+        send_to(archived_doc, doc.get('task', {}).get('desc'), doc.get('task', {}).get('stage'))
+
+        if archived_doc[config.CONTENT_STATE] != 'published':
+            archived_doc[config.CONTENT_STATE] = 'submitted'
+
+        resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
+
+        del archived_doc['_id']
+        archive_service.update(original['_id'], archived_doc, original)
+
+        insert_into_versions(guid=original['_id'])
+
+        return archived_doc
 
 
 superdesk.workflow_action(
     name='submit_to_desk',
-    include_states=['draft', 'fetched', 'routed', 'submitted', 'in_progress'],
+    include_states=['draft', 'fetched', 'routed', 'submitted', 'in_progress', 'published'],
     privileges=['archive', 'move']
 )

@@ -964,6 +964,10 @@ define([
 
                 scope.addFetch = function() {
                     if (scope.newFetch.desk && scope.newFetch.stage) {
+                        if (scope.newFetch.destination_groups) {
+                            var destinationGroups = _.pluck(scope.newFetch.destination_groups, '_id');
+                            scope.newFetch.destination_groups = destinationGroups;
+                        }
                         scope.rule.actions.fetch.push(scope.newFetch);
                         scope.newFetch = {};
                     }
@@ -977,6 +981,10 @@ define([
 
                 scope.addPublish = function() {
                     if (scope.newPublish.desk && scope.newPublish.stage) {
+                        if (scope.newPublish.destination_groups) {
+                            var destinationGroups = _.pluck(scope.newPublish.destination_groups, '_id');
+                            scope.newPublish.destination_groups = destinationGroups;
+                        }
                         scope.rule.actions.publish.push(scope.newPublish);
                         scope.newPublish = {};
                     }

@@ -1,0 +1,65 @@
+<div class="split-content">
+    <div class="header">
+        <h2 translate>Subscribers</h2>
+        <button class="btn btn-info pull-right" ng-click="edit()">
+            <i class="icon-plus-sign icon-white"></i> <span translate>Add New Subscriber</span>
+        </button>
+    </div>
+    
+    <div class="content">
+        <ul class="pills-list provider-list">
+            <li ng-repeat="subscriber in subscribers._items" class="clearfix">
+                <div class="header">
+                    <h6>{{:: subscriber.name }}</h6>
+                    <div class="actions">
+                        <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(subscriber)" title="{{:: 'Remove Subscriber' | translate }}"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div sd-modal data-model="subscriber" class="output-channel-modal">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="subscriber._id" translate>Edit Subscriber "{{ origSubscriber.name }}"</h3>
+        <h3 translate ng-hide="subscriber._id" translate>Add New Subscriber</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editForm" ng-submit="save()">
+            <fieldset>
+                <div class="field">
+                    <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                </div>
+                <div class="field">
+                    <label for="subscriber-name" translate>Name</label>
+                    <input type="text" id="subscriber-name" required ng-model="subscriber.name">
+                </div>
+                <div class="field">
+                    <label for="subscriber-type" translate>Type</label>
+                    <select id="subscriber-type" class="input" ng-model="subscriber.subscriber_type">
+                        <option value="media" translate>Media</option>
+                        <option value="nonmedia" translate>Non-media</option>
+                        <option value="" translate>Both</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label translate>Distributions</label>
+                    <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination" data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
+                    <div sd-destination ng-if="newDestination"
+                        data-destination="newDestination"
+                        data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"
+                    ></div>
+                    <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
+                        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Distribution</span>
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
+    </div>
+</div>

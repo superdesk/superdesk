@@ -314,18 +314,14 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
 
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
-    with context.app.mail.record_messages() as outbox:
-        data = apply_placeholders(context, context.text)
-        url = apply_placeholders(context, url)
+    post_data(context, url)
 
-        if is_user_resource(url):
-            user = json.loads(data)
-            user.setdefault('needs_activation', False)
-            data = json.dumps(user)
-        context.response = context.client.post(get_prefixed_url(context.app, url),
-                                               data=data, headers=context.headers)
-        store_placeholder(context, url)
-        context.outbox = outbox
+
+def set_user_default(url, data):
+    if is_user_resource(url):
+        user = json.loads(data)
+        user.setdefault('needs_activation', False)
+        data = json.dumps(user)
 
 
 def get_response_etag(response):
@@ -349,18 +345,39 @@ def store_placeholder(context, url):
             setattr(context, get_resource_name(url), item)
 
 
-@when('we post to "{url}" with success')
-def step_impl_when_post_url_with_success(context, url):
+def post_data(context, url, success=False):
     with context.app.mail.record_messages() as outbox:
         data = apply_placeholders(context, context.text)
         url = apply_placeholders(context, url)
+        set_user_default(url, data)
         context.response = context.client.post(get_prefixed_url(context.app, url),
                                                data=data, headers=context.headers)
-        assert_ok(context.response)
+        if success:
+            assert_ok(context.response)
+
         item = json.loads(context.response.get_data())
-        if item.get('_id'):
-            setattr(context, get_resource_name(url), item)
         context.outbox = outbox
+        store_placeholder(context, url)
+        return item
+
+
+@when('we post to "{url}" with "{tag}" and success')
+def step_impl_when_post_url_with_tag(context, url, tag):
+    item = post_data(context, url, True)
+    if item.get('_id'):
+        set_placeholder(context, tag, item.get('_id'))
+
+
+@given('we have "{url}" with "{tag}" and success')
+def step_impl_given_post_url_with_tag(context, url, tag):
+    item = post_data(context, url, True)
+    if item.get('_id'):
+        set_placeholder(context, tag, item.get('_id'))
+
+
+@when('we post to "{url}" with success')
+def step_impl_when_post_url_with_success(context, url):
+    post_data(context, url, True)
 
 
 @when('we put to "{url}"')
@@ -1389,11 +1406,16 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
 
+                if destination.get('destination_groups'):
+                    context_data = [str(g) for g in destination.get('destination_groups', [])]
+                    response_data = item[0]['destination_groups']
+                    assert_equal(json_match(context_data, response_data), True,
+                                 msg=str(context_data) + '\n != \n' + str(response_data))
+
                 if is_transformed:
                     assert item[0]['abstract'] == 'Abstract has been updated'
 
-                assert_items_in_package(item[0], state,
-                                        str(destination['desk']), str(destination['stage']))
+                assert_items_in_package(item[0], state, str(destination['desk']), str(destination['stage']))
             else:
                 assert len(item) == 0
 

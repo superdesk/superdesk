@@ -54,7 +54,11 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'}
+                                        'macro': {'type': 'string'},
+                                        'destination_groups': {
+                                            'type': 'list',
+                                            'schema': Resource.rel('destination_groups', True)
+                                        }
                                     }
                                 }
                             },
@@ -65,7 +69,11 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'}
+                                        'macro': {'type': 'string'},
+                                        'destination_groups': {
+                                            'type': 'list',
+                                            'schema': Resource.rel('destination_groups', True)
+                                        }
                                     }
                                 }
                             },
@@ -199,9 +207,11 @@ class RoutingRuleSchemeService(BaseService):
                 self.__validate_schedule(schedule)
 
     def __validate_schedule(self, schedule):
-        if schedule is not None and (len(schedule) == 0 or (schedule.get('day_of_week') is None
-                                                            or len(schedule.get('day_of_week', [])) == 0)):
-                raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
+        if schedule is not None \
+                and (len(schedule) == 0
+                     or (schedule.get('day_of_week') is None
+                         or len(schedule.get('day_of_week', [])) == 0)):
+            raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
 
         if schedule:
             day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
@@ -267,11 +277,14 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
-                item_id = get_resource_service('fetch').fetch([{'_id': ingest_item['_id'],
-                                                                'desk': str(destination.get('desk')),
-                                                                'stage': str(destination.get('stage')),
-                                                                'state': STATE_ROUTED,
-                                                                'macro': destination.get('macro', None)}])[0]
+                item_id = get_resource_service('fetch') \
+                    .fetch([{'_id': ingest_item['_id'],
+                             'desk': str(destination.get('desk')),
+                             'stage': str(destination.get('stage')),
+                             'state': STATE_ROUTED,
+                             'macro': destination.get('macro', None),
+                             'destination_groups': destination.get('destination_groups', [])}])[0]
+
                 archive_items.append(item_id)
             except:
                 logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))

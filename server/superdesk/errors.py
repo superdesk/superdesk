@@ -48,6 +48,9 @@ class SuperdeskError(ValidationError):
     def __str__(self):
         return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.message)
 
+    def get_error_description(self):
+        return self.code, self._codes[self.code]
+
 
 class SuperdeskApiError(SuperdeskError):
     """Base class for superdesk API."""
@@ -155,9 +158,6 @@ class SuperdeskIngestError(SuperdeskError):
                 logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
             else:
                 logger.error("{}: {}".format(self, exception))
-
-    def get_error_description(self):
-        return self.code, self._codes[self.code]
 
 
 class ProviderError(SuperdeskIngestError):
@@ -350,3 +350,90 @@ class IngestEmailError(SuperdeskIngestError):
     @classmethod
     def emailError(cls, exception=None, provider=None):
         return IngestEmailError(6002, exception, provider)
+
+
+class SuperdeskPublishError(SuperdeskError):
+    def __init__(self, code, exception, destination=None):
+        super().__init__(code)
+        self.system_exception = exception
+        destination = destination or {}
+        self.destination_name = destination.get('name', 'Unknown destination') \
+            if destination else 'Unknown destination'
+
+        if exception:
+            exception_msg = str(exception)[-200:]
+            update_notifiers('error',
+                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception_msg),
+                             resource='ingest_providers' if destination else None,
+                             name=self.destination_name,
+                             provider_id=destination.get('_id', ''))
+
+            if destination:
+                logger.error("{}: {} on channel {}".format(self, exception, self.destination_name))
+            else:
+                logger.error("{}: {}".format(self, exception))
+
+
+class FormatterError(SuperdeskPublishError):
+    _codes = {
+        7001: 'Article couldn"t be converted to NITF format'
+    }
+
+    @classmethod
+    def nitfFormatterError(cls, exception=None, destination=None):
+        return FormatterError(7001, exception, destination)
+
+
+class SubscriberError(SuperdeskPublishError):
+    _codes = {
+        8001: 'Subscriber is closed'
+    }
+
+    @classmethod
+    def subscriber_inactive_error(cls, exception=None, destination=None):
+        return FormatterError(8001, exception, destination)
+
+
+class PublishQueueError(SuperdeskPublishError):
+    _codes = {
+        9001: 'Item could not be updated in the queue',
+        9002: 'Item format could not be recognized',
+        9003: 'Destination group cannot found'
+    }
+
+    @classmethod
+    def item_update_error(cls, exception=None, destination=None):
+        return PublishQueueError(9001, exception, destination)
+
+    @classmethod
+    def unknown_format_error(cls, exception=None, destination=None):
+        return PublishQueueError(9002, exception, destination)
+
+    @classmethod
+    def destination_group_not_found_error(cls, exception=None, destination=None):
+        return PublishQueueError(9003, exception, destination)
+
+
+class PublishFtpError(SuperdeskPublishError):
+    _codes = {
+        10000: "FTP publish error"
+    }
+
+    @classmethod
+    def ftpError(cls, exception=None, destination=None):
+        return PublishFtpError(10000, exception, destination)
+
+
+class PublishEmailError(SuperdeskPublishError):
+    _codes = {
+        11000: "Email publish error",
+        11001: "Recipient could not be found for destination"
+    }
+
+    @classmethod
+    def emailError(cls, exception=None, destination=None):
+        return PublishEmailError(11000, exception, destination)
+
+    @classmethod
+    def recipientNotFoundError(cls, exception=None, destination=None):
+        return PublishEmailError(11001, exception, destination)

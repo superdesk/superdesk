@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -26,6 +26,30 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
             return _.pick(g, 'name');
         });
     };
+
+    if ($scope.item.destination_groups && $scope.item.destination_groups.length) {
+        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.item.destination_groups)
+        .then(function(result) {
+            var destinationGroups = [];
+            _.each(result._items, function(item) {
+                destinationGroups.push(item);
+            });
+            $scope.vars = {destinationGroups: destinationGroups};
+        });
+    } else {
+        $scope.vars = {destinationGroups: []};
+    }
+
+    $scope.$watch('vars', function() {
+        if ($scope.vars && $scope.vars.destinationGroups) {
+            var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
+            if (!_.isEqual(destinationGroups, $scope.item.destination_groups)) {
+                $scope.item.destination_groups = destinationGroups;
+                $scope.autosave($scope.item);
+            }
+        }
+    }, true);
+
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
 
