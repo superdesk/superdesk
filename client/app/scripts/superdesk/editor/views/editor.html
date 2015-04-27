@@ -13,7 +13,7 @@
 
     <button class="dropdown-toggle hide" dropdown-toggle></button>
     <ul class="dropdown-menu">
-        <li ng-repeat="word in suggestions"><button class="btn btn-light" ng-click="replace(word)">{{ :: word }}</button></li>
-        <li ng-show="suggestions.length === 0"><button class="btn btn-light" translate>SORRY, NO SUGGESTIONS.</button></li>
+        <li ng-repeat="word in suggestions"><button ng-click="replace(word)">{{ :: word }}</button></li>
+        <li ng-show="suggestions.length === 0"><button translate>SORRY, NO SUGGESTIONS.</button></li>
     </ul>
 </div>
