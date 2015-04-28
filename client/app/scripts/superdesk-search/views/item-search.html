@@ -13,8 +13,14 @@
             </div>
             <div class="field">
                 <label for="archive-collection">
-                    {{:: 'Content' | translate}}
+                    {{:: 'Production' | translate}}
                     <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
+                </label>
+            </div>
+            <div class="field">
+                <label for="published-collection">
+                    {{:: 'Published' | translate}}
+                    <input type="checkbox" id="published-collection" ng-model="repo.published" ng-checked="repo.published" tabindex="6">
                 </label>
             </div>
         </div>

@@ -27,7 +27,7 @@ class SearchService(superdesk.Service):
     private_filters = [{
         'or': [
             {'and': [{'exists': {'field': 'task.desk'}},
-                     {'terms': {'state': ['draft', 'in-progress', 'submitted']}}]},
+                     {'terms': {'state': ['fetched', 'routed', 'draft', 'in-progress', 'submitted']}}]},
             {'not': {'term': {'_type': 'archive'}}},
             {'and': [{'term': {'_type': 'published'}},
                      {'terms': {'state': ['published', 'killed']}}]}
