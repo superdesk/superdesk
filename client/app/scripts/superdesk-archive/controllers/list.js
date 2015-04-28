@@ -82,7 +82,9 @@ define([
                         $scope.cachePreviousItems = _.slice($scope.items._items, 0, query.size);
                         $scope.items._items.splice(0, query.size);
                     }
-                    $timeout(function() {$scope.items._items = $scope.items._items.concat($scope.cacheNextItems);}, 150);
+                    $timeout(function() {
+                        $scope.items._items = $scope.items._items.concat($scope.cacheNextItems);
+                    }, 100);
 
                     resource.query(criteria)
                     .then(function(items) {
@@ -131,7 +133,7 @@ define([
                     if ($scope.items._items.length > 0) {
                         scrollList($scope.items._items[parseInt((($scope.items._items.length - 1) / 2), 10)]._id);
                     }
-                }, 150);
+                }, 100);
 
                 resource.query(criteria)
                 .then(function(items) {
