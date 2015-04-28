@@ -25,7 +25,6 @@ from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +57,9 @@ class BasePublishService(BaseService):
     def on_update(self, updates, original):
         if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
+
+    def on_updated(self, updates, original):
+        get_resource_service('published').post([original])
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
