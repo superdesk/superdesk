@@ -39,6 +39,11 @@
     opacity: 0.4;
 }
 
+.dropdown.open li > .dropdown .dropdown-toggle span > i.submenu-icon {
+    position: absolute;
+    right: 10px;
+}
+
 // Dropdown arrow/caret
 // --------------------
 .caret {
@@ -406,21 +411,25 @@
 					cursor: default;
 				}
 			}
-			.dropdown-menu {
-				display: none;
-			}
-			&:hover {
-				> .dropdown-menu {
-					display: block;
-					left: 100%;
-					right: auto;
-					top: 0;
-					&.right-submenu {
-						left: auto;
-						right: 100%;
-					}
-				}
-			}
+                        .dropdown-menu {
+                            display: none;
+                        }
+                        &:hover {
+                            > .dropdown-menu {
+                                display: block;
+                                left: 100%;
+                                right: auto;
+                                top: 0;
+                                min-width: 160px;
+                                &.right-submenu {
+                                    left: auto;
+                                    right: 100%;
+                                }
+                                button {
+                                    min-width: 160px !important;
+                                }
+                            }
+                        }
 		}
 	}
 }
