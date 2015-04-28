@@ -81,4 +81,11 @@ describe('Master Desk', function() {
         browser.sleep(200);
         expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
     });
+
+    it('user role view - edit user', function() {
+        masterDesks.switchToTab('users');
+        masterDesks.editUser(0, 0, 0);
+        browser.sleep(200);
+        expect(element(by.className('modal-content')).isDisplayed()).toBe(true);
+    });
 });

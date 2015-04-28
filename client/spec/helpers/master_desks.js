@@ -52,4 +52,9 @@ function MasterDesks() {
     this.toggleOnlineUsers = function() {
         element(by.id('online_users')).click();
     };
+
+    this.editUser = function(desk, role, user) {
+        this.getUser(desk, role, user).element(by.className('icon-dots-vertical')).click();
+        this.getUser(desk, role, user).element(by.className('icon-pencil')).click();
+    };
 }
