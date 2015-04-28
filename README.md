@@ -21,8 +21,6 @@ and make sure you can run [docker without sudo](http://askubuntu.com/questions/4
 
 ##### install docker compose and run app
 
-_should be executed inside the repository root:_
-
 ```sh
 $ git clone https://github.com/superdesk/superdesk.git
 $ cd superdesk
