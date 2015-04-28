@@ -1,7 +1,8 @@
 
 'use strict';
 var openUrl = require('./helpers/utils').open,
-    masterDesks = require('./helpers/master_desks');
+    masterDesks = require('./helpers/master_desks'),
+    authoring = require('./helpers/authoring');
 
 describe('Master Desk', function() {
     beforeEach(function(done) {openUrl('/#/desks/').then(done);});
@@ -12,6 +13,18 @@ describe('Master Desk', function() {
         expect(masterDesks.getItem(0, 3, 0).element(by.tagName('span')).getText()).toContain('ITEM4 SLUGLINE');
         expect(masterDesks.getItem(1, 1, 0).element(by.tagName('span')).getText()).toContain('ITEM5 SLUGLINE');
         expect(masterDesks.getItem(1, 2, 0).element(by.tagName('span')).getText()).toContain('ITEM6 SLUGLINE');
+    });
+
+    it('show content view - preview item', function() {
+        masterDesks.switchToTab('content');
+        masterDesks.previewItem(0, 1, 0);
+        expect(authoring.lock.isDisplayed()).toBe(true);
+    });
+
+    it('show content view - edit item', function() {
+        masterDesks.switchToTab('content');
+        masterDesks.editItem(0, 1, 0);
+        expect(authoring.publish.isDisplayed()).toBe(true);
     });
 
     it('content view - show desk', function() {

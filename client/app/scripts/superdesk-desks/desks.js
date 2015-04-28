@@ -73,14 +73,18 @@
                 allowed: '=',
                 showEmpty: '=?',
                 selected: '=?',
-                action: '&',
                 filter: '='
             },
             link: function(scope, elem) {
 
-                scope.open = function(item) {
+                scope.preview = function(item) {
                     desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
+                };
+
+                scope.edit = function(item) {
+                    desks.setWorkspace(item.task.desk, item.task.stage);
+                    superdesk.intent('author', 'article', item);
                 };
 
                 function queryItems(queryString) {

@@ -12,7 +12,8 @@
 			<span>{{item.slugline}}</span>{{item.headline}}
 		</div>
 		<div class="action" ng-if="allowed">
-			<button ng-click="open(item); $event.stopPropagation();"><i class="icon-external"></i></button>
+			<button ng-click="preview(item); $event.stopPropagation();"><i class="icon-external"></i></button>
+			 <button ng-click="edit(item); $event.stopPropagation();"><i class="icon-pencil"></i></button>
 		</div>
 	</li>
 </ul>

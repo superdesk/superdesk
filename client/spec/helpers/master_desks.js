@@ -20,6 +20,16 @@ function MasterDesks() {
         return this.getStage(desk, stage).all(by.repeater('item in items')).get(item);
     };
 
+    this.previewItem = function(desk, stage, item) {
+        this.getItem(desk, stage, item).click();
+        this.getItem(desk, stage, item).element(by.className('icon-external')).click();
+    };
+
+    this.editItem = function(desk, stage, item) {
+        this.getItem(desk, stage, item).click();
+        this.getItem(desk, stage, item).element(by.className('icon-pencil')).click();
+    };
+
     this.getStatus = function(desk, status) {
         return this.getDesk(desk).all(by.repeater('status in statuses')).get(status);
     };
