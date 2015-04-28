@@ -13,7 +13,7 @@ define([
     .config(['authoringWidgetsProvider', function(authoringWidgets) {
             authoringWidgets.widget('related-item', {
                 label: gettext('Related Item'),
-                icon: 'multiedit',
+                icon: 'related',
                 template: require.toUrl('./widget-relatedItem.html'),
                 side: 'right',
                 display: {authoring: true, packages: false}
