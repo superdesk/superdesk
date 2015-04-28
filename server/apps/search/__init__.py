@@ -21,13 +21,16 @@ class SearchService(superdesk.Service):
     It can search ingest/content/archive/spike at the same time.
     """
 
-    available_repos = ('ingest', 'archive')
-    default_repos = ['ingest', 'archive']
+    available_repos = ('ingest', 'archive', 'published')
+    default_repos = ['ingest', 'archive', 'published']
 
     private_filters = [{
         'or': [
-            {'exists': {'field': 'task.desk'}},
-            {'not': {'term': {'_type': 'archive'}}}
+            {'and': [{'exists': {'field': 'task.desk'}},
+                     {'terms': {'state': ['draft', 'in-progress', 'submitted']}}]},
+            {'not': {'term': {'_type': 'archive'}}},
+            {'and': [{'term': {'_type': 'published'}},
+                     {'terms': {'state': ['published', 'killed']}}]}
         ]
     }]
 

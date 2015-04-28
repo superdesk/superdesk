@@ -19,6 +19,8 @@ from apps.publish.output_channels import OutputChannelsResource, OutputChannelsS
 from apps.publish.subscribers import SubscribersResource, SubscribersService
 from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
 from apps.publish.formatted_item import FormattedItemResource, FormattedItemService
+from apps.publish.published_item import PublishedItemResource, PublishedItemService
+
 from superdesk import get_backend
 
 logger = logging.getLogger(__name__)
@@ -49,6 +51,10 @@ def init_app(app):
     endpoint_name = 'formatted_item'
     service = FormattedItemService(endpoint_name, backend=get_backend())
     FormattedItemResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'published'
+    service = PublishedItemService(endpoint_name, backend=get_backend())
+    PublishedItemResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'output_channels'
     service = OutputChannelsService(endpoint_name, backend=get_backend())
