@@ -606,7 +606,7 @@
                 }],
                 filters: [{action: 'list', type: 'archive'}],
                 condition: function(item) {
-                    return item.type === 'composite' && item.state !== 'published';
+                    return item.type === 'composite' && item.state !== 'published' && item.state !== 'killed';
                 }
             })
             .activity('view.package', {
@@ -654,7 +654,10 @@
                             });
                         }
                     }],
-                filters: [{action: 'create', type: 'package'}]
+                filters: [{action: 'create', type: 'package'}],
+                condition: function(item) {
+                    return item.state !== 'killed';
+                }
             })
             .activity('package.item', {
                 label: gettext('Package item'),
@@ -672,7 +675,10 @@
                 }],
                 filters: [
                     {action: 'list', type: 'archive'}
-                ]
+                ],
+                condition: function(item) {
+                    return item.state !== 'killed';
+                }
             });
     }])
     .config(['apiProvider', function(apiProvider) {
