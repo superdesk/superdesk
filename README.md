@@ -24,9 +24,6 @@ and make sure you can run [docker without sudo](http://askubuntu.com/questions/4
 ```sh
 $ git clone https://github.com/superdesk/superdesk.git
 $ cd superdesk
-$ virtualenv -p python2 env
-$ . env/bin/activate
-$ pip install -r docker/requirements.txt
 $ ./scripts/docker-local-demo.sh
 ```
 

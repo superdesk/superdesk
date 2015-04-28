@@ -1,12 +1,18 @@
 #!/bin/bash
 
+WORK_DIR=$(readlink -e $(dirname "$0"))
+
+(test -d $WORK_DIR/env || virtualenv -p python2 $WORK_DIR/env ) &&
+. $WORK_DIR/env/bin/activate &&
+pip install -r $WORK_DIR/../docker/requirements.txt &&
+
 (
 	docker --version && docker ps >/dev/null && docker-compose --version
 ) || (
 	echo "Depended executable not found. Check the message above" && exit 1
 ) &&
 
-cd $(dirname "$0")/../docker &&
+cd $WORK_DIR/../docker &&
 
 . ./docker-compose.yml.sh > ./docker-compose.yml &&
 echo '
