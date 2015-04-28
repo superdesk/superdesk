@@ -405,7 +405,7 @@
             filters: [
                 {action: 'list', type: 'archive'}
             ],
-            condition: function(item) {return item.task && item.task.desk;}
+            condition: function(item) {return item.task && item.task.desk && item.state !== 'killed';}
         })
         .activity('/settings/highlights', {
             label: gettext('Highlights'),
