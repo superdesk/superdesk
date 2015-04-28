@@ -22,7 +22,7 @@ class LegalArchiveDataLayer(Mongo):
             raise ConnectionException(e)
 
     def current_mongo_prefix(self):
-        return self.app.config['LEGAL_ARCHIVE_DBNAME']
+        return 'LEGAL_ARCHIVE'
 
     def delete(self, resource, lookup):
         self.remove(resource, lookup)
