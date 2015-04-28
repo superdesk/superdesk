@@ -135,6 +135,9 @@ class StagesService(BaseService):
             if not original.get('published_stage'):
                 self.remove_old_default(original.get('desk'), 'published_stage')
                 self.set_desk_ref(original, 'published_stage')
+        else:
+            if original.get('published_stage') and 'published_stage' in updates:
+                self.clear_desk_ref(original, 'published_stage')
 
         if updates.get('default_incoming', False):
             if not original.get('default_incoming'):
@@ -176,6 +179,11 @@ class StagesService(BaseService):
         desk = get_resource_service('desks').find_one(_id=doc.get('desk'), req=None)
         if desk:
             get_resource_service('desks').update(doc.get('desk'), {field: doc.get('_id')}, desk)
+
+    def clear_desk_ref(self, doc, field):
+        desk = get_resource_service('desks').find_one(_id=doc.get('desk'), req=None)
+        if desk:
+            get_resource_service('desks').update(doc.get('desk'), {field: None}, desk)
 
     def remove_old_default(self, desk, field):
         lookup = {'$and': [{field: True}, {'desk': str(desk)}]}
