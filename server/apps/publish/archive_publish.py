@@ -224,7 +224,7 @@ class ArchivePublishService(BaseService):
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
-            return MoveService().move_content(doc['_id'], doc)['task']
+            return get_resource_service('move').move_content(doc['_id'], doc)['task']
 
 
 superdesk.workflow_state('published')
