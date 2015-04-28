@@ -24,7 +24,6 @@ from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
-from apps.duplication.archive_move import MoveService
 
 
 logger = logging.getLogger(__name__)
