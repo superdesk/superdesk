@@ -9,11 +9,10 @@ is scaleable to suit news organizations of any size.
 
 Use [docker-compose](http://fig.sh "") and the config from `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
 
-##### install docker and virtualenv
+##### install system-wide dependencies
 
 ```sh
-$ sudo apt-get install docker.io
-$ sudo apt-get install python-virtualenv
+$ sudo apt-get install docker.io python2 python-virtualenv
 ```
 
 and make sure you can run [docker without sudo](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).
