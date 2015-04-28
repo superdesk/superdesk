@@ -11,7 +11,9 @@
 import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from apps.content import metadata_schema
+from apps.content import metadata_schema, not_analyzed
+from eve.utils import ParsedRequest
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +26,15 @@ class PublishedItemResource(Resource):
     }
 
     schema = {
-        'item_id': Resource.rel('archive', type='string')
+        'item_id': {
+            'type': 'string',
+            'mapping': not_analyzed
+        },
+        'last_publish_action': {'type': 'string'}
     }
 
     schema.update(metadata_schema)
+    etag_ignore_fields = ['_id', 'last_publish_action', 'highlights', 'item_id']
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
 
@@ -37,3 +44,21 @@ class PublishedItemService(BaseService):
         for doc in docs:
             doc['item_id'] = doc['_id']
             del doc['_id']
+
+    def get(self, req, lookup):
+        items = super().get(req, lookup)
+        for item in items:
+            item['_id']=item['item_id']
+        return items
+
+    def get_other_published_items(self, _id):
+        query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
+        request = ParsedRequest()
+        request.args = {'source': json.dumps(query)}
+        return super().get(req=request, lookup=None)
+
+    def update_other_published_items(self, _id, state):
+        items = self.get_other_published_items(_id)
+        for item in items:
+            # resolve_document_etag([item], self.datasource)
+            super().system_update(item['_id'], {'last_publish_action': state}, item)

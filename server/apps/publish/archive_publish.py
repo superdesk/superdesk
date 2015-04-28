@@ -59,6 +59,7 @@ class BasePublishService(BaseService):
             raise InvalidStateTransitionError()
 
     def on_updated(self, updates, original):
+        get_resource_service('published').update_other_published_items(original['_id'], self.published_state)
         get_resource_service('published').post([original])
 
     def update(self, id, updates, original):
