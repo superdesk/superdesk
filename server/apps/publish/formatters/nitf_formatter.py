@@ -54,7 +54,7 @@ class NITFFormatter(Formatter):
     def __format_subjects(self, article, tobject):
         for subject in article.get('subject', []):
             SubElement(tobject, 'tobject.subject',
-                       {'tobject.subject.refnum': subject['qcode'],
+                       {'tobject.subject.refnum': subject.get('qcode', ''),
                         'tobject.subject.matter': subject['name']})
 
     def __format_keywords(self, article, head):

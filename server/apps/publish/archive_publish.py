@@ -24,7 +24,6 @@ from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
-from apps.duplication.archive_move import MoveService
 
 
 logger = logging.getLogger(__name__)
@@ -224,7 +223,7 @@ class ArchivePublishService(BaseService):
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
-            return MoveService().move_content(doc['_id'], doc)['task']
+            return get_resource_service('move').move_content(doc['_id'], doc)['task']
 
 
 superdesk.workflow_state('published')
