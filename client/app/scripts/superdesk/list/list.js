@@ -265,14 +265,12 @@
                 elm.bind('scroll', function() {
                     var st = elm.scrollTop();
                     if (st > lastScrollTop){
-                       // downscroll code
                         if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 250) {
                             if (scope.nextAction) {
                                 scope.nextAction();
                             }
                         }
                     } else {
-                        // upscroll code
                         if (lastScrollTop <= 150) {
                             if (scope.previousAction) {
                                 scope.previousAction();
