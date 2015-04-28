@@ -24,7 +24,7 @@ and make sure you can run [docker without sudo](http://askubuntu.com/questions/4
 _should be executed inside the repository root:_
 
 ```sh
-$ virtualenv env
+$ virtualenv -p python2 env
 $ . env/bin/activate
 $ pip install -r docker/requirements.txt
 $ ./scripts/docker-local-demo.sh
