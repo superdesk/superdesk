@@ -260,3 +260,6 @@ WS_PORT = env('WSPORT', '5100')
 
 AAP_MM_USER = env('AAP_MM_USER', None)
 AAP_MM_PASSWORD = env('AAP_MM_PASSWORD', None)
+
+# Defines the maximum value of Publish Sequence Number after which the value will start from 1
+MAX_VALUE_OF_PUBLISH_SEQUENCE = 9999

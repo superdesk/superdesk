@@ -130,12 +130,12 @@ class ArchivePublishService(BaseService):
             raise
 
     def resolve_destination_groups(self, dg_ids, destination_groups=None):
-        '''
+        """
         This function flattens and returns the unique list of destination_groups
         :param dg_ids: initial list of destination group ids to be resolved and flatten
         :param destination_groups: dictionary of resolved id, destination_group
         :return: destination_groups
-        '''
+        """
         if destination_groups is None:
             destination_groups = {}
 
@@ -148,13 +148,13 @@ class ArchivePublishService(BaseService):
         return destination_groups
 
     def resolve_output_channels(self, destination_groups):
-        '''
+        """
         This function returns the flattened list of output channels for a given unique
         list of destination groups
         :param destination_groups: unique list of destinations groups
         :return: output_channels:dictionary of resolved id, output_channel,
         lis of selector_codes, list of resolved format_types
-        '''
+        """
         output_channels = {}
         selector_codes = {}
         format_types = []
@@ -176,11 +176,11 @@ class ArchivePublishService(BaseService):
         return output_channels, selector_codes, list(set(format_types))
 
     def get_subscribers(self, output_channel):
-        '''
+        """
         Returns the list of subscribers for a given output channel
         :param output_channel: an output channel
         :return:list of subscribers
-        '''
+        """
         if output_channel.get('destinations'):
             subscriber_ids = output_channel['destinations']
             lookup = {'_id': {'$in': subscriber_ids}}
