@@ -25,8 +25,26 @@ define([
         };
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
+        $scope.published = !!$location.search().published;
+
+        $scope.togglePublished = function togglePublished() {
+            
+            if ($scope.spike) {
+                $scope.toggleSpike();
+            }
+
+            $scope.published = !$scope.published;
+            $location.search('published', $scope.published ? '1' : null);
+            $location.search('_id', null);
+            $scope.stages.select(null);
+        };
 
         $scope.toggleSpike = function toggleSpike() {
+            
+            if ($scope.published) {
+                $scope.togglePublished();
+            }
+
             $scope.spike = !$scope.spike;
             $location.search('spike', $scope.spike ? 1 : null);
             $location.search('_id', null);
@@ -37,6 +55,11 @@ define([
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
+            
+            if ($scope.published) {
+                $scope.togglePublished();
+            }
+
             $scope.stages.select(stage);
         };
 
@@ -70,7 +93,11 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
         function _refresh() {
             if (desks.activeDeskId) {
-                resource = api('archive');
+                if ($scope.published) {
+                    resource = api('published');
+                } else {
+                    resource = api('archive');
+                }
             } else {
                 resource = api('user_content', session.identity);
             }
