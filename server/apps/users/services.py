@@ -96,19 +96,22 @@ class UsersService(BaseService):
         Checks if the requested 'PATCH' or 'DELETE' operation is Invalid.
         Operation is invalid if one of the below is True:
             1. Check if the user is updating his/her own status.
-            2. Check if the user is changing the status of other logged-in users.
-            3. A user without 'User Management' privilege is changing role/user_type/privileges
+            2. Check if the user is changing the changing role/user_type/privileges of other logged-in users.
+            3. A user without 'User Management' privilege is changing status/role/user_type/privileges
 
         :return: error message if invalid.
         """
 
         if 'user' in flask.g:
             if method == 'PATCH':
-                if ('is_active' in updates or 'is_enabled' in updates) and str(user['_id']) == str(flask.g.user['_id']):
-                    return 'Not allowed to change your own status'
-                if str(user['_id']) != str(flask.g.user['_id']) and get_resource_service('auth').get(
-                        req=None, lookup={'username': user['username']}).count() != 0:
-                    return 'Not allowed to change the status/role of a logged-in user'
+                if ('is_active' in updates or 'is_enabled' in updates):
+                    if str(user['_id']) == str(flask.g.user['_id']):
+                        return 'Not allowed to change your own status'
+                    elif not current_user_has_privilege('users'):
+                        return 'Insufficient privileges to change user state'
+                if str(user['_id']) != str(flask.g.user['_id']) and user.get('session_preferences') \
+                        and is_sensitive_update(updates):
+                    return 'Not allowed to change the role/user_type/privileges of a logged-in user'
             elif method == 'DELETE' and str(user['_id']) == str(flask.g.user['_id']):
                 return 'Not allowed to disable your own profile.'
 
@@ -121,6 +124,7 @@ class UsersService(BaseService):
 
         if enabled is not None or active is not None:
             get_resource_service('auth').delete_action({'username': user.get('username')})  # remove active tokens
+            updates.update({'session_preferences', {}})
 
             # send email notification
             can_send_mail = get_resource_service('preferences').email_notification_is_enabled(user_id=user['_id'])
