@@ -18,6 +18,7 @@ be more specific, an `Eve framework <http://python-eve.org/>`_ application).
 from eve import Eve
 from eve.io.mongo.mongo import MongoJSONEncoder
 from eve.render import send_response
+from flask.ext.mail import Mail  # @UnresolvedImport
 import importlib
 import logging
 import os
@@ -54,6 +55,8 @@ def get_app(config=None):
     )
 
     superdesk.app = app
+
+    app.mail = Mail(app)
 
     @app.errorhandler(SuperdeskError)
     def client_error_handler(error):

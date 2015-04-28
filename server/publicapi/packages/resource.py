@@ -39,6 +39,7 @@ class PackagesResource(Resource):
 
     datasource = {
         'filter': {'type': 'composite'},
+        'source': 'items',
         'projection': {
             '_created': 0,
             '_updated': 0,

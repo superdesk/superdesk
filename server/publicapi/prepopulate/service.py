@@ -40,7 +40,7 @@ def open_with_report(file, mode='r', buffering=-1, encoding=None, errors=None):
 
 def prepopulate_data(file_name):
     placeholders = {'NOW()': date_to_str(utcnow())}
-    file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'prepopulate', 'data', file_name)
+    file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'prepopulate', 'prepopulate-data', file_name)
     with open_with_report(file, 'rt', encoding='utf8') as app_prepopulation:
         json_data = json.load(app_prepopulation)
         for item in json_data:
