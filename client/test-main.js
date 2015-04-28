@@ -72,7 +72,6 @@ tests.push('superdesk-publish/publish');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
-tests.push('angular-gettext');
 tests.push('angular-ui');
 tests.push('angular-route');
 tests.push('angular-file-upload');
@@ -80,7 +79,7 @@ tests.push('moment');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
-    deps: ['angular-mocks', 'gettext', 'angular'],
+    deps: ['angular-mocks', 'angular-gettext', 'gettext', 'angular'],
 
     callback: function() {
         'use strict';
