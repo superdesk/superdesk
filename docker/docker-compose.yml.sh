@@ -1,16 +1,16 @@
 cat <<EOF
 mongodb:
-  image: library/mongo
+  image: mongo:2.6
   volumes:
    - ../data/mongodb:/data/db
 
 redis:
-  image: library/redis
+  image: redis:2.8
   volumes:
    - ../data/redis:/data
 
 elastic:
-  image: library/elasticsearch
+  image: elasticsearch:1.5
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
 
@@ -23,7 +23,7 @@ backend:
    - elastic
   environment:
    - MONGOLAB_URI=mongodb://mongodb:27017/test
-   - LEGAL_ARCHIVE_URI=mongodb://mongodb:27017/legal_test
+   - LEGAL_ARCHIVE_URI=mongodb://mongodb:27017/test
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX
    - CELERY_BROKER_URL=redis://redis:6379/1

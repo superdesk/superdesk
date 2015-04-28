@@ -201,7 +201,6 @@ class rfc822Parser(Parser):
 
     # from http://chase-seibert.github.io/blog/2011/01/28/sanitize-html-with-beautiful-soup.html
     def safe_html(self, html):
-
         if not html:
             return None
 
@@ -242,11 +241,7 @@ class rfc822Parser(Parser):
                     else:
                         del tag.attrs[a]
             else:
-                # not a whitelisted tag. I'd like to remove it from the tree
-                # and replace it with its children. But that's hard. It's much
-                # easier to just replace it with an empty span tag.
-                tag.name = "span"
-                tag.attrs = []
+                tag.replaceWithChildren()
 
         # scripts can be executed from comments in some cases
         comments = soup.findAll(text=lambda text: isinstance(text, Comment))
@@ -258,7 +253,7 @@ class rfc822Parser(Parser):
         if safe_html == ", -":
             return None
 
-        return safe_html
+        return safe_html.replace('</br>', '').replace('<br>', '<br/>')
 
     def _attr_name_whitelisted(self, attr_name):
         return attr_name.lower() in ["href", "style", "color", "size", "bgcolor", "border"]
