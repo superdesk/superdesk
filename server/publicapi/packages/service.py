@@ -9,13 +9,13 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from superdesk.services import BaseService
+from publicapi.items.service import ItemsService
 
 
 logger = logging.getLogger(__name__)
 
 
-class PackagesService(BaseService):
+class PackagesService(ItemsService):
     """
     A service that knows how to perform CRUD operations on the `package`
     content types.

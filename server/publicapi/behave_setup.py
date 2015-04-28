@@ -26,6 +26,7 @@ def get_test_settings():
     test_settings['TESTING'] = True
     test_settings['SUPERDESK_TESTING'] = True
     test_settings['CONTENT_EXPIRY_MINUTES'] = 99
+    test_settings['SUPERDESK_PUBLICAPI_TESTING'] = True
 
     return test_settings
 

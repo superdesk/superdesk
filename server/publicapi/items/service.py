@@ -8,7 +8,10 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from flask import current_app as app
 import logging
+from urllib.parse import urljoin, quote
+
 from superdesk.services import BaseService
 
 
@@ -22,3 +25,15 @@ class ItemsService(BaseService):
 
     Serves mainly as a proxy to the data layer.
     """
+
+    def _set_uri(self, doc):
+        resource_url = app.config['PUBLICAPI_URL'] + '/' + app.config['URLS'][self.datasource] + '/'
+        doc['uri'] = urljoin(resource_url, quote(doc['_id']))
+
+    def on_fetched_item(self, doc):
+        self._set_uri(doc)
+
+    def on_fetched(self, res):
+        for doc in res['_items']:
+            self._set_uri(doc)
+        return res
