@@ -172,7 +172,7 @@ define([
                 })
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
-                    icon: 'archive',
+                    icon: 'copy',
                     //monitor: true,
                     /*
                     controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
