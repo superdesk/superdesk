@@ -5,7 +5,7 @@
             ng-if="type === 'archive' && selected.desk">
         </div>         
         <div class="navbtn dropdown strict" dropdown ng-if="type === 'archive'">
-            <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+            <button tooltip="{{ :: 'Create' | translate }}" tooltip-placement="left" class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
     </div>

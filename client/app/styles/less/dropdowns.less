@@ -1,4 +1,4 @@
-// DROPDOWN MENUS
+    // DROPDOWN MENUS
 // --------------
 
 // Use the .menu class on any <li> element within the topbar or ul.tabs and you'll get some superfancy dropdowns
@@ -320,20 +320,70 @@
 // Activity dropdowns
 // -------------------------------------------------
 .activity-dropdown {
-	.dropdown-menu {
-		.border-radius(0px);
-		border:0;
-		z-index: 1;
-		margin-top: -1px;
-		&:before {
-			display: none;
-		}
-	}
+    .dropdown-menu {
+        .border-radius(0px);
+        border:0;
+        z-index: 1;
+        margin-top: -1px;
+        &:before {
+            display: none;
+        }
+    }
+}
+
+// CLassic dropdown with no arrow
+// -------------------------------------------------
+.dropdown.dropdown-noarrow {
+    .dropdown-menu:before {
+        display: none;
+    }
+    .dropdown {
+        .dropdown-toggle {
+            display: block;
+            padding: 3px 15px;
+            clear: both;
+            font-weight: normal;
+            line-height: 18px;
+            white-space: nowrap;
+        }
+    }
+    &.open li > .dropdown .dropdown-toggle {
+        display: block;
+        padding: 5px 7px;
+        margin: 0;
+        clear: both;
+        font-weight: normal;
+        line-height: 18px;
+        white-space: nowrap;
+    }
+}
+
+// Dropdown integrated in input field
+// -------------------------------------------------
+.dropdown.input-addon {
+    position: absolute;
+    right: 12px;
+    margin-top: -1px;
+    > .dropdown-toggle {
+        height: 22px;
+        line-height: 0;
+        padding: 2px 6px;
+        box-shadow: none;
+        margin-bottom: 2px;
+        background-color: transparent;
+        .box-shadow(none) !important;
+        > span.caret {
+            padding: 0px;
+            margin-left: 0;
+        }
+    }
+    &.open > .dropdown-toggle {
+        background-color: transparent;
+    }
 }
 
 // Nested dropdowns
 // -------------------------------------------------
-
 .dropdown {
 	&.open {
 		li > .dropdown {
