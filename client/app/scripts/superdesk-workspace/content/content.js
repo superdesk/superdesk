@@ -9,7 +9,7 @@ function ContentCtrlFactory(api, superdesk) {
          * Create an item and start editing it
          */
         this.create = function(type) {
-            var item = {type: type || 'text'};
+            var item = {type: type || 'text', version: 0};
             api('archive')
                 .save(item)
                 .then(function() {

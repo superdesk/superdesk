@@ -17,7 +17,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user
+from .common import get_user, update_version
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -151,6 +151,10 @@ class ArchiveService(BaseService):
             if doc.get('media'):
                 self.mediaService.on_create([doc])
 
+            # let client create version 0 docs
+            if doc.get('version') == 0:
+                doc['_version'] = doc['version']
+
     def on_created(self, docs):
         packages = [doc for doc in docs if doc['type'] == 'composite']
         if packages:
@@ -202,6 +206,8 @@ class ArchiveService(BaseService):
 
         if original['type'] == 'composite':
             self.packageService.on_update(updates, original)
+
+        update_version(updates, original)
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])

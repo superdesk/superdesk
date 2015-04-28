@@ -309,15 +309,6 @@ Feature: News Items Archive
         Then we get response code 200
 
     @auth
-    Scenario: Hide private content
-        Given "archive"
-            """
-            [{"guid": "1"}]
-            """
-        When we get "/archive"
-        Then we get list with 0 items
-
-    @auth
     Scenario: State of an Uploaded Image, submitted to a desk when updated should change to in-progress
         Given empty "archive"
         And "desks"

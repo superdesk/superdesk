@@ -29,7 +29,7 @@ function VersioningController($scope, authoring, api, notify, lock) {
                 }
             });
 
-            $scope.versions = result;
+            $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_version').reverse();
             $scope.last = lastVersion();
 
             if ($scope.item._autosave) {
@@ -37,7 +37,6 @@ function VersioningController($scope, authoring, api, notify, lock) {
             } else {
                 $scope.openVersion($scope.last);
             }
-
         });
     }
 
