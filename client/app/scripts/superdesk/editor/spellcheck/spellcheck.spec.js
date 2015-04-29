@@ -29,11 +29,16 @@ describe('spellcheck', function() {
         expect(errors).toEqual(['wha', '4k']);
     }));
 
-    it('can render errors in given node', inject(function(spellcheck, $rootScope) {
+    function createParagraph(text) {
         var p = document.createElement('p');
         p.contentEditable = 'true';
-        p.appendChild(document.createTextNode(TEXT));
+        p.innerHTML = text;
         document.body.appendChild(p);
+        return p;
+    }
+
+    it('can render errors in given node', inject(function(spellcheck, $rootScope) {
+        var p = createParagraph(TEXT);
 
         spellcheck.render(p);
         $rootScope.$digest();
@@ -42,5 +47,34 @@ describe('spellcheck', function() {
             .toBe('<span class="sderror">wha</span> is foo, f1, <span class="sderror">4k</span> and 3d?');
 
         expect(spellcheck.clean(p)).toBe(TEXT);
+    }));
+
+    it('can render errors at the end of text', inject(function(spellcheck, $rootScope) {
+        var p = createParagraph('what is buz');
+
+        spellcheck.render(p);
+        $rootScope.$digest();
+
+        expect(p.innerHTML)
+            .toBe('what is <span class="sderror">buz</span>');
+    }));
+
+    it('can remove errors and keep the marker', inject(function(spellcheck, $rootScope) {
+        var p = createParagraph('what is <span class="sderror">b<span class="mark"></span>uz</span>');
+        expect(spellcheck.clean(p)).toBe('what is b<span class="mark"></span>uz');
+    }));
+
+    it('can prevent input event when rendering errors', inject(function(spellcheck, $rootScope) {
+        var p = createParagraph(TEXT);
+        spellcheck.addEventListener(p);
+        var handler = jasmine.createSpy('test');
+        p.addEventListener('input', handler);
+        spellcheck.render(p);
+        $rootScope.$digest();
+        expect(handler).not.toHaveBeenCalled();
+        spellcheck.removeEventListener(p);
+        spellcheck.render(p);
+        $rootScope.$digest();
+        expect(handler).toHaveBeenCalled();
     }));
 });
