@@ -96,10 +96,11 @@
         <label translate>Item types</label>
         <div class="type-filter-box">
             <button class="btn btn-light pull-left"
+                tooltip="{{typeLookup[type]|translate}}" tooltip-placement="bottom"
                 ng-repeat="type in typeList"
                 ng-click="toggleType(rule, type)"
                 ng-class="{active: isTypeChecked(rule, type)}">
-                    <i class="filetype-icon-{{type}}" title="{{typeLookup[type]|translate}}"></i>
+                    <i class="filetype-icon-{{type}}"></i>
             </button>
         </div>
     </div>
