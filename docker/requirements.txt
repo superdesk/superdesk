@@ -1,2 +1,1 @@
-docker-compose==1.1.0-rc2
-requests==2.4.3
+docker-compose==1.2.0
