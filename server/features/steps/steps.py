@@ -626,12 +626,15 @@ def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
     data = get_json_data(context.response)
     int_count = int(total_count.replace('+', ''))
+
+    if int_count == 0 or not context.text:
+        return
+
     if '+' in total_count:
         assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
-    if int_count == 0 or not context.text:
-        return
+
     test_json(context)
 
 
@@ -1058,7 +1061,8 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False, 'sign_off': 'foo'}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True,
+            'needs_activation': False, 'sign_off': 'foo'}
     tests.setup_auth_user(context, user)
     set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 

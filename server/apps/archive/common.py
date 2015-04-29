@@ -109,6 +109,7 @@ def set_original_creator(doc):
     doc['original_creator'] = user
     doc['sign_off'] = usr.get('sign_off', usr.get('username', ''))[:3]
 
+
 def set_sign_off(updates, original):
     usr = get_user()
     if not usr:
