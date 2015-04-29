@@ -361,3 +361,31 @@ Feature: News Items Archive
       """
       {"_message": "Cannot delete desk as it has article(s)."}
       """
+
+    @auth
+    Scenario: Sign-off is properly updated
+        When we post to "/archive"
+        """
+        [{"type": "text", "body_html": "<p>content</p>"}]
+        """
+        Then we get new resource
+        """
+        {"type": "text", "sign_off":"abc"}
+        """
+        When we patch latest
+        """
+        {"headline": "test3"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test3", "sign_off": "abc"}
+        """
+        When we switch user
+        And we patch latest
+        """
+        {"headline": "test4"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test4", "sign_off": "abc/foo"}
+        """

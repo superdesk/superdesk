@@ -1058,7 +1058,7 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False, 'sign_off': 'foo'}
     tests.setup_auth_user(context, user)
     set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 
