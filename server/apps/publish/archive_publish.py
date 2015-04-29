@@ -16,7 +16,7 @@ from eve.versioning import resolve_document_version
 from flask import current_app as app
 from eve.utils import config, document_etag
 from copy import copy
-from apps.archive.common import item_url, get_user, insert_into_versions
+from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
@@ -66,6 +66,7 @@ class BasePublishService(BaseService):
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
 
             # document is saved to keep the initial changes
+            set_sign_off(updates, original)
             self.backend.update(self.datasource, id, updates, original)
             updates[config.CONTENT_STATE] = self.published_state
             original.update(updates)

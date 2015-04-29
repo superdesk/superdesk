@@ -17,7 +17,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version
+from .common import get_user, update_version, set_sign_off
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -188,9 +188,7 @@ class ArchiveService(BaseService):
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
 
-        original_creator = updates.get('original_creator', None)
-        if not original_creator:
-            updates['original_creator'] = original['original_creator']
+        updates.setdefault('original_creator', original['original_creator'])
 
         str_user_id = str(user.get('_id'))
         if lock_user and str(lock_user) != str_user_id and not force_unlock:
@@ -199,6 +197,7 @@ class ArchiveService(BaseService):
         updates['versioncreated'] = utcnow()
         set_item_expiry(updates, original)
         updates['version_creator'] = str_user_id
+        set_sign_off(updates, original)
         update_word_count(updates)
 
         if force_unlock:
