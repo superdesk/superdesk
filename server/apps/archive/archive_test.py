@@ -21,13 +21,13 @@ class ArchiveRemoveExpiredContentTestCase(TestCase):
     def setUp(self):
         super().setUp()
         with self.app.app_context():
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(-10)}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(0)}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(10)}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(20)}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(30)}])
-            self.app.data.insert('archive', [{'expiry': None}])
-            self.app.data.insert('archive', [{'unique_id': 97}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(-10), 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(0), 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(10), 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(20), 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(30), 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': None, 'state': 'draft'}])
+            self.app.data.insert('archive', [{'unique_id': 97, 'state': 'draft'}])
             init_app(self.app)
 
     def test_query_getting_expired_content(self):

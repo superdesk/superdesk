@@ -360,11 +360,11 @@
                 provider = criteria.repo;
             }
 
-            if ($scope.repo.search) { 
+            if ($scope.repo.search) {
                 if ($scope.repo.search !== 'local') {
                     provider = $scope.repo.search;
                 } else if (criteria.repo.indexOf(',') >= 0) {
-                   provider = 'search'; 
+                    provider = 'search';
                 }
             }
 

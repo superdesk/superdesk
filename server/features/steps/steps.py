@@ -1397,7 +1397,7 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                     {'term': {'state': state}}
                 ]
             }
-            item = get_archive_items(query)
+            item = get_archive_items(query) + get_published_items(query)
 
             if is_routed:
                 assert len(item) > 0, 'No routed items found for criteria: ' + str(query)
@@ -1457,6 +1457,13 @@ def get_archive_items(query):
     req.max_results = 100
     req.args = {'filter': json.dumps(query)}
     return list(get_resource_service('archive').get(lookup=None, req=req))
+
+
+def get_published_items(query):
+    req = ParsedRequest()
+    req.max_results = 100
+    req.args = {'filter': json.dumps(query)}
+    return list(get_resource_service('published').get(lookup=None, req=req))
 
 
 def assert_items_in_package(item, state, desk, stage):
