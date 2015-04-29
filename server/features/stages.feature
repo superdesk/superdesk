@@ -508,3 +508,35 @@ Feature: Stages
         "published_stage": "#stages._id#"
         }
         """
+
+    @auth
+    Scenario: Set stage as publish stage then revoke it
+        Given empty "stages"
+        Given empty "desks"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+        When we post to "/stages"
+        """
+        {
+        "name": "Publish stage",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "published_stage": true
+        }
+        """
+        When we patch "/stages/#stages._id#"
+        """
+        {
+        "published_stage": false
+        }
+        """
+        When we get "/desks/#desks._id#"
+        Then we get existing resource
+        """
+        {
+        "name": "Sports Desk",
+        "published_stage": null
+        }
+        """
