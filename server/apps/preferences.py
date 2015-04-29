@@ -36,8 +36,8 @@ def init_app(app):
     superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
 
-def enhance_document_with_default_prefs(session_doc):
-    user_prefs = session_doc.get(_user_preferences_key, {})
+def enhance_document_with_default_prefs(doc):
+    user_prefs = doc.get(_user_preferences_key, {})
     available = dict(superdesk.default_user_preferences)
     available.update(user_prefs)
 
@@ -55,7 +55,7 @@ def enhance_document_with_default_prefs(session_doc):
         if default:
             sync_field('label', v, default)
             sync_field('category', v, default)
-    session_doc[_user_preferences_key] = available
+    doc[_user_preferences_key] = available
 
 
 class PreferencesResource(Resource):
@@ -208,6 +208,7 @@ class PreferencesService(BaseService):
         session_prefs = updates.get(_session_preferences_key, {}).get(str(original['_id']), {})
         updates[_session_preferences_key] = session_prefs
         self.enhance_document_with_user_privileges(updates)
+        enhance_document_with_default_prefs(updates)
         return res
 
     def enhance_document_with_user_privileges(self, user_doc):

@@ -1487,3 +1487,9 @@ def we_get_and_match(context, url):
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
+
+
+@then('there is no "{key}" in "{namespace}" preferences')
+def there_is_no_key_in(context, key, namespace):
+    data = get_json_data(context.response)['user_preferences']
+    assert key not in data[namespace], 'key "%s" is in %s' % (key, data[namespace])
