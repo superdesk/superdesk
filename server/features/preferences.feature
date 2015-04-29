@@ -51,7 +51,10 @@ Feature: User preferences
 
         When we patch "/preferences/#SESSION_ID#"
         """
-        {"user_preferences": {"feature:preview": {"enabled": true }}}
+        {"user_preferences": {
+            "feature:preview": {"enabled": true},
+            "editor:theme": {"label": "Editor"}
+        }}
         """
         Then we get existing resource
         """
@@ -63,10 +66,12 @@ Feature: User preferences
                     "enabled": true,
                     "label": "Enable Feature Preview",
                     "type": "bool"
-                }
+                },
+                "editor:theme": {"type": "string"}
             }
         }
         """
+        And there is no "label" in "editor:theme" preferences
 
 
     @auth
