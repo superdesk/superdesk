@@ -482,18 +482,18 @@
                 var repo = 'archive';
 
                 if (excludeItem && excludeItem._type === 'published') {
-                    repo = 'published'
+                    repo = 'published';
                 }
 
                 var filter = [
                     {not: {term: {state: 'spiked'}}},
                     {term: {family_id: familyId}}
                 ];
-                
+
                 if (excludeItem && excludeItem._type !== 'published') {
                     filter.push({not: {term: {_id: excludeItem._id}}});
                 }
-                
+
                 return api(repo).query({
                     source: {
                         query: {filtered: {filter: {

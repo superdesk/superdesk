@@ -28,7 +28,6 @@ define([
         $scope.published = !!$location.search().published;
 
         $scope.togglePublished = function togglePublished() {
-            
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
@@ -40,7 +39,6 @@ define([
         };
 
         $scope.toggleSpike = function toggleSpike() {
-            
             if ($scope.published) {
                 $scope.togglePublished();
             }
@@ -55,7 +53,7 @@ define([
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
-            
+
             if ($scope.published) {
                 $scope.togglePublished();
             }
