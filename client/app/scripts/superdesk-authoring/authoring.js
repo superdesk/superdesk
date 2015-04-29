@@ -1212,7 +1212,7 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state === 'published';
+                        return item.type !== 'composite' && item.state === 'published' && !item.last_publish_action;
                     },
                     privileges: {kill: 1}
                 })
