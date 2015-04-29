@@ -526,6 +526,9 @@
                                                           'date_published': $scope.origItem.versioncreated});
                 }
 
+                $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
+                $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
+
                 if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
                     adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
                         .then(function(result) {
@@ -549,10 +552,7 @@
                     }
                 }, true);
 
-                $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
-
                 $scope.proofread = false;
-
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
                 if ($scope.origItem.task && $scope.origItem.task.stage) {
