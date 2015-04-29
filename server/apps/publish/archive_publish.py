@@ -57,6 +57,8 @@ class BasePublishService(BaseService):
     def on_update(self, updates, original):
         if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
+
+    def on_updated(self, updates, original):
         get_resource_service('published').update_other_published_items(original['_id'], self.published_state)
         get_resource_service('published').post([original])
 
