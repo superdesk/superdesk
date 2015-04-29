@@ -33,16 +33,12 @@
 	outline: 0;
 }
 
-
-.dropdown.open li > .dropdown .dropdown-toggle i.submenu-icon {
-    float: right;
-    margin: 2px 0 0 0;
-    opacity: 0.4;
-}
-
-.dropdown.open li > .dropdown .dropdown-toggle span > i.submenu-icon {
+.dropdown .dropdown-toggle i.submenu-icon, .dropdown .nested-toggle i.submenu-icon {
     position: absolute;
-    right: 10px;
+    top: 50%;
+    right: 2px;
+    margin-top: -8px;
+    opacity: 0.4;
 }
 
 .more-actions .dropdown-toggle > i {
@@ -110,7 +106,7 @@
 	.divider {
 		.nav-divider();
 	}
-
+        
 	// Links within the dropdown menu
 	button {
 		width: 100%;
@@ -373,6 +369,14 @@
     }
 }
 
+// Classic dropdown with bigger width
+// -------------------------------------------------
+.dropdown.dropdown-bigger {
+    .dropdown-menu {
+        min-width: 230px;
+    }
+}
+
 // Dropdown integrated in input field
 // -------------------------------------------------
 .dropdown.input-addon {
@@ -442,4 +446,70 @@
                         }
 		}
 	}
+}
+
+// NESTED DROPDOWN MENUS
+.dropdown.dropdown-nested {
+    .dropdown-toggle {
+        opacity: 0.4;
+        &:hover {
+            opacity: 1;
+        }
+    }
+    &.open {
+        .dropdown-toggle {
+            opacity: 1;
+        }
+    }
+    .dropdown-menu {
+        overflow: hidden;
+        .nested-toggle {
+            position: relative;
+        }
+        .nested-menu {
+            position: absolute;
+            width: 100%;
+            left: 100%;
+            top: 0;
+            box-sizing: border-box;
+            padding: 10px 0;
+            background-color: white;
+            .transition(all .5s);
+            &.active {
+                left: 0;
+            }
+            .backlink {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 10px;
+                cursor: pointer;
+                height: 27px;
+                & + button {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 60%;
+                    width: calc(~"100% - 60px");
+                    min-width: 0;
+                    font-weight: 500;
+                    span {
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                    span.category-hover {
+                        display: none;
+                    }
+                    &:hover {
+                        span.category { display: none; }
+                        span.category-hover { display: block; }
+                    }
+                }
+            }
+        }
+    }
+    &.dropdown-noarrow {
+        .nested-menu {
+            padding: 10px;
+        }
+    }
 }

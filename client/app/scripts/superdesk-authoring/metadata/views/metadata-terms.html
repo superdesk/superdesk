@@ -5,27 +5,68 @@
         </ul>
     </div>
 </div>
-<div class="dropdown dropdown-noarrow" dropdown>
+<div class="dropdown dropdown-noarrow dropdown-nested dropdown-bigger pull-right" dropdown>
     <button class="dropdown-toggle" dropdown-toggle>
-        <i class="svg-icon-settings"></i>
+        <i class="icon-dots-vertical"></i>
     </button>
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu nested-menu">
         <li><button>Action 1</button></li>
         <li><button>Action 2</button></li>
         <li>
-            <div class="dropdown" dropdown>
-                <button class="dropdown-toggle" dropdown-toggle>
-                    Action 3
-                    <i class="icon-chevron-right-thin submenu-icon"></i>
-                </button>
-                <ul class="dropdown-menu left-submenu">
-                    <li><button>Action Submenu 1</button></li>
-                    <li><button>Action Submenu 2</button></li>
-                </ul>
-            </div>
+            <button class="nested-toggle">
+                Action 3
+                <i class="icon-chevron-right-thin submenu-icon"></i>
+            </button>
+            <ul class="nested-menu left-submenu">
+                <li>
+                    <i class="backlink level-up"></i>
+                    <button>
+                        <span class="category">Category name</span>
+                        <span class="category-hover">Choose entire category</span>
+                    </button>
+                </li>
+                <li class="divider"></li>
+                <li><button>Submenu 1 Action 1</button></li>
+                <li><button>Submenu 1 Action 2</button></li>
+                <li>
+                    <button class="nested-toggle">
+                        Submenu 1 Action 3
+                        <i class="icon-chevron-right-thin submenu-icon"></i>
+                    </button>
+                    <ul class="nested-menu left-submenu">
+                        <li>
+                            <i class="backlink level-up"></i>
+                            <button>
+                                <span class="category">Category name</span>
+                                <span class="category-hover">Choose entire category</span>
+                            </button>
+                        </li>
+                        <li class="divider"></li>
+                        <li><button>Submenu 2 Action 1</button></li>
+                        <li><button>Submenu 2 Action 2</button></li>
+                    </ul>
+                </li>
+                <li><button>Submenu 1 Action 4</button></li>
+                <li><button>Submenu 1 Action 5</button></li>
+            </ul>
         </li>
     </ul>
 </div>
+<script>
+    $("document").ready(function () {
+        $(".dropdown .nested-toggle").click(function (e) {
+            $(this).next(".nested-menu").addClass("active").parents(".dropdown-menu").stop().animate({"height": $(this).next(".nested-menu").height()});
+            e.stopPropagation();
+
+            $(this).next(".nested-menu").find(".level-up").click(function (e) {
+                $(this).parents(".nested-menu").eq(1).hasClass("dropdown-menu")
+                        ? $(this).closest(".nested-menu").removeClass("active").parents(".dropdown-menu").stop().css({"height": "auto"})
+                        : $(this).closest(".nested-menu").removeClass("active").parents(".dropdown-menu").stop().animate({"height": $(this).parents(".nested-menu").eq(1).height()});
+                e.stopPropagation();
+            });
+        });
+    });
+</script>
 <div class="terms" ng-if="item[field].length">
     <ul>
         <li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t.name}}</li>
