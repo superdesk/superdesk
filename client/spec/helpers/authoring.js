@@ -4,6 +4,10 @@
 module.exports = new Authoring();
 
 function Authoring() {
+
+    this.lock = element(by.css('[ng-click="lock()"]'));
+    this.publish = element(by.css('[ng-click="publish()"]'));
+
     /**
      * Send item to given desk
      */
