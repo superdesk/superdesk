@@ -78,7 +78,7 @@ class BasePublishService(BaseService):
                     updates['task'] = task
 
             # document is saved to change the status
-            item = self.backend.update(self.datasource, id, updates, original)
+            self.backend.update(self.datasource, id, updates, original)
             user = get_user()
             push_notification('item:' + self.publish_type, item=str(id), user=str(user))
             original.update(super().find_one(req=None, _id=id))
