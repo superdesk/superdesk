@@ -61,10 +61,14 @@ describe('authoring', function() {
 
         it('can preview content', function() {
             widget.all(by.repeater('item in items')).first().click();
-            expect(widget
-                .element(by.css('.preview-container'))
-                .element(by.binding('item.headline'))
-                .getText()).toBe('item5');
+            widget.all(by.repeater('item in items')).first().element(by.className('icon-external')).click();
+            expect(authoring.lock.isDisplayed()).toBe(true);
+        });
+
+        it('can edit content', function() {
+            widget.all(by.repeater('item in items')).first().click();
+            widget.all(by.repeater('item in items')).first().element(by.className('icon-pencil')).click();
+            expect(authoring.publish.isDisplayed()).toBe(true);
         });
     });
 });
