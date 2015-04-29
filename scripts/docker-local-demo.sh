@@ -23,6 +23,5 @@ echo '
 |       "./docker-local-create-user.sh"                           |
 |=================================================================|
 ' &&
-(docker-compose stop || true ) &&
 docker-compose build &&
 docker-compose up --timeout 600
