@@ -465,7 +465,7 @@
     AuthoringController.$inject = ['$scope', 'item', 'action'];
     function AuthoringController($scope, item, action) {
         $scope.origItem = item;
-        $scope.action = action;
+        $scope.action = action || 'edit';
 
         $scope.widget_target = 'authoring';
 
@@ -509,7 +509,7 @@
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
-                $scope.publish_enabled = $scope.origItem.task.desk &&
+                $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
                 $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
