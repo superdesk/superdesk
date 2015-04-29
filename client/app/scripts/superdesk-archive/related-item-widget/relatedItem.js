@@ -69,7 +69,7 @@ define([
                         $location.path('/authoring/' + item._id + '/view');
                     },
                     'class': 'open',
-                    icon: 'icon-expand'
+                    icon: 'icon-external'
                 }
             };
             BaseWidgetController.call(this, $scope);
