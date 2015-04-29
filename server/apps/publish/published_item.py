@@ -24,6 +24,7 @@ class PublishedItemResource(Resource):
 
     datasource = {
         'search_backend': 'elastic',
+        'elastic_filter': {'terms': {'state': ['scheduled', 'published', 'killed', 'corrected']}},
         'default_sort': [('_updated', -1)]
     }
 
@@ -43,12 +44,15 @@ class PublishedItemResource(Resource):
 class PublishedItemService(BaseService):
 
     def on_create(self, docs):
+        # the same content can be published more than once
+        # so it is necessary to have a new _id and preserve the original
         for doc in docs:
             doc['item_id'] = doc['_id']
             doc['_created'] = utcnow()
             del doc['_id']
 
     def get(self, req, lookup):
+        # convert to the original _id so everything else works
         items = super().get(req, lookup)
         for item in items:
             item['_id'] = item['item_id']

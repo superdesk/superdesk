@@ -20,6 +20,16 @@ Feature: News Items Archive
         """
 
     @auth
+    Scenario: Don't get published archive item by guid
+        Given "archive"
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
+        """
+
+        When we get "/archive/tag:example.com,0000:newsml_BRE9A605"
+        Then we get list with 0 items
+
+    @auth
     Scenario: Update item
         Given "archive"
         """

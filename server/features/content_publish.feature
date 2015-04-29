@@ -176,7 +176,7 @@ Feature: Content Publishing
         Then we get list with 6 items
         When we publish "#fetch._id#" with "publish" type and "published" state
         Then we get OK response
-		When we get "/archive"
+		When we get "/published"
         Then we get existing resource
 		"""
 		{
