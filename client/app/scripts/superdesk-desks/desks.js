@@ -63,8 +63,8 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
-    function StageItemListDirective(search, api, superdesk, desks) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
+    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -77,12 +77,18 @@
                 filter: '='
             },
             link: function(scope, elem) {
+                scope.page = 1;
+                scope.fetching = false;
+                scope.cacheNextItems = [];
+                scope.cachePreviousItems = [];
+                var query = search.query({});
+                var criteria = {source: query.getCriteria()};
+
                 scope.open = function(item) {
                     desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
                 };
                 function queryItems(queryString) {
-                    var query = search.query({});
                     query.filter({term: {'task.stage': scope.stage}});
                     query.size(10);
 
@@ -92,16 +98,14 @@
                             lenient: false
                         }}});
                     }
-
-                    var criteria = {source: query.getCriteria()};
-
-                    scope.page = 1;
-                    scope.fetching = false;
                     scope.loading = true;
                     scope.items = scope.total = null;
                     api('archive').query(criteria).then(function(items) {
                         scope.items = items._items;
                         scope.total = items._meta.total;
+
+                        scope.cachePreviousItems = items._items;
+                        setNextItems(criteria);
                     })['finally'](function() {
                         scope.loading = false;
                     });
@@ -116,20 +120,79 @@
                 });
 
                 var container = elem[0];
+                var lastScrollTop = 0;
                 elem.bind('scroll', function() {
-                    if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 120) {
-                        scope.fetchNext();
+                    var st = elem.scrollTop();
+                    if (st > lastScrollTop){
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 120) {
+                            scope.fetchNext();
+                        }
+                    } else {
+                        if (lastScrollTop <= 80) {
+                            scope.fetchPrevious();
+                        }
                     }
+                    lastScrollTop = st;
                 });
                 scope.fetchNext = function() {
                     if (!scope.fetching) {
+                        if (scope.cacheNextItems.length > 0) {
+                            scope.fetching = true;
+                            scope.page = scope.page + 1;
+
+                            criteria.source.from = (scope.page) * criteria.source.size;
+                            scope.loading = true;
+
+                            if (scope.items.length > criteria.source.size){
+                                scope.cachePreviousItems = _.slice(scope.items, 0, criteria.source.size);
+                                scope.items.splice(0, criteria.source.size);
+                            }
+                            $timeout(function() {
+                                scope.items = scope.items.concat(scope.cacheNextItems);
+                            }, 100);
+
+                            api('archive').query(criteria)
+                            .then(function(items) {
+                                scope.cacheNextItems = items._items;
+                                scope.fetching = false;
+                            }, function() {
+                                //
+                            })
+                            ['finally'](function() {
+                                scope.loading = false;
+                            });
+                        }
+                    } else {
+                        return $q.when(false);
+                    }
+                };
+                scope.fetchPrevious = function() {
+                    if (!scope.fetching && scope.page > 2) {
                         scope.fetching = true;
-                        scope.page = scope.page + 1;
-                        criteria.source.from = (scope.page - 1) * 25;
+                        scope.page = scope.page - 1;
+                        if (scope.page > 2) {
+                            criteria.source.from = (scope.page - 3) * criteria.source.size;
+                        } else {
+                            criteria.source.from = 0;
+                        }
                         scope.loading = true;
+
+                        if (scope.items.length > criteria.source.size) {
+                            scope.cacheNextItems = _.slice(scope.items,
+                                scope.items.length - (scope.items.length - criteria.source.size), scope.items.length);
+                            scope.items.splice(scope.items.length - (scope.items.length - criteria.source.size), criteria.source.size);
+                        }
+
+                        $timeout(function() {
+                            scope.items.unshift.apply(scope.items, scope.cachePreviousItems);
+                            if (scope.items.length > 0) {
+                                scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), 10)]._id);
+                            }
+                        }, 100);
+
                         api('archive').query(criteria)
                         .then(function(items) {
-                            scope.items = scope.items.concat(items._items);
+                            scope.cachePreviousItems = items._items;
                             scope.fetching = false;
                         }, function() {
                             //
@@ -139,6 +202,19 @@
                         });
                     }
                 };
+                function setNextItems(criteria) {
+                    criteria.source.from = scope.page * criteria.source.size;
+                    return api('archive').query(criteria)
+                        .then(function(items) {
+                            scope.cacheNextItems = items._items;
+                        }, function() {
+                            //
+                        });
+                }
+                function scrollList(id) {
+                    $location.hash(id);
+                    $anchorScroll();
+                }
             }
         };
     }

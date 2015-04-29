@@ -170,10 +170,6 @@ define([
         this.getResource  = function getResource() {
             return desks.activeDeskId ? api('archive') : api('user_content', session.identity);
         };
-        function refreshItems() {
-            $timeout.cancel(timeout);
-            timeout = $timeout(_refresh, 100, false);
-        }
 
         var refreshItems = _.debounce(_refresh, 100);
         function _refresh() {
