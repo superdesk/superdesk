@@ -7,7 +7,7 @@ is scaleable to suit news organizations of any size.
 
 ### Installation
 
-Use [docker-compose](http://fig.sh "") and the config from `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
+Use [docker-compose](http://fig.sh "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
 
 ##### install system-wide dependencies
 
@@ -26,9 +26,9 @@ $ cd superdesk
 $ ./scripts/docker-local-demo.sh
 ```
 
-Open in browser `http://localhost:80` after server will be ready.
+Open in a browser `http://localhost:80` after the server will be ready.
 
-If you can not log in you probably need to run `./scripts/docker-local-create-user.sh`.
+If you can't log in then you probably need to run `./scripts/docker-local-create-user.sh`.
 
 If you're going to assign some hostname to the instance, you should also set it in the config here https://github.com/superdesk/superdesk/blob/master/docker/docker-compose.yml.sh#L44-L45 and here https://github.com/superdesk/superdesk/blob/master/docker/docker-compose.yml.sh#L55 instead of `127.0.0.1`.
 
