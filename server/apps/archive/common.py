@@ -107,11 +107,21 @@ def set_original_creator(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
     doc['original_creator'] = user
+    doc['sign_off'] = usr.get('sign_off', usr.get('username', ''))[:3]
 
-    # sent_user = doc.get('user', None)
-    # if sent_user and user and sent_user != user:
-    #     raise superdesk.SuperdeskError()
-    # doc['user'] = user
+def set_sign_off(updates, original):
+    usr = get_user()
+    if not usr:
+        return
+
+    sign_off = usr.get('sign_off', usr['username'][:3])
+    current_sign_off = original.get('sign_off', '')
+
+    if current_sign_off.endswith(sign_off):
+        return
+
+    updated_sign_off = '{}/{}'.format(current_sign_off, sign_off)
+    updates['sign_off'] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
 
 
 item_url = 'regex("[\w,.:_-]+")'
