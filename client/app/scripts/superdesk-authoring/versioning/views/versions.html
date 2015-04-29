@@ -4,21 +4,21 @@
             <div class="header">
                 <time title="{{ item._autosave._updated | date:'medium' }}">{{ item._autosave._updated | reldate }}</time>
             </div>
-            <h6 ng-class="{'no-title': !item._autosave.headline}">{{ item._autosave.headline || ('Untitled' | translate) }}</h6>
+            <h6 ng-class="{'no-title': !item._autosave.headline}">{{ :: item._autosave.headline || ('Untitled' | translate) }}</h6>
             <div class="footer">
                 <em translate>autosave</em>
             </div>
         </li>
 
-        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="openVersion(version)">
+        <li class="item" ng-class="{selected: selected === version}" ng-repeat="version in versions" ng-click="openVersion(version)">
             <div class="header">
-                <time title="{{ version.versioncreated | date:'medium' }}">{{ version.versioncreated|reldate }}</time>
-                <span class="user">{{ 'by' | translate }} {{users[version.creator].display_name || users[version.original_creator].display_name}}</span>
+                <time title="{{ :: version.versioncreated | date:'medium' }}">{{ version.versioncreated|reldate }}</time>
+                <span class="user">{{ :: 'by' | translate }} {{users[version.creator].display_name || users[version.original_creator].display_name}}</span>
             </div>
-            <h6 ng-class="{'no-title': !version.headline }">{{ version.headline || ('Untitled' | translate) }}</h6>
+            <h6 ng-class="{'no-title': !version.headline }">{{ :: version.headline || ('Untitled' | translate) }}</h6>
             <div class="footer">
-            	<em>{{ 'version' | translate }}: {{ version._version || 1 }}</em>
-                <div class="state-label state-{{version.state}}">{{version.state}}</div>
+            	<em>{{ :: 'version' | translate }}: {{ version._version }}</em>
+                <div class="state-label state-{{ :: version.state}}">{{ :: version.state }}</div>
 	            <button class="btn btn-light btn-mini pull-right"
                     ng-show="canRevert && !$first"
                     ng-click="revert(version)"

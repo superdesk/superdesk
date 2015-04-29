@@ -22,10 +22,10 @@ Feature: Content Locking
         Then we get OK response
 
     @auth
-    Scenario: Unlocking version 1 draft item deletes the item
+    Scenario: Unlocking version 0 draft item deletes the item
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1, "state": "draft"}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 0, "state": "draft"}]
         """
         When we post to "/archive/item-1/lock"
         """
@@ -47,7 +47,7 @@ Feature: Content Locking
     Scenario: Unlocking version 1+ item unlockes the item
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 2}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1}]
         """
         When we post to "/archive/item-1/lock"
         """

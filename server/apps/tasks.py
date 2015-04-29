@@ -16,7 +16,7 @@ from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import on_create_item, item_url
+from apps.archive.common import on_create_item, item_url, update_version
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 import superdesk
@@ -187,6 +187,7 @@ class TasksService(BaseService):
             updates['expiry'] = get_expiry(new_stage['desk'], new_stage_id)
             if new_stage.get('task_status'):
                 updates['task']['status'] = new_stage['task_status']
+        update_version(updates, original)
 
     def on_updated(self, updates, original):
         new_task = updates.get('task', {})

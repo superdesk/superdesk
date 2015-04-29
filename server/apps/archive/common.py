@@ -34,6 +34,12 @@ FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
 
 
+def update_version(updates, original):
+    """Increment version number if possible."""
+    if '_version' in updates and original.get('version', 0) == 0:
+        updates.setdefault('version', updates['_version'])
+
+
 def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
