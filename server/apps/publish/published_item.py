@@ -13,6 +13,8 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
 from eve.utils import ParsedRequest
+from bson.objectid import ObjectId
+from superdesk.utc import utcnow
 import json
 
 logger = logging.getLogger(__name__)
@@ -43,12 +45,13 @@ class PublishedItemService(BaseService):
     def on_create(self, docs):
         for doc in docs:
             doc['item_id'] = doc['_id']
+            doc['_created'] = utcnow()
             del doc['_id']
 
     def get(self, req, lookup):
         items = super().get(req, lookup)
         for item in items:
-            item['_id']=item['item_id']
+            item['_id'] = item['item_id']
         return items
 
     def get_other_published_items(self, _id):
@@ -60,5 +63,4 @@ class PublishedItemService(BaseService):
     def update_other_published_items(self, _id, state):
         items = self.get_other_published_items(_id)
         for item in items:
-            # resolve_document_etag([item], self.datasource)
-            super().system_update(item['_id'], {'last_publish_action': state}, item)
+            super().system_update(ObjectId(item['_id']), {'last_publish_action': state}, item)
