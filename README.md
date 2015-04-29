@@ -7,7 +7,7 @@ is scaleable to suit news organizations of any size.
 
 ### Installation
 
-Use [docker-compose](http://fig.sh "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
+Use [docker-compose](http://docs.docker.com/compose/ "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
 
 ##### install system-wide dependencies
 
