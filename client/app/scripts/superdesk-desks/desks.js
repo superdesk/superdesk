@@ -73,6 +73,7 @@
                 allowed: '=',
                 showEmpty: '=?',
                 selected: '=?',
+                action: '&',
                 filter: '='
             },
             link: function(scope, elem) {
