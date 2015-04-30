@@ -29,6 +29,9 @@ class AppInitializeWithDataCommand(superdesk.Command):
         service = get_resource_service('vocabularies')
         self.import_file('vocabularies.json', service)
 
+        service = get_resource_service('content_templates')
+        self.import_file('content_templates.json', service)
+
         print('Data import finished')
 
         print('Starting indexes creation')
