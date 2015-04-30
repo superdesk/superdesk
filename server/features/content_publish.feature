@@ -40,6 +40,79 @@ Feature: Content Publishing
       {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
       """
 
+
+    @auth
+    Scenario: Schedule a user content publish
+      Given empty "output_channels"
+      Given empty "subscribers"
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "publish_schedule":"2015-05-30T10:00:00+00:00",
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#"
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 2, "state": "scheduled"}
+      """
+
+      When we get "/publish_queue"
+      Then we get list with 1 items
+      """
+      {
+        "_items":
+          [
+            {"destination":{"name":"Test"}, "publish_schedule":"2015-05-30T10:00:00+0000"}
+          ]
+      }
+      """
+
     @auth
     Scenario: Publish a user content and stays on the same stage
       Given "desks"
