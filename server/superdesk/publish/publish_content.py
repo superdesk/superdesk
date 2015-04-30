@@ -11,7 +11,9 @@ import superdesk
 import logging
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
+from datetime import datetime
 import superdesk.publish
+from superdesk.errors import PublishQueueError
 from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
 
 logger = logging.getLogger(__name__)
@@ -74,6 +76,8 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
             continue
 
         try:
+            if not is_on_time(queue_item, destination):
+                continue
 
             # update the status of the item to in-progress
             queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
@@ -91,5 +95,24 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
     if len(failed_items) > 0:
         logger.error('Failed to publish the following items: %s', str(failed_items))
 
+
+def is_on_time(queue_item, destination):
+    '''
+    Checks if the item is ready to be processed
+    :param queue_item: item to be checked
+    :return: True if the item is ready
+    '''
+    try:
+        if queue_item.get('publish_schedule'):
+            publish_schedule = queue_item['publish_schedule']
+            if type(publish_schedule) is not datetime:
+                raise PublishQueueError.bad_schedule_error(Exception("Schedule is not datetime"),
+                                                           destination)
+            return utcnow() >= publish_schedule
+        return True
+    except PublishQueueError:
+        raise
+    except Exception as ex:
+        raise PublishQueueError.bad_schedule_error(ex, destination)
 
 superdesk.command('publish:transmit', PublishContent())
