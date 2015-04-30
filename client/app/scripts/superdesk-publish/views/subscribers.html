@@ -30,7 +30,12 @@
         <form name="editForm" ng-submit="save()">
             <fieldset>
                 <div class="field">
-                    <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                    <label class="right">
+                        {{:: 'Status' | translate }}
+                        <span tooltip="{{ subscriber.is_active ? 'Deactivate' : 'Activate'  | translate }}" tooltip-placement="right">
+                            <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                        </span>
+                    </label>
                 </div>
                 <div class="field">
                     <label for="subscriber-name" translate>Name</label>
