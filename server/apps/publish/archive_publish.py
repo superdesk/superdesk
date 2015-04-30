@@ -82,6 +82,11 @@ class BasePublishService(BaseService):
                     updates['task'] = task
 
             # document is saved to change the status
+            if original.get('publish_schedule'):
+                updates[config.CONTENT_STATE] = 'scheduled'
+            else:
+                updates[config.CONTENT_STATE] = 'published'
+
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
             push_notification('item:' + self.publish_type, item=str(id), user=str(user))
@@ -127,6 +132,7 @@ class BasePublishService(BaseService):
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
                                 publish_queue_item['selector_codes'] = selector_codes.get(output_channel['_id'], [])
                                 publish_queue_item['published_seq_num'] = pub_seq_num
+                                publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
 
                                 publish_queue_items.append(publish_queue_item)
 

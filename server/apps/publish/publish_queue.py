@@ -48,6 +48,9 @@ class PublishQueueResource(Resource):
         },
         'error_message': {
             'type': 'string'
+        },
+        'publish_schedule': {
+            'type': 'datetime'
         }
     }
 
