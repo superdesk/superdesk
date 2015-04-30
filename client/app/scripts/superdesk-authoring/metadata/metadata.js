@@ -152,6 +152,35 @@ function MetadataListEditingDirective() {
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
 
+            scope.$watch('list', function(items) {
+                if (!items || !items[0].hasOwnProperty('parent')) {
+                    return;
+                }
+
+                var tree = {};
+                angular.forEach(items, function(item) {
+                    if (!tree.hasOwnProperty(item.parent)) {
+                        tree[item.parent] = [item];
+                    } else {
+                        tree[item.parent].push(item);
+                    }
+                });
+
+                scope.tree = tree;
+                scope.activeTree = tree[null];
+            });
+
+            scope.openParent = function(term, $event) {
+                var parent = _.find(scope.list, {qcode: term.parent});
+                scope.openTree(parent, $event);
+            };
+
+            scope.openTree = function(term, $event) {
+                scope.activeTerm = term;
+                scope.activeTree = scope.tree[term ? term.qcode : null];
+                $event.stopPropagation();
+            };
+
             scope.terms = [];
             scope.selectedTerm = '';
             var uniqueField = scope.unique || 'qcode';
