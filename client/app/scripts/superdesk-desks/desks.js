@@ -802,8 +802,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope', 'desks',
-            function(gettext, api, WizardHandler, tasks, $rootScope, desks) {
+        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope', 'desks', 'notify',
+            function(gettext, api, WizardHandler, tasks, $rootScope, desks, notify) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -912,8 +912,12 @@
                     };
 
                     function errorMessage(response) {
-                        if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                            scope._errorUniqueness = true;
+                        if (response.data && response.data._issues) {
+                            if (response.data._issues.name && response.data._issues.name.unique) {
+                                scope._errorUniqueness = true;
+                            } else if (response.data._issues['validator exception']) {
+                                notify.error(response.data._issues['validator exception']);
+                            }
                         } else {
                             scope._error = true;
                         }
