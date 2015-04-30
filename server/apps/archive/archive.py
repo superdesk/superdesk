@@ -100,6 +100,9 @@ class ArchiveResource(Resource):
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime'
         }
     }
 
