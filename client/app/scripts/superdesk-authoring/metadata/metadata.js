@@ -38,7 +38,8 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
 
     function setPublishScheduleDate() {
         if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
-            $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date, $scope.item.publish_schedule_time).format()
+            $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
+                $scope.item.publish_schedule_time).format();
             $scope.autosave($scope.item);
         }
     }
