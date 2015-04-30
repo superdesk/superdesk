@@ -151,3 +151,48 @@ Feature: Publish Queue
     }
     """
 
+  @auth
+  Scenario: Published Item should have published sequence number when published and placed in queue
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+        "name" : "Email Subscriber", "is_active" : true
+      }]
+      """
+      And we post to "/output_channels" with "channel1" and success
+      """
+      [{"name":"Group 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+      """
+      And we post to "/destination_groups" with "destgroup1" and success
+      """
+      [{
+        "name":"Group 1", "description": "new stuff",
+        "destination_groups": [],
+        "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}]
+      }]
+      """
+      And we post to "/archive" with success
+      """
+      [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      And we post to "/stages" with success
+      """
+      [
+        {
+        "name": "another stage",
+        "description": "another stage",
+        "task_status": "in_progress",
+        "desk": "#desks._id#",
+        "published_stage": true
+        }
+      ]
+      """
+      And we publish "#archive._id#"
+      Then we get "published_seq_num" in "/publish_queue/123"
+      And we get "published_seq_num" in "/formatted_item/123"
+

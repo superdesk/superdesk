@@ -8,12 +8,11 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.publish.formatters import Formatter
-from settings import MAX_VALUE_OF_PUBLISH_SEQUENCE
-from superdesk.celery_app import update_key, set_key
-from superdesk.errors import FormatterError
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
+
+from apps.publish.formatters import Formatter
+from superdesk.errors import FormatterError
 
 
 class NITFFormatter(Formatter):
@@ -24,6 +23,9 @@ class NITFFormatter(Formatter):
 
     def format(self, article, destination):
         try:
+
+            pub_seq_num = self.generate_sequence_number(destination)
+
             nitf = etree.Element("nitf")
             head = SubElement(nitf, "head")
             body = SubElement(nitf, "body")
@@ -34,12 +36,12 @@ class NITFFormatter(Formatter):
 
             etree.Element('doc-id', attrib={'id-string': article['guid']})
 
-            self.__append_meta(article, head, destination)
+            self.__append_meta(article, head, destination, pub_seq_num)
             self.__format_head(article, head)
             self.__format_body_head(article, body_head)
             self.__format_body_end(article, body_end)
 
-            return self.XML_ROOT + str(etree.tostring(nitf))
+            return pub_seq_num, self.XML_ROOT + str(etree.tostring(nitf))
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, destination)
 
@@ -90,24 +92,9 @@ class NITFFormatter(Formatter):
     def can_format(self, format_type):
         return format_type == 'nitf'
 
-    def __append_meta(self, article, head, destination):
+    def __append_meta(self, article, head, destination, pub_seq_num):
         """
         Appends <meta> elements to <head>
         """
-        sequence_key_name = "{output_channel_name}_output_channel_seq".format(
-            output_channel_name=destination.get('name')).lower()
 
-        sequence_number = update_key(sequence_key_name, flag=True)
-        max_seq_number = MAX_VALUE_OF_PUBLISH_SEQUENCE
-
-        if destination.get('sequence_num_settings'):
-            if sequence_number == 0 or sequence_number == 1:
-                sequence_number = destination['sequence_num_settings']['start_from']
-                set_key(sequence_key_name, value=sequence_number)
-
-            max_seq_number = destination['sequence_num_settings']['max']
-
-        if sequence_number == max_seq_number:
-            set_key(sequence_key_name)
-
-        SubElement(head, 'meta', {'name': 'anpa-sequence', 'content': str(sequence_number)})
+        SubElement(head, 'meta', {'name': 'anpa-sequence', 'content': str(pub_seq_num)})

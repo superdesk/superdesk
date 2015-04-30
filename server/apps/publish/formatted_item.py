@@ -29,7 +29,15 @@ class FormattedItemResource(Resource):
         'format': {
             'type': 'string',
             'nullable': False,
+        },
+        'published_seq_num': {
+            'type': 'integer'
         }
+    }
+
+    additional_lookup = {
+        'url': 'regex("[\w]+")',
+        'field': 'item_id'
     }
 
     datasource = {'default_sort': [('_created', -1)]}

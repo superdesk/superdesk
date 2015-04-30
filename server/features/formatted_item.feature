@@ -66,4 +66,3 @@ Feature: Formatted Item
         ]
     }
     """
-
