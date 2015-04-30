@@ -19,10 +19,6 @@
     TemplatesSettingsService.$inject = ['api', '$q'];
     function TemplatesSettingsService(api, $q) {
 
-        this.fetchTemplates = function fetchTemplates() {
-            return api.find('templates');
-        };
-
         this.fetchContentTemplates = function fetchContentTemplates() {
             return api.find('content_templates');
         };
@@ -33,20 +29,14 @@
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
-                $scope.templates = null;
                 $scope.content_templates = null;
                 $scope.origTemplate = null;
                 $scope.template = null;
 
                 function fetchTemplates() {
-                    templatesSettingsService.fetchTemplates().then(
-                        function(result) {
-                            $scope.templates = result;
-                            templatesSettingsService.fetchContentTemplates().then(
-                                function(content_templates) {
-                                    $scope.content_templates = content_templates;
-                                }
-                            );
+                    templatesSettingsService.fetchContentTemplates().then(
+                        function(content_templates) {
+                            $scope.content_templates = content_templates;
                         }
                     );
                 }

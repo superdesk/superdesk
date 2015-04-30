@@ -27,32 +27,6 @@
         sign_off: null
     };
 
-    var KILL_TEMPLATE = {
-        headline: 'Kill/Takedown notice ~~~ Kill/Takedown notice',
-        'abstract': 'This article has been removed',
-        anpa_take_key: 'KILL/TAKEDOWN',
-        body: ['Please kill story slugged ${ keyword } ex ${ dateline } at ${ date_published }.',
-               'Pursuant to your Information Supply Agreement with Australian Associated Press (AAP), AAP requests that',
-               'you remove the above story from any media you publish and access to the story be immediately disabled ',
-               'including but not limited to those websites in either your direct or indirect possession, custody, or control.',
-               'AAP has become aware that the story may potentially expose AAP and those who publish the story to the risk of:',
-               '[insert relevant option/s from below]',
-               ' - a claim in defamation.',
-               '- a possible prosecution for contempt.',
-               '- a contempt prosecution arising out of breach of an order of the Family/Supreme/District/Federal Court.',
-               '- a breach of a law prohibiting publication.',
-               '- a breach of a law prohibiting publication that applies retrospectively.',
-               '- a breach of any State or Commonwealth privacy laws.',
-               '- a claim for damages.',
-               '- publishing extremely erroneous material.',
-               'This kill/takedown is mandatory, and no further use can be made of the story. ',
-               'A replacement story will be issued shortly/will not be issued.',
-               'AAP will not be liable for any losses, costs and expenses, damages and other costs (including without limitation',
-               ' reasonable legal costs), indirect, consequential special or punitive loss or damage, arising out of the story and ',
-               'this Notice suffered or incurred by you after receipt of this Notice.'
-               ]
-    };
-
     /**
      * Extend content of dest
      *
@@ -517,13 +491,30 @@
                 $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
 
                 if ($scope.action === 'kill') {
-                    $scope.origItem.headline = KILL_TEMPLATE.headline;
-                    $scope.origItem['abstract'] = KILL_TEMPLATE['abstract'];
-                    $scope.origItem.anpa_take_key = KILL_TEMPLATE.anpa_take_key;
-                    var template = _.template(KILL_TEMPLATE.body.join('<br/>'));
-                    $scope.origItem.body_html = template({'keyword': $scope.origItem.slugline,
-                                                          'dateline': $scope.origItem.dateline,
-                                                          'date_published': $scope.origItem.versioncreated});
+                    api('content_templates').getById('kill').then(
+                        function(template) {
+                            template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
+                            var body = template.body_html;
+                            if (body) {
+                                // get the placeholders out of the template
+                                var placeholders = _.words(body, /\${([\s\S]+?)}/g);
+                                placeholders = _.map(placeholders, function(placeholder) {
+                                    return _.trim(placeholder, '${} ');
+                                });
+
+                                var compiled = _.template(body);
+                                var args = _.pick($scope.origItem, placeholders);
+                                $scope.origItem.body_html = compiled(args);
+                            }
+                            _.each(template, function(value, key) {
+                                if (!_.isEmpty(value)) {
+                                    if (key !== 'body_html') {
+                                        $scope.origItem[key] = value;
+                                    }
+                                }
+                            });
+                        }
+                    );
                 }
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;

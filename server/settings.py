@@ -140,7 +140,6 @@ INSTALLED_APPS = [
     'superdesk.publish',
     'superdesk.macro_register',
     'superdesk.commands',
-    'superdesk.predifined_templates',
 
     'apps.archive',
     'apps.stages',
