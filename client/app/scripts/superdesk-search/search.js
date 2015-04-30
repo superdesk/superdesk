@@ -344,7 +344,8 @@
 
         $scope.repo = {
             ingest: true,
-            archive: true
+            archive: true,
+            published: true
         };
 
         function refresh() {
@@ -359,8 +360,12 @@
                 provider = criteria.repo;
             }
 
-            if ($scope.repo.search && $scope.repo.search !== 'local') {
-                provider = $scope.repo.search;
+            if ($scope.repo.search) {
+                if ($scope.repo.search !== 'local') {
+                    provider = $scope.repo.search;
+                } else if (criteria.repo.indexOf(',') >= 0) {
+                    provider = 'search';
+                }
             }
 
             api.query(provider, criteria).then(function(result) {
@@ -771,7 +776,7 @@
                             {term: {unique_name: scope.meta.unique_name}}
                         ];
                         var criteria = {
-                            repo: 'ingest,archive',
+                            repo: 'ingest,archive,published',
                             source: {
                                 query: {filtered: {filter: {
                                     and: filter
@@ -892,9 +897,10 @@
                         if (params.repo) {
                             scope.repo.archive = params.repo.indexOf('archive') >= 0;
                             scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                            scope.repo.published = params.repo.indexOf('published') >= 0;
                         }
 
-                        if (!scope.repo.archive && !scope.repo.ingest) {
+                        if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published) {
                             scope.repo.search = params.repo;
                         } else {
                             scope.repo.search = 'local';

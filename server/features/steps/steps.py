@@ -626,12 +626,15 @@ def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
     data = get_json_data(context.response)
     int_count = int(total_count.replace('+', ''))
+
+    if int_count == 0 or not context.text:
+        return
+
     if '+' in total_count:
         assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
-    if int_count == 0 or not context.text:
-        return
+
     test_json(context)
 
 
@@ -1058,7 +1061,8 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False, 'sign_off': 'foo'}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True,
+            'needs_activation': False, 'sign_off': 'foo'}
     tests.setup_auth_user(context, user)
     set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 
@@ -1397,7 +1401,7 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                     {'term': {'state': state}}
                 ]
             }
-            item = get_archive_items(query)
+            item = get_archive_items(query) + get_published_items(query)
 
             if is_routed:
                 assert len(item) > 0, 'No routed items found for criteria: ' + str(query)
@@ -1457,6 +1461,13 @@ def get_archive_items(query):
     req.max_results = 100
     req.args = {'filter': json.dumps(query)}
     return list(get_resource_service('archive').get(lookup=None, req=req))
+
+
+def get_published_items(query):
+    req = ParsedRequest()
+    req.max_results = 100
+    req.args = {'filter': json.dumps(query)}
+    return list(get_resource_service('published').get(lookup=None, req=req))
 
 
 def assert_items_in_package(item, state, desk, stage):

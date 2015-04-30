@@ -30,7 +30,10 @@ class SearchServiceTestCase(TestCase):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{'task': {'desk': 1}}])
+            self.app.data.insert('archive', [{'task': {'desk': 1}, 'state': 'in_progress'}])
+            self.app.data.insert('archive', [{'task': {'desk': 1}, 'state': 'published'}])
+            self.app.data.insert('published', [{'task': {'desk': 1}, 'state': 'published'}])
+            self.app.data.insert('published', [{'task': {'desk': 1}, 'state': 'killed'}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener
@@ -38,7 +41,7 @@ class SearchServiceTestCase(TestCase):
     def test_query_post_processing(self):
         with self.app.app_context():
             docs = self.app.data.find('search', None, None)
-            self.assertEquals(2, docs.count())
+            self.assertEquals(4, docs.count())
 
             ingest_docs = [doc for doc in docs if doc['_type'] == 'ingest']
             self.assertEquals('ingest', ingest_docs[0]['_resource_listener'])
@@ -59,4 +62,16 @@ class SearchServiceTestCase(TestCase):
         with self.app.app_context():
             self.app.data.insert('archive', [{'task': {'desk': None}}, {'task': {}}])
             cursor = self.app.data.find('search', None, None)
-            self.assertEquals(2, cursor.count())
+            self.assertEquals(4, cursor.count())
+
+    def test_it_includes_published_content(self):
+        with self.app.app_context():
+            cursor = self.app.data.find('search', None, None)
+            self.assertEquals(4, cursor.count())
+
+    def test_it_excludes_published_content(self):
+        with self.app.app_context():
+            req = ParsedRequest()
+            req.args = {'repo': 'archive'}
+            docs = self.app.data.find('search', req, None)
+            self.assertEquals(1, docs.count())

@@ -114,6 +114,7 @@ class ArchiveResource(Resource):
             'last_version': 0
         },
         'default_sort': [('_updated', -1)],
+        'elastic_filter': {'terms': {'state': ['fetched', 'routed', 'draft', 'in_progress', 'submitted']}},
         'elastic_filter_callback': private_content_filter
     }
     etag_ignore_fields = ['highlights']
