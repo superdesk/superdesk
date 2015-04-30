@@ -58,3 +58,5 @@ def init_app(app):
                         description='User can manage subscribers')
     superdesk.privilege(name='publish_queue', label='Publish Queue',
                         description='User can update publish queue')
+    superdesk.privilege(name='output_channel_seq_num_settings', label='Update Output Channel Sequence Number Settings',
+                        description='User can update Update Output Channel Sequence Number Settings.')

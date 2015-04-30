@@ -256,8 +256,8 @@
         };
     }
 
-    OutputChannelsDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
-    function OutputChannelsDirective(gettext, notify, api, adminPublishSettingsService, modal) {
+    OutputChannelsDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal', 'privileges'];
+    function OutputChannelsDirective(gettext, notify, api, adminPublishSettingsService, modal, privileges) {
         return {
             templateUrl: 'scripts/superdesk-publish/views/output-channels.html',
             link: function ($scope) {
@@ -267,6 +267,7 @@
                 $scope.subscribers = null;
                 $scope.subscriberLookup = {};
                 $scope.newSubscriber = {_id: null};
+                $scope.can_update_seq_num_settings = Boolean(privileges.privileges.output_channel_seq_num_settings);
 
                 function fetchOutputChannels() {
                     adminPublishSettingsService.fetchOutputChannels().then(
@@ -317,9 +318,12 @@
                                 $scope.cancel();
                             },
                             function(response) {
-                                if (angular.isDefined(response.data._issues) &&
-                                        angular.isDefined(response.data._issues['validator exception'])) {
-                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                if (angular.isDefined(response.data._issues)) {
+                                    if (angular.isDefined(response.data._message)) {
+                                        notify.error(gettext('Error: ' + response.data._message));
+                                    } else if (angular.isDefined(response.data._issues['validator exception'])) {
+                                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                    }
                                 } else {
                                     notify.error(gettext('Error: Failed to save Output Channel.'));
                                 }
@@ -329,7 +333,9 @@
 
                 $scope.edit = function(outputChannel) {
                     $scope.origOutputChannel = outputChannel || {};
+
                     $scope.outputChannel = _.create($scope.origOutputChannel);
+                    $scope.outputChannel.sequence_num_settings = $scope.origOutputChannel.sequence_num_settings || {};
                 };
 
                 $scope.remove = function(outputChannel) {
@@ -500,7 +506,7 @@
                         templateUrl: 'scripts/superdesk-publish/views/settings.html',
                         controller: AdminPublishSettingsController,
                         category: superdesk.MENU_SETTINGS,
-                        privileges: {output_channels: 1, destination_groups: 1},
+                        privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
                         priority: 2000,
                         beta: true
                     })

@@ -40,12 +40,20 @@ class PublishQueueResource(Resource):
                 'config': {'type': 'dict'}
             }
         },
+        'published_seq_num': {
+            'type': 'integer'
+        },
         'selector_codes': {
             'type': 'list'
         },
         'error_message': {
             'type': 'string'
         }
+    }
+
+    additional_lookup = {
+        'url': 'regex("[\w]+")',
+        'field': 'item_id'
     }
 
     datasource = {'default_sort': [('_created', 1)]}
