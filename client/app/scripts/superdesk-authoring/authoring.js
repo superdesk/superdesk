@@ -24,7 +24,8 @@
         keywords: [],
         description: null,
         destination_groups: null,
-        sign_off: null
+        sign_off: null,
+		publish_schedule: null
     };
 
     /**
