@@ -7,13 +7,14 @@
 </div>
 <div class="dropdown dropdown-noarrow dropdown-nested dropdown-bigger pull-right" dropdown>
     <button class="dropdown-toggle" dropdown-toggle ng-show="activeTree.length">
-        <i class="icon-dots-vertical"></i>
+        <i class="icon-list-menu"></i>
     </button>
     <ul class="dropdown-menu nested-menu" ng-show="activeTree.length">
         <li ng-if="activeTerm">
             <i class="backlink level-up" ng-click="openParent(activeTerm, $event)"></i>
             <button ng-click="selectTerm(activeTerm)">
                 <b class="category">{{ activeTerm.name }}</b>
+                <b class="category-hover">{{ :: "Choose entire category" | translate }}</b>
             </button>
         </li>
         <li ng-if="activeTerm" class="divider"></li>
