@@ -445,7 +445,9 @@ define([
                         }
                     );
 
-                    fetchSourceErrors(provider.type);
+                    if (provider && provider.type) {
+                        fetchSourceErrors(provider.type);
+                    }
                 };
 
                 $scope.cancel = function() {

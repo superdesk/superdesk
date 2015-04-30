@@ -38,7 +38,7 @@
                         <div class="field">
                             <label class="right">
                                 {{:: 'Status' | translate }}
-                                <span tooltip="{{ providerSwitchOn ? 'Close' : 'Open'  | translate }}" tooltip-placement="right">
+                                <span tooltip="{{ provider.is_closed ? 'Open' : 'Close'  | translate }}" tooltip-placement="right">
                                     <span sd-switch-inverted ng-model="provider.is_closed"></span>
                                 </span>
                             </label>
