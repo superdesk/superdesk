@@ -7,12 +7,12 @@ is scaleable to suit news organizations of any size.
 
 ### Installation
 
-Use [docker-compose](http://fig.sh "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
+Use [docker-compose](http://docs.docker.com/compose/ "") and the config from the `docker` folder or build docker images manually from `Dockerfile`s from `client` and `server` folders accordingly.
 
 ##### install system-wide dependencies
 
 ```sh
-$ sudo apt-get install docker.io python2 python-virtualenv
+$ sudo apt-get install docker.io python2.7 python-virtualenv git
 ```
 
 and make sure you can run [docker without sudo](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).

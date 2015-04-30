@@ -24,4 +24,4 @@ echo '
 |=================================================================|
 ' &&
 docker-compose build &&
-docker-compose up --no-recreate --timeout 600
+docker-compose up --timeout 600

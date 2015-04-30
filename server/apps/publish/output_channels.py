@@ -9,6 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from apps.archive.common import get_user
+from apps.users import is_admin
+from settings import MAX_VALUE_OF_PUBLISH_SEQUENCE
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
@@ -40,6 +43,14 @@ class OutputChannelsResource(Resource):
         'is_active': {
             'type': 'boolean',
             'default': True
+        },
+        'sequence_num_settings': {
+            'type': 'dict',
+            'schema': {
+                'min': {'type': 'integer'},
+                'max': {'type': 'integer'},
+                'start_from': {'type': 'integer'}
+            }
         }
     }
 
@@ -48,9 +59,66 @@ class OutputChannelsResource(Resource):
 
 
 class OutputChannelsService(BaseService):
+
+    def on_create(self, docs):
+        for doc in docs:
+            self.__is_authorized_to_update_seq_num_settings(doc)
+            self.__validate_seq_num_settings(doc)
+
+    def on_update(self, updates, original):
+        self.__is_authorized_to_update_seq_num_settings(updates)
+        self.__validate_seq_num_settings(updates)
+
     def on_delete(self, doc):
         lookup = {'output_channels.channel': str(doc.get('_id'))}
         dest_groups = get_resource_service('destination_groups').get(req=None, lookup=lookup)
         if dest_groups and dest_groups.count() > 0:
             raise SuperdeskApiError.preconditionFailedError(
                 message='Output Channel is associated with Destination Groups.')
+
+    def __is_authorized_to_update_seq_num_settings(self, output_channel):
+        """
+        Checks if the user requested is authorized to modify sequence number settings.
+        If unauthorized then exception will be raised.
+        """
+
+        user = get_user()
+        if 'sequence_num_settings' in output_channel and not is_admin(user) \
+                and (user['active_privileges'].get('output_channel_seq_num_settings', 0) == 0):
+            raise SuperdeskApiError.forbiddenError("Unauthorized to modify Sequence Number Settings")
+
+    def __validate_seq_num_settings(self, output_channel):
+        """
+        Validates the 'sequence_num_settings' property if present in output_channel. Below are the validation rules:
+            1.  If min value is present then it should be greater than 0
+            2.  If min is present and max value isn't available then it's defaulted to MAX_VALUE_OF_PUBLISH_SEQUENCE
+            3.  If start_from present then the value should be between min and max.
+                Otherwise, it's defaulted to the value of min
+
+        :return: True if validation succeeds otherwise return False.
+        """
+
+        if output_channel.get('sequence_num_settings'):
+            min = output_channel.get('sequence_num_settings').get('min', 1)
+            max = output_channel.get('sequence_num_settings').get('max', MAX_VALUE_OF_PUBLISH_SEQUENCE)
+            start_from = output_channel.get('sequence_num_settings').get('start_from', min)
+
+            if min <= 0:
+                raise SuperdeskApiError.badRequestError(payload={"sequence_num_settings.min": 1},
+                                                        message="Value of Minimum in Sequence Number Settings should "
+                                                                "be greater than 0")
+
+            if min >= max:
+                raise SuperdeskApiError.badRequestError(payload={"sequence_num_settings.min": 1},
+                                                        message="Value of Minimum in Sequence Number Settings should "
+                                                                "be less than the value of Maximum")
+
+            if not min <= start_from <= max:
+                raise SuperdeskApiError.badRequestError(payload={"sequence_num_settings.start_from": 1},
+                                                        message="Value of Start From in Sequence Number Settings "
+                                                                "should be between Minimum and Maximum")
+
+            del output_channel['sequence_num_settings']
+            output_channel['sequence_num_settings'] = {"min": min, "max": max, "start_from": start_from}
+
+        return True
