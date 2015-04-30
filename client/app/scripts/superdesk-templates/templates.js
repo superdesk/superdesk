@@ -28,13 +28,15 @@
         };
     }
 
-    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templatesSettingsService', 'modal'];
-    function TemplatesDirective(gettext, notify, api, templatesSettingsService, modal) {
+    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templatesSettingsService', 'modal', 'adminPublishSettingsService'];
+    function TemplatesDirective(gettext, notify, api, templatesSettingsService, modal, adminPublishSettingsService) {
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
                 $scope.templates = null;
                 $scope.content_templates = null;
+                $scope.origTemplate = null;
+                $scope.template = null;
 
                 function fetchTemplates() {
                     templatesSettingsService.fetchTemplates().then(
@@ -68,8 +70,23 @@
                 };
 
                 $scope.edit = function(template) {
-                    $scope.origTemplate = template || {};
+                    $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
+
+                    $scope.origTemplate.destination_groups = $scope.origTemplate.destination_groups || [];
+
+                    if ($scope.origTemplate.destination_groups && $scope.origTemplate.destination_groups.length) {
+                        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origTemplate.destination_groups)
+                            .then(function(result) {
+                                var destinationGroups = [];
+                                _.each(result._items, function(item) {
+                                    destinationGroups.push(item);
+                                });
+                                $scope.vars = {destinationGroups: destinationGroups};
+                            });
+                    } else {
+                        $scope.vars = {destinationGroups: []};
+                    }
                 };
 
                 $scope.remove = function(template) {
@@ -92,7 +109,17 @@
                 $scope.cancel = function() {
                     $scope.origTemplate = null;
                     $scope.template = null;
+                    $scope.vars = null;
                 };
+
+                $scope.$watch('vars', function() {
+                    if ($scope.vars && $scope.vars.destinationGroups) {
+                        var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
+                        if (!_.isEqual(destinationGroups, $scope.template.destination_groups)) {
+                            $scope.template.destination_groups = destinationGroups;
+                        }
+                    }
+                }, true);
 
                 fetchTemplates();
             }
