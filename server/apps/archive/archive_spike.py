@@ -119,7 +119,7 @@ superdesk.workflow_state('spiked')
 
 superdesk.workflow_action(
     name='spike',
-    exclude_states=['spiked', 'published', 'killed'],
+    exclude_states=['spiked', 'published', 'scheduled', 'killed'],
     privileges=['spike']
 )
 

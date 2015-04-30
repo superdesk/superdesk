@@ -425,6 +425,6 @@ superdesk.workflow_action(
 superdesk.workflow_state('submitted')
 superdesk.workflow_action(
     name='move',
-    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'killed'],
+    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'scheduled', 'killed'],
     privileges=['archive']
 )

@@ -45,13 +45,13 @@ class WorkflowTestCase(tests.TestCase):
     def test_is_workflow_action_valid(self):
         superdesk.workflow_action(
             name='test_spike',
-            exclude_states=['spiked', 'published', 'killed'],
+            exclude_states=['spiked', 'published', 'scheduled', 'killed'],
             privileges=['spike']
         )
 
         superdesk.workflow_action(
             name='test_on_hold',
-            exclude_states=['spiked', 'published', 'killed', 'on_hold'],
+            exclude_states=['spiked', 'published', 'scheduled', 'killed', 'on_hold'],
             privileges=['on_hold']
         )
 
@@ -60,3 +60,4 @@ class WorkflowTestCase(tests.TestCase):
         self.assertTrue(superdesk.is_workflow_state_transition_valid('test_on_hold', 'routed'))
         self.assertTrue(superdesk.is_workflow_state_transition_valid('test_on_hold', 'fetched'))
         self.assertFalse(superdesk.is_workflow_state_transition_valid('test_on_hold', 'published'))
+        self.assertFalse(superdesk.is_workflow_state_transition_valid('test_on_hold', 'scheduled'))
