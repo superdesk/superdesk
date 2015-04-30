@@ -61,10 +61,8 @@ function rgb(color) {
  * Replace given dom elem with its contents
  */
 function replaceSpan(elem) {
-    var range = document.createRange();
-    range.selectNode(elem);
-    var fragment = range.createContextualFragment(elem.innerHTML);
-    elem.parentNode.replaceChild(fragment, elem);
+    var text = document.createTextNode(elem.textContent);
+    elem.parentNode.replaceChild(text, elem);
 }
 
 /**
@@ -123,16 +121,21 @@ function SpellcheckService($q, api, dictionaries, editor) {
     }
 
     /**
-     * Check given text and return all words that are not part of dict
+     * Find errors in given text
+     *
+     * @param {string} text
      */
-    this.check = function check(text) {
+    this.errors = function check(text) {
+
         return getDict().then(function() {
-            var words = text.match(/[a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g),
+            var words = text.match(/[0-9a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g),
                 errors = [];
             angular.forEach(words, function(word) {
-                var lowerWord = word.toLowerCase();
-                if (!dict[lowerWord]) {
-                    errors.push(word);
+                if (isNaN(word)) {
+                    var lowerWord = word.toLowerCase();
+                    if (!dict[lowerWord]) {
+                        errors.push(word);
+                    }
                 }
             });
 
@@ -149,17 +152,25 @@ function SpellcheckService($q, api, dictionaries, editor) {
     }
 
     /**
-     * Remove background color and set error class to all error elements in given node
+     * Find all nodes with predefined color and set the class
      */
     function setErrorClass(node) {
         var tree = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT),
             span;
         while ((span = tree.nextNode()) != null) {
             if (isError(span)) {
-                span.style.backgroundColor = null;
-                span.classList.add(ERROR_CLASS);
+                replaceStyleWithClass(span);
             }
         }
+    }
+
+    /**
+     * Replace style attr with class
+     */
+    function replaceStyleWithClass(span) {
+        span.removeAttribute('style');
+        span.className = '';
+        span.classList.add(ERROR_CLASS);
     }
 
     /**
@@ -183,7 +194,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
      */
     this.render = function render(elem) {
         var node = elem;
-        return this.check(node.textContent).then(function(errors) {
+        return this.errors(node.textContent).then(function(errors) {
             var selection = editor.storeSelection(node);
             angular.forEach(errors, function(error) {
                 hiliteError(node, error);
@@ -213,7 +224,10 @@ function SpellcheckService($q, api, dictionaries, editor) {
     };
 }
 
-angular.module('superdesk.editor.spellcheck', [])
+angular.module('superdesk.editor.spellcheck', [
+    'superdesk.dictionaries',
+    'superdesk.editor'
+    ])
     .service('spellcheck', SpellcheckService);
 
 })();

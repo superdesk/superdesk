@@ -36,7 +36,7 @@ def train(features):
 
 
 def words(text):
-    return re.findall('[^\d\W_]+', text.lower())
+    return [w for w in re.findall('[^\W_]+', text.lower()) if not w.isdigit()]
 
 
 def add_words(nwords, text, val=1):
