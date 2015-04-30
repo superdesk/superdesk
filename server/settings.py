@@ -140,6 +140,7 @@ INSTALLED_APPS = [
     'superdesk.publish',
     'superdesk.macro_register',
     'superdesk.commands',
+    'superdesk.predifined_templates',
 
     'apps.archive',
     'apps.stages',
@@ -163,6 +164,7 @@ INSTALLED_APPS = [
     'apps.duplication',
     'apps.aap_mm',
     'apps.spellcheck',
+    'apps.templates',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
