@@ -67,12 +67,12 @@ class DuplicateService(BaseService):
 
 superdesk.workflow_action(
     name='fetch_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published'],
+    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published', 'scheduled'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
     name='fetch_as_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published'],
+    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published', 'scheduled'],
     privileges=['archive']
 )

@@ -284,10 +284,17 @@ superdesk.workflow_action(
     privileges=['publish']
 )
 
+superdesk.workflow_state('scheduled')
+superdesk.workflow_action(
+    name='schedule',
+    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
+    privileges=['publish']
+)
+
 superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
-    include_states=['published'],
+    include_states=['published', 'scheduled'],
     privileges=['kill']
 )
 
