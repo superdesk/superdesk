@@ -18,6 +18,10 @@ class ContentTemplatesResource(Resource):
         'template_name': {
             'type': 'string',
             'iunique': True
+        },
+        'destination_groups': {
+            'type': 'list',
+            'schema': Resource.rel('destination_groups', True)
         }
     }
 
