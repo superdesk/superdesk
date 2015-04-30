@@ -13,6 +13,7 @@ from apps.content import metadata_schema
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
 
+
 class ContentTemplatesResource(Resource):
     schema = {
         'template_name': {
@@ -37,6 +38,7 @@ class ContentTemplatesResource(Resource):
     privileges = {'POST': CONTENT_TEMPLATE_PRIVILEGE,
                   'PATCH': CONTENT_TEMPLATE_PRIVILEGE,
                   'DELETE': CONTENT_TEMPLATE_PRIVILEGE}
+
 
 class ContentTemplatesService(Service):
     def on_create(self, docs):
