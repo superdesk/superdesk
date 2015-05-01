@@ -213,9 +213,14 @@
                                 $scope.cancel();
                             },
                             function(response) {
-                                if (angular.isDefined(response.data._issues) &&
-                                        angular.isDefined(response.data._issues['validator exception'])) {
-                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                if (angular.isDefined(response.data._issues)) {
+                                    if (angular.isDefined(response.data._issues['validator exception'])) {
+                                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                    } else if (angular.isDefined(response.data._issues.name) &&
+                                        angular.isDefined(response.data._issues.name.unique)) {
+                                        notify.error(gettext('Error: Subscriber with Name ' + $scope.subscriber.name +
+                                            ' already exists.'));
+                                    }
                                 } else {
                                     notify.error(gettext('Error: Failed to save Subscriber.'));
                                 }
