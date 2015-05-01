@@ -192,7 +192,6 @@ Feature: Publish Queue
         }
       ]
       """
-      And we publish "#archive._id#"
+      And we publish "#archive._id#" with "publish" type and "published" state
       Then we get "published_seq_num" in "/publish_queue/123"
       And we get "published_seq_num" in "/formatted_item/123"
-
