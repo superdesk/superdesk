@@ -421,7 +421,7 @@ class ArchiveSaveService(BaseService):
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
     name='save',
-    include_states=['draft', 'fetched', 'routed', 'submitted'],
+    include_states=['draft', 'fetched', 'routed', 'submitted', 'scheduled'],
     privileges=['archive']
 )
 

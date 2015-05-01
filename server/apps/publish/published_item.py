@@ -59,10 +59,13 @@ class PublishedItemService(BaseService):
         return items
 
     def get_other_published_items(self, _id):
-        query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(query)}
-        return super().get(req=request, lookup=None)
+        try:
+            query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            return super().get(req=request, lookup=None)
+        except:
+            return []
 
     def update_other_published_items(self, _id, state):
         items = self.get_other_published_items(_id)

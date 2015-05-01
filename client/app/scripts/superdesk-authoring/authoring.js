@@ -208,6 +208,14 @@
             });
         };
 
+        this.deschedule = function deschedule(orig, diff) {
+            diff = extendItem({}, diff);
+            return api.update('archive_deschedule', orig, {})
+            .then(function(item) {
+                return item;
+            });
+        }
+
         /**
          * Autosave the changes
          *
@@ -484,10 +492,12 @@
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                
                 $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
-                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
+                
+                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed', 'scheduled'], $scope.origItem.state);
 
                 if ($scope.action === 'kill') {
                     api('content_templates').getById('kill').then(
@@ -623,6 +633,22 @@
                         notify.error(gettext('Error. Destination groups invalid.'));
                     });
                 };
+
+                $scope.deschedule = function() {
+                    $scope.item.publish_schedule = false;
+                    return $scope.save();
+                    // authoring.deschedule($scope.origItem, $scope.item)
+                    // .then(function(res) {
+                    //     if (res) {
+                    //         notify.success(gettext('Item descheduled.'));
+                    //         $scope.item = res;
+                    //         $scope.dirty = false;
+                    //         $location.url($scope.referrerUrl);
+                    //     }
+                    // }, function(response) {
+                    //     notify.error(gettext('Error. Item not descheduled.'));
+                    // });
+                }
 
                 /**
                  * Close an item - unlock
@@ -1201,9 +1227,55 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'killed';
+                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'scheduled' && item.state !== 'killed';
                     }
                 })
+                // .activity('deschedule', {
+                //     label: gettext('Deschedule'),
+                //     icon: 'remove',
+                //     monitor: true,
+                //     controller: ['authoring', 'data', '$rootScope', function spikeActivity(authoring, data, $rootScope) {
+                //         return authoring.deschedule(data.item).then(function(item) {
+                //             $rootScope.$broadcast('item:descheduled');
+                //             return item;
+                //         });
+                //     }],
+                //     filters: [{action: 'list', type: 'archive'}],
+                //     action: 'deschedule',
+                //     condition: function(item) {
+                //         return item.type !== 'composite' && item.state === 'scheduled';
+                //     }
+                // })
+                // .activity('cancel.text', {
+                //     label: gettext('Deschedule'),
+                //     priority: 10,
+                //     icon: 'remove',
+                //     controller: ['data', 'superdesk', function(data, superdesk) {
+                //         superdesk.intent('deschedule', 'content_article', data.item);
+                //     }],
+                //     filters: [{action: 'list', type: 'archive'}],
+                //     condition: function(item) {
+                //         return item.type !== 'composite' && item.state === 'scheduled';
+                //     },
+                //     privileges: {publish: 1}
+                // })
+                // .activity('dechedule.content_article', {
+                //     category: '/authoring',
+                //     href: '/authoring/:_id/deschedule',
+                //     when: '/authoring/:_id/deschedule',
+                //     label: gettext('Descheduling'),
+                //     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                //     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                //     controller: AuthoringController,
+                //     filters: [{action: 'deschedule', type: 'content_article'}],
+                //     resolve: {
+                //         item: ['$route', 'authoring', function($route, authoring) {
+                //             return authoring.open($route.current.params._id, true);
+                //         }],
+                //         action: [function() {return 'dechedule';}]
+                //     },
+                //     authoring: true
+                // })
                 .activity('kill.text', {
                     label: gettext('Kill item'),
                     priority: 100,
