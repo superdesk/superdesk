@@ -81,6 +81,12 @@
                 });
             },
 
+            fetchFormattedItems: function(criteria) {
+                criteria = criteria || {};
+                criteria.max_results = 200;
+                return _fetch('formatted_item', criteria);
+            },
+
             fetchDestinationGroups: function(criteria) {
                 criteria = criteria || {};
                 criteria.max_results = 200;
@@ -131,6 +137,8 @@
         $scope.subscriberLookup = {};
         $scope.outputChannels = null;
         $scope.outputChannelLookup = {};
+        $scope.formattedItems = null;
+        $scope.formattedItemLookup = {};
         $scope.publish_queue = null;
 
         var promises = [];
@@ -146,6 +154,13 @@
             $scope.outputChannels = items._items;
             _.each(items._items, function(item) {
                 $scope.outputChannelLookup[item._id] = item;
+            });
+        }));
+
+        promises.push(adminPublishSettingsService.fetchFormattedItems().then(function(items) {
+            $scope.formattedItems = items._items;
+            _.each(items._items, function(item) {
+                $scope.formattedItemLookup[item._id] = item;
             });
         }));
 
@@ -546,6 +561,12 @@
                 type: 'http',
                 backend: {
                     rel: 'publish_queue'
+                }
+            });
+            apiProvider.api('formatted_item', {
+                type: 'http',
+                backend: {
+                    rel: 'formatted_item'
                 }
             });
         }]);

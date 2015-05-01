@@ -7,6 +7,7 @@
 	<table class="table">
 		<thead>
 			<tr>
+				<td>Sequence No</td>
 				<td>Queue Id</td>
 				<td>Article Id</td>
 				<td>Formatted Article Id</td>
@@ -22,6 +23,7 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
+				<td>{{formattedItemLookup[queue_item.formatted_item_id].published_seq_num}}</td>
 				<td>{{queue_item._id}}</td>
 				<td>{{queue_item.item_id}}</td>
 				<td>{{queue_item.formatted_item_id}}</td>
