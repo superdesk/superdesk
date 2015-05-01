@@ -234,6 +234,41 @@ Feature: Content Publishing
       """
 
     @auth
+    Scenario: Clean autosave on publishing item
+        Given "desks"
+          """
+          [{"name": "Sports"}]
+          """
+        And we have "/destination_groups" with "destgroup1" and success
+          """
+          [
+            {
+              "name":"Group 1", "description": "new stuff",
+              "destination_groups": [], "output_channels": []
+            }
+          ]
+          """
+        And "archive"
+          """
+          [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+          """
+        When we post to "/archive_autosave"
+          """
+            {"_id": "#archive._id#", "guid": "123", "headline": "testing", "state": "fetched", "destination_groups": ["#destgroup1#"]}
+          """
+        Then we get existing resource
+          """
+            {"_id": "#archive._id#", "guid": "123", "headline": "testing", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+          """
+        When we publish "#archive._id#" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/archive_autosave/#archive._id#"
+        Then we get error 404
+
+
+    @auth
     Scenario: We can lock a published content and then kill it
       Given "desks"
       """

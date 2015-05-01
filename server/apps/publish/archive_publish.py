@@ -8,22 +8,24 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
-import logging
-import superdesk
-
 from eve.versioning import resolve_document_version
-from flask import current_app as app
 from eve.utils import config, document_etag
+from flask import current_app as app
 from copy import copy
-from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
+import logging
+
+import superdesk
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
+
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
+from apps.common.components.utils import get_component
+from apps.item_autosave.components.item_autosave import ItemAutosave
+from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +84,7 @@ class BasePublishService(BaseService):
                 updates[config.CONTENT_STATE] = self.published_state
 
             original.update(updates)
+            get_component(ItemAutosave).clear(original['_id'])
 
             if archived_item['type'] != 'composite':
                 # queue only text items
