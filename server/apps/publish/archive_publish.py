@@ -283,6 +283,20 @@ class CorrectPublishService(BasePublishService):
     published_state = 'corrected'
 
 
+class DeschedulePublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'deschedule')
+
+
+class DeschedulePublishService(BasePublishService):
+    publish_type = 'deschedule'
+    published_state = 'in_progress'
+
+    def on_update(self, docs):
+        pass
+
+
 superdesk.workflow_state('published')
 superdesk.workflow_action(
     name='publish',
@@ -294,7 +308,13 @@ superdesk.workflow_state('scheduled')
 superdesk.workflow_action(
     name='schedule',
     include_states=['fetched', 'routed', 'submitted', 'in_progress'],
-    privileges=['publish']
+    privileges=['schedule']
+)
+
+superdesk.workflow_action(
+    name='deschedule',
+    include_states=['scheduled'],
+    privileges=['deschedule']
 )
 
 superdesk.workflow_state('killed')
