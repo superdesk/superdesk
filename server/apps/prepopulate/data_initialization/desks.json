@@ -4,7 +4,6 @@
         "description": "Domestic news, so from all over Australia in this case.",
         "incoming_stage": "54e68ec41024542de76d663f",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54e64b011024542de640fee0"},
             {"user": "54ed946e10245479ccc3837c"},
             {"user": "54ed946e10245479ccc3837d"},
@@ -71,7 +70,6 @@
         "description": "All news that is from overseas, so from anywhere outside of Australia.",
         "incoming_stage": "54e68fcd1024542de76d6642",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54e64b011024542de640fee0"},
             {"user": "54ed946e10245479ccc38382"},
             {"user": "54ed946e10245479ccc38383"},
@@ -132,7 +130,6 @@
         "description": "Content automatically routed to the desk, or manually fetched to it, should usually land in this stage. The producer works primarily out of this stage, copytasting and sending content items to the subs.",
         "incoming_stage": "54e691ca1024542de640fef0",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54e64b011024542de640fee0"},
             {"user": "54ed946e10245479ccc38394"},
             {"user": "54ed946e10245479ccc38395"},
@@ -193,7 +190,6 @@
         "description": "News from and about New Zealand.",
         "incoming_stage": "54e692311024542ddeb76af7",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54e64b011024542de640fee0"},
             {"user": "54ed94da10245479ccc383f8"},
             {"user": "54ed94da10245479ccc383f9"},
@@ -225,7 +221,6 @@
         "description": "Sport news, commentary and results - domestic and international.",
         "incoming_stage": "54e6928d1024542de640fef4",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54ed946e10245479ccc383a2"},
             {"user": "54ed946e10245479ccc383a3"},
             {"user": "54ed946e10245479ccc383a4"},
@@ -303,7 +298,6 @@
         "description": "Content here is all about lifestyle, culture and entertainment.",
         "incoming_stage": "54e6930f1024542ddeb76afa",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54ed955910245479d505d289"},
             {"user": "54ed955910245479d505d28a"},
             {"user": "54ed955910245479d505d28b"},
@@ -329,7 +323,6 @@
         "description": "This is a desk to be used for special coverage, for elections, Olympics, an interesting war/campaign, a high-profile court case or commission of inquiry.",
         "incoming_stage": "54e698a31024542de76d6649",
         "members": [
-            {"user": "54e5b8451024542d9803fa05"},
             {"user": "54e64b011024542de640fee0"},
             {"user": "54ed946e10245479ccc3837c"},
             {"user": "54ed946e10245479ccc38382"},

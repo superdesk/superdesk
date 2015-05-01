@@ -8,7 +8,9 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import re
 from superdesk import Resource, Service
+from superdesk.errors import SuperdeskApiError
 from apps.content import metadata_schema
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
@@ -43,8 +45,16 @@ class ContentTemplatesResource(Resource):
 class ContentTemplatesService(Service):
     def on_create(self, docs):
         for doc in docs:
-            doc['template_name'] = doc['template_name'].lower()
+            doc['template_name'] = doc['template_name'].lower().strip()
+            self.validate_template_name(doc['template_name'])
 
     def on_update(self, updates, original):
         if 'template_name' in updates:
-            updates['template_name'] = updates['template_name'].lower()
+            updates['template_name'] = updates['template_name'].lower().strip()
+            self.validate_template_name(updates['template_name'])
+
+    def validate_template_name(self, doc_template_name):
+        query = {'template_name': re.compile('^{}$'.format(doc_template_name), re.IGNORECASE)}
+        if self.find_one(req=None, **query):
+            msg = 'Template name must be unique'
+            raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
