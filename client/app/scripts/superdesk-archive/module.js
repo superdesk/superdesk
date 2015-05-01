@@ -172,7 +172,7 @@ define([
                 })
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
-                    icon: 'archive',
+                    icon: 'copy',
                     controller: ['$location', 'data', function($location, data) {
                         $location.search('fetch', data.item._id);
                     }],
