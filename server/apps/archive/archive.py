@@ -42,6 +42,8 @@ from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
 from .archive_composite import PackageService
 from .archive_media import ArchiveMediaService
+from superdesk.utc import utcnow
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -179,6 +181,15 @@ class ArchiveService(BaseService):
     def on_update(self, updates, original):
         is_update_allowed(original)
         user = get_user()
+
+        if updates.get('publish_schedule'):
+            if original['state'] == 'scheduled':
+                # this is an descheduling action
+                self.deschedule_item(original)
+                return
+            else:
+                # validate the schedule
+                self.validate_schedule(updates.get('publish_schedule'))
 
         if 'unique_name' in updates and not is_admin(user) \
                 and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
@@ -352,6 +363,25 @@ class ArchiveService(BaseService):
             new_versions.append(old_version)
         if new_versions:
             get_resource_service('archive_versions').post(new_versions)
+
+    def deschedule_item(self, doc):
+        doc['state'] = 'in_progress'
+        del doc['publish_schedule']
+        # delete entries from publish queue
+        get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
+        # delete entry from published repo
+        get_resource_service('published').delete_by_article_id(doc['_id'])
+
+    def validate_schedule(self, schedule):
+        if not isinstance(schedule, datetime.date):
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.date() or schedule.date().year <= 1970:
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.time():
+            raise SuperdeskApiError.badRequestError("Schedule time is not recognized")
+        if schedule < utcnow():
+            raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
+
 
     def can_edit(self, item, user_id):
         """
