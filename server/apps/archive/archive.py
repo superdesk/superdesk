@@ -185,8 +185,7 @@ class ArchiveService(BaseService):
         if updates.get('publish_schedule'):
             if original['state'] == 'scheduled':
                 # this is an descheduling action
-                self.deschedule_item(original)
-                return
+                self.deschedule_item(updates, original)
             else:
                 # validate the schedule
                 self.validate_schedule(updates.get('publish_schedule'))
@@ -364,9 +363,9 @@ class ArchiveService(BaseService):
         if new_versions:
             get_resource_service('archive_versions').post(new_versions)
 
-    def deschedule_item(self, doc):
-        doc['state'] = 'in_progress'
-        del doc['publish_schedule']
+    def deschedule_item(self, updates, doc):
+        updates['state'] = 'in_progress'
+        del updates['publish_schedule']
         # delete entries from publish queue
         get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
         # delete entry from published repo
@@ -381,7 +380,6 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.badRequestError("Schedule time is not recognized")
         if schedule < utcnow():
             raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
-
 
     def can_edit(self, item, user_id):
         """
