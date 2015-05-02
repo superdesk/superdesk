@@ -27,7 +27,6 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
         });
     };
 
-    
     $scope.$watch('item.publish_schedule_date', function() {
         setPublishScheduleDate();
     });

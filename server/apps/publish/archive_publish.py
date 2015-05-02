@@ -73,7 +73,14 @@ class BasePublishService(BaseService):
             # document is saved to keep the initial changes
             set_sign_off(updates, original)
             self.backend.update(self.datasource, id, updates, original)
-            updates[config.CONTENT_STATE] = self.published_state
+
+            # document is saved to change the status
+            if original.get('publish_schedule') \
+                    and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
+                updates[config.CONTENT_STATE] = 'scheduled'
+            else:
+                updates[config.CONTENT_STATE] = self.published_state
+
             original.update(updates)
 
             if archived_item['type'] != 'composite':
@@ -82,12 +89,6 @@ class BasePublishService(BaseService):
                 task = self.__send_to_publish_stage(original)
                 if task:
                     updates['task'] = task
-
-            # document is saved to change the status
-            if original.get('publish_schedule'):
-                updates[config.CONTENT_STATE] = 'scheduled'
-            else:
-                updates[config.CONTENT_STATE] = 'published'
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
@@ -281,20 +282,6 @@ class CorrectPublishResource(BasePublishResource):
 class CorrectPublishService(BasePublishService):
     publish_type = 'correct'
     published_state = 'corrected'
-
-
-class DeschedulePublishResource(BasePublishResource):
-
-    def __init__(self, endpoint_name, app, service):
-        super().__init__(endpoint_name, app, service, 'deschedule')
-
-
-class DeschedulePublishService(BasePublishService):
-    publish_type = 'deschedule'
-    published_state = 'in_progress'
-
-    def on_update(self, docs):
-        pass
 
 
 superdesk.workflow_state('published')

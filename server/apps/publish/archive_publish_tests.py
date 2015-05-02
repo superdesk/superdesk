@@ -169,5 +169,6 @@ class ArchivePublishTestCase(TestCase):
             archive_publish.ArchivePublishService().queue_transmission(self.articles[1])
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(6, queue_items.count())
-            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(self.articles[1]['_id'])
+            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend())\
+                .delete_by_article_id(self.articles[1]['_id'])
             self.assertEquals(0, queue_items.count())
