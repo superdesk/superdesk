@@ -588,15 +588,48 @@
 
                 function validateDestinationGroups(item) {
                     if (!item.destination_groups || !item.destination_groups.length) {
-                        return $q.reject();
+                        return $q.reject('Error. Destination groups invalid.');
                     }
                     return adminPublishSettingsService.fetchDestinationGroupsByIds(item.destination_groups)
                     .then(function(result) {
                         if (result._items.length !== item.destination_groups.length) {
-                            return $q.reject();
+                            return $q.reject('Error. Destination groups invalid.');
                         }
                         return true;
                     });
+                }
+
+                function validatePublishSchedule(item) {
+                    if (item.publish_schedule_date && !item.publish_schedule_time) {
+                        notify.error(gettext('Publish Schedule time is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule_time && !item.publish_schedule_date) {
+                        notify.error(gettext('Publish Schedule date is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule) {
+                        var schedule = new Date(item.publish_schedule);
+
+                        if (!_.isDate(schedule)) {
+                            notify.error(gettext('Publish Schedule is not a valid date!'));
+                            return false
+                        }
+
+                        if (schedule < _.now()) {
+                            notify.error(gettext('Publish Schedule cannot be earlier than now!'));
+                            return false;
+                        }
+
+                        if (!schedule.getTime()) {
+                            notify.error(gettext('Publish Schedule time is invalid!'));
+                            return false;
+                        }
+                    }
+                    
+                   return true;
                 }
 
                 function publishItem(orig, item) {
@@ -615,39 +648,30 @@
                 }
 
                 $scope.publish = function() {
-                    validateDestinationGroups($scope.item)
-                    .then(function() {
-                        if ($scope.dirty) { // save dialog & then publish if confirm
-                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
-                            .then(function(res) {
-                                if (res) {
-                                    publishItem($scope.origItem, $scope.item);
-                                }
-                            }, function(response) {
-                                notify.error(gettext('Error. Item not published.'));
-                            });
-                        } else { // Publish
-                            publishItem($scope.origItem, $scope.item);
-                        }
-                    }, function(res) {
-                        notify.error(gettext('Error. Destination groups invalid.'));
-                    });
+                    if (validatePublishSchedule($scope.item)) {
+                        validateDestinationGroups($scope.item)
+                        .then(function() {
+                            if ($scope.dirty) { // save dialog & then publish if confirm
+                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
+                                .then(function(res) {
+                                    if (res) {
+                                        publishItem($scope.origItem, $scope.item);
+                                    }
+                                }, function(response) {
+                                    notify.error(gettext('Error. Item not published.'));
+                                });
+                            } else { // Publish
+                                publishItem($scope.origItem, $scope.item);
+                            }
+                        }, function(res) {
+                            notify.error(gettext(res));
+                        });
+                    }
                 };
 
                 $scope.deschedule = function() {
                     $scope.item.publish_schedule = false;
                     return $scope.save();
-                    // authoring.deschedule($scope.origItem, $scope.item)
-                    // .then(function(res) {
-                    //     if (res) {
-                    //         notify.success(gettext('Item descheduled.'));
-                    //         $scope.item = res;
-                    //         $scope.dirty = false;
-                    //         $location.url($scope.referrerUrl);
-                    //     }
-                    // }, function(response) {
-                    //     notify.error(gettext('Error. Item not descheduled.'));
-                    // });
                 }
 
                 /**
@@ -1230,52 +1254,6 @@
                         return item.type !== 'composite' && item.state !== 'published' && item.state !== 'scheduled' && item.state !== 'killed';
                     }
                 })
-                // .activity('deschedule', {
-                //     label: gettext('Deschedule'),
-                //     icon: 'remove',
-                //     monitor: true,
-                //     controller: ['authoring', 'data', '$rootScope', function spikeActivity(authoring, data, $rootScope) {
-                //         return authoring.deschedule(data.item).then(function(item) {
-                //             $rootScope.$broadcast('item:descheduled');
-                //             return item;
-                //         });
-                //     }],
-                //     filters: [{action: 'list', type: 'archive'}],
-                //     action: 'deschedule',
-                //     condition: function(item) {
-                //         return item.type !== 'composite' && item.state === 'scheduled';
-                //     }
-                // })
-                // .activity('cancel.text', {
-                //     label: gettext('Deschedule'),
-                //     priority: 10,
-                //     icon: 'remove',
-                //     controller: ['data', 'superdesk', function(data, superdesk) {
-                //         superdesk.intent('deschedule', 'content_article', data.item);
-                //     }],
-                //     filters: [{action: 'list', type: 'archive'}],
-                //     condition: function(item) {
-                //         return item.type !== 'composite' && item.state === 'scheduled';
-                //     },
-                //     privileges: {publish: 1}
-                // })
-                // .activity('dechedule.content_article', {
-                //     category: '/authoring',
-                //     href: '/authoring/:_id/deschedule',
-                //     when: '/authoring/:_id/deschedule',
-                //     label: gettext('Descheduling'),
-                //     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
-                //     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                //     controller: AuthoringController,
-                //     filters: [{action: 'deschedule', type: 'content_article'}],
-                //     resolve: {
-                //         item: ['$route', 'authoring', function($route, authoring) {
-                //             return authoring.open($route.current.params._id, true);
-                //         }],
-                //         action: [function() {return 'dechedule';}]
-                //     },
-                //     authoring: true
-                // })
                 .activity('kill.text', {
                     label: gettext('Kill item'),
                     priority: 100,

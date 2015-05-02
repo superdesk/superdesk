@@ -10,10 +10,10 @@
 
 
 from superdesk.tests import TestCase
-from apps.publish import archive_publish
-from apps.publish import init_app
+from apps.publish import init_app, archive_publish, publish_queue
 from superdesk.utc import utcnow
 from datetime import timedelta
+import superdesk
 
 
 class ArchivePublishTestCase(TestCase):
@@ -161,3 +161,13 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals("2015-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
             self.assertEquals("2015-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
             self.assertEquals("2015-05-30T10:00:00+0000", queue_items[5]["publish_schedule"])
+
+    def test_delete_from_queue_by_article_id(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            archive_publish.ArchivePublishService().queue_transmission(self.articles[1])
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(6, queue_items.count())
+            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(self.articles[1]['_id'])
+            self.assertEquals(0, queue_items.count())
