@@ -71,3 +71,7 @@ class PublishedItemService(BaseService):
         items = self.get_other_published_items(_id)
         for item in items:
             super().system_update(ObjectId(item['_id']), {'last_publish_action': state}, item)
+
+    def delete_by_article_id(self, _id):
+        lookup = {'query': {'term': {'item_id': _id}}}
+        self.delete(lookup=lookup)
