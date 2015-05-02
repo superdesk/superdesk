@@ -13,8 +13,7 @@ import logging
 import superdesk
 
 from apps.publish.archive_publish import ArchivePublishResource, ArchivePublishService, \
-    KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService, \
-    DeschedulePublishService, DeschedulePublishResource
+    KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService
 from apps.publish.destination_groups import DestinationGroupsResource, DestinationGroupsService
 from apps.publish.output_channels import OutputChannelsResource, OutputChannelsService
 from apps.publish.subscribers import SubscribersResource, SubscribersService
@@ -40,10 +39,6 @@ def init_app(app):
     endpoint_name = 'archive_correct'
     service = CorrectPublishService(endpoint_name, backend=get_backend())
     CorrectPublishResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'archive_deschedule'
-    service = DeschedulePublishService(endpoint_name, backend=get_backend())
-    DeschedulePublishResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'subscribers'
     service = SubscribersService(endpoint_name, backend=get_backend())
@@ -80,4 +75,3 @@ def init_app(app):
                         description='User can update publish queue')
     superdesk.privilege(name='output_channel_seq_num_settings', label='Update Output Channel Sequence Number Settings',
                         description='User can update Update Output Channel Sequence Number Settings.')
-    superdesk.privilege(name='deschedule', label='Deschedule', description='Cancel a scheduled publish')

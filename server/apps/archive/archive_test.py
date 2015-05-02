@@ -53,12 +53,8 @@ class ArchiveTestCase(TestCase):
 
         ArchiveService().validate_schedule(date_in_future)
 
-
-        with assert_raises(SuperdeskApiError) as error_context:
+        with assert_raises(SuperdeskApiError):
             ArchiveService().validate_schedule("2015-04-27T10:53:48+00:00")
-        with assert_raises(SuperdeskApiError) as error_context:
             ArchiveService().validate_schedule(date_without_time)
-        with assert_raises(SuperdeskApiError) as error_context:
             ArchiveService().validate_schedule(time_without_date)
-        with assert_raises(SuperdeskApiError) as error_context:
             ArchiveService().validate_schedule(date_in_past)

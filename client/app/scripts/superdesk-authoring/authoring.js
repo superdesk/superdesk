@@ -25,7 +25,7 @@
         description: null,
         destination_groups: null,
         sign_off: null,
-		publish_schedule: null
+        publish_schedule: null
     };
 
     /**
@@ -214,7 +214,7 @@
             .then(function(item) {
                 return item;
             });
-        }
+        };
 
         /**
          * Autosave the changes
@@ -492,11 +492,11 @@
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
-                
+
                 $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
-                
+
                 $scope.save_visible = $scope._editable && !_.contains(['published', 'killed', 'scheduled'], $scope.origItem.state);
 
                 if ($scope.action === 'kill') {
@@ -615,7 +615,7 @@
 
                         if (!_.isDate(schedule)) {
                             notify.error(gettext('Publish Schedule is not a valid date!'));
-                            return false
+                            return false;
                         }
 
                         if (schedule < _.now()) {
@@ -628,8 +628,8 @@
                             return false;
                         }
                     }
-                    
-                   return true;
+
+                    return true;
                 }
 
                 function publishItem(orig, item) {
@@ -672,7 +672,7 @@
                 $scope.deschedule = function() {
                     $scope.item.publish_schedule = false;
                     return $scope.save();
-                }
+                };
 
                 /**
                  * Close an item - unlock
@@ -1251,7 +1251,10 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'scheduled' && item.state !== 'killed';
+                        return item.type !== 'composite' &&
+                        item.state !== 'published' &&
+                        item.state !== 'scheduled' &&
+                        item.state !== 'killed';
                     }
                 })
                 .activity('kill.text', {
