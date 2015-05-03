@@ -399,7 +399,8 @@ class PublishQueueError(SuperdeskPublishError):
         9001: 'Item could not be updated in the queue',
         9002: 'Item format could not be recognized',
         9003: 'Destination group cannot found',
-        9004: 'Schedule information could not be processed'
+        9004: 'Schedule information could not be processed',
+        9005: 'State of the content item could not be updated'
     }
 
     @classmethod
@@ -417,6 +418,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def bad_schedule_error(cls, exception=None, destination=None):
         return PublishQueueError(9004, exception, destination)
+
+    @classmethod
+    def content_update_error(cls, exception=None, destination=None):
+        return PublishQueueError(9005, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):
