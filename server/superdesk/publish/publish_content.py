@@ -80,6 +80,7 @@ def transmit_items(queue_items, subscriber, destination):
 
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
             transmitter.transmit(queue_item, formatted_item, subscriber, destination)
+            update_content_state(queue_item)
         except:
             failed_items.append(queue_item)
 
@@ -88,11 +89,11 @@ def transmit_items(queue_items, subscriber, destination):
 
 
 def is_on_time(queue_item, destination):
-    '''
+    """
     Checks if the item is ready to be processed
     :param queue_item: item to be checked
     :return: True if the item is ready
-    '''
+    """
     try:
         if queue_item.get('publish_schedule'):
             publish_schedule = queue_item['publish_schedule']
@@ -105,5 +106,22 @@ def is_on_time(queue_item, destination):
         raise
     except Exception as ex:
         raise PublishQueueError.bad_schedule_error(ex, destination)
+
+
+def update_content_state(queue_item):
+    """
+    Updates the state of the content item to published
+    In archive and published repos
+    :param queue_item:
+    :return:
+    """
+    if queue_item.get('publish_schedule'):
+        try:
+            item_update = {'state': 'published'}
+            superdesk.get_resource_service('archive').patch(queue_item['item_id'], item_update)
+            superdesk.get_resource_service('published').\
+                update_published_items(queue_item['item_id'], 'state', 'published')
+        except Exception as ex:
+            raise PublishQueueError.content_update_error(ex)
 
 superdesk.command('publish:transmit', PublishContent())
