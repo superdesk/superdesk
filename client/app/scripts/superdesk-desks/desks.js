@@ -63,8 +63,9 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$location', '$anchorScroll',
+    'keyboardManager'];
+    function StageItemListDirective(search, api, superdesk, desks, $timeout, $location, $anchorScroll, keyboardManager) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -116,6 +117,7 @@
                 scope.$on('task:stage', function(event, data) {
                     if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
                         queryItems();
+                        console.log('task:stage');
                     }
                 });
 
@@ -124,11 +126,11 @@
                 elem.bind('scroll', function() {
                     var st = elem.scrollTop();
                     if (st > lastScrollTop){
-                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 120) {
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 33) {
                             scope.fetchNext();
                         }
                     } else {
-                        if (lastScrollTop <= 80) {
+                        if (lastScrollTop <= 33) {
                             scope.fetchPrevious();
                         }
                     }
@@ -162,12 +164,11 @@
                                 scope.loading = false;
                             });
                         }
-                    } else {
-                        return $q.when(false);
                     }
                 };
                 scope.fetchPrevious = function() {
                     if (!scope.fetching && scope.page > 2) {
+                        console.log('fetchPrevious');
                         scope.fetching = true;
                         scope.page = scope.page - 1;
                         if (scope.page > 2) {
@@ -215,6 +216,43 @@
                     $location.hash(id);
                     $anchorScroll();
                 }
+
+                var UP = -1,
+                    DOWN = 1;
+
+                keyboardManager.bind('up', function(e) { scope.move(UP, elem, e); });
+                keyboardManager.bind('down', function(e) { scope.move(DOWN, elem, e); });
+
+                scope.move = function (diff, elem, e) {
+                    if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
+
+                        if (scope.items) {
+                            var index = _.findIndex(scope.items, {_id: scope.selected._id});
+                            if (index === -1) { // selected not in current items, select first
+                                clickItem(_.first(scope.items), e);
+                            }
+                            var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
+                            if (nextIndex < 0) {
+                                clickItem(_.last(scope.items), e);
+                            }
+                            if (scope.selected._id !== scope.items[nextIndex]._id) {
+                                scrollList(scope.items[nextIndex]._id);
+                                clickItem(scope.items[nextIndex], e);
+                            }
+                        }
+                    }
+                };
+                function clickItem(item, $event) {
+                    scope.select(item);
+                    if ($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        $event.stopImmediatePropagation();
+                    }
+                }
+                scope.select = function(view) {
+                    this.selected = view;
+                };
             }
         };
     }
@@ -344,8 +382,8 @@
         };
     }
 
-    AggregateWidgetCtrl.$inject = ['desks', 'preferencesService'];
-    function AggregateWidgetCtrl(desks, preferencesService) {
+    AggregateWidgetCtrl.$inject = ['desks', 'preferencesService', 'keyboardManager'];
+    function AggregateWidgetCtrl(desks, preferencesService, keyboardManager) {
 
         var PREFERENCES_KEY = 'agg:view';
 
@@ -419,7 +457,8 @@
 
     var app = angular.module('superdesk.desks', [
         'superdesk.users',
-        'superdesk.authoring.widgets'
+        'superdesk.authoring.widgets',
+        'superdesk.keyboard'
     ]);
 
     var limits = {
