@@ -77,7 +77,7 @@ class BasePublishService(BaseService):
             self.backend.update(self.datasource, id, updates, original)
 
             # document is saved to change the status
-            if original.get('publish_schedule') \
+            if (original.get('publish_schedule') or updates.get('publish_schedule')) \
                     and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
                 updates[config.CONTENT_STATE] = 'scheduled'
             else:

@@ -49,7 +49,10 @@ class PublishedItemService(BaseService):
         for doc in docs:
             doc['item_id'] = doc['_id']
             doc['_created'] = utcnow()
-            del doc['_id']
+            doc['versioncreated'] = utcnow()
+            doc.pop('_id', None)
+            doc.pop('lock_user', None)
+            doc.pop('lock_time', None)
 
     def get(self, req, lookup):
         # convert to the original _id so everything else works
