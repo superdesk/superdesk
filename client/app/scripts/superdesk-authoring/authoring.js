@@ -210,14 +210,6 @@
             });
         };
 
-        this.deschedule = function deschedule(orig, diff) {
-            diff = extendItem({}, diff);
-            return api.update('archive_deschedule', orig, {})
-            .then(function(item) {
-                return item;
-            });
-        };
-
         /**
          * Autosave the changes
          *
