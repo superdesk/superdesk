@@ -214,13 +214,15 @@ class AppImportTextArchiveCommand(superdesk.Command):
 
             self._addkeywords('Selectors', doc, item)
 
-            if item['type'] == 'text':
-                story = doc.find('dcdossier/document/body/BodyText').text
-                story = story.replace('\n   ', '<br><br>')
-                story = story.replace('\n', '<br>')
-                item['body_html'] = story
-            else:
-                item['body_html'] = doc.find('dcdossier/document/body/BodyText').text
+            el = doc.find('dcdossier/document/body/BodyText')
+            if el is not None:
+                story = el.text
+                if item['type'] == 'text':
+                    story = story.replace('\n   ', '<br><br>')
+                    story = story.replace('\n', '<br>')
+                    item['body_html'] = story
+                else:
+                    item['body_html'] = story
 
             item['pubstatus'] = 'usable'
 
