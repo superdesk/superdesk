@@ -4,8 +4,8 @@ define([], function() {
     /**
      * Login modal is watching session token and displays modal when needed
      */
-    LoginModalDirective.$inject = ['session', 'auth', 'features', 'asset'];
-    function LoginModalDirective(session, auth, features, asset) {
+    LoginModalDirective.$inject = ['session', 'auth', 'features', 'asset', '$route'];
+    function LoginModalDirective(session, auth, features, asset, $route) {
         return {
             replace: true,
             templateUrl: asset.templateUrl('superdesk/auth/login-modal.html'),
@@ -20,6 +20,9 @@ define([], function() {
                         .then(function() {
                             scope.isLoading = false;
                             scope.password = null;
+                            if ($route.current.redirectTo) {
+                                $route.reload();
+                            }
                         }, function(rejection) {
                             scope.isLoading = false;
                             scope.loginError = rejection.status;
