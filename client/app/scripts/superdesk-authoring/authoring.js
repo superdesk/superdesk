@@ -260,6 +260,10 @@
             return !!item.lock_user && !lock.isLocked(item);
         };
 
+        this.isPublished = function isPublished(item) {
+            return _.contains(['published', 'killed', 'scheduled'], item.state);
+        };
+
         /**
          * Unlock an item - callback for item:unlock event
          *
@@ -497,14 +501,13 @@
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
 
-                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed', 'scheduled'], $scope.origItem.state);
+                $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
 
                 function resolveDestinations() {
                     if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
-                        console.log($scope.origItem.destination_groups);
                         adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
                             .then(function(result) {
                                 var destinationGroups = [];
