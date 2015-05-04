@@ -1,4 +1,14 @@
 <div class="metadata" ng-controller="MetadataWidgetCtrl">
+	<div sd-toggle-box data-title="Publishing" data-open="true">
+		<ul class="basic-list">
+			<li class="auto">
+				<label translate>Publish Schedule</label>
+				<div sd-datepicker ng-model="item.publish_schedule_date"></div>
+				<div sd-timepicker ng-model="item.publish_schedule_time"></div>
+			</li>
+		</ul>
+	</div>
+
 	<ul class="basic-list">
 		<li class="auto">
 			<label translate>GUID</label>
@@ -129,6 +139,7 @@
 		</li>
 	</ul>
 
+
 	<div sd-toggle-box data-title="Task details" data-open="true" ng-if="item.task">
 		<ul class="basic-list task-info">
 			<li ng-if="item.slugline" class="auto">
@@ -158,6 +169,15 @@
 			<li ng-if="item.task.user">
 				<label translate>Assignee</label>
 				<div class="data">{{userLookup[item.task.user].display_name}}</div>
+			</li>
+		</ul>
+	</div>
+	<div sd-toggle-box data-title="Publishing" data-open="true">
+		<ul class="basic-list">
+			<li class="auto">
+				<label translate>Publish Schedule</label>
+				<div sd-datepicker ng-model="item.publish_schedule_date"></div>
+				<div sd-timepicker ng-model="item.publish_schedule_time"></div>
 			</li>
 		</ul>
 	</div>

@@ -24,7 +24,8 @@
         keywords: [],
         description: null,
         destination_groups: null,
-        sign_off: null
+        sign_off: null,
+        publish_schedule: null
     };
 
     /**
@@ -204,6 +205,14 @@
                     .then(function(result) {
                         return result;
                     });
+            });
+        };
+
+        this.deschedule = function deschedule(orig, diff) {
+            diff = extendItem({}, diff);
+            return api.update('archive_deschedule', orig, {})
+            .then(function(item) {
+                return item;
             });
         };
 
@@ -483,10 +492,12 @@
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+
                 $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
-                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed'], $scope.origItem.state);
+
+                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed', 'scheduled'], $scope.origItem.state);
 
                 if ($scope.action === 'kill') {
                     api('content_templates').getById('kill').then(
@@ -577,15 +588,48 @@
 
                 function validateDestinationGroups(item) {
                     if (!item.destination_groups || !item.destination_groups.length) {
-                        return $q.reject();
+                        return $q.reject('Error. Destination groups invalid.');
                     }
                     return adminPublishSettingsService.fetchDestinationGroupsByIds(item.destination_groups)
                     .then(function(result) {
                         if (result._items.length !== item.destination_groups.length) {
-                            return $q.reject();
+                            return $q.reject('Error. Destination groups invalid.');
                         }
                         return true;
                     });
+                }
+
+                function validatePublishSchedule(item) {
+                    if (item.publish_schedule_date && !item.publish_schedule_time) {
+                        notify.error(gettext('Publish Schedule time is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule_time && !item.publish_schedule_date) {
+                        notify.error(gettext('Publish Schedule date is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule) {
+                        var schedule = new Date(item.publish_schedule);
+
+                        if (!_.isDate(schedule)) {
+                            notify.error(gettext('Publish Schedule is not a valid date!'));
+                            return false;
+                        }
+
+                        if (schedule < _.now()) {
+                            notify.error(gettext('Publish Schedule cannot be earlier than now!'));
+                            return false;
+                        }
+
+                        if (!schedule.getTime()) {
+                            notify.error(gettext('Publish Schedule time is invalid!'));
+                            return false;
+                        }
+                    }
+
+                    return true;
                 }
 
                 function publishItem(orig, item) {
@@ -604,23 +648,30 @@
                 }
 
                 $scope.publish = function() {
-                    validateDestinationGroups($scope.item)
-                    .then(function() {
-                        if ($scope.dirty) { // save dialog & then publish if confirm
-                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
-                            .then(function(res) {
-                                if (res) {
-                                    publishItem($scope.origItem, $scope.item);
-                                }
-                            }, function(response) {
-                                notify.error(gettext('Error. Item not published.'));
-                            });
-                        } else { // Publish
-                            publishItem($scope.origItem, $scope.item);
-                        }
-                    }, function(res) {
-                        notify.error(gettext('Error. Destination groups invalid.'));
-                    });
+                    if (validatePublishSchedule($scope.item)) {
+                        validateDestinationGroups($scope.item)
+                        .then(function() {
+                            if ($scope.dirty) { // save dialog & then publish if confirm
+                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
+                                .then(function(res) {
+                                    if (res) {
+                                        publishItem($scope.origItem, $scope.item);
+                                    }
+                                }, function(response) {
+                                    notify.error(gettext('Error. Item not published.'));
+                                });
+                            } else { // Publish
+                                publishItem($scope.origItem, $scope.item);
+                            }
+                        }, function(res) {
+                            notify.error(gettext(res));
+                        });
+                    }
+                };
+
+                $scope.deschedule = function() {
+                    $scope.item.publish_schedule = false;
+                    return $scope.save();
                 };
 
                 /**
@@ -1200,7 +1251,10 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published' && item.state !== 'killed';
+                        return item.type !== 'composite' &&
+                        item.state !== 'published' &&
+                        item.state !== 'scheduled' &&
+                        item.state !== 'killed';
                     }
                 })
                 .activity('kill.text', {

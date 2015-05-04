@@ -271,7 +271,7 @@ def update_state(original, updates):
     """
 
     original_state = original.get(config.CONTENT_STATE)
-    if original_state != 'ingested' and original_state != 'in_progress':
+    if original_state not in ['ingested', 'in_progress', 'scheduled']:
         if not is_workflow_state_transition_valid('save', original_state):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):

@@ -59,12 +59,23 @@ class PublishedItemService(BaseService):
         return items
 
     def get_other_published_items(self, _id):
-        query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(query)}
-        return super().get(req=request, lookup=None)
+        try:
+            query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            return super().get(req=request, lookup=None)
+        except:
+            return []
 
-    def update_other_published_items(self, _id, state):
+    def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)
         for item in items:
-            super().system_update(ObjectId(item['_id']), {'last_publish_action': state}, item)
+            try:
+                super().system_update(ObjectId(item['_id']), {field: state}, item)
+            except:
+                # This part is used in unit testing
+                super().system_update(item['_id'], {field: state}, item)
+
+    def delete_by_article_id(self, _id):
+        lookup = {'query': {'term': {'item_id': _id}}}
+        self.delete(lookup=lookup)

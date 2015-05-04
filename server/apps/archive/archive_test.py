@@ -11,9 +11,13 @@
 
 from superdesk.tests import TestCase
 from eve.utils import date_to_str
-from . import init_app
+from apps.archive import init_app
 from superdesk.utc import get_expiry_date, utcnow
-from .commands import ArchiveRemoveExpiredContent
+from apps.archive.commands import ArchiveRemoveExpiredContent
+from apps.archive import ArchiveService
+from nose.tools import assert_raises
+from superdesk.errors import SuperdeskApiError
+from datetime import datetime, timedelta
 
 
 class ArchiveRemoveExpiredContentTestCase(TestCase):
@@ -35,3 +39,22 @@ class ArchiveRemoveExpiredContentTestCase(TestCase):
             now = date_to_str(utcnow())
             expiredItems = ArchiveRemoveExpiredContent().get_expired_items(now)
             self.assertEquals(2, expiredItems.count())
+
+
+class ArchiveTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+
+    def test_validate_schedule(self):
+        date_without_time = datetime.strptime('Jun 1 2005', '%b %d %Y')
+        time_without_date = datetime.strptime('1:33PM', '%I:%M%p')
+        date_in_past = utcnow() + timedelta(hours=-2)
+        date_in_future = utcnow() + timedelta(hours=2)
+
+        ArchiveService().validate_schedule(date_in_future)
+
+        with assert_raises(SuperdeskApiError):
+            ArchiveService().validate_schedule("2015-04-27T10:53:48+00:00")
+            ArchiveService().validate_schedule(date_without_time)
+            ArchiveService().validate_schedule(time_without_date)
+            ArchiveService().validate_schedule(date_in_past)

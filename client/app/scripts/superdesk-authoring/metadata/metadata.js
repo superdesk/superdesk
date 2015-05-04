@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService', 'datetimeHelper'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService, datetimeHelper) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -26,6 +26,22 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
             return _.pick(g, 'name');
         });
     };
+
+    $scope.$watch('item.publish_schedule_date', function() {
+        setPublishScheduleDate();
+    });
+
+    $scope.$watch('item.publish_schedule_time', function() {
+        setPublishScheduleDate();
+    });
+
+    function setPublishScheduleDate() {
+        if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
+            $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
+                $scope.item.publish_schedule_time).format();
+            $scope.autosave($scope.item);
+        }
+    }
 
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }

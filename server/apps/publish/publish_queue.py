@@ -48,6 +48,9 @@ class PublishQueueResource(Resource):
         },
         'error_message': {
             'type': 'string'
+        },
+        'publish_schedule': {
+            'type': 'datetime'
         }
     }
 
@@ -68,3 +71,7 @@ class PublishQueueService(BaseService):
 
     def on_update(self, updates, original):
         pass
+
+    def delete_by_article_id(self, _id):
+        lookup = {'item_id': _id}
+        self.delete(lookup=lookup)
