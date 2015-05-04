@@ -260,6 +260,10 @@
             return !!item.lock_user && !lock.isLocked(item);
         };
 
+        this.isPublished = function isPublished(item) {
+            return _.contains(['published', 'killed', 'scheduled'], item.state);
+        };
+
         /**
          * Unlock an item - callback for item:unlock event
          *
@@ -497,49 +501,56 @@
                     ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
 
-                $scope.save_visible = $scope._editable && !_.contains(['published', 'killed', 'scheduled'], $scope.origItem.state);
-
-                if ($scope.action === 'kill') {
-                    api('content_templates').getById('kill').then(
-                        function(template) {
-                            template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
-                            var body = template.body_html;
-                            if (body) {
-                                // get the placeholders out of the template
-                                var placeholders = _.words(body, /\${([\s\S]+?)}/g);
-                                placeholders = _.map(placeholders, function(placeholder) {
-                                    return _.trim(placeholder, '${} ');
-                                });
-
-                                var compiled = _.template(body);
-                                var args = _.pick($scope.origItem, placeholders);
-                                $scope.origItem.body_html = compiled(args);
-                            }
-                            _.each(template, function(value, key) {
-                                if (!_.isEmpty(value)) {
-                                    if (key !== 'body_html') {
-                                        $scope.origItem[key] = value;
-                                    }
-                                }
-                            });
-                        }
-                    );
-                }
+                $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
 
-                if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
-                    adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
-                        .then(function(result) {
-                            var destinationGroups = [];
-                            _.each(result._items, function(item) {
-                                destinationGroups.push(item);
+                function resolveDestinations() {
+                    if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
+                        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
+                            .then(function(result) {
+                                var destinationGroups = [];
+                                _.each(result._items, function(item) {
+                                    destinationGroups.push(item);
+                                });
+                                $scope.vars = {destinationGroups: destinationGroups};
                             });
-                            $scope.vars = {destinationGroups: destinationGroups};
+                    } else {
+                        $scope.vars = {destinationGroups: []};
+                    }
+                }
+
+                if ($scope.action === 'kill') {
+                    api('content_templates').getById('kill').then(function(template) {
+                        template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
+                        var body = template.body_html;
+                        if (body) {
+                            // get the placeholders out of the template
+                            var placeholders = _.words(body, /\${([\s\S]+?)}/g);
+                            placeholders = _.map(placeholders, function(placeholder) {
+                                return _.trim(placeholder, '${} ');
+                            });
+
+                            var compiled = _.template(body);
+                            var args = _.pick($scope.origItem, placeholders);
+                            $scope.origItem.body_html = compiled(args);
+                        }
+                        _.each(template, function(value, key) {
+                            if (!_.isEmpty(value)) {
+                                if (key !== 'body_html') {
+                                    if (key === 'destination_groups') {
+                                        $scope.origItem.destination_groups = _.union($scope.origItem.destination_groups, value);
+                                    } else {
+                                        $scope.origItem[key] = value;
+                                    }
+                                }
+                            }
                         });
+                        resolveDestinations();
+                    });
                 } else {
-                    $scope.vars = {destinationGroups: []};
+                    resolveDestinations();
                 }
 
                 $scope.$watch('vars', function() {
