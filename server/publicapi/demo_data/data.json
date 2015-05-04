@@ -1,6 +1,5 @@
 {
     "_id": "tag:demodata.org,0001:ninjs_XYZ123",
-    "uri": "http://new.demodata.org/archive/20150316pic1234",
     "type": "picture",
     "version": 3,
     "versioncreated": "2015-03-16T08:12:00Z",
@@ -35,7 +34,6 @@
 
 {
     "_id": "tag:demodata.org,0002:ninjs_XYZ123",
-    "uri": "http://new.demodata.org/archive/20130520vid222",
     "type": "video",
     "version": 1,
     "versioncreated": "2013-05-20T11:40:00Z",
@@ -63,7 +61,6 @@
 
 {
     "_id": "tag:demodata.org,0003:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150101fgt117",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -98,7 +95,6 @@
 
 {
     "_id": "tag:demodata.org,0004:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150101fgt220",
     "type": "text",
     "profile": "text-only",
     "version": 2,
@@ -133,7 +129,6 @@
 
 {
     "_id": "tag:demodata.org,0005:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150131asd101",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -167,7 +162,6 @@
 
 {
     "_id": "tag:demodata.org,0006:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20141206abc",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -200,7 +194,6 @@
 
 {
     "_id": "tag:demodata.org,0007:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20141206abc",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -233,7 +226,6 @@
 
 {
     "_id": "tag:demodata.org,0008:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150502_abc",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -263,7 +255,6 @@
 
 {
     "_id": "tag:demodata.org,0009:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150520abc",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -297,7 +288,6 @@
 
 {
     "_id": "tag:demodata.org,0010:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/newsitems/20150321abc",
     "type": "text",
     "profile": "text-only",
     "version": 1,
@@ -330,7 +320,6 @@
 
 {
     "_id": "tag:demodata.org,0011:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/stories/20150503_1c",
     "type": "composite",
     "profile": "text-photo",
     "version": 1,
@@ -378,7 +367,6 @@
     "body_xhtml": "<b>Reporter:</b> &quot;Don Vito Corleone, bongiorno!&quot;, etc.",
     "associations": {
         "mainpic": {
-            "uri": "http://ninjs.example.com/pictures/don_vito.png",
             "type": "picture",
             "versioncreated": "2015-04-26T11:50:14Z",
             "byline": "Photo Grapher jr.",
@@ -407,7 +395,6 @@
 
 {
     "_id": "tag:demodata.org,0012:ninjs_XYZ123",
-    "uri": "http://ninjs.example.com/stories/20140815_ghb",
     "type": "composite",
     "profile": "text-photo",
     "version": 1,
@@ -455,7 +442,6 @@
     "body_xhtml": "<p>Want to try <em>McRide</em> or <em>McGhostHouse</em>?</p>",
     "associations": {
         "mainpic": {
-            "uri": "http://ninjs.example.com/pictures/mcthemepark.jpg",
             "type": "picture",
             "versioncreated": "2014-08-11T09:39:02Z",
             "byline": "The Phototaker",
