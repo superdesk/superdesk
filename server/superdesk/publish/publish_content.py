@@ -63,8 +63,16 @@ def publish(subscriber, destination):
 def transmit_items(queue_items, subscriber, destination):
     failed_items = []
 
+    output_channels = superdesk.get_resource_service('output_channels').get(req=None, lookup={})
+    output_channels = {str(output_channel['_id']): output_channel for output_channel in output_channels}
+
     for queue_item in queue_items:
+        # Check if output channel is active
+        if(output_channels.get(str(queue_item['output_channel_id']), {})).get('is_active', False):
+            continue
+
         try:
+
             # update the status of the item to in-progress
             queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
             superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), queue_update)
