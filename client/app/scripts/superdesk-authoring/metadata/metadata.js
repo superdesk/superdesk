@@ -43,7 +43,16 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
         }
     }
 
+    function resolvePublishScheduleDate() {
+        if ($scope.item.publish_schedule) {
+            var publishSchedule = new Date(Date.parse($scope.item.publish_schedule));
+            $scope.item.publish_schedule_date = moment(publishSchedule).utc().format('DD/MM/YYYY');
+            $scope.item.publish_schedule_time = moment(publishSchedule).utc().format('HH:mm:ss');
+        }
+    }
+
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
+    resolvePublishScheduleDate();
 }
 
 MetadataDropdownDirective.$inject = [];
