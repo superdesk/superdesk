@@ -104,7 +104,8 @@ class ArchiveResource(Resource):
             'schema': Resource.rel('destination_groups', True)
         },
         'publish_schedule': {
-            'type': 'datetime'
+            'type': 'datetime',
+            'default': None
         }
     }
 
@@ -365,7 +366,7 @@ class ArchiveService(BaseService):
 
     def deschedule_item(self, updates, doc):
         updates['state'] = 'in_progress'
-        del updates['publish_schedule']
+        updates['publish_schedule'] = None
         # delete entries from publish queue
         get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
         # delete entry from published repo
