@@ -31,6 +31,7 @@ from apps.common.models.io.eve_proxy import EveProxy
 from superdesk.celery_app import celery
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
+from .text_archive import TextArchiveResource, TextArchiveService
 
 
 logger = logging.getLogger(__name__)
@@ -89,6 +90,10 @@ def init_app(app):
     endpoint_name = 'archive_autosave'
     service = ArchiveSaveService(endpoint_name, backend=superdesk.get_backend())
     AutoSaveResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'text_archive'
+    service = TextArchiveService(endpoint_name, backend=superdesk.get_backend())
+    TextArchiveResource(endpoint_name, app=app, service=service)
 
     from apps.item_autosave.components.item_autosave import ItemAutosave
     from apps.item_autosave.models.item_autosave import ItemAutosaveModel

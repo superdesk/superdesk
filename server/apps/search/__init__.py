@@ -21,8 +21,13 @@ class SearchService(superdesk.Service):
     It can search ingest/content/archive/spike at the same time.
     """
 
+<<<<<<< HEAD
     available_repos = ('ingest', 'archive', 'published')
     default_repos = ['ingest', 'archive', 'published']
+=======
+    available_repos = ('ingest', 'archive', 'text_archive')
+    default_repos = ['ingest', 'archive', 'text_archive']
+>>>>>>> [SD-1992] Impliment Text Archive
 
     private_filters = [{
         'or': [
