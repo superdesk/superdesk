@@ -42,6 +42,8 @@ from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
 from .archive_composite import PackageService
 from .archive_media import ArchiveMediaService
+from superdesk.utc import utcnow
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +102,9 @@ class ArchiveResource(Resource):
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime'
         }
     }
 
@@ -176,6 +181,14 @@ class ArchiveService(BaseService):
     def on_update(self, updates, original):
         is_update_allowed(original)
         user = get_user()
+
+        if updates.get('publish_schedule'):
+            if original['state'] == 'scheduled':
+                # this is an descheduling action
+                self.deschedule_item(updates, original)
+            else:
+                # validate the schedule
+                self.validate_schedule(updates.get('publish_schedule'))
 
         if 'unique_name' in updates and not is_admin(user) \
                 and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
@@ -350,6 +363,24 @@ class ArchiveService(BaseService):
         if new_versions:
             get_resource_service('archive_versions').post(new_versions)
 
+    def deschedule_item(self, updates, doc):
+        updates['state'] = 'in_progress'
+        del updates['publish_schedule']
+        # delete entries from publish queue
+        get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
+        # delete entry from published repo
+        get_resource_service('published').delete_by_article_id(doc['_id'])
+
+    def validate_schedule(self, schedule):
+        if not isinstance(schedule, datetime.date):
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.date() or schedule.date().year <= 1970:
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.time():
+            raise SuperdeskApiError.badRequestError("Schedule time is not recognized")
+        if schedule < utcnow():
+            raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
+
     def can_edit(self, item, user_id):
         """
         Determines if the user can edit the item or not.
@@ -418,13 +449,13 @@ class ArchiveSaveService(BaseService):
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
     name='save',
-    include_states=['draft', 'fetched', 'routed', 'submitted'],
+    include_states=['draft', 'fetched', 'routed', 'submitted', 'scheduled'],
     privileges=['archive']
 )
 
 superdesk.workflow_state('submitted')
 superdesk.workflow_action(
     name='move',
-    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'killed'],
+    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'scheduled', 'killed'],
     privileges=['archive']
 )

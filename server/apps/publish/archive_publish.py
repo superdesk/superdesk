@@ -59,7 +59,9 @@ class BasePublishService(BaseService):
             raise InvalidStateTransitionError()
 
     def on_updated(self, updates, original):
-        get_resource_service('published').update_other_published_items(original['_id'], self.published_state)
+        get_resource_service('published').update_published_items(original['_id'],
+                                                                 'last_publish_action',
+                                                                 self.published_state)
         get_resource_service('published').post([original])
 
     def update(self, id, updates, original):
@@ -73,7 +75,14 @@ class BasePublishService(BaseService):
             # document is saved to keep the initial changes
             set_sign_off(updates, original)
             self.backend.update(self.datasource, id, updates, original)
-            updates[config.CONTENT_STATE] = self.published_state
+
+            # document is saved to change the status
+            if original.get('publish_schedule') \
+                    and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
+                updates[config.CONTENT_STATE] = 'scheduled'
+            else:
+                updates[config.CONTENT_STATE] = self.published_state
+
             original.update(updates)
 
             if archived_item['type'] != 'composite':
@@ -83,7 +92,6 @@ class BasePublishService(BaseService):
                 if task:
                     updates['task'] = task
 
-            # document is saved to change the status
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
@@ -137,6 +145,7 @@ class BasePublishService(BaseService):
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
                                 publish_queue_item['selector_codes'] = selector_codes.get(output_channel['_id'], [])
                                 publish_queue_item['published_seq_num'] = pub_seq_num
+                                publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
 
                                 publish_queue_items.append(publish_queue_item)
 
@@ -280,14 +289,27 @@ class CorrectPublishService(BasePublishService):
 superdesk.workflow_state('published')
 superdesk.workflow_action(
     name='publish',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
+    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'scheduled'],
     privileges=['publish']
+)
+
+superdesk.workflow_state('scheduled')
+superdesk.workflow_action(
+    name='schedule',
+    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
+    privileges=['schedule']
+)
+
+superdesk.workflow_action(
+    name='deschedule',
+    include_states=['scheduled'],
+    privileges=['deschedule']
 )
 
 superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
-    include_states=['published'],
+    include_states=['published', 'scheduled'],
     privileges=['kill']
 )
 

@@ -10,7 +10,17 @@
 
     <div class="button-stack right-stack">
         <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && item.state !== 'published'" ng-click="unlock()" translate>Unlock</button>
-        <button class="btn btn-medium pull-left" ng-show="!sending && !_editable && !item._locked && item.state !== 'published' && publish_enabled" ng-click="lock()" translate>Edit</button>
+        
+        <button class="btn btn-medium pull-left" 
+            ng-show="!sending && !_editable && !item._locked && item.state !== 'published' && item.state !== 'scheduled' && publish_enabled" 
+            ng-click="lock()" 
+            translate>Edit</button>
+
+        <button class="btn btn-medium pull-left" 
+            ng-show="!sending && !_editable && !item._locked && item.state === 'scheduled'"
+            ng-click="deschedule()" 
+            translate>Deschedule</button>
+
         <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"

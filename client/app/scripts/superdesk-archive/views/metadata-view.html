@@ -146,6 +146,12 @@
         </dd>
     </dl>
 
+    <!-- publish schedule data -->
+    <dl ng-if="item.publish_schedule">
+        <dt translate>Publish Schedule</dt>
+        <dd sd-reldate-complex ng-model="item.publish_schedule"></dd>
+    </dl>
+
     <!-- file specific data -->
     <dl ng-if="item.FileMeta">
         <dt translate>Aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
