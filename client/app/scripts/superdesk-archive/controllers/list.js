@@ -6,9 +6,9 @@ define([
 
     ArchiveListController.$inject = [
         '$scope', '$injector', '$location', 'superdesk',
-        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl'
+        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', 'notify'
     ];
-    function ArchiveListController($scope, $injector, $location, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
+    function ArchiveListController($scope, $injector, $location, superdesk, session, api, desks, ContentCtrl, StagesCtrl, notify) {
 
         var resource,
             self = this;
@@ -105,6 +105,10 @@ define([
         $scope.$on('item:mark', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', reset);
+
+        $scope.$on('item:publish:closed:channels', function(_e, data) {
+            notify.error(gettext('Item published to closed Output Channel(s).'));
+        });
 
         desks.fetchCurrentUserDesks().then(function() {
             // only watch desk/stage after we get current user desk

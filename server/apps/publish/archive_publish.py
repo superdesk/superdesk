@@ -80,11 +80,10 @@ class ArchivePublishService(BaseService):
             item = self.backend.update(self.datasource, id, updates, original)
             original.update(updates)
             user = get_user()
-            push_notification('item:publish', item=str(item.get('_id')), user=str(user))
-            original.update(super().find_one(req=None, _id=id))
 
-            if any_channel_closed:
-                raise SuperdeskApiError.badRequestError('Item published to closed Output Channel(s).')
+            push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
+                              item=str(item.get('_id')), user=str(user))
+            original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
         except KeyError as e:

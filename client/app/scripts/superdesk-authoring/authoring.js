@@ -531,14 +531,14 @@
                     authoring.publish(item)
                     .then(function(response) {
                         if (response) {
-                            if (response.status === 200 || response.status === 201) {
-                                notify.success(gettext('Item published.'));
-                                $scope.item = response;
-                                $scope.dirty = false;
-                            } else if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
+                            if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
                                 if (angular.isDefined(response.data._issues['validator exception'])) {
                                     notify.error(gettext('Error: ' + response.data._issues['validator exception']));
                                 }
+                            } else {
+                                notify.success(gettext('Item published.'));
+                                $scope.item = response;
+                                $scope.dirty = false;
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));

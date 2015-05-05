@@ -182,6 +182,7 @@ Feature: Content Publishing
 		"""
 
     @auth
+    @notification
     Scenario: As a user I should be able to publish item to a closed output channel
       Given "desks"
       """
@@ -221,7 +222,7 @@ Feature: Content Publishing
       ]
       """
       And we publish "#archive._id#"
-      Then we get error 400
+      Then we get response code 200
       """
-      {"_issues": {"validator exception": "400: Item published to closed Output Channel(s)."}, "_status": "ERR"}
+      [{"event": "item:publish:closed:channels"}]
       """
