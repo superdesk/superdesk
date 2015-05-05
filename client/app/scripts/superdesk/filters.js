@@ -64,20 +64,10 @@ define([
         .filter('menuGroup', function() {
             return function(input) {
 
-                if (!input || !input.category || !input.label) {
+                if (!input || !input.category) {
                     return '#/';
                 }
-
-                switch (input.category) {
-                    case 'superdesk.menu.main':
-                    case '/workspace':
-                    case '/authoring':
-                        return '#/' + input.label.toLowerCase().replace(' ', '-');
-                    case 'superdesk.menu.settings':
-                        return '#/settings/' + input.label.toLowerCase().replace(' ', '-');
-                    default:
-                        return '#/';
-                }
+                return '#' + input.href;
             };
         })
         .filter('truncateString', function() {
