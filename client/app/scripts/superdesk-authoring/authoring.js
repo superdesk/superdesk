@@ -200,7 +200,7 @@
                         return result;
                     });
             }, function(response) {
-                //notify.error(gettext('Error. Item not updated.'));
+                return response;
             });
 
         };
@@ -529,14 +529,20 @@
 
                 function publishItem(item) {
                     authoring.publish(item)
-                    .then(function(res) {
-                        if (res) {
-                            notify.success(gettext('Item published.'));
-                            $scope.item = res;
-                            $scope.dirty = false;
+                    .then(function(response) {
+                        if (response) {
+                            if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
+                                if (angular.isDefined(response.data._issues['validator exception'])) {
+                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                }
+                            } else {
+                                notify.success(gettext('Item published.'));
+                                $scope.item = response;
+                                $scope.dirty = false;
+                            }
+                        } else {
+                            notify.error(gettext('Unknown Error: Item not published.'));
                         }
-                    }, function(response) {
-                        notify.error(gettext('Error. Item not published.'));
                     });
                 }
 

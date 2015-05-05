@@ -23,12 +23,16 @@ class PublishContent(superdesk.Command):
     """Runs deliveries"""
 
     def run(self, provider_type=None):
+        output_channels = superdesk.get_resource_service('output_channels').get(req=None, lookup={'is_active': True})
+        output_channels = {str(output_channel['_id']): output_channel for output_channel in output_channels}
+
         for subscriber in superdesk.get_resource_service('subscribers').get(req=None, lookup={}):
             if subscriber['is_active']:
                 for destination in subscriber.get('destinations', []):
                     kwargs = {
                         'subscriber': subscriber,
-                        'destination': destination
+                        'destination': destination,
+                        'output_channels': output_channels
                     }
 
                     publish.apply_async(
@@ -37,11 +41,12 @@ class PublishContent(superdesk.Command):
 
 
 @celery.task(soft_time_limit=1800)
-def publish(subscriber, destination):
+def publish(subscriber, destination, output_channels):
     """
     Fetches items from publish queue as per the configuration,
     calls the transmit function.
     """
+
     if is_task_running(destination['name'],
                        subscriber[superdesk.config.ID_FIELD],
                        UPDATE_SCHEDULE_DEFAULT):
@@ -54,17 +59,22 @@ def publish(subscriber, destination):
 
         items = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
         if items.count() > 0:
-            transmit_items(items, subscriber, destination)
+            transmit_items(items, subscriber, destination, output_channels)
     finally:
         mark_task_as_not_running(destination['name'],
                                  subscriber[superdesk.config.ID_FIELD])
 
 
-def transmit_items(queue_items, subscriber, destination):
+def transmit_items(queue_items, subscriber, destination, output_channels):
     failed_items = []
 
     for queue_item in queue_items:
+        # Check if output channel is active
+        if(output_channels.get(str(queue_item['output_channel_id']), {})).get('is_active', False):
+            continue
+
         try:
+
             # update the status of the item to in-progress
             queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
             superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), queue_update)

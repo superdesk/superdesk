@@ -59,6 +59,8 @@ class ArchivePublishService(BaseService):
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
         try:
+            any_channel_closed = False
+
             if archived_item['type'] == 'composite':
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
 
@@ -68,7 +70,7 @@ class ArchivePublishService(BaseService):
 
             if archived_item['type'] != 'composite':
                 # queue only text items
-                self.queue_transmission(original)
+                any_channel_closed = self.queue_transmission(original)
                 task = self.__send_to_publish_stage(original)
                 if task:
                     updates['task'] = task
@@ -78,8 +80,12 @@ class ArchivePublishService(BaseService):
             item = self.backend.update(self.datasource, id, updates, original)
             original.update(updates)
             user = get_user()
-            push_notification('item:publish', item=str(item.get('_id')), user=str(user))
+
+            push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
+                              item=str(item.get('_id')), user=str(user))
             original.update(super().find_one(req=None, _id=id))
+        except SuperdeskApiError as e:
+            raise e
         except KeyError as e:
             raise SuperdeskApiError.badRequestError(
                 message="Key is missing on article to be published: {}"
@@ -92,11 +98,16 @@ class ArchivePublishService(BaseService):
     def queue_transmission(self, doc):
         try:
             if doc.get('destination_groups'):
+                any_channel_closed = False
+
                 destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
                 output_channels, selector_codes, format_types = \
                     self.resolve_output_channels(destination_groups.values())
 
                 for output_channel in output_channels.values():
+                    if output_channel.get('is_active', True) is False:
+                        any_channel_closed = True
+
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers and subscribers.count() > 0:
                         formatter = get_formatter(output_channel['format'])
@@ -125,6 +136,8 @@ class ArchivePublishService(BaseService):
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
+
+                return any_channel_closed
             else:
                 raise PublishQueueError.destination_group_not_found_error(
                     KeyError('Destination groups empty for article: {}'.format(doc['_id'])), None)
@@ -193,8 +206,6 @@ class ArchivePublishService(BaseService):
     def __publish_package_items(self, package, last_updated):
         """
         Publishes items of a package recursively
-
-        :return: True if all the items of a package have been published successfully. False otherwise.
         """
 
         items = [ref.get('residRef') for group in package.get('groups', [])
