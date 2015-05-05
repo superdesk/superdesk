@@ -37,6 +37,14 @@
 	.opacity(30);
 }
 
+body:not(:-moz-handler-blocked) .modal{
+	&.moz-scroll-fix{
+		.modal-dialog{
+			height: 100%;
+		}
+	}
+}
+
 // Base modal
 .modal {
 	position: fixed;
