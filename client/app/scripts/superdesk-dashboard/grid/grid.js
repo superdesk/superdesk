@@ -15,21 +15,22 @@ define([
          * Usage:
          * <div sd-grid
          *  class="gridster"
-         *  ng-class="{'editmode': editmode}"
+         *  ng-class="{editmode: widgetBoxStatus}"
          *  data-status="widgetBoxStatus"
          *  data-widgets="widgets"></div>
          *
          * Params:
          * @scope {Boolean} status - on/off switch for widget
-         * @scope {Object} widgets
+         * @scope {List} widgets
+         * @scope {Object} dashboard
          */
         .directive('sdGrid', function() {
             return {
                 scope: {
                     status: '=',
-                    widgets: '='
+                    widgets: '=',
+                    save: '&'
                 },
-                replace: true,
                 templateUrl: require.toUrl('./views/grid.html'),
                 controller: ['$scope', function($scope) {
                     this.addWidget = function(widget, element) {
@@ -70,6 +71,7 @@ define([
                         widget_margins: [20, 20],
                         widget_base_dimensions: [320, 250],
                         min_rows: 3,
+                        min_cols: 3,
                         draggable: {
                             stop: function(e, ui, $widget) {
                                 scope.syncWidgets();
@@ -130,6 +132,10 @@ define([
 
                         sdGrid.resizeWidget(element, widget.sizex, widget.sizey);
                     };
+
+                    scope.$on('$destroy', function() {
+                        scope.removeWidget();
+                    });
                 }
             };
         });

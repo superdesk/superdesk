@@ -497,13 +497,13 @@
                                 .then(angular.bind(this, this.fetchUserDesks))
                                 .then(angular.bind(this, function(desks) {
                                     userDesks = desks;
-                                    if (desks._items.length) {
-                                        if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
-                                            this.activeDeskId = desks._items[0]._id;
-                                        }
-                                    } else if (this.activeDeskId) {
+
+                                    if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
+                                        this.activeDeskId = desks._items.length ? desks._items[0]._id : null;
+                                    } else {
                                         this.activeDeskId = null;
                                     }
+
                                     setActive(this);
                                     return desks;
                                 }));

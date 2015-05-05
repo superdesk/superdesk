@@ -2,44 +2,52 @@
 
 describe('dashboard', function() {
 
-    var USER_URL = '/users/1';
-    var USER = {
-        _links: {self: {href: USER_URL}},
-        _etag: '1'
-    };
-
     beforeEach(module('templates'));
     beforeEach(module('superdesk.dashboard'));
 
     beforeEach(inject(function(session) {
-        session.start({}, USER);
+        session.identity = {_id: 'u1'};
     }));
 
-    it('can load user widgets', inject(function(workspace, api, $rootScope, $q) {
-        spyOn(api, 'get').and.returnValue($q.when(USER));
+    it('can open dashboard', inject(function($controller, api, $location, $q, $rootScope) {
+        $location.search('desk', 1);
+        var dashboard = {name: 'foo', widgets: [{_id: 'foo'}]};
+        spyOn(api, 'query').and.returnValue($q.when({_items: [dashboard]}));
 
-        var widgets;
-        workspace.load().then(function(_widgets) {
-            widgets = _widgets.widgets;
-        });
-
+        var ctrl = $controller('DashboardController', {widgets: [
+            {_id: 'foo', name: 'foo'}
+        ]});
         $rootScope.$digest();
-        expect(api.get).toHaveBeenCalledWith(USER_URL);
-        expect(widgets.length).toBe(0);
+
+        expect(ctrl.current.name).toBe('foo');
+        expect(ctrl.widgets.length).toBe(1);
+        expect(ctrl.widgets[0].name).toBe('foo');
+        expect(api.query).toHaveBeenCalledWith('dashboards', {where: {desk: 1}});
     }));
 
-    it('can add widget to user workspace', inject(function(workspace, api, $rootScope, $q) {
+    it('can create dashboard', inject(function($controller, api, desks, $location, $q, $rootScope) {
+        $location.search('desk', 1);
+        spyOn(api, 'query').and.returnValue($q.when({_items: []}));
 
-        var user = angular.extend(USER, {_etag: '2'});
+        var ctrl = $controller('DashboardController', {widgets: [
+            {_id: 'foo', name: 'foo'},
+            {_id: 'bar', name: 'bar'},
+            {_id: 'baz', name: 'baz'}
+        ]});
 
-        spyOn(api, 'get').and.returnValue($q.when(user));
-        spyOn(api, 'save').and.returnValue($q.when(USER));
-
-        workspace.load();
         $rootScope.$digest();
-        workspace.save();
-        $rootScope.$digest();
+        expect(ctrl.availableWidgets.length).toBe(3);
 
-        expect(api.save).toHaveBeenCalledWith('users', user, {workspace: {widgets: []}});
+        spyOn(api, 'save').and.returnValue($q.when({widgets: [{_id: 'foo'}]}));
+        ctrl.selectWidget(ctrl.availableWidgets[0]);
+        ctrl.addWidget(ctrl.selectedWidget);
+
+        expect(ctrl.widgets.length).toBe(1);
+        expect(ctrl.availableWidgets.length).toBe(2);
+        expect(ctrl.selectedWidget).toBe(null);
+        expect(api.save).toHaveBeenCalledWith('dashboards', ctrl.current, {desk: 1, widgets: [{_id: 'foo'}]});
+
+        $rootScope.$digest();
+        expect(ctrl.widgets[0].name).toBe('foo');
     }));
 });

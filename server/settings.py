@@ -164,6 +164,7 @@ INSTALLED_APPS = [
     'apps.aap_mm',
     'apps.spellcheck',
     'apps.templates',
+    'apps.dashboard',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
