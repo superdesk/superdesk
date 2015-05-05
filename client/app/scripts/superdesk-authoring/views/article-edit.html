@@ -10,33 +10,41 @@
         ng-trim="false">
 	<div ng-if="!_editable">{{item.slugline}}</div>
 </div>
+
 <div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
 	<label translate>Headline</label>
     <span sd-character-count data-item="item.headline" data-limit="limits.headline"></span>
-    <textarea class="headline"
-        id="title"
-        sd-auto-height
+    <div id="title" class="headline"
+        sd-text-editor
+        data-config="{disableToolbar: true, disableReturn: true}"
         ng-model="item.headline"
         ng-change="autosave(item)"
         ng-if="_editable"
-        ng-trim="false"></textarea>
+        ng-trim="false"></div>
 	<div class="headline" ng-if="!_editable">{{item.headline}}</div>
 </div>
+
 <div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
 	<label translate>Abstract</label>
     <span sd-character-count data-item="item.abstract" data-limit="limits.abstract"></span>
-    <textarea class="abstract"
-        sd-auto-height
+    <div class="abstract"
+        sd-text-editor
+        data-config="{disableToolbar: true}"
         ng-model="item.abstract"
         ng-change="autosave(item)"
         ng-if="_editable"
-        ng-trim="false"></textarea>
+        ng-trim="false"></div>
 	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
 </div>
-<div class="field" ng-if="!isMediaType">
+
+<div class="field body" ng-if="!isMediaType">
 	<label translate>Body</label>
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
-    <div sd-text-editor ng-model="item.body_html" ng-if="_editable" ng-change="autosave(item)" data-type="item.type"></div>
+    <div sd-text-editor
+        ng-model="item.body_html"
+        ng-if="_editable"
+        ng-change="autosave(item)"
+        data-type="item.type"></div>
     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
 </div>
 

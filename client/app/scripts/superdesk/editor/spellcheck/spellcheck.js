@@ -31,7 +31,7 @@ function cursorMove(node, offset, extend) {
         currentOffset = 0,
         tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     while (tree.nextNode()) {
-        if (currentOffset + tree.currentNode.textContent.length > offset) {
+        if (currentOffset + tree.currentNode.textContent.length >= offset) {
             var method = extend ? 'extend' : 'collapse';
             selection[method](tree.currentNode, offset - currentOffset);
             return;
@@ -61,8 +61,13 @@ function rgb(color) {
  * Replace given dom elem with its contents
  */
 function replaceSpan(elem) {
-    var text = document.createTextNode(elem.textContent);
-    elem.parentNode.replaceChild(text, elem);
+    var parent = elem.parentNode;
+    while (elem.hasChildNodes()) {
+        parent.insertBefore(elem.childNodes.item(0), elem);
+    }
+
+    parent.removeChild(elem);
+    parent.normalize();
 }
 
 /**
@@ -85,6 +90,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     var dict,
         dictPromise,
         dictId,
+        isRendering,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
 
@@ -195,12 +201,14 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.render = function render(elem) {
         var node = elem;
         return this.errors(node.textContent).then(function(errors) {
+            isRendering = true;
             var selection = editor.storeSelection(node);
             angular.forEach(errors, function(error) {
                 hiliteError(node, error);
             });
             setErrorClass(node);
             editor.resetSelection(node, selection);
+            isRendering = false;
         });
     };
 
@@ -221,6 +229,20 @@ function SpellcheckService($q, api, dictionaries, editor) {
         }).then(function(result) {
             return result.corrections || [];
         });
+    };
+
+    function preventInputEvent(event) {
+        if (isRendering) {
+            event.stopImmediatePropagation();
+        }
+    }
+
+    this.addEventListener = function addEventListener(elem) {
+        elem.addEventListener('input', preventInputEvent);
+    };
+
+    this.removeEventListener = function removeEventListener(elem) {
+        elem.removeEventListener('input', preventInputEvent);
     };
 }
 

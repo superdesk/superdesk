@@ -92,6 +92,10 @@ body, html {
 		}
 	}
 
+	.field {
+		margin-bottom: 10px;
+	}
+
 	//labels
 	.field label {
 		.text-normal();
@@ -110,7 +114,6 @@ body, html {
 
 	// inputs
 	.text-editor {
-		min-height: 300px;
 		border: 1px solid #e0e0e0;
 		padding: 5px;
 		&:focus {
@@ -120,6 +123,12 @@ body, html {
 			font-size: 16px;
 			line-height: 18px;
 			margin-bottom: 9px;
+		}
+	}
+
+	.field.body {
+		.text-editor {
+			min-height: 300px;
 		}
 	}
 
@@ -196,36 +205,40 @@ body, html {
 	.text-editor, .headline, .abstract, input {
 		color: rgba(51, 51, 51, 1) !important;
 	}
+
 	.keyword {
 		font-size: 13px;
 		text-transform: uppercase;
 		.text-semibold();
 	}
-	.headline {
-		font-size:28px;
-		line-height: 120%;
-		.text-semibold();
-	}
-	textarea.headline {
-		height: 40px;
-		padding: 6px;
-	}
-
-	.abstract {
-		font-size:16px;
-		line-height: 150%;
-		font-style: italic;
-	}
 
 	.text-editor {
-		font-size:16px !important;
-		line-height: 150% !important;
+		font-size: 16px;
+		line-height: 150%;
 		p {
 			padding: 0 !important;
 			margin-bottom: 10px !important;
 			font-size:16px !important;
 			line-height: 150% !important;
 			.text-light();
+		}
+		p:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
+
+	.headline {
+		.text-editor {
+			font-size:28px;
+			line-height: 120%;
+			.text-semibold();
+			padding: 6px;
+		}
+	}
+
+	.abstract {
+		.text-editor {
+			font-style: italic;
 		}
 	}
 }
@@ -234,7 +247,9 @@ body, html {
 .large-text {
 	&.main-article {
 		.abstract {
-			font-size: 18px;
+			.text-editor {
+				font-size: 18px;
+			}
 		}
 		.text-editor {
 			font-size: 18px !important;
