@@ -19,7 +19,7 @@ define(['./analytics'], function(analyticsModule) {
             };
 
             // mimic route change event
-            $rootScope.$broadcast('$routeChangeSuccess', {$$route: activity});
+            $rootScope.$broadcast('$routeChangeSuccess', activity);
 
             expect(analytics.track).toHaveBeenCalledWith(activity);
         }));

@@ -24,7 +24,7 @@ define([
         .run(['$rootScope', 'analytics', function($rootScope, analytics) {
             $rootScope.$on('$routeChangeSuccess', function(ev, route) {
                 if (angular.isDefined(route)) {
-                    analytics.track(route.$$route);
+                    analytics.track(route);
                 }
             });
         }]);
