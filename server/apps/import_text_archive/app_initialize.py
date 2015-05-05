@@ -17,6 +17,7 @@ from superdesk.io.iptc import subject_codes
 from datetime import datetime
 from superdesk.utc import utc
 from superdesk.io.commands.update_ingest import process_iptc_codes
+from superdesk.etree import get_text_word_count
 
 # The older content does not contain an anpa category, so we derive it from the
 # publication name
@@ -58,7 +59,8 @@ class AppImportTextArchiveCommand(superdesk.Command):
         superdesk.Option('--user', '-usr', dest='user', required=True),
         superdesk.Option('--password', '-pwd', dest='password', required=True),
         superdesk.Option('--url_root', '-url', dest='url', required=True),
-        superdesk.Option('--query', '-qry', dest='query', required=True)
+        superdesk.Option('--query', '-qry', dest='query', required=True),
+        superdesk.Option('--count', '-c', dest='limit', required=False)
     )
 
     def _api_login(self):
@@ -73,7 +75,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
     def _get_bunch(self, id):
         url = self._url_root + 'archives/txtarch?search_docs[struct_query]=(DCDATA_ID<{0})&search_docs[query]='.format(id)
         url += self._query
-        url += '&search_docs[format]=full&search_docs[pagesize]=100&search_docs[page]=1'
+        url += '&search_docs[format]=full&search_docs[pagesize]=500&search_docs[page]=1'
         url += '&search_docs[sortorder]=DCDATA_ID%20DESC'
         print(url)
         retries = 3
@@ -81,7 +83,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
             r = self._http.request('GET', url, headers=self._headers)
             if r.status == 200:
                 e = etree.fromstring(r.data)
-                print(str(r.data))
+                # print(str(r.data))
                 count = int(e.find('doc_count').text)
                 if count > 0:
                     print('count : {}'.format(count))
@@ -206,6 +208,10 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     item['body_html'] = story
                 else:
                     item['body_html'] = story
+                try:
+                    item['word_count'] = get_text_word_count(item['body_html'])
+                except:
+                    pass
 
             item['pubstatus'] = 'usable'
 
@@ -216,15 +222,18 @@ class AppImportTextArchiveCommand(superdesk.Command):
             else:
                 res.patch(original['_id'], item)
 
-            print(item)
+            if self._limit:
+                self._limit -= 1
+            # print(item)
 
-    def run(self, start_id, user, password, url, query):
+    def run(self, start_id, user, password, url, query, limit):
         print('Starting text archive import at {}'.format(start_id))
         self._user = user
         self._password = password
         self._id = int(start_id)
         self._url_root = url
         self._query = urllib.parse.quote(query)
+        self._limit = int(limit)
 
         self._api_login()
 
@@ -232,6 +241,8 @@ class AppImportTextArchiveCommand(superdesk.Command):
         while x:
             self._process_bunch(x)
             x = self._get_bunch(self._id)
+            if self._limit is not None and self._limit <= 0:
+                break
 
         print('finished text archive import')
 
