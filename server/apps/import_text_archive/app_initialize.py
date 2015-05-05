@@ -16,6 +16,7 @@ import xml.etree.ElementTree as etree
 from superdesk.io.iptc import subject_codes
 from datetime import datetime
 from superdesk.utc import utc
+from superdesk.io.commands.update_ingest import process_iptc_codes
 
 # The older content does not contain an anpa category, so we derive it from the
 # publication name
@@ -70,18 +71,24 @@ class AppImportTextArchiveCommand(superdesk.Command):
         self._anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
 
     def _get_bunch(self, id):
-        url = self._url_root + 'archives/txtarch?search_docs[query]=(ID<{0})'.format(id)
+        url = self._url_root + 'archives/txtarch?search_docs[struct_query]=(DCDATA_ID<{0})&search_docs[query]='.format(id)
         url += self._query
         url += '&search_docs[format]=full&search_docs[pagesize]=100&search_docs[page]=1'
         url += '&search_docs[sortorder]=DCDATA_ID%20DESC'
         print(url)
-        r = self._http.request('GET', url, headers=self._headers)
-        e = etree.fromstring(r.data)
-        print(str(r.data))
-        count = int(e.find('doc_count').text)
-        if count > 0:
-            print('count : {}'.format(count))
-            return e
+        retries = 3
+        while retries > 0:
+            r = self._http.request('GET', url, headers=self._headers)
+            if r.status == 200:
+                e = etree.fromstring(r.data)
+                print(str(r.data))
+                count = int(e.find('doc_count').text)
+                if count > 0:
+                    print('count : {}'.format(count))
+                return e
+            else:
+                self._api_login()
+                retries -= 1
         return None
 
     def _get_head_value(self, doc, field):
@@ -89,33 +96,6 @@ class AppImportTextArchiveCommand(superdesk.Command):
         if el is not None:
             return el.text
         return None
-
-    def _process_iptc_codes(self, item):
-        """
-        Ensures that the higher level IPTC codes are present by inserting them if missing, for example
-        if given 15039001 (Formula One) make sure that 15039000 (motor racing) and 15000000 (sport) are there as well
-
-        :param item: A story item
-        :return: A story item with possible expanded subjects
-        """
-        try:
-            def iptc_already_exists(code):
-                for entry in item['subject']:
-                    if 'qcode' in entry and code == entry['qcode']:
-                        return True
-                return False
-
-            for subject in item['subject']:
-                if 'qcode' in subject and len(subject['qcode']) == 8:
-                    top_qcode = subject['qcode'][:2] + '000000'
-                    if not iptc_already_exists(top_qcode):
-                        item['subject'].append({'qcode': top_qcode, 'name': subject_codes[top_qcode]})
-
-                    mid_qcode = subject['qcode'][:5] + '000'
-                    if not iptc_already_exists(mid_qcode):
-                        item['subject'].append({'qcode': mid_qcode, 'name': subject_codes[mid_qcode]})
-        except Exception:
-            pass
 
     def _addkeywords(self, key, doc, item):
             code = self._get_head_value(doc, key)
@@ -197,7 +177,10 @@ class AppImportTextArchiveCommand(superdesk.Command):
             if code and code in subject_codes:
                 item['subject'] = []
                 item['subject'].append({'qcode': code, 'name': subject_codes[code]})
-                self._process_iptc_codes(item)
+                try:
+                    process_iptc_codes(item, None)
+                except:
+                    pass
 
             slug = self._get_head_value(doc, 'SLUG')
             if slug:
@@ -241,7 +224,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
         self._password = password
         self._id = int(start_id)
         self._url_root = url
-        self._query = urllib.parse.quote('&' + query)
+        self._query = urllib.parse.quote(query)
 
         self._api_login()
 
