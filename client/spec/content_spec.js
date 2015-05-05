@@ -71,10 +71,10 @@ describe('Content', function() {
             boxes = element.all(by.css('.list-field.type-icon'));
 
         toggle(boxes.first());
-        expect(count.getText()).toBe('1 ITEM SELECTED');
+        expect(count.getText()).toBe('1 Item selected');
 
         toggle(boxes.last());
-        expect(count.getText()).toBe('2 ITEMS SELECTED');
+        expect(count.getText()).toBe('2 Items selected');
 
         element(by.css('.big-icon-multiedit')).click();
         expect(browser.getCurrentUrl()).toMatch(/multiedit$/);

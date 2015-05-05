@@ -98,7 +98,7 @@ requirejs.config({
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
-        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
+        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap-tpls',
         'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
