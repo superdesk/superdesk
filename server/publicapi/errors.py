@@ -24,17 +24,17 @@ class PublicApiError(SuperdeskError):
     }
     """A mapping of error codes to error messages."""
 
-    def __init__(self, error_code=10000):
-        super().__init__(error_code)
+    def __init__(self, error_code=10000, desc=None):
+        super().__init__(error_code, desc=desc)
 
 
-class UnknownParameterError(PublicApiError):
-    """Used when request contains an unknown parameter."""
+class UnexpectedParameterError(PublicApiError):
+    """Used when request contains an unexpected parameter."""
 
-    PublicApiError._codes[10001] = "Unknown parameter."
+    PublicApiError._codes[10001] = "Unexpected parameter."
 
-    def __init__(self):
-        super().__init__(10001)
+    def __init__(self, desc=None):
+        super().__init__(10001, desc=desc)
 
 
 class BadParameterValueError(PublicApiError):
@@ -42,5 +42,5 @@ class BadParameterValueError(PublicApiError):
 
     PublicApiError._codes[10002] = "Bad parameter value."
 
-    def __init__(self):
-        super().__init__(10002)
+    def __init__(self, desc=None):
+        super().__init__(10002, desc=desc)

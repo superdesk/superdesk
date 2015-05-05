@@ -42,6 +42,10 @@ class PublicApiErrorTestCase(ApiTestCase):
         error = self._make_one()
         self.assertEqual(error.message, "Unknown API error.")
 
+    def test_uses_error_description_if_given(self):
+        error = self._make_one(desc='Detailed description')
+        self.assertEqual(error.desc, "Detailed description")
+
 
 class UnknownParameterErrorTestCase(ApiTestCase):
 
@@ -51,11 +55,11 @@ class UnknownParameterErrorTestCase(ApiTestCase):
         Make the test fail immediately if the class cannot be imported.
         """
         try:
-            from publicapi.errors import UnknownParameterError
+            from publicapi.errors import UnexpectedParameterError
         except ImportError:
             self.fail("Could not import class under test")
         else:
-            return UnknownParameterError(*args, **kwargs)
+            return UnexpectedParameterError(*args, **kwargs)
 
     def test_inherits_from_base_publicapi_error(self):
         from publicapi.errors import PublicApiError
@@ -68,7 +72,11 @@ class UnknownParameterErrorTestCase(ApiTestCase):
 
     def test_error_message(self):
         error = self._make_one()
-        self.assertEqual(error.message, "Unknown parameter.")
+        self.assertEqual(error.message, "Unexpected parameter.")
+
+    def test_uses_error_description_if_given(self):
+        error = self._make_one(desc='More detailed description')
+        self.assertEqual(error.desc, 'More detailed description')
 
 
 class BadParameterValueTestCase(ApiTestCase):
@@ -97,3 +105,7 @@ class BadParameterValueTestCase(ApiTestCase):
     def test_error_message(self):
         error = self._make_one()
         self.assertEqual(error.message, "Bad parameter value.")
+
+    def test_uses_error_description_if_given(self):
+        error = self._make_one(desc='Integer expected for max results')
+        self.assertEqual(error.desc, 'Integer expected for max results')
