@@ -150,6 +150,9 @@
 		height: auto !important;
 		
 		.term-editor {
+                    input[type="text"] {
+                        padding-right: 25px;
+                    }
 			.item-list {
 				max-width: @tabpane-width - 40px;
 			}
@@ -183,6 +186,13 @@
 				}
 			}
 		}
+                
+                .dropdown-nested {
+                    position: absolute;
+                    right: 0px;
+                    margin-top: 0px;
+                }
+                
 	}
 	
 	.state-label {
