@@ -11,6 +11,29 @@
  (function() {
     'use strict';
 
+    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService', '$location', 'reloadService'];
+    function DeskDropdownDirective(desks, $route, preferencesService, $location, reloadService) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/desk-dropdown.html',
+            link: function(scope) {
+
+                scope.select = function selectDesk(desk) {
+                    scope.selected = desk;
+                    desks.setCurrentDeskId(desk._id);
+                    $location.search('_id', null);
+                    $location.path('/workspace');
+                };
+
+                desks.initialize().then(function() {
+                    desks.fetchCurrentUserDesks().then(function(userDesks) {
+                        scope.userDesks = userDesks._items;
+                        scope.selected = desks.getCurrentDesk();
+                    });
+                });
+            }
+        };
+    }
+
     DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges', 'tasks', 'api'];
     function DeskListController($scope, desks, superdesk, privileges, tasks, api) {
 
@@ -491,6 +514,8 @@
                     };
                 }
 
+                var PERSONAL = 'personal';
+
                 var desksService = {
                     desks: null,
                     users: null,
@@ -595,6 +620,7 @@
                             if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
+                            return self.activeDeskId;
                         });
                     },
                     fetchCurrentStageId: function() {
@@ -609,12 +635,15 @@
                             }
                         });
                     },
+                    isPersonal: function(deskId) {
+                        return deskId === PERSONAL;
+                    },
                     getCurrentDeskId: function() {
-                        if (this.activeDeskId === 'personal' ||
+                        if (this.isPersonal(this.activeDeskId) ||
                             !this.userDesks ||
                             !this.userDesks._items ||
                             !this.userDesks._items.length) {
-                            return 'personal';
+                            return PERSONAL;
                         }
                         if (!this.activeDeskId || !_.find(this.userDesks._items, {_id: this.activeDeskId})) {
                             return this.userDesks._items[0]._id;
@@ -649,8 +678,8 @@
                         return api.desks.getById(Id);
                     },
                     getCurrentDesk: function() {
-                        if (this.getCurrentDeskId() === 'personal') {
-                            return {'_id': 'personal'};
+                        if (this.isPersonal(this.getCurrentDeskId())) {
+                            return {'_id': PERSONAL};
                         } else {
                             return this.deskLookup[this.getCurrentDeskId()];
                         }
@@ -1244,6 +1273,7 @@
             };
         }])
         .directive('sdStageHeader', StageHeaderDirective)
+        .directive('sdDeskDropdown', DeskDropdownDirective)
         ;
 
     function StageHeaderDirective() {

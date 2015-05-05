@@ -7,15 +7,16 @@ var content = require('./content'),
     nav = require('./utils').nav;
 
 function Workspace() {
-    this.open = function() {
+    function openContent() {
         return nav('workspace/content');
-    };
+    }
 
-    this.openContent = this.open;
-
-    this.openIngest = function() {
+    function openIngest() {
         return nav('workspace/ingest');
-    };
+    }
+
+    this.open = this.openContent = openContent;
+    this.openIngest = openIngest;
 
     this.getDesk = function(name) {
         var desks = element.all(by.repeater('desk in userDesks'));
@@ -38,6 +39,8 @@ function Workspace() {
                     return getDesk(desk).click();
                 }
             }
+        }).then(function() {
+            return openContent();
         }).then(function() {
             return browser.wait(function() {
                 return element(by.css('.list-view')).isPresent();
