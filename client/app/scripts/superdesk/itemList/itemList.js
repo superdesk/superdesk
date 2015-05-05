@@ -98,7 +98,7 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         var queryContent = [];
         _.each(fields, function(dbField, field) {
             if (options[field]) {
-                queryContent.push(dbField + ':(' + options[field] + ')');
+                queryContent.push(dbField + ':(*' + options[field] + '*)');
             }
         });
         if (queryContent.length) {
@@ -140,7 +140,7 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         if (options.search) {
             var queryContentAny = [];
             _.each(_.values(fields), function(dbField) {
-                queryContentAny.push(dbField + ':(' + options.search + ')');
+                queryContentAny.push(dbField + ':(*' + options.search + '*)');
             });
             query.source.query.filtered.query = {
                 query_string: {

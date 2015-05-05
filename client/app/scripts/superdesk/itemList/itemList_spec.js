@@ -197,7 +197,7 @@ describe('itemListService', function() {
         $rootScope.$digest();
         expect(queryParams.source.query.filtered.query).toEqual({
             query_string: {
-                query: 'headline:(h) subject.name:(s) slugline:(k) unique_name:(u) body_html:(b)',
+                query: 'headline:(*h*) subject.name:(*s*) slugline:(*k*) unique_name:(*u*) body_html:(*b*)',
                 lenient: false,
                 default_operator: 'AND'
             }
@@ -216,7 +216,7 @@ describe('itemListService', function() {
         $rootScope.$digest();
         expect(queryParams.source.query.filtered.query).toEqual({
             query_string: {
-                query: 'headline:(s) subject.name:(s) slugline:(s) unique_name:(s) body_html:(s)',
+                query: 'headline:(*s*) subject.name:(*s*) slugline:(*s*) unique_name:(*s*) body_html:(*s*)',
                 lenient: false,
                 default_operator: 'OR'
             }
