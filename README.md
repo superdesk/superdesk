@@ -14,7 +14,7 @@ Use [docker-compose](http://docs.docker.com/compose/ "") and the config from the
 ```sh
 $ sudo apt-get install docker.io python2.7 python-virtualenv git
 ```
-
+and install [the newest docker](https://docs.docker.com/installation/).
 and make sure you can run [docker without sudo](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).
 
 
