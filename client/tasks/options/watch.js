@@ -6,20 +6,22 @@ module.exports = {
         tasks: ['style'],
         files: [
             '<%= appDir %>/styles/{,*/}*.less',
-            '<%= appDir %>/scripts/superdesk/**/*.less',
-            '<%= appDir %>/scripts/superdesk-*/**/*.less'
+            '<%= appDir %>/scripts/superdesk*/**/*.less'
         ]
     },
     code: {
         options: {livereload: true},
         tasks: ['hint'],
-        files: ['<%= appDir %>/scripts/**/*.js']
+        files: [
+            '<%= appDir %>/scripts/*.js',
+            '<%= appDir %>/scripts/superdesk*/**/*.js'
+        ]
     },
     assets: {
         options: {livereload: true},
         files: [
             '<%= appDir %>/styles/**/*.css',
-            '<%= appDir %>/scripts/**/*.html',
+            '<%= appDir %>/scripts/superdesk*/**/*.html',
             '<%= appDir %>/docs/**/*.html'
         ]
     },
