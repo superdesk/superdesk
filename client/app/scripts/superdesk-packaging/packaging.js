@@ -459,22 +459,50 @@
         };
     }
 
-    PackageItemPreviewDirective.$inject = ['api'];
-    function PackageItemPreviewDirective(api) {
+    PackageItemPreviewDirective.$inject = ['api', 'lock'];
+    function PackageItemPreviewDirective(api, lock) {
         return {
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-item-preview.html',
             link: function(scope) {
                 scope.data = null;
                 scope.error = null;
                 scope.type = scope.item.type || scope.item.itemClass.split(':')[1];
-                if (scope.type !== 'text' && scope.type !== 'composite' && scope.item.location) {
+                if (scope.item.location) {
                     api[scope.item.location].getById(scope.item.residRef)
                     .then(function(result) {
                         scope.data = result;
+                        scope.isLocked = lock.isLocked(scope.data);
+                        scope.isPublished = scope.data.state === 'published';
                     }, function(response) {
                         scope.error = true;
                     });
                 }
+
+                scope.$on('item:lock', function(_e, data) {
+                    if (scope.data && scope.data._id === data.item) {
+                        scope.$applyAsync(function() {
+                            scope.data.lock_user = data.user;
+                            scope.isLocked = lock.isLocked(scope.data);
+                        });
+                    }
+                });
+
+                scope.$on('item:unlock', function(_e, data) {
+                    if (scope.data && scope.data._id === data.item) {
+                        scope.$applyAsync(function() {
+                            scope.data.lock_user = null;
+                            scope.isLocked = false;
+                        });
+                    }
+                });
+
+                scope.$on('item:publish', function(_e, data) {
+                    if (scope.data && scope.data._id === data.item) {
+                        scope.$applyAsync(function() {
+                            scope.isPublished = true;
+                        });
+                    }
+                });
             }
         };
     }
