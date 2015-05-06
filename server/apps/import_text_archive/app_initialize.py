@@ -73,7 +73,8 @@ class AppImportTextArchiveCommand(superdesk.Command):
         self._anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
 
     def _get_bunch(self, id):
-        url = self._url_root + 'archives/txtarch?search_docs[struct_query]=(DCDATA_ID<{0})&search_docs[query]='.format(id)
+        url = self._url_root + \
+            'archives/txtarch?search_docs[struct_query]=(DCDATA_ID<{0})&search_docs[query]='.format(id)
         url += self._query
         url += '&search_docs[format]=full&search_docs[pagesize]=500&search_docs[page]=1'
         url += '&search_docs[sortorder]=DCDATA_ID%20DESC'
@@ -160,7 +161,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
             if type == 'x':
                 item['type'] = 'text'
             elif type == 't':
-                item['type'] = 'preformated'
+                item['type'] = 'preformatted'
             else:
                 item['type'] = 'text'
 
