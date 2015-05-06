@@ -25,7 +25,8 @@
         description: null,
         destination_groups: null,
         sign_off: null,
-        publish_schedule: null
+        publish_schedule: null,
+        pubstatus: null
     };
 
     /**
@@ -531,8 +532,13 @@
                                 return _.trim(placeholder, '${} ');
                             });
 
-                            var compiled = _.template(body);
                             var args = _.pick($scope.origItem, placeholders);
+                            _.each(placeholders, function(placeholder) {
+                                if (!(_.has(args, placeholder))) {
+                                    args[placeholder] = placeholder.toUpperCase();
+                                }
+                            });
+                            var compiled = _.template(body);
                             $scope.origItem.body_html = compiled(args);
                         }
                         _.each(template, function(value, key) {
@@ -546,6 +552,7 @@
                                 }
                             }
                         });
+                        $scope.origItem.pubstatus = 'Canceled';
                         resolveDestinations();
                     });
                 } else {
