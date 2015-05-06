@@ -7,38 +7,44 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<td>Sequence No</td>
-				<td>Queue Id</td>
-				<td>Article Id</td>
-				<td>Formatted Article Id</td>
-				<td>Output Channel</td>
-				<td>Subscriber</td>
-				<td>Destination</td>
-				<td>Queued At</td>
-				<td>Scheduled</td>
-				<td>Transmit Started At</td>
-				<td>Transmit Completed At</td>
-				<td>Status</td>
-				<td>Message</td>
+				<th>Sequence No</th>
+				<th>Unique Name</th>
+				<th>Headline</th>
+				<th>Content Type</th>
+                <th>Publishing Action</th>
+				<th>Output Channel</th>
+				<th>Subscriber</th>
+				<th>Destination</th>
+				<th>Queued At</th>
+				<th>Scheduled At</th>
+				<th>Transmitted At</th>
+				<th>Status</th>
+				<th>Message</th>
+                <th>Action</th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
-				<td>{{formattedItemLookup[queue_item.formatted_item_id].published_seq_num}}</td>
-				<td>{{queue_item._id}}</td>
-				<td>{{queue_item.item_id}}</td>
-				<td>{{queue_item.formatted_item_id}}</td>
+        <tbody>
+            <tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
+                <td>{{ queue_item.published_seq_num }}</td>
+                <td>{{ queue_item.unique_name }}</td>
+                <td>{{ queue_item.headline }}</td>
+                <td>{{ queue_item.content_type }}</td>
+                <td>{{ queue_item.publishing_action }}</td>
 				<td>{{outputChannelLookup[queue_item.output_channel_id].name}}</td>
 				<td>{{subscriberLookup[queue_item.subscriber_id].name}}</td>
-				<td>{{queue_item.destination.name}}</td>
+				<td ng-if="queue_item.selector_codes != null && queue_item.selector_codes.length > 0">{{queue_item.destination.name}} {{ queue_item.selector_codes }}</td>
+                <td ng-if="queue_item.selector_codes == null || queue_item.selector_codes.length == 0">{{queue_item.destination.name}}</td>
 				<td>{{queue_item._created | dateTimeString}}</td>
 				<td>{{queue_item.publish_schedule | dateTimeString}}</td>
-				<td>{{queue_item.transmit_started_at | dateTimeString}}</td>
 				<td>{{queue_item.completed_at | dateTimeString}}</td>
 				<td>{{queue_item.state}}</td>
 				<td>{{queue_item.error_message}}</td>
-			</tr>
-		</tbody>
+                <td>
+                    <button ng-if="queue_item.state === 'success'" ng-click="scheduleToSend(queue_item)">Resend</button>
+                    <button ng-if="queue_item.state === 'pending'" ng-click="cancelSchedule(queue_item)">Cancel</button>
+                </td>
+            </tr>
+        </tbody>
 	</table>
 </section>
 

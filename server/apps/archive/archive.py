@@ -143,6 +143,15 @@ class ArchiveService(BaseService):
     packageService = PackageService()
     mediaService = ArchiveMediaService()
 
+    def on_fetched(self, docs):
+        """
+        Overriding this to handle existing data in Mongo & Elastic
+        """
+
+        for item in docs[config.ITEMS]:
+            if 'pubstatus' in item:
+                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+
     def on_create(self, docs):
         on_create_item(docs)
 
@@ -161,6 +170,9 @@ class ArchiveService(BaseService):
             # let client create version 0 docs
             if doc.get('version') == 0:
                 doc['_version'] = doc['version']
+
+            if 'pubstatus' in doc:
+                doc['pubstatus'] = doc.get('pubstatus', 'Usable').capitalize()
 
     def on_created(self, docs):
         packages = [doc for doc in docs if doc['type'] == 'composite']
@@ -291,9 +303,14 @@ class ArchiveService(BaseService):
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)
+
         if item and str(item.get('task', {}).get('stage', '')) in \
                 get_resource_service('users').get_invisible_stages_ids(get_user().get('_id')):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
+
+        if item and 'pubstatus' in item:
+            item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+
         return item
 
     def restore_version(self, id, doc, original):

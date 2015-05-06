@@ -45,7 +45,6 @@ class PublishedItemResource(Resource):
 
 
 class PublishedItemService(BaseService):
-
     def on_create(self, docs):
         # the same content can be published more than once
         # so it is necessary to have a new _id and preserve the original
@@ -65,7 +64,12 @@ class PublishedItemService(BaseService):
                 '_id': item['item_id'],
                 'item_id': item['_id']
             }
+
             item.update(updates)
+
+            if 'pustatus' in item:
+                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+
         return items
 
     def on_delete(self, doc):
@@ -129,3 +133,11 @@ class PublishedItemService(BaseService):
             text_archive.delete_action({'_id': doc['_id']})
             logger.info('Deleting published item {} with headline {} and version {} and expiry {}.'.
                         format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))
+
+    def find_one(self, req, **lookup):
+        item = super().find_one(req, **lookup)
+
+        if 'pubstatus' in item:
+            item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+
+        return item

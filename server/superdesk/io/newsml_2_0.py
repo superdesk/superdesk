@@ -65,7 +65,7 @@ class NewsMLTwoParser(Parser):
         item['type'] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
-        item['pubstatus'] = meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]
+        item['pubstatus'] = (meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]).capitalize()
         item['ednote'] = meta.find(self.qname('edNote')).text if meta.find(self.qname('edNote')) is not None else ''
 
     def parse_content_meta(self, tree, item):

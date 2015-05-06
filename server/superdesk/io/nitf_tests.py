@@ -71,7 +71,7 @@ class AAPTestCase(NITFTestCase):
         self.assertNotIn('<body.content>', self.item.get('body_html'))
 
     def test_pubstatus(self):
-        self.assertEqual('usable', self.item.get('pubstatus'))
+        self.assertEqual('Usable', self.item.get('pubstatus'))
 
     def test_ingest_provider_sequence(self):
         self.assertEqual(self.item.get('ingest_provider_sequence'), '1747')
@@ -91,7 +91,7 @@ class IPTCExampleTestCase(NITFTestCase):
         self.assertEqual(self.item.get('headline'), 'Weather and Tide Updates for Norfolk')
 
     def test_pubstatus(self):
-        self.assertEqual('canceled', self.item.get('pubstatus'))
+        self.assertEqual('Canceled', self.item.get('pubstatus'))
 
     def test_guid(self):
         self.assertEquals('iptc.321656141.b', self.item.get('guid'))

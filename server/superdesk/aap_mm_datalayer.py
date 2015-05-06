@@ -55,7 +55,7 @@ class AAPMMDatalayer(DataLayer):
         new_doc['versioncreated'] = self._datetime(doc['ModifiedDate'])
         new_doc['firstcreated'] = self._datetime(doc['CreationDate'])
         new_doc['type'] = 'picture'
-        new_doc['pubstatus'] = 'usable'
+        new_doc['pubstatus'] = 'Usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
         # entry that the client can use to identify the fetch endpoint

@@ -141,8 +141,8 @@
         };
     }
 
-    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q'];
-    function PublishQueueController($scope, adminPublishSettingsService, api, $q) {
+    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify'];
+    function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
         $scope.outputChannels = null;
@@ -188,6 +188,55 @@
                     $scope.lastRefreshedAt = new Date();
                 });
             });
+        };
+
+        $scope.scheduleToSend = function(item) {
+            var newItem = {};
+
+            newItem.publishing_action = item.publishing_action;
+            newItem.item_id = item.item_id;
+            newItem.published_seq_num = item.published_seq_num;
+            newItem.publish_schedule = item.publish_schedule;
+            newItem.selector_codes = item.selector_codes;
+            newItem.formatted_item_id = item.formatted_item_id;
+            newItem.headline = item.headline;
+            newItem.content_type = item.content_type;
+            newItem.subscriber_id = item.subscriber_id;
+            newItem.output_channel_id = item.output_channel_id;
+            newItem.unique_name = item.unique_name;
+            newItem.destination = item.destination;
+
+            api.publish_queue.save({}, newItem).then(
+                function(response) {
+                    $scope.reload();
+                },
+                function(response) {
+                    if (angular.isDefined(response.data._issues)) {
+                        if (angular.isDefined(response.data._issues['validator exception'])) {
+                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                        }
+                    } else {
+                        notify.error(gettext('Error: Failed to re-schedule'));
+                    }
+                }
+            );
+        };
+
+        $scope.cancelSchedule = function(item) {
+            api.publish_queue.save(item, {'state': 'canceled', 'error_message': 'canceled by user'}).then(
+                function(response) {
+                    $scope.reload();
+                },
+                function(response) {
+                    if (angular.isDefined(response.data._issues)) {
+                        if (angular.isDefined(response.data._issues['validator exception'])) {
+                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                        }
+                    } else {
+                        notify.error(gettext('Error: Failed to cancel the schedule'));
+                    }
+                }
+            );
         };
 
         $scope.reload();

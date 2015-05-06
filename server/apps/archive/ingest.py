@@ -17,6 +17,7 @@ from apps.content import metadata_schema
 from .common import extra_response_fields, item_url, aggregations, on_create_item
 from eve.defaults import resolve_default_values
 from eve.methods.common import resolve_document_etag
+from eve.utils import config
 from flask import current_app as app
 
 
@@ -40,10 +41,23 @@ class IngestResource(Resource):
 
 
 class IngestService(BaseService):
+    def on_fetched(self, docs):
+        """
+        Items when ingested have different case for pubstatus.
+        Overriding this to handle existing data in Mongo & Elastic
+        """
+
+        for item in docs[config.ITEMS]:
+            if 'pubstatus' in item:
+                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
 
     def on_create(self, docs):
         for doc in docs:
             set_default_state(doc, STATE_INGESTED)
+
+            if 'pubstatus' in doc:
+                doc['pubstatus'] = doc.get('pubstatus', 'Usable').capitalize()
+
         on_create_item(docs)  # do it after setting the state otherwise it will make it draft
 
     def post_in_mongo(self, docs, **kwargs):
