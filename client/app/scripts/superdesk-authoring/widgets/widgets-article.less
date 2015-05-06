@@ -63,6 +63,7 @@
 			padding-bottom: 65px;
 			top: 44px;
 			border-top:1px solid #e0e0e0;
+                        margin-top: 0;
 
 			fieldset {
 				padding: 10px;
@@ -70,6 +71,12 @@
 					margin-left: 0;
 				}
 			}
+                        span.chevron {
+                            background-color: @sd-background;
+                            ~ h6 {
+                                background-color: @sd-background;
+                            }
+                        }
 		}
 	}
 }

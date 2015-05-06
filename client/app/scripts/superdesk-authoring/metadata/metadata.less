@@ -142,6 +142,9 @@
 					width: auto;
 					height: auto;
 				}
+                                .datepicker-input {
+                                    margin-bottom: 10px;
+                                }
 			}
 		}
 	}
@@ -152,6 +155,7 @@
 		.term-editor {
                     input[type="text"] {
                         padding-right: 25px;
+                        text-align: left;
                     }
 			.item-list {
 				max-width: @tabpane-width - 40px;
@@ -165,6 +169,7 @@
 			padding-top: 10px;
 			.clearfix();
 			li {
+                                position: relative;
 				background: #e8e8e8;
 				line-height: 26px;
 				height: 26px;
@@ -172,18 +177,28 @@
 				.border-radius(3px);
 				margin: 0 5px 5px 0;
 				float: left;
+                                .transition(all .5s);
 				i {
-					vertical-align: sub;
-					margin-left: 5px;
-					.opacity(40);
+                                        position: absolute;
+                                        display: none;
+                                        right: 5px;
+                                        top: 6px;
+					.opacity(0);
+                                        .transition(all .5s);
 				}
 				&:hover {
 					cursor: pointer;
+                                        padding-right: 20px;
 					background: #e0e0e0;
 					i {
-						.opacity(70);
+                                            .opacity(70);
 					}
 				}
+                                &:hover {
+                                    > i {
+                                        display: inline-block;
+                                    }
+                                }
 			}
 		}
                 
