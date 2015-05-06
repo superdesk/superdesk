@@ -462,7 +462,7 @@ Feature: Content Publishing
         {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
       ]
       """
-      And we publish "#archive._id#"
+      And we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 200
       """
       [{"event": "item:publish:closed:channels"}]
