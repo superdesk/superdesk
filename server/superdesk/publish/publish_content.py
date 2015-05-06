@@ -70,7 +70,7 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
 
     for queue_item in queue_items:
         # Check if output channel is active
-        if(output_channels.get(str(queue_item['output_channel_id']), {})).get('is_active', False):
+        if not (output_channels.get(str(queue_item['output_channel_id']), {})).get('is_active', False):
             continue
 
         try:
