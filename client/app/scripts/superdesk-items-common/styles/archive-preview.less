@@ -41,8 +41,19 @@
 	.item {
 		margin-bottom: 15px;
 		position: relative;
+		
 		&:hover {
 			cursor: pointer;
+		}
+
+		.border-radius(2px);
+		border-left: 3px solid #d1d1d1;
+
+		&.locked {
+			border-left-color: @state-color-red;
+		}
+		&.published {
+			border-left-color: @state-color-green;
 		}
 	}
 	.info {
