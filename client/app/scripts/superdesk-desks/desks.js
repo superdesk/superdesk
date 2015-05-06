@@ -233,24 +233,30 @@
                 var UP = -1,
                     DOWN = 1;
 
-                keyboardManager.bind('up', function(e) { scope.move(UP, e); });
-                keyboardManager.bind('down', function(e) { scope.move(DOWN, e); });
+                keyboardManager.bind('up', function(event) { scope.move(UP, event); });
+                keyboardManager.bind('down', function(event) { scope.move(DOWN, event); });
 
-                scope.move = function (diff, e) {
+                scope.move = function (diff, event) {
                     if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
 
                         if (scope.items) {
                             var index = _.findIndex(scope.items, {_id: scope.selected._id});
                             if (index === -1) { // selected not in current items, select first
-                                clickItem(_.first(scope.items), e);
+                                clickItem(_.first(scope.items), event);
                             }
                             var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
                             if (nextIndex < 0) {
-                                clickItem(_.last(scope.items), e);
+                                clickItem(_.last(scope.items), event);
                             }
                             if (index !== nextIndex) {
                                 scrollList(scope.items[nextIndex]._id);
-                                clickItem(scope.items[nextIndex], e);
+                                clickItem(scope.items[nextIndex], event);
+                            } else {
+                                if (event) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    event.stopImmediatePropagation();
+                                }
                             }
                         }
                     }
