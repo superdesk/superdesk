@@ -63,9 +63,8 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll',
-    'keyboardManager'];
-    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll, keyboardManager) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
+    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -233,8 +232,22 @@
                 var UP = -1,
                     DOWN = 1;
 
-                keyboardManager.bind('up', function(event) { scope.move(UP, event); });
-                keyboardManager.bind('down', function(event) { scope.move(DOWN, event); });
+                var code;
+                elem.on('keyup', function(e) {
+                    scope.$apply(function() {
+                        if (e.keyCode) {
+                            code = e.keyCode;
+                        } else if (e.which) {
+                            code = e.which;
+                        }
+                        if (code === 38) { scope.move(UP, e); }
+                        if (code === 40) {
+                            console.log('down');
+                            e.preventDefault();
+                            scope.move(DOWN, e);
+                        }
+                    });
+                });
 
                 scope.move = function (diff, event) {
                     if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
