@@ -242,7 +242,6 @@
                         }
                         if (code === 38) { scope.move(UP, e); }
                         if (code === 40) {
-                            console.log('down');
                             e.preventDefault();
                             scope.move(DOWN, e);
                         }
