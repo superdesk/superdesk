@@ -63,8 +63,9 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
-    function StageItemListDirective(search, api, superdesk, desks) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll',
+    'keyboardManager'];
+    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll, keyboardManager) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -78,6 +79,13 @@
             },
             link: function(scope, elem) {
 
+                scope.page = 1;
+                scope.fetching = false;
+                scope.cacheNextItems = [];
+                scope.cachePreviousItems = [];
+                var query = search.query({});
+                var criteria = {source: query.getCriteria()};
+
                 scope.preview = function(item) {
                     desks.setWorkspace(item.task.desk, item.task.stage);
                     superdesk.intent('read_only', 'content_article', item);
@@ -89,9 +97,9 @@
                 };
 
                 function queryItems(queryString) {
-                    var query = search.query({});
+                    query = search.query({});
                     query.filter({term: {'task.stage': scope.stage}});
-                    query.size(10);
+                    query.size(25);
 
                     if (queryString) {
                         query.filter({query: {query_string: {
@@ -99,14 +107,15 @@
                             lenient: false
                         }}});
                     }
-
-                    var criteria = {source: query.getCriteria()};
-
+                    criteria = {source: query.getCriteria()};
                     scope.loading = true;
                     scope.items = scope.total = null;
                     api('archive').query(criteria).then(function(items) {
                         scope.items = items._items;
                         scope.total = items._meta.total;
+
+                        scope.cachePreviousItems = items._items;
+                        setNextItems(criteria);
                     })['finally'](function() {
                         scope.loading = false;
                     });
@@ -119,6 +128,144 @@
                         queryItems();
                     }
                 });
+
+                var container = elem[0];
+                var lastScrollTop = 0;
+                elem.bind('scroll', function() {
+                    var st = elem.scrollTop();
+                    if (st > lastScrollTop){
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 33) {
+                            scope.fetchNext();
+                        }
+                    } else {
+                        if (lastScrollTop <= 33) {
+                            scope.fetchPrevious();
+                        }
+                    }
+                    lastScrollTop = st;
+                });
+                scope.fetchNext = function() {
+                    if (!scope.fetching) {
+                        if (scope.cacheNextItems.length > 0) {
+                            scope.fetching = true;
+                            scope.page = scope.page + 1;
+
+                            criteria.source.from = (scope.page) * criteria.source.size;
+                            scope.loading = true;
+
+                            if (scope.items.length > criteria.source.size){
+                                scope.cachePreviousItems = _.slice(scope.items, 0, criteria.source.size);
+                                scope.items.splice(0, criteria.source.size);
+                            }
+                            $timeout(function() {
+                                if (!_.isEqual(scope.items, scope.cacheNextItems)) {
+                                    scope.items = scope.items.concat(scope.cacheNextItems);
+                                }
+                            }, 100);
+
+                            api('archive').query(criteria)
+                            .then(function(items) {
+                                scope.cacheNextItems = items._items;
+                                scope.fetching = false;
+                            }, function() {
+                                //
+                            })
+                            ['finally'](function() {
+                                scope.loading = false;
+                            });
+                        }
+                    } else {
+                        return $q.when(false);
+                    }
+                };
+                scope.fetchPrevious = function() {
+                    if (!scope.fetching && scope.page > 2) {
+                        scope.fetching = true;
+                        scope.page = scope.page - 1;
+                        if (scope.page > 2) {
+                            criteria.source.from = (scope.page - 3) * criteria.source.size;
+                        } else {
+                            criteria.source.from = 0;
+                        }
+                        scope.loading = true;
+
+                        if (scope.items.length > criteria.source.size) {
+                            scope.cacheNextItems = _.slice(scope.items,
+                                scope.items.length - (scope.items.length - criteria.source.size), scope.items.length);
+                            scope.items.splice(scope.items.length - (scope.items.length - criteria.source.size), criteria.source.size);
+                        }
+
+                        $timeout(function() {
+                            scope.items.unshift.apply(scope.items, scope.cachePreviousItems);
+                            if (scope.items.length > 0) {
+                                scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), 10)]._id);
+                            }
+                        }, 100);
+
+                        api('archive').query(criteria)
+                        .then(function(items) {
+                            scope.cachePreviousItems = items._items;
+                            scope.fetching = false;
+                        }, function() {
+                            //
+                        })
+                        ['finally'](function() {
+                            scope.loading = false;
+                        });
+                    } else {
+                        return $q.when(false);
+                    }
+                };
+                function setNextItems(criteria) {
+                    criteria.source.from = scope.page * criteria.source.size;
+                    return api('archive').query(criteria)
+                        .then(function(items) {
+                            scope.cacheNextItems = items._items;
+                        }, function() {
+                            //
+                        });
+                }
+                function scrollList(id) {
+                    $location.hash(id);
+                    $anchorScroll();
+                }
+
+                var UP = -1,
+                    DOWN = 1;
+
+                keyboardManager.bind('up', function(e) { scope.move(UP, e); });
+                keyboardManager.bind('down', function(e) { scope.move(DOWN, e); });
+
+                scope.move = function (diff, e) {
+                    if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
+
+                        if (scope.items) {
+                            var index = _.findIndex(scope.items, {_id: scope.selected._id});
+                            if (index === -1) { // selected not in current items, select first
+                                clickItem(_.first(scope.items), e);
+                            }
+                            var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
+                            if (nextIndex < 0) {
+                                clickItem(_.last(scope.items), e);
+                            }
+                            if (index !== nextIndex) {
+                                scrollList(scope.items[nextIndex]._id);
+                                clickItem(scope.items[nextIndex], e);
+                            }
+                        }
+                    }
+                };
+                function clickItem(item, $event) {
+                    scope.select(item);
+                    if ($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        $event.stopImmediatePropagation();
+                    }
+                }
+                scope.select = function(view) {
+                    this.selected = view;
+                };
             }
         };
     }
