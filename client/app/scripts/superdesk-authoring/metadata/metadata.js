@@ -27,14 +27,23 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
         });
     };
 
-    $scope.$watch('item.publish_schedule_date', setPublishScheduleDate);
+    $scope.$watch('item.publish_schedule_date', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
 
-    $scope.$watch('item.publish_schedule_time', setPublishScheduleDate);
+    $scope.$watch('item.publish_schedule_time', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
 
-    function setPublishScheduleDate() {
-        if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
-            $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
-                $scope.item.publish_schedule_time).format();
+    function setPublishScheduleDate(newValue, oldValue) {
+        if (newValue !== oldValue) {
+            if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
+                $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
+                    $scope.item.publish_schedule_time).format();
+            } else {
+                $scope.item.publish_schedule = false;
+            }
+
             $scope.autosave($scope.item);
         }
     }

@@ -198,6 +198,11 @@
         this.publish = function publish(orig, diff, action) {
             action = action || 'publish';
             diff = extendItem({}, diff);
+
+            if (!diff.publish_schedule) {
+                delete diff.publish_schedule;
+            }
+
             var endpoint = 'archive_' + action;
             return api.update(endpoint, orig, diff)
             .then(function(result) {
