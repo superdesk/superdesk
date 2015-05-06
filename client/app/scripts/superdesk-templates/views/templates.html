@@ -1,0 +1,116 @@
+<div class="split-content">
+  <div class="header">
+    <h2 translate>Templates</h2>
+    <button class="btn btn-info pull-right" ng-click="edit()">
+      <i class="icon-plus-sign icon-white"></i> <span translate>Add New Template</span>
+    </button>
+  </div>
+
+  <div class="content">
+    <ul class="pills-list provider-list">
+      <li ng-repeat="template in content_templates._items" class="clearfix">
+        <div class="header">
+          <h6>{{ template.template_name }}</h6>
+          <div class="actions">
+            <button ng-click="edit(template)" title="{{:: 'Edit Template' | translate }}"><i class="icon-pencil"></i></button>
+            <button ng-click="remove(template)" title="{{:: 'Remove Template' | translate }}"><i class="icon-trash"></i></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div sd-modal data-model="template" class="modal-responsive">
+  <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+    <h3 translate ng-show="template._id" translate>Edit Template "{{ origTemplate.template_name }}"</h3>
+    <h3 translate ng-hide="template._id" translate>Add New Template</h3>
+  </div>
+  <div class="modal-body">
+    <form name="editForm" ng-submit="save()">
+      <article class="theme-container">
+        <div class="fieldset">
+          <div class="field">
+            <label for="template-name" translate>Name</label>
+            <input type="text" id="template-name" required ng-model="template.template_name">
+          </div>
+          <div class="field">
+            <label translate>Keyword</label>
+            <input type="text"
+                   class="keyword"
+                   id="keyword"
+                   ng-model="template.slugline"
+                   ng-trim="false">
+          </div>
+          <div class="field">
+            <label translate>Take key</label>
+            <input type="text"
+                   class="keyword"
+                   id="anpa_take_key"
+                   ng-model="template.anpa_take_key"
+                   ng-trim="false">
+          </div>
+
+          <div class="field">
+            <label translate>Destination groups</label>
+            <ul class="basic-list">
+	          <li class="auto">
+	            <div sd-search-list
+		             data-endpoint="destination_groups"
+		             data-label-key="name"
+		             data-search-key="name"
+		             data-page-size="5"
+		             data-selected-items="vars.destinationGroups">
+	            </div>
+	          </li>
+            </ul>
+          </div>
+
+          <div class="field">
+	        <label translate>Headline</label>
+            <textarea class="headline"
+                      id="title"
+                      sd-auto-height
+                      ng-model="template.headline"
+                      ng-trim="false"></textarea>
+          </div>
+
+          <div class="field">
+	        <label translate>Abstract</label>
+            <textarea class="abstract"
+                      sd-auto-height
+                      ng-model="template.abstract"
+                      ng-trim="false"></textarea>
+          </div>
+
+          <div class="field">
+            <label translate>By</label>
+            <input type="text"
+                   class="keyword"
+                   id="byline"
+                   ng-model="template.byline"
+                   >
+          </div>
+
+          <div class="field">
+            <label translate>Dateline</label>
+            <input type="text"
+                   class="keyword"
+                   id="dateline"
+                   ng-model="template.dateline">
+          </div>
+
+          <div class="field">
+	        <label translate>Body</label>
+            <div sd-text-editor ng-model="template.body_html" data-type="template.type"></div>
+          </div>
+
+        </div>
+      </article>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+    <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
+  </div>
+</div>

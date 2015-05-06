@@ -10,10 +10,10 @@
 
 
 from superdesk.tests import TestCase
-from apps.publish import archive_publish
-from apps.publish import init_app
+from apps.publish import init_app, archive_publish, publish_queue
 from superdesk.utc import utcnow
 from datetime import timedelta
+import superdesk
 
 
 class ArchivePublishTestCase(TestCase):
@@ -61,7 +61,24 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
-                 'expiry': utcnow() + timedelta(minutes=20)}]
+                 'expiry': utcnow() + timedelta(minutes=20)},
+                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
+                 '_id': 2,
+                 'last_version': 3,
+                 'body_html': 'Test body of the second article',
+                 'destination_groups': [4],
+                 'urgency': 4,
+                 'headline': 'Another two students missing',
+                 'pubstatus': 'done',
+                 'firstcreated': utcnow(),
+                 'byline': 'By Alan Karben',
+                 'ednote': 'Andrew Marwood contributed to this article',
+                 'dateline': 'Sydney',
+                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
+                            {'qcode': '04001002', 'name': 'Weather'}],
+                 'expiry': utcnow() + timedelta(minutes=20),
+                 'publish_schedule': "2015-05-30T10:00:00+0000"}]
 
     def setUp(self):
         super().setUp()
@@ -130,3 +147,28 @@ class ArchivePublishTestCase(TestCase):
             archive_publish.ArchivePublishService().queue_transmission(self.articles[0])
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(6, queue_items.count())
+
+    def test_queue_transmission_for_scheduled_publish(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            archive_publish.ArchivePublishService().queue_transmission(self.articles[1])
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(6, queue_items.count())
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
+            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[5]["publish_schedule"])
+
+    def test_delete_from_queue_by_article_id(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            archive_publish.ArchivePublishService().queue_transmission(self.articles[1])
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(6, queue_items.count())
+            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend())\
+                .delete_by_article_id(self.articles[1]['_id'])
+            self.assertEquals(0, queue_items.count())

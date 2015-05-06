@@ -626,12 +626,15 @@ def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
     data = get_json_data(context.response)
     int_count = int(total_count.replace('+', ''))
+
+    if int_count == 0 or not context.text:
+        return
+
     if '+' in total_count:
         assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
-    if int_count == 0 or not context.text:
-        return
+
     test_json(context)
 
 
@@ -1058,7 +1061,8 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True,
+            'needs_activation': False, 'sign_off': 'foo'}
     tests.setup_auth_user(context, user)
     set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 
@@ -1356,14 +1360,14 @@ def then_field_is_populated(context, field_name):
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
 
 
-@when('we publish "{item_id}"')
-def step_impl_when_publish_url(context, item_id):
+@when('we publish "{item_id}" with "{pub_type}" type and "{state}" state')
+def step_impl_when_publish_url(context, item_id, pub_type, state):
     item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
-
-    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/publish/' + item_id),
-                                            data='{"state": "published"}', headers=headers)
+    data = json.dumps({"state": state})
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
+                                            data=data, headers=headers)
 
 
 @then('the ingest item is routed based on routing scheme and rule "{rule_name}"')
@@ -1397,7 +1401,7 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                     {'term': {'state': state}}
                 ]
             }
-            item = get_archive_items(query)
+            item = get_archive_items(query) + get_published_items(query)
 
             if is_routed:
                 assert len(item) > 0, 'No routed items found for criteria: ' + str(query)
@@ -1457,6 +1461,13 @@ def get_archive_items(query):
     req.max_results = 100
     req.args = {'filter': json.dumps(query)}
     return list(get_resource_service('archive').get(lookup=None, req=req))
+
+
+def get_published_items(query):
+    req = ParsedRequest()
+    req.max_results = 100
+    req.args = {'filter': json.dumps(query)}
+    return list(get_resource_service('published').get(lookup=None, req=req))
 
 
 def assert_items_in_package(item, state, desk, stage):

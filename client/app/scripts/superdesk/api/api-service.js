@@ -105,7 +105,10 @@ define([
                 return urls.resource(this.resource)
                     .then(angular.bind(this, function(url) {
                         if (this.parent) {
-                            url = resolve(url, this.parent);
+                            var new_url = resolve(url, this.parent);
+                            if (new_url !== url) {
+                                return new_url;
+                            }
                         }
 
                         if (_id) {
@@ -232,7 +235,7 @@ define([
             api.update = function apiUpdate(resource, item, updates) {
                 return http({
                     method: 'PATCH',
-                    url: getResourceUrl(resource, null, item._id),
+                    url: getResourceUrl(resource, item, item._id),
                     data: updates,
                     headers: getHeaders(item)
                 });

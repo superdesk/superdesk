@@ -173,30 +173,13 @@ define([
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
                     icon: 'copy',
-                    //monitor: true,
-                    /*
-                    controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
-                        api
-                            .save('duplicate', {}, {desk: desks.getCurrentDeskId()}, data.item)
-                            .then(function(archiveItem) {
-                                data.item.task_id = archiveItem.task_id;
-                                data.item.created = archiveItem._created;
-                                $rootScope.$broadcast('item:duplicate');
-                            }, function(response) {
-                                data.item.error = response;
-                            })
-                        ['finally'](function() {
-                            data.item.actioning.archiveContent = false;
-                        });
-                    }],
-                    */
                     controller: ['$location', 'data', function($location, data) {
                         $location.search('fetch', data.item._id);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},
                     condition: function(item) {
-                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) && item.state !== 'killed';
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
                         return desks.getCurrentDeskId() !== null;

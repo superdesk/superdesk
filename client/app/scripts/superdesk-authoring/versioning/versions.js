@@ -19,7 +19,7 @@ function VersioningController($scope, authoring, api, notify, lock) {
     }
 
     function fetchVersions() {
-        $scope.canRevert = authoring.isEditable($scope.item);
+        $scope.canRevert = authoring.isEditable($scope.item) && !authoring.isPublished($scope.item);
         return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
         .then(function(result) {
             _.each(result._items, function(version) {

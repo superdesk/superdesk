@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'apps.duplication',
     'apps.aap_mm',
     'apps.spellcheck',
+    'apps.templates',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

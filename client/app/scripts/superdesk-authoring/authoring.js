@@ -23,7 +23,9 @@
         unique_name: '',
         keywords: [],
         description: null,
-        destination_groups: null
+        destination_groups: null,
+        sign_off: null,
+        publish_schedule: null
     };
 
     /**
@@ -184,7 +186,7 @@
             if (this.isEditable(diff) && isDirty) {
                 promise = confirm.confirmPublish()
                     .then(angular.bind(this, function save() {
-                        return this.save(orig, diff);
+                        return true;
                     }), function() { // cancel
                         return false;
                     });
@@ -192,8 +194,17 @@
 
             return promise;
         };
-        this.publish = function publish(item) {
-            return api.update('archive_publish', item, {})
+
+        this.publish = function publish(orig, diff, action) {
+            action = action || 'publish';
+            diff = extendItem({}, diff);
+
+            if (!diff.publish_schedule) {
+                delete diff.publish_schedule;
+            }
+
+            var endpoint = 'archive_' + action;
+            return api.update(endpoint, orig, diff)
             .then(function(result) {
                 return lock.unlock(result)
                     .then(function(result) {
@@ -202,7 +213,6 @@
             }, function(response) {
                 return response;
             });
-
         };
 
         /**
@@ -249,6 +259,10 @@
             return !!item.lock_user && !lock.isLocked(item);
         };
 
+        this.isPublished = function isPublished(item) {
+            return _.contains(['published', 'killed', 'scheduled'], item.state);
+        };
+
         /**
          * Unlock an item - callback for item:unlock event
          *
@@ -280,9 +294,8 @@
         };
     }
 
-    LockService.$inject = ['$q', 'api', 'session', 'privileges'];
-    function LockService($q, api, session, privileges) {
-
+    LockService.$inject = ['$q', 'api', 'session', 'privileges', 'notify'];
+    function LockService($q, api, session, privileges, notify) {
         /**
          * Lock an item
          */
@@ -295,7 +308,9 @@
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
+                    notify.error(gettext('Failed to get a lock on the item!'));
                     item._locked = true;
+                    item._editable = false;
                     return item;
                 });
             } else {
@@ -433,9 +448,10 @@
         };
     }
 
-    AuthoringController.$inject = ['$scope', 'item'];
-    function AuthoringController($scope, item) {
+    AuthoringController.$inject = ['$scope', 'item', 'action'];
+    function AuthoringController($scope, item, action) {
         $scope.origItem = item;
+        $scope.action = action || 'edit';
 
         $scope.widget_target = 'authoring';
 
@@ -478,9 +494,75 @@
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
+                $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+
+                $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
+                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+
+                $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+
+                $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
+                $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
+
+                function resolveDestinations() {
+                    if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
+                        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
+                            .then(function(result) {
+                                var destinationGroups = [];
+                                _.each(result._items, function(item) {
+                                    destinationGroups.push(item);
+                                });
+                                $scope.vars = {destinationGroups: destinationGroups};
+                            });
+                    } else {
+                        $scope.vars = {destinationGroups: []};
+                    }
+                }
+
+                if ($scope.action === 'kill') {
+                    api('content_templates').getById('kill').then(function(template) {
+                        template = _.pick(template, _.keys(CONTENT_FIELDS_DEFAULTS));
+                        var body = template.body_html;
+                        if (body) {
+                            // get the placeholders out of the template
+                            var placeholders = _.words(body, /\${([\s\S]+?)}/g);
+                            placeholders = _.map(placeholders, function(placeholder) {
+                                return _.trim(placeholder, '${} ');
+                            });
+
+                            var compiled = _.template(body);
+                            var args = _.pick($scope.origItem, placeholders);
+                            $scope.origItem.body_html = compiled(args);
+                        }
+                        _.each(template, function(value, key) {
+                            if (!_.isEmpty(value)) {
+                                if (key !== 'body_html') {
+                                    if (key === 'destination_groups') {
+                                        $scope.origItem.destination_groups = _.union($scope.origItem.destination_groups, value);
+                                    } else {
+                                        $scope.origItem[key] = value;
+                                    }
+                                }
+                            }
+                        });
+                        resolveDestinations();
+                    });
+                } else {
+                    resolveDestinations();
+                }
+
+                $scope.$watch('vars', function() {
+                    if ($scope.vars && $scope.vars.destinationGroups) {
+                        var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
+                        if (!_.isEqual(destinationGroups, $scope.item.destination_groups)) {
+                            $scope.item.destination_groups = destinationGroups;
+                            $scope.autosave($scope.item);
+                        }
+                    }
+                }, true);
 
                 $scope.proofread = false;
-
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
                 if ($scope.origItem.task && $scope.origItem.task.stage) {
@@ -516,19 +598,53 @@
 
                 function validateDestinationGroups(item) {
                     if (!item.destination_groups || !item.destination_groups.length) {
-                        return $q.reject();
+                        return $q.reject('Error. Destination groups invalid.');
                     }
                     return adminPublishSettingsService.fetchDestinationGroupsByIds(item.destination_groups)
                     .then(function(result) {
                         if (result._items.length !== item.destination_groups.length) {
-                            return $q.reject();
+                            return $q.reject('Error. Destination groups invalid.');
                         }
                         return true;
                     });
                 }
 
-                function publishItem(item) {
-                    authoring.publish(item)
+                function validatePublishSchedule(item) {
+                    if (item.publish_schedule_date && !item.publish_schedule_time) {
+                        notify.error(gettext('Publish Schedule time is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule_time && !item.publish_schedule_date) {
+                        notify.error(gettext('Publish Schedule date is invalid!'));
+                        return false;
+                    }
+
+                    if (item.publish_schedule) {
+                        var schedule = new Date(item.publish_schedule);
+
+                        if (!_.isDate(schedule)) {
+                            notify.error(gettext('Publish Schedule is not a valid date!'));
+                            return false;
+                        }
+
+                        if (schedule < _.now()) {
+                            notify.error(gettext('Publish Schedule cannot be earlier than now!'));
+                            return false;
+                        }
+
+                        if (!schedule.getTime()) {
+                            notify.error(gettext('Publish Schedule time is invalid!'));
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                function publishItem(orig, item) {
+                    var action = $scope.action === 'kill' ? 'kill' : 'publish';
+                    authoring.publish(orig, item, action)
                     .then(function(response) {
                         if (response) {
                             if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
@@ -539,6 +655,7 @@
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
+                                $location.url($scope.referrerUrl);
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
@@ -547,25 +664,30 @@
                 }
 
                 $scope.publish = function() {
-                    validateDestinationGroups($scope.item)
-                    .then(function() {
-                        if ($scope.dirty) { // save dialog & then publish if confirm
-                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
-                            .then(function(res) {
-                                if (res) {
-                                    publishItem(res);
-                                    $location.url($scope.referrerUrl);
-                                }
-                            }, function(response) {
-                                notify.error(gettext('Error. Item not published.'));
-                            });
-                        } else { // Publish
-                            publishItem($scope.origItem);
-                            $location.url($scope.referrerUrl);
-                        }
-                    }, function(res) {
-                        notify.error(gettext('Error. Destination groups invalid.'));
-                    });
+                    if (validatePublishSchedule($scope.item)) {
+                        validateDestinationGroups($scope.item)
+                        .then(function() {
+                            if ($scope.dirty) { // save dialog & then publish if confirm
+                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
+                                .then(function(res) {
+                                    if (res) {
+                                        publishItem($scope.origItem, $scope.item);
+                                    }
+                                }, function(response) {
+                                    notify.error(gettext('Error. Item not published.'));
+                                });
+                            } else { // Publish
+                                publishItem($scope.origItem, $scope.item);
+                            }
+                        }, function(res) {
+                            notify.error(gettext(res));
+                        });
+                    }
+                };
+
+                $scope.deschedule = function() {
+                    $scope.item.publish_schedule = false;
+                    return $scope.save();
                 };
 
                 /**
@@ -1130,7 +1252,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
-                        }]
+                        }],
+                        action: [function() {return 'edit';}]
                     },
                     authoring: true
                 })
@@ -1144,8 +1267,41 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state !== 'published';
+                        return item.type !== 'composite' &&
+                        item.state !== 'published' &&
+                        item.state !== 'scheduled' &&
+                        item.state !== 'killed';
                     }
+                })
+                .activity('kill.text', {
+                    label: gettext('Kill item'),
+                    priority: 100,
+                    icon: 'remove',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
+                        superdesk.intent('kill', 'content_article', data.item);
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.type !== 'composite' && item.state === 'published' && !item.last_publish_action;
+                    },
+                    privileges: {kill: 1}
+                })
+                .activity('kill.content_article', {
+                    category: '/authoring',
+                    href: '/authoring/:_id/kill',
+                    when: '/authoring/:_id/kill',
+                    label: gettext('Authoring Kill'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    controller: AuthoringController,
+                    filters: [{action: 'kill', type: 'content_article'}],
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id, false);
+                        }],
+                        action: [function() {return 'kill';}]
+                    },
+                    authoring: true
                 })
                 .activity('view.text', {
                     label: gettext('View item'),
@@ -1171,7 +1327,8 @@
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, true);
-                        }]
+                        }],
+                        action: [function() {return 'view';}]
                     },
                     authoring: true
                 });

@@ -28,6 +28,7 @@ test_user = {
     'is_active': True,
     'is_enabled': True,
     'needs_activation': False,
+    'sign_off': 'abc',
     'email': 'behave_test@sourcefabric.org',
     'preferences': {
         'email:notification': {

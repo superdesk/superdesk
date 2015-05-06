@@ -4,13 +4,7 @@
 			<label translate>GUID</label>
 			<div class="data">{{item.guid}}</div>
 		</li>
-		<li>
-			<label translate>Take key</label>
-			<div class="data">
-				<input type="text" ng-model="item.anpa_take_key" ng-change="autosave(item)" ng-disabled="!_editable">
-			</div>
-		</li>
-		<li>
+        <li>
 			<label translate>Unique name</label>
 			<div class="data">
 				<input type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
@@ -25,12 +19,6 @@
 		<li>
 			<label translate>Type</label>
 			<div class="data">{{item.type}}</div>
-		</li>
-		<li>
-			<label translate>By</label>
-			<div class="data">
-				<input type="text" ng-model="item.byline" ng-change="autosave(item)" ng-disabled="!_editable">
-			</div>
 		</li>
 		<li ng-if="item.original_source">
 			<label translate>Original source</label>
@@ -109,17 +97,11 @@
 		<li class="terms-box">
 			<label translate>Keywords</label>
 			<div sd-meta-words-list data-item="item" data-field="keywords" data-change="autosave(item)" data-list="item.keywords" data-disabled="!_editable"></div>
-		</li>		
+		</li>
 		<li>
 			<label translate>Located</label>
 			<div class="data">
 				<input type="text" ng-model="item.located" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li>
-			<label translate>Dateline</label>
-			<div class="data">
-				<input type="text" ng-model="item.dateline" ng-disabled="!_editable" ng-change="autosave(item)">
 			</div>
 		</li>
 		<li>
@@ -147,6 +129,7 @@
 		</li>
 	</ul>
 
+
 	<div sd-toggle-box data-title="Task details" data-open="true" ng-if="item.task">
 		<ul class="basic-list task-info">
 			<li ng-if="item.slugline" class="auto">
@@ -155,7 +138,7 @@
 			</li>
 			<li ng-if="item.description" class="auto">
 				<label translate>Description</label>
-				<div class="data">{{item.description}}</div>
+				<div>{{item.description}}</div>
 			</li>
 			<li ng-if="item.task.status">
 				<label translate>Status</label>
@@ -182,15 +165,9 @@
 	<div sd-toggle-box data-title="Publishing" data-open="true">
 		<ul class="basic-list">
 			<li class="auto">
-				<label translate>Destination groups</label>
-				<div sd-search-list
-					ng-disabled="!_editable"
-					data-endpoint="destination_groups"
-					data-label-key="name"
-					data-search-key="name"
-					data-page-size="5"
-					data-selected-items="vars.destinationGroups">
-				</div>
+				<label translate>Publish Schedule</label>
+				<div sd-datepicker ng-model="item.publish_schedule_date"></div>
+				<div sd-timepicker ng-model="item.publish_schedule_time"></div>
 			</li>
 		</ul>
 	</div>

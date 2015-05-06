@@ -75,7 +75,7 @@ class MoveService(BaseService):
 
         send_to(archived_doc, doc.get('task', {}).get('desc'), doc.get('task', {}).get('stage'))
 
-        if archived_doc[config.CONTENT_STATE] != 'published':
+        if archived_doc[config.CONTENT_STATE] not in ['published', 'scheduled', 'killed']:
             archived_doc[config.CONTENT_STATE] = 'submitted'
 
         resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
@@ -83,13 +83,13 @@ class MoveService(BaseService):
         del archived_doc['_id']
         archive_service.update(original['_id'], archived_doc, original)
 
-        insert_into_versions(guid=original['_id'])
+        insert_into_versions(id_=original['_id'])
 
         return archived_doc
 
 
 superdesk.workflow_action(
     name='submit_to_desk',
-    include_states=['draft', 'fetched', 'routed', 'submitted', 'in_progress', 'published'],
+    include_states=['draft', 'fetched', 'routed', 'submitted', 'in_progress', 'published', 'scheduled'],
     privileges=['archive', 'move']
 )

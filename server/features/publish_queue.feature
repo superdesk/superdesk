@@ -54,7 +54,7 @@ Feature: Publish Queue
     When we post to "/publish_queue" with success
     """
     {
-       "item_id":"#archive._id#","formatted_item_id":"#formatted_item._id#","output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2","delivery_type":"Email","config":{"password":"abc"}}
+       "item_id":"#archive._id#","publish_schedule": "2015-05-30T10:00:00+00:00", "formatted_item_id":"#formatted_item._id#","output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2","delivery_type":"Email","config":{"password":"abc"}}
     }
     """
     And we get "/publish_queue"
@@ -192,7 +192,6 @@ Feature: Publish Queue
         }
       ]
       """
-      And we publish "#archive._id#"
+      And we publish "#archive._id#" with "publish" type and "published" state
       Then we get "published_seq_num" in "/publish_queue/123"
       And we get "published_seq_num" in "/formatted_item/123"
-

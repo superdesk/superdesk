@@ -8,53 +8,63 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
-import logging
-import superdesk
-
 from eve.versioning import resolve_document_version
-from flask import current_app as app
 from eve.utils import config, document_etag
+from flask import current_app as app
 from copy import copy
-from apps.archive.common import item_url, get_user, insert_into_versions
+import logging
+
+import superdesk
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
+
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
-
+from apps.common.components.utils import get_component
+from apps.item_autosave.components.item_autosave import ItemAutosave
+from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
 
 logger = logging.getLogger(__name__)
 
 
-class ArchivePublishResource(ArchiveResource):
+class BasePublishResource(ArchiveResource):
     """
     Resource class for "publish" endpoint.
     """
+    def __init__(self, endpoint_name, app, service, publish_type):
+        self.endpoint_name = 'archive_' + publish_type
+        self.resource_title = endpoint_name
+        self.datasource = {'source': ARCHIVE}
 
-    endpoint_name = 'archive_publish'
-    resource_title = endpoint_name
-    datasource = {'source': ARCHIVE}
+        self.url = 'archive/{}'.format(publish_type)
+        self.item_url = item_url
 
-    url = "archive/publish"
-    item_url = item_url
+        self.resource_methods = []
+        self.item_methods = ['PATCH']
 
-    resource_methods = []
-    item_methods = ['PATCH']
-
-    privileges = {'PATCH': 'publish'}
+        self.privileges = {'PATCH': publish_type}
+        super().__init__(endpoint_name, app=app, service=service)
 
 
-class ArchivePublishService(BaseService):
+class BasePublishService(BaseService):
     """
-    Service class for "publish" endpoint
+    Base service class for "publish" endpoint
     """
+    publish_type = 'publish'
+    published_state = 'published'
 
     def on_update(self, updates, original):
-        if not is_workflow_state_transition_valid('publish', original[app.config['CONTENT_STATE']]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
+
+    def on_updated(self, updates, original):
+        get_resource_service('published').update_published_items(original['_id'],
+                                                                 'last_publish_action',
+                                                                 self.published_state)
+        get_resource_service('published').post([original])
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
@@ -65,8 +75,18 @@ class ArchivePublishService(BaseService):
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
 
             # document is saved to keep the initial changes
+            set_sign_off(updates, original)
             self.backend.update(self.datasource, id, updates, original)
+
+            # document is saved to change the status
+            if (original.get('publish_schedule') or updates.get('publish_schedule')) \
+                    and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
+                updates[config.CONTENT_STATE] = 'scheduled'
+            else:
+                updates[config.CONTENT_STATE] = self.published_state
+
             original.update(updates)
+            get_component(ItemAutosave).clear(original['_id'])
 
             if archived_item['type'] != 'composite':
                 # queue only text items
@@ -75,14 +95,10 @@ class ArchivePublishService(BaseService):
                 if task:
                     updates['task'] = task
 
-            # document is saved to change the status
-            updates[config.CONTENT_STATE] = 'published'
-            item = self.backend.update(self.datasource, id, updates, original)
-            original.update(updates)
+            self.backend.update(self.datasource, id, updates, original)
             user = get_user()
-
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
-                              item=str(item.get('_id')), user=str(user))
+                              item=str(id), user=str(user))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
@@ -132,6 +148,7 @@ class ArchivePublishService(BaseService):
                                 publish_queue_item['output_channel_id'] = output_channel['_id']
                                 publish_queue_item['selector_codes'] = selector_codes.get(output_channel['_id'], [])
                                 publish_queue_item['published_seq_num'] = pub_seq_num
+                                publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
 
                                 publish_queue_items.append(publish_queue_item)
 
@@ -220,7 +237,7 @@ class ArchivePublishService(BaseService):
                         self.__publish_package_items(doc)
 
                     resolve_document_version(document=doc, resource=ARCHIVE, method='PATCH', latest_doc=doc)
-                    doc[config.CONTENT_STATE] = 'published'
+                    doc[config.CONTENT_STATE] = self.published_state
                     doc[config.LAST_UPDATED] = last_updated
                     doc[config.ETAG] = document_etag(doc)
                     self.backend.update(self.datasource, guid, {config.CONTENT_STATE: doc[config.CONTENT_STATE],
@@ -239,17 +256,63 @@ class ArchivePublishService(BaseService):
             return get_resource_service('move').move_content(doc['_id'], doc)['task']
 
 
+class ArchivePublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'publish')
+
+
+class ArchivePublishService(BasePublishService):
+    publish_type = 'publish'
+    published_state = 'published'
+
+
+class KillPublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'kill')
+
+
+class KillPublishService(BasePublishService):
+    publish_type = 'kill'
+    published_state = 'killed'
+
+
+class CorrectPublishResource(BasePublishResource):
+
+    def __init__(self, endpoint_name, app, service):
+        super().__init__(endpoint_name, app, service, 'correct')
+
+
+class CorrectPublishService(BasePublishService):
+    publish_type = 'correct'
+    published_state = 'corrected'
+
+
 superdesk.workflow_state('published')
 superdesk.workflow_action(
     name='publish',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
+    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'scheduled'],
     privileges=['publish']
+)
+
+superdesk.workflow_state('scheduled')
+superdesk.workflow_action(
+    name='schedule',
+    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
+    privileges=['schedule']
+)
+
+superdesk.workflow_action(
+    name='deschedule',
+    include_states=['scheduled'],
+    privileges=['deschedule']
 )
 
 superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
-    include_states=['published'],
+    include_states=['published', 'scheduled'],
     privileges=['kill']
 )
 

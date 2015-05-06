@@ -107,11 +107,22 @@ def set_original_creator(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
     doc['original_creator'] = user
+    doc['sign_off'] = usr.get('sign_off', usr.get('username', ''))[:3]
 
-    # sent_user = doc.get('user', None)
-    # if sent_user and user and sent_user != user:
-    #     raise superdesk.SuperdeskError()
-    # doc['user'] = user
+
+def set_sign_off(updates, original):
+    usr = get_user()
+    if not usr:
+        return
+
+    sign_off = usr.get('sign_off', usr['username'][:3])
+    current_sign_off = original.get('sign_off', '')
+
+    if current_sign_off.endswith(sign_off):
+        return
+
+    updated_sign_off = '{}/{}'.format(current_sign_off, sign_off)
+    updates['sign_off'] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
 
 
 item_url = 'regex("[\w,.:_-]+")'
@@ -150,7 +161,7 @@ def generate_unique_id_and_name(item):
         raise IdentifierGenerationError() from e
 
 
-def insert_into_versions(guid=None, doc=None):
+def insert_into_versions(id_=None, doc=None):
     """
     There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
     manually manage versions. Below are some scenarios:
@@ -162,8 +173,8 @@ def insert_into_versions(guid=None, doc=None):
         in the package is not handled by eve.
     """
 
-    if guid:
-        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    if id_:
+        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=id_)
     else:
         doc_in_archive_collection = doc
 
@@ -260,7 +271,7 @@ def update_state(original, updates):
     """
 
     original_state = original.get(config.CONTENT_STATE)
-    if original_state != 'ingested' and original_state != 'in_progress':
+    if original_state not in ['ingested', 'in_progress', 'scheduled']:
         if not is_workflow_state_transition_valid('save', original_state):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
@@ -276,5 +287,5 @@ def is_update_allowed(archive_doc):
     """
 
     state = archive_doc.get(config.CONTENT_STATE)
-    if state in ['published']:
+    if state in ['killed']:
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")

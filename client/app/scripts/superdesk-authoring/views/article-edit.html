@@ -10,6 +10,33 @@
         ng-trim="false">
 	<div ng-if="!_editable">{{item.slugline}}</div>
 </div>
+<div class="field">
+  <label translate>Take key</label>
+  <input type="text"
+         class="keyword"
+         id="anpa_take_key"
+         ng-model="item.anpa_take_key"
+         ng-change="autosave(item)"
+         ng-if="_editable"
+         ng-trim="false">
+  <div ng-if="!_editable">{{item.anpa_take_key}}</div>
+</div>
+
+<div class="field">
+  <label translate>Destination groups</label>
+  <ul class="basic-list">
+	<li class="auto">
+	  <div sd-search-list
+		   ng-disabled="!_editable"
+		   data-endpoint="destination_groups"
+		   data-label-key="name"
+		   data-search-key="name"
+		   data-page-size="5"
+		   data-selected-items="vars.destinationGroups">
+	  </div>
+	</li>
+  </ul>
+</div>
 
 <div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
 	<label translate>Headline</label>
@@ -35,6 +62,35 @@
         ng-if="_editable"
         ng-trim="false"></div>
 	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
+</div>
+
+<div class="field">
+  <label translate>By</label>
+  <input type="text"
+         class="keyword"
+         id="byline"
+         ng-model="item.byline"
+         ng-change="autosave(item)"
+         ng-if="_editable"
+         >
+  <div ng-if="!_editable">{{item.byline}}</div>
+</div>
+
+<div class="field">
+  <label translate>Sign-off</label>
+  <div>{{item.sign_off}}</div>
+</div>
+
+<div class="field">
+  <label translate>Dateline</label>
+  <input type="text"
+         class="keyword"
+         id="dateline"
+         ng-model="item.dateline"
+         ng-change="autosave(item)"
+         ng-if="_editable"
+         >
+  <div ng-if="!_editable">{{item.dateline}}</div>
 </div>
 
 <div class="field body" ng-if="!isMediaType">

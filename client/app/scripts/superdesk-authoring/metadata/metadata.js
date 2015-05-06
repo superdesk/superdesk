@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService', 'datetimeHelper'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService, datetimeHelper) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -27,30 +27,37 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublish
         });
     };
 
-    if ($scope.item.destination_groups && $scope.item.destination_groups.length) {
-        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.item.destination_groups)
-        .then(function(result) {
-            var destinationGroups = [];
-            _.each(result._items, function(item) {
-                destinationGroups.push(item);
-            });
-            $scope.vars = {destinationGroups: destinationGroups};
-        });
-    } else {
-        $scope.vars = {destinationGroups: []};
+    $scope.$watch('item.publish_schedule_date', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
+
+    $scope.$watch('item.publish_schedule_time', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
+
+    function setPublishScheduleDate(newValue, oldValue) {
+        if (newValue !== oldValue) {
+            if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
+                $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
+                    $scope.item.publish_schedule_time).format();
+            } else {
+                $scope.item.publish_schedule = false;
+            }
+
+            $scope.autosave($scope.item);
+        }
     }
 
-    $scope.$watch('vars', function() {
-        if ($scope.vars && $scope.vars.destinationGroups) {
-            var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
-            if (!_.isEqual(destinationGroups, $scope.item.destination_groups)) {
-                $scope.item.destination_groups = destinationGroups;
-                $scope.autosave($scope.item);
-            }
+    function resolvePublishScheduleDate() {
+        if ($scope.item.publish_schedule) {
+            var publishSchedule = new Date(Date.parse($scope.item.publish_schedule));
+            $scope.item.publish_schedule_date = moment(publishSchedule).utc().format('DD/MM/YYYY');
+            $scope.item.publish_schedule_time = moment(publishSchedule).utc().format('HH:mm:ss');
         }
-    }, true);
+    }
 
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
+    resolvePublishScheduleDate();
 }
 
 MetadataDropdownDirective.$inject = [];
