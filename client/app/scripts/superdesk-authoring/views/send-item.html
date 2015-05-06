@@ -1,59 +1,61 @@
-<div class="send-to-pane">
-    <header>
-        <h3 translate ng-show="mode !== 'archive'">Send</h3>
-        <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
-        <div class="close" ng-click="close()"><i class="icon-close-small"></i></div>
-    </header>
-    <div class="content">
-        <div class="dropdown desk-select" dropdown>
-            <button class="dropdown-toggle" dropdown-toggle>
-                <span ng-show="!selectedDesk || selectedDesk._id === 'personal'" translate>Select desk</span>
-                <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
-                <b class="caret white"></b>
-            </button>
-            <div class="dropdown-menu">
-                <ul>
-                    <li ng-repeat="desk in desks._items">
-                        <button ng-click="selectDesk(desk)">{{desk.name}}</button>
+<div class="pane-holder" ng-class="{show: !selected.preview && !selected.fetch}">
+    <div class="send-to-pane">
+        <header>
+            <h3 translate ng-show="mode !== 'archive'">Send</h3>
+            <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
+            <div class="close" ng-click="close()"><i class="icon-close-small"></i></div>
+        </header>
+        <div class="content">
+            <div class="dropdown desk-select" dropdown>
+                <button class="dropdown-toggle" dropdown-toggle>
+                    <span ng-show="!selectedDesk || selectedDesk._id === 'personal'" translate>Select desk</span>
+                    <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
+                    <b class="caret white"></b>
+                </button>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li ng-repeat="desk in desks._items">
+                            <button ng-click="selectDesk(desk)">{{desk.name}}</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <ul class="btn-list" ng-if="stages">
+                <li ng-repeat="stage in stages">
+                    <button
+                        ng-class="{active: stage._id === selectedStage._id}"
+                        ng-disabled="stage._id === item.task.stage"
+                        ng-click="selectStage(stage)">{{stage.name}}</button>
+                </li>
+            </ul>
+            <div ng-if="macros && selectedDesk._id !== 'personal'">
+                <header>
+                    <h3 translate ng-show="macros">Transformation</h3>
+                </header>
+                <br />
+                <ul class="btn-list">
+                    <li ng-repeat="macro in macros">
+                        <button 
+                            ng-class="{active: macro.label === selectedMacro.label}" 
+                            ng-click="selectMacro(macro)">{{macro.label}}</button>
                     </li>
                 </ul>
             </div>
-        </div>
-        <ul class="btn-list" ng-if="stages">
-            <li ng-repeat="stage in stages">
-                <button
-                    ng-class="{active: stage._id === selectedStage._id}"
-                    ng-disabled="stage._id === item.task.stage"
-                    ng-click="selectStage(stage)">{{stage.name}}</button>
-            </li>
-        </ul>
-        <div ng-if="macros && selectedDesk._id !== 'personal'">
-            <header>
-                <h3 translate ng-show="macros">Transformation</h3>
-            </header>
-            <br />
             <ul class="btn-list">
-                <li ng-repeat="macro in macros">
-                    <button 
-                        ng-class="{active: macro.label === selectedMacro.label}" 
-                        ng-click="selectMacro(macro)">{{macro.label}}</button>
+                <li>
+                    <button class="cancel" ng-click="close()" translate>cancel</button>
+                </li>
+                <li>
+                    <button class="send" ng-click="send()"
+                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    translate>send</button>
+                </li>
+                <li ng-show="mode !== 'authoring'">
+                    <button class="send" ng-click="send(true)"
+                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    translate>send and open</button>
                 </li>
             </ul>
         </div>
-        <ul class="btn-list">
-            <li>
-                <button class="cancel" ng-click="close()" translate>cancel</button>
-            </li>
-            <li>
-                <button class="send" ng-click="send()"
-                ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
-                translate>send</button>
-            </li>
-            <li ng-show="mode !== 'authoring'">
-                <button class="send" ng-click="send(true)"
-                ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
-                translate>send and open</button>
-            </li>
-        </ul>
     </div>
 </div>
