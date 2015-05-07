@@ -15,6 +15,7 @@ from superdesk.tests import TestCase, setup_notification
 from nose.tools import assert_raises
 from superdesk.tests import setup
 import logging
+import unittest
 
 
 class MockLoggingHandler(logging.Handler):
@@ -35,6 +36,55 @@ class MockLoggingHandler(logging.Handler):
             'error': [],
             'critical': [],
         }
+
+
+class SuperdeskErrorTestCase(unittest.TestCase):
+    """Tests for the `superdesk.errors.SuperdeskError` class."""
+
+    def _get_target_class(self):
+        """Return the class under test.
+
+        Make the test fail immediately if the class cannot be imported.
+        """
+        try:
+            from superdesk.errors import SuperdeskError
+        except ImportError:
+            self.fail("Could not import class under test (SuperdeskError).")
+        else:
+            return SuperdeskError
+
+    def test_sets_error_description_to_none_by_default(self):
+        klass = self._get_target_class()
+        instance = klass(1234)
+        self.assertIsNone(instance.desc)
+
+    def test_stores_given_detailed_error_description(self):
+        klass = self._get_target_class()
+        instance = klass(1234, desc='Detailed error description.')
+        self.assertEqual(instance.desc, 'Detailed error description.')
+
+    def test_string_representation_of_the_instance_no_description(self):
+        klass = self._get_target_class()
+        instance = klass(1234)
+        instance.code = 101
+        instance.message = 'Foobar error'
+        instance.desc = None
+
+        self.assertEqual(
+            str(instance), 'SuperdeskError Error 101 - Foobar error')
+
+    def test_string_representation_of_the_instance_description_given(self):
+        klass = self._get_target_class()
+        instance = klass(1234)
+        instance.code = 101
+        instance.message = 'Foobar error'
+        instance.desc = 'This is a detailed description'
+
+        self.assertEqual(
+            str(instance),
+            ('SuperdeskError Error 101 - Foobar error '
+             'Details: This is a detailed description')
+        )
 
 
 class ErrorsTestCase(TestCase):
