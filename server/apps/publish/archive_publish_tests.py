@@ -78,7 +78,7 @@ class ArchivePublishTestCase(TestCase):
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
                  'expiry': utcnow() + timedelta(minutes=20),
-                 'publish_schedule': "2015-05-30T10:00:00+0000"}]
+                 'publish_schedule': "2016-05-30T10:00:00+0000"}]
 
     def setUp(self):
         super().setUp()
@@ -155,12 +155,12 @@ class ArchivePublishTestCase(TestCase):
             archive_publish.ArchivePublishService().queue_transmission(self.articles[1])
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(6, queue_items.count())
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
-            self.assertEquals("2015-05-30T10:00:00+0000", queue_items[5]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
+            self.assertEquals("2016-05-30T10:00:00+0000", queue_items[5]["publish_schedule"])
 
     def test_delete_from_queue_by_article_id(self):
         with self.app.app_context():

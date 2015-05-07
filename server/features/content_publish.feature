@@ -92,7 +92,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
-        "publish_schedule":"2015-05-30T10:00:00+00:00",
+        "publish_schedule":"2016-05-30T10:00:00+00:00",
         "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
@@ -108,7 +108,7 @@ Feature: Content Publishing
       {
         "_items":
           [
-            {"destination":{"name":"Test"}, "publish_schedule":"2015-05-30T10:00:00+0000"}
+            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
           ]
       }
       """
@@ -164,7 +164,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
-        "publish_schedule":"2015-05-30T10:00:00+00:00",
+        "publish_schedule":"2016-05-30T10:00:00+00:00",
         "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
@@ -180,13 +180,13 @@ Feature: Content Publishing
       {
         "_items":
           [
-            {"destination":{"name":"Test"}, "publish_schedule":"2015-05-30T10:00:00+0000"}
+            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
           ]
       }
       """
       When we patch "/archive/123"
       """
-      {"publish_schedule": "2010-05-30T10:00:00+00:00"}
+      {"publish_schedule": "2017-05-30T10:00:00+00:00"}
       """
       And we get "/archive"
       Then we get existing resource
@@ -205,6 +205,65 @@ Feature: Content Publishing
       When we get "/published"
       Then we get list with 0 items
 
+
+    @auth
+    Scenario: Deschedule an item fails if date is past
+      Given empty "output_channels"
+      Given empty "subscribers"
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we patch "/archive/123"
+      """
+      {"publish_schedule": "2010-05-30T10:00:00+00:00"}
+      """
+      Then we get response code 400
 
     @auth
     Scenario: Publish a user content and stays on the same stage

@@ -184,16 +184,17 @@ class ArchiveService(BaseService):
         user = get_user()
 
         if updates.get('publish_schedule'):
+            if original['state'] == 'scheduled':
+                # this is an descheduling action
+                self.deschedule_item(updates, original)
+                return
+
             if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None
             else:
-                if original['state'] == 'scheduled':
-                    # this is an descheduling action
-                    self.deschedule_item(updates, original)
-                else:
-                    # validate the schedule
-                    self.validate_schedule(updates.get('publish_schedule'))
+                # validate the schedule
+                self.validate_schedule(updates.get('publish_schedule'))
 
         if 'unique_name' in updates and not is_admin(user) \
                 and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
