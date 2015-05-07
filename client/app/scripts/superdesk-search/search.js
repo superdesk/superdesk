@@ -346,7 +346,7 @@
             ingest: true,
             archive: true,
             text_archive: true,
-			published: true
+            published: true
         };
 
         function refresh() {
