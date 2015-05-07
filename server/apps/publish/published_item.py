@@ -17,6 +17,7 @@ from eve.utils import ParsedRequest
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow
 import json
+import superdesk
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +61,15 @@ class PublishedItemService(BaseService):
         # convert to the original _id so everything else works
         items = super().get(req, lookup)
         for item in items:
-            item['_id'] = item['item_id']
+            updates = {
+                '_id': item['item_id'],
+                'item_id': item['_id']
+            }
+            item.update(updates)
         return items
+
+    def on_delete(self, doc):
+        self.insert_into_text_archive(doc)
 
     def get_other_published_items(self, _id):
         try:
@@ -84,3 +92,40 @@ class PublishedItemService(BaseService):
     def delete_by_article_id(self, _id):
         lookup = {'query': {'term': {'item_id': _id}}}
         self.delete(lookup=lookup)
+
+    def insert_into_text_archive(self, doc):
+        """
+        To move the items into text archive once it is published
+        """
+        text_archive = superdesk.get_resource_service('text_archive')
+
+        if text_archive is None:
+            return
+
+        if doc.get('state') == 'published':
+            # query to check if the item is killed the future versions or not
+            query = {
+                'query': {
+                    'filtered': {
+                        'filter': {
+                            'and': [
+                                {'term': {'item_id': doc['item_id']}},
+                                {'term': {'state': 'killed'}}
+                            ]
+                        }
+                    }
+                }
+            }
+
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            items = super().get(req=request, lookup=None)
+
+            if items.count() == 0:
+                text_archive.post([doc.copy()])
+                logger.info('Inserting published item {} with headline {} and version {} and expiry {}.'.
+                            format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))
+        elif doc.get('state') == 'killed':
+            text_archive.delete_action({'_id': doc['_id']})
+            logger.info('Deleting published item {} with headline {} and version {} and expiry {}.'.
+                        format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))

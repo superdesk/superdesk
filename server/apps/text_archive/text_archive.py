@@ -11,7 +11,7 @@
 
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from apps.content import metadata_schema
+from apps.content import metadata_schema, not_analyzed
 from apps.archive.common import aggregations, item_url
 from superdesk.notification import push_notification
 from apps.archive.common import get_user
@@ -19,7 +19,12 @@ import superdesk
 
 
 class TextArchiveResource(Resource):
-    schema = {}
+    schema = {
+        'item_id': {
+            'type': 'string',
+            'mapping': not_analyzed
+        }
+    }
     schema.update(metadata_schema)
     datasource = {
         'source': 'text_archive',

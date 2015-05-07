@@ -10,9 +10,10 @@
 
 
 from superdesk.tests import TestCase
-from apps.publish import init_app, archive_publish, publish_queue
+from apps.publish import init_app, archive_publish, publish_queue, PublishedRemoveExpiredContent
 from superdesk.utc import utcnow
 from datetime import timedelta
+from eve.utils import config
 import superdesk
 
 
@@ -61,6 +62,7 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
+                 'state': 'published',
                  'expiry': utcnow() + timedelta(minutes=20)},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
                  '_id': 2,
@@ -78,7 +80,25 @@ class ArchivePublishTestCase(TestCase):
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
                  'expiry': utcnow() + timedelta(minutes=20),
-                 'publish_schedule': "2016-05-30T10:00:00+0000"}]
+                 'state': 'scheduled',
+                 'publish_schedule': "2016-05-30T10:00:00+0000"},
+                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fa',
+                 '_id': 3,
+                 'last_version': 3,
+                 'body_html': 'Test body',
+                 'destination_groups': [4],
+                 'urgency': 4,
+                 'headline': 'Two students missing killed',
+                 'pubstatus': 'done',
+                 'firstcreated': utcnow(),
+                 'byline': 'By Alan Karben',
+                 'ednote': 'Andrew Marwood contributed to this article killed',
+                 'dateline': 'Sydney',
+                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
+                            {'qcode': '04001002', 'name': 'Weather'}],
+                 'state': 'killed',
+                 'expiry': utcnow() + timedelta(minutes=20)}]
 
     def setUp(self):
         super().setUp()
@@ -172,3 +192,67 @@ class ArchivePublishTestCase(TestCase):
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend())\
                 .delete_by_article_id(self.articles[1]['_id'])
             self.assertEquals(0, queue_items.count())
+
+    def test_remove_published_expired_content(self):
+        with self.app.app_context():
+            published_service = superdesk.get_resource_service('published')
+            text_archive = superdesk.get_resource_service('text_archive')
+            original = self.articles[0]
+            published_service.post([original])
+            published_items = published_service.get_other_published_items(original['item_id'])
+            self.assertEquals(1, published_items.count())
+            published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
+            PublishedRemoveExpiredContent().run()
+            published_items = published_service.get_other_published_items(str(original['item_id']))
+            self.assertEquals(0, published_items.count())
+            item = text_archive.find_one(req=None, _id=str(original['_id']))
+            self.assertEquals(item['_id'], original['_id'])
+            self.assertEquals(item['item_id'], original['item_id'])
+
+    def test_cannot_remove_scheduled_content(self):
+        with self.app.app_context():
+            published_service = superdesk.get_resource_service('published')
+            original = self.articles[1]
+            published_service.post([original])
+            published_items = published_service.get_other_published_items(original['item_id'])
+            self.assertEquals(1, published_items.count())
+            PublishedRemoveExpiredContent().run()
+            published_items = published_service.get_other_published_items(original['item_id'])
+            self.assertEquals(1, published_items.count())
+
+    def test_remove_killed_expired_content(self):
+        with self.app.app_context():
+            published_service = superdesk.get_resource_service('published')
+            text_archive = superdesk.get_resource_service('text_archive')
+            original = self.articles[2].copy()
+            published_service.post([original])
+            published_items = published_service.get_other_published_items(original['item_id'])
+            self.assertEquals(1, published_items.count())
+            published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
+            PublishedRemoveExpiredContent().run()
+            published_items = published_service.get_other_published_items(str(original['item_id']))
+            self.assertEquals(0, published_items.count())
+            item = text_archive.find_one(req=None, _id=str(original['_id']))
+            self.assertIsNone(item)
+
+    def test_remove_published_and_killed_expired_content(self):
+        with self.app.app_context():
+            published_service = superdesk.get_resource_service('published')
+            text_archive = superdesk.get_resource_service('text_archive')
+            published = self.articles[2].copy()
+            published[config.CONTENT_STATE] = 'published'
+            published_service.post([published])
+            published_items = published_service.get_other_published_items(published['item_id'])
+            self.assertEquals(1, published_items.count())
+            killed = self.articles[2].copy()
+            published_service.post([killed])
+            published_items = published_service.get_other_published_items(published['item_id'])
+            self.assertEquals(2, published_items.count())
+            published_service.update_published_items(killed['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
+            PublishedRemoveExpiredContent().run()
+            published_items = published_service.get_other_published_items(killed['item_id'])
+            self.assertEquals(0, published_items.count())
+            item = text_archive.find_one(req=None, _id=str(published['_id']))
+            self.assertIsNone(item)
+            item = text_archive.find_one(req=None, _id=str(killed['_id']))
+            self.assertIsNone(item)
