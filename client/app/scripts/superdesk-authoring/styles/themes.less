@@ -4,7 +4,7 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-@main-article-padding : 60px 60px @bottom-view-padding+120;
+@main-article-padding : 60px 60px @bottom-view-padding + 10;
 
 // Themes color config
 // dark
@@ -32,7 +32,6 @@ body, html {
 
 .main-article {
 	width:auto;
-	height: 100%;
 	overflow-y: scroll;
 	background: @white;
 	border: 1px solid #cacaca;
@@ -189,12 +188,16 @@ body, html {
 		color: #D33C30 !important;
 	}
 
-	
 	// images
+	figure {
+		width: 100%;
+		display: table;
+		table-layout: fixed;
+	}
 
 	figure img {
+		display: block;
 		max-width: 100%;
-		float:left;
 		margin: 10px 20px 10px 0;
 	}
 
