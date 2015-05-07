@@ -900,10 +900,14 @@
                             scope.repo.published = params.repo.indexOf('published') >= 0;
                         }
 
-                        if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published) {
-                            scope.repo.search = params.repo;
+                        if (!scope.repo) {
+                            scope.repo = {'search': 'local'};
                         } else {
-                            scope.repo.search = 'local';
+                            if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published) {
+                                scope.repo.search = params.repo;
+                            } else {
+                                scope.repo.search = 'local';
+                            }
                         }
                     }
 

@@ -12,6 +12,7 @@ import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
+from apps.archive.common import aggregations
 from eve.utils import ParsedRequest
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow
@@ -24,6 +25,7 @@ class PublishedItemResource(Resource):
 
     datasource = {
         'search_backend': 'elastic',
+        'aggregations': aggregations,
         'elastic_filter': {'terms': {'state': ['scheduled', 'published', 'killed', 'corrected']}},
         'default_sort': [('_updated', -1)]
     }
