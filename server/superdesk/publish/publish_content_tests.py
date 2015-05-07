@@ -102,7 +102,7 @@ class PublishContentTests(TestCase):
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
                  'expiry': utcnow() + timedelta(minutes=20),
-                 'publish_schedule': "2015-05-30T10:00:00+0000",
+                 'publish_schedule': "2016-05-30T10:00:00+0000",
                  'state': 'scheduled',
                  'original_creator': '553cea4d1d41c85d4d42ff98',
                  'task': {'desk': 1}}]
@@ -127,7 +127,7 @@ class PublishContentTests(TestCase):
                   'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                              {'qcode': '04001002', 'name': 'Weather'}],
                   'expiry': utcnow() + timedelta(minutes=20),
-                  'publish_schedule': "2015-05-30T10:00:00+0000",
+                  'publish_schedule': "2016-05-30T10:00:00+0000",
                   'state': 'scheduled'}]
 
     def setUp(self):
