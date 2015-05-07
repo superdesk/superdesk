@@ -215,7 +215,7 @@ define([
              * Remove a given item.
              */
             api.remove = function apiRemove(item, params, resource) {
-                var url = resource ? getResourceUrl(resource, item) : urls.item(item._links.self.href);
+                var url = resource ? getResourceUrl(resource, item, item._id) : urls.item(item._links.self.href);
                 return http({
                     method: 'DELETE',
                     url: url,

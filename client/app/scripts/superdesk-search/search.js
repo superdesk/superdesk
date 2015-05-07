@@ -348,6 +348,7 @@
         $scope.repo = {
             ingest: true,
             archive: true,
+            text_archive: true,
             published: true
         };
 
@@ -717,6 +718,10 @@
                         } else {
                             if (scope.item._type === 'archive') {
                                 scope.item.container = 'location:workspace';
+                            } else {
+                                if (scope.item._type === 'text_archive') {
+                                    scope.item.container = 'text archive';
+                                }
                             }
                         }
                     }
@@ -779,7 +784,7 @@
                             {term: {unique_name: scope.meta.unique_name}}
                         ];
                         var criteria = {
-                            repo: 'ingest,archive,published',
+                            repo: 'ingest,archive,text_archive,published',
                             source: {
                                 query: {filtered: {filter: {
                                     and: filter
@@ -901,12 +906,13 @@
                             scope.repo.archive = params.repo.indexOf('archive') >= 0;
                             scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
                             scope.repo.published = params.repo.indexOf('published') >= 0;
+                            scope.repo.text_archive = params.repo.indexOf('text_archive') >= 0;
                         }
 
                         if (!scope.repo) {
                             scope.repo = {'search': 'local'};
                         } else {
-                            if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published) {
+                            if (!scope.repo.archive && !scope.repo.ingest && !scope.repo.published && !scope.repo.text_archive) {
                                 scope.repo.search = params.repo;
                             } else {
                                 scope.repo.search = 'local';
