@@ -163,11 +163,8 @@ INSTALLED_APPS = [
     'apps.duplication',
     'apps.aap_mm',
     'apps.spellcheck',
-<<<<<<< HEAD
     'apps.templates',
-=======
     'apps.import_text_archive',
->>>>>>> [SD-1992] Impliment Text Archive
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
