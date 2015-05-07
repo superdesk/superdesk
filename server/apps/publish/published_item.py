@@ -60,7 +60,11 @@ class PublishedItemService(BaseService):
         # convert to the original _id so everything else works
         items = super().get(req, lookup)
         for item in items:
-            item['_id'] = item['item_id']
+            updates = {
+                '_id': item['item_id'],
+                'item_id': item['_id']
+            }
+            item.update(updates)
         return items
 
     def get_other_published_items(self, _id):

@@ -18,7 +18,10 @@ __entities__ = {
     'stages': ('stages.json', 'desk'),
     'groups': ('groups.json', ''),
     'vocabularies': ('vocabularies.json', ''),
-    'content_templates': ('content_templates.json', 'template_name')
+    'content_templates': ('content_templates.json', 'template_name'),
+    'published': (None, [('item_id', pymongo.ASCENDING),
+                         ('state', pymongo.ASCENDING)]),
+    'published': (None, '_created')
 }
 
 
@@ -48,14 +51,16 @@ class AppInitializeWithDataCommand(superdesk.Command):
         return 0
 
     def import_file(self, entity_name, file_name, index_params):
-        file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
-                            file_name)
-        with open(file, 'rt') as app_prepopulation:
-            json_data = json.loads(app_prepopulation.read())
-            service = get_resource_service(entity_name)
-            data = [app.data.mongo._mongotize(item, service.datasource) for item in json_data]
-            service.post(data)
-            print('File {} imported successfully.'.format(file_name))
+
+        if file_name:
+            file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
+                                file_name)
+            with open(file, 'rt') as app_prepopulation:
+                json_data = json.loads(app_prepopulation.read())
+                service = get_resource_service(entity_name)
+                data = [app.data.mongo._mongotize(item, service.datasource) for item in json_data]
+                service.post(data)
+                print('File {} imported successfully.'.format(file_name))
 
         if index_params:
             app.data.mongo.pymongo().db[entity_name].create_index(index_params)

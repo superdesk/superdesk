@@ -42,9 +42,13 @@ class ArchiveRemoveExpiredContent(superdesk.Command):
         return superdesk.get_resource_service('archive').get(req, None)
 
     def get_query_for_expired_items(self, now):
+        """
+        Return expired items.
+        """
         query = {'and':
                  [
-                     {'range': {'expiry': {'lte': now}}}
+                     {'range': {'expiry': {'lte': now}}},
+                     {'not': {'term': {'state': 'scheduled'}}}
                  ]
                  }
         return superdesk.json.dumps(query)

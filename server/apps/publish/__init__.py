@@ -20,6 +20,7 @@ from apps.publish.subscribers import SubscribersResource, SubscribersService
 from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
 from apps.publish.formatted_item import FormattedItemResource, FormattedItemService
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
+from apps.publish.commands import PublishedRemoveExpiredContent  # noqa
 
 from superdesk import get_backend
 
