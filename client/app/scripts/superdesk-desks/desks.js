@@ -205,8 +205,6 @@
                         .then(function(items) {
                             scope.cachePreviousItems = items._items;
                             scope.fetching = false;
-                        }, function() {
-                            //
                         })
                         ['finally'](function() {
                             scope.loading = false;
@@ -220,8 +218,6 @@
                     return api('archive').query(criteria)
                         .then(function(items) {
                             scope.cacheNextItems = items._items;
-                        }, function() {
-                            //
                         });
                 }
                 function scrollList(id) {
@@ -250,7 +246,6 @@
 
                 scope.move = function (diff, event) {
                     if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
-
                         if (scope.items) {
                             var index = _.findIndex(scope.items, {_id: scope.selected._id});
                             if (index === -1) { // selected not in current items, select first
