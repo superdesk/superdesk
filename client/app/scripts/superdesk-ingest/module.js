@@ -1357,6 +1357,24 @@ define([
                 }],
                 filters: [{action: 'list', type: 'externalsource'}],
                 privileges: {fetch: 1}
+            })
+            .activity('text_archive', {
+                label: gettext('Delete from text archive'),
+                icon: 'remove',
+                monitor: true,
+                controller: ['api', 'data', function(api, data) {
+                    api
+                        .remove(data.item, {}, 'text_archive')
+                        .then(
+                            function(response) {
+                                data.item.error = response;
+                            })
+                    ['finally'](function() {
+                        data.item.actioning.text_archive = false;
+                    });
+                }],
+                filters: [{action: 'list', type: 'text_archive'}],
+                privileges: {textarchive: 1}
             });
     }]);
 

@@ -13,7 +13,9 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 from .common import aggregations, item_url
-from superdesk import intrinsic_privilege
+from superdesk.notification import push_notification
+from .common import get_user
+import superdesk
 
 
 class TextArchiveResource(Resource):
@@ -26,10 +28,17 @@ class TextArchiveResource(Resource):
     }
     item_url = item_url
     resource_methods = ['GET', 'POST']
+    item_methods = ['GET', 'DELETE']
+    privileges = {'POST': 'archive', 'DELETE': 'textarchive'}
 
 
 class TextArchiveService(BaseService):
-    pass
+
+    def on_deleted(self, doc):
+        user = get_user()
+        push_notification('item:deleted', item=str(doc['_id']), user=str(user.get('_id')))
 
 
-intrinsic_privilege('text_archive', method=['GET', 'POST'])
+superdesk.privilege(name='textarchive',
+                    label='Text Archive Management',
+                    description='User can remove items from the text archive.')
