@@ -20,8 +20,7 @@ __entities__ = {
     'vocabularies': ('vocabularies.json', ''),
     'content_templates': ('content_templates.json', 'template_name'),
     'published': (None, [('item_id', pymongo.ASCENDING),
-                         ('state', pymongo.ASCENDING)]),
-    'published': (None, '_created')
+                         ('state', pymongo.ASCENDING)])
 }
 
 

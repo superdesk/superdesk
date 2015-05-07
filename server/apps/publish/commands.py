@@ -40,7 +40,7 @@ class PublishedRemoveExpiredContent(superdesk.Command):
         query_filter = self.get_query_for_expired_items(now)
         req = ParsedRequest()
         req.sort = '_created'
-        req.max_results = 1
+        req.max_results = 100
         return superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=query_filter)
 
     def get_query_for_expired_items(self, now):
