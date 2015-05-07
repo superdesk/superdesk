@@ -12,9 +12,9 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema
-from .common import aggregations, item_url
+from apps.archive.common import aggregations, item_url
 from superdesk.notification import push_notification
-from .common import get_user
+from apps.archive.common import get_user
 import superdesk
 
 

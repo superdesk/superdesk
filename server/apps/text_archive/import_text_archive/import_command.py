@@ -63,6 +63,26 @@ class AppImportTextArchiveCommand(superdesk.Command):
         superdesk.Option('--count', '-c', dest='limit', required=False)
     )
 
+    def run(self, start_id, user, password, url, query, limit):
+        print('Starting text archive import at {}'.format(start_id))
+        self._user = user
+        self._password = password
+        self._id = int(start_id)
+        self._url_root = url
+        self._query = urllib.parse.quote(query)
+        self._limit = int(limit)
+
+        self._api_login()
+
+        x = self._get_bunch(self._id)
+        while x:
+            self._process_bunch(x)
+            x = self._get_bunch(self._id)
+            if self._limit is not None and self._limit <= 0:
+                break
+
+        print('finished text archive import')
+
     def _api_login(self):
         self._http = urllib3.PoolManager()
         credentials = '?login[username]={}&login[password]={}'.format(self._user, self._password)
@@ -227,24 +247,5 @@ class AppImportTextArchiveCommand(superdesk.Command):
                 self._limit -= 1
             # print(item)
 
-    def run(self, start_id, user, password, url, query, limit):
-        print('Starting text archive import at {}'.format(start_id))
-        self._user = user
-        self._password = password
-        self._id = int(start_id)
-        self._url_root = url
-        self._query = urllib.parse.quote(query)
-        self._limit = int(limit)
-
-        self._api_login()
-
-        x = self._get_bunch(self._id)
-        while x:
-            self._process_bunch(x)
-            x = self._get_bunch(self._id)
-            if self._limit is not None and self._limit <= 0:
-                break
-
-        print('finished text archive import')
 
 superdesk.command('app:import_text_archive', AppImportTextArchiveCommand())
