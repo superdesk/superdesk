@@ -41,12 +41,23 @@ class SuperdeskError(ValidationError):
     _codes = {}
     system_exception = None
 
-    def __init__(self, code):
+    def __init__(self, code, desc=None):
+        """
+        :param int code: numeric error code
+        :param desc: optional detailed error description, defaults to None
+        """
         self.code = code
         self.message = self._codes.get(code, 'Unknown error')
+        self.desc = desc
 
     def __str__(self):
-        return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.message)
+        desc_text = '' if not self.desc else (' Details: ' + self.desc)
+        return "{} Error {} - {}{desc}".format(
+            self.__class__.__name__,
+            self.code,
+            self.message,
+            desc=desc_text
+        )
 
     def get_error_description(self):
         return self.code, self._codes[self.code]
