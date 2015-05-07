@@ -129,19 +129,19 @@
                 });
 
                 var container = elem[0];
-                var lastScrollTop = 0;
+                var offsetY = 0;
                 elem.bind('scroll', function() {
-                    var st = elem.scrollTop();
-                    if (st > lastScrollTop){
-                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 33) {
+                    scope.$apply(function() {
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 3) {
+                            container.scrollTop = container.scrollTop - 3;
                             scope.fetchNext();
                         }
-                    } else {
-                        if (lastScrollTop <= 33) {
+                        if (container.scrollTop <= 2) {
+                            offsetY = 2 - container.scrollTop;
+                            container.scrollTop = container.scrollTop + offsetY;
                             scope.fetchPrevious();
                         }
-                    }
-                    lastScrollTop = st;
+                    });
                 });
                 scope.fetchNext = function() {
                     if (!scope.fetching) {
