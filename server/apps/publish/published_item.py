@@ -17,6 +17,7 @@ from eve.utils import ParsedRequest
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow
 import json
+import superdesk
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +97,11 @@ class PublishedItemService(BaseService):
         """
         To move the items into text archive once it is published
         """
+        text_archive = superdesk.get_resource_service('text_archive')
+
+        if text_archive is None:
+            return
+
         if doc.get('state') == 'published':
             # query to check if the item is killed the future versions or not
             query = {
@@ -116,8 +122,10 @@ class PublishedItemService(BaseService):
             items = super().get(req=request, lookup=None)
 
             if items.count() == 0:
-                # TODO: insert into text archive
-                pass
+                text_archive.post([doc.copy()])
+                logger.info('Inserting published item {} with headline {} and version {} and expiry {}.'.
+                            format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))
         elif doc.get('state') == 'killed':
-            # TODO: make sure we delete from text archive
-            pass
+            text_archive.delete_action({'_id': doc['_id']})
+            logger.info('Deleting published item {} with headline {} and version {} and expiry {}.'.
+                        format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))
