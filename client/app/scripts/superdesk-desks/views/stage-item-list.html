@@ -1,19 +1,21 @@
 <div ng-if="loading" class="loading"></div>
-
 <div ng-if="!loading && !items.length && showEmpty" class="no-items" translate>No items in this stage</div>
-
-<ul ng-if="!loading && items.length" class="inline-content-items" >
-	<li ng-repeat="item in items track by item._id" class="item"
-		ng-click="action({item: item})" 
-		ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
-		<div class="type"><i class="filetype-icon-{{item.type}}"></i></div>
-		<div class="urgency"><i class="urgency-icon-{{item.urgency}}"></i></div>
-		<div class="text">
-			<span>{{item.slugline}}</span>{{item.headline}}
-		</div>
-		<div class="action" ng-if="allowed">
-			<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="bottom"><i class="icon-external"></i></button>
-			 <button ng-click="edit(item); $event.stopPropagation();" tooltip="Edit" tooltip-placement="bottom"><i class="icon-pencil"></i></button>
-		</div>
-	</li>
-</ul>
+<div tabindex="0">
+	<ul ng-if="items.length" class="inline-content-items">
+		<li ng-repeat="item in items track by item._id" class="item"
+			ng-click="action({item: item})" 
+			ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
+			<div id="{{item._id}}">
+				<div class="type"><i class="filetype-icon-{{item.type}}"></i></div>
+				<div class="urgency"><i class="urgency-icon-{{item.urgency}}"></i></div>
+				<div class="text">
+					<span>{{item.slugline}}</span>{{item.headline}}
+				</div>
+				<div class="action" ng-if="allowed">
+					<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="bottom"><i class="icon-external"></i></button>
+			 		<button ng-click="edit(item); $event.stopPropagation();" tooltip="Edit" tooltip-placement="bottom"><i class="icon-pencil"></i></button>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
