@@ -236,7 +236,10 @@
 
         function initSelectedParameters (parameters) {
             tags.selectedParameters = [];
-            while (parameters.indexOf(':') >= 0) {
+            while (parameters.indexOf(':') > 0 &&
+                   parameters.indexOf(':') < parameters.indexOf('(') &&
+                   parameters.indexOf(':') < parameters.indexOf(')')) {
+
                 var colonIndex = parameters.indexOf(':');
                 var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
                 tags.selectedParameters.push(parameter);
