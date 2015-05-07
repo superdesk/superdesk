@@ -67,6 +67,9 @@ class PublishedItemService(BaseService):
             item.update(updates)
         return items
 
+    def on_delete(self, doc):
+        self.insert_into_text_archive(doc)
+
     def get_other_published_items(self, _id):
         try:
             query = {'query': {'filtered': {'filter': {'term': {'item_id': _id}}}}}
@@ -88,3 +91,33 @@ class PublishedItemService(BaseService):
     def delete_by_article_id(self, _id):
         lookup = {'query': {'term': {'item_id': _id}}}
         self.delete(lookup=lookup)
+
+    def insert_into_text_archive(self, doc):
+        """
+        To move the items into text archive once it is published
+        """
+        if doc.get('state') == 'published':
+            # query to check if the item is killed the future versions or not
+            query = {
+                'query': {
+                    'filtered': {
+                        'filter': {
+                            'and': [
+                                {'term': {'item_id': doc['item_id']}},
+                                {'term': {'state': 'killed'}}
+                            ]
+                        }
+                    }
+                }
+            }
+
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            items = super().get(req=request, lookup=None)
+
+            if items.count() == 0:
+                # TODO: insert into text archive
+                pass
+        elif doc.get('state') == 'killed':
+            # TODO: make sure we delete from text archive
+            pass
