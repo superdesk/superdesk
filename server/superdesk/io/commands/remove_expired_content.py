@@ -81,8 +81,13 @@ def get_expired_items(provider_id, expiration_date):
 
 
 def remove_items_from_elastic(ids):
-    query = {'query': {'terms': {'ingest._id': ids}}}
-    superdesk.app.data._search_backend('ingest').remove('ingest', query)
+    batch_size = 500
+    print("total documents to be removed {}".format(len(ids)))
+    for i in range(0, len(ids), batch_size):
+        batch = ids[i:i + batch_size]
+        query = {'query': {'terms': {'ingest._id': batch}}}
+        superdesk.app.data._search_backend('ingest').remove('ingest', query)
+        print("Removed {} documents from ingest.".format(len(batch)))
 
 
 def get_query_for_expired_items(provider, expiration_date):
