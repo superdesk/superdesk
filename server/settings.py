@@ -115,6 +115,10 @@ CELERYBEAT_SCHEDULE = {
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',
         'schedule': timedelta(seconds=10)
+    },
+    'publish:remove_expired': {
+        'task': 'apps.publish.content_purge',
+        'schedule': crontab(minute=30)
     }
 }
 

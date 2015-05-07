@@ -21,7 +21,7 @@ from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
 from apps.publish.formatted_item import FormattedItemResource, FormattedItemService
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
 from apps.publish.commands import PublishedRemoveExpiredContent  # noqa
-
+from superdesk.celery_app import celery
 from superdesk import get_backend
 
 logger = logging.getLogger(__name__)
@@ -76,3 +76,8 @@ def init_app(app):
                         description='User can update publish queue')
     superdesk.privilege(name='output_channel_seq_num_settings', label='Update Output Channel Sequence Number Settings',
                         description='User can update Update Output Channel Sequence Number Settings.')
+
+
+@celery.task
+def content_purge():
+    PublishedRemoveExpiredContent().run()
