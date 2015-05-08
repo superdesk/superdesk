@@ -659,7 +659,7 @@
                                     userDesks = desks;
                                     if (desks._items.length) {
                                         if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
-                                            this.activeDeskId = desks._items[0]._id;
+                                            this.activeDeskId = null;
                                         }
                                     } else if (this.activeDeskId) {
                                         this.activeDeskId = null;
