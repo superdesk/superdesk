@@ -169,18 +169,22 @@
 				</div>
 				<div class="modal-footer">
 				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-				  	<button class="btn btn-primary" ng-click="save()" translate>Done</button>
+				  	<button class="btn btn-primary" ng-click="save()" translate>Next</button>
 				</div>
 			</div>
 		</div>
-        <div sd-wizard-step data-title="{{ 'Macros' | translate }}" data-code="general">
-            <div sd-desk-macros>
+        <div sd-wizard-step data-title="{{ 'Macros' | translate }}" data-code="macros">
+            <div sd-deskedit-macros>
                 <div sd-shadow>
                     <ul class="pills-list">
                         <li ng-repeat="macro in macros">
                             <h6 class="pull-left">{{ macro.label }}</h6>
                         </li>
                     </ul>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
+                    <button class="btn btn-primary" ng-click="save()" translate>Done</button>
                 </div>
             </div>
         </div>

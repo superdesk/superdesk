@@ -1260,10 +1260,30 @@
                             desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
                             var origDesk = desks.deskLookup[scope.desk.edit._id];
                             _.extend(origDesk, scope.desk.edit);
-                            WizardHandler.wizard('desks').finish();
+                            WizardHandler.wizard('desks').next();
                         }, function(response) {
                             scope.message = gettext('There was a problem, members not saved.');
                         });
+                    };
+                }
+            };
+        }])
+        .directive('sdDeskeditMacros', ['macros', 'WizardHandler', 'desks',  '$rootScope',
+            function (macros, WizardHandler, desks, $rootScope) {
+            return {
+                link: function(scope) {
+                    if (scope.desk && scope.desk.edit) {
+                        macros.getByDesk(scope.desk.edit.name).then(function(macros) {
+                            scope.macros = macros;
+                        });
+                    }
+
+                    scope.previous = function () {
+                        WizardHandler.wizard('desks').previous();
+                    };
+
+                    scope.save = function () {
+                        WizardHandler.wizard('desks').finish();
                     };
                 }
             };
@@ -1300,17 +1320,6 @@
                             }
                         }
                     });
-                }
-            };
-        }])
-        .directive('sdDeskMacros', ['macros', function (macros) {
-            return {
-                link: function(scope) {
-                    if (scope.desk && scope.desk.edit) {
-                        macros.getByDesk(scope.desk.edit.name).then(function(macros) {
-                            scope.macros = macros;
-                        });
-                    }
                 }
             };
         }]);
