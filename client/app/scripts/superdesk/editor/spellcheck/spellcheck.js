@@ -16,36 +16,18 @@ function escapeRegExp(string) {
 }
 
 /**
- * Reset cursor to first character in given node
+ * Find text node + offset for given node and offset
  */
-function cursorReset(node) {
-    var selection = document.getSelection();
-    selection.collapse(node, 0);
-}
-
-/**
- * Move cursor to given offset in given node
- */
-function cursorMove(node, offset, extend) {
-    var selection = document.getSelection(),
-        currentOffset = 0,
+function findTextNode(node, offset) {
+    var currentOffset = 0,
         tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     while (tree.nextNode()) {
         if (currentOffset + tree.currentNode.textContent.length >= offset) {
-            var method = extend ? 'extend' : 'collapse';
-            selection[method](tree.currentNode, offset - currentOffset);
-            return;
+            return {node: tree.currentNode, offset: offset - currentOffset};
         }
 
         currentOffset += tree.currentNode.length;
     }
-}
-
-/**
- * Extend selection to given offset in given node
- */
-function cursorExtend(node, offset) {
-    cursorMove(node, offset, true);
 }
 
 /**
@@ -184,12 +166,28 @@ function SpellcheckService($q, api, dictionaries, editor) {
      */
     function hiliteError(node, error) {
         var regexp = new RegExp('\\b' + escapeRegExp(error) + '\\b', 'im'),
-            index, lastIndex = 0, text = node.textContent;
+            index, lastIndex = 0, text = node.textContent,
+            selection = document.getSelection();
         while ((index = text.search(regexp)) > -1) {
-            cursorReset(node);
-            cursorMove(node, index + lastIndex);
-            cursorExtend(node, index + lastIndex + error.length);
-            document.execCommand('hiliteColor', false, COLOR);
+            var range = document.createRange(),
+                start = findTextNode(node, index + lastIndex),
+                end = findTextNode(node, index + lastIndex + error.length);
+            if (start.node === end.node) {
+                // optimize error hilite when the word is within single text node
+                var replace = start.node.splitText(start.offset),
+                    span = document.createElement('span');
+                span.classList.add(ERROR_CLASS);
+                replace.splitText(end.offset - start.offset);
+                span.textContent = replace.textContent;
+                replace.parentNode.replaceChild(span, replace);
+            } else {
+                range.setStart(start.node, start.offset);
+                range.setEnd(end.node, end.offset);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('hiliteColor', false, COLOR);
+            }
+
             lastIndex += index + error.length;
             text = text.substring(index + error.length);
         }
@@ -203,9 +201,11 @@ function SpellcheckService($q, api, dictionaries, editor) {
         return this.errors(node.textContent).then(function(errors) {
             isRendering = true;
             var selection = editor.storeSelection(node);
+
             angular.forEach(errors, function(error) {
                 hiliteError(node, error);
             });
+
             setErrorClass(node);
             editor.resetSelection(node, selection);
             isRendering = false;
@@ -231,18 +231,20 @@ function SpellcheckService($q, api, dictionaries, editor) {
         });
     };
 
-    function preventInputEvent(event) {
+    function stopEvent(event) {
         if (isRendering) {
             event.stopImmediatePropagation();
         }
     }
 
     this.addEventListener = function addEventListener(elem) {
-        elem.addEventListener('input', preventInputEvent);
+        elem.addEventListener('input', stopEvent);
+        elem.addEventListener('select', stopEvent);
     };
 
     this.removeEventListener = function removeEventListener(elem) {
-        elem.removeEventListener('input', preventInputEvent);
+        elem.removeEventListener('input', stopEvent);
+        elem.removeEventListener('select', stopEvent);
     };
 }
 

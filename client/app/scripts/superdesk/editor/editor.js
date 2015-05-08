@@ -25,15 +25,14 @@ function EditorService() {
      */
     this.storeSelection = function storeSelection(node) {
         var selection = document.getSelection();
-        if (selection.anchorNode == null) {
+        if (selection.anchorNode == null || selection.anchorNode.nodeType !== TEXT_TYPE) {
             return;
         }
 
-        var span = document.createElement('span'),
-            range = document.createRange();
-        range.setStart(selection.anchorNode, selection.anchorOffset);
+        var next = selection.anchorNode.splitText(selection.anchorOffset),
+            span = document.createElement('span');
         span.classList.add(MARKER_CLASS);
-        range.insertNode(span);
+        selection.anchorNode.parentNode.insertBefore(span, next);
     };
 
     /**
@@ -43,7 +42,11 @@ function EditorService() {
         var marks = node.getElementsByClassName(MARKER_CLASS),
             selection = document.getSelection(),
             range = document.createRange();
-        selection.removeAllRanges();
+
+        if (selection.rangeCount) {
+            selection.removeAllRanges();
+        }
+
         while (marks.length) {
             var mark = marks.item(0);
             range.setStartBefore(mark);
@@ -310,33 +313,38 @@ angular.module('superdesk.editor', [])
             link: function(scope, elem, attrs, ngModel) {
 
                 var editorElem,
-                    timeout;
+                    updateTimeout,
+                    renderTimeout;
 
                 /**
                  * Remove spellcheck highlights from node
                  */
                 function removeSpellcheck(node) {
-                    var selection = editor.storeSelection(node);
-                    node.innerHTML = spellcheck.clean(node);
+                    var selection = editor.storeSelection(node),
+                        html = spellcheck.clean(node);
+                    node.innerHTML = html;
                     editor.resetSelection(node, selection);
+                    return html;
                 }
 
-                function updateModel(event) {
+                function updateModel() {
                     if (editor.readOnly) {
                         return;
                     }
 
-                    removeSpellcheck(editorElem[0]);
-                    var html = editorElem[0].innerHTML;
+                    var html = removeSpellcheck(editorElem[0]);
                     scope.$applyAsync(function() {
                         ngModel.$setViewValue(html);
+                        spellcheck.render(editorElem[0]);
                     });
                 }
 
-                // 2s after model change - render errors again
-                ngModel.$viewChangeListeners.push(_.debounce(function renderSpellcheck() {
-                    spellcheck.render(editorElem[0]);
-                }, 500));
+                ngModel.$viewChangeListeners.push(function renderSpellcheck() {
+                    $timeout.cancel(renderTimeout);
+                    renderTimeout = $timeout(function() {
+                        spellcheck.render(editorElem[0]);
+                    }, 200, false);
+                });
 
                 ngModel.$render = function renderEditor() {
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
@@ -344,6 +352,7 @@ angular.module('superdesk.editor', [])
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
+                    // this has to register before the editor
                     spellcheck.addEventListener(editorElem[0]);
 
                     var editorConfig = angular.extend({}, config, scope.config || {});
@@ -351,13 +360,8 @@ angular.module('superdesk.editor', [])
                     editor.editor = new window.MediumEditor(editor.elem, editorConfig);
 
                     editorElem.on('input', function(event) {
-                        $timeout.cancel(timeout);
-                        timeout = $timeout(updateModel, 200, false);
-                    });
-
-                    editorElem.on('keydown', function(event) {
-                        $timeout.cancel(timeout);
-                        removeSpellcheck(editorElem[0]);
+                        $timeout.cancel(updateTimeout);
+                        updateTimeout = $timeout(updateModel, 300, false);
                     });
 
                     editorElem.on('contextmenu', function(event) {
