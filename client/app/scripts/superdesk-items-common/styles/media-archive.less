@@ -381,7 +381,7 @@
 		}
 		.type-icon {
 			position: absolute;
-			bottom: 35px;
+			bottom: 7px;
 			left: 0px;
 			.opacity(50);
 		}
@@ -398,18 +398,19 @@
 
 		.urgency-label {
 			position: absolute;
-			bottom: 35px;
+			bottom: 7px;
 			left: 36px;
 		}
 
 		.state-label {
 			position: absolute;
-			bottom: 36px;
+			bottom: 8px;
 			right: 0px;
 		}
 
 		.fetched-desk {
 			font-size:11px;
+                        margin-top: 3px;
 		}
 	}
 
@@ -417,12 +418,16 @@
 .mgrid-view, #scratchpad {
 	.media-box {
 		.action {
+                    display: none;
 			height:33px;
 			position: absolute;
 			left: 0;
 			right: 0;
 			bottom: 0;
 		}
+                &:hover .action { 
+                    display: block;
+                }
 		.media-box-generic;
 		&.locked {
 			border-bottom-color: #e51c23 !important;
