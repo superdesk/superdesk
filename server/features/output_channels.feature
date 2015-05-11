@@ -49,7 +49,7 @@ Feature: Output Channels
     When we post to "/output_channels"
     """
     {
-      "name":"test oc", "sequence_num_settings": {"min": 1, "max": 99, "start_from": 1}
+      "name":"test oc", "sequence_num_settings": {"min": 1, "max": 99}
     }
     """
     And we get "/output_channels"
@@ -58,7 +58,7 @@ Feature: Output Channels
     {
       "_items":
         [
-          {"name":"test oc", "sequence_num_settings": {"min": 1, "max": 99, "start_from": 1}}
+          {"name":"test oc", "sequence_num_settings": {"min": 1, "max": 99}}
         ]
     }
     """
@@ -123,28 +123,10 @@ Feature: Output Channels
     When we post to "/output_channels"
     """
     {
-      "name":"test oc", "sequence_num_settings": {"min": 0, "max": 99, "start_from": 1}
+      "name":"test oc", "sequence_num_settings": {"min": 0, "max": 99 }
     }
     """
     Then we get error 400
     """
     {"_issues": {"sequence_num_settings.min": 1}, "_message": "Value of Minimum in Sequence Number Settings should be greater than 0"}
-    """
-
-  @auth
-  Scenario: Updating an output channel with invalid start_from in sequence number setting should fail
-    Given empty "output_channels"
-    When we post to "/output_channels"
-    """
-    {
-      "name":"test oc", "sequence_num_settings": {"min": 1, "max": 99, "start_from": 1}
-    }
-    """
-    And we patch "/output_channels/#output_channels._id#"
-    """
-    {"sequence_num_settings": {"min": 1, "max": 99, "start_from": 100}}
-    """
-    Then we get error 400
-    """
-    {"_issues": {"validator exception": "400: Value of Start From in Sequence Number Settings should be between Minimum and Maximum"}}
     """

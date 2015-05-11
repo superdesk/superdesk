@@ -54,7 +54,7 @@ class Formatter(metaclass=FormatterRegistry):
 
         if output_channel.get('sequence_num_settings'):
             if sequence_number == 0 or sequence_number == 1:
-                sequence_number = output_channel['sequence_num_settings']['start_from']
+                sequence_number = output_channel['sequence_num_settings']['min']
                 set_key(sequence_key_name, value=sequence_number)
 
             max_seq_number = output_channel['sequence_num_settings']['max']
