@@ -132,7 +132,10 @@ define([
         $scope.$on('item:unspike', reset);
 
         $scope.$on('item:publish:closed:channels', function(_e, data) {
-            notify.error(gettext('Item published to closed Output Channel(s).'));
+            if (desks.activeDeskId && desks.activeDeskId === data.desk) {
+                notify.error(gettext('Item having story name ' + data.unique_name + ' published to closed Output Channel(s).'));
+                refreshItems();
+            }
         });
 
         desks.fetchCurrentUserDesks().then(function() {

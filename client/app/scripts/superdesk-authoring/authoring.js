@@ -821,6 +821,12 @@
                     superdesk.intent('view', 'content');
                 };
 
+                $scope.$on('item:publish:closed:channels', function(_e, data) {
+                    if (data.item === $scope.item._id) {
+                        notify.error(gettext('Item published to closed Output Channel(s).'));
+                    }
+                });
+
                 macros.setupShortcuts($scope);
             }
         };
