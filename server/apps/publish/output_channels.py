@@ -46,6 +46,10 @@ class OutputChannelsResource(Resource):
             'type': 'boolean',
             'default': True
         },
+        'is_digital': {
+            'type': 'boolean',
+            'default': False
+        },
         'sequence_num_settings': {
             'type': 'dict',
             'schema': {
