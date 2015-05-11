@@ -31,6 +31,7 @@ from apps.common.models.io.eve_proxy import EveProxy
 from superdesk.celery_app import celery
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
+from .archive_link import ArchiveLinkResource, ArchiveLinkService
 
 
 logger = logging.getLogger(__name__)
@@ -78,6 +79,10 @@ def init_app(app):
     service = UserContentService(endpoint_name, backend=superdesk.get_backend())
     UserContentResource(endpoint_name, app=app, service=service)
 
+    endpoint_name = 'archive_link'
+    service = ArchiveLinkService(endpoint_name, backend=superdesk.get_backend())
+    ArchiveLinkResource(endpoint_name, app=app, service=service)
+
     endpoint_name = 'saved_searches'
     service = SavedSearchesService(endpoint_name, backend=superdesk.get_backend())
     SavedSearchesResource(endpoint_name, app=app, service=service)
@@ -113,6 +118,7 @@ def init_app(app):
     superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
 
     superdesk.intrinsic_privilege(ArchiveUnlockResource.endpoint_name, method=['POST'])
+    superdesk.intrinsic_privilege(ArchiveLinkResource.endpoint_name, method=['POST'])
 
 
 @celery.task
