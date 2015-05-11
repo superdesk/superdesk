@@ -16,6 +16,7 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
+from eve.utils import config
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +49,7 @@ class OutputChannelsResource(Resource):
             'type': 'dict',
             'schema': {
                 'min': {'type': 'integer'},
-                'max': {'type': 'integer'},
-                'start_from': {'type': 'integer'}
+                'max': {'type': 'integer'}
             }
         }
     }
@@ -59,6 +59,14 @@ class OutputChannelsResource(Resource):
 
 
 class OutputChannelsService(BaseService):
+
+    def on_fetched(self, doc):
+        """
+        Overriding to take care of existing data in Mongo
+        """
+        for item in doc[config.ITEMS]:
+            if item and 'sequence_num_settings' in item and 'start_from' in item['sequence_num_settings']:
+                del item['sequence_num_settings']['start_from']
 
     def on_create(self, docs):
         for doc in docs:
@@ -76,6 +84,17 @@ class OutputChannelsService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Output Channel is associated with Destination Groups.')
 
+    def find_one(self, req, **lookup):
+        """
+        Overriding to take care of existing data in Mongo
+        """
+        item = super().find_one(req, **lookup)
+
+        if item and 'sequence_num_settings' in item and 'start_from' in item['sequence_num_settings']:
+            del item['sequence_num_settings']['start_from']
+
+        return item
+
     def __is_authorized_to_update_seq_num_settings(self, output_channel):
         """
         Checks if the user requested is authorized to modify sequence number settings.
@@ -92,8 +111,6 @@ class OutputChannelsService(BaseService):
         Validates the 'sequence_num_settings' property if present in output_channel. Below are the validation rules:
             1.  If min value is present then it should be greater than 0
             2.  If min is present and max value isn't available then it's defaulted to MAX_VALUE_OF_PUBLISH_SEQUENCE
-            3.  If start_from present then the value should be between min and max.
-                Otherwise, it's defaulted to the value of min
 
         :return: True if validation succeeds otherwise return False.
         """
@@ -101,7 +118,6 @@ class OutputChannelsService(BaseService):
         if output_channel.get('sequence_num_settings'):
             min = output_channel.get('sequence_num_settings').get('min', 1)
             max = output_channel.get('sequence_num_settings').get('max', MAX_VALUE_OF_PUBLISH_SEQUENCE)
-            start_from = output_channel.get('sequence_num_settings').get('start_from', min)
 
             if min <= 0:
                 raise SuperdeskApiError.badRequestError(payload={"sequence_num_settings.min": 1},
@@ -113,12 +129,7 @@ class OutputChannelsService(BaseService):
                                                         message="Value of Minimum in Sequence Number Settings should "
                                                                 "be less than the value of Maximum")
 
-            if not min <= start_from <= max:
-                raise SuperdeskApiError.badRequestError(payload={"sequence_num_settings.start_from": 1},
-                                                        message="Value of Start From in Sequence Number Settings "
-                                                                "should be between Minimum and Maximum")
-
             del output_channel['sequence_num_settings']
-            output_channel['sequence_num_settings'] = {"min": min, "max": max, "start_from": start_from}
+            output_channel['sequence_num_settings'] = {"min": min, "max": max}
 
         return True
