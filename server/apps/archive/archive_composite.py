@@ -17,7 +17,9 @@ from eve.utils import config
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.content import LINKED_IN_PACKAGES
+from apps.archive.archive import SOURCE as ARCHIVE
+from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE
+import pprint
 
 ASSOCIATIONS = 'refs'
 ITEM_REF = 'residRef'
@@ -60,6 +62,53 @@ def get_item_ref(item):
 
 
 class PackageService():
+
+    def item_is_take(self, item):
+        takes_package = [package for package in item.get(LINKED_IN_PACKAGES, [])
+                         if package.get(PACKAGE_TYPE)]
+        if len(takes_package) > 1:
+            message = 'Multiple takes found for item: {0}'.format(item['_id'])
+            logger.error(message)
+            raise SuperdeskApiError.forbiddenError(message=message)
+        return takes_package[0] if takes_package else None
+
+    def create_takes_package(self, target, link):
+        # check if target has an associated takes package
+        # if not, create it and add target as a take
+        # check if the target is the last take, if not, resolve the last take
+        # copy metadata from the target and add it as the next take
+        # return the link item
+        pp = pprint.PrettyPrinter(indent=4)
+        takes_package = self.item_is_take(target)
+        service = get_resource_service(ARCHIVE)
+        if not link.get('_id'):
+            # TODO: copy metadata from target
+            link['headline'] = target.get('headline')
+            link['slugline'] = target.get('slugline')
+            service.post([link])
+            print('Saved link')
+            pp.pprint(link)
+
+        if not takes_package:
+            takes_package = {
+                ITEM_TYPE: ITEM_TYPE_COMPOSITE,
+                PACKAGE_TYPE: TAKES_PACKAGE
+            }
+            create_root_group([takes_package])
+            target_ref = get_item_ref(target)
+            target_ref['sequence'] = 1
+            link_ref = get_item_ref(link)
+            link_ref['sequence'] = 2
+            main_group = next((group for group in takes_package['groups'] if group['id'] == MAIN_GROUP))
+            main_group['refs'].append(target_ref)
+            main_group['refs'].append(link_ref)
+            print('Before saving')
+            pp.pprint(takes_package)
+            service.post([takes_package])
+
+        print('Saved package')
+        pp.pprint(takes_package)
+        return link
 
     def on_create(self, docs):
         create_root_group(docs)
@@ -174,7 +223,7 @@ class PackageService():
         two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
 
         if not delete:
-            two_way_links.append({'package': package_id})
+            two_way_links.append({'package': package_id, PACKAGE_TYPE: TAKES_PACKAGE})
 
         updates = self.get_item_update_data(item, two_way_links, delete)
         get_resource_service(endpoint).system_update(item_id, updates, item)
