@@ -51,6 +51,7 @@ def test_json(context):
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
+    return response_data
 
 
 def json_match(context_data, response_data):
@@ -612,7 +613,13 @@ def step_impl_then_get_new(context):
     assert_ok(context.response)
     expect_json_contains(context.response, 'self', path='_links')
     if context.text is not None:
-        test_json(context)
+        return test_json(context)
+
+
+@then('we get next take')
+def step_impl_then_get_next_take(context):
+    data = step_impl_then_get_new(context)
+    set_placeholder(context, 'TAKE', data['_id'])
 
 
 @then('we get error {code}')
