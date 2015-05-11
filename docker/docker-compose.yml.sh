@@ -9,6 +9,16 @@ redis:
   volumes:
    - ../data/redis:/data
 
+logstash:
+  image: logstash
+  links:
+  - elastic
+
+kibana:
+  image: kibana
+  links:
+  - logstash
+
 elastic:
   image: elasticsearch:1.5
   volumes:
@@ -21,6 +31,7 @@ backend:
    - mongodb
    - redis
    - elastic
+   - logstash
   environment:
    - MONGOLAB_URI=mongodb://mongodb:27017/test
    - LEGAL_ARCHIVE_URI=mongodb://mongodb:27017/test

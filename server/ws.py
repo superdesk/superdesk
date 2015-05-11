@@ -18,15 +18,22 @@ import signal
 
 from autobahn.asyncio.websocket import WebSocketServerProtocol
 from autobahn.asyncio.websocket import WebSocketServerFactory
-from settings import WS_HOST, WS_PORT
+from settings import WS_HOST, WS_PORT, LOG_SERVER_ADDRESS, LOG_SERVER_PORT
+from logging.handlers import SysLogHandler
+from logging import Formatter
 
 
 beat_delay = 30
+debug_log_format = ('%(levelname)s:%(module)s:%(message)s\n')
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))
+handler.setFormatter(Formatter(debug_log_format))
+logger.addHandler(handler)
 
 
-def log(msg):
-    log_msg = msg
+def log(log_msg):
     logger.info(log_msg)
     print(log_msg)
 
