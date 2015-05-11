@@ -74,6 +74,16 @@
                 </div>
 
                 <div class="field">
+                    <label class="right">
+                        {{:: 'Digital' | translate }}
+                        <span tooltip="{{ outputChannel.is_digital ? 'Non-Digital' : 'Digital'  | translate }}" tooltip-placement="right">
+                            <span class="pull-right" id="outputChannel-digital" sd-switch ng-model="outputChannel.is_digital"></span>
+                        </span>
+                    </label>
+                </div>
+
+
+                <div class="field">
                     <label>
                         <span translate>Subscribers</span>
                     </label>
