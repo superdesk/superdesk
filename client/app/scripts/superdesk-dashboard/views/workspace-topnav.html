@@ -10,6 +10,9 @@
     <li ng-class="{selected: currentRoute.href == '/workspace/content'}" ng-if="privileges.archive">
         <a href="#/workspace/content" translate>CONTENT</a>
     </li>
+    <li ng-class="{selected: currentRoute.href == '/workspace/production'}" ng-if="privileges.archive">
+        <a href="#/workspace/production" translate>PRODUCTION</a>
+    </li>
     <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" ng-show="selected.name">
         <a href="#/workspace/stream" translate>ACTIVITY STREAM</a>
     </li>

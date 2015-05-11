@@ -1,0 +1,37 @@
+<div class="subnav">
+    <h3 class="page-nav-title" translate></h3>
+
+    <div class="button-stack right-stack">		
+        <div class="navbtn dropdown strict" dropdown>
+	        <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+	        <ul class="dropdown-menu pull-right" sd-content-create></ul>
+	    </div>
+    </div>
+</div>
+<!-- <div sd-authoring class="auth-screen"> -->
+    <!-- <div sd-authoring-topbar></div> -->
+    <section class="main-section" ng-class="{'auth-sendto': views.send}">
+    	Add directives Here..
+		<div sd-authoring-widgets data-item="item">
+            <div class="page-content-container"
+                ng-click="views.send = false">
+                <!-- <article class="theme-container" ng-class="{preview: !_editable}">
+                    <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
+                        <span class="button-lable" translate>Mode: </span>
+                        <span ng-show="proofread" translate>Proofread</span>
+                        <span ng-show="!proofread" translate>Normal</span>
+                    </button>
+
+                    <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
+                    <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
+
+                    <div class="fieldset" sd-article-edit></div>
+                </article> -->
+                <div sd-dashboard-articles></div>
+            </div>
+		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
+		</div>
+	</section>
+
+    <!-- <div sd-authoring-sidebar></div> -->
+<!-- </div> -->
