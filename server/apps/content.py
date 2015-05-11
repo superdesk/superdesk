@@ -14,6 +14,10 @@ from superdesk.resource import Resource
 
 LINKED_IN_PACKAGES = 'linked_in_packages'
 PACKAGE = 'package'
+PACKAGE_TYPE = 'package_type'
+TAKES_PACKAGE = 'takes'
+ITEM_TYPE = 'type'
+ITEM_TYPE_COMPOSITE = 'composite'
 
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
 
@@ -121,11 +125,15 @@ metadata_schema = {
     },
 
     # Story Metadata
-    'type': {
+    ITEM_TYPE: {
         'type': 'string',
-        'allowed': ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', 'composite'],
+        'allowed': ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', ITEM_TYPE_COMPOSITE],
         'default': 'text',
         'mapping': not_analyzed
+    },
+    PACKAGE_TYPE: {
+        'type': 'string',
+        'allowed': [TAKES_PACKAGE]
     },
     'language': {
         'type': 'string',
@@ -255,7 +263,11 @@ metadata_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                PACKAGE: Resource.rel('archive')
+                PACKAGE: Resource.rel('archive'),
+                PACKAGE_TYPE: {
+                    'type': 'string',
+                    'allowed': [TAKES_PACKAGE]
+                }
             }
         }
     },
