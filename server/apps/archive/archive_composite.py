@@ -65,6 +65,10 @@ def get_item_ref(item):
 class PackageService():
 
     def get_take_package_id(self, item):
+        """
+        Checks if the item is in a 'takes' package and returns the package id
+        :return: _id of the package or None
+        """
         takes_package = [package.get(PACKAGE) for package in item.get(LINKED_IN_PACKAGES, [])
                          if package.get(PACKAGE_TYPE)]
         if len(takes_package) > 1:
