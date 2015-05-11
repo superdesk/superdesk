@@ -38,6 +38,7 @@ from re import findall
 from eve.utils import ParsedRequest
 import shutil
 from apps.dictionaries.resource import DICTIONARY_FILE
+import pprint
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -635,6 +636,8 @@ def step_impl_then_get_list(context, total_count):
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
 
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(data)
     test_json(context)
 
 
