@@ -99,7 +99,7 @@ class BasePublishService(BaseService):
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
                                 item=str(id), unique_name=archived_item['unique_name'],
-                                desk=str(archived_item['task']['desk']), user=str(user['_id']))
+                                desk=str(archived_item['task']['desk']), user=str(user.get('_id', '')))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
