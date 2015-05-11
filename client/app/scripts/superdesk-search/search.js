@@ -903,10 +903,11 @@
                         fetchProviders();
 
                         if (params.repo) {
-                            scope.repo.archive = params.repo.indexOf('archive') >= 0;
-                            scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
-                            scope.repo.published = params.repo.indexOf('published') >= 0;
-                            scope.repo.text_archive = params.repo.indexOf('text_archive') >= 0;
+                            var param_list = params.repo.split(',');
+                            scope.repo.archive = param_list.indexOf('archive') >= 0;
+                            scope.repo.ingest = param_list.indexOf('ingest') >= 0;
+                            scope.repo.published = param_list.indexOf('published') >= 0;
+                            scope.repo.text_archive = param_list.indexOf('text_archive') >= 0;
                         }
 
                         if (!scope.repo) {
