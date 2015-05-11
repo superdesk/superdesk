@@ -98,6 +98,65 @@ class ArchivePublishTestCase(TestCase):
                  'subject':[{'qcode': '17004000', 'name': 'Statistics'},
                             {'qcode': '04001002', 'name': 'Weather'}],
                  'state': 'killed',
+                 'expiry': utcnow() + timedelta(minutes=20)},
+                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fb',
+                 '_id': 4,
+                 'last_version': 3,
+                 'body_html': 'Take-1 body',
+                 'destination_groups': [4],
+                 'urgency': 4,
+                 'headline': 'Take-1 headline',
+                 'abstract': 'Abstract for take-1',
+                 'anpa-category': {'qcode': 'A', 'name': 'Sport'},
+                 'pubstatus': 'done',
+                 'firstcreated': utcnow(),
+                 'byline': 'By Alan Karben',
+                 'dateline': 'Sydney',
+                 'slugline': 'taking takes',
+                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
+                            {'qcode': '04001002', 'name': 'Weather'}],
+                 'state': 'in-progress',
+                 'expiry': utcnow() + timedelta(minutes=20)},
+                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fg',
+                 '_id': 5,
+                 'last_version': 3,
+                 'body_html': 'Take-2 body',
+                 'destination_groups': [4],
+                 'urgency': 4,
+                 'headline': 'Take-2 headline',
+                 'abstract': 'Abstract for take-1',
+                 'anpa-category': {'qcode': 'A', 'name': 'Sport'},
+                 'pubstatus': 'done',
+                 'firstcreated': utcnow(),
+                 'byline': 'By Alan Karben',
+                 'dateline': 'Sydney',
+                 'slugline': 'taking takes',
+                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
+                            {'qcode': '04001002', 'name': 'Weather'}],
+                 'state': 'published',
+                 'expiry': utcnow() + timedelta(minutes=20)},
+                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
+                 '_id': 6,
+                 'last_version': 2,
+                 'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
+                            {
+                                'id': 'main',
+                                'refs': [
+                                    {
+                                        'location': 'archive',
+                                        'guid': 5,
+                                        'type': 'text'
+                                    },
+                                    {
+                                        'location': 'archive',
+                                        'guid': 4,
+                                        'type': 'text'
+                                    }
+                                ],
+                                'role': 'grpRole:main'}],
+                 'firstcreated': utcnow(),
                  'expiry': utcnow() + timedelta(minutes=20)}]
 
     def setUp(self):
@@ -191,6 +250,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals(6, queue_items.count())
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend())\
                 .delete_by_article_id(self.articles[1]['_id'])
+            queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(0, queue_items.count())
 
     def test_remove_published_expired_content(self):
@@ -206,7 +266,7 @@ class ArchivePublishTestCase(TestCase):
             published_items = published_service.get_other_published_items(str(original['item_id']))
             self.assertEquals(0, published_items.count())
             item = text_archive.find_one(req=None, _id=str(original['_id']))
-            self.assertEquals(item['_id'], original['_id'])
+            self.assertEquals(str(item['_id']), str(original['_id']))
             self.assertEquals(item['item_id'], original['item_id'])
 
     def test_cannot_remove_scheduled_content(self):
@@ -256,3 +316,13 @@ class ArchivePublishTestCase(TestCase):
             self.assertIsNone(item)
             item = text_archive.find_one(req=None, _id=str(killed['_id']))
             self.assertIsNone(item)
+
+    def test_processing_takes(self):
+        with self.app.app_context():
+            original_package, updated_package = archive_publish.\
+                ArchivePublishService('archive_publish', superdesk.get_backend()).\
+                process_takes(self.articles[3], self.articles[5]['_id'])
+            self.assertIsNotNone(original_package)
+            self.assertIsNotNone(updated_package)
+            self.assertEqual(updated_package['body_html'], 'Take-2 body<br>Take-1 body<br>')
+            self.assertEqual(updated_package['headline'], 'Take-1 headline')
