@@ -27,7 +27,7 @@ class PublishQueueResource(Resource):
         },
         'state': {
             'type': 'string',
-            'allowed': ['pending', 'in-progress', 'success', 'error'],
+            'allowed': ['pending', 'in-progress', 'success', 'canceled', 'error'],
             'nullable': False
         },
         'output_channel_id': Resource.rel('output_channels'),
@@ -51,6 +51,18 @@ class PublishQueueResource(Resource):
         },
         'publish_schedule': {
             'type': 'datetime'
+        },
+        'publishing_action': {
+            'type': 'string'
+        },
+        'unique_name': {
+            'type': 'string'
+        },
+        'content_type': {
+            'type': 'string'
+        },
+        'headline': {
+            'type': 'string'
         }
     }
 

@@ -134,7 +134,7 @@ class NewsMLOneParser(Parser):
         item['urgency'] = parsed_el['Urgency']['FormalName']
         item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
         item['firstcreated'] = self.datetime(parsed_el['FirstCreated'])
-        item['pubstatus'] = parsed_el['Status']['FormalName']
+        item['pubstatus'] = (parsed_el['Status']['FormalName']).capitalize()
         # if parsed_el['NewsItemType']['FormalName'] == 'Alert':
         #    parsed_el['headline'] = 'Alert'
 
