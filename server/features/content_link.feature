@@ -8,7 +8,18 @@ Feature: Link content in takes
         """
         When we post to "archive"
         """
-        [{"guid": "123", "type":"text", "headline": "test1", "guid": "123", "state": "draft", "task": {"user": "#CONTEXT_USER_ID#"}}]
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "guid": "123",
+            "state": "draft",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            }
+        }]
         """
         And we post to "/archive/123/move"
         """
@@ -19,7 +30,17 @@ Feature: Link content in takes
         """
         [{}]
         """
-        Then we get OK response
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
         When we get "archive"
         Then we get list with 3 items
         """
@@ -33,14 +54,15 @@ Feature: Link content in takes
                             "refs": [
                                 {
                                     "headline": "test1",
+                                    "slugline": "comics",
                                     "residRef": "123",
                                     "sequence": 1
                                 },
                                 {
                                     "headline": "test1",
+                                    "slugline": "comics",
                                     "sequence": 2
                                 }
-
                             ]
                         }
                     ],
@@ -59,5 +81,20 @@ Feature: Link content in takes
                     "linked_in_packages": [{"package_type": "takes"}]
                 }
             ]
+        }
+        """
+        When we post to "archive/#TAKE#/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
         }
         """
