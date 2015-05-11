@@ -95,5 +95,5 @@ class ZCZCParser(Parser):
     def set_item_defaults(self, item):
         item['type'] = 'text'
         item['urgency'] = '5'
-        item['pubstatus'] = 'Usable'
+        item['pubstatus'] = 'usable'
         item['versioncreated'] = utcnow()

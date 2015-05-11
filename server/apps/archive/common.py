@@ -289,3 +289,12 @@ def is_update_allowed(archive_doc):
     state = archive_doc.get(config.CONTENT_STATE)
     if state in ['killed']:
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
+
+
+def set_pub_status(doc, pub_status_value='usable'):
+    """
+    Sets the value of pubstatus prooperty in metadata of doc in either ingest or archive repo
+    """
+
+    if doc and 'pubstatus' in doc:
+        doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()

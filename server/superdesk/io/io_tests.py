@@ -100,7 +100,7 @@ class TextParserTest(ItemTest):
         self.assertIn({'qcode': '15054000', 'name': 'soccer'}, self.item.get('subject'))
 
     def test_pubstatus(self):
-        self.assertEquals('Usable', self.item.get('pubstatus'))
+        self.assertEquals('usable', self.item.get('pubstatus'))
 
 
 class PictureParserTest(ItemTest):

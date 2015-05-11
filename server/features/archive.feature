@@ -111,7 +111,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+                     "pubstatus": "usable", "language": "en", "state": "draft"}]}
         """
 
     @auth
@@ -254,7 +254,7 @@ Feature: News Items Archive
         """
         Then we get updated response
         """
-        { "headline": "test1", "pubstatus" : "Usable", "byline" : "By Line",
+        { "headline": "test1", "pubstatus" : "usable", "byline" : "By Line",
           "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre": [{"name": "Test"}]}
         """
         And we get version 2
@@ -338,7 +338,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+                     "pubstatus": "usable", "language": "en", "state": "draft"}]}
         """
         When we patch "/archive/#archive._id#"
         """

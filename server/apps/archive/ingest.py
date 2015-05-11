@@ -14,7 +14,7 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.workflow import set_default_state
 from apps.content import metadata_schema
-from .common import extra_response_fields, item_url, aggregations, on_create_item
+from .common import extra_response_fields, item_url, aggregations, on_create_item, set_pub_status
 from eve.defaults import resolve_default_values
 from eve.methods.common import resolve_document_etag
 from eve.utils import config
@@ -48,15 +48,12 @@ class IngestService(BaseService):
         """
 
         for item in docs[config.ITEMS]:
-            if 'pubstatus' in item:
-                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+            set_pub_status(item)
 
     def on_create(self, docs):
         for doc in docs:
             set_default_state(doc, STATE_INGESTED)
-
-            if 'pubstatus' in doc:
-                doc['pubstatus'] = doc.get('pubstatus', 'Usable').capitalize()
+            set_pub_status(doc)
 
         on_create_item(docs)  # do it after setting the state otherwise it will make it draft
 

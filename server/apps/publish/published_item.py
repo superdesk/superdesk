@@ -12,7 +12,7 @@ import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
-from apps.archive.common import aggregations
+from apps.archive.common import aggregations, set_pub_status
 from eve.utils import ParsedRequest
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow
@@ -66,9 +66,7 @@ class PublishedItemService(BaseService):
             }
 
             item.update(updates)
-
-            if 'pustatus' in item:
-                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+            set_pub_status(item)
 
         return items
 
@@ -136,8 +134,6 @@ class PublishedItemService(BaseService):
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)
-
-        if 'pubstatus' in item:
-            item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+        set_pub_status(item)
 
         return item
