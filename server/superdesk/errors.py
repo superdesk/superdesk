@@ -411,7 +411,8 @@ class PublishQueueError(SuperdeskPublishError):
         9002: 'Item format could not be recognized',
         9003: 'Destination group cannot found',
         9004: 'Schedule information could not be processed',
-        9005: 'State of the content item could not be updated'
+        9005: 'State of the content item could not be updated',
+        9006: 'Previous take is either not published or killed'
     }
 
     @classmethod
@@ -433,6 +434,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def content_update_error(cls, exception=None, destination=None):
         return PublishQueueError(9005, exception, destination)
+
+    @classmethod
+    def previous_take_not_published_error(cls, exception=None, destination=None):
+        return PublishQueueError(9006, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):
