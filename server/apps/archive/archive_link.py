@@ -11,7 +11,7 @@
 from flask import request
 
 from superdesk import get_resource_service, Service, Resource
-from .archive_composite import PackageService
+from .archive_composite import TakesPackageService
 from apps.archive.common import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
 import logging
@@ -35,7 +35,7 @@ class ArchiveLinkResource(Resource):
 
 
 class ArchiveLinkService(Service):
-    packageService = PackageService()
+    packageService = TakesPackageService()
 
     def create(self, docs, **kwargs):
         target_id = request.view_args['target_id']
@@ -48,6 +48,6 @@ class ArchiveLinkService(Service):
         if link_id:
             link = service.find_one(req=None, _id=link_id)
 
-        linked_item = self.packageService.create_takes_package(target, link)
+        linked_item = self.packageService.link_as_next_take(target, link)
         doc.update(linked_item)
         return [linked_item['_id']]
