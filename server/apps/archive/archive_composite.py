@@ -95,10 +95,12 @@ class PackageService():
     def __next_sequence__(self, seq):
         return seq + 1
 
-    def __copy_metadata__(self, target, to):
+    def __copy_metadata__(self, target, to, package):
         to['headline'] = target.get('headline')  # + 1
-        to['slugline'] = target.get('slugline')
         to['anpa_take_key'] = target.get('anpa_take_key')  # + 1
+
+        for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups', 'slugline', 'urgency', 'subject']:
+            to[field] = target.get(field)
 
     def create_takes_package(self, target, link):
         # check if target has an associated takes package
@@ -106,37 +108,33 @@ class PackageService():
         # check if the target is the last take, if not, resolve the last take
         # copy metadata from the target and add it as the next take
         # return the link item
-        pp = pprint.PrettyPrinter(indent=4)
         takes_package_id = self.get_take_package_id(target)
         service = get_resource_service(ARCHIVE)
+        takes_package = service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
 
         if not link.get('_id'):
-            # TODO: copy metadata from target, define what fields need to be copied
-            self.__copy_metadata__(target, link)
+            self.__copy_metadata__(target, link, takes_package)
             service.post([link])
-            print('Saved link')
-            pp.pprint(link)
 
         if not takes_package_id:
-            takes_package = {
+            takes_package.update({
                 ITEM_TYPE: ITEM_TYPE_COMPOSITE,
                 PACKAGE_TYPE: TAKES_PACKAGE
-            }
+            })
             create_root_group([takes_package])
             self.__link_items__(takes_package, target, link)
-            print('Before saving')
-            pp.pprint(takes_package)
-            service.post([takes_package])
+            ids = service.post([takes_package])
+            takes_package_id = ids[0]
+
+            # send the package to the desk where the first take was sent
+            tasks_service = get_resource_service('tasks')
+            current_task = target.get('task')
+            tasks_service.patch(takes_package_id, {'task': current_task})
         else:
-            takes_package = service.find_one(req=None, _id=takes_package_id)
             self.__link_items__(takes_package, target, link)
-            print('Before updating package')
-            pp.pprint(takes_package)
             del takes_package['_id']
             service.patch(takes_package_id, takes_package)
 
-        print('Saved package')
-        pp.pprint(takes_package)
         return link
 
     def on_create(self, docs):
