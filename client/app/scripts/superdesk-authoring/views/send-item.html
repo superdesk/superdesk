@@ -50,6 +50,11 @@
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
                 </li>
+                <li ng-show="mode === 'authoring' && canSendAndContinue()">
+                    <button class="send" ng-click="sendAndContinue()"
+                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    translate>send and continue</button>
+                </li>                
                 <li ng-show="mode !== 'authoring'">
                     <button class="send" ng-click="send(true)"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
