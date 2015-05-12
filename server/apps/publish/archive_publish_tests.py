@@ -33,7 +33,8 @@ class ArchivePublishTestCase(TestCase):
     output_channels = [{'_id': 1, 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': [1]},
                        {'_id': 2, 'name': 'oc2', 'is_active': False, 'format': 'nitf', 'destinations': [1, 2]},
                        {'_id': 3, 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': [2]},
-                       {'_id': 4, 'name': 'oc4', 'is_active': True, 'format': 'nitf', 'destinations': [2]}]
+                       {'_id': 4, 'name': 'oc4', 'is_active': True,
+                        'is_digital': True, 'format': 'nitf', 'destinations': [2]}]
 
     destination_groups = [{'_id': 1, 'name': 'dg1'},
                           {'_id': 2, 'name': 'dg2', 'destination_groups': [1]},
@@ -241,6 +242,28 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals("2016-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
             self.assertEquals("2016-05-30T10:00:00+0000", queue_items[5]["publish_schedule"])
 
+    def test_queue_transmission_for_digital_channels(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            archive_publish.ArchivePublishService().queue_transmission(self.articles[1], 'digital')
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(2, queue_items.count())
+            self.assertEquals(4, queue_items[0]["output_channel_id"])
+            self.assertEquals(4, queue_items[1]["output_channel_id"])
+
+    def test_queue_transmission_for_wire_channels(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            archive_publish.ArchivePublishService().queue_transmission(self.articles[1], 'wire')
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(4, queue_items.count())
+            self.assertEquals(1, queue_items[0]["output_channel_id"])
+            self.assertEquals(2, queue_items[1]["output_channel_id"])
+            self.assertEquals(2, queue_items[2]["output_channel_id"])
+            self.assertEquals(2, queue_items[3]["output_channel_id"])
+
     def test_delete_from_queue_by_article_id(self):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
@@ -317,7 +340,17 @@ class ArchivePublishTestCase(TestCase):
             item = text_archive.find_one(req=None, _id=str(killed['_id']))
             self.assertIsNone(item)
 
-    def test_processing_takes(self):
+    def test_processing_very_first_take(self):
+        with self.app.app_context():
+            original_package, updated_package = archive_publish.\
+                ArchivePublishService('archive_publish', superdesk.get_backend()).\
+                process_takes(self.articles[4], self.articles[5]['_id'])
+            self.assertIsNotNone(original_package)
+            self.assertIsNotNone(updated_package)
+            self.assertEqual(updated_package['body_html'], 'Take-2 body<br>')
+            self.assertEqual(updated_package['headline'], 'Take-2 headline')
+
+    def test_processing_second_take_where_first_take_published(self):
         with self.app.app_context():
             original_package, updated_package = archive_publish.\
                 ArchivePublishService('archive_publish', superdesk.get_backend()).\
