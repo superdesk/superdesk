@@ -44,7 +44,7 @@ class ArchiveLinkService(Service):
         desk_id = doc.get('desk')
         service = get_resource_service(ARCHIVE)
         target = service.find_one(req=None, _id=target_id)
-        link = {'task.desk': desk_id} if desk_id else {}
+        link = {'task': {'desk': desk_id}} if desk_id else {}
         if link_id:
             link = service.find_one(req=None, _id=link_id)
 
