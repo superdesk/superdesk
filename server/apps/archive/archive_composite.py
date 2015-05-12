@@ -94,11 +94,24 @@ class TakesPackageService():
     def __next_sequence__(self, seq):
         return seq + 1
 
-    def __copy_metadata__(self, target, to, package):
-        to['headline'] = target.get('headline')  # + 1
-        to['anpa_take_key'] = target.get('anpa_take_key')  # + 1
+    def __strip_take_info__(self, take_info):
+        take_index = take_info.rfind('=')
+        return take_info[0:take_index] if take_info[take_index + 1:].isdigit() else take_info
 
-        for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups', 'slugline', 'urgency', 'subject']:
+    def __copy_metadata__(self, target, to, package):
+        # TODO: length validation may be required.
+        # if target is the first take hence default sequence is for first take.
+        sequence = package.get(SEQUENCE, 1) if package else 1
+        sequence = self.__next_sequence__(sequence)
+        headline = self.__strip_take_info__(target.get('headline', ''))
+        take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
+        to['headline'] = '{}={}'.format(headline, sequence)
+        to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
+        to['_version'] = 1
+        to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
+
+        for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups',
+                      'slugline', 'urgency', 'subject', 'dateline']:
             to[field] = target.get(field)
 
     def create_takes_package(self, takes_package, target, link):
