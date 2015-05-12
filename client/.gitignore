@@ -24,3 +24,5 @@ e2e-test-results/
 *.sublime-workspace
 *.sublime-project
 nbproject/
+coveralls.json
+lcov.info

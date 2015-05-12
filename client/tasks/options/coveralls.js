@@ -1,8 +1,8 @@
 
 module.exports = {
     options: {
-        coverage_dir: 'report/',
-        dryRun: false,
+        coverageDir: '.',
+        dryRun: true,
         force: true
     }
 };
