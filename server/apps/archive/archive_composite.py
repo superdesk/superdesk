@@ -19,7 +19,6 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE, PACKAGE
-import pprint
 
 ASSOCIATIONS = 'refs'
 ITEM_REF = 'residRef'
@@ -62,7 +61,7 @@ def get_item_ref(item):
     }
 
 
-class PackageService():
+class TakesPackageService():
 
     def get_take_package_id(self, item):
         """
@@ -102,40 +101,49 @@ class PackageService():
         for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups', 'slugline', 'urgency', 'subject']:
             to[field] = target.get(field)
 
-    def create_takes_package(self, target, link):
+    def create_takes_package(self, takes_package, target, link):
+        takes_package.update({
+            ITEM_TYPE: ITEM_TYPE_COMPOSITE,
+            PACKAGE_TYPE: TAKES_PACKAGE
+        })
+        create_root_group([takes_package])
+        self.__link_items__(takes_package, target, link)
+        archive_service = get_resource_service(ARCHIVE)
+        tasks_service = get_resource_service('tasks')
+        ids = archive_service.post([takes_package])
+        takes_package_id = ids[0]
+
+        # send the package to the desk where the first take was sent
+        current_task = target.get('task')
+        tasks_service.patch(takes_package_id, {'task': current_task})
+
+    def link_as_next_take(self, target, link):
+        """
         # check if target has an associated takes package
         # if not, create it and add target as a take
         # check if the target is the last take, if not, resolve the last take
         # copy metadata from the target and add it as the next take
-        # return the link item
+        # return the update link item
+        """
         takes_package_id = self.get_take_package_id(target)
-        service = get_resource_service(ARCHIVE)
-        takes_package = service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
+        archive_service = get_resource_service(ARCHIVE)
+        takes_package = archive_service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
 
         if not link.get('_id'):
             self.__copy_metadata__(target, link, takes_package)
-            service.post([link])
+            archive_service.post([link])
 
         if not takes_package_id:
-            takes_package.update({
-                ITEM_TYPE: ITEM_TYPE_COMPOSITE,
-                PACKAGE_TYPE: TAKES_PACKAGE
-            })
-            create_root_group([takes_package])
-            self.__link_items__(takes_package, target, link)
-            ids = service.post([takes_package])
-            takes_package_id = ids[0]
-
-            # send the package to the desk where the first take was sent
-            tasks_service = get_resource_service('tasks')
-            current_task = target.get('task')
-            tasks_service.patch(takes_package_id, {'task': current_task})
+            self.create_takes_package(takes_package, target, link)
         else:
             self.__link_items__(takes_package, target, link)
             del takes_package['_id']
-            service.patch(takes_package_id, takes_package)
+            archive_service.patch(takes_package_id, takes_package)
 
         return link
+
+
+class PackageService():
 
     def on_create(self, docs):
         create_root_group(docs)
