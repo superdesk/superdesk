@@ -26,7 +26,9 @@
         destination_groups: null,
         sign_off: null,
         publish_schedule: null,
-        marked_for_not_publication: false
+        marked_for_not_publication: false,
+        pubstatus: null,
+        more_coming: false
     };
 
     /**
@@ -238,7 +240,7 @@
          */
         this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
-
+            console.log('before diff', diff);
             // Finding if all the keys are dirty for real
             if (angular.isDefined(origItem)) {
                 angular.forEach(_.keys(diff), function(key) {
@@ -247,7 +249,7 @@
                     }
                 });
             }
-
+            console.log('after diff', diff);
             autosave.stop(item);
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
