@@ -25,9 +25,15 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
-from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
+from apps.archive.common import item_url, get_user, insert_into_versions, \
+    set_sign_off
+
+from apps.archive.archive_composite import PackageService
 
 logger = logging.getLogger(__name__)
+
+DIGITAL = 'digital'
+WIRE = 'wire'
 
 
 class BasePublishResource(ArchiveResource):
@@ -89,11 +95,24 @@ class BasePublishService(BaseService):
             get_component(ItemAutosave).clear(original['_id'])
 
             if archived_item['type'] != 'composite':
+                # check if item is in a digital package
+                package_id = PackageService().get_take_package_id(original)
+                if package_id:
+                    # process the takes to form digital master file content
+                    package, package_updates = self.process_takes(take=original, package_id=package_id)
+                    package_updates[config.CONTENT_STATE] = self.published_state
+                    resolve_document_version(document=package, resource=ARCHIVE, method='PATCH', latest_doc=package)
+                    self.backend.update(self.datasource, package['id'], package_updates, package)
+                    insert_into_versions(doc=package)
+
+                    # send it to the digital channels
+                    any_channel_closed = self.publish(doc=package, updates=updates,
+                                                      target_output_channels=DIGITAL)
+
                 # queue only text items
-                any_channel_closed = self.queue_transmission(original)
-                task = self.__send_to_publish_stage(original)
-                if task:
-                    updates['task'] = task
+                any_channel_closed = any_channel_closed or \
+                    self.publish(doc=original, updates=updates,
+                                 target_output_channels=WIRE if package_id else None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
@@ -112,16 +131,28 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
                                                   .format(str(e)))
 
-    def queue_transmission(self, doc):
+    def publish(self, doc, updates, target_output_channels=None):
+        any_channel_closed = self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
+        task = self.__send_to_publish_stage(doc)
+        if task:
+            updates['task'] = task
+        return any_channel_closed
+
+    def queue_transmission(self, doc, target_output_channels=None):
         try:
             if doc.get('destination_groups'):
                 any_channel_closed = False
 
-                destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
+                destination_groups = self.resolve_destination_groups(
+                    doc.get('destination_groups'))
                 output_channels, selector_codes, format_types = \
                     self.resolve_output_channels(destination_groups.values())
 
                 for output_channel in output_channels.values():
+                    if target_output_channels == WIRE and output_channel.get('is_digital', False) or \
+                            target_output_channels == DIGITAL and not output_channel.get('is_digital', False):
+                        continue
+
                     if output_channel.get('is_active', True) is False:
                         any_channel_closed = True
 
@@ -258,6 +289,65 @@ class BasePublishService(BaseService):
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
             return get_resource_service('move').move_content(doc['_id'], doc)['task']
+
+    def process_takes(self, take, package_id):
+        """
+        This function validates if the take is the one in order then
+        it generates the body_html of the takes package and make sure the
+        metadata for the package is the same as the metadata of the take
+        to be published
+        :param take: The take to be published
+        :return: It throws an error if the take is not the right take
+        otherwise it returns the original package and the updated package
+        """
+        package = super().find_one(req=None, _id=package_id)
+        package_updates = package.copy()
+        package_updates['body_html'] = ''
+        take_index = 1000
+        for group in package['groups']:
+            if group['id'] == 'main':
+                for i, ref in enumerate(group['refs']):
+                    if ref['guid'] != take['_id']:
+                        other_take = super().find_one(req=None, _id=ref['guid'])
+
+                        if i < take_index:
+                            # previous items
+                            if other_take[config.CONTENT_STATE] not in ['published', 'corrected']:
+                                # previous item is not published or killed
+                                raise PublishQueueError.\
+                                    previous_take_not_published_error(
+                                        Exception('Take with id:{}'.format(other_take['_id'])), None)
+                            else:
+                                package_updates['body_html'] += other_take['body_html'] + '<br>'
+
+                        if i > take_index:
+                            # next takes
+                            if other_take[config.CONTENT_STATE] in ['published', 'corrected']:
+                                package_updates['body_html'] += other_take['body_html'] + '<br>'
+                            if other_take[config.CONTENT_STATE] in ['killed']:
+                                raise PublishQueueError.\
+                                    previous_take_not_published_error(
+                                        Exception('Take with id:{}'.format(other_take['_id'])), None)
+
+                    else:
+                        take_index = i
+                        package_updates['body_html'] += take['body_html'] + '<br>'
+                        self.update_metadata(take, package_updates)
+        return package, package_updates
+
+    def update_metadata(self, take, package):
+        metadata_tobe_copied = ['headline',
+                                'abstract',
+                                'anpa-category',
+                                'pubstatus',
+                                'destination_groups',
+                                'slugline',
+                                'urgency',
+                                'subject'
+                                ]
+
+        for metadata in metadata_tobe_copied:
+            package[metadata] = take[metadata]
 
 
 class ArchivePublishResource(BasePublishResource):

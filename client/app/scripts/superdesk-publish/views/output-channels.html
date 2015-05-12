@@ -5,7 +5,7 @@
             <i class="icon-plus-sign icon-white"></i> <span translate>Add New Output Channel</span>
         </button>
     </div>
-    
+
     <div class="content">
         <ul class="pills-list provider-list">
             <li ng-repeat="outputChannel in outputChannels._items" class="clearfix">
@@ -76,6 +76,15 @@
                         </div>
 
                         <div class="field">
+                          <label class="right">
+                            {{:: 'Digital' | translate }}
+                            <span tooltip="{{ outputChannel.is_digital ? 'Non-Digital' : 'Digital'  | translate }}" tooltip-placement="right">
+                              <span class="pull-right" id="outputChannel-digital" sd-switch ng-model="outputChannel.is_digital"></span>
+                            </span>
+                          </label>
+                        </div>
+
+                        <div class="field">
                             <label>
                                 <span translate>Subscribers</span>
                             </label>
@@ -99,7 +108,7 @@
                             </button>
                         </div>
                     </tab>
-                    
+
 
                     <tab heading="Critical Errors" class="TabContent">
                         <div class="content privileges-settings">
