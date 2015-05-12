@@ -234,7 +234,6 @@
          */
         this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
-            console.log('before diff', diff);
             // Finding if all the keys are dirty for real
             if (angular.isDefined(origItem)) {
                 angular.forEach(_.keys(diff), function(key) {
@@ -243,7 +242,7 @@
                     }
                 });
             }
-            console.log('after diff', diff);
+
             autosave.stop(item);
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
@@ -597,10 +596,8 @@
                  * Create a new version
                  */
                 $scope.save = function() {
-                    console.log('before save more_coming', $scope.item.more_coming);
                     return authoring.save($scope.origItem, $scope.item).then(function(res) {
                         $scope.origItem = res;
-                        console.log('after save more_coming', $scope.origItem.more_coming);
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
                         notify.success(gettext('Item updated.'));
@@ -1080,7 +1077,6 @@
                 };
 
                 scope.sendAndContinue = function() {
-                    console.log('start send and continue ....');
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
                     var activeDeskId = desks.activeDeskId;
@@ -1088,10 +1084,8 @@
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
                             authoring.linkItem(scope.item, null, activeDeskId).then(function (item) {
-                                    console.log('linking item success', item);
                                     $location.url('/authoring/' + item._id);
                                 }, function(err) {
-                                    console.log('linking item error', err);
                                     notify.error('Failed to send and continue.');
                                 });
                         });
