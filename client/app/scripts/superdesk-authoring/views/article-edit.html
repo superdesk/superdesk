@@ -41,7 +41,7 @@
 
 <div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
 	<label translate>Headline</label>
-    <span sd-character-count data-item="item.headline" data-limit="limits.headline"></span>
+    <span sd-character-count data-item="item.headline" data-html="true" data-limit="limits.headline"></span>
     <div id="title" class="headline"
         sd-text-editor
         data-config="{disableToolbar: true, disableReturn: true}"
@@ -54,7 +54,7 @@
 
 <div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
 	<label translate>Abstract</label>
-    <span sd-character-count data-item="item.abstract" data-limit="limits.abstract"></span>
+    <span sd-character-count data-item="item.abstract" data-html="true" data-limit="limits.abstract"></span>
     <div class="abstract"
         sd-text-editor
         data-config="{disableToolbar: true}"

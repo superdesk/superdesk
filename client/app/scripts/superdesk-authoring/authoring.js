@@ -25,8 +25,7 @@
         description: null,
         destination_groups: null,
         sign_off: null,
-        publish_schedule: null,
-        pubstatus: null
+        publish_schedule: null
     };
 
     /**
@@ -532,13 +531,8 @@
                                 return _.trim(placeholder, '${} ');
                             });
 
-                            var args = _.pick($scope.origItem, placeholders);
-                            _.each(placeholders, function(placeholder) {
-                                if (!(_.has(args, placeholder))) {
-                                    args[placeholder] = placeholder.toUpperCase();
-                                }
-                            });
                             var compiled = _.template(body);
+                            var args = _.pick($scope.origItem, placeholders);
                             $scope.origItem.body_html = compiled(args);
                         }
                         _.each(template, function(value, key) {
@@ -552,7 +546,6 @@
                                 }
                             }
                         });
-                        $scope.origItem.pubstatus = 'Canceled';
                         resolveDestinations();
                     });
                 } else {
@@ -849,7 +842,8 @@
     }
 
     var cleanHtml = function(data) {
-        return data.replace(/<\/?[^>]+>/gi, '').replace('&nbsp;', ' ');
+        return data.replace(/<br>/g, '&nbsp;').replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
+            .replace(/<\/?[^>]+>/gi, '').trim().replace(/&nbsp;/g, ' ');
     };
 
     CharacterCount.$inject = [];
