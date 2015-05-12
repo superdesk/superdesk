@@ -67,7 +67,8 @@ Feature: Link content in takes
                         }
                     ],
                     "type": "composite",
-                    "package_type": "takes"
+                    "package_type": "takes",
+                    "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}
                 },
                 {
                     "headline": "test1",
