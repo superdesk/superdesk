@@ -145,7 +145,7 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
+    @auth @provider @test
     Scenario: Content is fetched and published to different stages
         Given empty "desks"
         When we post to "/desks"
