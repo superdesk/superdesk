@@ -19,11 +19,7 @@ logger = logging.getLogger(__name__)
 
 class AAPMMDatalayer(DataLayer):
 
-    def init_app(self, app):
-        app.config.setdefault('AAP_MM_SEARCH_URL', 'https://one-api.aap.com.au/api/v3')
-        self._app = app
-        self._headers = None
-        self._http = urllib3.PoolManager()
+    def __set_auth_cookie(self, app):
         if 'AAP_MM_USER' in app.config and 'AAP_MM_PASSWORD' in app.config and app.config['AAP_MM_USER'] is not None:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/login'
             values = {'username': app.config['AAP_MM_USER'], 'password': app.config['AAP_MM_PASSWORD']}
@@ -31,9 +27,19 @@ class AAPMMDatalayer(DataLayer):
         else:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/AnonymousToken'
             r = self._http.request('GET', url, redirect=False)
+
         self._headers = {'cookie': r.getheader('set-cookie')}
 
+    def init_app(self, app):
+        app.config.setdefault('AAP_MM_SEARCH_URL', 'https://one-api.aap.com.au/api/v3')
+        self._app = app
+        self._headers = None
+        self._http = urllib3.PoolManager()
+
     def find(self, resource, req, lookup):
+        if self._headers is None:
+            self.__set_auth_cookie(self._app)
+
         url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/search'
         query_keywords = '*:*'
         if 'query' in req['query']['filtered']:
@@ -55,7 +61,7 @@ class AAPMMDatalayer(DataLayer):
         new_doc['versioncreated'] = self._datetime(doc['ModifiedDate'])
         new_doc['firstcreated'] = self._datetime(doc['CreationDate'])
         new_doc['type'] = 'picture'
-        new_doc['pubstatus'] = 'Usable'
+        new_doc['pubstatus'] = 'usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
         # entry that the client can use to identify the fetch endpoint
@@ -98,6 +104,9 @@ class AAPMMDatalayer(DataLayer):
         raise NotImplementedError
 
     def find_one_raw(self, resource, _id):
+        if self._headers is None:
+            self.__set_auth_cookie(self._app)
+
         url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}'.format(_id)
         r = self._http.request('GET', url, headers=self._headers)
         doc = json.loads(r.data.decode('UTF-8'))

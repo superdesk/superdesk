@@ -177,8 +177,8 @@ metadata_schema = {
     },
     'pubstatus': {
         'type': 'string',
-        'allowed': ['Usable', 'Withhold', 'Canceled'],
-        'default': 'Usable',
+        'allowed': ['usable', 'withhold', 'canceled'],
+        'default': 'usable',
         'mapping': not_analyzed
     },
     'signal': {

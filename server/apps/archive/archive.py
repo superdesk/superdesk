@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
 from apps.users.services import current_user_has_privilege
 
 
@@ -17,12 +18,11 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off
+from .common import get_user, update_version, set_sign_off, set_pub_status
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
-from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
@@ -149,8 +149,7 @@ class ArchiveService(BaseService):
         """
 
         for item in docs[config.ITEMS]:
-            if 'pubstatus' in item:
-                item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+            set_pub_status(item)
 
     def on_create(self, docs):
         on_create_item(docs)
@@ -170,9 +169,6 @@ class ArchiveService(BaseService):
             # let client create version 0 docs
             if doc.get('version') == 0:
                 doc['_version'] = doc['version']
-
-            if 'pubstatus' in doc:
-                doc['pubstatus'] = doc.get('pubstatus', 'Usable').capitalize()
 
     def on_created(self, docs):
         packages = [doc for doc in docs if doc['type'] == 'composite']
@@ -308,8 +304,7 @@ class ArchiveService(BaseService):
                 get_resource_service('users').get_invisible_stages_ids(get_user().get('_id')):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
 
-        if item and 'pubstatus' in item:
-            item['pubstatus'] = item.get('pubstatus', 'Usable').capitalize()
+        set_pub_status(item)
 
         return item
 

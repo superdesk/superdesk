@@ -47,7 +47,7 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('version'), '1')
         self.assertEquals(self.item.get('versioncreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))
         self.assertEquals(self.item.get('firstcreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))
-        self.assertEquals(self.item.get('pubstatus'), 'Usable')
+        self.assertEquals(self.item.get('pubstatus'), 'usable')
 
     def test_subjects(self):
         self.assertEquals(len(self.item.get('subject')), 5)
