@@ -1,4 +1,4 @@
-<div ng-if="desks.length">
-	<span translate>fetched in:</span>
-	<span ng-repeat="desk in desks"><a ng-href="">{{desk.desk.name}} ({{desk.count}})</a>{{$last ? '' : ', '}} </span>
-</div>
+<dl ng-if="desks.length">
+	<dt translate>fetched in:</dt>
+	<dd ng-repeat="desk in desks track by desk.desk._id"><a ng-href="">{{desk.desk.name}} ({{desk.count}})</a>{{$last ? '' : ', '}} </dd>
+</dl>
