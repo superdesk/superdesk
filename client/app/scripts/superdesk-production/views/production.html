@@ -8,30 +8,26 @@
 	    </div>
     </div>
 </div>
-<!-- <div sd-authoring class="auth-screen"> -->
-    <!-- <div sd-authoring-topbar></div> -->
-    <section class="main-section" ng-class="{'auth-sendto': views.send}">
-    	Add directives Here..
-		<div sd-authoring-widgets data-item="item">
-            <div class="page-content-container"
-                ng-click="views.send = false">
-                <!-- <article class="theme-container" ng-class="{preview: !_editable}">
-                    <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
-                        <span class="button-lable" translate>Mode: </span>
-                        <span ng-show="proofread" translate>Proofread</span>
-                        <span ng-show="!proofread" translate>Normal</span>
-                    </button>
-
-                    <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
-                    <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
-
-                    <div class="fieldset" sd-article-edit></div>
-                </article> -->
-                <div sd-dashboard-articles></div>
+<section class="main-section production-dashboard">
+    <div class ="tabpane left-tabpane open-tabpane widget-aggregate">
+        <div class="tabcontent">
+            <div class="widget-content">
+                <div sd-production-agg-widget></div>
             </div>
-		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
-		</div>
-	</section>
+        </div>
+    </div>
+    <div sd-dashboard-articles></div>
+</section>
+    <!-- <div class="tabpane left-tabpane open-tabpane">
+        <section class="tabcontent">
+            <div sd-widget>
+                <div sd-production-agg-widget></div>
+                <div ng-include="active.left.template"></div>
+            </div>
+        </section>
+    </div>
+    <div class="main-section production-dashboard">
+        <div sd-dashboard-articles></div>
+    </div> -->
 
-    <!-- <div sd-authoring-sidebar></div> -->
-<!-- </div> -->
+<div sd-workqueue></div>
