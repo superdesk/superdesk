@@ -49,5 +49,5 @@ class ArchiveLinkService(Service):
             link = service.find_one(req=None, _id=link_id)
 
         linked_item = self.packageService.create_takes_package(target, link)
-        print(linked_item)
+        doc.update(linked_item)
         return [linked_item['_id']]
