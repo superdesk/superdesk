@@ -1089,18 +1089,15 @@
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
                     var activeDeskId = desks.activeDeskId;
-
-                    console.log('mode', scope.mode);
-                    console.log('selected desk', deskId);
-                    console.log('select stage', stageId);
-                    console.log('activeDeskId', activeDeskId);
                     scope.item.more_coming = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
                             authoring.linkItem(scope.item, null, activeDeskId).then(function (item) {
                                     console.log('linking item success', item);
+                                    $location.url('/authoring/' + item._id);
                                 }, function(err) {
                                     console.log('linking item error', err);
+                                    notify.error('Failed to send and continue.');
                                 });
                         });
                 };
@@ -1141,7 +1138,6 @@
                             });
                         })
                         .then(function(value) {
-                            console.log(value);
                             notify.success(gettext('Item sent.'));
                             if (sendAndContinue) {
                                 return deferred.resolve();
