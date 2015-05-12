@@ -67,7 +67,8 @@ Feature: Link content in takes
                         }
                     ],
                     "type": "composite",
-                    "package_type": "takes"
+                    "package_type": "takes",
+                    "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}
                 },
                 {
                     "headline": "test1",
@@ -96,5 +97,53 @@ Feature: Link content in takes
             "anpa_take_key": "Take",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we get "archive"
+        Then we get list with 4 items
+        """
+        {
+            "_items": [
+                {
+                    "groups": [
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                },
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "sequence": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "type": "composite",
+                    "package_type": "takes"
+                },
+                {
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "guid": "123",
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "guid": "#TAKE#",
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                }
+            ]
         }
         """
