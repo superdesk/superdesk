@@ -150,6 +150,8 @@
         $scope.formattedItems = null;
         $scope.formattedItemLookup = {};
         $scope.publish_queue = null;
+        $scope.selectedFilterChannel = null;
+        $scope.selectedFilterSubscriber = null;
 
         var promises = [];
 
@@ -178,6 +180,20 @@
             var criteria = criteria || {};
             criteria.max_results = 200;
             criteria.sort = '[(\'_created\',-1)]';
+
+            if ($scope.selectedFilterSubscriber !== null && $scope.selectedFilterChannel !== null) {
+                criteria.where = JSON.stringify({
+                        '$and': [
+                            {'output_channel_id': $scope.selectedFilterChannel._id},
+                            {'subscriber_id': $scope.selectedFilterSubscriber._id}
+                        ]
+                    });
+            } else if ($scope.selectedFilterChannel !== null) {
+                criteria.where = {'output_channel_id': $scope.selectedFilterChannel._id};
+            } else if ($scope.selectedFilterSubscriber !== null) {
+                criteria.where = {'subscriber_id': $scope.selectedFilterSubscriber._id};
+            }
+
             return api.publish_queue.query(criteria);
         }
 
@@ -236,6 +252,13 @@
                     }
                 }
             );
+        };
+
+        $scope.filterSchedule = function() {
+            fetchPublishQueue().then(function(queue) {
+                $scope.publish_queue = queue._items;
+                $scope.lastRefreshedAt = new Date();
+            });
         };
 
         $scope.reload();

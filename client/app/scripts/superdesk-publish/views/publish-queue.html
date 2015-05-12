@@ -3,6 +3,19 @@
 </div>
 <section class="main-section ingest-dashboard">
 	<button ng-click="reload()">Refresh</button><i style="float:right;">Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</i>
+
+    <span>
+        Filter by
+
+        Output Channel:
+        <select id="outputChannelFilter" ng-model="selectedFilterChannel" ng-change="filterSchedule()"
+                ng-options="outputChannel.name for outputChannel in outputChannels" style="width: 20%"></select>
+
+        Subscriber:
+        <select id="subscriberFilter" ng-model="selectedFilterSubscriber" ng-change="filterSchedule()"
+                ng-options="subscriber.name for subscriber in subscribers" style="width: 20%"></select>
+    </span>
+
 	<hr />
 	<table class="table">
 		<thead>
