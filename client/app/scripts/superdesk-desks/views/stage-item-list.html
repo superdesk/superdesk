@@ -9,7 +9,9 @@
 				<div class="type"><i class="filetype-icon-{{item.type}}"></i></div>
 				<div class="urgency"><i class="urgency-icon-{{item.urgency}}"></i></div>
 				<div class="text">
-					<span>{{item.slugline}}</span>{{item.headline}}
+					<time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
+					<span class="keywords">{{item.slugline}}</span>
+					<span class="headline">{{item.headline}}</span>
 				</div>
 				<div class="action" ng-if="allowed">
 					<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="bottom"><i class="icon-external"></i></button>

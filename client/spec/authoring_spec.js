@@ -29,7 +29,7 @@ describe('authoring', function() {
             var stage = element.all(by.repeater('stage in agg.deskStages')).get(4);
             expect(stage.element(by.css('.stage-header')).getText())
                 .toBe('SPORTS DESK : NEW\n1');
-            expect(stage.all(by.repeater('item in items')).first().element(by.css('.text')).getText())
+            expect(stage.all(by.repeater('item in items')).first().element(by.css('.headline')).getText())
                 .toBe('item1');
         });
 
