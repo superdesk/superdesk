@@ -28,7 +28,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
     set_sign_off
 
-from apps.archive.archive_composite import PackageService
+from apps.archive.archive_composite import TakesPackageService
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ class BasePublishService(BaseService):
 
             if archived_item['type'] != 'composite':
                 # check if item is in a digital package
-                package_id = PackageService().get_take_package_id(original)
+                package_id = TakesPackageService().get_take_package_id(original)
                 if package_id:
                     # process the takes to form digital master file content
                     package, package_updates = self.process_takes(take=original, package_id=package_id)
