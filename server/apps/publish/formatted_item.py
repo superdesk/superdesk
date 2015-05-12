@@ -36,7 +36,7 @@ class FormattedItemResource(Resource):
     }
 
     additional_lookup = {
-        'url': 'regex("[\w]+")',
+        'url': 'regex("[\w,.:-]+")',
         'field': 'item_id'
     }
 

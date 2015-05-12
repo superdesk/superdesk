@@ -195,3 +195,63 @@ Feature: Publish Queue
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get "published_seq_num" in "/publish_queue/123"
       And we get "published_seq_num" in "/formatted_item/123"
+
+  @auth
+  Scenario: Creating a new publish queue entry should add published sequence number
+    Given empty "archive"
+    Given empty "formatted_item"
+    Given empty "output_channels"
+    Given empty "subscribers"
+    When we post to "/archive"
+    """
+    [{"headline": "test"}]
+    """
+    And we post to "/formatted_item"
+    """
+    {
+      "item_id":"#archive._id#","item_version":"2","formatted_item":"This is the formatted item","format":"nitf"
+    }
+    """
+    Then we get latest
+    """
+    {
+      "format":"nitf"
+    }
+    """
+    When we post to "/subscribers"
+    """
+    {
+      "name":"Channel 3"
+    }
+    """
+    Then we get latest
+    """
+    {
+      "name":"Channel 3"
+    }
+    """
+    When we post to "/output_channels"
+    """
+    [
+      {
+        "name":"Output Channel", "description": "new stuff",
+        "destinations": ["#subscribers._id#"]
+      }
+    ]
+    """
+    Then we get latest
+    """
+    {
+      "name":"Output Channel"
+    }
+    """
+
+    When we post to "/publish_queue"
+    """
+    {
+       "item_id":"#archive._id#","publish_schedule": "2016-05-30T10:00:00+00:00", "formatted_item_id":"#formatted_item._id#",
+       "output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2",
+       "delivery_type":"Email","config":{"password":"abc"}}
+    }
+    """
+    Then we get "published_seq_num" in "/publish_queue/#archive._id#"

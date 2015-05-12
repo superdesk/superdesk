@@ -195,7 +195,6 @@
 
             newItem.publishing_action = item.publishing_action;
             newItem.item_id = item.item_id;
-            newItem.published_seq_num = item.published_seq_num;
             newItem.publish_schedule = item.publish_schedule;
             newItem.selector_codes = item.selector_codes;
             newItem.formatted_item_id = item.formatted_item_id;
