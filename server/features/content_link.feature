@@ -34,9 +34,9 @@ Feature: Link content in takes
         """
         {
             "type": "text",
-            "headline": "test1",
+            "headline": "test1=2",
             "slugline": "comics",
-            "anpa_take_key": "Take",
+            "anpa_take_key": "Take=2",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
         }
@@ -59,7 +59,7 @@ Feature: Link content in takes
                                     "sequence": 1
                                 },
                                 {
-                                    "headline": "test1",
+                                    "headline": "test1=2",
                                     "slugline": "comics",
                                     "sequence": 2
                                 }
@@ -71,7 +71,7 @@ Feature: Link content in takes
                     "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}
                 },
                 {
-                    "headline": "test1",
+                    "headline": "test1=2",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}]
                 },
@@ -92,9 +92,9 @@ Feature: Link content in takes
         """
         {
             "type": "text",
-            "headline": "test1",
+            "headline": "test1=3",
             "slugline": "comics",
-            "anpa_take_key": "Take",
+            "anpa_take_key": "Take=3",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
         }
@@ -117,7 +117,7 @@ Feature: Link content in takes
                                     "sequence": 1
                                 },
                                 {
-                                    "headline": "test1",
+                                    "headline": "test1=2",
                                     "slugline": "comics",
                                     "sequence": 2
                                 }
@@ -128,7 +128,7 @@ Feature: Link content in takes
                     "package_type": "takes"
                 },
                 {
-                    "headline": "test1",
+                    "headline": "test1=2",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}]
                 },
@@ -140,7 +140,7 @@ Feature: Link content in takes
                 },
                 {
                     "guid": "#TAKE#",
-                    "headline": "test1",
+                    "headline": "test1=3",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}]
                 }
