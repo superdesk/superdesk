@@ -1,0 +1,10 @@
+doc-warnings: true
+max-line-length: 140
+requirements:
+    - server/requirements.txt
+pylint:
+    disable:
+        - super-on-old-class
+        - unused-variable
+        - missing-super-argument
+        - old-style-class
