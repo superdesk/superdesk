@@ -63,8 +63,8 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'authoring', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
+    function StageItemListDirective(search, authoring, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -85,16 +85,37 @@
                 var query = search.query({});
                 var criteria = {source: query.getCriteria()};
 
-                scope.preview = function(item) {
-                    desks.setWorkspace(item.task.desk, item.task.stage);
-                    superdesk.intent('read_only', 'content_article', item);
-                };
-
-                scope.edit = function(item) {
-                    desks.setWorkspace(item.task.desk, item.task.stage);
-                    superdesk.intent('author', 'article', item);
-                };
-
+                if (!scope.$parent.productionPreview) {
+                    scope.preview = function(item) {
+                        desks.setWorkspace(item.task.desk, item.task.stage);
+                        superdesk.intent('read_only', 'content_article', item);
+                    };
+                    scope.edit = function(item) {
+                        desks.setWorkspace(item.task.desk, item.task.stage);
+                        superdesk.intent('author', 'article', item);
+                    };
+                } else {
+                    scope.preview = function(item) {
+                        desks.setWorkspace(item.task.desk, item.task.stage);
+                        //superdesk.intent('read_only', 'content_article', item);
+                        scope.$parent.action = 'view';
+                        authoring.open(item._id, true).
+                        then(function(opened) {
+                            scope.$parent.origItem = opened;
+                            console.log('view in production');
+                        });
+                    };
+                    scope.edit = function(item) {
+                        desks.setWorkspace(item.task.desk, item.task.stage);
+                        //superdesk.intent('producer', 'article', item);
+                        scope.$parent.action = 'edit';
+                        authoring.open(item._id, false).
+                        then(function(opened) {
+                            scope.$parent.origItem = opened;
+                            console.log('edit in production');
+                        });
+                    };
+                }
                 function queryItems(queryString) {
                     query = search.query({});
                     query.filter({term: {'task.stage': scope.stage}});

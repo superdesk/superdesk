@@ -552,6 +552,9 @@
                     resolveDestinations();
                 }
 
+                $scope.$watch($scope.origItem, function() {
+                    console.log('called');
+                });
                 $scope.$watch('vars', function() {
                     if ($scope.vars && $scope.vars.destinationGroups) {
                         var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();

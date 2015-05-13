@@ -3,6 +3,12 @@
 
 ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring'];
 function ProductionController($scope, production, superdesk, authoring) {
+        $scope.productionPreview = true;
+        $scope.origItem = {};
+        $scope.action = 'view';
+        $scope.viewdefault = _.isEqual({}, $scope.origItem) ? true : false;
+
+        //$scope._editable = true;
         /*$scope.items = null;
         production.query().then(function() {
             $scope.items = production.items;
@@ -19,18 +25,6 @@ function ProductionController($scope, production, superdesk, authoring) {
             type: 'article'
         };*/
     }
-/*ProductionController.$inject = ['$scope'];
-function ProductionController($scope) {
-        $scope.origItem = item;
-        $scope.action = action || 'edit';
-
-        $scope.widget_target = 'authoring';
-
-        $scope.intentFilter = {
-            action: 'author',
-            type: 'article'
-        };
-    }*/
 
 ProductionService.$inject = ['api', '$q'];
 function ProductionService(api, $q) {
@@ -52,80 +46,6 @@ function ProductionService(api, $q) {
 
         //return items;
     }
-
-    /*AggregateWidgetCtrl.$inject = ['desks', 'preferencesService'];
-    function AggregateWidgetCtrl(desks, preferencesService) {
-
-        var PREFERENCES_KEY = 'agg:view';
-
-        this.configured = false;
-        this.selected = null;
-        this.active = {};
-
-        this.setConfigured = function() {
-            this.configured = _.keys(this.active).length > 0;
-        };
-
-        desks.initialize()
-        .then(angular.bind(this, function() {
-            return preferencesService.get(PREFERENCES_KEY)
-                .then(angular.bind(this, function(active) {
-                    this.active = active != null ? active.active : {};
-                    this.setConfigured();
-                }));
-        }))
-        .then(angular.bind(this, function() {
-            return desks.fetchCurrentUserDesks()
-                .then(angular.bind(this, function (deskList) {
-                    this.desks = deskList;
-                    this.deskStages = desks.deskStages;
-                }));
-        }));
-
-        this.preview = function(item) {
-            this.selected = item;
-        };
-
-        this.closeModal = function() {
-            this.modalActive = false;
-        };
-
-        this.edit = function() {
-            this.oldActive = this.active;
-            this.active = _.create(this.active);
-            this.modalActive = true;
-        };
-
-        this.cancel = function() {
-            this.active = this.oldActive;
-            this.closeModal();
-        };
-
-        this.isActive = angular.bind(this, function(item) {
-            if (this.searchAll || !this.configured) {
-                return true;
-            }
-
-            return !!this.active[item._id];
-        });
-
-        this.save = function() {
-            var updates = {};
-            updates[PREFERENCES_KEY] = {active: this.active};
-            preferencesService.update(updates, PREFERENCES_KEY)
-                .then(angular.bind(this, function() {
-                    this.setConfigured();
-                    this.closeModal();
-                }));
-        };
-
-        this.search = function(query) {
-            this.query = query;
-        };
-
-        this.searchAll = false;
-    }*/
-
 return angular.module('superdesk.production', [
         'superdesk.editor',
         'superdesk.activity',
@@ -143,28 +63,12 @@ return angular.module('superdesk.production', [
                 templateUrl: 'scripts/superdesk-production/views/production.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 controller: ProductionController
-            });
-           /* .activity('edit.text', {
-                label: gettext('Edit item'),
-                href: '/production/:_id',
-                priority: 10,
-                icon: 'pencil',
-                controller: ['data', 'superdesk', function(data, superdesk) {
-                    superdesk.intent('author', 'article', data.item);
-                }],
-                filters: [{action: 'list', type: 'archive'}],
-                condition: function(item) {
-                    return item.type !== 'composite' &&
-                    item.state !== 'published' &&
-                    item.state !== 'scheduled' &&
-                    item.state !== 'killed';
-                }
             })
             .activity('read_only.content_article', {
                 category: '/production',
                 href: '/production/:_id/view',
                 when: '/production/:_id/view',
-                label: gettext('Authoring Read Only'),
+                label: gettext('Production Read Only'),
                 templateUrl: 'scripts/superdesk-production/views/production.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 controller: ProductionController,
@@ -176,6 +80,22 @@ return angular.module('superdesk.production', [
                     action: [function() {return 'view';}]
                 },
                 authoring: true
+            });
+/*            .activity('edit.text', {
+                label: gettext('Edit item'),
+                href: '/production/:_id',
+                priority: 10,
+                icon: 'pencil',
+                controller: ['data', 'superdesk', function(data, superdesk) {
+                    superdesk.intent('producer', 'article', data.item);
+                }],
+                filters: [{action: 'list', type: 'archive'}],
+                condition: function(item) {
+                    return item.type !== 'composite' &&
+                    item.state !== 'published' &&
+                    item.state !== 'scheduled' &&
+                    item.state !== 'killed';
+                }
             });*/
     }])
     .config(['apiProvider', function(apiProvider) {
