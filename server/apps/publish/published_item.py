@@ -82,6 +82,10 @@ class PublishedItemService(BaseService):
         except:
             return []
 
+    def is_published_before(self, item_id):
+        item = super().find_one(req=None, _id=item_id)
+        return 'last_publish_action' in item
+
     def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)
         for item in items:
