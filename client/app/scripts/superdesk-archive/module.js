@@ -154,7 +154,10 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     action: 'spike',
                     condition: function(item) {
-                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
+                        item.state !== 'killed' &&
+                        item.state !== 'published' &&
+                        item.state !== 'corrected';
                     }
                 })
                 .activity('unspike', {
