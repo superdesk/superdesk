@@ -172,6 +172,8 @@ INSTALLED_APPS = [
     'apps.spellcheck',
     'apps.templates',
     'apps.text_archive',
+    'apps.validators',
+    'apps.validate',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
