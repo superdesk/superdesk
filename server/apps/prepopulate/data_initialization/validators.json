@@ -41,10 +41,16 @@
         },
         "subject" : {
             "type" : "list",
-            "required" : true
+            "required" : true,
+            "minlength" : 1
         }        
     }
 },
     {"_id": "kill",
     "schema" : {}
-}]
+},
+    {
+     "_id": "correct",
+     "schema": {}
+}
+]
