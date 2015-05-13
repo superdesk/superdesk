@@ -28,7 +28,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
     set_sign_off
 
-from apps.archive.archive_composite import PackageService
+from apps.archive.archive_composite import TakesPackageService
 
 logger = logging.getLogger(__name__)
 
@@ -67,10 +67,7 @@ class BasePublishService(BaseService):
             raise InvalidStateTransitionError()
 
     def on_updated(self, updates, original):
-        get_resource_service('published').update_published_items(original['_id'],
-                                                                 'last_publish_action',
-                                                                 self.published_state)
-        get_resource_service('published').post([original])
+        self.update_published_collection(published_item=original)
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
@@ -96,18 +93,23 @@ class BasePublishService(BaseService):
 
             if archived_item['type'] != 'composite':
                 # check if item is in a digital package
-                package_id = PackageService().get_take_package_id(original)
+                package_id = TakesPackageService().get_take_package_id(original)
                 if package_id:
                     # process the takes to form digital master file content
                     package, package_updates = self.process_takes(take=original, package_id=package_id)
                     package_updates[config.CONTENT_STATE] = self.published_state
-                    resolve_document_version(document=package, resource=ARCHIVE, method='PATCH', latest_doc=package)
-                    self.backend.update(self.datasource, package['id'], package_updates, package)
+                    resolve_document_version(document=package_updates,
+                                             resource=ARCHIVE, method='PATCH',
+                                             latest_doc=package)
+                    self.backend.update(self.datasource, package['_id'], package_updates, package)
+                    package.update(package_updates)
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
                     any_channel_closed = self.publish(doc=package, updates=updates,
                                                       target_output_channels=DIGITAL)
+
+                    self.update_published_collection(published_item=package)
 
                 # queue only text items
                 any_channel_closed = any_channel_closed or \
@@ -302,7 +304,7 @@ class BasePublishService(BaseService):
         otherwise it returns the original package and the updated package
         """
         package = super().find_one(req=None, _id=package_id)
-        package_updates = package.copy()
+        package_updates = {}
         package_updates['body_html'] = ''
         take_index = 1000
         for group in package['groups']:
@@ -349,6 +351,12 @@ class BasePublishService(BaseService):
 
         for metadata in metadata_tobe_copied:
             package[metadata] = take[metadata]
+
+    def update_published_collection(self, published_item):
+        get_resource_service('published').update_published_items(published_item['_id'],
+                                                                 'last_publish_action',
+                                                                 self.published_state)
+        get_resource_service('published').post([published_item])
 
 
 class ArchivePublishResource(BasePublishResource):
