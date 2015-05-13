@@ -217,7 +217,8 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) && item.state !== 'killed';
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
+                            item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted');
                     },
                     controller: ['data', '$rootScope', 'desks', 'authoring', 'notify',
                         function(data, $rootScope, desks, authoring, notify) {
