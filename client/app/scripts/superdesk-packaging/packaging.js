@@ -684,7 +684,7 @@
                     }],
                 filters: [{action: 'create', type: 'package'}],
                 condition: function(item) {
-                    return item.state !== 'killed';
+                    return item ? item.state !== 'killed' : true;
                 }
             })
             .activity('package.item', {
