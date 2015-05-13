@@ -12,7 +12,7 @@
         <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && item.state !== 'published'" ng-click="unlock()" translate>Unlock</button>
         
         <button class="btn btn-medium pull-left" 
-            ng-show="!sending && !_editable && !item._locked && item.state !== 'published' && item.state !== 'scheduled' && publish_enabled" 
+            ng-show="!sending && !_editable && !item._locked && _isInProductionStates && publish_enabled" 
             ng-click="lock()" 
             translate>Edit</button>
 
@@ -40,7 +40,7 @@
             ng-click="publish()"
             ng-if = "publish_enabled"
             ng-show="_editable"
-            translate>Publish</button>
+            translate>{{action === "edit" ? "Publish": action}}</button>
 
         <div class="navbtn dropdown strict pull-left" tooltip="{{ :: 'Create' | translate }}" tooltip-placement="bottom" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
