@@ -44,6 +44,49 @@ Feature: Content Publishing
       {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
       """
 
+    @auth
+    Scenario: Publish user content that fails validation
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{"headline": {"required": true}}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+
+      When we post to "/stages" with success
+      """
+      [
+        {
+        "name": "another stage",
+        "description": "another stage",
+        "task_status": "in_progress",
+        "desk": "#desks._id#",
+        "published_stage": true
+        }
+      ]
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+        {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
+      """
+
 
     @auth
     Scenario: Schedule a user content publish
@@ -351,7 +394,8 @@ Feature: Content Publishing
     Scenario: We can lock a published content and then kill it
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish", "schema":{}},
+      {"_id": "kill", "schema":{}}]
       """
       Given "desks"
       """
