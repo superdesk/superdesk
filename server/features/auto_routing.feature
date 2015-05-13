@@ -146,7 +146,11 @@ Feature: Auto Routing
         """
 
     @auth @provider @test
-    Scenario: Content is fetched and published to different stages
+    Scenario: Content is fetched and published to different stages 1
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
         Given empty "desks"
         When we post to "/desks"
         """
@@ -261,7 +265,7 @@ Feature: Auto Routing
         """
 
     @auth @provider
-    Scenario: Content is fetched and published to different stages
+    Scenario: Content is fetched and published to different stages 2
         Given empty "desks"
         When we post to "/desks"
         """
