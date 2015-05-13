@@ -145,13 +145,20 @@
     function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
+
         $scope.outputChannels = null;
         $scope.outputChannelLookup = {};
-        $scope.formattedItems = null;
-        $scope.formattedItemLookup = {};
+
         $scope.publish_queue = null;
+
         $scope.selectedFilterChannel = null;
         $scope.selectedFilterSubscriber = null;
+
+        $scope.multiSelectCount = 0;
+        $scope.selectedQueueItems = [];
+
+        $scope.showResendBtn = false;
+        $scope.showCacnelBtn = false;
 
         var promises = [];
 
@@ -166,13 +173,6 @@
             $scope.outputChannels = items._items;
             _.each(items._items, function(item) {
                 $scope.outputChannelLookup[item._id] = item;
-            });
-        }));
-
-        promises.push(adminPublishSettingsService.fetchFormattedItems().then(function(items) {
-            $scope.formattedItems = items._items;
-            _.each(items._items, function(item) {
-                $scope.formattedItemLookup[item._id] = item;
             });
         }));
 
@@ -200,13 +200,22 @@
         $scope.reload = function() {
             $q.all(promises).then(function() {
                 fetchPublishQueue().then(function(queue) {
-                    $scope.publish_queue = queue._items;
+                    var queuedItems = queue._items;
+
+                    _.forEach(queuedItems, function(item) {
+                        angular.extend(item, {'selected': false});
+                    });
+
+                    $scope.publish_queue = queuedItems;
                     $scope.lastRefreshedAt = new Date();
+
+                    $scope.showResendBtn = false;
+                    $scope.showCacnelBtn = false;
                 });
             });
         };
 
-        $scope.scheduleToSend = function(item) {
+        $scope.buildNewSchedule = function (item) {
             var newItem = {};
 
             newItem.publishing_action = item.publishing_action;
@@ -220,8 +229,21 @@
             newItem.output_channel_id = item.output_channel_id;
             newItem.unique_name = item.unique_name;
             newItem.destination = item.destination;
+            return newItem;
+        };
 
-            api.publish_queue.save({}, newItem).then(
+        $scope.scheduleToSend = function(item) {
+            var queueItems;
+
+            if (angular.isDefined(item)) {
+                queueItems = $scope.buildNewSchedule(item);
+            } else if ($scope.multiSelectCount > 0) {
+                _.forEach($scope.selectedQueueItems, function(item) {
+                    queueItems.push($scope.buildNewSchedule(item));
+                });
+            }
+
+            api.publish_queue.save([], queueItems).then(
                 function(response) {
                     $scope.reload();
                 },
@@ -238,27 +260,91 @@
         };
 
         $scope.cancelSchedule = function(item) {
-            api.publish_queue.save(item, {'state': 'canceled', 'error_message': 'canceled by user'}).then(
-                function(response) {
-                    $scope.reload();
-                },
-                function(response) {
-                    if (angular.isDefined(response.data._issues)) {
-                        if (angular.isDefined(response.data._issues['validator exception'])) {
-                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+            var _updates = {'state': 'canceled', 'error_message': 'canceled by user'};
+
+            if (angular.isDefined(item)) {
+                api.publish_queue.save(item, _updates).then(
+                    function(response) {
+                    },
+                    function(response) {
+                        if (angular.isDefined(response.data._issues)) {
+                            if (angular.isDefined(response.data._issues['validator exception'])) {
+                                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                            }
+                        } else {
+                            notify.error(gettext('Error: Failed to cancel the schedule'));
                         }
-                    } else {
-                        notify.error(gettext('Error: Failed to cancel the schedule'));
                     }
-                }
-            );
+                );
+            } else if ($scope.multiSelectCount > 0) {
+                _.forEach($scope.selectedQueueItems, function(item) {
+                    api.publish_queue.save(item, _updates).then(
+                        function(response) {
+                        },
+                        function(response) {
+                            notify.error(gettext('Error: Failed to cancel the schedule with Story Name: ' + item.unique_name));
+                        }
+                    );
+                });
+            }
+
+            $scope.reload();
         };
 
         $scope.filterSchedule = function() {
+            $scope.multiSelectCount = 0;
             fetchPublishQueue().then(function(queue) {
-                $scope.publish_queue = queue._items;
+                var queuedItems = queue._items;
+
+                _.forEach(queuedItems, function(item) {
+                    angular.extend(item, {'selected': false});
+                });
+
+                $scope.publish_queue = queuedItems;
                 $scope.lastRefreshedAt = new Date();
+
+                $scope.showResendBtn = false;
+                $scope.showCacnelBtn = false;
             });
+        };
+
+        $scope.selectQueuedItem = function(queuedItem) {
+            if (queuedItem.selected) {
+                $scope.selectedQueueItems = _.union($scope.selectedQueueItems, [queuedItem]);
+            } else {
+                $scope.selectedQueueItems = _.without($scope.selectedQueueItems, queuedItem);
+            }
+
+            var idx = _.findIndex($scope.selectedQueueItems, function(item) {
+                return item.state === 'pending' || item.state === 'in-progress' || item.state === 'canceled';
+            });
+
+            if (idx === -1) {
+                $scope.showResendBtn = true;
+                $scope.showCancelBtn = false;
+            } else {
+                idx = _.findIndex($scope.selectedQueueItems, function(item) {
+                    return item.state === 'success' || item.state === 'in-progress' || item.state === 'canceled' ||
+                        item.state === 'error';
+                });
+
+                if (idx === -1) {
+                    $scope.showResendBtn = false;
+                    $scope.showCancelBtn = true;
+                } else {
+                    $scope.showResendBtn = false;
+                    $scope.showCancelBtn = false;
+                }
+            }
+
+            $scope.multiSelectCount = $scope.selectedQueueItems.length;
+        };
+
+        $scope.cancelSelection = function() {
+            $scope.selectedFilterChannel = null;
+            $scope.selectedFilterSubscriber = null;
+
+            $scope.filterSchedule();
         };
 
         $scope.reload();

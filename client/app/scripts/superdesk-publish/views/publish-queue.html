@@ -1,6 +1,18 @@
 <div class="subnav">
     <h3 class="page-nav-title" translate>Publish Queue</h3>
+
+    <span class="multi-action-bar">
+        <span id="multi-select-count"
+            translate
+            translate-n="multiSelectCount"
+            translate-plural="{{ multiSelectCount }} Items selected">{{ multiSelectCount }} Item selected
+        </span>
+        <button class="btn" ng-click="scheduleToSend()" ng-show="multiSelectCount > 0 && showResendBtn">resend</button>
+        <button class="btn" ng-click="cancelSchedule()" ng-show="multiSelectCount > 0 && showCancelBtn">cancel</button>
+        <button class="btn" ng-click="cancelSelection()" ng-show="multiSelectCount > 0">cancel selection</button>
+    </span>
 </div>
+
 <section class="main-section ingest-dashboard">
 	<button ng-click="reload()">Refresh</button><i style="float:right;">Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</i>
 
@@ -38,7 +50,10 @@
 		</thead>
         <tbody>
             <tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
-                <td>{{ queue_item.published_seq_num }}</td>
+                <td>
+                    <input type="checkbox" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected">
+                    {{ queue_item.published_seq_num }}
+                </td>
                 <td>{{ queue_item.unique_name }}</td>
                 <td>{{ queue_item.headline }}</td>
                 <td>{{ queue_item.content_type }}</td>
@@ -53,7 +68,7 @@
 				<td>{{queue_item.state}}</td>
 				<td>{{queue_item.error_message}}</td>
                 <td>
-                    <button ng-if="queue_item.state === 'success'" ng-click="scheduleToSend(queue_item)">Resend</button>
+                    <button ng-if="queue_item.state === 'success' || queue_item.state === 'error'" ng-click="scheduleToSend(queue_item)">Resend</button>
                     <button ng-if="queue_item.state === 'pending'" ng-click="cancelSchedule(queue_item)">Cancel</button>
                 </td>
             </tr>
