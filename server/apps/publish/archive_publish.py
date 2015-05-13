@@ -10,6 +10,7 @@
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, document_etag
+from eve.validation import ValidationError
 from flask import current_app as app
 from copy import copy
 import logging
@@ -69,6 +70,11 @@ class BasePublishService(BaseService):
 
         if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
+
+        validate_item = {'act': self.publish_type, 'validate': updates}
+        validation_errors = get_resource_service('validate').post([validate_item])
+        if validation_errors[0]:
+            raise ValidationError('Publish failed due to {}'.format(str(validation_errors[0])))
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item=original)
