@@ -842,7 +842,7 @@
     }
 
     var cleanHtml = function(data) {
-        return data.replace(/<br>/g, '&nbsp;').replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
+        return data.replace(/<br[^>]*>/gi, '&nbsp;').replace(/<\/?[^>]+><\/?[^>]+>/gi, ' ')
             .replace(/<\/?[^>]+>/gi, '').trim().replace(/&nbsp;/g, ' ');
     };
 
