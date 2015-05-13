@@ -210,6 +210,26 @@ define([
                     additionalCondition:['desks', 'item', function(desks, item) {
                         return desks.getCurrentDeskId() === null;
                     }]
+                })
+                .activity('New Take', {
+                    label: gettext('New Take'),
+                    icon: 'copy',
+                    filters: [{action: 'list', type: 'archive'}],
+                    privileges: {archive: 1},
+                    condition: function(item) {
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) && item.state !== 'killed';
+                    },
+                    controller: ['data', '$rootScope', 'desks', 'authoring', 'notify',
+                        function(data, $rootScope, desks, authoring, notify) {
+                            authoring.linkItem(data.item, null, desks.getCurrentDeskId())
+                                .then(function(item) {
+                                    notify.success(gettext('New take created.'));
+                                    $rootScope.$broadcast('item:take');
+                                }, function(response) {
+                                    data.item.error = response;
+                                    notify.error(gettext('Failed to generate new take.'));
+                                });
+                        }]
                 });
         }])
 
