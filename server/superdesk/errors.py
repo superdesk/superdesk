@@ -412,7 +412,8 @@ class PublishQueueError(SuperdeskPublishError):
         9003: 'Destination group cannot found',
         9004: 'Schedule information could not be processed',
         9005: 'State of the content item could not be updated',
-        9006: 'Previous take is either not published or killed'
+        9006: 'Previous take is either not published or killed',
+        9007: 'A post-publish action has happened on item'
     }
 
     @classmethod
@@ -438,6 +439,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def previous_take_not_published_error(cls, exception=None, destination=None):
         return PublishQueueError(9006, exception, destination)
+
+    @classmethod
+    def post_publish_exists_error(cls, exception=None, destination=None):
+        return PublishQueueError(9007, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):

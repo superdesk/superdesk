@@ -66,6 +66,8 @@ class BasePublishService(BaseService):
     def on_update(self, updates, original):
         if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
+        if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
+            raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
 
         validate_item = {'act': self.publish_type, 'validate': updates}
         validation_errors = get_resource_service('validate').post([validate_item])
@@ -422,13 +424,13 @@ superdesk.workflow_action(
 superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
-    include_states=['published', 'scheduled'],
+    include_states=['published', 'scheduled', 'corrected'],
     privileges=['kill']
 )
 
 superdesk.workflow_state('corrected')
 superdesk.workflow_action(
     name='correct',
-    include_states=['published'],
-    privileges=['correction']
+    include_states=['published', 'corrected'],
+    privileges=['correct']
 )

@@ -529,10 +529,16 @@
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
 
                 $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
-                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
-                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+                    ((!_.contains(['published', 'killed', 'corrected'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
+                     ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
 
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+                $scope._isInProductionStates = $scope.origItem.state !== 'published' &&
+                $scope.origItem.state !== 'corrected' &&
+                $scope.origItem.state !== 'killed' &&
+                $scope.origItem.state !== 'scheduled';
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
@@ -586,6 +592,9 @@
                         $scope.origItem.pubstatus = 'Canceled';
                         resolveDestinations();
                     });
+                } else if ($scope.action === 'kill') {
+                    $scope.origItem.pubstatus = 'Corrected';
+                    resolveDestinations();
                 } else {
                     resolveDestinations();
                 }
@@ -681,7 +690,7 @@
                 }
 
                 function publishItem(orig, item) {
-                    var action = $scope.action === 'kill' ? 'kill' : 'publish';
+                    var action = $scope.action === 'edit' ? 'publish' : $scope.action;
                     authoring.publish(orig, item, action)
                     .then(function(response) {
                         if (response) {
@@ -1341,6 +1350,7 @@
                         return item.type !== 'composite' &&
                         item.state !== 'published' &&
                         item.state !== 'scheduled' &&
+                        item.state !== 'corrected' &&
                         item.state !== 'killed';
                     }
                 })
@@ -1353,7 +1363,9 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' && item.state === 'published' && !item.last_publish_action;
+                        return item.type !== 'composite' &&
+                        (item.state === 'published' ||  item.state === 'corrected') &&
+                        !item.last_publish_action;
                     },
                     privileges: {kill: 1}
                 })
@@ -1371,6 +1383,38 @@
                             return authoring.open($route.current.params._id, false);
                         }],
                         action: [function() {return 'kill';}]
+                    },
+                    authoring: true
+                })
+                .activity('correct.text', {
+                    label: gettext('Correct item'),
+                    priority: 100,
+                    icon: 'pencil',
+                    controller: ['data', 'superdesk', function(data, superdesk) {
+                        superdesk.intent('correct', 'content_article', data.item);
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.type !== 'composite' &&
+                        (item.state === 'published' ||  item.state === 'corrected')  &&
+                        !item.last_publish_action;
+                    },
+                    privileges: {correct: 1}
+                })
+                .activity('correct.content_article', {
+                    category: '/authoring',
+                    href: '/authoring/:_id/correct',
+                    when: '/authoring/:_id/correct',
+                    label: gettext('Authoring Correct'),
+                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    controller: AuthoringController,
+                    filters: [{action: 'correct', type: 'content_article'}],
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id, false);
+                        }],
+                        action: [function() {return 'correct';}]
                     },
                     authoring: true
                 })
