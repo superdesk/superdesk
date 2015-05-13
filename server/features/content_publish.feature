@@ -434,6 +434,158 @@ Feature: Content Publishing
       """
       Then we get OK response
 
+    @auth
+    Scenario: We can lock a published content and then correct it
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+        """
+        {}
+        """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we post to "/archive/#archive._id#/unlock"
+      """
+        {}
+      """
+      Then we get OK response
+
+    @auth
+    Scenario: Correcting an already corrected published story fails
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+        """
+        {}
+        """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+
+
+    @auth
+    Scenario: We can correct a corrected story
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+      """
+      {}
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      """
+      {"headline": "test-1"}
+      """
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      """
+      {"headline": "test-2"}
+      """
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+          "_items": [
+              {
+                  "headline": "test",
+                  "_version": 2,
+                  "state": "published"
+              },
+              {
+                  "headline": "test-1",
+                  "_version": 3,
+                  "state": "corrected"
+              },
+              {
+                  "headline": "test-2",
+                  "_version": 4,
+                  "state": "corrected"
+              }
+          ]
+      }
+      """
 
     @auth
     Scenario: User can't publish without a privilege
