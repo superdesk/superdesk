@@ -25,7 +25,9 @@
         description: null,
         destination_groups: null,
         sign_off: null,
-        publish_schedule: null
+        publish_schedule: null,
+        pubstatus: null,
+        more_coming: false
     };
 
     /**
@@ -232,7 +234,6 @@
          */
         this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
-
             // Finding if all the keys are dirty for real
             if (angular.isDefined(origItem)) {
                 angular.forEach(_.keys(diff), function(key) {
@@ -260,7 +261,7 @@
         };
 
         this.isPublished = function isPublished(item) {
-            return _.contains(['published', 'killed', 'scheduled'], item.state);
+            return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
         };
 
         /**
@@ -291,6 +292,25 @@
                 item.lock_user = userId;
             });
             item._locked = true;
+        };
+
+        /**
+        * Link an item for takes.
+        * @param {Object} item : Target Item
+        * @param {string} [link_id]: If not provider it returns the new Linked item.
+        * @param {string} [desk]: Desk for newly create item.
+        */
+        this.linkItem = function link(item, link_id, desk) {
+            var data = {};
+            if (link_id) {
+                data.link_id = link_id;
+            }
+
+            if (desk) {
+                data.desk = desk;
+            }
+
+            return api.save('archive_link', {}, data, item);
         };
     }
 
@@ -983,8 +1003,8 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope'];
-    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring'];
+    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope, authoring) {
         return {
             scope: {
                 item: '=',
@@ -995,26 +1015,13 @@
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
             link: function sendItemLink(scope, elem, attrs) {
                 scope.mode = scope.mode || 'authoring';
-
                 scope.desks = null;
                 scope.stages = null;
                 scope.macros = null;
-
+                scope.task = null;
                 scope.selectedDesk = null;
                 scope.selectedStage = null;
                 scope.selectedMacro = null;
-
-                scope.task = null;
-
-                scope.beforeSend = scope._beforeSend || $q.when;
-                scope.macros = null;
-
-                scope.selectedDesk = null;
-                scope.selectedStage = null;
-                scope.selectedMacro = null;
-
-                scope.task = null;
-
                 scope.beforeSend = scope._beforeSend || $q.when;
 
                 scope.$watch('item', function() {
@@ -1055,6 +1062,7 @@
                 scope.send = function(open) {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
+
                     if (scope.mode === 'authoring') {
                         return sendAuthoring(deskId, stageId, scope.selectedMacro);
                     } else if (scope.mode === 'archive') {
@@ -1062,6 +1070,27 @@
                     } else if (scope.mode === 'ingest') {
                         return sendIngest(deskId, stageId, scope.selectedMacro, open);
                     }
+                };
+
+                scope.canSendAndContinue = function() {
+                    return !authoring.isPublished(scope.item);
+                };
+
+                scope.sendAndContinue = function() {
+                    var deskId = scope.selectedDesk._id;
+                    var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
+                    var activeDeskId = desks.activeDeskId;
+                    scope.item.more_coming = true;
+                    return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
+                        .then(function() {
+                            return authoring.linkItem(scope.item, null, activeDeskId);
+                        })
+                        .then(function (item) {
+                            notify.success(gettext('New take created.'));
+                            $location.url('/authoring/' + item._id);
+                        }, function(err) {
+                            notify.error('Failed to send and continue.');
+                        });
                 };
 
                 var runMacro = function(item, macro) {
@@ -1077,7 +1106,13 @@
                     return p;
                 };
 
-                var sendAuthoring = function(deskId, stageId, macro) {
+                var sendAuthoring = function(deskId, stageId, macro, sendAndContinue) {
+                    var deferred;
+
+                    if (sendAndContinue) {
+                        deferred = $q.defer();
+                    }
+
                     runMacro(scope.item, macro)
                     .then(function(item) {
                         api.find('tasks', scope.item._id)
@@ -1093,11 +1128,23 @@
                                 task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
                             });
                         })
-                        .then(function() {
+                        .then(function(value) {
                             notify.success(gettext('Item sent.'));
-                            $location.url(scope.$parent.referrerUrl);
+                            if (sendAndContinue) {
+                                return deferred.resolve();
+                            } else {
+                                $location.url(scope.$parent.referrerUrl);
+                            }
+                        }, function(err) {
+                            if (sendAndContinue) {
+                                return deferred.reject(err);
+                            }
                         });
                     });
+
+                    if (sendAndContinue) {
+                        return deferred.promise;
+                    }
                 };
 
                 var sendContent = function(deskId, stageId, macro, open) {
