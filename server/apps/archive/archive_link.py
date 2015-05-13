@@ -14,6 +14,7 @@ from superdesk import get_resource_service, Service, Resource
 from .archive_composite import TakesPackageService
 from apps.archive.common import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.errors import SuperdeskApiError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,8 +25,8 @@ class ArchiveLinkResource(Resource):
     resource_title = endpoint_name
 
     schema = {
-        'link_id': Resource.rel('archive', False, required=False),
-        'desk': Resource.rel('desks', required=False)
+        'link_id': Resource.rel('archive', embeddable=False, type='string'),
+        'desk': Resource.rel('desks', embeddable=False)
     }
 
     url = 'archive/<{0}:target_id>/link'.format(item_url)
@@ -44,7 +45,12 @@ class ArchiveLinkService(Service):
         desk_id = doc.get('desk')
         service = get_resource_service(ARCHIVE)
         target = service.find_one(req=None, _id=target_id)
+
         link = {'task': {'desk': desk_id}} if desk_id else {}
+
+        if not target:
+            raise SuperdeskApiError.notFoundError(message='Cannot find the target item with id {}.'.format(target_id))
+
         if link_id:
             link = service.find_one(req=None, _id=link_id)
 
