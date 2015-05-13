@@ -1115,7 +1115,6 @@
                             notify.success(gettext('New take created.'));
                             $location.url('/authoring/' + item._id);
                         }, function(err) {
-                            console.log(err);
                             notify.error('Failed to send and continue.');
                         });
                 };
