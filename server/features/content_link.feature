@@ -151,6 +151,10 @@ Feature: Link content in takes
 
     @auth
     Scenario: Metadata is copied from published takes
+        Given the "validators"
+        """
+        [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
