@@ -21,7 +21,14 @@ module.exports = {
     },
     travis: {
         browsers: ['PhantomJS'],
-        reporters: 'dots'
+        reporters: ['dots', 'coverage'],
+        coverageReporter: {
+            dir: '.',
+            includeAllSources: true,
+            reporters: [
+                {type: 'lcovonly', subdir: '.', file: 'lcov.info'}
+            ]
+        }
     },
     bamboo: {
         browsers: ['PhantomJS'],

@@ -1,0 +1,4 @@
+languages:
+    JavaScript: true
+    Python: true
+exclude_paths: ['client/bower']
