@@ -29,9 +29,6 @@ class FormattedItemResource(Resource):
         'format': {
             'type': 'string',
             'nullable': False,
-        },
-        'published_seq_num': {
-            'type': 'integer'
         }
     }
 
