@@ -25,8 +25,8 @@ class ArchiveLinkResource(Resource):
     resource_title = endpoint_name
 
     schema = {
-        'link_id': Resource.rel('archive', False, type='string'),
-        'desk': Resource.rel('desks', False)
+        'link_id': Resource.rel('archive', embeddable=False, type='string'),
+        'desk': Resource.rel('desks', embeddable=False)
     }
 
     url = 'archive/<{0}:target_id>/link'.format(item_url)
