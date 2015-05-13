@@ -18,6 +18,7 @@ __entities__ = {
     'stages': ('stages.json', 'desk'),
     'groups': ('groups.json', ''),
     'vocabularies': ('vocabularies.json', ''),
+    'validators': ('validators.json', ''),
     'content_templates': ('content_templates.json', 'template_name'),
     'published': (None, [('item_id', pymongo.ASCENDING),
                          ('state', pymongo.ASCENDING)])
