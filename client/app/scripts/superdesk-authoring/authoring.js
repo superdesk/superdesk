@@ -297,8 +297,8 @@
         /**
         * Link an item for takes.
         * @param {Object} item : Target Item
-        * @param {string} link_id: Optional. If not provider it returns the new Linked item.
-        * @param {string} desk: Optional. Desk for newly create item.
+        * @param {string} [link_id]: If not provider it returns the new Linked item.
+        * @param {string} [desk]: Desk for newly create item.
         */
         this.linkItem = function link(item, link_id, desk) {
             var data = {};
@@ -1083,11 +1083,13 @@
                     scope.item.more_coming = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
-                            authoring.linkItem(scope.item, null, activeDeskId).then(function (item) {
-                                    $location.url('/authoring/' + item._id);
-                                }, function(err) {
-                                    notify.error('Failed to send and continue.');
-                                });
+                            return authoring.linkItem(scope.item, null, activeDeskId);
+                        })
+                        .then(function (item) {
+                            notify.success(gettext('New take created.'));
+                            $location.url('/authoring/' + item._id);
+                        }, function(err) {
+                            notify.error('Failed to send and continue.');
                         });
                 };
 
