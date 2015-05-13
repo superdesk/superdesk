@@ -482,6 +482,280 @@ Feature: Content Publishing
 		"""
 
     @auth
+    Scenario: Publish the second take before the first fails
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+    	When we post to "archive"
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "#TAKE#" with "publish" type and "published" state
+        Then we get response code 400
+		"""
+		{
+            "_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9006 - Previous take is either not published or killed"}
+        }
+		"""
+
+    @auth
+    Scenario: Publish the very first take before the second
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+          "name" : "Email Subscriber", "is_active" : true
+        }]
+        """
+        And we post to "/output_channels" with "channel1" and success
+        """
+        [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        """
+        And we post to "/output_channels" with "channel2" and success
+        """
+        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+        """
+        And we post to "/destination_groups" with "destgroup1" and success
+        """
+        [{
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [],
+          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+        }]
+        """
+    	When we post to "archive" with success
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "Take-1 headline",
+            "abstract": "Take-1 abstract",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1",
+            "state": "draft",
+            "slugline": "Take-1 slugline",
+            "urgency": "4",
+            "pubstatus": "Usable",
+            "destination_groups":["#destgroup1#"],
+            "subject":[{"qcode": "17004000", "name": "Statistics"}],
+            "anpa-category": {"qcode": "A", "name": "Sport"},
+            "anpa_take_key": "Take"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "Take-1 headline",
+            "slugline": "Take-1 slugline",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "123" with "publish" type and "published" state
+        Then we get OK response
+		When we get "/published"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_version": 3,
+                    "state": "published",
+                    "body_html": "Take-1"
+                },
+                {
+                    "_version": 2,
+                    "state": "published",
+                    "type": "composite",
+                    "package_type": "takes",
+                    "body_html": "Take-1<br>"
+                }
+            ]
+        }
+		"""
+
+   @auth
+    Scenario: Publish the second take after the first
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+          "name" : "Email Subscriber", "is_active" : true
+        }]
+        """
+        And we post to "/output_channels" with "channel1" and success
+        """
+        [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        """
+        And we post to "/output_channels" with "channel2" and success
+        """
+        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+        """
+        And we post to "/destination_groups" with "destgroup1" and success
+        """
+        [{
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [],
+          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+        }]
+        """
+    	When we post to "archive" with success
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "Take-1 headline",
+            "abstract": "Take-1 abstract",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1",
+            "state": "draft",
+            "slugline": "Take-1 slugline",
+            "urgency": "4",
+            "pubstatus": "Usable",
+            "destination_groups":["#destgroup1#"],
+            "subject":[{"qcode": "17004000", "name": "Statistics"}],
+            "anpa-category": {"qcode": "A", "name": "Sport"},
+            "anpa_take_key": "Take"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "Take-1 headline",
+            "slugline": "Take-1 slugline",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "123" with "publish" type and "published" state
+        Then we get OK response
+        When we publish "#TAKE#" with "publish" type and "published" state
+        Then we get OK response
+		When we get "/published"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_id": "123",
+                    "_version": 3,
+                    "state": "published",
+                    "body_html": "Take-1"
+                },
+                {
+                    "_version": 3,
+                    "state": "published",
+                    "type": "composite",
+                    "package_type": "takes",
+                    "body_html": "Take-1<br>Take-2<br>"
+                },
+                {
+                    "_version": 4,
+                    "state": "published",
+                    "body_html": "Take-2"
+                }
+            ]
+        }
+		"""
+
+    @auth
     @notification
     Scenario: As a user I should be able to publish item to a closed output channel
       Given "desks"
