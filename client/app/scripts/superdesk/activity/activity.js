@@ -416,7 +416,8 @@ define([
                         this.setReferrerUrl('/workspace');
                         localStorage.setItem('referrerUrl', '/workspace');
                     } else {
-                        if (currentRoute.$$route.authoring && !previousRoute.$$route.authoring) {
+                        if (currentRoute.$$route.authoring && (!previousRoute.$$route.authoring ||
+                            previousRoute.$$route._id === 'packaging')) {
                             this.setReferrerUrl(prepareUrl(previousRoute));
                             localStorage.setItem('referrerUrl', this.getReferrerUrl());
                         }
