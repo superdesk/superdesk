@@ -33,7 +33,7 @@ class IOErrorsService(superdesk.Service):
 
     def get_errors_by_source_type(self, source_type, errors):
         return {'source_errors': errors[source_type.lower()],
-                'all_errors': self._get_all_errors()}
+                'all_errors': self._get_all_errors(errors)}
 
     def get_all_errors(self, errors):
         return {'all_errors': self._get_all_errors(errors)}

@@ -29,37 +29,56 @@
     <div class="modal-body">
         <form name="editForm" ng-submit="save()">
             <fieldset>
-                <div class="field">
-                    <label class="right">
-                        {{:: 'Status' | translate }}
-                        <span tooltip="{{ subscriber.is_active ? 'Deactivate' : 'Activate'  | translate }}" tooltip-placement="right">
-                            <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
-                        </span>
-                    </label>
-                </div>
-                <div class="field">
-                    <label for="subscriber-name" translate>Name</label>
-                    <input type="text" id="subscriber-name" required ng-model="subscriber.name">
-                </div>
-                <div class="field">
-                    <label for="subscriber-type" translate>Type</label>
-                    <select id="subscriber-type" class="input" ng-model="subscriber.subscriber_type">
-                        <option value="media" translate>Media</option>
-                        <option value="nonmedia" translate>Non-media</option>
-                        <option value="" translate>Both</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label translate>Distributions</label>
-                    <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination" data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
-                    <div sd-destination ng-if="newDestination"
-                        data-destination="newDestination"
-                        data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"
-                    ></div>
-                    <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
-                        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Distribution</span>
-                    </button>
-                </div>
+                <tabset>
+                    <tab heading="General" class="TabContent">
+                        <div class="field">
+                            <label class="right">
+                                {{:: 'Status' | translate }}
+                                <span tooltip="{{ subscriber.is_active ? 'Deactivate' : 'Activate'  | translate }}" tooltip-placement="right">
+                                    <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label for="subscriber-name" translate>Name</label>
+                            <input type="text" id="subscriber-name" required ng-model="subscriber.name">
+                        </div>
+                        <div class="field">
+                            <label for="subscriber-type" translate>Type</label>
+                            <select id="subscriber-type" class="input" ng-model="subscriber.subscriber_type">
+                                <option value="media" translate>Media</option>
+                                <option value="nonmedia" translate>Non-media</option>
+                                <option value="" translate>Both</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label translate>Distributions</label>
+                            <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination" data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
+                            <div sd-destination ng-if="newDestination"
+                                data-destination="newDestination"
+                                data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"
+                            ></div>
+                            <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
+                                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Distribution</span>
+                            </button>
+                        </div>
+                    </tab>
+
+                    <tab heading="Critical Errors" class="TabContent">
+                        <div class="content privileges-settings">
+                            <div class="horizontal">
+                                <div class="roles-list">
+                                    <div ng-repeat="(key, val) in all_errors | orderBy:name" class="field">
+                                        <label>
+                                            {{::key}}: {{::val}}
+                                            <span sd-switch ng-model="subscriber.critical_errors[key]"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+                </tabset>
             </fieldset>
         </form>
     </div>

@@ -72,7 +72,13 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
 
     for queue_item in queue_items:
         # Check if output channel is active
-        if not (output_channels.get(str(queue_item['output_channel_id']), {})).get('is_active', False):
+        output_channel = output_channels.get(str(queue_item['output_channel_id']))
+
+        if not output_channel:
+            raise PublishQueueError.output_channel_not_found_error(
+                Exception('Output Channel: {}'.format(queue_item['output_channel_id'])))
+
+        if not output_channel.get('is_active', False):
             continue
 
         try:
@@ -88,7 +94,7 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
                 find_one(req=None, _id=queue_item['formatted_item_id'])
 
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
-            transmitter.transmit(queue_item, formatted_item, subscriber, destination)
+            transmitter.transmit(queue_item, formatted_item, subscriber, destination, output_channel)
             update_content_state(queue_item)
         except:
             failed_items.append(queue_item)

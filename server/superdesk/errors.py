@@ -409,9 +409,10 @@ class PublishQueueError(SuperdeskPublishError):
     _codes = {
         9001: 'Item could not be updated in the queue',
         9002: 'Item format could not be recognized',
-        9003: 'Destination group cannot found',
+        9003: 'Destination group cannot be found',
         9004: 'Schedule information could not be processed',
-        9005: 'State of the content item could not be updated'
+        9005: 'State of the content item could not be updated',
+        9006: 'Output channel cannot be found'
     }
 
     @classmethod
@@ -433,6 +434,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def content_update_error(cls, exception=None, destination=None):
         return PublishQueueError(9005, exception, destination)
+
+    @classmethod
+    def output_channel_not_found_error(cls, exception=None, destination=None):
+        return PublishQueueError(9006, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):

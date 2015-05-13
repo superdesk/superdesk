@@ -121,6 +121,11 @@
                 return this.fetchDestinationGroups({
                     where: JSON.stringify({'$or': parts})
                 });
+            },
+
+            fetchPublishErrors: function() {
+                var criteria = {'io_type': 'publish'};
+                return _fetch('io_errors', criteria);
             }
         };
 
@@ -260,6 +265,12 @@
                     );
                 }
 
+                function fetchPublishErrors() {
+                    adminPublishSettingsService.fetchPublishErrors().then(function(result) {
+                        $scope.all_errors = result._items[0].all_errors;
+                    });
+                }
+
                 $scope.addNewDestination = function() {
                     $scope.newDestination = {};
                 };
@@ -305,6 +316,10 @@
                 $scope.edit = function(subscriber) {
                     $scope.origSubscriber = subscriber || {};
                     $scope.subscriber = _.create($scope.origSubscriber);
+                    $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
+                    if (subscriber) {
+                        fetchPublishErrors();
+                    }
                 };
 
                 $scope.remove = function(subscriber) {
@@ -367,6 +382,12 @@
                     );
                 }
 
+                function fetchPublishErrors() {
+                    adminPublishSettingsService.fetchPublishErrors().then(function(result) {
+                        $scope.all_errors = result._items[0].all_errors;
+                    });
+                }
+
                 $scope.isIncluded = function(subscriber) {
                     return $scope.outputChannel.destinations && $scope.outputChannel.destinations.indexOf(subscriber._id) !== -1;
                 };
@@ -415,6 +436,11 @@
 
                     $scope.outputChannel = _.create($scope.origOutputChannel);
                     $scope.outputChannel.sequence_num_settings = $scope.origOutputChannel.sequence_num_settings || {};
+                    $scope.outputChannel.critical_errors = $scope.origOutputChannel.critical_errors;
+
+                    if (outputChannel) {
+                        fetchPublishErrors();
+                    }
                 };
 
                 $scope.remove = function(outputChannel) {
@@ -626,6 +652,12 @@
                 type: 'http',
                 backend: {
                     rel: 'formatted_item'
+                }
+            });
+            apiProvider.api('io_errors', {
+                type: 'http',
+                backend: {
+                    rel: 'io_errors'
                 }
             });
         }]);

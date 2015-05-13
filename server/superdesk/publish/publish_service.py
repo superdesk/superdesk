@@ -23,7 +23,7 @@ class PublishService():
     def _transmit(self, formatted_item, subscriber, destination):
         raise NotImplementedError()
 
-    def transmit(self, queue_item, formatted_item, subscriber, destination):
+    def transmit(self, queue_item, formatted_item, subscriber, destination, output_channel):
         if not subscriber.get('is_active'):
             raise SubscriberError.subscriber_inactive_error(Exception('Subscriber inactive'), subscriber)
         else:
@@ -32,7 +32,30 @@ class PublishService():
                 update_item_status(queue_item, 'success')
             except SuperdeskPublishError as error:
                 update_item_status(queue_item, 'error', error)
+                self.close_transmitter(output_channel, 'output_channels', error)
+                self.close_transmitter(subscriber, 'subscribers', error)
                 raise error
+
+    def close_transmitter(self, transmitter, transmitter_type, error):
+        """
+        Checks if the transmitter has the error code set in the list of
+        critical errors then closes the transmitter
+        :param transmitter: Either an output channel or a subscriber
+        :param transmitter_type: Name of the resource 'output_channels or subscribers
+        :param error: The error thrown during transmission
+        :return: None
+        """
+        if transmitter.get('critical_errors', {}).get(str(error.code)):
+            update = {
+                'is_active': False,
+                'last_closed': {
+                    'closed_at': utcnow(),
+                    'message': '{} closed due to critical error: {}'.format(transmitter_type, error)
+                }
+            }
+
+            transmitter_service = superdesk.get_resource_service(transmitter_type)
+            transmitter_service.system_update(transmitter[superdesk.config.ID_FIELD], update, transmitter)
 
 
 def update_item_status(queue_item, status, error=None):
