@@ -26,9 +26,9 @@ from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
-    set_sign_off
-
+    set_sign_off, PUBLISH_STATES
 from apps.archive.archive_composite import TakesPackageService
+
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ class BasePublishService(BaseService):
 
             # document is saved to change the status
             if (original.get('publish_schedule') or updates.get('publish_schedule')) \
-                    and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
+                    and original[config.CONTENT_STATE] not in PUBLISH_STATES:
                 updates[config.CONTENT_STATE] = 'scheduled'
             else:
                 updates[config.CONTENT_STATE] = self.published_state

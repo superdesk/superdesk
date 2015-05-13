@@ -516,9 +516,9 @@ Feature: Content Publishing
         """
         {
             "type": "text",
-            "headline": "test1",
+            "headline": "test1=2",
             "slugline": "comics",
-            "anpa_take_key": "Take",
+            "anpa_take_key": "Take=2",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
         }
@@ -584,7 +584,7 @@ Feature: Content Publishing
             "state": "draft",
             "slugline": "Take-1 slugline",
             "urgency": "4",
-            "pubstatus": "Usable",
+            "pubstatus": "usable",
             "destination_groups":["#destgroup1#"],
             "subject":[{"qcode": "17004000", "name": "Statistics"}],
             "anpa-category": {"qcode": "A", "name": "Sport"},
@@ -604,9 +604,9 @@ Feature: Content Publishing
         """
         {
             "type": "text",
-            "headline": "Take-1 headline",
+            "headline": "Take-1 headline=2",
             "slugline": "Take-1 slugline",
-            "anpa_take_key": "Take",
+            "anpa_take_key": "Take=2",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
         }
@@ -687,7 +687,7 @@ Feature: Content Publishing
             "state": "draft",
             "slugline": "Take-1 slugline",
             "urgency": "4",
-            "pubstatus": "Usable",
+            "pubstatus": "usable",
             "destination_groups":["#destgroup1#"],
             "subject":[{"qcode": "17004000", "name": "Statistics"}],
             "anpa-category": {"qcode": "A", "name": "Sport"},
@@ -707,9 +707,9 @@ Feature: Content Publishing
         """
         {
             "type": "text",
-            "headline": "Take-1 headline",
+            "headline": "Take-1 headline=2",
             "slugline": "Take-1 slugline",
-            "anpa_take_key": "Take",
+            "anpa_take_key": "Take=2",
             "state": "draft",
             "original_creator": "#CONTEXT_USER_ID#"
         }
