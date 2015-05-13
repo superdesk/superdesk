@@ -8,7 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import logging
 import superdesk
 
@@ -19,13 +18,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE, PACKAGE
-
-ASSOCIATIONS = 'refs'
-ITEM_REF = 'residRef'
-ID_REF = 'idRef'
-MAIN_GROUP = 'main'
-ROOT_GROUP = 'root'
-SEQUENCE = 'sequence'
+from .common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP, SEQUENCE, PUBLISH_STATES
 
 
 logger = logging.getLogger(__name__)
@@ -110,9 +103,10 @@ class TakesPackageService():
         to['_version'] = 1
         to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
 
+        copy_from = package if (package.get(config.CONTENT_STATE) in PUBLISH_STATES) else target
         for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups',
                       'slugline', 'urgency', 'subject', 'dateline']:
-            to[field] = target.get(field)
+            to[field] = copy_from.get(field)
 
     def create_takes_package(self, takes_package, target, link):
         takes_package.update({
