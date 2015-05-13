@@ -2,6 +2,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: Publish a user content and moves to publish stage
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
@@ -48,6 +52,10 @@ Feature: Content Publishing
       Given "desks"
       """
       [{"name": "Sports"}]
+      """
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
       """
       When we post to "/subscribers"
       """
@@ -115,11 +123,15 @@ Feature: Content Publishing
 
     @auth
     Scenario: Deschedule an item
-        Given empty "output_channels"
+      Given empty "output_channels"
       Given empty "subscribers"
       Given "desks"
       """
       [{"name": "Sports"}]
+      """
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
       """
       When we post to "/subscribers"
       """
@@ -271,6 +283,10 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       And we have "/destination_groups" with "destgroup1" and success
       """
       [
@@ -294,6 +310,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: Clean autosave on publishing item
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
         Given "desks"
           """
           [{"name": "Sports"}]
@@ -329,6 +349,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: We can lock a published content and then kill it
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
@@ -391,6 +415,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: User can't update a published item
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
@@ -420,6 +448,10 @@ Feature: Content Publishing
     @auth
     @provider
     Scenario: Publish a package
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
@@ -483,6 +515,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: Publish the second take before the first fails
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
@@ -543,6 +579,10 @@ Feature: Content Publishing
 
     @auth
     Scenario: Publish the very first take before the second
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
@@ -646,6 +686,10 @@ Feature: Content Publishing
 
    @auth
     Scenario: Publish the second take after the first
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
@@ -758,6 +802,10 @@ Feature: Content Publishing
     @auth
     @notification
     Scenario: As a user I should be able to publish item to a closed output channel
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]

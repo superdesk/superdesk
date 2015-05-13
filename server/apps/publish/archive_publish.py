@@ -10,6 +10,7 @@
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, document_etag
+from eve.validation import ValidationError
 from flask import current_app as app
 from copy import copy
 import logging
@@ -71,6 +72,12 @@ class BasePublishService(BaseService):
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
+
+        validate_item = {'act': 'publish', 'validate': updates}
+        validation_errors = get_resource_service('validate').post([validate_item])
+        if validation_errors[0]:
+            raise ValidationError('Publish failed due to {}'.format(str(validation_errors[0])))
+
         try:
             any_channel_closed = False
 

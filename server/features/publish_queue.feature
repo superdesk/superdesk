@@ -153,6 +153,10 @@ Feature: Publish Queue
 
   @auth
   Scenario: Published Item should have published sequence number when published and placed in queue
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
