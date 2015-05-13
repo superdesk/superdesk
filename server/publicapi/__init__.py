@@ -24,12 +24,42 @@ import logging
 import os
 
 from publicapi import settings
+from publicapi.errors import UnexpectedParameterError
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
 from superdesk.errors import SuperdeskError, SuperdeskApiError
 
 
 logger = logging.getLogger('superdesk')
+
+
+def _set_error_handlers(app):
+    """Set error handlers for the given application object.
+
+    Each error handler receives a :py:class:`superdesk.errors.SuperdeskError`
+    instance as a parameter and returns a tuple containing an error message
+    that is sent to the client and the HTTP status code.
+
+    :param app: an instance of `Eve <http://python-eve.org/>`_ application
+    """
+    @app.errorhandler(UnexpectedParameterError)
+    def unknown_parameter_handler(error):
+        return str(error), 422
+
+    # TODO: contains the same bug as the client_error_handler of the main
+    # superdesk app, fix it when the latter gets resolved (or, perhaps,
+    # replace it with a new 500 error handler tailored for the public API app)
+    @app.errorhandler(SuperdeskError)
+    def client_error_handler(error):
+        return send_response(None, (error.to_dict(), None, None, error.status_code))
+
+    @app.errorhandler(500)
+    def server_error_handler(error):
+        """Log server errors."""
+        app.sentry.captureException()
+        logger.exception(error)
+        return_error = SuperdeskApiError.internalError()
+        return client_error_handler(return_error)
 
 
 def get_app(config=None):
@@ -55,24 +85,8 @@ def get_app(config=None):
     )
 
     superdesk.app = app
-
+    _set_error_handlers(app)
     app.mail = Mail(app)
-
-    @app.errorhandler(SuperdeskError)
-    def client_error_handler(error):
-        """Return json error response.
-
-        :param error: an instance of :attr:`superdesk.SuperdeskError` class
-        """
-        return send_response(None, (error.to_dict(), None, None, error.status_code))
-
-    @app.errorhandler(500)
-    def server_error_handler(error):
-        """Log server errors."""
-        app.sentry.captureException()
-        logger.exception(error)
-        return_error = SuperdeskApiError.internalError()
-        return client_error_handler(return_error)
 
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
