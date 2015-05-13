@@ -40,6 +40,16 @@
         return angular.extend(dest, _.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)));
     }
 
+    function stripHtml(item) {
+        var fields = ['headline']; // field to remove html from
+        var matchHtml = /(<([^>]+)>)/ig;
+        _.each(fields, function(key) {
+            if (item[key] && item[key].match(matchHtml) != null) {
+                item[key] = item[key].replace(matchHtml, '');
+            }
+        });
+    }
+
     /**
      * Extend content of dest by forcing 'default' values
      * if the value doesn't exist in src
@@ -235,6 +245,7 @@
         this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
             // Finding if all the keys are dirty for real
+
             if (angular.isDefined(origItem)) {
                 angular.forEach(_.keys(diff), function(key) {
                     if (_.isEqual(diff[key], origItem[key])) {
@@ -243,6 +254,7 @@
                 });
             }
 
+            stripHtml(diff);
             autosave.stop(item);
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
@@ -1094,6 +1106,7 @@
                             notify.success(gettext('New take created.'));
                             $location.url('/authoring/' + item._id);
                         }, function(err) {
+                            console.log(err);
                             notify.error('Failed to send and continue.');
                         });
                 };
