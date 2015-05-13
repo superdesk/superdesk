@@ -1376,7 +1376,10 @@ def step_impl_when_publish_url(context, item_id, pub_type, state):
     item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
-    data = json.dumps({"state": state})
+    context_data = {"state": state}
+    if context.text:
+        context_data.update(json.loads(context.text))
+    data = json.dumps(context_data)
     context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
                                             data=data, headers=headers)
 
