@@ -11,7 +11,6 @@
 from eve.versioning import resolve_document_version
 from eve.utils import config, document_etag
 from eve.validation import ValidationError
-from flask import current_app as app
 from copy import copy
 import logging
 
@@ -64,7 +63,7 @@ class BasePublishService(BaseService):
     published_state = 'published'
 
     def on_update(self, updates, original):
-        if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
         if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
             raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
@@ -72,7 +71,7 @@ class BasePublishService(BaseService):
         validate_item = {'act': self.publish_type, 'validate': updates}
         validation_errors = get_resource_service('validate').post([validate_item])
         if validation_errors[0]:
-            raise ValidationError('Publish failed due to {}'.format(str(validation_errors[0])))
+            raise ValidationError(validation_errors)
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item=original)
@@ -95,6 +94,7 @@ class BasePublishService(BaseService):
                     and original[config.CONTENT_STATE] not in PUBLISH_STATES:
                 updates[config.CONTENT_STATE] = 'scheduled'
             else:
+                updates['publish_schedule'] = None
                 updates[config.CONTENT_STATE] = self.published_state
 
             original.update(updates)
@@ -115,21 +115,30 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
-                    any_channel_closed = self.publish(doc=package, updates=updates,
-                                                      target_output_channels=DIGITAL)
+                    any_channel_closed_digital, queued_digital = \
+                        self.publish(doc=package, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
+                else:
+                    any_channel_closed_digital = False
+                    queued_digital = False
 
                 # queue only text items
-                any_channel_closed = any_channel_closed or \
-                    self.publish(doc=original, updates=updates,
-                                 target_output_channels=WIRE if package_id else None)
+                any_channel_closed_wire, queued_wire = \
+                    self.publish(doc=original, target_output_channels=WIRE if package_id else None)
+
+                any_channel_closed = any_channel_closed_digital or any_channel_closed_wire
+                queued = queued_digital or queued_wire
+
+                if not queued:
+                    raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
                               item=str(id), unique_name=archived_item['unique_name'],
-                              desk=str(archived_item['task']['desk']), user=str(user.get('_id', '')))
+                              desk=str(archived_item['task']['desk']),
+                              user=str(user.get('_id', '')))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
@@ -142,17 +151,30 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
                                                   .format(str(e)))
 
-    def publish(self, doc, updates, target_output_channels=None):
-        any_channel_closed = self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
-        task = self.__send_to_publish_stage(doc)
-        if task:
-            updates['task'] = task
-        return any_channel_closed
+    def publish(self, doc, target_output_channels=None):
+        any_channel_closed, wrong_formatted_channels, queued = \
+            self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
+
+        user = get_user()
+
+        if wrong_formatted_channels and len(wrong_formatted_channels) > 0:
+            push_notification('item:publish:wrong:format',
+                              item=str(doc['_id']), unique_name=doc['unique_name'],
+                              desk=str(doc['task']['desk']),
+                              user=str(user.get('_id', '')),
+                              output_channels=[c['name'] for c in wrong_formatted_channels])
+
+        if not target_output_channels and not queued:
+            raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+
+        return any_channel_closed, queued
 
     def queue_transmission(self, doc, target_output_channels=None):
         try:
             if doc.get('destination_groups'):
+                queued = False
                 any_channel_closed = False
+                wrong_formatted_channels = []
 
                 destination_groups = self.resolve_destination_groups(
                     doc.get('destination_groups'))
@@ -169,12 +191,17 @@ class BasePublishService(BaseService):
 
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers and subscribers.count() > 0:
-                        formatter = get_formatter(output_channel['format'])
+                        formatter = get_formatter(output_channel['format'], doc['type'])
+                        if not formatter:
+                            # if formatter not found then record it
+                            wrong_formatted_channels.append(output_channel)
+                            continue
 
                         pub_seq_num, formatted_doc = formatter.format(doc, output_channel)
 
                         formatted_item = {'formatted_item': formatted_doc, 'format': output_channel['format'],
-                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0)}
+                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0),
+                                          'published_seq_num': pub_seq_num}
 
                         formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
 
@@ -199,8 +226,9 @@ class BasePublishService(BaseService):
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
+                        queued = True
 
-                return any_channel_closed
+                return any_channel_closed, wrong_formatted_channels, queued
             else:
                 raise PublishQueueError.destination_group_not_found_error(
                     KeyError('Destination groups empty for article: {}'.format(doc['_id'])), None)
@@ -295,12 +323,6 @@ class BasePublishService(BaseService):
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
 
-    def __send_to_publish_stage(self, doc):
-        desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
-        if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
-            doc['task']['stage'] = desk['published_stage']
-            return get_resource_service('move').move_content(doc['_id'], doc)['task']
-
     def process_takes(self, take, package_id):
         """
         This function validates if the take is the one in order then
@@ -364,7 +386,7 @@ class BasePublishService(BaseService):
         get_resource_service('published').update_published_items(published_item['_id'],
                                                                  'last_publish_action',
                                                                  self.published_state)
-        get_resource_service('published').post([published_item])
+        get_resource_service('published').post([copy(published_item)])
 
 
 class ArchivePublishResource(BasePublishResource):
