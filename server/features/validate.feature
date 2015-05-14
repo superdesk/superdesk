@@ -13,7 +13,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"headline": "must be of string type"}}
+    {"errors": ["HEADLINE must be of string type"]}
     """
 
   @auth
@@ -43,7 +43,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"headline": "required field"}}
+    {"errors": ["HEADLINE is a required field"]}
     """
   @auth
   Scenario: Validate field length short
@@ -57,7 +57,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"headline": "min length is 2"}}
+    {"errors": ["HEADLINE is too short"]}
     """
 
   @auth
@@ -72,7 +72,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"headline": "max length is 3"}}
+    {"errors": ["HEADLINE is too long"]}
     """
 
   @auth
@@ -87,7 +87,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"type": "unallowed value B"}}
+    {"errors": ["TYPE unallowed value B"]}
     """
   @auth
   Scenario: Validate allow unknown fields
@@ -115,5 +115,5 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {"missing": "validator was not found"}}
+    {"errors": ["validator was not found for missing"]}
     """

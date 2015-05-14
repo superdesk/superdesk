@@ -41,13 +41,11 @@
     }
 
     function stripHtml(item) {
-        var fields = ['headline']; // field to remove html from
-        var matchHtml = /(<([^>]+)>)/ig;
-        _.each(fields, function(key) {
-            if (item[key] && item[key].match(matchHtml) != null) {
-                item[key] = item[key].replace(matchHtml, '');
-            }
-        });
+        var elem = document.createElement('div');
+        elem.innerHTML = item.headline? item.headline: '';
+        if (elem.textContent !== '') {
+            item.headline = elem.textContent;
+        }
     }
 
     /**
@@ -651,6 +649,10 @@
                 }
 
                 function validatePublishSchedule(item) {
+                    if (_.contains(['published', 'killed', 'corrected'], item.state)) {
+                        return true;
+                    }
+
                     if (item.publish_schedule_date && !item.publish_schedule_time) {
                         notify.error(gettext('Publish Schedule time is invalid!'));
                         return false;
@@ -690,7 +692,11 @@
                         if (response) {
                             if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
                                 if (angular.isDefined(response.data._issues['validator exception'])) {
-                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                    var errors = response.data._issues['validator exception'];
+                                    errors = errors.replace(/\[/g, '').replace(/\]/g, '').split(',');
+                                    for (var i = 0; i < errors.length; i++) {
+                                        notify.error(errors[i]);
+                                    }
                                 }
                             } else {
                                 notify.success(gettext('Item published.'));
@@ -858,6 +864,15 @@
                 $scope.$on('item:publish:closed:channels', function(_e, data) {
                     if (data.item === $scope.item._id) {
                         notify.error(gettext('Item published to closed Output Channel(s).'));
+                    }
+                });
+
+                $scope.$on('item:publish:wrong:format', function(_e, data) {
+                    if (data.item === $scope.item._id) {
+                        notify.error(gettext('Item having story name ' +
+                            data.unique_name +
+                            ' has wrong formatted Output Channel(s):' +
+                            data.output_channels.join(',')));
                     }
                 });
 
