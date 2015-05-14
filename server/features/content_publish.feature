@@ -1,7 +1,7 @@
 Feature: Content Publishing
 
     @auth
-    Scenario: Publish a user content and moves to publish stage
+    Scenario: Publish a user content
       Given the "validators"
       """
       [{"_id": "publish", "schema":{}}]
@@ -10,38 +10,61 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
-
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_version": 2, "state": "published", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
 
     @auth
@@ -66,27 +89,134 @@ Feature: Content Publishing
       Given "archive"
       """
       [{"guid": "123", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
-
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
       """
         {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
       """
 
+    @auth @test
+    Scenario: Publish a user content fails if nothing queued
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
+      """
+
+    @auth
+    Scenario: Publish a user content fails if content format is not compatible
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "type": "image", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
+      """
 
     @auth
     Scenario: Schedule a user content publish
@@ -330,19 +460,43 @@ Feature: Content Publishing
       """
       [{"_id": "publish", "schema":{}}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -361,19 +515,43 @@ Feature: Content Publishing
           """
           [{"name": "Sports"}]
           """
-        And we have "/destination_groups" with "destgroup1" and success
-          """
-          [
-            {
-              "name":"Group 1", "description": "new stuff",
-              "destination_groups": [], "output_channels": []
-            }
-          ]
-          """
+        When we post to "/subscribers"
+        """
+        {
+          "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+        }
+        """
+        Then we get latest
+        """
+        {
+          "name":"Channel 3"
+        }
+        """
+        When we post to "/output_channels"
+        """
+        [
+          {
+            "name":"Output Channel",
+            "description": "new stuff",
+            "destinations": ["#subscribers._id#"],
+            "format": "nitf"
+          }
+        ]
+        """
+        Given we have "/destination_groups" with "destgroup1" and success
+        """
+        [
+          {
+            "name":"Group 1", "description": "new stuff",
+            "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+          }
+        ]
+        """
         And "archive"
           """
           [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+            "body_html": "Test Document body"}]
           """
         When we post to "/archive_autosave"
           """
@@ -401,19 +579,43 @@ Feature: Content Publishing
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       Given "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -444,19 +646,43 @@ Feature: Content Publishing
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
-      Given "archive"
+      And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -487,19 +713,43 @@ Feature: Content Publishing
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
-      Given "archive"
+      And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -528,19 +778,43 @@ Feature: Content Publishing
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
-      Given "archive"
+      And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -619,19 +893,43 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -792,7 +1090,7 @@ Feature: Content Publishing
         """
         And we post to "/output_channels" with "channel1" and success
         """
-        [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        [{"name":"Channel 1", "description": "new stuff", "is_digital":true, "format": "nitf", "destinations": ["#subscribers._id#"]}]
         """
         And we post to "/output_channels" with "channel2" and success
         """
@@ -899,11 +1197,13 @@ Feature: Content Publishing
         """
         And we post to "/output_channels" with "channel1" and success
         """
-        [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        [{"name":"Channel 1", "is_digital": true,
+        "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
         """
         And we post to "/output_channels" with "channel2" and success
         """
-        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+        [{"name":"Channel 2", "description": "new stuff",
+        "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
         """
         And we post to "/destination_groups" with "destgroup1" and success
         """
@@ -1032,12 +1332,6 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
-      """
-      And we post to "/stages" with success
-      """
-      [
-        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
-      ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 200
