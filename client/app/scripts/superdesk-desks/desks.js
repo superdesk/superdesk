@@ -97,29 +97,17 @@
                 } else {
                     scope.preview = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        //superdesk.intent('read_only', 'content_article', item);
-                        //scope.$parent.$broadcast('handleBroadcast');
-                        //scope.$parent.action = 'view';
-                        scope.$emit('handlePreview', item);
-                        /*authoring.open(item._id, true).
-                        then(function(opened) {
-                            scope.$parent.origItem = opened;
-                            scope.$parent.items = opened;
-                            scope.$emit('handlePreview', opened);
-                            console.log('view in production');
-                        });*/
+                        scope.$root.$broadcast('handlePreview', item);
                     };
                     scope.edit = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        //superdesk.intent('producer', 'article', item);
-                        scope.$parent.action = 'edit';
-                        return authoring.open(item._id, false).
-                        then(function(opened) {
-                            scope.$parent.origItem = opened;
-                            scope.$parent.items = opened;
-                            console.log('edit in production');
-                        });
+                        scope.$root.$broadcast('handleEdit', item);
                     };
+                    scope.$watch('selected', function() {
+                        if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
+                            scope.$root.$broadcast('handlePreview', scope.selected);
+                        }
+                    });
                 }
                 function queryItems(queryString) {
                     query = search.query({});
@@ -146,7 +134,6 @@
                     });
 
                 }
-
                 scope.$watch('filter', queryItems);
                 scope.$on('task:stage', function(event, data) {
                     if (data.new_stage === scope.stage || data.old_stage === scope.stage) {

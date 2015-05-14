@@ -552,9 +552,6 @@
                     resolveDestinations();
                 }
 
-                $scope.$watch($scope.origItem, function() {
-                    console.log('called');
-                });
                 $scope.$watch('vars', function() {
                     if ($scope.vars && $scope.vars.destinationGroups) {
                         var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
@@ -564,6 +561,17 @@
                         }
                     }
                 }, true);
+
+                $scope.$on('handlePreview', function(_e, item) {
+                    if ($scope.item._id !== item._id){
+                        $scope.closePreview();
+                    }
+                });
+                $scope.$on('handleEdit', function(_e, item) {
+                    if ($scope.item._id !== item._id){
+                        $scope.closePreview();
+                    }
+                });
 
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
