@@ -158,7 +158,7 @@
         $scope.selectedQueueItems = [];
 
         $scope.showResendBtn = false;
-        $scope.showCacnelBtn = false;
+        $scope.showCancelBtn = false;
 
         var promises = [];
 
