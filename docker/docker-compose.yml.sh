@@ -11,18 +11,23 @@ redis:
 
 logstash:
   image: logstash
+  command: logstash -f /usr/share/logstash/logstash.conf
   links:
   - elastic
+  volumes:
+  - ../server/logstash:/usr/share/logstash
 
-kibana:
-  image: kibana
-  links:
-  - logstash
+# kibana:
+#   image: kibana
+#   links:
+#   - logstash
 
 elastic:
   image: elasticsearch:1.5
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
+  ports:
+  - "9200:9200"
 
 backend:
   build: ../server
@@ -39,6 +44,8 @@ backend:
    - ELASTICSEARCH_INDEX
    - CELERY_BROKER_URL=redis://redis:6379/1
    - REDIS_URL=redis://redis:6379/1
+   - LOG_SERVER_ADDRESS=logstash
+   - LOG_SERVER_PORT=5555
    - AMAZON_ACCESS_KEY_ID
    - AMAZON_CONTAINER_NAME
    - AMAZON_REGION
