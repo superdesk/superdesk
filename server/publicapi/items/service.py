@@ -74,6 +74,9 @@ class ItemsService(BaseService):
         :return: requested item (if found)
         :rtype: dict or None
         """
+        if req is None:
+            req = ParsedRequest()
+
         self._check_request_params(req, whitelist=(), allow_filtering=False)
 
         return super().find_one(req, **lookup)

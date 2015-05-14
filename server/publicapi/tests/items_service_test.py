@@ -10,6 +10,7 @@
 
 import json
 
+from eve.utils import ParsedRequest
 from publicapi.tests import ApiTestCase
 from unittest import mock
 from unittest.mock import MagicMock
@@ -156,7 +157,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertTrue(fake_super_get.called)
         args, kwargs = fake_super_get.call_args
         self.assertEqual(len(args), 2)
-        self.assertIsNotNone(args[0])
+        self.assertIsInstance(args[0], ParsedRequest)
 
     def test_sets_query_filter_on_request_object_if_present(self):
         request = MagicMock()
@@ -239,3 +240,14 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(len(args), 1)
         self.assertIs(args[0], request)
         self.assertEqual(kwargs, lookup)
+
+    def test_provides_request_object_to_superclass_if_not_given(self):
+        lookup = {'_id': 'my_item'}
+
+        instance = self._make_one()
+        instance.find_one(None, **lookup)
+
+        self.assertTrue(fake_super_find_one.called)
+        args, kwargs = fake_super_find_one.call_args
+        self.assertEqual(len(args), 1)
+        self.assertIsInstance(args[0], ParsedRequest)
