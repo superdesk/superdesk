@@ -12,6 +12,7 @@
 from publicapi.tests import ApiTestCase
 from unittest import mock
 from unittest.mock import MagicMock
+from werkzeug.datastructures import MultiDict
 
 
 class ItemsServiceTestCase(ApiTestCase):
@@ -34,6 +35,65 @@ class ItemsServiceTestCase(ApiTestCase):
         return self._get_target_class()(*args, **kwargs)
 
 
+class CheckParamsMethodTestCase(ItemsServiceTestCase):
+    """Tests for the _check_params() helper method."""
+
+    def test_does_not_raise_an_error_on_valid_parameters(self):
+        request = MagicMock()
+        request.args = MultiDict([('sort_by', 'language')])
+        instance = self._make_one()
+
+        try:
+            instance._check_request_params(request, ('foo', 'sort_by', 'bar'))
+        except Exception as ex:
+            self.fail("Exception unexpectedly raised ({})".format(ex))
+
+    def test_raises_correct_error_on_unexpected_parameters(self):
+        request = MagicMock()
+        request.args = MultiDict([('param_x', 'something')])
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._check_request_params(request, ('foo', 'bar'))
+
+        ex = context.exception
+        self.assertEqual(ex.desc, 'Unexpected parameter (param_x)')
+
+    def test_raises_more_descriptive_error_on_filtering_disabled(self):
+        request = MagicMock()
+        request.args = MultiDict([('q', '{"language": "en"}')])
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._check_request_params(
+                request, whitelist=(), allow_filtering=False)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Filtering is not supported when retrieving a single object '
+            '(the "q" parameter)'
+        )
+
+    def test_raises_correct_error_on_duplicate_parameters(self):
+        request = MagicMock()
+        request.args = MultiDict([('foo', 'value 1'), ('foo', 'value 2')])
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance._check_request_params(request, whitelist=('foo',))
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc, "Multiple values received for parameter (foo)")
+
+
 fake_super_get = MagicMock(name='fake super().get')
 
 
@@ -44,6 +104,30 @@ class GetMethodTestCase(ItemsServiceTestCase):
     def setUp(self):
         super().setUp()
         fake_super_get.reset_mock()
+
+    @mock.patch('publicapi.items.service.ItemsService._check_request_params')
+    def test_correctly_invokes_parameter_validation(self, fake_check_params):
+        fake_request = MagicMock()
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(fake_request, lookup)
+
+        self.assertTrue(fake_check_params.called)
+        args, kwargs = fake_check_params.call_args
+
+        self.assertGreater(len(args), 0)
+        self.assertEqual(args[0], fake_request)
+
+        whitelist_arg = kwargs.get('whitelist')
+        if whitelist_arg is not None:
+            # NOTE: the whitelist argument is converted to a list, because any
+            # iterable type is valid, not just lists
+            self.assertEqual(list(whitelist_arg), ['q'])
+        else:
+            # whitelist can also be passed as a positional argument
+            self.assertGreater(len(args), 1)
+            self.assertEqual(list(args[1]), ['q'])
 
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
@@ -71,7 +155,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
     def test_sets_query_filter_on_request_object_if_present(self):
         request = MagicMock()
-        request.args = dict(q='{"language": "de"}')
+        request.args = MultiDict([('q', '{"language": "de"}')])
         lookup = {}
 
         instance = self._make_one()
@@ -81,20 +165,6 @@ class GetMethodTestCase(ItemsServiceTestCase):
         args, kwargs = fake_super_get.call_args
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0].where, '{"language": "de"}')
-
-    def test_raises_correct_error_on_unexpected_parameters(self):
-        request = MagicMock()
-        request.args = dict(foo='bar')
-        lookup = {}
-
-        from publicapi.errors import UnexpectedParameterError
-        instance = self._make_one()
-
-        with self.assertRaises(UnexpectedParameterError) as context:
-            instance.get(request, lookup)
-
-        ex = context.exception
-        self.assertEqual(ex.desc, 'Unexpected parameter (foo)')
 
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
@@ -108,6 +178,31 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         super().setUp()
         fake_super_find_one.reset_mock()
 
+    @mock.patch('publicapi.items.service.ItemsService._check_request_params')
+    def test_correctly_invokes_parameter_validation(self, fake_check_params):
+        fake_request = MagicMock()
+        lookup = {'_id': 'my_item'}
+
+        instance = self._make_one()
+        instance.find_one(fake_request, **lookup)
+
+        self.assertTrue(fake_check_params.called)
+        args, kwargs = fake_check_params.call_args
+
+        self.assertGreater(len(args), 0)
+        self.assertEqual(args[0], fake_request)
+        self.assertEqual(kwargs.get('allow_filtering'), False)
+
+        whitelist_arg = kwargs.get('whitelist')
+        if whitelist_arg is not None:
+            # NOTE: the whitelist argument is converted to a list, because any
+            # iterable type is valid, not just lists
+            self.assertEqual(list(whitelist_arg), [])
+        else:
+            # whitelist can also be passed as a positional argument
+            self.assertGreater(len(args), 1)
+            self.assertEqual(list(args[1]), [])
+
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
         lookup = {'_id': 'my_item'}
@@ -120,35 +215,3 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(len(args), 1)
         self.assertIs(args[0], request)
         self.assertEqual(kwargs, lookup)
-
-    def test_raises_correct_error_on_unexpected_parameters(self):
-        request = MagicMock()
-        request.args = dict(foo='bar')
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import UnexpectedParameterError
-        instance = self._make_one()
-
-        with self.assertRaises(UnexpectedParameterError) as context:
-            instance.find_one(request, **lookup)
-
-        ex = context.exception
-        self.assertEqual(ex.desc, 'Unexpected parameter (foo)')
-
-    def test_raises_error_with_descriptive_msg_on_filtering_attempt(self):
-        request = MagicMock()
-        request.args = dict(q='{"language": "en"}')
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import UnexpectedParameterError
-        instance = self._make_one()
-
-        with self.assertRaises(UnexpectedParameterError) as context:
-            instance.find_one(request, **lookup)
-
-        ex = context.exception
-        self.assertEqual(
-            ex.desc,
-            'Filtering is not supported when retrieving a single item '
-            '(the "q" parameter)'
-        )
