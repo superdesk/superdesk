@@ -111,7 +111,10 @@ class TakesPackageService():
     def create_takes_package(self, takes_package, target, link):
         takes_package.update({
             ITEM_TYPE: ITEM_TYPE_COMPOSITE,
-            PACKAGE_TYPE: TAKES_PACKAGE
+            PACKAGE_TYPE: TAKES_PACKAGE,
+            'headline': target.get('headline'),
+            'slugline': target.get('slugline'),
+            'abstract': target.get('abstract')
         })
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)
