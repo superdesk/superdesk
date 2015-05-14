@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import json
 
 from publicapi.tests import ApiTestCase
 from unittest import mock
@@ -35,8 +36,8 @@ class ItemsServiceTestCase(ApiTestCase):
         return self._get_target_class()(*args, **kwargs)
 
 
-class CheckParamsMethodTestCase(ItemsServiceTestCase):
-    """Tests for the _check_params() helper method."""
+class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
+    """Tests for the _check_request_params() helper method."""
 
     def test_does_not_raise_an_error_on_valid_parameters(self):
         request = MagicMock()
@@ -108,6 +109,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
     @mock.patch('publicapi.items.service.ItemsService._check_request_params')
     def test_correctly_invokes_parameter_validation(self, fake_check_params):
         fake_request = MagicMock()
+        fake_request.args = MultiDict()
         lookup = {}
 
         instance = self._make_one()
@@ -119,18 +121,21 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0], fake_request)
 
+        expected_whitelist = sorted(['start_date', 'end_date', 'q'])
+
         whitelist_arg = kwargs.get('whitelist')
         if whitelist_arg is not None:
             # NOTE: the whitelist argument is converted to a list, because any
             # iterable type is valid, not just lists
-            self.assertEqual(list(whitelist_arg), ['q'])
+            self.assertEqual(sorted(list(whitelist_arg)), expected_whitelist)
         else:
             # whitelist can also be passed as a positional argument
             self.assertGreater(len(args), 1)
-            self.assertEqual(list(args[1]), ['q'])
+            self.assertEqual(sorted(list(args[1])), expected_whitelist)
 
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
+        request.args = MultiDict()
         lookup = {}
 
         instance = self._make_one()
@@ -165,6 +170,25 @@ class GetMethodTestCase(ItemsServiceTestCase):
         args, kwargs = fake_super_get.call_args
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0].where, '{"language": "de"}')
+
+    def test_includes_given_date_range_into_query_filter_if_given(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('start_date', '2012-08-21'),
+            ('end_date', '2012-08-26')
+        ])
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {'$gte': '2012-08-21', '$lte': '2012-08-26'}
+        self.assertEqual(date_filter, expected_filter)
 
 
 fake_super_find_one = MagicMock(name='fake super().find_one')

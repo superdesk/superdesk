@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import json
 import logging
 
 from eve.utils import ParsedRequest
@@ -91,11 +92,36 @@ class ItemsService(BaseService):
         if req is None:
             req = ParsedRequest()
 
-        self._check_request_params(req, whitelist=('q',))
+        allowed_params = ('q', 'start_date', 'end_date')
+        self._check_request_params(req, whitelist=allowed_params)
 
         request_params = req.args or {}
+        query_filter = {}
+
         if 'q' in request_params:
-            req.where = request_params['q']
+            # TODO: add validation for the "q" parameter when we define its
+            # format and implement the corresponding actions
+            query_filter = json.loads(request_params['q'])
+
+        # ### set date filters
+        # TODO: validate date format! helper function..
+        # check for no ValueError: datetime.strptime(date_text, '%Y-%m-%d')
+        # if yes, raise BadParameterValueError (from None, of course)
+        date_filter = {'versioncreated': {}}
+
+        start_date = request_params.get('start_date')
+        if start_date is not None:
+            date_filter['versioncreated']['$gte'] = start_date
+
+        end_date = request_params.get('end_date')
+        if end_date is not None:
+            date_filter['versioncreated']['$lte'] = end_date
+
+        if start_date or end_date:
+            query_filter.update(date_filter)
+        # ### end setting date filters
+
+        req.where = json.dumps(query_filter)
 
         return super().get(req, lookup)
 
