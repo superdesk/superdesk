@@ -157,7 +157,8 @@ define([
                         return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
                         item.state !== 'killed' &&
                         item.state !== 'published' &&
-                        item.state !== 'corrected';
+                        item.state !== 'corrected' &&
+                        item.package_type !== 'takes';
                     }
                 })
                 .activity('unspike', {
@@ -182,7 +183,9 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) && item.state !== 'killed';
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
+                            item.state !== 'killed' &&
+                            item.package_type !== 'takes';
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
                         return desks.getCurrentDeskId() !== null;
