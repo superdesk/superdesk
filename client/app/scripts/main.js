@@ -32,6 +32,10 @@ define('main', [
         apps.unshift(superdesk.name);
         superdesk.constant('config', config);
 
+        superdesk.config(['$compileProvider', function ($compileProvider) {
+            $compileProvider.debugInfoEnabled(false);
+        }]);
+
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {

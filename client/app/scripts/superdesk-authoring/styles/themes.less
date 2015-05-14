@@ -31,8 +31,6 @@ body, html {
 }
 
 .main-article {
-	width:auto;
-	overflow-y: scroll;
 	background: @white;
 	border: 1px solid #cacaca;
 	border-width:0 1px;
@@ -106,9 +104,7 @@ body, html {
 		font-size: 10px;
 		line-height: 15px;
 		height: 15px;
-		.transition(all ease 0.2s);
 		opacity: 0;
-
 	}
 
 	// inputs
@@ -167,11 +163,11 @@ body, html {
 			color: #D33C30;
 		}
 	}
+
 	&:hover, &:focus {
 		.char-count, .field label {
 			.opacity(100);
 		}
-
 	}
 
 	.field.limit-error {

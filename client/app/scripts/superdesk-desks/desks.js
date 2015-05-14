@@ -82,23 +82,33 @@
                 scope.fetching = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
+
+                scope.preview = preview;
+                scope.edit = edit;
+
+                scope.select = function(view) {
+                    scope.selected = view;
+                };
+
+                scope.$watch('filter', queryItems);
+                scope.$on('task:stage', handleStage);
+
+                elem.on('keyup', handleKeyUp);
+                elem.on('scroll', handleScroll);
+
                 var query = search.query({});
                 var criteria = {source: query.getCriteria()};
 
-                scope.preview = function(item) {
-                    desks.setWorkspace(item.task.desk, item.task.stage);
-                    superdesk.intent('read_only', 'content_article', item);
-                };
-
-                scope.edit = function(item) {
-                    desks.setWorkspace(item.task.desk, item.task.stage);
-                    superdesk.intent('author', 'article', item);
-                };
+                function handleStage(event, data) {
+                    if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
+                        queryItems();
+                    }
+                }
 
                 function queryItems(queryString) {
                     query = search.query({});
-                    query.filter({term: {'task.stage': scope.stage}});
-                    query.size(25);
+                    //query.filter({term: {'task.stage': scope.stage}});
+                    query.size(20); // hard limit, we don't let user scroll over this
 
                     if (queryString) {
                         query.filter({query: {query_string: {
@@ -106,146 +116,101 @@
                             lenient: false
                         }}});
                     }
+
                     criteria = {source: query.getCriteria()};
+
                     scope.loading = true;
                     scope.items = scope.total = null;
-                    api('archive').query(criteria).then(function(items) {
-                        scope.items = items._items;
+                    return api.query('ingest', criteria).then(function(items) {
                         scope.total = items._meta.total;
-
-                        scope.cachePreviousItems = items._items;
-                        setNextItems(criteria);
+                        scope.items = items._items;
+                        scope.$applyAsync(setVisible);
                     })['finally'](function() {
                         scope.loading = false;
                     });
-
                 }
 
-                scope.$watch('filter', queryItems);
-                scope.$on('task:stage', function(event, data) {
-                    if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
-                        queryItems();
-                    }
-                });
+                function setVisible(event) {
+                    var ITEM_HEIGHT = 32,
+                        ITEMS_COUNT = 10,
+                        BUFFER = 5,
+                        top = elem[0].scrollTop,
+                        start = Math.floor(top / ITEM_HEIGHT),
+                        from = Math.max(0, start - BUFFER),
+                        to = Math.min(scope.total, start + ITEMS_COUNT + BUFFER),
+                        list = elem[0].getElementsByClassName('inline-content-items')[0];
 
-                var container = elem[0];
-                var offsetY = 0;
-                elem.bind('scroll', function() {
-                    scope.$apply(function() {
-                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 3) {
-                            container.scrollTop = container.scrollTop - 3;
-                            scope.fetchNext();
-                        }
-                        if (container.scrollTop <= 2) {
-                            offsetY = 2 - container.scrollTop;
-                            container.scrollTop = container.scrollTop + offsetY;
-                            scope.fetchPrevious();
-                        }
+                    if (parseInt(list.style.height, 10) !== scope.total * ITEM_HEIGHT) {
+                        list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
+                    }
+
+                    criteria.source.from = from;
+                    criteria.source.size = to - from;
+                    api.query('ingest', criteria).then(function(items) {
+                        scope.$applyAsync(function() {
+                            if (items._meta.total > scope.total) {
+                                from += items._meta.total - scope.total;
+                                console.log('total+', items._meta.total - scope.total);
+                                scope.total = items._meta.total;
+                                list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
+                            }
+
+                            list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
+                            scope.viewitems = items._items;
+                        });
                     });
-                });
-                scope.fetchNext = function() {
-                    if (!scope.fetching) {
-                        if (scope.cacheNextItems.length > 0) {
-                            scope.fetching = true;
-                            scope.page = scope.page + 1;
-
-                            criteria.source.from = (scope.page) * criteria.source.size;
-                            scope.loading = true;
-
-                            if (scope.items.length > criteria.source.size){
-                                scope.cachePreviousItems = _.slice(scope.items, 0, criteria.source.size);
-                                scope.items.splice(0, criteria.source.size);
-                            }
-                            $timeout(function() {
-                                if (!_.isEqual(scope.items, scope.cacheNextItems)) {
-                                    scope.items = scope.items.concat(scope.cacheNextItems);
-                                }
-                            }, 100);
-
-                            api('archive').query(criteria)
-                            .then(function(items) {
-                                scope.cacheNextItems = items._items;
-                                scope.fetching = false;
-                            }, function() {
-                                //
-                            })
-                            ['finally'](function() {
-                                scope.loading = false;
-                            });
-                        }
-                    } else {
-                        return $q.when(false);
-                    }
-                };
-                scope.fetchPrevious = function() {
-                    if (!scope.fetching && scope.page > 2) {
-                        scope.fetching = true;
-                        scope.page = scope.page - 1;
-                        if (scope.page > 2) {
-                            criteria.source.from = (scope.page - 3) * criteria.source.size;
-                        } else {
-                            criteria.source.from = 0;
-                        }
-                        scope.loading = true;
-
-                        if (scope.items.length > criteria.source.size) {
-                            scope.cacheNextItems = _.slice(scope.items,
-                                scope.items.length - (scope.items.length - criteria.source.size), scope.items.length);
-                            scope.items.splice(scope.items.length - (scope.items.length - criteria.source.size), criteria.source.size);
-                        }
-
-                        $timeout(function() {
-                            scope.items.unshift.apply(scope.items, scope.cachePreviousItems);
-                            if (scope.items.length > 0) {
-                                scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), 10)]._id);
-                            }
-                        }, 100);
-
-                        api('archive').query(criteria)
-                        .then(function(items) {
-                            scope.cachePreviousItems = items._items;
-                            scope.fetching = false;
-                        })
-                        ['finally'](function() {
-                            scope.loading = false;
-                        });
-                    } else {
-                        return $q.when(false);
-                    }
-                };
-                function setNextItems(criteria) {
-                    criteria.source.from = scope.page * criteria.source.size;
-                    return api('archive').query(criteria)
-                        .then(function(items) {
-                            scope.cacheNextItems = items._items;
-                        });
-                }
-                function scrollList(id) {
-                    $location.hash(id);
-                    $anchorScroll();
                 }
 
-                var UP = -1,
-                    DOWN = 1;
+                scope.$on('ingest:update', update);
 
-                var code;
-                elem.on('keyup', function(e) {
+                function update() {
+                    if (criteria.source.from) {
+                        console.log('not visible probably');
+                    } else {
+                        console.log('this would be visible');
+                    }
+
+                    apu.query('ingest', criteria).then(function(items) {
+                        console.dir(items);
+                    });
+                }
+
+                var updateTimeout;
+
+                function handleScroll(event) {
+                    event.stopImmediatePropagation();
+                    event.stopPropagation();
+                    $timeout.cancel(updateTimeout);
+                    updateTimeout = $timeout(setVisible, 100, false);
+                }
+
+                function handleKeyUp(e) {
+                    var UP = -1, DOWN = 1, code;
                     scope.$apply(function() {
                         if (e.keyCode) {
                             code = e.keyCode;
                         } else if (e.which) {
                             code = e.which;
                         }
-                        if (code === 38) { scope.move(UP, e); }
+                        if (code === 38) { move(UP, e); }
                         if (code === 40) {
                             e.preventDefault();
-                            scope.move(DOWN, e);
+                            move(DOWN, e);
                         }
                     });
-                });
+                }
 
-                scope.move = function (diff, event) {
-                    if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
+                function clickItem(item, $event) {
+                    scope.select(item);
+                    if ($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        $event.stopImmediatePropagation();
+                    }
+                }
+
+                function move(diff, event) {
+                    if (scope.selected != null) {
                         if (scope.items) {
                             var index = _.findIndex(scope.items, {_id: scope.selected._id});
                             if (index === -1) { // selected not in current items, select first
@@ -267,20 +232,94 @@
                             }
                         }
                     }
-                };
-                function clickItem(item, $event) {
-                    scope.select(item);
-                    if ($event) {
-                        $event.preventDefault();
-                        $event.stopPropagation();
-                        $event.stopImmediatePropagation();
-                    }
                 }
-                scope.select = function(view) {
-                    this.selected = view;
-                };
             }
         };
+
+        function preview(item) {
+            desks.setWorkspace(item.task.desk, item.task.stage);
+            superdesk.intent('read_only', 'content_article', item);
+        }
+
+        function edit(item) {
+            desks.setWorkspace(item.task.desk, item.task.stage);
+            superdesk.intent('author', 'article', item);
+        }
+
+        function scrollList(id) {
+            $location.hash(id);
+            $anchorScroll();
+        }
+
+        function fetchNext(scope, criteria) {
+            if (!scope.fetching) {
+                scope.fetching = true;
+                scope.page = scope.page + 1;
+
+                criteria.source.from = (scope.page) * criteria.source.size;
+                scope.loading = true;
+
+                if (scope.items.length > criteria.source.size){
+                    scope.cachePreviousItems = _.slice(scope.items, 0, criteria.source.size);
+                    scope.items.splice(0, criteria.source.size);
+                }
+
+                scope.$applyAsync(function() {
+                    scope.items.merge(scope.cacheNextItems);
+                });
+
+                api('archive').query(criteria)
+                .then(function(items) {
+                    scope.cacheNextItems = items;
+                    scope.fetching = false;
+                }, function() {
+                    //
+                })
+                ['finally'](function() {
+                    scope.loading = false;
+                });
+            } else {
+                return $q.when(false);
+            }
+        }
+
+        function fetchPrevious(scope, criteria) {
+            if (!scope.fetching && scope.page > 2) {
+                scope.fetching = true;
+                scope.page = scope.page - 1;
+                if (scope.page > 2) {
+                    criteria.source.from = (scope.page - 3) * criteria.source.size;
+                } else {
+                    criteria.source.from = 0;
+                }
+
+                scope.loading = true;
+
+                if (scope.items.length > criteria.source.size) {
+                    scope.cacheNextItems = _.slice(scope.items,
+                        scope.items.length - (scope.items.length - criteria.source.size), scope.items.length);
+                    scope.items.splice(scope.items.length - (scope.items.length - criteria.source.size), criteria.source.size);
+                }
+
+                $timeout(function() {
+                    scope.items.unshift.apply(scope.items, scope.cachePreviousItems);
+                    if (scope.items.length > 0) {
+                        scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), 10)]._id);
+                    }
+                }, 100);
+
+                api('archive').query(criteria)
+                .then(function(items) {
+                    scope.cachePreviousItems = items._items;
+                    scope.fetching = false;
+                })
+                ['finally'](function() {
+                    scope.loading = false;
+                });
+            } else {
+                return $q.when(false);
+            }
+        }
     }
 
     TaskStatusItemsDirective.$inject = ['search', 'api', 'desks'];

@@ -19,7 +19,6 @@
 
     .tabcontent {
         position: relative;
-        overflow: initial;
         padding: 0;
         left: 0; right: 0;
         height: 100%;
@@ -27,7 +26,6 @@
     .widget-content {
         position: relative;
         top: 0;
-        overflow: initial;
         padding-bottom: 0;
         border-top: 0;
         height: 100%;
@@ -50,7 +48,6 @@
         background: @tabpane-background;
         width: @search-widget-width;
         height: 100%;
-        overflow: hidden;
         &.extended {
             width: @search-widget-width + @search-widget-preview-width;
         }
@@ -97,28 +94,11 @@
         .content-list {
             position: absolute;
             top: 2*@nav-height;
-            bottom: @bottom-view-padding - 20px;
+            bottom: @bottom-view-padding;
             left: 0;
             right: 0;
             padding: 10px;
-            overflow: auto;
-
-            &::-webkit-scrollbar {
-                width: 12px;
-                height: 12px;
-                border-left: 1px solid #ccc;
-            }
-            &::-webkit-scrollbar:hover {
-                background:@tabpane-background;
-            }
-            &::-webkit-scrollbar-thumb {
-                border-left: 1px solid #ccc;
-                background: #ccc;
-                .box-shadow(inset 0px 0px 0px 2px @tabpane-background);
-            }
-            &::-webkit-scrollbar-thumb:hover {
-                background: #bbb;
-            }
+            overflow-y: scroll;
         }
     }
 
@@ -200,15 +180,6 @@
                             padding: 6px;
                         }
                     }
-                    &:hover {
-                        background: #f4f4f4;
-                        cursor: pointer;
-                        padding-right: 40px;
-                        border-right-color: #f4f4f4;
-                        .item-functions {
-                            display: block;
-                        }
-                    }
                     [class^="filetype-icon-"] {
                         margin: -1px 4px 0 -4px;
                         .opacity(80);
@@ -246,7 +217,6 @@
                             }
                         }
                     }
-
                     &.added {
                         background: #fafafa;
                         border-right-color: #ddd;
@@ -319,8 +289,9 @@
                 }
                 .stage-content {
                     margin: 5px 0 20px;
-                    overflow: scroll;
-                    height: 326px;
+                    overflow-y: scroll;
+                    overflow-x: hidden;
+                    max-height: 326px;
                     position: relative;
                 }
             }

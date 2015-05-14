@@ -220,6 +220,11 @@
 
 .inline-content-items {
 	min-height: 18px;
+	.border-box();
+	.item-container {
+		height: 32px;
+		background: @white;
+	}
 	.item {
 		cursor: default;
 		background: @white;
@@ -253,7 +258,6 @@
 		}
 		.text {
 			height: 32px;
-			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			font-size: 12px;
@@ -288,14 +292,7 @@
 				background: darken(@sd-hover, 10%);
 			}
 		}
-		&.shifted:hover {
-			.text {
-				padding-right: 37px;
-			}
-			.action {
-				display: block;
-			}
-		}
+		
 	}
 	&.content-tasks {
 		.item {

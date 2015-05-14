@@ -59,7 +59,27 @@
         </div>
     </div>
 
-    <div ng-include="'scripts/superdesk-packaging/views/search-widget-preview.html'"></div>
+    <div class="preview-container" ng-init="contenttab = true" ng-if="agg.selected">
+        <header>
+            <ul class="nav nav-tabs">
+                <li ng-class="{active: contenttab}">
+                    <button ng-click="contenttab = true">Content</button>
+                </li>
+                <li ng-class="{active: !contenttab}">
+                    <button ng-click="contenttab = false">Metadata</button>
+                </li>
+            </ul>
+            <button ng-click="agg.preview()" class="close-preview">
+                <i class="icon-close-small"></i>
+            </button>
+        </header>
+        <div class="content-item-preview" ng-if="agg.selected">
+            <div class="content" ng-if="contenttab"
+                sd-media-preview-widget data-item="agg.selected"></div>
+            <div ng-if="!contenttab"
+                sd-media-metadata data-item="agg.selected"></div>
+        </div>
+    </div>
 
     <div sd-modal data-model="agg.modalActive" class="aggregate-widget-config">
         <div class="modal-header">

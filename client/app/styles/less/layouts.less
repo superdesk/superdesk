@@ -13,7 +13,6 @@ body {
 	line-height: @baseLineHeight;
 	color: @sd-text;
 	background-color: @sd-background;
-	overflow: hidden;
 	height:100%;
 }
 
@@ -44,9 +43,6 @@ a:hover {
 	.box-sizing(border-box);
 	height:100%;
 	background: @background-main;
-	overflow-y:visible;
-	.transition( all 0.3s ease);
-	overflow-x:hidden; 
 	&.menu {
 		left: @sf-main-menu-width !important;
 		.subnav {
@@ -234,10 +230,9 @@ a:hover {
 	bottom:0;
 	z-index:20;
 	background: @tablist-background;
-	overflow:hidden;
 	&.left-tablist {
 		left:0;
-                overflow: visible;
+        overflow: visible;
 		.box-shadow(inset -8px 0 7px -6px #888);
 	}
 	&.right-tablist {
