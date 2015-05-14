@@ -91,9 +91,12 @@ class BasePublishService(BaseService):
             if archived_item['type'] != 'composite':
                 # queue only text items
                 any_channel_closed = self.queue_transmission(original)
-                task = self.__send_to_publish_stage(original)
+                source, task = self.__send_to_publish_stage_and_set_source(original)
                 if task:
                     updates['task'] = task
+
+                if source:
+                    updates['source'] = source
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
@@ -253,11 +256,18 @@ class BasePublishService(BaseService):
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
 
-    def __send_to_publish_stage(self, doc):
+    def __send_to_publish_stage_and_set_source(self, doc):
+        task = source = ''
         desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+
+        if (not doc.get('ingest_provider')) and desk.get('source', ''):
+            source = desk['source']
+
         if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
             doc['task']['stage'] = desk['published_stage']
-            return get_resource_service('move').move_content(doc['_id'], doc)['task']
+            task = get_resource_service('move').move_content(doc['_id'], doc)['task']
+
+        return source, task
 
 
 class ArchivePublishResource(BasePublishResource):

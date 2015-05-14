@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from apps.users.services import current_user_has_privilege
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
 
 SOURCE = 'archive'
@@ -169,6 +170,9 @@ class ArchiveService(BaseService):
             # let client create version 0 docs
             if doc.get('version') == 0:
                 doc['_version'] = doc['version']
+
+            if not doc.get('ingest_provider'):
+                doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
     def on_created(self, docs):
         packages = [doc for doc in docs if doc['type'] == 'composite']
@@ -444,6 +448,10 @@ class AutoSaveResource(Resource):
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime',
+            'default': None
         }
     }
     schema.update(metadata_schema)

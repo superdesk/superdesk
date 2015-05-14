@@ -269,3 +269,6 @@ AAP_MM_PASSWORD = env('AAP_MM_PASSWORD', None)
 
 # Defines the maximum value of Publish Sequence Number after which the value will start from 1
 MAX_VALUE_OF_PUBLISH_SEQUENCE = 9999
+
+# Defines default value for Source to be set for manually created articles
+DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = 'AAP'
