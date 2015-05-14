@@ -68,13 +68,13 @@ function EditorService() {
 
     this.disableEditorToolbar = function disableEditorToolbar() {
         if (this.editor) {
-            this.editor.toolbar.classList.add('ng-hide');
+            this.editor.toolbar.toolbar.classList.add('ng-hide');
         }
     };
 
     this.enableEditorToolbar = function enableEditorToolbar() {
         if (this.editor) {
-            this.editor.toolbar.classList.remove('ng-hide');
+            this.editor.toolbar.toolbar.classList.remove('ng-hide');
         }
     };
 
