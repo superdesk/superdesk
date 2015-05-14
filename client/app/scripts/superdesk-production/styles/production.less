@@ -4,9 +4,13 @@
 @import 'variables.less';
 
 @send-to-pane-width: 445px;
+@search-widget-width: @tabpane-extended-width;
+	@search-widget-preview-width: 440px;
 
 .auth-screen {
 	position: absolute;
+	margin-left: @search-widget-width;
+	float:right;
 	top: 0; right: 0; left: 0; bottom: 0;
 	.main-section {
 		.transition(all ease 0.3s);

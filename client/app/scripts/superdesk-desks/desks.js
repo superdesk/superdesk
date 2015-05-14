@@ -98,20 +98,25 @@
                     scope.preview = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
                         //superdesk.intent('read_only', 'content_article', item);
-                        scope.$parent.action = 'view';
-                        authoring.open(item._id, true).
+                        //scope.$parent.$broadcast('handleBroadcast');
+                        //scope.$parent.action = 'view';
+                        scope.$emit('handlePreview', item);
+                        /*authoring.open(item._id, true).
                         then(function(opened) {
                             scope.$parent.origItem = opened;
+                            scope.$parent.items = opened;
+                            scope.$emit('handlePreview', opened);
                             console.log('view in production');
-                        });
+                        });*/
                     };
                     scope.edit = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
                         //superdesk.intent('producer', 'article', item);
                         scope.$parent.action = 'edit';
-                        authoring.open(item._id, false).
+                        return authoring.open(item._id, false).
                         then(function(opened) {
                             scope.$parent.origItem = opened;
+                            scope.$parent.items = opened;
                             console.log('edit in production');
                         });
                     };

@@ -8,6 +8,28 @@ function ProductionController($scope, production, superdesk, authoring) {
         $scope.action = 'view';
         $scope.viewdefault = _.isEqual({}, $scope.origItem) ? true : false;
 
+        $scope.items = {};
+
+        $scope.$on('handlePreview', function(event, arg) {
+            //$scope.$apply(function() {
+            console.log('event broadcast');
+            //$scope.origItem =  arg;
+            console.log(arg._id);
+            //});
+            authoring.open(arg._id, true).
+                then(function(opened) {
+                    $scope.origItem = opened;
+                    $scope.items = opened;
+                    //scope.$parent.items = opened;
+                    //scope.$emit('handlePreview', opened);
+                    console.log('Inside production controller');
+                });
+        });
+
+        $scope.$watch($scope.origItem, function() {
+                console.log('production Ctrl');
+            });
+
         //$scope._editable = true;
         /*$scope.items = null;
         production.query().then(function() {
@@ -46,14 +68,16 @@ function ProductionService(api, $q) {
 
         //return items;
     }
-return angular.module('superdesk.production', [
+var prod =  angular.module('superdesk.production', [
         'superdesk.editor',
         'superdesk.activity',
         'superdesk.authoring',
         'superdesk.authoring.widgets',
         'superdesk.desks',
         'superdesk.api'
-    ])
+    ]);
+
+prod
     .service('production', ProductionService)
     .config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -63,8 +87,8 @@ return angular.module('superdesk.production', [
                 templateUrl: 'scripts/superdesk-production/views/production.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 controller: ProductionController
-            })
-            .activity('read_only.content_article', {
+            });
+            /*.activity('read_only.content_article', {
                 category: '/production',
                 href: '/production/:_id/view',
                 when: '/production/:_id/view',
@@ -80,7 +104,7 @@ return angular.module('superdesk.production', [
                     action: [function() {return 'view';}]
                 },
                 authoring: true
-            });
+            });*/
 /*            .activity('edit.text', {
                 label: gettext('Edit item'),
                 href: '/production/:_id',
@@ -116,4 +140,6 @@ return angular.module('superdesk.production', [
             });
     }]);*/
     //.controller('AggregateWidgetCtrl', AggregateWidgetCtrl);
+
+return prod;
 })();
