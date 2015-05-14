@@ -12,6 +12,7 @@ import logging
 from apps.archive.common import get_user
 from apps.users import is_admin
 from settings import MAX_VALUE_OF_PUBLISH_SEQUENCE
+from superdesk.celery_app import update_key, set_key
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_resource_service
@@ -133,3 +134,28 @@ class OutputChannelsService(BaseService):
             output_channel['sequence_num_settings'] = {"min": min, "max": max}
 
         return True
+
+    def generate_sequence_number(self, output_channel):
+        """
+        Generates Published Sequence Number for the passed output_channel
+        """
+
+        assert (output_channel is not None), "Output Channel can't be null"
+
+        sequence_key_name = "{output_channel_name}_output_channel_seq".format(
+            output_channel_name=output_channel.get('name')).lower()
+
+        sequence_number = update_key(sequence_key_name, flag=True)
+        max_seq_number = MAX_VALUE_OF_PUBLISH_SEQUENCE
+
+        if output_channel.get('sequence_num_settings'):
+            if sequence_number == 0 or sequence_number == 1:
+                sequence_number = output_channel['sequence_num_settings']['min']
+                set_key(sequence_key_name, value=sequence_number)
+
+            max_seq_number = output_channel['sequence_num_settings']['max']
+
+        if sequence_number == max_seq_number:
+            set_key(sequence_key_name)
+
+        return sequence_number

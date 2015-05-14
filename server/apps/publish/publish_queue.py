@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 
@@ -67,7 +68,7 @@ class PublishQueueResource(Resource):
     }
 
     additional_lookup = {
-        'url': 'regex("[\w]+")',
+        'url': 'regex("[\w,.:-]+")',
         'field': 'item_id'
     }
 
@@ -78,8 +79,14 @@ class PublishQueueResource(Resource):
 class PublishQueueService(BaseService):
 
     def on_create(self, docs):
+        output_channel_service = get_resource_service('output_channels')
+
         for doc in docs:
             doc['state'] = 'pending'
+
+            if 'published_seq_num' not in doc:
+                output_channel = output_channel_service.find_one(req=None, _id=doc['output_channel_id'])
+                doc['published_seq_num'] = output_channel_service.generate_sequence_number(output_channel)
 
     def on_update(self, updates, original):
         pass

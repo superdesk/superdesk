@@ -12,6 +12,7 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
 from apps.publish.formatters import Formatter
+import superdesk
 from superdesk.errors import FormatterError
 
 
@@ -24,7 +25,7 @@ class NITFFormatter(Formatter):
     def format(self, article, destination):
         try:
 
-            pub_seq_num = self.generate_sequence_number(destination)
+            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
 
             nitf = etree.Element("nitf")
             head = SubElement(nitf, "head")

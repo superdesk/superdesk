@@ -132,8 +132,7 @@ class BasePublishService(BaseService):
                         pub_seq_num, formatted_doc = formatter.format(doc, output_channel)
 
                         formatted_item = {'formatted_item': formatted_doc, 'format': output_channel['format'],
-                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0),
-                                          'published_seq_num': pub_seq_num}
+                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0)}
 
                         formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
 

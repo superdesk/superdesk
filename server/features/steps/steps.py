@@ -675,6 +675,7 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
+    url = apply_placeholders(context, url)
     res = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
