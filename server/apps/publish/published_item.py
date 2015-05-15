@@ -13,9 +13,9 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
 from apps.archive.common import aggregations, handle_existing_data
-from eve.utils import ParsedRequest
+from eve.utils import ParsedRequest, config
 from bson.objectid import ObjectId
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 import json
 import superdesk
 
@@ -52,6 +52,7 @@ class PublishedItemService(BaseService):
             doc['item_id'] = doc['_id']
             doc['_created'] = utcnow()
             doc['versioncreated'] = utcnow()
+            self.__set_published_item_expiry(doc)
             doc.pop('_id', None)
             doc.pop('lock_user', None)
             doc.pop('lock_time', None)
@@ -141,3 +142,11 @@ class PublishedItemService(BaseService):
         handle_existing_data(item)
 
         return item
+
+    def __set_published_item_expiry(self, doc):
+        desk_id = doc.get('task', {}).get('desk', None)
+        desk = {}
+        if desk_id:
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+        expiry_minutes = desk.get('published_item_expiry', config.PUBLISHED_ITEMS_EXPIRY_MINUTES)
+        doc['expiry'] = get_expiry_date(expiry_minutes)
