@@ -120,20 +120,37 @@ class ItemsService(BaseService):
     def _get_date_range(self, request_params):
         """TODO: helper method  to extract day, srt default values etc."""
         # TODO: add tests, comments, format checking, implement...
+        try:
+            start_date = self.parse_iso_date(request_params.get('start_date'))
+        except ValueError:
+            raise BadParameterValueError(
+                desc="Invalid parameter value (start_date)") from None
 
-        # TODO: validate date format! helper function..
-        # check for no ValueError: datetime.strptime(date_text, '%Y-%m-%d')
-        # if yes, raise BadParameterValueError (from None, of course)
+        try:
+            end_date = self.parse_iso_date(request_params.get('end_date'))
+        except ValueError:
+            raise BadParameterValueError(
+                desc="Invalid parameter value (end_date)") from None
 
-        start_date = request_params.get('start_date')
-        if start_date:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        if (
+            (start_date is not None) and (end_date is not None) and
+            (start_date > end_date)
+        ):
+            # NOTE: we allow start_date == end_date (for exact date queries)
+            raise BadParameterValueError(
+                desc="Start date must not be greater than end date")
 
-        end_date = request_params.get('end_date')
-        if end_date:
-            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        # TODO: set default values if missing
 
         return start_date, end_date
+
+    @staticmethod
+    def parse_iso_date(date_str):
+        """TODO: docstring, test... parses given date string"""
+        if date_str is None:
+            return None
+        else:
+            return datetime.strptime(date_str, '%Y-%m-%d').date()
 
     def _create_date_range_filter(self, start_date, end_date):
         """TODO: docstrings, perhaps tests etc."""

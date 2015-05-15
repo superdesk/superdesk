@@ -191,11 +191,57 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21T00:00:00',
-            '$lte': '2012-08-26T00:00:00'
+            '$gte': '2012-08-21',
+            '$lte': '2012-08-26'
         }
         self.assertEqual(date_filter, expected_filter)
 
+    def test_raises_correct_error_on_invalid_date_parameter(self):
+        request = MagicMock()
+        request.args = MultiDict([('start_date', '2015-13-35')])
+        lookup = {}
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.get(request, lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc, "Invalid parameter value (start_date)")
+
+    def test_raises_correct_error_if_start_date_greater_than_end_date(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('start_date', '2015-02-17'),
+            ('end_date', '2015-02-16')
+        ])
+        lookup = {}
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.get(request, lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc, "Start date must not be greater than end date")
+
+    def test_allows_start_and_end_dates_to_be_equal(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('start_date', '2010-01-28'),
+            ('end_date', '2010-01-28')
+        ])
+        lookup = {}
+        instance = self._make_one()
+
+        try:
+            instance.get(request, lookup)
+        except Exception as ex:
+            self.fail("Exception unexpectedly raised ({})".format(ex))
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
 
