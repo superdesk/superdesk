@@ -31,7 +31,7 @@
         <div class="line">
             <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
             <div class="category" ng-if="item['anpa-category'].name">{{ item['anpa-category'].name }}</div>
-            <div class="provider" ng-if="item.ingest_provider" sd-meta-ingest data-item="item"></div>
+            <div class="provider" sd-meta-ingest data-item="item"></div>
             <div class="expires" ng-if="item.is_spiked"><span translate>expires</span> {{ item.expiry | reldate }}</div>
             <div ng-if="item.archived"><div sd-fetched-desks data-item="item"></div></div>
         </div>
