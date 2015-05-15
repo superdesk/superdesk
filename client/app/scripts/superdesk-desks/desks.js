@@ -63,8 +63,8 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll', '$interval'];
+    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll, $interval) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -83,8 +83,9 @@
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
 
-                scope.preview = preview;
                 scope.edit = edit;
+                scope.preview = preview;
+                scope.renderNew = renderNew;
 
                 scope.select = function(view) {
                     scope.selected = view;
@@ -124,13 +125,13 @@
                     return api.query('ingest', criteria).then(function(items) {
                         scope.total = items._meta.total;
                         scope.items = items._items;
-                        scope.$applyAsync(setVisible);
+                        scope.$applyAsync(render);
                     })['finally'](function() {
                         scope.loading = false;
                     });
                 }
 
-                function setVisible(event) {
+                function render() {
                     var ITEM_HEIGHT = 32,
                         ITEMS_COUNT = 10,
                         BUFFER = 5,
@@ -149,30 +150,58 @@
                     api.query('ingest', criteria).then(function(items) {
                         scope.$applyAsync(function() {
                             if (items._meta.total > scope.total) {
-                                from += items._meta.total - scope.total;
-                                console.log('total+', items._meta.total - scope.total);
+                                scope.newItemsCount = items._meta.total - scope.total;
                                 scope.total = items._meta.total;
                                 list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
+                            } else {
+                                scope.newItemsCount = 0;
                             }
 
                             list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
-                            scope.viewitems = items._items;
+                            scope.viewitems = merge(items._items);
                         });
                     });
                 }
 
+                function renderNew() {
+                    scope.total += scope.newItemsCount;
+                    scope.newItemsCount = 0;
+                    render();
+                }
+
+                function merge(newItems) {
+                    var next = [],
+                        olditems = scope.viewitems || [];
+                    angular.forEach(newItems, function(item) {
+                        var old = _.find(olditems, {_id: item._id});
+                        next.push(old ? angular.extend(old, item) : item);
+                    });
+
+                    return next;
+                }
+
                 scope.$on('ingest:update', update);
+                $interval(update, 5000, 20, false);
+
+                function updateCurrentView() {
+                    var ids = _.pluck(scope.viewitems, '_id'),
+                        query = {query: {filtered: {filter: {terms: {_id: ids}}}}};
+                    query.size = ids.length;
+                    api.query('ingest', {source: query}).then(function(items) {
+                        var nextItems = _.indexBy(items._items, '_id');
+                        angular.forEach(scope.viewitems, function(item, i) {
+                            var diff = nextItems[item._id] || {_deleted: 1};
+                            angular.extend(item, diff);
+                        });
+                    });
+                }
 
                 function update() {
-                    if (criteria.source.from) {
-                        console.log('not visible probably');
+                    if (elem[0].scrollTop) {
+                        updateCurrentView();
                     } else {
-                        console.log('this would be visible');
+                        render();
                     }
-
-                    apu.query('ingest', criteria).then(function(items) {
-                        console.dir(items);
-                    });
                 }
 
                 var updateTimeout;
@@ -181,7 +210,7 @@
                     event.stopImmediatePropagation();
                     event.stopPropagation();
                     $timeout.cancel(updateTimeout);
-                    updateTimeout = $timeout(setVisible, 100, false);
+                    updateTimeout = $timeout(render, 100, false);
                 }
 
                 function handleKeyUp(e) {

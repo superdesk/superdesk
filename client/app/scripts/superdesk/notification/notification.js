@@ -18,15 +18,17 @@
         }
 
         var ws = new WebSocket(config.server.ws);
+        ws.onmessage = wsmessage;
+        ws.onerror = wserror;
 
-        ws.onmessage = function(event) {
+        function wsmessage(event) {
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
-        };
+        }
 
-        ws.onerror = function(event) {
+        function wserror(event) {
             console.error(event);
-        };
+        }
     }
 
     return angular.module('superdesk.notification', [])

@@ -114,7 +114,8 @@ CELERYBEAT_SCHEDULE = {
     },
     'publish:transmit': {
         'task': 'superdesk.publish.transmit',
-        'schedule': timedelta(seconds=10)
+        'schedule': timedelta(seconds=30),
+        'options': {'expires': 29}
     },
     'publish:remove_expired': {
         'task': 'apps.publish.content_purge',
@@ -246,7 +247,7 @@ CONTENT_EXPIRY_MINUTES = 43200
 
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
-INGEST_EXPIRY_MINUTES = 2880
+INGEST_EXPIRY_MINUTES = int(env('SUPERDESK_INGEST_EXPIRY', 2880))
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.
