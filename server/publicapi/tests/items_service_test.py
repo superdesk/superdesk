@@ -10,6 +10,7 @@
 
 import json
 
+from datetime import date
 from eve.utils import ParsedRequest
 from publicapi.tests import ApiTestCase
 from unittest import mock
@@ -174,28 +175,6 @@ class GetMethodTestCase(ItemsServiceTestCase):
         query_filter = json.loads(args[0].where)
         self.assertEqual(query_filter.get('language'), 'de')
 
-    def test_includes_given_date_range_into_query_filter_if_given(self):
-        request = MagicMock()
-        request.args = MultiDict([
-            ('start_date', '2012-08-21'),
-            ('end_date', '2012-08-26')
-        ])
-        lookup = {}
-
-        instance = self._make_one()
-        instance.get(request, lookup)
-
-        self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
-        self.assertGreater(len(args), 0)
-
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
-        expected_filter = {
-            '$gte': '2012-08-21',
-            '$lte': '2012-08-26'
-        }
-        self.assertEqual(date_filter, expected_filter)
-
     def test_raises_correct_error_on_invalid_date_parameter(self):
         request = MagicMock()
         request.args = MultiDict([('start_date', '2015-13-35')])
@@ -242,6 +221,99 @@ class GetMethodTestCase(ItemsServiceTestCase):
             instance.get(request, lookup)
         except Exception as ex:
             self.fail("Exception unexpectedly raised ({})".format(ex))
+
+    def test_includes_given_date_range_into_query_filter_if_given(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('start_date', '2012-08-21'),
+            ('end_date', '2012-08-26')
+        ])
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {
+            '$gte': '2012-08-21',
+            '$lte': '2012-08-26'
+        }
+        self.assertEqual(date_filter, expected_filter)
+
+    @mock.patch('publicapi.items.service.date', wraps=date)
+    def test_sets_end_date_to_today_if_not_given(self, fake_date_class):
+        request = MagicMock()
+        request.args = MultiDict([('start_date', '2012-08-21')])
+        lookup = {}
+
+        fake_date_class.today.return_value = date(2014, 7, 15)
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {
+            '$gte': '2012-08-21',
+            '$lte': '2014-07-15'
+        }
+        self.assertEqual(date_filter, expected_filter)
+
+    def test_sets_start_date_to_end_date_minus_one_if_not_given(self):
+        request = MagicMock()
+        request.args = MultiDict([('end_date', '2012-08-21')])
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {
+            '$gte': '2012-08-20',
+            '$lte': '2012-08-21'
+        }
+        self.assertEqual(date_filter, expected_filter)
+
+    @mock.patch('publicapi.items.service.date', wraps=date)
+    def test_sets_end_date_to_today_and_start_day_to_yesterday_if_both_not_given(
+        self, fake_date_class
+    ):
+        request = MagicMock()
+        request.args = MultiDict()
+        lookup = {}
+
+        fake_date_class.today.return_value = date(2014, 7, 15)
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {
+            '$gte': '2014-07-14',
+            '$lte': '2014-07-15'
+        }
+        self.assertEqual(date_filter, expected_filter)
+
+    # TODO: not bigger than current day? return server time in ex. msg
+
+
+# TODO: + three test cases for helper methods (parse_iso_date - _get_target_class)
+
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
 

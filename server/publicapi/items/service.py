@@ -11,7 +11,7 @@
 import json
 import logging
 
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from eve.utils import ParsedRequest
 from flask import current_app as app
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
@@ -132,15 +132,22 @@ class ItemsService(BaseService):
             raise BadParameterValueError(
                 desc="Invalid parameter value (end_date)") from None
 
+        # TODO: start_date not bigger than today! same as end date!
+
         if (
             (start_date is not None) and (end_date is not None) and
             (start_date > end_date)
         ):
-            # NOTE: we allow start_date == end_date (for exact date queries)
+            # NOTE: we allow start_date == end_date (for specific date queries)
             raise BadParameterValueError(
                 desc="Start date must not be greater than end date")
 
-        # TODO: set default values if missing
+        # set default values if missing
+        if end_date is None:
+            end_date = date.today()
+
+        if start_date is None:
+            start_date = end_date - timedelta(1)
 
         return start_date, end_date
 
