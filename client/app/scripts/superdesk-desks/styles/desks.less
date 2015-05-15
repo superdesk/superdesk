@@ -235,6 +235,8 @@
 		border-left: 3px solid #d1d1d1;
 		border-right: 2px solid @white;
 		position: relative;
+		width: 100%;
+		overflow: hidden;
 		&.active {
 			background: @sd-hover;
 			border-right-color: @sd-blue;
@@ -243,7 +245,6 @@
 			border-left-color: #b70101;
 		}
 		&.deleted {
-			text-decoration: line-through;
 			opacity: 0.3;
 		}
 		.type {
@@ -266,6 +267,8 @@
 			white-space: nowrap;
 			font-size: 12px;
 			padding-right: 10px;
+			margin-right: 50px;
+			overflow: hidden;
 			span {
 				  color: #216278;
 				  text-transform: uppercase;
@@ -276,7 +279,7 @@
 			position: absolute;
 			right: 0; top: 0;
 			display: none;
-                        background-color: inherit;
+            background-color: inherit;
 
 			button {
 				background: transparent;
@@ -296,7 +299,16 @@
 				background: darken(@sd-hover, 10%);
 			}
 		}
-		
+
+		&.shifted:hover {
+			.text {
+				padding-right: 37px;
+			}
+
+			.action {
+				display: block;
+			}
+		}
 	}
 	&.content-tasks {
 		.item {
