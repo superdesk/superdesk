@@ -170,7 +170,9 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertTrue(fake_super_get.called)
         args, kwargs = fake_super_get.call_args
         self.assertGreater(len(args), 0)
-        self.assertEqual(args[0].where, '{"language": "de"}')
+
+        query_filter = json.loads(args[0].where)
+        self.assertEqual(query_filter.get('language'), 'de')
 
     def test_includes_given_date_range_into_query_filter_if_given(self):
         request = MagicMock()
@@ -188,7 +190,10 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertGreater(len(args), 0)
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
-        expected_filter = {'$gte': '2012-08-21', '$lte': '2012-08-26'}
+        expected_filter = {
+            '$gte': '2012-08-21T00:00:00',
+            '$lte': '2012-08-26T00:00:00'
+        }
         self.assertEqual(date_filter, expected_filter)
 
 
