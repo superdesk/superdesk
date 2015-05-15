@@ -132,8 +132,27 @@ class ItemsService(BaseService):
             raise BadParameterValueError(
                 desc="Invalid parameter value (end_date)") from None
 
-        # TODO: start_date not bigger than today! same as end date!
+        # disallow dates in the future
+        future_err_msg = (
+            "{} date ({}) must not be set in the future "
+            "(current server date: {})")
+        today = date.today()
 
+        if (start_date is not None) and (start_date > today):
+            raise BadParameterValueError(
+                desc=future_err_msg.format(
+                    'Start', start_date.isoformat(), today.isoformat()
+                )
+            )
+
+        if (end_date is not None) and (end_date > today):
+            raise BadParameterValueError(
+                desc=future_err_msg.format(
+                    'End', end_date.isoformat(), today.isoformat()
+                )
+            )
+
+        # make sure that the date range limits make sense
         if (
             (start_date is not None) and (end_date is not None) and
             (start_date > end_date)
@@ -142,7 +161,7 @@ class ItemsService(BaseService):
             raise BadParameterValueError(
                 desc="Start date must not be greater than end date")
 
-        # set default values if missing
+        # set default date range values if missing
         if end_date is None:
             end_date = date.today()
 

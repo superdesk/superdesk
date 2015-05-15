@@ -309,10 +309,50 @@ class GetMethodTestCase(ItemsServiceTestCase):
         }
         self.assertEqual(date_filter, expected_filter)
 
-    # TODO: not bigger than current day? return server time in ex. msg
+    @mock.patch('publicapi.items.service.date', wraps=date)
+    def test_raises_correct_error_for_start_date_in_future(self, fake_date_class):
+        request = MagicMock()
+        request.args = MultiDict([('start_date', '2007-10-31')])
+        lookup = {}
+
+        fake_date_class.today.return_value = date(2007, 10, 30)
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.get(request, lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            "Start date (2007-10-31) must not be set in the future "
+            "(current server date: 2007-10-30)"
+        )
+
+    @mock.patch('publicapi.items.service.date', wraps=date)
+    def test_raises_correct_error_for_end_date_in_future(self, fake_date_class):
+        request = MagicMock()
+        request.args = MultiDict([('end_date', '2007-10-31')])
+        lookup = {}
+
+        fake_date_class.today.return_value = date(2007, 10, 30)
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.get(request, lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            "End date (2007-10-31) must not be set in the future "
+            "(current server date: 2007-10-30)"
+        )
 
 
-# TODO: + three test cases for helper methods (parse_iso_date - _get_target_class)
+# TODO: parse_iso_date() helper method tests
 
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
