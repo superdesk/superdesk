@@ -566,21 +566,6 @@
                     }
                 }, true);
 
-                $scope.$on('handlePreview', function(_e, item) {
-                    if ($scope.item._id !== item._id) {
-                        $scope.closePreview();
-                    }
-                });
-
-                $scope.$on('handleEdit', function(_e, item) {
-                    if ($scope.item._id !== item._id) {
-                        $scope.closePreview();
-                        $scope.origItem = item;
-                        $scope.origItem._editable = true;
-                        initEditor();
-                    }
-                });
-
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
@@ -825,6 +810,22 @@
                         $scope.item._locked = false;
                         $scope.item.lock_session = null;
                         $scope.item.lock_user = null;
+                    }
+                });
+
+                $scope.$on('handlePreview', function(_e, item) {
+                    if ($scope.item._id !== item._id) {
+                        $scope.closePreview();
+                    }
+                });
+
+                $scope.$on('handleEdit', function(_e, item) {
+                    if ($scope.item._id !== item._id) {
+                        $scope.closePreview();
+                        $scope.origItem = item;
+                        $scope.origItem._editable = true;
+                        //$scope.origItem = lock.lock($scope.origItem);
+                        initEditor();
                     }
                 });
 
