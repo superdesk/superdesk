@@ -129,7 +129,6 @@ class ItemsService(BaseService):
         :return: a (start_date, end_date) tuple with both values being
             instances of Python's datetime.date
 
-
         :raises BadParameterValueError:
             * if any of the dates is not in the ISO 8601 format
             * if any of the dates is set in the future
