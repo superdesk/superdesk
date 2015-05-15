@@ -22,14 +22,7 @@ class PublishContentTests(TestCase):
                     "output_channel_id": 1,
                     "destination": {
                         "delivery_type": "ftp",
-                        "config": {
-                            "path": "/ipnews",
-                            "dest_path": "/",
-                            "username": "superdesk-dev1",
-                            "password": "Frodo987",
-                            "host": "liveftp.aap.com.au",
-                            "ip": "144.122.244.55"
-                        },
+                        "config": {},
                         "name": "destination1"
                     },
                     "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
@@ -44,14 +37,7 @@ class PublishContentTests(TestCase):
                        "output_channel_id": 1,
                        "destination": {
                            "delivery_type": "ftp",
-                           "config": {
-                               "path": "/ipnews",
-                               "dest_path": "/",
-                               "username": "superdesk-dev1",
-                               "password": "Frodo987",
-                               "host": "liveftp.aap.com.au",
-                               "ip": "144.122.244.55"
-                           },
+                           "config": {},
                            "name": "destination1"
                        },
                        "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
@@ -66,14 +52,7 @@ class PublishContentTests(TestCase):
                        "output_channel_id": 1,
                        "destination": {
                            "delivery_type": "ftp",
-                           "config": {
-                               "path": "/ipnews",
-                               "dest_path": "/",
-                               "username": "superdesk-dev1",
-                               "password": "Frodo987",
-                               "host": "liveftp.aap.com.au",
-                               "ip": "144.122.244.55"
-                           },
+                           "config": {},
                            "name": "destination1"
                        },
                        "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",

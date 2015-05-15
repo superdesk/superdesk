@@ -41,6 +41,20 @@ class SubscribersResource(Resource):
         'is_active': {
             'type': 'boolean',
             'default': True
+        },
+        'critical_errors': {
+            'type': 'dict',
+            'keyschema': {
+                'type': 'boolean'
+            }
+        },
+        'last_closed': {
+            'type': 'dict',
+            'schema': {
+                'closed_at': {'type': 'datetime'},
+                'closed_by': Resource.rel('users', nullable=True),
+                'message': {'type': 'string'}
+            }
         }
     }
 
