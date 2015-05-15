@@ -574,6 +574,7 @@
 
                 $scope.$on('handleEdit', function(_e, item) {
                     if ($scope.item._id !== item._id) {
+                        $scope.closePreview();
                         $scope.origItem = item;
                         $scope.origItem._editable = true;
                         initEditor();
