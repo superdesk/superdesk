@@ -658,9 +658,10 @@
                                 .then(angular.bind(this, function(desks) {
                                     userDesks = desks;
                                     if (desks._items.length) {
+                                        if (this.activeDeskId === ''){
                                             this.activeDeskId = '';
                                         } else if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
-                                            this.activeDeskId = null;
+                                            this.activeDeskId = desks._items[0]._id;
                                         }
                                     } else if (this.activeDeskId) {
                                         this.activeDeskId = null;
