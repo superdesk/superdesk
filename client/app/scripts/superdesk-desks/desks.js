@@ -86,24 +86,29 @@
                 scope.edit = edit;
                 scope.preview = preview;
                 scope.renderNew = renderNew;
-
-                scope.select = function(view) {
-                    scope.selected = view;
-                };
+                scope.select = select;
 
                 scope.$watch('filter', queryItems);
                 scope.$on('task:stage', handleStage);
+                scope.$on('ingest:update', update);
+
+                $interval(update, 5000, 20, false);
 
                 elem.on('keyup', handleKeyUp);
                 elem.on('scroll', handleScroll);
 
-                var query = search.query({});
-                var criteria = {source: query.getCriteria()};
+                var query = search.query({}),
+                    criteria = {source: query.getCriteria()},
+                    updateTimeout;
 
                 function handleStage(event, data) {
                     if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
                         queryItems();
                     }
+                }
+
+                function select(view) {
+                    scope.selected = view;
                 }
 
                 function queryItems(queryString) {
@@ -134,7 +139,7 @@
                 function render() {
                     var ITEM_HEIGHT = 32,
                         ITEMS_COUNT = 10,
-                        BUFFER = 5,
+                        BUFFER = 8,
                         top = elem[0].scrollTop,
                         start = Math.floor(top / ITEM_HEIGHT),
                         from = Math.max(0, start - BUFFER),
@@ -150,11 +155,8 @@
                     api.query('ingest', criteria).then(function(items) {
                         scope.$applyAsync(function() {
                             if (items._meta.total > scope.total) {
-                                scope.newItemsCount = items._meta.total - scope.total;
                                 scope.total = items._meta.total;
                                 list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
-                            } else {
-                                scope.newItemsCount = 0;
                             }
 
                             list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
@@ -180,9 +182,6 @@
                     return next;
                 }
 
-                scope.$on('ingest:update', update);
-                $interval(update, 5000, 20, false);
-
                 function updateCurrentView() {
                     var ids = _.pluck(scope.viewitems, '_id'),
                         query = {query: {filtered: {filter: {terms: {_id: ids}}}}};
@@ -192,8 +191,15 @@
                         angular.forEach(scope.viewitems, function(item, i) {
                             var diff = nextItems[item._id] || {_deleted: 1};
                             angular.extend(item, diff);
+                            randomDelete(item, i , query.size);
                         });
                     });
+                }
+
+                function randomDelete(item, i, size) {
+                    if (i == Math.floor(Math.random() * size)) {
+                        angular.extend(item, {_deleted: 1});
+                    }
                 }
 
                 function update() {
@@ -203,8 +209,6 @@
                         render();
                     }
                 }
-
-                var updateTimeout;
 
                 function handleScroll(event) {
                     event.stopImmediatePropagation();
