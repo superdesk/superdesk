@@ -378,9 +378,9 @@
         };
 
         $scope.openDesk = function(step, desk) {
-            $scope.desk.edit = desk;
             $scope.modalActive = true;
             $scope.step.current = step;
+            $scope.desk.edit = desk;
         };
 
         $scope.cancel = function() {
@@ -388,6 +388,8 @@
             $scope.step.current = null;
             $scope.desk.edit = null;
         };
+
+        $(document).on('hidden.bs.modal', '.modal', function () { $scope.modalActive = false; });
 
         $scope.remove = function(desk) {
             modal.confirm(gettext('Please confirm you want to delete desk.')).then(
