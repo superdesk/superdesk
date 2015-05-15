@@ -12,3 +12,11 @@ class AppInitializeWithDataCommandTestCase(TestCase):
             command = AppInitializeWithDataCommand()
             result = command.run()
             self.assertEquals(result, 0)
+
+    def test_app_initialization_multiple_loads(self):
+        with self.app.app_context():
+            command = AppInitializeWithDataCommand()
+            result = command.run()
+            self.assertEquals(result, 0)
+            result = command.run()
+            self.assertEquals(result, 0)
