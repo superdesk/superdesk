@@ -15,19 +15,20 @@ logstash:
   links:
   - elastic
   volumes:
-  - ../server/logstash:/usr/share/logstash
+  - logstash:/usr/share/logstash
 
-# kibana:
-#   image: kibana
-#   links:
-#   - logstash
+kibana:
+  build: kibana
+  restart: always
+  links:
+  - elastic
+  ports:
+  - "5601:5601"
 
 elastic:
   image: elasticsearch:1.5
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
-  ports:
-  - "9200:9200"
 
 backend:
   build: ../server

@@ -1,0 +1,23 @@
+port: 5601
+host: "0.0.0.0"
+elasticsearch_url: "http://elastic:9200"
+elasticsearch_preserve_host: true
+kibana_index: ".kibana"
+default_app_id: "discover"
+request_timeout: 30000
+shard_timeout: 0
+verify_ssl: false
+
+# Plugins that are included in the build, and no longer found in the plugins/ folder
+bundled_plugin_ids:
+ - plugins/dashboard/index
+ - plugins/discover/index
+ - plugins/doc/index
+ - plugins/kibana/index
+ - plugins/markdown_vis/index
+ - plugins/metric_vis/index
+ - plugins/settings/index
+ - plugins/table_vis/index
+ - plugins/vis_types/index
+ - plugins/visualize/index
+ 
