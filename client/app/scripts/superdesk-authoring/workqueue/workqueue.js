@@ -91,6 +91,12 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
         workqueue.updateItem(data.item);
     });
 
+    $scope.openProductionArticle = function(article) {
+        console.log('clicked');
+        //$scope.items = article;
+        $scope.$root.$broadcast('openProductionArticle', article);
+    };
+
     $scope.openMulti = function() {
         multiEdit.open();
     };
@@ -114,10 +120,18 @@ function ArticleDashboardDirective() {
     };
 }
 
+function ProductionArticleDashboardDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/views/dashboard-production-articles.html',
+        controller: WorkqueueCtrl
+    };
+}
+
 angular.module('superdesk.authoring.workqueue', ['superdesk.activity', 'superdesk.notification'])
     .service('workqueue', WorkqueueService)
     .directive('sdWorkqueue', WorkqueueListDirective)
     .directive('sdDashboardArticles', ArticleDashboardDirective)
+    .directive('sdDashboardProductionArticles', ProductionArticleDashboardDirective)
 
     .config(['superdeskProvider', function(superdesk) {
         superdesk

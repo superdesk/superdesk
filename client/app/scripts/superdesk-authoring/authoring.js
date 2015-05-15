@@ -486,24 +486,28 @@
             link: function($scope) {
                 var _closing;
 
-                $scope.privileges = privileges.privileges;
-                $scope.content = new ContentCtrl($scope);
+                function initEditor() {
+                    $scope.privileges = privileges.privileges;
+                    $scope.content = new ContentCtrl($scope);
 
-                $scope.dirty = false;
-                $scope.views = {send: false};
-                $scope.stage = null;
-                $scope._editable = $scope.origItem._editable;
-                $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
-                $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                    $scope.dirty = false;
+                    $scope.views = {send: false};
+                    $scope.stage = null;
+                    $scope._editable = $scope.origItem._editable;
+                    $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
+                    $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
 
-                $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
-                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
-                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+                    $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
+                        ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
+                         ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
 
-                $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+                    $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
 
-                $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
-                $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
+                    $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
+                    $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
+                }
+
+                initEditor();
 
                 function resolveDestinations() {
                     if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
@@ -563,13 +567,16 @@
                 }, true);
 
                 $scope.$on('handlePreview', function(_e, item) {
-                    if ($scope.item._id !== item._id){
+                    if ($scope.item._id !== item._id) {
                         $scope.closePreview();
                     }
                 });
+
                 $scope.$on('handleEdit', function(_e, item) {
-                    if ($scope.item._id !== item._id){
-                        $scope.closePreview();
+                    if ($scope.item._id !== item._id) {
+                        $scope.origItem = item;
+                        $scope.origItem._editable = true;
+                        initEditor();
                     }
                 });
 

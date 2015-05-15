@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring'];
-    function ProductionController($scope, production, superdesk, authoring) {
+    ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring', '$location', 'referrer'];
+    function ProductionController($scope, production, superdesk, authoring, $location, referrer) {
         $scope.productionPreview = true;
         $scope.origItem = {};
         $scope.action = 'view';
@@ -12,21 +12,28 @@
 
         $scope.items = {};
 
-        $scope.$root.$on('handlePreview', function(event, arg) {
+        $scope.$on('handlePreview', function(event, arg) {
             $scope.origItem = arg;
             $scope.selected_id = arg._id;
             $scope.action = 'view';
             $scope._editable = null;
             $scope.viewdefault = false;
         });
-        $scope.$root.$on('handleEdit', function(event, arg) {
+        $scope.$on('handleEdit', function(event, arg) {
             $scope.origItem = arg;
             $scope.selected_id = arg._id;
             $scope.action = 'edit';
             $scope._editable = $scope.origItem._editable;
             $scope.viewdefault = false;
         });
-
+        $scope.$on('openProductionArticle', function(event, arg) {
+            referrer.setReferrerUrl($location.url());
+            $scope.origItem = arg;
+            $scope.selected_id = arg._id;
+            $scope.action = 'view';
+            $scope._editable = null;
+            $scope.viewdefault = false;
+        });
     }
 
     ProductionService.$inject = ['api', '$q'];
