@@ -175,7 +175,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         query_filter = json.loads(args[0].where)
         self.assertEqual(query_filter.get('language'), 'de')
 
-    def test_raises_correct_error_on_invalid_date_parameter(self):
+    def test_raises_correct_error_on_invalid_start_date_parameter(self):
         request = MagicMock()
         request.args = MultiDict([('start_date', '2015-13-35')])
         lookup = {}
@@ -189,6 +189,21 @@ class GetMethodTestCase(ItemsServiceTestCase):
         ex = context.exception
         self.assertEqual(
             ex.desc, "Invalid parameter value (start_date)")
+
+    def test_raises_correct_error_on_invalid_end_date_parameter(self):
+        request = MagicMock()
+        request.args = MultiDict([('end_date', '2015-13-35')])
+        lookup = {}
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.get(request, lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc, "Invalid parameter value (end_date)")
 
     def test_raises_correct_error_if_start_date_greater_than_end_date(self):
         request = MagicMock()
@@ -353,22 +368,22 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
 
 class ParseIsoDateMethodTestCase(ItemsServiceTestCase):
-    """Tests for the parse_iso_date() helper method."""
+    """Tests for the _parse_iso_date() helper method."""
 
     def test_returns_none_if_none_given(self):
         klass = self._get_target_class()
-        result = klass.parse_iso_date(None)
+        result = klass._parse_iso_date(None)
         self.assertIsNone(result)
 
     def test_returns_date_object_on_valid_iso_date_string(self):
         klass = self._get_target_class()
-        result = klass.parse_iso_date('2015-05-15')
+        result = klass._parse_iso_date('2015-05-15')
         self.assertEqual(result, date(2015, 5, 15))
 
     def test_raises_value_error_on_invalid_iso_date_string(self):
         klass = self._get_target_class()
         with self.assertRaises(ValueError):
-            klass.parse_iso_date('5th May 2015')
+            klass._parse_iso_date('5th May 2015')
 
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
