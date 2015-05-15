@@ -352,7 +352,23 @@ class GetMethodTestCase(ItemsServiceTestCase):
         )
 
 
-# TODO: parse_iso_date() helper method tests
+class ParseIsoDateMethodTestCase(ItemsServiceTestCase):
+    """Tests for the parse_iso_date() helper method."""
+
+    def test_returns_none_if_none_given(self):
+        klass = self._get_target_class()
+        result = klass.parse_iso_date(None)
+        self.assertIsNone(result)
+
+    def test_returns_date_object_on_valid_iso_date_string(self):
+        klass = self._get_target_class()
+        result = klass.parse_iso_date('2015-05-15')
+        self.assertEqual(result, date(2015, 5, 15))
+
+    def test_raises_value_error_on_invalid_iso_date_string(self):
+        klass = self._get_target_class()
+        with self.assertRaises(ValueError):
+            klass.parse_iso_date('5th May 2015')
 
 
 fake_super_find_one = MagicMock(name='fake super().find_one')
