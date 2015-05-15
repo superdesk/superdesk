@@ -685,7 +685,7 @@
                     }],
                 filters: [{action: 'create', type: 'package'}],
                 condition: function(item) {
-                    return item ? item.state !== 'killed' && item.package_type !== 'takes' : tru;
+                    return item ? item.state !== 'killed' && item.package_type !== 'takes' : true;
                 }
             })
             .activity('package.item', {
