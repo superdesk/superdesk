@@ -11,7 +11,7 @@
 from flask import request
 
 from superdesk import get_resource_service, Service, Resource
-from .archive_composite import TakesPackageService
+from .takes_package_service import TakesPackageService
 from apps.archive.common import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
