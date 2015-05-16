@@ -114,13 +114,13 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
-                    any_channel_closed = self.publish(doc=package, target_output_channels=DIGITAL)
+                    any_channel_closed = self.queue_transmission(doc=package, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
 
                 # queue only text items
                 any_channel_closed = any_channel_closed or \
-                    self.publish(doc=original, target_output_channels=WIRE if package_id else None)
+                    self.queue_transmission(doc=original, target_output_channels=WIRE if package_id else None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
