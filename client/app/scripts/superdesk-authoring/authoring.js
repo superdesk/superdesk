@@ -1123,7 +1123,7 @@
                 };
 
                 scope.canSendAndContinue = function() {
-                    return !authoring.isPublished(scope.item);
+                    return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
                 };
 
                 scope.sendAndContinue = function() {
