@@ -414,7 +414,8 @@ class PublishQueueError(SuperdeskPublishError):
         9005: 'State of the content item could not be updated',
         9006: 'Output channel cannot be found',
         9007: 'Previous take is either not published or killed',
-        9008: 'A post-publish action has happened on item'
+        9008: 'A post-publish action has happened on item',
+        9009: 'Item could not be queued'
     }
 
     @classmethod
@@ -448,6 +449,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def post_publish_exists_error(cls, exception=None, destination=None):
         return PublishQueueError(9008, exception, destination)
+
+    @classmethod
+    def item_not_queued_error(cls, exception=None, destination=None):
+        return PublishQueueError(9009, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):

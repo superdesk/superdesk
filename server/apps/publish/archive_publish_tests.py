@@ -50,6 +50,7 @@ class ArchivePublishTestCase(TestCase):
 
     articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  '_id': 1,
+                 'type': 'text',
                  'last_version': 3,
                  'body_html': 'Test body',
                  'destination_groups': [4],
@@ -227,6 +228,18 @@ class ArchivePublishTestCase(TestCase):
             archive_publish.ArchivePublishService().queue_transmission(self.articles[0])
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(6, queue_items.count())
+
+    def test_queue_transmission_wrong_article_type_fails(self):
+        with self.app.app_context():
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            self.articles[0]['type'] = 'image'
+            any_channel_closed, wrong_formatted_channels, queued = \
+                archive_publish.ArchivePublishService().queue_transmission(self.articles[0])
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEquals(0, queue_items.count())
+            self.assertEquals(3, len(wrong_formatted_channels))
+            self.assertFalse(queued)
 
     def test_queue_transmission_for_scheduled_publish(self):
         with self.app.app_context():
