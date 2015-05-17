@@ -875,6 +875,15 @@
                     }
                 });
 
+                $scope.$on('item:publish:wrong:format', function(_e, data) {
+                    if (data.item === $scope.item._id) {
+                        notify.error(gettext('Item having story name ' +
+                            data.unique_name +
+                            ' has wrong formatted Output Channel(s):' +
+                            data.output_channels.join(',')));
+                    }
+                });
+
                 macros.setupShortcuts($scope);
             }
         };

@@ -203,12 +203,41 @@ Feature: Auto Routing
           }
         ]
         """
+        When we post to "/subscribers"
+        """
+        {
+          "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+        }
+        """
+        Then we get latest
+        """
+        {
+          "name":"Channel 3"
+        }
+        """
+        When we post to "/output_channels"
+        """
+        [
+          {
+            "name":"Output Channel",
+            "description": "new stuff",
+            "destinations": ["#subscribers._id#"],
+            "format": "nitf"
+          }
+        ]
+        """
+        Then we get latest
+        """
+        {
+          "name":"Output Channel"
+        }
+        """
         When we post to "/destination_groups" with "destgroup1" and success
         """
         [
           {
             "name":"Group 1", "description": "new stuff",
-            "destination_groups": [], "output_channels": []
+            "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
           }
         ]
         """
