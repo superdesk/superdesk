@@ -133,7 +133,8 @@ class BasePublishService(BaseService):
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
                               item=str(id), unique_name=archived_item['unique_name'],
-                              desk=str(archived_item['task']['desk']), user=str(user.get('_id', '')))
+                              desk=str(archived_item['task']['desk']),
+                              user=str(user.get('_id', '')))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
@@ -147,19 +148,33 @@ class BasePublishService(BaseService):
                                                   .format(str(e)))
 
     def publish(self, doc, updates, target_output_channels=None):
-        any_channel_closed = self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
+        any_channel_closed, wrong_formatted_channels, queued = \
+            self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
         source, task = self.__send_to_publish_stage_and_set_source(doc)
         if task:
             updates['task'] = task
         if source:
             updates['source'] = source
 
+        user = get_user()
+
+        if wrong_formatted_channels and len(wrong_formatted_channels) > 0:
+            push_notification('item:publish:wrong:format',
+                              item=str(doc['_id']), unique_name=doc['unique_name'],
+                              desk=str(doc['task']['desk']),
+                              user=str(user.get('_id', '')),
+                              output_channels=[c['name'] for c in wrong_formatted_channels])
+        if not queued:
+            raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+
         return any_channel_closed
 
     def queue_transmission(self, doc, target_output_channels=None):
         try:
             if doc.get('destination_groups'):
+                queued = False
                 any_channel_closed = False
+                wrong_formatted_channels = []
 
                 destination_groups = self.resolve_destination_groups(
                     doc.get('destination_groups'))
@@ -176,12 +191,17 @@ class BasePublishService(BaseService):
 
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers and subscribers.count() > 0:
-                        formatter = get_formatter(output_channel['format'])
+                        formatter = get_formatter(output_channel['format'], doc['type'])
+                        if not formatter:
+                            # if formatter not found then record it
+                            wrong_formatted_channels.append(output_channel)
+                            continue
 
                         pub_seq_num, formatted_doc = formatter.format(doc, output_channel)
 
                         formatted_item = {'formatted_item': formatted_doc, 'format': output_channel['format'],
-                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0)}
+                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0),
+                                          'published_seq_num': pub_seq_num}
 
                         formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
 
@@ -206,8 +226,9 @@ class BasePublishService(BaseService):
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
+                        queued = True
 
-                return any_channel_closed
+                return any_channel_closed, wrong_formatted_channels, queued
             else:
                 raise PublishQueueError.destination_group_not_found_error(
                     KeyError('Destination groups empty for article: {}'.format(doc['_id'])), None)

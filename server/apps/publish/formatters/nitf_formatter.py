@@ -90,8 +90,8 @@ class NITFFormatter(Formatter):
             tagline = SubElement(body_end, 'tagline')
             tagline.text = article['ednote']
 
-    def can_format(self, format_type):
-        return format_type == 'nitf'
+    def can_format(self, format_type, article_type):
+        return format_type == 'nitf' and article_type in ['text', 'preformatted', 'composite']
 
     def __append_meta(self, article, head, destination, pub_seq_num):
         """
