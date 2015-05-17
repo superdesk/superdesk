@@ -168,7 +168,7 @@ Feature: Link content in takes
         """
         And we post to "/output_channels" with "channel1" and success
         """
-        [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        [{"name":"Channel 1", "is_digital": true, "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
         """
         And we post to "/output_channels" with "channel2" and success
         """
