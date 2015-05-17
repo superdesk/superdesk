@@ -37,13 +37,13 @@ class Formatter(metaclass=FormatterRegistry):
         raise NotImplementedError()
 
 
-def get_formatter(format_type):
+def get_formatter(format_type, article_type):
     """Get parser for given xml.
 
     :param etree: parsed xml
     """
     for formatter in formatters:
-        if formatter.can_format(format_type):
+        if formatter.can_format(format_type, article_type):
             return formatter
 
 
