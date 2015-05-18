@@ -64,7 +64,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         ex = context.exception
         self.assertEqual(ex.desc, 'Unexpected parameter (param_x)')
 
-    def test_raises_more_descriptive_error_on_filtering_disabled(self):
+    def test_raises_descriptive_error_on_filtering_disabled(self):
         request = MagicMock()
         request.args = MultiDict([('q', '{"language": "en"}')])
 
@@ -80,6 +80,42 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
             ex.desc,
             'Filtering is not supported when retrieving a single object '
             '(the "q" parameter)'
+        )
+
+    def test_raises_descriptive_error_on_disabled_start_date_filtering(self):
+        request = MagicMock()
+        request.args = MultiDict([('start_date', '2015-01-01')])
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._check_request_params(
+                request, whitelist=(), allow_filtering=False)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Filtering by date range is not supported when retrieving a '
+            'single object (the "start_date" parameter)'
+        )
+
+    def test_raises_descriptive_error_on_disabled_end_date_filtering(self):
+        request = MagicMock()
+        request.args = MultiDict([('end_date', '2015-01-01')])
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._check_request_params(
+                request, whitelist=(), allow_filtering=False)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Filtering by date range is not supported when retrieving a '
+            'single object (the "end_date" parameter)'
         )
 
     def test_raises_correct_error_on_duplicate_parameters(self):
