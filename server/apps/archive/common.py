@@ -294,7 +294,7 @@ def is_update_allowed(archive_doc):
 def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
     """
     Handles existing data. For now the below are handled:
-        1. Sets the value of pubstatus prooperty in metadata of doc in either ingest or archive repo
+        1. Sets the value of pubstatus property in metadata of doc in either ingest or archive repo
         2. Sets the value of marked_for_not_publication
     """
 

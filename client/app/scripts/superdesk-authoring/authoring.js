@@ -508,7 +508,7 @@
 
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
 
-                $scope.not_for_publication_visisble = $scope.publish_enabled && $scope.origItem.marked_for_not_publication === false;
+                $scope.not_for_publication_visible = $scope.publish_enabled && $scope.origItem.marked_for_not_publication === false;
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
@@ -588,7 +588,7 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
-                        $scope.not_for_publication_visisble = $scope.publish_enabled && res.marked_for_not_publication === false;
+                        $scope.not_for_publication_visible = $scope.publish_enabled && res.marked_for_not_publication === false;
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -694,8 +694,8 @@
                     }
                 };
 
-                $scope.markForPublication = function(isArticlePublishabble) {
-                    $scope.item.marked_for_not_publication = isArticlePublishabble;
+                $scope.markForPublication = function(isArticlePublishable) {
+                    $scope.item.marked_for_not_publication = isArticlePublishable;
                     return $scope.save();
                 };
 
