@@ -115,13 +115,23 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
-                    any_channel_closed = self.publish(doc=package, target_output_channels=DIGITAL)
+                    any_channel_closed_digital, queued_digital = \
+                        self.publish(doc=package, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
+                else:
+                    any_channel_closed_digital = False
+                    queued_digital = False
 
                 # queue only text items
-                any_channel_closed = any_channel_closed or \
+                any_channel_closed_wire, queued_wire = \
                     self.publish(doc=original, target_output_channels=WIRE if package_id else None)
+
+                any_channel_closed = any_channel_closed_digital or any_channel_closed_wire
+                queued = queued_digital or queued_wire
+
+                if not queued:
+                    raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
@@ -153,10 +163,11 @@ class BasePublishService(BaseService):
                               desk=str(doc['task']['desk']),
                               user=str(user.get('_id', '')),
                               output_channels=[c['name'] for c in wrong_formatted_channels])
-        if not queued:
+
+        if not target_output_channels and not queued:
             raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
-        return any_channel_closed
+        return any_channel_closed, queued
 
     def queue_transmission(self, doc, target_output_channels=None):
         try:
