@@ -42,6 +42,17 @@ class ValidateService(superdesk.Service):
             v = Validator()
             v.allow_unknown = True
             v.validate(doc['validate'], validator['schema'])
-            return v.errors
+            error_list = v.errors
+            response = []
+            for e in error_list:
+                if error_list[e] == 'required field':
+                    response.append('{} is a required field'.format(e.upper()))
+                elif 'min length is' in error_list[e]:
+                    response.append('{} is too short'.format(e.upper()))
+                elif 'max length is' in error_list[e]:
+                    response.append('{} is too long'.format(e.upper()))
+                else:
+                    response.append('{} {}'.format(e.upper(), error_list[e]))
+            return response
         else:
-            return {doc['act']: 'validator was not found'}
+            return ['validator was not found for {}'.format(doc['act'])]
