@@ -66,6 +66,19 @@
             ng-show="_editable"
             translate>Mark for Publication</button>
 
+        <div class="navbtn dropdown pull-left" dropdown>
+            <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+            <div class="dropdown-menu">
+                <ul>
+                    <li ng-controller="TemplateActionsController as template">
+                        <button type="button"
+                            ng-click="template.create(item)"
+                            translate>Save as template</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="navbtn dropdown strict pull-left" tooltip="{{ :: 'Create' | translate }}" tooltip-placement="bottom" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
@@ -91,5 +104,6 @@
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>
+
     </div>
 </div>

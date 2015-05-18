@@ -116,37 +116,113 @@
         };
     }
 
-    var app = angular.module('superdesk.templates', ['superdesk.authoring']);
-    app.service('templatesSettingsService', TemplatesSettingsService)
-        .directive('sdTemplates', TemplatesDirective);
+    CreateTemplateController.$inject = ['item', 'api', 'desks', '$q'];
+    function CreateTemplateController(item, api, desks, $q) {
+        var vm = this,
+            metadata = [
+                'headline',
+                'slugline',
+                'abstract',
+                'dateline',
+                'byline',
+                'usage_terms',
+                'subject',
+                'genre',
+                'type',
+                'language',
+                'anpa-category',
+                'anpa_take_key',
+                'keywords',
+                'priority',
+                'urgency',
+                'pubstatus',
+                'description',
+                'body_html',
+                'body_text',
+                'place',
+                'located',
+                'creditline'
+            ];
 
-    app
-        .config(['superdeskProvider', function(superdesk) {
-            superdesk
-                .activity('/settings/templates', {
-                    label: gettext('Templates'),
-                    templateUrl: 'scripts/superdesk-templates/views/settings.html',
-                    controller: TemplatesSettingsController,
-                    category: superdesk.MENU_SETTINGS,
-                    privileges: {content_templates: 1},
-                    priority: 2000,
-                    beta: true
-                });
-        }])
-        .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('templates', {
-                type: 'http',
-                backend: {
-                    rel: 'templates'
+        this.type = 'create';
+        this.name = item.slugline || null;
+        this.desk = desks.active.desk || null;
+
+        this.save = save;
+
+        activate();
+
+        function activate() {
+            desks.fetchCurrentUserDesks().then(function(desks) {
+                vm.desks = desks._items;
+            });
+        }
+
+        function save() {
+            var template = angular.extend({
+                template_name: vm.name,
+                template_type: vm.type,
+                template_desk: vm.desk
+            }, _.pick(item, metadata));
+            return api.save('content_templates', template).then(function(data) {
+                vm._issues = null;
+                return data;
+            }, function(response) {
+                vm._issues = response.data._issues;
+                return $q.reject(vm._issues);
+            });
+        }
+    }
+
+    TemplateActionsController.$inject = ['$modal'];
+    function TemplateActionsController($modal) {
+        this.create = createFromItem;
+        function createFromItem(item) {
+            $modal.open({
+                templateUrl: 'scripts/superdesk-templates/views/create-template.html',
+                controller: 'CreateTemplateController',
+                controllerAs: 'template',
+                resolve: {
+                    item: function() {
+                        return item;
+                    }
                 }
             });
-            apiProvider.api('content_templates', {
-                type: 'http',
-                backend: {
-                    rel: 'content_templates'
-                }
-            });
-        }]);
+        }
+    }
 
-    return app;
+    angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring'])
+        .service('templatesSettingsService', TemplatesSettingsService)
+        .directive('sdTemplates', TemplatesDirective)
+        .controller('CreateTemplateController', CreateTemplateController)
+        .controller('TemplateActionsController', TemplateActionsController)
+        .config(config)
+        ;
+
+    config.$inject = ['superdeskProvider', 'apiProvider'];
+    function config(superdesk, apiProvider) {
+        superdesk.activity('/settings/templates', {
+            label: gettext('Templates'),
+            templateUrl: 'scripts/superdesk-templates/views/settings.html',
+            controller: TemplatesSettingsController,
+            category: superdesk.MENU_SETTINGS,
+            privileges: {content_templates: 1},
+            priority: 2000,
+            beta: true
+        });
+
+        apiProvider.api('templates', {
+            type: 'http',
+            backend: {
+                rel: 'templates'
+            }
+        });
+
+        apiProvider.api('content_templates', {
+            type: 'http',
+            backend: {
+                rel: 'content_templates'
+            }
+        });
+    }
 })();
