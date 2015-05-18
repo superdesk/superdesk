@@ -14,8 +14,8 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE, PACKAGE
-from .common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
-from .archive_composite import get_item_ref, create_root_group
+from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
+from .package_service import get_item_ref, create_root_group
 
 
 LAST_TAKE = 'last_take'
