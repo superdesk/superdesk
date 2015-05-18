@@ -223,15 +223,20 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
-                            item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted');
+                        var state = (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
+                            item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted') &&
+                            (angular.isUndefined(item.takes) || item.takes.last_take === item._id) &&
+                            (angular.isUndefined(item.more_coming) || !item.more_coming);
+
+                        return state;
                     },
-                    controller: ['data', '$rootScope', 'desks', 'authoring', 'notify',
-                        function(data, $rootScope, desks, authoring, notify) {
+                    controller: ['data', '$rootScope', 'desks', 'authoring', 'notify', 'superdesk',
+                        function(data, $rootScope, desks, authoring, notify, superdesk) {
                             authoring.linkItem(data.item, null, desks.getCurrentDeskId())
                                 .then(function(item) {
                                     notify.success(gettext('New take created.'));
                                     $rootScope.$broadcast('item:take');
+                                    superdesk.intent('author', 'article', item);
                                 }, function(response) {
                                     data.item.error = response;
                                     notify.error(gettext('Failed to generate new take.'));

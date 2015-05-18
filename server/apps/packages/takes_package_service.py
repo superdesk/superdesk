@@ -75,6 +75,8 @@ class TakesPackageService():
         take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
         to['headline'] = '{}={}'.format(headline, sequence)
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
+        if target.get(config.CONTENT_STATE) in PUBLISH_STATES:
+            to['anpa_take_key'] = '{} (reopens)'.format(take_key)
         to['_version'] = 1
         to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
 
