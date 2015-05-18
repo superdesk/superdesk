@@ -31,6 +31,8 @@ For image processing you will need some extra packages:
 - mongodb
 - elasticsearch
 - redis
+- lostash
+- kibana
 
 ## CI
 

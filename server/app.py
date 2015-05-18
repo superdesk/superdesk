@@ -26,8 +26,11 @@ from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
 from superdesk.errors import SuperdeskError, SuperdeskApiError
+from logging.handlers import SysLogHandler
+from settings import LOG_SERVER_ADDRESS, LOG_SERVER_PORT
 
 
+logging.basicConfig(handlers=[SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))])
 logger = logging.getLogger('superdesk')
 sentry = Sentry(register_signal=False, wrap_wsgi=False)
 
