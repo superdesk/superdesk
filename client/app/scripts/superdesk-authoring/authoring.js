@@ -651,6 +651,10 @@
                 }
 
                 function validatePublishSchedule(item) {
+                    if (_.contains(['published', 'killed', 'corrected'], item.state)) {
+                        return true;
+                    }
+
                     if (item.publish_schedule_date && !item.publish_schedule_time) {
                         notify.error(gettext('Publish Schedule time is invalid!'));
                         return false;

@@ -95,6 +95,7 @@ class BasePublishService(BaseService):
                     and original[config.CONTENT_STATE] not in PUBLISH_STATES:
                 updates[config.CONTENT_STATE] = 'scheduled'
             else:
+                updates['publish_schedule'] = None
                 updates[config.CONTENT_STATE] = self.published_state
 
             original.update(updates)
