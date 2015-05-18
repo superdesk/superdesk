@@ -4,6 +4,20 @@
 ContentCtrlFactory.$inject = ['api', 'superdesk'];
 function ContentCtrlFactory(api, superdesk) {
     return function ContentCtrl($scope) {
+        var templateFields = [
+            'abstract',
+            'anpa_take_key',
+            'body_html',
+            'byline',
+            'dateline',
+            'destination_groups',
+            'headline',
+            'language',
+            'more_coming',
+            'pubstatus',
+            'slugline',
+            'type'
+        ];
 
         /**
          * Create an item and start editing it
@@ -23,6 +37,15 @@ function ContentCtrlFactory(api, superdesk) {
             } else {
                 superdesk.intent('create', 'package');
             }
+        };
+
+        this.createFromTemplate = function(template) {
+            var item = _.pick(template, templateFields);
+            api('archive')
+            .save(item)
+            .then(function() {
+                superdesk.intent('author', 'article', item);
+            });
         };
     };
 }

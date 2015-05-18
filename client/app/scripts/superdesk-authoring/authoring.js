@@ -1203,9 +1203,23 @@
         };
     }
 
-    function ContentCreateDirective() {
+    ContentCreateDirective.$inject = ['templatesSettingsService'];
+    function ContentCreateDirective(templatesSettingsService) {
         return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html'
+            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
+            link: function(scope) {
+                scope.contentTemplates = null;
+
+                var fetchTemplates = function() {
+                    templatesSettingsService.fetchContentTemplates()
+                    .then(function(contentTemplates) {
+                            scope.contentTemplates = contentTemplates;
+                        }
+                    );
+                };
+
+                fetchTemplates();
+            }
         };
     }
 
