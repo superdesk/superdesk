@@ -89,6 +89,13 @@ define([
                 }
             };
         }])
+        .filter('dateTimeStringWithSecs', ['$filter', function($filter) {
+            return function(input) {
+                if (input !== null) {
+                    return $filter('date')(input, 'dd.MM.yyyy HH:mm:ss');
+                }
+            };
+        }])
         .filter('queueStatus', ['$filter', function($filter)  {
             return function(input) {
                 if (input === 'pending') {
