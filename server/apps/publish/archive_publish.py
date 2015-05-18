@@ -118,7 +118,7 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
-                    any_channel_closed = self.queue_transmission(doc=package, target_output_channels=DIGITAL)
+                    any_channel_closed = self.publish(doc=package, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
 
