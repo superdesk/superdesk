@@ -690,7 +690,11 @@
                         if (response) {
                             if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
                                 if (angular.isDefined(response.data._issues['validator exception'])) {
-                                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                                    var errors = response.data._issues['validator exception'];
+                                    errors = errors.replace(/\[/g, '').replace(/\]/g, '').split(',');
+                                    for (var i = 0; i < errors.length; i++) {
+                                        notify.error(errors[i]);
+                                    }
                                 }
                             } else {
                                 notify.success(gettext('Item published.'));
