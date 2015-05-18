@@ -91,6 +91,11 @@
             this.stop(item);
             timeouts[item._id] = $timeout(function() {
                 var diff = extendItem({_id: item._id}, item);
+
+                if (diff.publish_schedule === null) {
+                    delete diff.publish_schedule;
+                }
+
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
                     extendItem(item, _autosave);
                     var orig = Object.getPrototypeOf(item);

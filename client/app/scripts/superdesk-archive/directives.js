@@ -253,15 +253,20 @@
             var promise = ingestSources.initialize();
             return {
                 scope: {
-                    provider: '='
+                    item: '='
                 },
                 template: '{{name}}',
                 link: function(scope) {
-                    scope.$watch('provider', function() {
+                    scope.$watch('item', function() {
                         scope.name = '';
+
+                        if (!scope.item.ingest_provider && 'source' in scope.item) {
+                            scope.name = scope.item.source;
+                        }
+
                         promise.then(function() {
-                            if (scope.provider && scope.provider in ingestSources.providersLookup) {
-                                scope.name = ingestSources.providersLookup[scope.provider].name;
+                            if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
+                                scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
                             }
                         });
                     });

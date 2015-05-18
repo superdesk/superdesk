@@ -33,7 +33,7 @@
 
         <dl>
             <dt class="source"><span translate>source:</span></dt>
-            <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
+            <dd class="provider" sd-meta-ingest data-item="item"></dd>
             <dt translate>updated</dt>
             <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
             <dt ng-show="item.is_spiked" translate>expires</dt>

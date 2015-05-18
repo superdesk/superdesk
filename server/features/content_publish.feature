@@ -526,3 +526,29 @@ Feature: Content Publishing
       """
       [{"event": "item:publish:closed:channels"}]
       """
+
+    @auth
+    Scenario: Assign a default Source to user created content Items and is overwritten by Source at desk level when published
+      Given "desks"
+      """
+      [{"name": "Sports", "source": "Superdesk Sports"}]
+      """
+      And we have "/destination_groups" with "destgroup1" and success
+      """
+      [{ "name":"Group 1", "description": "new stuff", "destination_groups": [], "output_channels": [] }]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we post to "/stages" with success
+      """
+      [{"name": "Published Stage", "task_status": "done", "desk": "#desks._id#", "published_stage": true}]
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      """

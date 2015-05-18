@@ -399,3 +399,14 @@ Feature: News Items Archive
         """
         {"headline": "test4", "sign_off": "abc/foo"}
         """
+
+    @auth
+    Scenario: Assign a default Source to user created content Items
+        When we post to "/archive"
+        """
+        [{"type": "text", "body_html": "<p>content</p>"}]
+        """
+        Then we get new resource
+        """
+        {"type": "text", "source":"AAP"}
+        """

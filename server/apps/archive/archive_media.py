@@ -12,6 +12,7 @@ import logging
 
 from flask import abort, current_app as app
 from eve.utils import config
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.upload import url_for_media
@@ -61,6 +62,9 @@ class ArchiveMediaService():
                     set_original_creator(doc)
 
                 doc.setdefault(config.CONTENT_STATE, 'draft')
+
+                if not doc.get('ingest_provider'):
+                    doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
                 add_activity('upload', 'uploaded media {{ name }}',
                              'archive', item=doc,

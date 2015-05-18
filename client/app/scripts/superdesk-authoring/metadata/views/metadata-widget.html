@@ -24,9 +24,9 @@
 			<label translate>Original source</label>
 			<div class="data">{{ item.original_source}}</div>
 		</li>
-		<li ng-if="item.ingest_provider">
-			<label translate>Ingest provider</label>
-			<div class="data" sd-meta-ingest data-provider="item.ingest_provider"></div>
+		<li>
+			<label translate>Source</label>
+			<div class="data" sd-meta-ingest data-item="item"></div>
 		</li>
 		<li ng-if="item.ingest_provider_sequence">
 			<label translate>Provider sequence</label>
@@ -47,10 +47,6 @@
 		<li ng-if="item.expiry">
 			<label translate>Expiry</label>
 			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
-		</li>
-		<li ng-if="item.provider">
-			<label translate>Provider</label>
-			<div class="data" sd-meta-ingest data-provider="item.ingest_provider">{{ item.provider }}</div>
 		</li>
 		<li>
 			<label translate>Urgency</label>
