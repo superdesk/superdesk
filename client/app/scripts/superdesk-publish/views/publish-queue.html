@@ -62,9 +62,9 @@
 				<td>{{subscriberLookup[queue_item.subscriber_id].name}}</td>
 				<td ng-if="queue_item.selector_codes != null && queue_item.selector_codes.length > 0">{{queue_item.destination.name}} {{ queue_item.selector_codes }}</td>
                 <td ng-if="queue_item.selector_codes == null || queue_item.selector_codes.length == 0">{{queue_item.destination.name}}</td>
-				<td>{{queue_item._created | dateTimeStringWithMillis}}</td>
-				<td>{{queue_item.publish_schedule | dateTimeStringWithMillis}}</td>
-				<td>{{queue_item.completed_at | dateTimeStringWithMillis}}</td>
+				<td>{{queue_item._created | dateTimeStringWithSecs}}</td>
+				<td>{{queue_item.publish_schedule | dateTimeStringWithSecs}}</td>
+				<td>{{queue_item.completed_at | dateTimeStringWithSecs}}</td>
 				<td>{{queue_item.state}}</td>
 				<td>{{queue_item.error_message}}</td>
                 <td>
