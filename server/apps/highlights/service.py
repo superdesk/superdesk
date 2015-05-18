@@ -1,6 +1,6 @@
 
 import json
-import apps.archive.archive_composite as package
+import apps.packages.package_service as package
 
 from superdesk import get_resource_service
 from superdesk.services import BaseService
