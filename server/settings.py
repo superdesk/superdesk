@@ -250,6 +250,10 @@ CONTENT_EXPIRY_MINUTES = 43200
 # 2880 = 2 days in minutes
 INGEST_EXPIRY_MINUTES = 2880
 
+# The number of minutes before published items purged
+# 4320 = 3 days in minutes
+PUBLISHED_ITEMS_EXPIRY_MINUTES = 4320
+
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.
 # If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value

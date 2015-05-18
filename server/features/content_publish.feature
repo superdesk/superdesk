@@ -1,7 +1,7 @@
 Feature: Content Publishing
 
     @auth
-    Scenario: Publish a user content and moves to publish stage
+    Scenario: Publish a user content
       Given the "validators"
       """
       [{"_id": "publish", "schema":{}}]
@@ -54,23 +54,17 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_version": 2, "state": "published", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
 
     @auth
@@ -98,25 +92,13 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
       """
         {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
       """
 
-    @auth
+    @auth @test
     Scenario: Publish a user content fails if nothing queued
       Given the "validators"
       """
@@ -170,19 +152,7 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
       """
       {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
@@ -242,19 +212,7 @@ Feature: Content Publishing
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
-      When we post to "/stages" with success
-      """
-      [
-        {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
-        }
-      ]
-      """
-      And we publish "#archive._id#" with "publish" type and "published" state
+      When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
       """
       {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
@@ -1374,12 +1332,6 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
-      """
-      And we post to "/stages" with success
-      """
-      [
-        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
-      ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 200

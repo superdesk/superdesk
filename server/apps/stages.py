@@ -91,8 +91,6 @@ class StagesService(BaseService):
             else:
                 doc['desk_order'] = prev_stage[0].get('desk_order', 1) + 1
             # if this new one is default need to remove the old default
-            if doc.get('published_stage', False):
-                self.remove_old_default(doc.get('desk'), 'published_stage')
             if doc.get('default_incoming', False):
                 self.remove_old_default(doc.get('desk'), 'default_incoming')
 
@@ -101,8 +99,6 @@ class StagesService(BaseService):
             if 'desk' in doc:
                 push_notification(self.notification_key, created=1, stage_id=str(doc.get('_id')),
                                   desk_id=str(doc.get('desk')), is_visible=doc.get('is_visible', True))
-            if doc.get('published_stage', False):
-                self.set_desk_ref(doc, 'published_stage')
             if doc.get('default_incoming', False):
                 self.set_desk_ref(doc, 'incoming_stage')
 
@@ -130,14 +126,6 @@ class StagesService(BaseService):
                 expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
                 item_model = get_model(ItemModel)
                 item_model.update({'_id': doc['_id']}, {'expiry': expiry})
-
-        if updates.get('published_stage', False):
-            if not original.get('published_stage'):
-                self.remove_old_default(original.get('desk'), 'published_stage')
-                self.set_desk_ref(original, 'published_stage')
-        else:
-            if original.get('published_stage') and 'published_stage' in updates:
-                self.clear_desk_ref(original, 'published_stage')
 
         if updates.get('default_incoming', False):
             if not original.get('default_incoming'):

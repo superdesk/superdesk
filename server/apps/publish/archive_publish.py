@@ -11,7 +11,6 @@
 from eve.versioning import resolve_document_version
 from eve.utils import config, document_etag
 from eve.validation import ValidationError
-from flask import current_app as app
 from copy import copy
 import logging
 
@@ -64,7 +63,7 @@ class BasePublishService(BaseService):
     published_state = 'published'
 
     def on_update(self, updates, original):
-        if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
         if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
             raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
@@ -115,15 +114,13 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=package)
 
                     # send it to the digital channels
-                    any_channel_closed = self.publish(doc=package, updates=updates,
-                                                      target_output_channels=DIGITAL)
+                    any_channel_closed = self.publish(doc=package, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
 
                 # queue only text items
                 any_channel_closed = any_channel_closed or \
-                    self.publish(doc=original, updates=updates,
-                                 target_output_channels=WIRE if package_id else None)
+                    self.publish(doc=original, target_output_channels=WIRE if package_id else None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
@@ -143,12 +140,9 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
                                                   .format(str(e)))
 
-    def publish(self, doc, updates, target_output_channels=None):
+    def publish(self, doc, target_output_channels=None):
         any_channel_closed, wrong_formatted_channels, queued = \
             self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
-        task = self.__send_to_publish_stage(doc)
-        if task:
-            updates['task'] = task
 
         user = get_user()
 
@@ -317,12 +311,6 @@ class BasePublishService(BaseService):
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
 
-    def __send_to_publish_stage(self, doc):
-        desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
-        if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
-            doc['task']['stage'] = desk['published_stage']
-            return get_resource_service('move').move_content(doc['_id'], doc)['task']
-
     def process_takes(self, take, package_id):
         """
         This function validates if the take is the one in order then
@@ -386,7 +374,7 @@ class BasePublishService(BaseService):
         get_resource_service('published').update_published_items(published_item['_id'],
                                                                  'last_publish_action',
                                                                  self.published_state)
-        get_resource_service('published').post([published_item])
+        get_resource_service('published').post([copy(published_item)])
 
 
 class ArchivePublishResource(BasePublishResource):
