@@ -17,6 +17,8 @@ from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_T
 from .common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
 from .archive_composite import get_item_ref, create_root_group
 
+
+LAST_TAKE = 'last_take'
 logger = logging.getLogger(__name__)
 
 
@@ -35,6 +37,12 @@ class TakesPackageService():
             raise SuperdeskApiError.forbiddenError(message=message)
         return takes_package[0] if takes_package else None
 
+    def enhance_with_package_info(self, item):
+        package_id = self.get_take_package_id(item)
+        if package_id:
+            takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+            item.setdefault(TAKES_PACKAGE, takes_package)
+
     def __link_items__(self, takes_package, target, link):
         sequence = takes_package.get(SEQUENCE, 0) if takes_package else 0
         main_group = next((group for group in takes_package['groups'] if group['id'] == MAIN_GROUP))
@@ -49,6 +57,7 @@ class TakesPackageService():
         link_ref[SEQUENCE] = self.__next_sequence__(sequence)
         main_group[ASSOCIATIONS].append(link_ref)
         takes_package[SEQUENCE] = link_ref[SEQUENCE]
+        takes_package[LAST_TAKE] = link['_id']
 
     def __next_sequence__(self, seq):
         return seq + 1

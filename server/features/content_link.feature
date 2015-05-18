@@ -68,18 +68,22 @@ Feature: Link content in takes
                     ],
                     "type": "composite",
                     "package_type": "takes",
-                    "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}
+                    "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+                    "sequence": 2,
+                    "last_take": ""
                 },
                 {
                     "headline": "test1=2",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}]
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
                 },
                 {
                     "guid": "123",
                     "headline": "test1",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}]
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
                 }
             ]
         }
@@ -130,19 +134,22 @@ Feature: Link content in takes
                 {
                     "headline": "test1=2",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}]
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
                 },
                 {
                     "guid": "123",
                     "headline": "test1",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}]
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
                 },
                 {
                     "guid": "#TAKE#",
                     "headline": "test1=3",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}]
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
                 }
             ]
         }
