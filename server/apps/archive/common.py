@@ -298,8 +298,9 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
         2. Sets the value of marked_for_not_publication
     """
 
-    if doc and 'pubstatus' in doc:
-        doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+    if doc:
+        if 'pubstatus' in doc:
+            doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
 
-    if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
-        doc['marked_for_not_publication'] = False
+        if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
+            doc['marked_for_not_publication'] = False
