@@ -1,6 +1,6 @@
 Feature: Content Publishing
 
-    @auth @test
+    @auth
     Scenario: Publish a user content
       Given the "validators"
       """
@@ -98,7 +98,7 @@ Feature: Content Publishing
         {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
       """
 
-    @auth
+    @auth @test
     Scenario: Publish a user content fails if nothing queued
       Given the "validators"
       """
