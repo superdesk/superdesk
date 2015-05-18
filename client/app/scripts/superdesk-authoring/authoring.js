@@ -42,13 +42,11 @@
     }
 
     function stripHtml(item) {
-        var fields = ['headline']; // field to remove html from
-        var matchHtml = /(<([^>]+)>)/ig;
-        _.each(fields, function(key) {
-            if (item[key] && item[key].match(matchHtml) != null) {
-                item[key] = item[key].replace(matchHtml, '');
-            }
-        });
+        var elem = document.createElement('div');
+        elem.innerHTML = item.headline? item.headline: '';
+        if (elem.textContent !== '') {
+            item.headline = elem.textContent;
+        }
     }
 
     /**
