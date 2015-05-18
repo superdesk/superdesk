@@ -701,6 +701,7 @@
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
                         $location.url($scope.referrerUrl);
+                        $scope.$root.$broadcast('itemClosing');
                     });
                 };
 
@@ -813,19 +814,9 @@
                     }
                 });
 
-                $scope.$on('handlePreview', function(_e, item) {
+                $scope.$on('handleItemPreview', function(_e, item) {
                     if ($scope.item._id !== item._id) {
                         $scope.closePreview();
-                    }
-                });
-
-                $scope.$on('handleEdit', function(_e, item) {
-                    if ($scope.item._id !== item._id) {
-                        $scope.closePreview();
-                        $scope.origItem = item;
-                        $scope.origItem._editable = true;
-                        //$scope.origItem = lock.lock($scope.origItem);
-                        initEditor();
                     }
                 });
 

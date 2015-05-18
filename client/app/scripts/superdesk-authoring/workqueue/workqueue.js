@@ -92,8 +92,6 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     });
 
     $scope.openProductionArticle = function(article) {
-        console.log('clicked');
-        //$scope.items = article;
         $scope.$root.$broadcast('openProductionArticle', article);
     };
 
