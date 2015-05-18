@@ -7,31 +7,31 @@
         $scope.origItem = {};
         $scope.action = 'view';
         $scope.viewdefault = true;
-
         $scope.selected_id = null;
-
         $scope.items = {};
+        $scope.$on('itemClosing', function() {
+            $scope.viewdefault = true;
+        });
 
-        $scope.$on('handlePreview', function(event, arg) {
-            $scope.origItem = arg;
-            $scope.selected_id = arg._id;
-            $scope.action = 'view';
-            $scope._editable = null;
-            $scope.viewdefault = false;
-        });
-        $scope.$on('handleEdit', function(event, arg) {
-            $scope.origItem = arg;
-            $scope.selected_id = arg._id;
-            $scope.action = 'edit';
-            $scope._editable = $scope.origItem._editable;
-            $scope.viewdefault = false;
-        });
-        $scope.$on('openProductionArticle', function(event, arg) {
+        $scope.$on('handleItemPreview', function(event, item) {
             referrer.setReferrerUrl($location.url());
-            $scope.origItem = arg;
-            $scope.selected_id = arg._id;
+            $scope.origItem = item;
+            $scope.selected_id = item._id;
             $scope.action = 'view';
             $scope._editable = null;
+            $scope.viewdefault = false;
+        });
+        $scope.$on('handleItemEdit', function(event, item) {
+            $scope.origItem = item;
+            $scope.action = 'edit';
+            $scope.origItem._editable = true;
+            authoring.open(item._id, false).then(function() {
+                $scope.viewdefault = false;
+            });
+        });
+        $scope.$on('openProductionArticle', function(event, item) {
+            referrer.setReferrerUrl($location.url());
+            $scope.origItem = item;
             $scope.viewdefault = false;
         });
     }

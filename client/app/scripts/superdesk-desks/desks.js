@@ -63,8 +63,10 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'authoring', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, authoring, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'authoring', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll',
+    'referrer'];
+    function StageItemListDirective(search, authoring, api, superdesk, desks, $timeout, $q, $location, $anchorScroll,
+    referrer) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -97,15 +99,17 @@
                 } else {
                     scope.preview = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        scope.$root.$broadcast('handlePreview', item);
+                        scope.$root.$broadcast('handleItemPreview', item);
                     };
                     scope.edit = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        scope.$root.$broadcast('handleEdit', item);
+                        referrer.setReferrerUrl($location.url());
+                        $location.search('_id', item ? item._id : null);
+                        scope.$root.$broadcast('handleItemEdit', item);
                     };
                     scope.$watch('selected', function() {
                         if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
-                            scope.$root.$broadcast('handlePreview', scope.selected);
+                            scope.$root.$broadcast('handleItemPreview', scope.selected);
                         }
                     });
                 }
