@@ -264,6 +264,11 @@
 				  margin-right: 5px;
 			}
 		}
+                &:not(:-moz-handler-blocked) {
+                    .text {
+                        white-space: normal;
+                    }
+                }
 		.action {
 			position: absolute;
 			right: 0; top: 0;
@@ -290,7 +295,7 @@
 		}
 		&.shifted:hover {
 			.text {
-				padding-right: 37px;
+				padding-right: 57px;
 			}
 			.action {
 				display: block;
