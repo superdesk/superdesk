@@ -27,7 +27,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
     set_sign_off, PUBLISH_STATES
-from apps.archive.takes_package_service import TakesPackageService
+from apps.packages import TakesPackageService
 
 
 logger = logging.getLogger(__name__)
