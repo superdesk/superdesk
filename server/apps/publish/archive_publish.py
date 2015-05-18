@@ -76,7 +76,7 @@ class BasePublishService(BaseService):
         validate_item = {'act': self.publish_type, 'validate': updates}
         validation_errors = get_resource_service('validate').post([validate_item])
         if validation_errors[0]:
-            raise ValidationError('Publish failed due to {}'.format(str(validation_errors[0])))
+            raise ValidationError(validation_errors)
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item=original)
