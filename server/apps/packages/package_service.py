@@ -16,9 +16,8 @@ from eve.utils import config
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.archive.archive import SOURCE as ARCHIVE
-from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE, PACKAGE
-from .common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP, SEQUENCE, PUBLISH_STATES
+from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE
+from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP
 
 
 logger = logging.getLogger(__name__)
@@ -54,105 +53,6 @@ def get_item_ref(item):
     }
 
 
-class TakesPackageService():
-
-    def get_take_package_id(self, item):
-        """
-        Checks if the item is in a 'takes' package and returns the package id
-        :return: _id of the package or None
-        """
-        takes_package = [package.get(PACKAGE) for package in item.get(LINKED_IN_PACKAGES, [])
-                         if package.get(PACKAGE_TYPE)]
-        if len(takes_package) > 1:
-            message = 'Multiple takes found for item: {0}'.format(item['_id'])
-            logger.error(message)
-            raise SuperdeskApiError.forbiddenError(message=message)
-        return takes_package[0] if takes_package else None
-
-    def __link_items__(self, takes_package, target, link):
-        sequence = takes_package.get(SEQUENCE, 0) if takes_package else 0
-        main_group = next((group for group in takes_package['groups'] if group['id'] == MAIN_GROUP))
-
-        if sequence == 0:
-            target_ref = get_item_ref(target)
-            sequence = self.__next_sequence__(sequence)
-            target_ref[SEQUENCE] = sequence
-            main_group[ASSOCIATIONS].append(target_ref)
-
-        link_ref = get_item_ref(link)
-        link_ref[SEQUENCE] = self.__next_sequence__(sequence)
-        main_group[ASSOCIATIONS].append(link_ref)
-        takes_package[SEQUENCE] = link_ref[SEQUENCE]
-
-    def __next_sequence__(self, seq):
-        return seq + 1
-
-    def __strip_take_info__(self, take_info):
-        take_index = take_info.rfind('=')
-        return take_info[0:take_index] if take_info[take_index + 1:].isdigit() else take_info
-
-    def __copy_metadata__(self, target, to, package):
-        # TODO: length validation may be required.
-        # if target is the first take hence default sequence is for first take.
-        sequence = package.get(SEQUENCE, 1) if package else 1
-        sequence = self.__next_sequence__(sequence)
-        headline = self.__strip_take_info__(target.get('headline', ''))
-        take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
-        to['headline'] = '{}={}'.format(headline, sequence)
-        to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
-        to['_version'] = 1
-        to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
-
-        copy_from = package if (package.get(config.CONTENT_STATE) in PUBLISH_STATES) else target
-        for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups',
-                      'slugline', 'urgency', 'subject', 'dateline']:
-            to[field] = copy_from.get(field)
-
-    def create_takes_package(self, takes_package, target, link):
-        takes_package.update({
-            ITEM_TYPE: ITEM_TYPE_COMPOSITE,
-            PACKAGE_TYPE: TAKES_PACKAGE,
-            'headline': target.get('headline'),
-            'slugline': target.get('slugline'),
-            'abstract': target.get('abstract')
-        })
-        create_root_group([takes_package])
-        self.__link_items__(takes_package, target, link)
-        archive_service = get_resource_service(ARCHIVE)
-        tasks_service = get_resource_service('tasks')
-        ids = archive_service.post([takes_package])
-        takes_package_id = ids[0]
-
-        # send the package to the desk where the first take was sent
-        current_task = target.get('task')
-        tasks_service.patch(takes_package_id, {'task': current_task})
-
-    def link_as_next_take(self, target, link):
-        """
-        # check if target has an associated takes package
-        # if not, create it and add target as a take
-        # check if the target is the last take, if not, resolve the last take
-        # copy metadata from the target and add it as the next take
-        # return the update link item
-        """
-        takes_package_id = self.get_take_package_id(target)
-        archive_service = get_resource_service(ARCHIVE)
-        takes_package = archive_service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
-
-        if not link.get('_id'):
-            self.__copy_metadata__(target, link, takes_package)
-            archive_service.post([link])
-
-        if not takes_package_id:
-            self.create_takes_package(takes_package, target, link)
-        else:
-            self.__link_items__(takes_package, target, link)
-            del takes_package['_id']
-            archive_service.patch(takes_package_id, takes_package)
-
-        return link
-
-
 class PackageService():
 
     def on_create(self, docs):
@@ -164,7 +64,7 @@ class PackageService():
     def on_created(self, docs):
         for (doc, assoc) in [(doc, assoc) for doc in docs
                              for assoc in self._get_associations(doc)]:
-            self.update_link(doc[config.ID_FIELD], assoc)
+            self.update_link(doc, assoc)
 
     def on_update(self, updates, original):
         self.check_root_group([updates])
@@ -177,13 +77,13 @@ class PackageService():
         toAdd = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
         toRemove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in toAdd]
         for assoc in toRemove:
-            self.update_link(original[config.ID_FIELD], assoc, delete=True)
+            self.update_link(original, assoc, delete=True)
         for assoc in toAdd.values():
-            self.update_link(original[config.ID_FIELD], assoc)
+            self.update_link(original, assoc)
 
     def on_deleted(self, doc):
         for assoc in self._get_associations(doc):
-            self.update_link(doc[config.ID_FIELD], assoc, delete=True)
+            self.update_link(doc, assoc, delete=True)
 
     def check_root_group(self, docs):
         for groups in [doc.get('groups') for doc in docs if doc.get('groups')]:
@@ -255,10 +155,12 @@ class PackageService():
             raise SuperdeskApiError.notFoundError(message=message)
         return item, item_id, endpoint
 
-    def update_link(self, package_id, assoc, delete=False):
+    def update_link(self, package, assoc, delete=False):
         # skip root node
         if assoc.get(ID_REF):
             return
+        package_id = package[config.ID_FIELD]
+        package_type = package.get(PACKAGE_TYPE)
 
         item, item_id, endpoint = self.get_associated_item(assoc, not delete)
         if not item and delete:
@@ -268,7 +170,10 @@ class PackageService():
         two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
 
         if not delete:
-            two_way_links.append({PACKAGE: package_id, PACKAGE_TYPE: TAKES_PACKAGE})
+            data = {PACKAGE: package_id}
+            if package_type:
+                data.update({PACKAGE_TYPE: TAKES_PACKAGE})
+            two_way_links.append(data)
 
         updates = self.get_item_update_data(item, two_way_links, delete)
         get_resource_service(endpoint).system_update(item_id, updates, item)

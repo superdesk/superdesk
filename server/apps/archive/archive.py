@@ -41,7 +41,7 @@ import superdesk
 import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
-from .archive_composite import PackageService
+from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
@@ -146,6 +146,7 @@ def update_word_count(doc):
 
 class ArchiveService(BaseService):
     packageService = PackageService()
+    takesService = TakesPackageService()
     mediaService = ArchiveMediaService()
 
     def on_fetched(self, docs):
@@ -155,6 +156,7 @@ class ArchiveService(BaseService):
 
         for item in docs[config.ITEMS]:
             handle_existing_data(item)
+            self.takesService.enhance_with_package_info(item)
 
     def on_create(self, docs):
         on_create_item(docs)
