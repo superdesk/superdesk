@@ -42,8 +42,10 @@
 
     function stripHtml(item) {
         var elem = document.createElement('div');
-        elem.innerHTML = item.headline;
-        item.headline = elem.textContent;
+        elem.innerHTML = item.headline? item.headline: '';
+        if (elem.textContent !== '') {
+            item.headline = elem.textContent;
+        }
     }
 
     /**
