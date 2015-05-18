@@ -528,6 +528,51 @@ Feature: Content Publishing
       """
 
     @auth
+    Scenario: As a user I shouldn't be able to publish an item which is marked as not for publication
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+        "name" : "Email Subscriber", "is_active" : true
+      }]
+      """
+      And we post to "/output_channels" with "channel1" and success
+      """
+      [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+      """
+      And we post to "/output_channels" with "channel2" and success
+      """
+      [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+      """
+      And we post to "/destination_groups" with "destgroup1" and success
+      """
+      [{
+        "name":"Group 1", "description": "new stuff",
+        "destination_groups": [],
+        "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+      }]
+      """
+      And we post to "/archive" with success
+      """
+      [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
+        "marked_for_not_publication": true, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      And we post to "/stages" with success
+      """
+      [
+        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
+      ]
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Cannot publish an item which is marked as Not for Publication"}}
+      """
+
+    @auth
     Scenario: Assign a default Source to user created content Items and is overwritten by Source at desk level when published
       Given "desks"
       """

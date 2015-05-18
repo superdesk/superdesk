@@ -38,9 +38,21 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "publish_enabled"
+            ng-if = "publish_enabled && not_for_publication_visisble"
             ng-show="_editable"
             translate>Publish</button>
+
+        <button class="btn btn-medium btn-info pull-left" type="submit"
+            ng-click="markForPublication(true)"
+            ng-if="not_for_publication_visisble"
+            ng-show="_editable"
+            translate>Mark for Not Publication</button>
+
+        <button class="btn btn-medium btn-info pull-left" type="submit"
+            ng-click="markForPublication(false)"
+            ng-if="!not_for_publication_visisble"
+            ng-show="_editable"
+            translate>Mark for Publication</button>
 
         <div class="navbtn dropdown strict pull-left" tooltip="{{ :: 'Create' | translate }}" tooltip-placement="bottom" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
