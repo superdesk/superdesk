@@ -237,6 +237,42 @@ define([
                                     notify.error(gettext('Failed to generate new take.'));
                                 });
                         }]
+                })
+                .activity('Update', {
+                    label: gettext('Update'),
+                    icon: 'copy',
+                    filters: [{action: 'list', type: 'archive'}],
+                    privileges: {archive: 1},
+                    condition: function(item) {
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
+                            _.contains(['published', 'corrected'], item.state) &&
+                            (item.type === 'text' || item.type === 'preformatted');
+                    },
+                    controller: ['data', '$location', 'api', 'notify', 'session', 'desks',
+                        function(data, $location, api, notify, session, desks) {
+                            var pick_fields = ['family_id', 'abstract', 'anpa-category',
+                                                'pubstatus', 'destination_groups',
+                                                'slugline', 'urgency', 'subject', 'dateline',
+                                                'priority', 'byline', 'dateline', 'headline'];
+                            var update_item = {};
+                            update_item =  _.pick(angular.extend(update_item, data.item), pick_fields);
+                            update_item.related_to = data.item._id;
+                            update_item.anpa_take_key = 'update';
+                            update_item.task = {};
+
+                            session.getIdentity()
+                                .then(function(user) {
+                                    update_item.task.desk = user.desk? user.desk: desks.getCurrentDeskId();
+                                    return api.archive.save({}, update_item);
+                                })
+                                .then(function(new_item) {
+                                    notify.success(gettext('Update Created.'));
+                                    $location.url('/authoring/' + new_item._id);
+                                }, function(response) {
+                                    notify.error(gettext('Failed to generate update.'));
+                                });
+
+                        }]
                 });
         }])
 
