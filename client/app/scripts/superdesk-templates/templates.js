@@ -16,16 +16,21 @@
 
     }
 
-    TemplatesSettingsService.$inject = ['api', '$q'];
-    function TemplatesSettingsService(api, $q) {
+    TemplatesService.$inject = ['api', '$q', 'gettext'];
+    function TemplatesService(api, $q, gettext) {
+
+        this.types = [
+            {_id: 'kill', label: gettext('Kill')},
+            {_id: 'create', label: gettext('Create')}
+        ];
 
         this.fetchContentTemplates = function fetchContentTemplates() {
             return api.find('content_templates');
         };
     }
 
-    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templatesSettingsService', 'modal', 'adminPublishSettingsService'];
-    function TemplatesDirective(gettext, notify, api, templatesSettingsService, modal, adminPublishSettingsService) {
+    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'adminPublishSettingsService'];
+    function TemplatesDirective(gettext, notify, api, templates, modal, adminPublishSettingsService) {
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
@@ -34,12 +39,14 @@
                 $scope.template = null;
 
                 function fetchTemplates() {
-                    templatesSettingsService.fetchContentTemplates().then(
+                    templates.fetchContentTemplates().then(
                         function(content_templates) {
                             $scope.content_templates = content_templates;
                         }
                     );
                 }
+
+                $scope.types = templates.types;
 
                 $scope.save = function() {
                     api.content_templates.save($scope.origTemplate, $scope.template)
@@ -62,6 +69,9 @@
                 $scope.edit = function(template) {
                     $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
+
+                    $scope.item = $scope.template;
+                    $scope._editable = true;
 
                     $scope.origTemplate.destination_groups = $scope.origTemplate.destination_groups || [];
 
@@ -116,8 +126,8 @@
         };
     }
 
-    CreateTemplateController.$inject = ['item', 'api', 'desks', '$q'];
-    function CreateTemplateController(item, api, desks, $q) {
+    CreateTemplateController.$inject = ['item', 'templates', 'api', 'desks', '$q'];
+    function CreateTemplateController(item, templates, api, desks, $q) {
         var vm = this,
             metadata = [
                 'headline',
@@ -148,6 +158,7 @@
         this.name = item.slugline || null;
         this.desk = desks.active.desk || null;
 
+        this.types = templates.types;
         this.save = save;
 
         activate();
@@ -192,7 +203,7 @@
     }
 
     angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring'])
-        .service('templatesSettingsService', TemplatesSettingsService)
+        .service('templates', TemplatesService)
         .directive('sdTemplates', TemplatesDirective)
         .controller('CreateTemplateController', CreateTemplateController)
         .controller('TemplateActionsController', TemplateActionsController)
