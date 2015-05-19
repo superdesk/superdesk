@@ -1,0 +1,72 @@
+<div sd-modal data-model="modalActive" class="add-group-popup modal-large modal-static" >
+
+        <div class="modal-header">
+            <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+            <h3 translate>Aggregate settings</h3>
+        </div>
+
+        <div class="modal-body" sd-wizard data-name="aggregatesettings" data-current-step="step.current" data-finish="cancel()">
+
+            <div sd-wizard-step data-title="{{ 'Desks' | translate }}" data-code="desks">
+                    <div class="content">
+
+				         <div class="legend" translate>Select desks for view</div>
+				         <div class="desk" ng-repeat="desk in desks">
+				             <div class="desk-title">
+				                 {{desk.name}}
+				                 <span sd-switch class="pull-right" ng-model="editGroups[desk._id].selected" ng-click="setDeskInfo(desk._id)"></span>
+				             </div>
+				             <ul class="stages clearfix" ng-if="editGroups[desk._id]">
+				                 <li ng-repeat="stage in deskStages[desk._id]">
+				                     <span sd-check ng-model="editGroups[stage._id].selected" ng-click="setStageInfo(stage._id)"></span> {{stage.name}}
+				                 </li>
+				             </ul>
+				         </div>
+				         <div ng-show="" class="legend" translate>Select saved searches to view</div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button id="nextStages" class="btn btn-primary" ng-click="next()" translate>Next</button>
+                    </div>
+            </div>
+
+            <div sd-wizard-step data-title="{{ 'Saved Searches' | translate }}" data-code="searches">
+                    <div class="content">
+                         <div class="legend" translate>Select saved searches for view</div>
+                         <div class="desk" ng-repeat="search in searches">
+                             <div class="desk-title">
+                                 {{search.name}}
+                                 <span sd-switch class="pull-right" ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>
+                             </div>
+                         </div>
+                         <div ng-show="" class="legend" translate>Select saved searches for view</div>
+                         
+                    </div>
+                    <div class="modal-footer">
+                        <button id="previousSearches" class="btn pull-left" ng-click="previous()" translate>Previous</button>
+                        <button id="nextSearches" class="btn btn-primary" ng-click="next()" translate>Next</button>
+                    </div>
+            </div>
+            
+            <div sd-wizard-step data-title="{{ 'Reorder Sections' | translate }}" data-code="reorder">
+                    <div class="content people-stage">
+                         <div class="legend" translate>Reorder stages and saved searches for view</div>
+                         <div class="desk" ng-repeat="item in getValues() | orderBy:'group_order'">
+                             <div class="desk-title" ng-if="item.selected && item.type === 'stage'">
+                             {{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span>
+                             </div>
+                             <div class="desk-title" ng-if="item.selected && item.type === 'search'">
+                                 {{searchLookup[item._id].name}}
+                             </div>
+                         </div>
+                         <div ng-show="" class="legend" translate>Reorder stages and saved searches for view</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="previousReorder" class="btn pull-left" ng-click="previous()" translate>Previous</button>
+                        <button class="btn btn-primary" ng-click="save()" translate>Done</button>
+                    </div>
+            </div>
+
+        </div>
+
+    </div>

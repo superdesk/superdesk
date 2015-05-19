@@ -48,7 +48,7 @@ class SavedSearchesResource(Resource):
 class SavedSearchesService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            doc.setdefault('user', request.view_args['user'])
+            doc.setdefault('user', request.view_args.get('user'))
             repo, query = self.process_query(doc)
 
             if repo.find(',') >= 0:
