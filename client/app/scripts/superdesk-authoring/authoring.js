@@ -1212,9 +1212,24 @@
         };
     }
 
-    function ContentCreateDirective() {
+    ContentCreateDirective.$inject = ['api'];
+    function ContentCreateDirective(api) {
+        var NUM_ITEMS = 5;
         return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html'
+            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
+            link: function(scope) {
+                scope.contentTemplates = null;
+
+                var fetchTemplates = function(numItems) {
+                    var params = {max_results: numItems || undefined};
+                    api.content_templates.query(params)
+                    .then(function(result) {
+                        scope.contentTemplates = result;
+                    });
+                };
+
+                fetchTemplates(NUM_ITEMS);
+            }
         };
     }
 
