@@ -291,10 +291,16 @@ def is_update_allowed(archive_doc):
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
 
 
-def set_pub_status(doc, pub_status_value='usable'):
+def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
     """
-    Sets the value of pubstatus prooperty in metadata of doc in either ingest or archive repo
+    Handles existing data. For now the below are handled:
+        1. Sets the value of pubstatus property in metadata of doc in either ingest or archive repo
+        2. Sets the value of marked_for_not_publication
     """
 
-    if doc and 'pubstatus' in doc:
-        doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+    if doc:
+        if 'pubstatus' in doc:
+            doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+
+        if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
+            doc['marked_for_not_publication'] = False

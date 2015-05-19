@@ -57,6 +57,10 @@ class BasePublishService(BaseService):
     published_state = 'published'
 
     def on_update(self, updates, original):
+        if original.get('marked_for_not_publication', False):
+            raise SuperdeskApiError.badRequestError(
+                message='Cannot publish an item which is marked as Not for Publication')
+
         if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
 
@@ -68,6 +72,7 @@ class BasePublishService(BaseService):
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
+
         try:
             any_channel_closed = False
 

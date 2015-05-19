@@ -19,7 +19,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off, set_pub_status
+from .common import get_user, update_version, set_sign_off, handle_existing_data
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -107,6 +107,10 @@ class ArchiveResource(Resource):
         'publish_schedule': {
             'type': 'datetime',
             'default': None
+        },
+        'marked_for_not_publication': {
+            'type': 'boolean',
+            'default': False
         }
     }
 
@@ -150,7 +154,7 @@ class ArchiveService(BaseService):
         """
 
         for item in docs[config.ITEMS]:
-            set_pub_status(item)
+            handle_existing_data(item)
 
     def on_create(self, docs):
         on_create_item(docs)
@@ -308,7 +312,7 @@ class ArchiveService(BaseService):
                 get_resource_service('users').get_invisible_stages_ids(get_user().get('_id')):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
 
-        set_pub_status(item)
+        handle_existing_data(item)
 
         return item
 

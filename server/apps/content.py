@@ -53,10 +53,6 @@ metadata_schema = {
         'type': 'string',
         'mapping': not_analyzed
     },
-    'related_to': {  # this field keeps a reference to the related item from which metadata has been copied
-        'type': 'string',
-        'mapping': not_analyzed
-    },
 
     # Audit Information
     'original_creator': Resource.rel('users'),
@@ -164,12 +160,15 @@ metadata_schema = {
         'type': 'integer',
         'nullable': True,
     },
+
+    # Related to state of an article
+
     'state': {
         'type': 'string',
         'allowed': superdesk.allowed_workflow_states,
         'mapping': not_analyzed,
     },
-    # The previous state the item was in before for example being spiked, when unspiked it will revert to this state
+    # The previous state the item was in before for example being spiked, when un-spiked it will revert to this state
     'revert_state': {
         'type': 'string',
         'allowed': superdesk.allowed_workflow_states,
@@ -185,6 +184,7 @@ metadata_schema = {
         'type': 'string',
         'mapping': not_analyzed
     },
+
     'byline': {
         'type': 'string',
         'nullable': True,

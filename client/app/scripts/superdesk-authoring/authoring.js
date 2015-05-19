@@ -25,7 +25,8 @@
         description: null,
         destination_groups: null,
         sign_off: null,
-        publish_schedule: null
+        publish_schedule: null,
+        marked_for_not_publication: false
     };
 
     /**
@@ -502,10 +503,12 @@
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
 
                 $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
-                    ((!_.contains(['published', 'killed'], $scope.origItem.state) && $scope.privileges.publish === 1) ||
-                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
+                    (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
+                    ($scope.origItem.state === 'published' && $scope.privileges.kill === 1));
 
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+
+                $scope.not_for_publication_visible = $scope.publish_enabled && $scope.origItem.marked_for_not_publication === false;
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
@@ -585,6 +588,7 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
+                        $scope.not_for_publication_visible = $scope.publish_enabled && res.marked_for_not_publication === false;
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -688,6 +692,11 @@
                             notify.error(gettext(res));
                         });
                     }
+                };
+
+                $scope.markForPublication = function(isArticlePublishable) {
+                    $scope.item.marked_for_not_publication = isArticlePublishable;
+                    return $scope.save();
                 };
 
                 $scope.deschedule = function() {
