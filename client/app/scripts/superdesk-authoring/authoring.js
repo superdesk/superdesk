@@ -1404,7 +1404,7 @@
                     condition: function(item) {
                         return item.type !== 'composite' &&
                         (item.state === 'published' ||  item.state === 'corrected') &&
-                        !item.last_publish_action;
+                        !item.last_publish_action && (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
                     privileges: {kill: 1}
                 })
@@ -1436,7 +1436,7 @@
                     condition: function(item) {
                         return item.type !== 'composite' &&
                         (item.state === 'published' ||  item.state === 'corrected')  &&
-                        !item.last_publish_action;
+                        !item.last_publish_action && (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
                     privileges: {correct: 1}
                 })
