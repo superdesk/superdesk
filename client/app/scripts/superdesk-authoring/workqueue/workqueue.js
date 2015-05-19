@@ -49,8 +49,8 @@ function ArticleDashboardCtrl($scope, ContentCtrl) {
     $scope.content = new ContentCtrl();
 }
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
-function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock', '$location'];
+function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock, $location) {
 
     $scope.workqueue = workqueue;
     $scope.multiEdit = multiEdit;
@@ -92,6 +92,7 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     });
 
     $scope.openProductionArticle = function(article) {
+        $location.search('_id', article ? article._id : null);
         $scope.$root.$broadcast('handleItemEdit', article);
     };
 
@@ -107,6 +108,13 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
 function WorkqueueListDirective() {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
+        controller: WorkqueueCtrl
+    };
+}
+
+function WorkqueueListProductionDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/views/opened-production-articles.html',
         controller: WorkqueueCtrl
     };
 }
@@ -128,6 +136,7 @@ function ProductionArticleDashboardDirective() {
 angular.module('superdesk.authoring.workqueue', ['superdesk.activity', 'superdesk.notification'])
     .service('workqueue', WorkqueueService)
     .directive('sdWorkqueue', WorkqueueListDirective)
+    .directive('sdWorkqueueProduction', WorkqueueListProductionDirective)
     .directive('sdDashboardArticles', ArticleDashboardDirective)
     .directive('sdDashboardProductionArticles', ProductionArticleDashboardDirective)
 
