@@ -1203,22 +1203,23 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['templatesSettingsService'];
-    function ContentCreateDirective(templatesSettingsService) {
+    ContentCreateDirective.$inject = ['api'];
+    function ContentCreateDirective(api) {
+        var NUM_ITEMS = 5;
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
                 scope.contentTemplates = null;
 
-                var fetchTemplates = function() {
-                    templatesSettingsService.fetchContentTemplates()
-                    .then(function(contentTemplates) {
-                            scope.contentTemplates = contentTemplates;
-                        }
-                    );
+                var fetchTemplates = function(numItems) {
+                    var params = {max_results: numItems || undefined};
+                    api.content_templates.query(params)
+                    .then(function(result) {
+                        scope.contentTemplates = result;
+                    });
                 };
 
-                fetchTemplates();
+                fetchTemplates(NUM_ITEMS);
             }
         };
     }

@@ -25,10 +25,10 @@ function ContentCtrlFactory(api, superdesk) {
         this.create = function(type) {
             var item = {type: type || 'text', version: 0};
             api('archive')
-                .save(item)
-                .then(function() {
-                    superdesk.intent('author', 'article', item);
-                });
+            .save(item)
+            .then(function() {
+                superdesk.intent('author', 'article', item);
+            });
         };
 
         this.createPackage = function createPackage(current_item) {
