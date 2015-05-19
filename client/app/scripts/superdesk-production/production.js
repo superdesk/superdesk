@@ -22,9 +22,7 @@
             data.item = item;
             data.action = 'view';
             $scope.viewdefault = false;
-            $timeout(function() {
-                $scope.$root.$broadcast('showPreview', data);
-            }, 200);
+            $scope.$root.$broadcast('showPreview', data);
         });
         $scope.$on('handleItemEdit', function(event, item) {
             referrer.setReferrerUrl($location.path());
