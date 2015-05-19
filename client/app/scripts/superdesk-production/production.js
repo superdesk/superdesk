@@ -1,38 +1,45 @@
 (function() {
     'use strict';
 
-    ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring', '$location', 'referrer'];
-    function ProductionController($scope, production, superdesk, authoring, $location, referrer) {
+    ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring', '$location', 'referrer', '$timeout'];
+    function ProductionController($scope, production, superdesk, authoring, $location, referrer, $timeout) {
         $scope.productionPreview = true;
-        $scope.origItem = {};
-        $scope.action = 'view';
         $scope.viewdefault = true;
         $scope.selected_id = null;
-        $scope.items = {};
         $scope.$on('itemClosing', function() {
             $scope.viewdefault = true;
         });
 
         $scope.$on('handleItemPreview', function(event, item) {
-            referrer.setReferrerUrl($location.url());
+            referrer.setReferrerUrl($location.path());
             $scope.origItem = item;
-            $scope.selected_id = item._id;
             $scope.action = 'view';
-            $scope._editable = null;
+            $scope._editable = false;
             $scope.viewdefault = false;
+            item._editable = false;
+
+            var data = {};
+            data.item = item;
+            data.action = 'view';
+            $scope.viewdefault = false;
+            $scope.$root.$broadcast('showPreview', data);
         });
         $scope.$on('handleItemEdit', function(event, item) {
+            referrer.setReferrerUrl($location.path());
+            item._editable = true;
             $scope.origItem = item;
-            $scope.action = 'edit';
-            $scope.origItem._editable = true;
-            authoring.open(item._id, false).then(function() {
+            $scope.action = 'view';
+            $scope._editable = false;
+
+            authoring.open(item._id, false).then(function(item) {
+                var data = {};
+                data.item = item;
+                data.action = 'edit';
+                $scope.$root.$broadcast('showPreview', data);
+            })
+            ['finally'](function() {
                 $scope.viewdefault = false;
             });
-        });
-        $scope.$on('openProductionArticle', function(event, item) {
-            referrer.setReferrerUrl($location.url());
-            $scope.origItem = item;
-            $scope.viewdefault = false;
         });
     }
 

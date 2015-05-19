@@ -813,9 +813,11 @@
                         $scope.item.lock_user = null;
                     }
                 });
-
-                $scope.$on('handleItemPreview', function(_e, item) {
-                    if ($scope.item._id !== item._id) {
+                $scope.$on('showPreview', function(_e, data) {
+                    if ($scope.item._id !== data.item._id) {
+                        $scope.origItem = data.item;
+                        $scope.action = data.action;
+                        initEditor();
                         $scope.closePreview();
                     }
                 });
