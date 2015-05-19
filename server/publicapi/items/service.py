@@ -11,11 +11,12 @@
 import json
 import logging
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from eve.utils import ParsedRequest
 from flask import current_app as app
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 from superdesk.services import BaseService
+from superdesk.utc import utcnow
 from urllib.parse import urljoin, quote
 from werkzeug.datastructures import MultiDict
 
@@ -134,39 +135,43 @@ class ItemsService(BaseService):
             * if any of the dates is set in the future
             * if the start date is bigger than the end date
         """
+        # check date limits' format...
+        err_msg = ("{} parameter must be an ISO 8601 date (YYYY-MM-DD) "
+                   "without the time part")
+
         try:
             start_date = self._parse_iso_date(request_params.get('start_date'))
         except ValueError:
             raise BadParameterValueError(
-                desc="Invalid parameter value (start_date)") from None
+                desc=err_msg.format('start_date')) from None
 
         try:
             end_date = self._parse_iso_date(request_params.get('end_date'))
         except ValueError:
             raise BadParameterValueError(
-                desc="Invalid parameter value (end_date)") from None
+                desc=err_msg.format('end_date')) from None
 
-        # disallow dates in the future
-        future_err_msg = (
+        # disallow dates in the future...
+        err_msg = (
             "{} date ({}) must not be set in the future "
-            "(current server date: {})")
-        today = date.today()
+            "(current server date (UTC): {})")
+        today = utcnow().date()
 
         if (start_date is not None) and (start_date > today):
             raise BadParameterValueError(
-                desc=future_err_msg.format(
+                desc=err_msg.format(
                     'Start', start_date.isoformat(), today.isoformat()
                 )
             )
 
         if (end_date is not None) and (end_date > today):
             raise BadParameterValueError(
-                desc=future_err_msg.format(
+                desc=err_msg.format(
                     'End', end_date.isoformat(), today.isoformat()
                 )
             )
 
-        # make sure that the date range limits make sense
+        # make sure that the date range limits make sense...
         if (
             (start_date is not None) and (end_date is not None) and
             (start_date > end_date)
@@ -175,9 +180,9 @@ class ItemsService(BaseService):
             raise BadParameterValueError(
                 desc="Start date must not be greater than end date")
 
-        # set default date range values if missing
+        # set default date range values if missing...
         if end_date is None:
-            end_date = date.today()
+            end_date = today
 
         if start_date is None:
             start_date = end_date - timedelta(1)
@@ -207,7 +212,10 @@ class ItemsService(BaseService):
             date_filter['versioncreated']['$gte'] = start_date.isoformat()
 
         if end_date is not None:
-            date_filter['versioncreated']['$lte'] = end_date.isoformat()
+            # need to set it to strictly less than end_date + 1 day,
+            # because internally dates are stored as datetimes
+            date_filter['versioncreated']['$lt'] = \
+                (end_date + timedelta(1)).isoformat()
 
         return date_filter
 
@@ -220,6 +228,8 @@ class ItemsService(BaseService):
 
         :return: resulting date object or None if None is given
         :rtype: datetime.date
+
+        :raises ValueError: if `date_str` is not in the ISO 8601 date format
         """
         if date_str is None:
             return None

@@ -188,7 +188,9 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc, "Invalid parameter value (start_date)")
+            ex.desc,
+            ("start_date parameter must be an ISO 8601 date (YYYY-MM-DD) "
+             "without the time part"))
 
     def test_raises_correct_error_on_invalid_end_date_parameter(self):
         request = MagicMock()
@@ -203,7 +205,9 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc, "Invalid parameter value (end_date)")
+            ex.desc,
+            ("end_date parameter must be an ISO 8601 date (YYYY-MM-DD) "
+             "without the time part"))
 
     def test_raises_correct_error_if_start_date_greater_than_end_date(self):
         request = MagicMock()
@@ -255,17 +259,17 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2012-08-21',
-            '$lte': '2012-08-26'
+            '$lt': '2012-08-27'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
-    @mock.patch('publicapi.items.service.date', wraps=date)
-    def test_sets_end_date_to_today_if_not_given(self, fake_date_class):
+    @mock.patch('publicapi.items.service.utcnow')
+    def test_sets_end_date_to_today_if_not_given(self, fake_utcnow):
         request = MagicMock()
         request.args = MultiDict([('start_date', '2012-08-21')])
         lookup = {}
 
-        fake_date_class.today.return_value = date(2014, 7, 15)
+        fake_utcnow.return_value.date.return_value = date(2014, 7, 15)
 
         instance = self._make_one()
         instance.get(request, lookup)
@@ -277,7 +281,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2012-08-21',
-            '$lte': '2014-07-15'
+            '$lt': '2014-07-16'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -296,19 +300,19 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2012-08-20',
-            '$lte': '2012-08-21'
+            '$lt': '2012-08-22'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
-    @mock.patch('publicapi.items.service.date', wraps=date)
+    @mock.patch('publicapi.items.service.utcnow')
     def test_sets_end_date_to_today_and_start_day_to_yesterday_if_both_not_given(
-        self, fake_date_class
+        self, fake_utcnow
     ):
         request = MagicMock()
         request.args = MultiDict()
         lookup = {}
 
-        fake_date_class.today.return_value = date(2014, 7, 15)
+        fake_utcnow.return_value.date.return_value = date(2014, 7, 15)
 
         instance = self._make_one()
         instance.get(request, lookup)
@@ -320,17 +324,39 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2014-07-14',
-            '$lte': '2014-07-15'
+            '$lt': '2014-07-16'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
-    @mock.patch('publicapi.items.service.date', wraps=date)
-    def test_raises_correct_error_for_start_date_in_future(self, fake_date_class):
+    def test_creates_correct_query_if_start_and_end_date_are_the_same(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('start_date', '2010-09-17'),
+            ('end_date', '2010-09-17')]
+        )
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, kwargs = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        expected_filter = {
+            '$gte': '2010-09-17',
+            '$lt': '2010-09-18'
+        }
+        self.assertEqual(date_filter, expected_filter)
+
+    @mock.patch('publicapi.items.service.utcnow')
+    def test_raises_correct_error_for_start_date_in_future(self, fake_utcnow):
         request = MagicMock()
         request.args = MultiDict([('start_date', '2007-10-31')])
         lookup = {}
 
-        fake_date_class.today.return_value = date(2007, 10, 30)
+        fake_utcnow.return_value.date.return_value = date(2007, 10, 30)
 
         from publicapi.errors import BadParameterValueError
         instance = self._make_one()
@@ -342,16 +368,16 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(
             ex.desc,
             "Start date (2007-10-31) must not be set in the future "
-            "(current server date: 2007-10-30)"
+            "(current server date (UTC): 2007-10-30)"
         )
 
-    @mock.patch('publicapi.items.service.date', wraps=date)
-    def test_raises_correct_error_for_end_date_in_future(self, fake_date_class):
+    @mock.patch('publicapi.items.service.utcnow')
+    def test_raises_correct_error_for_end_date_in_future(self, fake_utcnow):
         request = MagicMock()
         request.args = MultiDict([('end_date', '2007-10-31')])
         lookup = {}
 
-        fake_date_class.today.return_value = date(2007, 10, 30)
+        fake_utcnow.return_value.date.return_value = date(2007, 10, 30)
 
         from publicapi.errors import BadParameterValueError
         instance = self._make_one()
@@ -363,7 +389,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(
             ex.desc,
             "End date (2007-10-31) must not be set in the future "
-            "(current server date: 2007-10-30)"
+            "(current server date (UTC): 2007-10-30)"
         )
 
 
