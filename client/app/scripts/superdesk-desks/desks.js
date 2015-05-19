@@ -104,7 +104,7 @@
                     };
                     scope.edit = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        referrer.setReferrerUrl($location.path());
+                        //referrer.setReferrerUrl($location.path());
                         $location.search('_id', item ? item._id : null);
                         scope.$root.$broadcast('handleItemEdit', item);
                     };

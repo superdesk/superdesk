@@ -28,9 +28,12 @@
                 $scope.origItem = item;
                 $scope.action = 'edit';
                 $scope.origItem._editable = true;
+            })
+            ['finally'](function() {
                 $scope.viewdefault = false;
-            });           
+            });
         });
+
     }
 
     ProductionService.$inject = ['api', '$q'];
