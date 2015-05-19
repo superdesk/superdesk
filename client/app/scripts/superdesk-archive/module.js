@@ -243,8 +243,8 @@ define([
                                 });
                         }]
                 })
-                .activity('Update', {
-                    label: gettext('Update'),
+                .activity('Re-write', {
+                    label: gettext('Re-write'),
                     icon: 'copy',
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
