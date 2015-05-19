@@ -185,7 +185,7 @@ class ItemsService(BaseService):
             end_date = today
 
         if start_date is None:
-            start_date = end_date - timedelta(1)
+            start_date = end_date
 
         return start_date, end_date
 

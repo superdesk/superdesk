@@ -285,7 +285,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         }
         self.assertEqual(date_filter, expected_filter)
 
-    def test_sets_start_date_to_end_date_minus_one_if_not_given(self):
+    def test_sets_start_date_equal_to_end_date_if_not_given(self):
         request = MagicMock()
         request.args = MultiDict([('end_date', '2012-08-21')])
         lookup = {}
@@ -299,13 +299,13 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-20',
+            '$gte': '2012-08-21',
             '$lt': '2012-08-22'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
     @mock.patch('publicapi.items.service.utcnow')
-    def test_sets_end_date_to_today_and_start_day_to_yesterday_if_both_not_given(
+    def test_sets_end_date_and_start_date_to_today_if_both_not_given(
         self, fake_utcnow
     ):
         request = MagicMock()
@@ -323,7 +323,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2014-07-14',
+            '$gte': '2014-07-15',
             '$lt': '2014-07-16'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
