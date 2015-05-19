@@ -14,7 +14,7 @@
         });
 
         $scope.$on('handleItemPreview', function(event, item) {
-            referrer.setReferrerUrl($location.url());
+            referrer.setReferrerUrl($location.path());
             $scope.origItem = item;
             $scope.selected_id = item._id;
             $scope.action = 'view';
@@ -22,17 +22,14 @@
             $scope.viewdefault = false;
         });
         $scope.$on('handleItemEdit', function(event, item) {
-            $scope.origItem = item;
-            $scope.action = 'edit';
-            $scope.origItem._editable = true;
-            authoring.open(item._id, false).then(function() {
+            referrer.setReferrerUrl($location.path());
+            item._editable = true;
+            authoring.open(item._id, false).then(function(item) {
+                $scope.origItem = item;
+                $scope.action = 'edit';
+                $scope.origItem._editable = true;
                 $scope.viewdefault = false;
-            });
-        });
-        $scope.$on('openProductionArticle', function(event, item) {
-            referrer.setReferrerUrl($location.url());
-            $scope.origItem = item;
-            $scope.viewdefault = false;
+            });           
         });
     }
 

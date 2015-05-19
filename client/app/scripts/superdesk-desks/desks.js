@@ -99,16 +99,18 @@
                 } else {
                     scope.preview = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
+                        $location.search('_id', item ? item._id : null);
                         scope.$root.$broadcast('handleItemPreview', item);
                     };
                     scope.edit = function(item) {
                         desks.setWorkspace(item.task.desk, item.task.stage);
-                        referrer.setReferrerUrl($location.url());
+                        referrer.setReferrerUrl($location.path());
                         $location.search('_id', item ? item._id : null);
                         scope.$root.$broadcast('handleItemEdit', item);
                     };
                     scope.$watch('selected', function() {
                         if (scope.selected != null && (scope.selected.task.stage === scope.stage)) {
+                            $location.search('_id', scope.selected ? scope.selected._id : null);
                             scope.$root.$broadcast('handleItemPreview', scope.selected);
                         }
                     });

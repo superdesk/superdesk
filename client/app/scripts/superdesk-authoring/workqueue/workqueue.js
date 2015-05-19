@@ -92,7 +92,7 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     });
 
     $scope.openProductionArticle = function(article) {
-        $scope.$root.$broadcast('openProductionArticle', article);
+        $scope.$root.$broadcast('handleItemEdit', article);
     };
 
     $scope.openMulti = function() {
