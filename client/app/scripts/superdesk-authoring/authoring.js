@@ -539,10 +539,7 @@
                      ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
 
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
-                $scope._isInProductionStates = $scope.origItem.state !== 'published' &&
-                $scope.origItem.state !== 'corrected' &&
-                $scope.origItem.state !== 'killed' &&
-                $scope.origItem.state !== 'scheduled';
+                $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
 
                 $scope.not_for_publication_visible = $scope.publish_enabled && $scope.origItem.marked_for_not_publication === false;
 
@@ -834,6 +831,10 @@
                     } else {
                         superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
                     }
+                };
+
+                $scope.openAction = function(action) {
+                    $location.path('/authoring/' + $scope.item._id + '/' + action);
                 };
 
                 $scope.isLockedByMe = function() {
