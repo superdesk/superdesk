@@ -21,12 +21,19 @@ class ContentTemplatesResource(Resource):
         'template_name': {
             'type': 'string',
             'iunique': True,
-            'required': True
+            'required': True,
         },
+        'template_type': {
+            'type': 'string',
+            'required': True,
+            'allowed': ['create', 'kill'],
+            'default': 'create',
+        },
+        'template_desk': Resource.rel('desks', embeddable=False),
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)
-        }
+        },
     }
 
     schema.update(metadata_schema)
