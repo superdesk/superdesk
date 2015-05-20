@@ -38,6 +38,7 @@ from re import findall
 from eve.utils import ParsedRequest
 import shutil
 from apps.dictionaries.resource import DICTIONARY_FILE
+import pprint
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -50,6 +51,7 @@ def test_json(context):
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
+    return response_data
 
 
 def json_match(context_data, response_data):
@@ -611,7 +613,13 @@ def step_impl_then_get_new(context):
     assert_ok(context.response)
     expect_json_contains(context.response, 'self', path='_links')
     if context.text is not None:
-        test_json(context)
+        return test_json(context)
+
+
+@then('we get next take')
+def step_impl_then_get_next_take(context):
+    data = step_impl_then_get_new(context)
+    set_placeholder(context, 'TAKE', data['_id'])
 
 
 @then('we get error {code}')
@@ -635,6 +643,8 @@ def step_impl_then_get_list(context, total_count):
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
 
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(data)
     test_json(context)
 
 
@@ -1366,7 +1376,10 @@ def step_impl_when_publish_url(context, item_id, pub_type, state):
     item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
-    data = json.dumps({"state": state})
+    context_data = {"state": state}
+    if context.text:
+        context_data.update(json.loads(context.text))
+    data = json.dumps(context_data)
     context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
                                             data=data, headers=headers)
 

@@ -41,7 +41,7 @@ import superdesk
 import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
-from .archive_composite import PackageService
+from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
@@ -106,7 +106,7 @@ class ArchiveResource(Resource):
         },
         'publish_schedule': {
             'type': 'datetime',
-            'default': None
+            'nullable': True
         },
         'marked_for_not_publication': {
             'type': 'boolean',
@@ -146,6 +146,7 @@ def update_word_count(doc):
 
 class ArchiveService(BaseService):
     packageService = PackageService()
+    takesService = TakesPackageService()
     mediaService = ArchiveMediaService()
 
     def on_fetched(self, docs):
@@ -155,6 +156,7 @@ class ArchiveService(BaseService):
 
         for item in docs[config.ITEMS]:
             handle_existing_data(item)
+            self.takesService.enhance_with_package_info(item)
 
     def on_create(self, docs):
         on_create_item(docs)
@@ -199,12 +201,12 @@ class ArchiveService(BaseService):
         is_update_allowed(original)
         user = get_user()
 
-        if updates.get('publish_schedule'):
-            if original['state'] == 'scheduled':
-                # this is an descheduling action
-                self.deschedule_item(updates, original)
-                return
+        if 'publish_schedule' in updates and original['state'] == 'scheduled':
+            # this is an descheduling action
+            self.deschedule_item(updates, original)
+            return
 
+        if updates.get('publish_schedule'):
             if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None

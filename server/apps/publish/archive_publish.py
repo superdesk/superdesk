@@ -10,7 +10,7 @@
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, document_etag
-from flask import current_app as app
+from eve.validation import ValidationError
 from copy import copy
 import logging
 
@@ -25,9 +25,15 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
-from apps.archive.common import item_url, get_user, insert_into_versions, set_sign_off
+from apps.archive.common import item_url, get_user, insert_into_versions, \
+    set_sign_off, PUBLISH_STATES
+from apps.packages import TakesPackageService
+
 
 logger = logging.getLogger(__name__)
+
+DIGITAL = 'digital'
+WIRE = 'wire'
 
 
 class BasePublishResource(ArchiveResource):
@@ -61,14 +67,18 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.badRequestError(
                 message='Cannot publish an item which is marked as Not for Publication')
 
-        if not is_workflow_state_transition_valid(self.publish_type, original[app.config['CONTENT_STATE']]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
+        if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
+            raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
+
+        validate_item = {'act': self.publish_type, 'validate': updates}
+        validation_errors = get_resource_service('validate').post([validate_item])
+        if validation_errors[0]:
+            raise ValidationError(validation_errors)
 
     def on_updated(self, updates, original):
-        get_resource_service('published').update_published_items(original['_id'],
-                                                                 'last_publish_action',
-                                                                 self.published_state)
-        get_resource_service('published').post([original])
+        self.update_published_collection(published_item=original)
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
@@ -85,29 +95,54 @@ class BasePublishService(BaseService):
 
             # document is saved to change the status
             if (original.get('publish_schedule') or updates.get('publish_schedule')) \
-                    and original[config.CONTENT_STATE] not in ['published', 'killed', 'scheduled']:
+                    and original[config.CONTENT_STATE] not in PUBLISH_STATES:
                 updates[config.CONTENT_STATE] = 'scheduled'
             else:
+                updates['publish_schedule'] = None
                 updates[config.CONTENT_STATE] = self.published_state
 
             original.update(updates)
             get_component(ItemAutosave).clear(original['_id'])
 
             if archived_item['type'] != 'composite':
-                # queue only text items
-                any_channel_closed = self.queue_transmission(original)
-                source, task = self.__send_to_publish_stage_and_set_source(original)
-                if task:
-                    updates['task'] = task
+                # check if item is in a digital package
+                package_id = TakesPackageService().get_take_package_id(original)
+                if package_id:
+                    # process the takes to form digital master file content
+                    package, package_updates = self.process_takes(take=original, package_id=package_id)
+                    package_updates[config.CONTENT_STATE] = self.published_state
+                    resolve_document_version(document=package_updates,
+                                             resource=ARCHIVE, method='PATCH',
+                                             latest_doc=package)
+                    self.backend.update(self.datasource, package['_id'], package_updates, package)
+                    package.update(package_updates)
+                    insert_into_versions(doc=package)
 
-                if source:
-                    updates['source'] = source
+                    # send it to the digital channels
+                    any_channel_closed_digital, queued_digital = \
+                        self.publish(doc=package, updates=None, target_output_channels=DIGITAL)
+
+                    self.update_published_collection(published_item=package)
+                else:
+                    any_channel_closed_digital = False
+                    queued_digital = False
+
+                # queue only text items
+                any_channel_closed_wire, queued_wire = \
+                    self.publish(doc=original, updates=updates, target_output_channels=WIRE if package_id else None)
+
+                any_channel_closed = any_channel_closed_digital or any_channel_closed_wire
+                queued = queued_digital or queued_wire
+
+                if not queued:
+                    raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
             self.backend.update(self.datasource, id, updates, original)
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
                               item=str(id), unique_name=archived_item['unique_name'],
-                              desk=str(archived_item['task']['desk']), user=str(user.get('_id', '')))
+                              desk=str(archived_item['task']['desk']),
+                              user=str(user.get('_id', '')))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
             raise e
@@ -120,27 +155,63 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}"
                                                   .format(str(e)))
 
-    def queue_transmission(self, doc):
+    def publish(self, doc, updates, target_output_channels=None):
+        any_channel_closed, wrong_formatted_channels, queued = \
+            self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
+        source, task = self.__send_to_publish_stage_and_set_source(doc)
+        if updates:
+            if task:
+                updates['task'] = task
+            if source:
+                updates['source'] = source
+
+        user = get_user()
+
+        if wrong_formatted_channels and len(wrong_formatted_channels) > 0:
+            push_notification('item:publish:wrong:format',
+                              item=str(doc['_id']), unique_name=doc['unique_name'],
+                              desk=str(doc['task']['desk']),
+                              user=str(user.get('_id', '')),
+                              output_channels=[c['name'] for c in wrong_formatted_channels])
+
+        if not target_output_channels and not queued:
+            raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+
+        return any_channel_closed, queued
+
+    def queue_transmission(self, doc, target_output_channels=None):
         try:
             if doc.get('destination_groups'):
+                queued = False
                 any_channel_closed = False
+                wrong_formatted_channels = []
 
-                destination_groups = self.resolve_destination_groups(doc.get('destination_groups'))
+                destination_groups = self.resolve_destination_groups(
+                    doc.get('destination_groups'))
                 output_channels, selector_codes, format_types = \
                     self.resolve_output_channels(destination_groups.values())
 
                 for output_channel in output_channels.values():
+                    if target_output_channels == WIRE and output_channel.get('is_digital', False) or \
+                            target_output_channels == DIGITAL and not output_channel.get('is_digital', False):
+                        continue
+
                     if output_channel.get('is_active', True) is False:
                         any_channel_closed = True
 
                     subscribers = self.get_subscribers(output_channel)
                     if subscribers and subscribers.count() > 0:
-                        formatter = get_formatter(output_channel['format'])
+                        formatter = get_formatter(output_channel['format'], doc['type'])
+                        if not formatter:
+                            # if formatter not found then record it
+                            wrong_formatted_channels.append(output_channel)
+                            continue
 
                         pub_seq_num, formatted_doc = formatter.format(doc, output_channel)
 
                         formatted_item = {'formatted_item': formatted_doc, 'format': output_channel['format'],
-                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0)}
+                                          'item_id': doc['_id'], 'item_version': doc.get('last_version', 0),
+                                          'published_seq_num': pub_seq_num}
 
                         formatted_item_id = get_resource_service('formatted_item').post([formatted_item])[0]
 
@@ -165,8 +236,9 @@ class BasePublishService(BaseService):
                                 publish_queue_items.append(publish_queue_item)
 
                         get_resource_service('publish_queue').post(publish_queue_items)
+                        queued = True
 
-                return any_channel_closed
+                return any_channel_closed, wrong_formatted_channels, queued
             else:
                 raise PublishQueueError.destination_group_not_found_error(
                     KeyError('Destination groups empty for article: {}'.format(doc['_id'])), None)
@@ -274,6 +346,71 @@ class BasePublishService(BaseService):
 
         return source, task
 
+    def process_takes(self, take, package_id):
+        """
+        This function validates if the take is the one in order then
+        it generates the body_html of the takes package and make sure the
+        metadata for the package is the same as the metadata of the take
+        to be published
+        :param take: The take to be published
+        :return: It throws an error if the take is not the right take
+        otherwise it returns the original package and the updated package
+        """
+        package = super().find_one(req=None, _id=package_id)
+        package_updates = {}
+        package_updates['body_html'] = ''
+        take_index = 1000
+        for group in package['groups']:
+            if group['id'] == 'main':
+                for i, ref in enumerate(group['refs']):
+                    if ref['guid'] != take['_id']:
+                        other_take = super().find_one(req=None, _id=ref['guid'])
+
+                        if i < take_index:
+                            # previous items
+                            if other_take[config.CONTENT_STATE] not in ['published', 'corrected']:
+                                # previous item is not published or killed
+                                raise PublishQueueError.\
+                                    previous_take_not_published_error(
+                                        Exception('Take with id:{}'.format(other_take['_id'])), None)
+                            else:
+                                package_updates['body_html'] += other_take['body_html'] + '<br>'
+
+                        if i > take_index:
+                            # next takes
+                            if other_take[config.CONTENT_STATE] in ['published', 'corrected']:
+                                package_updates['body_html'] += other_take['body_html'] + '<br>'
+                            if other_take[config.CONTENT_STATE] in ['killed']:
+                                raise PublishQueueError.\
+                                    previous_take_not_published_error(
+                                        Exception('Take with id:{}'.format(other_take['_id'])), None)
+
+                    else:
+                        take_index = i
+                        package_updates['body_html'] += take['body_html'] + '<br>'
+                        self.update_metadata(take, package_updates)
+        return package, package_updates
+
+    def update_metadata(self, take, package):
+        metadata_tobe_copied = ['headline',
+                                'abstract',
+                                'anpa-category',
+                                'pubstatus',
+                                'destination_groups',
+                                'slugline',
+                                'urgency',
+                                'subject'
+                                ]
+
+        for metadata in metadata_tobe_copied:
+            package[metadata] = take[metadata]
+
+    def update_published_collection(self, published_item):
+        get_resource_service('published').update_published_items(published_item['_id'],
+                                                                 'last_publish_action',
+                                                                 self.published_state)
+        get_resource_service('published').post([copy(published_item)])
+
 
 class ArchivePublishResource(BasePublishResource):
 
@@ -331,13 +468,13 @@ superdesk.workflow_action(
 superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
-    include_states=['published', 'scheduled'],
+    include_states=['published', 'scheduled', 'corrected'],
     privileges=['kill']
 )
 
 superdesk.workflow_state('corrected')
 superdesk.workflow_action(
     name='correct',
-    include_states=['published'],
-    privileges=['correction']
+    include_states=['published', 'corrected'],
+    privileges=['correct']
 )

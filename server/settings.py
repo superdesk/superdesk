@@ -172,6 +172,8 @@ INSTALLED_APPS = [
     'apps.spellcheck',
     'apps.templates',
     'apps.text_archive',
+    'apps.validators',
+    'apps.validate',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -250,6 +252,10 @@ CONTENT_EXPIRY_MINUTES = 43200
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
 INGEST_EXPIRY_MINUTES = 2880
+
+# The number of minutes before published items purged
+# 4320 = 3 days in minutes
+PUBLISHED_ITEMS_EXPIRY_MINUTES = 4320
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.

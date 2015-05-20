@@ -122,6 +122,7 @@ define([
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:copy', refreshItems);
+        $scope.$on('item:take', refreshItems);
         $scope.$on('item:duplicate', refreshItems);
         $scope.$on('item:created', refreshItems);
         $scope.$on('item:updated', refreshItems);

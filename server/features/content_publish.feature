@@ -1,7 +1,78 @@
 Feature: Content Publishing
 
     @auth
-    Scenario: Publish a user content and moves to publish stage
+    Scenario: Publish a user content
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_version": 2, "state": "published", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      """
+
+    @auth
+    Scenario: Publish user content that fails validation
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{"headline": {"required": true}}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
@@ -17,29 +88,135 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      [{"guid": "123", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+        {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
       """
 
-      When we post to "/stages" with success
+    @auth @test
+    Scenario: Publish a user content fails if nothing queued
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
       """
       [
         {
-        "name": "another stage",
-        "description": "another stage",
-        "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
         }
       ]
       """
-      And we publish "#archive._id#" with "publish" type and "published" state
-      Then we get OK response
-      And we get existing resource
+      Then we get latest
       """
-      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": []
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
       """
 
+    @auth
+    Scenario: Publish a user content fails if content format is not compatible
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Then we get latest
+      """
+      {
+        "name":"Output Channel"
+      }
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      Given "archive"
+      """
+      [{"guid": "123", "type": "image", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      """
+      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
+      """
 
     @auth
     Scenario: Schedule a user content publish
@@ -48,6 +225,10 @@ Feature: Content Publishing
       Given "desks"
       """
       [{"name": "Sports"}]
+      """
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
       """
       When we post to "/subscribers"
       """
@@ -115,11 +296,15 @@ Feature: Content Publishing
 
     @auth
     Scenario: Deschedule an item
-        Given empty "output_channels"
+      Given empty "output_channels"
       Given empty "subscribers"
       Given "desks"
       """
       [{"name": "Sports"}]
+      """
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
       """
       When we post to "/subscribers"
       """
@@ -271,19 +456,47 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -294,23 +507,51 @@ Feature: Content Publishing
 
     @auth
     Scenario: Clean autosave on publishing item
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
         Given "desks"
           """
           [{"name": "Sports"}]
           """
-        And we have "/destination_groups" with "destgroup1" and success
-          """
-          [
-            {
-              "name":"Group 1", "description": "new stuff",
-              "destination_groups": [], "output_channels": []
-            }
-          ]
-          """
+        When we post to "/subscribers"
+        """
+        {
+          "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+        }
+        """
+        Then we get latest
+        """
+        {
+          "name":"Channel 3"
+        }
+        """
+        When we post to "/output_channels"
+        """
+        [
+          {
+            "name":"Output Channel",
+            "description": "new stuff",
+            "destinations": ["#subscribers._id#"],
+            "format": "nitf"
+          }
+        ]
+        """
+        Given we have "/destination_groups" with "destgroup1" and success
+        """
+        [
+          {
+            "name":"Group 1", "description": "new stuff",
+            "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+          }
+        ]
+        """
         And "archive"
           """
           [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+            "body_html": "Test Document body"}]
           """
         When we post to "/archive_autosave"
           """
@@ -329,23 +570,52 @@ Feature: Content Publishing
 
     @auth
     Scenario: We can lock a published content and then kill it
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}},
+      {"_id": "kill", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       Given "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -366,6 +636,230 @@ Feature: Content Publishing
       """
       Then we get OK response
 
+    @auth
+    Scenario: We can lock a published content and then correct it
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+        """
+        {}
+        """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we post to "/archive/#archive._id#/unlock"
+      """
+        {}
+      """
+      Then we get OK response
+
+    @auth
+    Scenario: Correcting an already corrected published story fails
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+        """
+        {}
+        """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+
+
+    @auth
+    Scenario: We can correct a corrected story
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      """
+      Given "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
+      """
+      [
+        {
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
+        }
+      ]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+      """
+      {}
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      """
+      {"headline": "test-1"}
+      """
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      """
+      {"headline": "test-2"}
+      """
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+          "_items": [
+              {
+                  "headline": "test",
+                  "_version": 2,
+                  "state": "published"
+              },
+              {
+                  "headline": "test-1",
+                  "_version": 3,
+                  "state": "corrected"
+              },
+              {
+                  "headline": "test-2",
+                  "_version": 4,
+                  "state": "corrected"
+              }
+          ]
+      }
+      """
 
     @auth
     Scenario: User can't publish without a privilege
@@ -391,23 +885,51 @@ Feature: Content Publishing
 
     @auth
     Scenario: User can't update a published item
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers"
+      """
+      {
+        "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
+      }
+      """
+      Then we get latest
+      """
+      {
+        "name":"Channel 3"
+      }
+      """
+      When we post to "/output_channels"
+      """
+      [
+        {
+          "name":"Output Channel",
+          "description": "new stuff",
+          "destinations": ["#subscribers._id#"],
+          "format": "nitf"
+        }
+      ]
+      """
+      Given we have "/destination_groups" with "destgroup1" and success
       """
       [
         {
           "name":"Group 1", "description": "new stuff",
-          "destination_groups": [], "output_channels": []
+          "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
         }
       ]
       """
       And "archive"
       """
       [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -420,6 +942,10 @@ Feature: Content Publishing
     @auth
     @provider
     Scenario: Publish a package
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
     	Given empty "ingest"
     	And "desks"
         """
@@ -482,8 +1008,300 @@ Feature: Content Publishing
 		"""
 
     @auth
+    Scenario: Publish the second take before the first fails
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+    	When we post to "archive"
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "state": "draft",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "test1=2",
+            "slugline": "comics",
+            "anpa_take_key": "Take=2",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "#TAKE#" with "publish" type and "published" state
+        Then we get response code 400
+		"""
+		{
+            "_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9006 - Previous take is either not published or killed"}
+        }
+		"""
+
+    @auth
+    Scenario: Publish the very first take before the second
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+          "name" : "Email Subscriber", "is_active" : true
+        }]
+        """
+        And we post to "/output_channels" with "channel1" and success
+        """
+        [{"name":"Channel 1", "description": "new stuff", "is_digital":true, "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        """
+        And we post to "/output_channels" with "channel2" and success
+        """
+        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+        """
+        And we post to "/destination_groups" with "destgroup1" and success
+        """
+        [{
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [],
+          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+        }]
+        """
+    	When we post to "archive" with success
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "Take-1 headline",
+            "abstract": "Take-1 abstract",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1",
+            "state": "draft",
+            "slugline": "Take-1 slugline",
+            "urgency": "4",
+            "pubstatus": "usable",
+            "destination_groups":["#destgroup1#"],
+            "subject":[{"qcode": "17004000", "name": "Statistics"}],
+            "anpa-category": {"qcode": "A", "name": "Sport"},
+            "anpa_take_key": "Take"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "Take-1 headline=2",
+            "slugline": "Take-1 slugline",
+            "anpa_take_key": "Take=2",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "123" with "publish" type and "published" state
+        Then we get OK response
+		When we get "/published"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_version": 3,
+                    "state": "published",
+                    "body_html": "Take-1"
+                },
+                {
+                    "_version": 2,
+                    "state": "published",
+                    "type": "composite",
+                    "package_type": "takes",
+                    "body_html": "Take-1<br>"
+                }
+            ]
+        }
+		"""
+
+   @auth
+    Scenario: Publish the second take after the first
+        Given the "validators"
+        """
+          [{"_id": "publish", "schema":{}}]
+        """
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+          "name" : "Email Subscriber", "is_active" : true
+        }]
+        """
+        And we post to "/output_channels" with "channel1" and success
+        """
+        [{"name":"Channel 1", "is_digital": true,
+        "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+        """
+        And we post to "/output_channels" with "channel2" and success
+        """
+        [{"name":"Channel 2", "description": "new stuff",
+        "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+        """
+        And we post to "/destination_groups" with "destgroup1" and success
+        """
+        [{
+          "name":"Group 1", "description": "new stuff",
+          "destination_groups": [],
+          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+        }]
+        """
+    	When we post to "archive" with success
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "Take-1 headline",
+            "abstract": "Take-1 abstract",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1",
+            "state": "draft",
+            "slugline": "Take-1 slugline",
+            "urgency": "4",
+            "pubstatus": "usable",
+            "destination_groups":["#destgroup1#"],
+            "subject":[{"qcode": "17004000", "name": "Statistics"}],
+            "anpa-category": {"qcode": "A", "name": "Sport"},
+            "anpa_take_key": "Take"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take
+        """
+        {
+            "type": "text",
+            "headline": "Take-1 headline=2",
+            "slugline": "Take-1 slugline",
+            "anpa_take_key": "Take=2",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#"
+        }
+        """
+        When we patch "/archive/#TAKE#"
+        """
+        {"body_html": "Take-2"}
+        """
+        And we post to "/archive/#TAKE#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+		And we get "/archive"
+        Then we get list with 3 items
+        When we publish "123" with "publish" type and "published" state
+        Then we get OK response
+        When we publish "#TAKE#" with "publish" type and "published" state
+        Then we get OK response
+		When we get "/published"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_id": "123",
+                    "_version": 3,
+                    "state": "published",
+                    "body_html": "Take-1"
+                },
+                {
+                    "_version": 3,
+                    "state": "published",
+                    "type": "composite",
+                    "package_type": "takes",
+                    "body_html": "Take-1<br>Take-2<br>"
+                },
+                {
+                    "_version": 4,
+                    "state": "published",
+                    "body_html": "Take-2"
+                }
+            ]
+        }
+		"""
+
+    @auth
     @notification
     Scenario: As a user I should be able to publish item to a closed output channel
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
@@ -514,12 +1332,6 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
-      """
-      And we post to "/stages" with success
-      """
-      [
-        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
-      ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 200
@@ -574,17 +1386,39 @@ Feature: Content Publishing
 
     @auth
     Scenario: Assign a default Source to user created content Items and is overwritten by Source at desk level when published
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports", "source": "Superdesk Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers" with success
       """
-      [{ "name":"Group 1", "description": "new stuff", "destination_groups": [], "output_channels": [] }]
+      [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+        "name" : "Email Subscriber", "is_active" : true
+      }]
+      """
+      And we post to "/output_channels" with "channel1" and success
+      """
+      [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+      """
+      And we post to "/output_channels" with "channel2" and success
+      """
+      [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+      """
+      And we post to "/destination_groups" with "destgroup1" and success
+      """
+      [{
+        "name":"Group 1", "description": "new stuff",
+        "destination_groups": [],
+        "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+      }]
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "body_html": "body", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we post to "/stages" with success
@@ -595,5 +1429,5 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
       """
