@@ -1,7 +1,7 @@
 <div class="workqueue-list">
 	<ul class="card-list">
 		<li ng-repeat="article in workqueue.items track by article._id" sd-dashboard-card>
-           zzz <a ng-href="{{ $root.link('edit.text', article) }}">
+            <a ng-href="{{ $root.link('edit.text', article) }}">
     			<div class="title" ng-show="article.headline">{{ article.headline }}</div>
     			<div class="title" ng-show="!article.headline">{{ 'Untitled' | translate }}</div>
                 <div>
