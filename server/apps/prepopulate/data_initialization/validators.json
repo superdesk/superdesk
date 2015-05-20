@@ -50,7 +50,8 @@
         },
         "urgency" : {
             "type" : "integer",
-            "required": true
+            "required": true,
+            "allowed": [1, 2, 3, 4, 5]
         }
     }
 },
