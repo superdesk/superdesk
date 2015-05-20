@@ -546,6 +546,7 @@
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
+                $scope.takes_package = (angular.isDefined($scope.origItem.package_type) && $scope.origItem.package_type === 'takes');
 
                 function resolveDestinations() {
                     if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
