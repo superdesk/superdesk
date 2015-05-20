@@ -47,7 +47,11 @@
             "type" : "list",
             "required" : true,
             "minlength" : 1
-        }        
+        },
+        "urgency" : {
+            "type" : "integer",
+            "required": true
+        }
     }
 },
     {"_id": "kill",
