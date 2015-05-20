@@ -1386,17 +1386,39 @@ Feature: Content Publishing
 
     @auth
     Scenario: Assign a default Source to user created content Items and is overwritten by Source at desk level when published
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports", "source": "Superdesk Sports"}]
       """
-      And we have "/destination_groups" with "destgroup1" and success
+      When we post to "/subscribers" with success
       """
-      [{ "name":"Group 1", "description": "new stuff", "destination_groups": [], "output_channels": [] }]
+      [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
+        "name" : "Email Subscriber", "is_active" : true
+      }]
+      """
+      And we post to "/output_channels" with "channel1" and success
+      """
+      [{"name":"Channel 1", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
+      """
+      And we post to "/output_channels" with "channel2" and success
+      """
+      [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
+      """
+      And we post to "/destination_groups" with "destgroup1" and success
+      """
+      [{
+        "name":"Group 1", "description": "new stuff",
+        "destination_groups": [],
+        "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
+      }]
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "body_html": "body", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we post to "/stages" with success
@@ -1407,5 +1429,5 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#", "stage": "#stages._id#"}}
+      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
       """

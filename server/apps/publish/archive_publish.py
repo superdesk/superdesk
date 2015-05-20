@@ -120,7 +120,7 @@ class BasePublishService(BaseService):
 
                     # send it to the digital channels
                     any_channel_closed_digital, queued_digital = \
-                        self.publish(doc=package, target_output_channels=DIGITAL)
+                        self.publish(doc=package, updates=None, target_output_channels=DIGITAL)
 
                     self.update_published_collection(published_item=package)
                 else:
@@ -159,10 +159,11 @@ class BasePublishService(BaseService):
         any_channel_closed, wrong_formatted_channels, queued = \
             self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
         source, task = self.__send_to_publish_stage_and_set_source(doc)
-        if task:
-            updates['task'] = task
-        if source:
-            updates['source'] = source
+        if updates:
+            if task:
+                updates['task'] = task
+            if source:
+                updates['source'] = source
 
         user = get_user()
 
