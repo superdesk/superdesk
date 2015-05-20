@@ -39,7 +39,7 @@
             </label>
         </div>
     </fieldset>
-	<fieldset>
+    <fieldset>
         <div class="field">
             <label for="search-headline">Headline</label>
             <div class="control">
@@ -47,18 +47,10 @@
             </div>
         </div>
 
-        <div class="multiple">
-            <div class="field">
-                <label for="search-subject">Subject</label>
-                <div class="control">
-                    <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="11">
-                </div>
-            </div>
-            <div class="field">
-                <label for="search-slugline">Keyword</label>
-                <div class="control">
-                    <input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="8">
-                </div>
+        <div class="field">
+            <label for="search-slugline">Keyword</label>
+            <div class="control">
+                <input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="8">
             </div>
         </div>
 
@@ -78,7 +70,13 @@
             <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="12">
         </div>
 
-	</fieldset>
+        <div class="field">
+            <label for="search-subject">Subject</label>
+            <div class="control">
+                <div sd-meta-terms data-item="subjectitems" data-field="subject" data-unique="qcode" data-list="subjectcodes" data-change="subjectSearch(subjectitems)"></div>
+            </div>
+        </div>
+    </fieldset>
 </form>
 <div class="actions">
     <button class="btn btn-info pull-right" ng-click="search()" tabindex="13" translate>Go</button>

@@ -144,8 +144,9 @@ function MetadataWordsListEditingDirective() {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-MetadataListEditingDirective.$inject = [];
-function MetadataListEditingDirective() {
+var subjectScope;
+MetadataListEditingDirective.$inject = ['metadata'];
+function MetadataListEditingDirective(metadata) {
     return {
         scope: {
             item: '=',
@@ -158,6 +159,8 @@ function MetadataListEditingDirective() {
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
+
+            subjectScope = scope;
 
             scope.$watch('list', function(items) {
                 if (!items || !items[0].hasOwnProperty('parent')) {
@@ -226,15 +229,7 @@ function MetadataListEditingDirective() {
             };
 
             scope.removeTerm = function(term) {
-                var temp = _.without(scope.item[scope.field], term);
-
-                //build object
-                var o = {};
-                o[scope.field] = temp;
-
-                _.extend(scope.item, o);
-
-                scope.change({item: scope.item});
+                metadata.removeSubjectTerm(term);
             };
         }
     };
@@ -274,6 +269,30 @@ function MetadataService(api, $q, staticMetadata) {
                 return api('archive').getById(_id).then(function(_item) {
                     return _item;
                 });
+            }
+        },
+        removeSubjectTerm: function(term) {
+            var o = {},
+                subjectCodesArray = subjectScope.item[subjectScope.field],
+                temp = _.without(subjectCodesArray, term);
+
+            if (temp.length === subjectCodesArray.length) {
+                temp = removeSubjectCode(subjectCodesArray, term);
+            }
+
+            o[subjectScope.field] = temp;
+
+            _.extend(subjectScope.item, o);
+
+            subjectScope.change({item: subjectScope.item});
+
+            function removeSubjectCode(subjectcodes, term) {
+                for (var i = 0, subjectCodesLenght = subjectcodes.length; i < subjectCodesLenght; i++) {
+                    if (subjectcodes[i].name === term) {
+                        subjectcodes.splice(i, 1);
+                        return subjectcodes;
+                    }
+                }
             }
         },
         initialize: function() {
