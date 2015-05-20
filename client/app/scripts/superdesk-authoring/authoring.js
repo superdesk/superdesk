@@ -541,7 +541,8 @@
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
 
-                $scope.not_for_publication_visible = $scope.publish_enabled && $scope.origItem.marked_for_not_publication === false;
+                $scope.not_for_publication_visible = $scope.publish_enabled && !authoring.isPublished($scope.origItem) &&
+                    !$scope.origItem.marked_for_not_publication;
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
