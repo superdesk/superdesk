@@ -106,7 +106,7 @@ class ArchiveResource(Resource):
         },
         'publish_schedule': {
             'type': 'datetime',
-            'default': None
+            'nullable': True
         },
         'marked_for_not_publication': {
             'type': 'boolean',
@@ -201,12 +201,12 @@ class ArchiveService(BaseService):
         is_update_allowed(original)
         user = get_user()
 
-        if updates.get('publish_schedule'):
-            if original['state'] == 'scheduled':
-                # this is an descheduling action
-                self.deschedule_item(updates, original)
-                return
+        if 'publish_schedule' in updates and original['state'] == 'scheduled':
+            # this is an descheduling action
+            self.deschedule_item(updates, original)
+            return
 
+        if updates.get('publish_schedule'):
             if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None
