@@ -314,7 +314,7 @@
             link: function(scope) {
                 scope.limits = authoring.limits;
                 scope._editable = scope.origItem._editable;
-                scope._isInProductionStates = authoring.isPublished(scope.origItem);
+                scope._isInPublishedStates = authoring.isPublished(scope.origItem);
             }
         };
     }
