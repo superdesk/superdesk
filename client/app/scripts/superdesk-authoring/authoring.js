@@ -689,18 +689,27 @@
                         if (response) {
                             if (angular.isDefined(response.data) && angular.isDefined(response.data._issues)) {
                                 if (angular.isDefined(response.data._issues['validator exception'])) {
+
                                     var errors = response.data._issues['validator exception'];
-                                    errors = errors.replace(/\[/g, '').replace(/\]/g, '').split(',');
-                                    for (var i = 0; i < errors.length; i++) {
-                                        notify.error(errors[i]);
+                                    var modified_errors = errors.replace(/\[/g, '').replace(/\]/g, '').split(',');
+                                    for (var i = 0; i < modified_errors.length; i++) {
+                                        notify.error(modified_errors[i]);
+                                    }
+
+                                    if (errors.indexOf('9007') >= 0 || errors.indexOf('9009') >= 0) {
+                                        $scope.publish_enabled = false;
                                     }
                                 }
-                            } else {
+                            } else if (response.status === 412) {
+                                notify.error(gettext('Precondition Error: Item not published.'));
+                                $scope.publish_enabled = false;
+                            } else if (response.status === 200) {
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
                                 $location.url($scope.referrerUrl);
                             }
+
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
                         }
