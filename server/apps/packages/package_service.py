@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
 
 from collections import Counter
@@ -59,6 +60,11 @@ class PackageService():
         create_root_group(docs)
         self.check_root_group(docs)
         self.check_package_associations(docs)
+
+        for doc in docs:
+            if not doc.get('ingest_provider'):
+                doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
+
         package_create_signal.send(self, docs=docs)
 
     def on_created(self, docs):
