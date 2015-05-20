@@ -21,13 +21,15 @@
             ng-click="deschedule()"
             translate>Deschedule</button>
 
-        <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates && item.state !== 'scheduled'"
+        <button class="btn btn-medium btn-info pull-left" 
+            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates 
+                && item.state !== 'scheduled' && !takes_package" 
             ng-click="openAction('correct')"
             translate>Correct</button>
 
-        <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates && item.state !== 'scheduled'"
+        <button class="btn btn-medium btn-info pull-left" 
+            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates 
+                && item.state !== 'scheduled' && !takes_package" 
             ng-click="openAction('kill')"
             translate>Kill</button>
 
