@@ -719,13 +719,12 @@
                                 notify.error(gettext('Precondition Error: Item not published.'));
                                 $scope.publish_enabled = false;
                                 $scope.save_visible = false;
-                            } else if (response.status === 200) {
+                            } else {
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
                                 $location.url($scope.referrerUrl);
                             }
-
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
                         }
