@@ -39,11 +39,19 @@
             "maxlength" : 24,
             "minlength" : 1
         },
+        "body_html" : {
+            "type" : "string",
+            "required" : true
+        },
         "subject" : {
             "type" : "list",
             "required" : true,
             "minlength" : 1
-        }        
+        },
+        "urgency" : {
+            "type" : "integer",
+            "required": true
+        }
     }
 },
     {"_id": "kill",
