@@ -72,7 +72,6 @@ function SpellcheckService($q, api, dictionaries, editor) {
     var dict,
         dictPromise,
         dictId,
-        isRendering,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
 
@@ -199,7 +198,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.render = function render(elem) {
         var node = elem;
         return this.errors(node.textContent).then(function(errors) {
-            isRendering = true;
+            editor.stopEvents = true;
             var selection = editor.storeSelection(node);
 
             angular.forEach(errors, function(error) {
@@ -208,7 +207,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
 
             setErrorClass(node);
             editor.resetSelection(node, selection);
-            isRendering = false;
+            editor.stopEvents = false;
         });
     };
 
@@ -230,28 +229,28 @@ function SpellcheckService($q, api, dictionaries, editor) {
             return result.corrections || [];
         });
     };
-
-    function stopEvent(event) {
-        if (isRendering) {
-            event.stopImmediatePropagation();
-        }
-    }
-
-    this.addEventListener = function addEventListener(elem) {
-        elem.addEventListener('input', stopEvent);
-        elem.addEventListener('select', stopEvent);
-    };
-
-    this.removeEventListener = function removeEventListener(elem) {
-        elem.removeEventListener('input', stopEvent);
-        elem.removeEventListener('select', stopEvent);
-    };
 }
 
-angular.module('superdesk.editor.spellcheck', [
-    'superdesk.dictionaries',
-    'superdesk.editor'
-    ])
-    .service('spellcheck', SpellcheckService);
+function SpellcheckMenuController(editor, $rootScope) {
+    this.isAuto = editor.settings.spellcheck || true;
+    this.spellcheck = spellcheck;
+    this.pushSettings = pushSettings;
+
+    var vm = this;
+
+    function spellcheck() {
+        $rootScope.$broadcast('spellcheck:run');
+    }
+
+    function pushSettings() {
+        editor.settings = angular.extend({}, editor.settings, {spellcheck: vm.isAuto});
+        $rootScope.$broadcast('editor:settings', {spellcheck: vm.isAuto});
+    }
+}
+
+angular.module('superdesk.editor.spellcheck', ['superdesk.dictionaries', 'superdesk.editor'])
+    .service('spellcheck', SpellcheckService)
+    .controller('SpellcheckMenu', SpellcheckMenuController)
+    ;
 
 })();

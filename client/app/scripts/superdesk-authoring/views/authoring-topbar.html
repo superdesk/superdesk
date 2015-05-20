@@ -66,41 +66,58 @@
             ng-show="_editable"
             translate>Mark for Publication</button>
 
-        <div class="navbtn dropdown pull-left" dropdown>
-            <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-            <div class="dropdown-menu">
-                <ul>
-                    <li ng-controller="TemplateActionsController as template">
-                        <button type="button"
-                            ng-click="template.create(item)"
-                            translate>Save as template</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="navbtn dropdown strict pull-left" tooltip="{{ :: 'Create' | translate }}" tooltip-placement="bottom" dropdown>
+        <div class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
        <div class="navbtn dropdown strict highlights-dropdown pull-left" ng-if="item.task && item.task.desk"
-            tooltip="{{ :: 'Mark item' | translate }}" tooltip-placement="bottom" dropdown>
+            title="{{ :: 'Mark item' | translate }}" dropdown>
 			<button class="dropdown-toggle" dropdown-toggle>
 			<i class="svg-icon-add-to-list"></i>
 			</button>
 			<ul class="dropdown-menu pull-right" sd-mark-highlights-dropdown></ul>
 	   </div>
 
-        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" tooltip="{{ :: 'Multiedit' | translate }}" tooltip-placement="bottom" dropdown>
+        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
             <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
         </div>
 
+        <div class="navbtn dropdown pull-left" dropdown>
+            <button class="dropdown-toggle" dropdown-toggle>
+                <i class="icon-dots-vertical"></i>
+            </button>
+            <div class="dropdown-menu pull-right">
+                <ul ng-controller="TemplateMenu as templateMenu">
+                    <li><span class="menu-label" translate>Templates</span></li>
+                    <li>
+                        <button type="button"
+                            ng-click="templateMenu.createTemplateFromItem(item)"
+                            translate>Save as template</button>
+                    </li>
+                </ul>
+
+                <ul ng-if="_editable"><li class="divider"></li></ul>
+
+                <ul ng-if="_editable" ng-controller="SpellcheckMenu as spellcheckMenu">
+                    <li><span class="menu-label" translate>Spell Checker</span></li>
+                    <li>
+                        <button type="button" translate>Run automatically <span class="pull-right" sd-switch="" ng-model="spellcheckMenu.isAuto" ng-change="spellcheckMenu.pushSettings()"></span></button></li>
+                    <li>
+                        <button type="button"
+                            ng-click="spellcheckMenu.spellcheck()"
+                            ng-disabled="spellcheckMenu.isAuto"
+                            translate>Check spelling</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <button id="send-to-btn" ng-show="privileges.move == 1 && _editable && isActionAllowed(item, 'move')"
-            class="navbtn navbtn-hover" tooltip="{{ :: 'Send to desk' | translate }}" tooltip-placement="left"
+            class="navbtn navbtn-hover" title="{{ :: 'Send to desk' | translate }}"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>

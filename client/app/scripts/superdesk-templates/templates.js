@@ -185,8 +185,8 @@
         }
     }
 
-    TemplateActionsController.$inject = ['$modal'];
-    function TemplateActionsController($modal) {
+    TemplateMenuController.$inject = ['$modal'];
+    function TemplateMenuController($modal) {
         this.create = createFromItem;
         function createFromItem(item) {
             $modal.open({
@@ -206,7 +206,7 @@
         .service('templates', TemplatesService)
         .directive('sdTemplates', TemplatesDirective)
         .controller('CreateTemplateController', CreateTemplateController)
-        .controller('TemplateActionsController', TemplateActionsController)
+        .controller('TemplateMenu', TemplateMenuController)
         .config(config)
         ;
 
