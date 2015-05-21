@@ -144,7 +144,6 @@ function MetadataWordsListEditingDirective() {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-var subjectScope;
 MetadataListEditingDirective.$inject = ['metadata'];
 function MetadataListEditingDirective(metadata) {
     return {
@@ -160,7 +159,7 @@ function MetadataListEditingDirective(metadata) {
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
 
-            subjectScope = scope;
+            metadata.subjectScope = scope;
 
             scope.$watch('list', function(items) {
                 if (!items || !items[0].hasOwnProperty('parent')) {
@@ -240,6 +239,7 @@ function MetadataService(api, $q, staticMetadata) {
 
     var service = {
         values: {},
+        subjectScope: null,
         loaded: null,
         fetchMetadataValues: function() {
             var self = this;
@@ -273,26 +273,23 @@ function MetadataService(api, $q, staticMetadata) {
         },
         removeSubjectTerm: function(term) {
             var o = {},
-                subjectCodesArray = subjectScope.item[subjectScope.field],
+                self = this,
+                subjectCodesArray = self.subjectScope.item[self.subjectScope.field],
                 temp = _.without(subjectCodesArray, term);
 
             if (temp.length === subjectCodesArray.length) {
                 temp = removeSubjectCode(subjectCodesArray, term);
             }
 
-            o[subjectScope.field] = temp;
+            o[self.subjectScope.field] = temp;
 
-            _.extend(subjectScope.item, o);
+            _.extend(self.subjectScope.item, o);
 
-            subjectScope.change({item: subjectScope.item});
+            self.subjectScope.change({item: self.subjectScope.item});
 
             function removeSubjectCode(subjectcodes, term) {
-                for (var i = 0, subjectCodesLenght = subjectcodes.length; i < subjectCodesLenght; i++) {
-                    if (subjectcodes[i].name === term) {
-                        subjectcodes.splice(i, 1);
-                        return subjectcodes;
-                    }
-                }
+                _.remove(subjectcodes, {name: term});
+                return subjectcodes;
             }
         },
         initialize: function() {

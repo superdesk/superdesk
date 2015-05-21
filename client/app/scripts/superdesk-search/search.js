@@ -1027,15 +1027,24 @@
                         });
                     });
 
-                    metadata.fetchSubjectcodes().then(function () {
-                        scope.subjectcodes = metadata.values.subjectcodes;
-                        tags.initSelectedFacets().then(function (currentTags) {
+                    /*
+                     * Converting to object and adding pre-selected subject codes to list in left sidebar
+                     */
+                    metadata
+                        .fetchSubjectcodes()
+                        .then(function () {
+                            scope.subjectcodes = metadata.values.subjectcodes;
+                            return tags.initSelectedFacets();
+                        })
+                        .then(function (currentTags) {
                             scope.subjectitems = {
                                 subject: getSubjectCodes(currentTags)
                             };
                         });
-                    });
 
+                    /*
+                     * Function for finding object by string array for subject codes
+                     */
                     function getSubjectCodes(currentTags) {
                         var queryArray = currentTags.selectedParameters, filteredArray = [];
                         if (!$location.search().q) {
@@ -1048,7 +1057,7 @@
                                         queryArrayElement.lastIndexOf('(') + 1,
                                         queryArrayElement.lastIndexOf(')')
                                         );
-                                for (var j = 0, subjectCodesLenght = scope.subjectcodes.length; j < subjectCodesLenght; j++) {
+                                for (var j = 0, subjectCodesLength = scope.subjectcodes.length; j < subjectCodesLength; j++) {
                                     if (scope.subjectcodes[j].name === elementName) {
                                         filteredArray.push(scope.subjectcodes[j]);
                                     }
@@ -1058,22 +1067,26 @@
                         return filteredArray;
                     }
 
+                    /*
+                     * Filter content by subject search
+                     */
                     scope.subjectSearch = function (item) {
                         tags.initSelectedFacets().then(function (currentTags) {
-                            if (item.subject.length > getSubjectCodes(currentTags).length) {
-                                var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')';
-                                var query = getQuery(),
-                                        q = (query === null ?
-                                                addItemSubjectName :
-                                                query + ' ' + addItemSubjectName);
+                            var subjectCodes = getSubjectCodes(currentTags);
+                            if (item.subject.length > subjectCodes.length) {
+                                /* Adding subject codes to filter */
+                                var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')',
+                                    query = getQuery(),
+                                    q = (query === null ? addItemSubjectName : query + ' ' + addItemSubjectName);
 
                                 $location.search('q', q);
                             } else {
+                                /* Removing subject codes from filter */
                                 var params = $location.search();
                                 if (params.q) {
-                                    for (var j = 0; j < getSubjectCodes(currentTags).length; j++) {
-                                        if (item.subject.indexOf(getSubjectCodes(currentTags)[j]) === -1) {
-                                            var removeItemSubjectName = 'subject.name:(' + getSubjectCodes(currentTags)[j].name + ')';
+                                    for (var j = 0; j < subjectCodes.length; j++) {
+                                        if (item.subject.indexOf(subjectCodes[j]) === -1) {
+                                            var removeItemSubjectName = 'subject.name:(' + subjectCodes[j].name + ')';
                                             params.q = params.q.replace(removeItemSubjectName, '').trim();
                                             $location.search('q', params.q || null);
                                         }
