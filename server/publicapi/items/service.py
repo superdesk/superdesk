@@ -101,12 +101,21 @@ class ItemsService(BaseService):
         """
         request_params = (request.args or MultiDict())
 
-        if not allow_filtering and 'q' in request_params.keys():
-            desc = (
-                "Filtering is not supported when retrieving a single "
-                "object (the \"q\" parameter)"
-            )
-            raise UnexpectedParameterError(desc=desc)
+        if not allow_filtering:
+            err_msg = ("Filtering{} is not supported when retrieving a "
+                       "single object (the \"{param}\" parameter)")
+
+            if 'q' in request_params.keys():
+                desc = err_msg.format('', param='q')
+                raise UnexpectedParameterError(desc=desc)
+
+            if 'start_date' in request_params.keys():
+                desc = err_msg.format(' by date range', param='start_date')
+                raise UnexpectedParameterError(desc=desc)
+
+            if 'end_date' in request_params.keys():
+                desc = err_msg.format(' by date range', param='end_date')
+                raise UnexpectedParameterError(desc=desc)
 
         for param_name in request_params.keys():
             if param_name not in whitelist:
