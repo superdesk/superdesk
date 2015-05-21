@@ -159,7 +159,11 @@ class GetMethodTestCase(ItemsServiceTestCase):
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0], fake_request)
 
-        expected_whitelist = sorted(['start_date', 'end_date', 'q'])
+        expected_whitelist = sorted([
+            'start_date', 'end_date',
+            'exclude_fields', 'include_fields',
+            'q'
+        ])
 
         whitelist_arg = kwargs.get('whitelist')
         if whitelist_arg is not None:
@@ -462,6 +466,7 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
     @mock.patch('publicapi.items.service.ItemsService._check_request_params')
     def test_correctly_invokes_parameter_validation(self, fake_check_params):
         fake_request = MagicMock()
+        fake_request.args = MultiDict()
         lookup = {'_id': 'my_item'}
 
         instance = self._make_one()
@@ -474,18 +479,21 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(args[0], fake_request)
         self.assertEqual(kwargs.get('allow_filtering'), False)
 
+        expected_whitelist = sorted(['exclude_fields', 'include_fields'])
+
         whitelist_arg = kwargs.get('whitelist')
         if whitelist_arg is not None:
             # NOTE: the whitelist argument is converted to a list, because any
             # iterable type is valid, not just lists
-            self.assertEqual(list(whitelist_arg), [])
+            self.assertEqual(sorted(list(whitelist_arg)), expected_whitelist)
         else:
             # whitelist can also be passed as a positional argument
             self.assertGreater(len(args), 1)
-            self.assertEqual(list(args[1]), [])
+            self.assertEqual(sorted(list(args[1])), expected_whitelist)
 
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
+        request.args = MultiDict()
         lookup = {'_id': 'my_item'}
 
         instance = self._make_one()
@@ -507,3 +515,54 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         args, kwargs = fake_super_find_one.call_args
         self.assertEqual(len(args), 1)
         self.assertIsInstance(args[0], ParsedRequest)
+
+    # TODO: test URI should be mandatory in result? always present even if not
+    # whitelisted, error if trying to blacklist it in exclude_fields?
+
+    # TODO: test exclude_fields and incldue_fields cannot use at the same time
+
+    # TODO: cannot include/exclude fields not in schema
+
+    # TODO: cannot blacklist fields required by NINJS (uri)
+
+    def test_filters_out_blacklisted_fields_if_requested(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('exclude_fields', 'language,version'),
+        ])
+        lookup = {'_id': 'my_item'}
+
+        instance = self._make_one()
+        instance.find_one(request, **lookup)
+
+        self.assertTrue(fake_super_find_one.called)
+        args, kwargs = fake_super_find_one.call_args
+        self.assertGreater(len(args), 0)
+
+        projection = json.loads(args[0].projection)
+        expected_projection = {
+            'language': 0,
+            'version': 0,
+        }
+        self.assertEqual(projection, expected_projection)
+
+    def test_filters_out_all_but_whitelisted_fields_if_requested(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('include_fields', 'body_text,byline'),
+        ])
+        lookup = {'_id': 'my_item'}
+
+        instance = self._make_one()
+        instance.find_one(request, **lookup)
+
+        self.assertTrue(fake_super_find_one.called)
+        args, kwargs = fake_super_find_one.call_args
+        self.assertGreater(len(args), 0)
+
+        projection = json.loads(args[0].projection)
+        expected_projection = {
+            'body_text': 1,
+            'byline': 1,
+        }
+        self.assertEqual(projection, expected_projection)
