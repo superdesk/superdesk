@@ -165,7 +165,7 @@
                             }
 
                             list.style.paddingTop = (from * ITEM_HEIGHT) + 'px';
-                            scope.viewitems = merge(items._items);
+                            scope.items = merge(items._items);
                         });
                     });
                 }
@@ -182,7 +182,7 @@
 
                 function merge(newItems) {
                     var next = [],
-                        olditems = scope.viewitems || [];
+                        olditems = scope.items || [];
                     angular.forEach(newItems, function(item) {
                         var old = _.find(olditems, {_id: item._id});
                         next.push(old ? angular.extend(old, item) : item);
@@ -192,7 +192,7 @@
                 }
 
                 function updateCurrentView() {
-                    var ids = _.pluck(scope.viewitems, '_id'),
+                    var ids = _.pluck(scope.items, '_id'),
                         query = {query: {filtered: {filter: {and: [
                             {terms: {_id: ids}},
                             {term: {'task.stage': scope.stage}}
@@ -200,7 +200,7 @@
                     query.size = ids.length;
                     apiquery(query).then(function(items) {
                         var nextItems = _.indexBy(items._items, '_id');
-                        angular.forEach(scope.viewitems, function(item, i) {
+                        angular.forEach(scope.items, function(item, i) {
                             var diff = nextItems[item._id] || {_deleted: 1};
                             angular.extend(item, diff);
                         });
@@ -241,15 +241,15 @@
                 }
 
                 function move(diff, event) {
-                    var index = _.findIndex(scope.viewitems, scope.selected),
+                    var index = _.findIndex(scope.items, scope.selected),
                         nextItem,
                         nextIndex;
 
                     if (index === -1) {
-                        nextItem = scope.viewitems[0];
+                        nextItem = scope.items[0];
                     } else {
-                        nextIndex = Math.max(0, Math.min(scope.viewitems.length - 1, index + diff));
-                        nextItem = scope.viewitems[nextIndex];
+                        nextIndex = Math.max(0, Math.min(scope.items.length - 1, index + diff));
+                        nextItem = scope.items[nextIndex];
 
                         $timeout.cancel(moveTimeout);
                         moveTimeout = $timeout(function() {
@@ -266,7 +266,7 @@
                     }
 
                     scope.$apply(function() {
-                        clickItem(scope.viewitems[nextIndex], event);
+                        clickItem(scope.items[nextIndex], event);
                     });
                 }
             }

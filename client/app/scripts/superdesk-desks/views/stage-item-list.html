@@ -7,7 +7,7 @@
 
 <ul ng-show="total" class="inline-content-items" tabindex="0">
 	<li class="item-container"
-		ng-repeat="item in viewitems track by item._id">
+		ng-repeat="item in items track by item._id">
 		<div id="{{ :: item._id }}" class="item"
 			ng-click="action({item: item})"
 			ng-class="{
