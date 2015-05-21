@@ -197,10 +197,10 @@
          * @param {Object} diff Edits.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.publishConfirmation = function publishAuthoring(orig, diff, isDirty) {
+        this.publishConfirmation = function publishAuthoring(orig, diff, isDirty, action) {
             var promise = $q.when();
             if (this.isEditable(diff) && isDirty) {
-                promise = confirm.confirmPublish()
+                promise = confirm.confirmPublish(action)
                     .then(angular.bind(this, function save() {
                         return true;
                     }), function() { // cancel
@@ -448,11 +448,11 @@
         /**
          * In case $scope is dirty ask user if he want's to save changes and publish.
          */
-        this.confirmPublish = function confirmPublish() {
+        this.confirmPublish = function confirmPublish(action) {
             return modal.confirm(
-                gettext('There are some unsaved changes, do you want to save it and publish now?'),
+                gettext('There are some unsaved changes, do you want to save it and ' + action + ' now?'),
                 gettext('Save changes?'),
-                gettext('Save and publish'),
+                gettext('Save and ' + action),
                 gettext('Cancel')
             );
         };
@@ -736,7 +736,8 @@
                         validateDestinationGroups($scope.item)
                         .then(function() {
                             if ($scope.dirty) { // save dialog & then publish if confirm
-                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty)
+                                var message = $scope.action === 'kill' ? $scope.action : 'publish';
+                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
                                 .then(function(res) {
                                     if (res) {
                                         publishItem($scope.origItem, $scope.item);
