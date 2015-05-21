@@ -278,7 +278,7 @@ function MetadataService(api, $q, staticMetadata) {
                 temp = _.without(subjectCodesArray, term);
 
             if (temp.length === subjectCodesArray.length) {
-                temp = removeSubjectCode(subjectCodesArray, term);
+                _.remove(temp, {name: term});
             }
 
             o[self.subjectScope.field] = temp;
@@ -286,11 +286,6 @@ function MetadataService(api, $q, staticMetadata) {
             _.extend(self.subjectScope.item, o);
 
             self.subjectScope.change({item: self.subjectScope.item});
-
-            function removeSubjectCode(subjectcodes, term) {
-                _.remove(subjectcodes, {name: term});
-                return subjectcodes;
-            }
         },
         initialize: function() {
             if (!this.loaded) {
