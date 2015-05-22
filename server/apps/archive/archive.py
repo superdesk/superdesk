@@ -49,6 +49,38 @@ import datetime
 logger = logging.getLogger(__name__)
 
 
+def item_schema(extra=None):
+    """Create schema for item.
+
+    :param extra: extra fields to be added to schema
+    """
+    schema = {
+        'old_version': {
+            'type': 'number',
+        },
+        'last_version': {
+            'type': 'number',
+        },
+        'task': {'type': 'dict'},
+        'destination_groups': {
+            'type': 'list',
+            'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime',
+            'nullable': True
+        },
+        'marked_for_not_publication': {
+            'type': 'boolean',
+            'default': False
+        }
+    }
+    schema.update(metadata_schema)
+    if extra:
+        schema.update(extra)
+    return schema
+
+
 def get_subject(doc1, doc2=None):
     for key in ('headline', 'subject', 'slugline'):
         value = doc1.get(key)
@@ -92,29 +124,7 @@ class ArchiveVersionsResource(Resource):
 
 
 class ArchiveResource(Resource):
-    schema = {
-        'old_version': {
-            'type': 'number',
-        },
-        'last_version': {
-            'type': 'number',
-        },
-        'task': {'type': 'dict'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'nullable': True
-        },
-        'marked_for_not_publication': {
-            'type': 'boolean',
-            'default': False
-        }
-    }
-
-    schema.update(metadata_schema)
+    schema = item_schema()
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
@@ -449,18 +459,7 @@ class ArchiveService(BaseService):
 class AutoSaveResource(Resource):
     endpoint_name = 'archive_autosave'
     item_url = item_url
-    schema = {
-        '_id': {'type': 'string'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'default': None
-        }
-    }
-    schema.update(metadata_schema)
+    schema = item_schema({'_id': {'type': 'string'}})
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name

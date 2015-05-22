@@ -19,6 +19,12 @@ function click(target) {
 }
 
 function EditorService() {
+    this.settings = {spellcheck: true};
+    this.stopEvents = false;
+    this.addEventListeners = addEventListeners;
+    this.removeEventListeners = removeEventListeners;
+
+    var vm = this;
 
     /**
      * Store current anchor position within given node
@@ -107,6 +113,29 @@ function EditorService() {
     };
 
     this.clear(); // init
+
+    function addEventListeners(elem) {
+        elem.addEventListener('blur', stopEventListener);
+        elem.addEventListener('input', stopEventListener);
+        elem.addEventListener('focus', stopEventListener);
+        elem.addEventListener('select', stopEventListener);
+        document.body.addEventListener('focus', stopEventListener, true);
+    }
+
+    function removeEventListeners(elem) {
+        elem.removeEventListener('blur', stopEventListener);
+        elem.removeEventListener('input', stopEventListener);
+        elem.removeEventListener('focus', stopEventListener);
+        elem.removeEventListener('select', stopEventListener);
+        document.body.removeEventListener('focus', stopEventListener);
+    }
+
+    function stopEventListener(event) {
+        if (vm.stopEvents) {
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+        }
+    }
 }
 
 function FindReplaceCommand(rootNode) {
@@ -248,7 +277,8 @@ angular.module('superdesk.editor', [])
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
             anchorInputPlaceholder: gettext('Paste or type a full link'),
-            disablePlaceholders: true
+            disablePlaceholders: true,
+            spellcheck: false
         };
 
         /**
@@ -316,35 +346,7 @@ angular.module('superdesk.editor', [])
                     updateTimeout,
                     renderTimeout;
 
-                /**
-                 * Remove spellcheck highlights from node
-                 */
-                function removeSpellcheck(node) {
-                    var selection = editor.storeSelection(node),
-                        html = spellcheck.clean(node);
-                    node.innerHTML = html;
-                    editor.resetSelection(node, selection);
-                    return html;
-                }
-
-                function updateModel() {
-                    if (editor.readOnly) {
-                        return;
-                    }
-
-                    var html = removeSpellcheck(editorElem[0]);
-                    scope.$applyAsync(function() {
-                        ngModel.$setViewValue(html);
-                        spellcheck.render(editorElem[0]);
-                    });
-                }
-
-                ngModel.$viewChangeListeners.push(function renderSpellcheck() {
-                    $timeout.cancel(renderTimeout);
-                    renderTimeout = $timeout(function() {
-                        spellcheck.render(editorElem[0]);
-                    }, 200, false);
-                });
+                ngModel.$viewChangeListeners.push(changeListener);
 
                 ngModel.$render = function renderEditor() {
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
@@ -352,11 +354,10 @@ angular.module('superdesk.editor', [])
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
-                    // this has to register before the editor
-                    spellcheck.addEventListener(editorElem[0]);
+                    editor.elem = editorElem[0];
+                    editor.addEventListeners(editorElem[0]);
 
                     var editorConfig = angular.extend({}, config, scope.config || {});
-                    editor.elem = editorElem[0];
                     editor.editor = new window.MediumEditor(editor.elem, editorConfig);
 
                     editorElem.on('input', function(event) {
@@ -397,18 +398,66 @@ angular.module('superdesk.editor', [])
                     }
 
                     scope.$on('$destroy', function() {
-                        editorElem.off();
                         editor.clear();
-                        spellcheck.removeEventListener(editorElem[0]);
+                        editor.removeEventListeners(editorElem[0]);
+                        editorElem.off();
                     });
 
                     scope.cursor = {};
-                    spellcheck.render(editorElem[0]);
+                    autoRenderSpellcheck();
                 };
 
                 scope.replace = function(text) {
                     scope.replaceTarget.parentNode.replaceChild(document.createTextNode(text), scope.replaceTarget);
                 };
+
+                scope.$on('editor:settings', function() {
+                    if (editor.settings.spellcheck) {
+                        spellcheck.render(editorElem[0]);
+                    } else {
+                        removeSpellcheck(editorElem[0]);
+                    }
+                });
+
+                scope.$on('spellcheck:run', renderSpellcheck);
+
+                function updateModel() {
+                    if (editor.readOnly) {
+                        return;
+                    }
+
+                    var html = removeSpellcheck(editorElem[0]);
+                    scope.$applyAsync(function() {
+                        ngModel.$setViewValue(html);
+                    });
+                }
+
+                function changeListener() {
+                    $timeout.cancel(renderTimeout);
+                    renderTimeout = $timeout(autoRenderSpellcheck, 200, false);
+                }
+
+                function autoRenderSpellcheck() {
+                    if (editor.settings.spellcheck) {
+                        renderSpellcheck();
+                    }
+                }
+
+                function renderSpellcheck() {
+                    spellcheck.render(editorElem[0]);
+                }
+
+                function removeSpellcheck(node) {
+                    if (!node) {
+                        node = editorElem[0];
+                    }
+
+                    var selection = editor.storeSelection(node),
+                        html = spellcheck.clean(node);
+                    node.innerHTML = html;
+                    editor.resetSelection(node, selection);
+                    return html;
+                }
             }
         };
     }]);
