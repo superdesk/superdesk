@@ -198,16 +198,16 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.render = function render(elem) {
         var node = elem;
         return this.errors(node.textContent).then(function(errors) {
-            editor.stopEvents = true;
-            var selection = editor.storeSelection(node);
+            isRendering = true;
+            editor.storeSelection(node);
 
             angular.forEach(errors, function(error) {
                 hiliteError(node, error);
             });
 
             setErrorClass(node);
-            editor.resetSelection(node, selection);
-            editor.stopEvents = false;
+            editor.resetSelection(node);
+            isRendering = false;
         });
     };
 
