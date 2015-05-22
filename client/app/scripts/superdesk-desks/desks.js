@@ -852,7 +852,8 @@
                 templateUrl: 'scripts/superdesk-desks/views/content-expiry.html',
                 scope: {
                     item: '=',
-                    preview: '='
+                    preview: '=',
+                    header: '@'
                 },
                 link: function(scope, elem, attrs) {
 
@@ -889,9 +890,7 @@
 
                     var setContentExpiry = function(item) {
 
-                        if (expiryfield !== 'content_expiry') {
-                            scope.ContentExpiry.Header = 'Spike Expiry';
-                        }
+                        scope.ContentExpiry.Header = scope.header;
 
                         if (item && item[expiryfield] != null) {
                             scope.ContentExpiry.Hours = getExpiryHours(item[expiryfield]);

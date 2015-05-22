@@ -8,8 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 import logging
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
 
 from collections import Counter
@@ -17,13 +17,8 @@ from eve.utils import config
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.content import LINKED_IN_PACKAGES
-
-ASSOCIATIONS = 'refs'
-ITEM_REF = 'residRef'
-ID_REF = 'idRef'
-MAIN_GROUP = 'main'
-ROOT_GROUP = 'root'
+from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE
+from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP
 
 
 logger = logging.getLogger(__name__)
@@ -39,8 +34,8 @@ def create_root_group(docs):
         if len(doc.get('groups', [])):
             continue
         doc['groups'] = [
-            {'id': ROOT_GROUP, 'refs': [{ID_REF: MAIN_GROUP}]},
-            {'id': MAIN_GROUP, 'refs': []}
+            {'id': ROOT_GROUP, ASSOCIATIONS: [{ID_REF: MAIN_GROUP}]},
+            {'id': MAIN_GROUP, ASSOCIATIONS: []}
         ]
 
 
@@ -65,12 +60,17 @@ class PackageService():
         create_root_group(docs)
         self.check_root_group(docs)
         self.check_package_associations(docs)
+
+        for doc in docs:
+            if not doc.get('ingest_provider'):
+                doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
+
         package_create_signal.send(self, docs=docs)
 
     def on_created(self, docs):
         for (doc, assoc) in [(doc, assoc) for doc in docs
                              for assoc in self._get_associations(doc)]:
-            self.update_link(doc[config.ID_FIELD], assoc)
+            self.update_link(doc, assoc)
 
     def on_update(self, updates, original):
         self.check_root_group([updates])
@@ -83,13 +83,13 @@ class PackageService():
         toAdd = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
         toRemove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in toAdd]
         for assoc in toRemove:
-            self.update_link(original[config.ID_FIELD], assoc, delete=True)
+            self.update_link(original, assoc, delete=True)
         for assoc in toAdd.values():
-            self.update_link(original[config.ID_FIELD], assoc)
+            self.update_link(original, assoc)
 
     def on_deleted(self, doc):
         for assoc in self._get_associations(doc):
-            self.update_link(doc[config.ID_FIELD], assoc, delete=True)
+            self.update_link(doc, assoc, delete=True)
 
     def check_root_group(self, docs):
         for groups in [doc.get('groups') for doc in docs if doc.get('groups')]:
@@ -161,10 +161,12 @@ class PackageService():
             raise SuperdeskApiError.notFoundError(message=message)
         return item, item_id, endpoint
 
-    def update_link(self, package_id, assoc, delete=False):
+    def update_link(self, package, assoc, delete=False):
         # skip root node
         if assoc.get(ID_REF):
             return
+        package_id = package[config.ID_FIELD]
+        package_type = package.get(PACKAGE_TYPE)
 
         item, item_id, endpoint = self.get_associated_item(assoc, not delete)
         if not item and delete:
@@ -174,7 +176,10 @@ class PackageService():
         two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
 
         if not delete:
-            two_way_links.append({'package': package_id})
+            data = {PACKAGE: package_id}
+            if package_type:
+                data.update({PACKAGE_TYPE: TAKES_PACKAGE})
+            two_way_links.append(data)
 
         updates = self.get_item_update_data(item, two_way_links, delete)
         get_resource_service(endpoint).system_update(item_id, updates, item)

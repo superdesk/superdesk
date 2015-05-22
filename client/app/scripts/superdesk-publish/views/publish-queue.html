@@ -51,7 +51,7 @@
         <tbody>
             <tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
                 <td>
-                    <input type="checkbox" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected">
+                    <input type="checkbox" ng-show="queue_item.state !== 'canceled'" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected">
                     {{ queue_item.published_seq_num }}
                 </td>
                 <td>{{ queue_item.unique_name }}</td>

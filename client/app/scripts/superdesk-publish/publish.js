@@ -154,7 +154,7 @@
         $scope.outputChannels = null;
         $scope.outputChannelLookup = {};
 
-        $scope.publish_queue = null;
+        $scope.publish_queue = [];
 
         $scope.selectedFilterChannel = null;
         $scope.selectedFilterSubscriber = null;
@@ -221,27 +221,19 @@
         };
 
         $scope.buildNewSchedule = function (item) {
-            var newItem = {};
+            var pick_fields = ['item_id', 'publishing_action', 'selector_codes',
+                'formatted_item_id', 'headline', 'content_type',
+                'subscriber_id', 'output_channel_id', 'unique_name', 'destination'];
 
-            newItem.publishing_action = item.publishing_action;
-            newItem.item_id = item.item_id;
-            newItem.publish_schedule = item.publish_schedule;
-            newItem.selector_codes = item.selector_codes;
-            newItem.formatted_item_id = item.formatted_item_id;
-            newItem.headline = item.headline;
-            newItem.content_type = item.content_type;
-            newItem.subscriber_id = item.subscriber_id;
-            newItem.output_channel_id = item.output_channel_id;
-            newItem.unique_name = item.unique_name;
-            newItem.destination = item.destination;
+            var newItem = _.pick(item, pick_fields);
             return newItem;
         };
 
         $scope.scheduleToSend = function(item) {
-            var queueItems;
+            var queueItems = [];
 
             if (angular.isDefined(item)) {
-                queueItems = $scope.buildNewSchedule(item);
+                queueItems.push($scope.buildNewSchedule(item));
             } else if ($scope.multiSelectCount > 0) {
                 _.forEach($scope.selectedQueueItems, function(item) {
                     queueItems.push($scope.buildNewSchedule(item));
@@ -292,8 +284,6 @@
                     );
                 });
             }
-
-            $scope.reload();
         };
 
         $scope.filterSchedule = function() {
@@ -348,10 +338,21 @@
         $scope.cancelSelection = function() {
             $scope.selectedFilterChannel = null;
             $scope.selectedFilterSubscriber = null;
-
+            $scope.selectedQueueItems = [];
             $scope.filterSchedule();
         };
 
+        function refreshQueueState (data) {
+            var item = _.find($scope.publish_queue, {'_id': data.queue_id});
+
+            if (item) {
+                var fields = ['error_message', 'completed_at', 'state'];
+                angular.extend(item, _.pick(data, fields));
+                $scope.$apply();
+            }
+        }
+
+        $scope.$on('publish_queue:update', function(evt, data) { refreshQueueState(data); });
         $scope.reload();
     }
 
@@ -709,7 +710,8 @@
         .directive('sdAdminPubSubscribers', SubscribersDirective)
         .directive('sdAdminPubOutputChannels', OutputChannelsDirective)
         .directive('sdAdminPubDestinationGroups', DestinationGroupsDirective)
-        .directive('sdDestination', DestinationDirective);
+        .directive('sdDestination', DestinationDirective)
+        .controller('publishQueueCtrl', PublishQueueController);
 
     app
         .config(['superdeskProvider', function(superdesk) {

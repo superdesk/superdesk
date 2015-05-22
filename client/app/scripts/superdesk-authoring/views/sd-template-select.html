@@ -1,0 +1,28 @@
+<div sd-modal data-model="open" class="output-channel-modal">
+    <div class="modal-header"> <a href="" class="close" ng-click="close()"><i class="icon-close-small"></i></a>
+        <h3 translate>Select template</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <fieldset>
+                <div class="field">
+                    <label for="keyword" translate>Keyword</label>
+                    <input type="text" id="keyword" ng-model="options.keyword" ng-model-options="{ debounce: 300 }">
+                </div>
+                <div class="field">
+                    <label translate>Templates</label>
+                    <ul>
+                        <li ng-repeat="template in templates._items track by template._id">
+                            <button class="btn btn-full" ng-click="select(template)">
+                                <span class="pull-left">{{ :: template.template_name }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div sd-pagination-alt class="pagination-box" data-page="options.page" data-max-page="maxPage"></div>
+    </div>
+</div>

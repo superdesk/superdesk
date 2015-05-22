@@ -1,13 +1,15 @@
 {
     "_id": "tag:demodata.org,0001:ninjs_XYZ123",
     "type": "picture",
-    "version": 3,
+    "version": "v3",
     "versioncreated": "2015-03-16T08:12:00Z",
+    "pubstatus": "usable",
+    "urgency": 9,
     "usageterms": "You can use this photo in any way you want.",
     "byline": "Andy Catlover",
     "headline": "Amazing! A very cute fluffy cat!",
     "description_text": "This is a cute picture of our cat.",
-    "description_xhtml": "<p>This is a <em>cute</em> picture of our cat.</p>",
+    "description_html": "<p>This is a <em>cute</em> picture of our cat.</p>",
     "place": [
         {"name": "my neighbour's backyard"},
         {"name": "Berlin"},
@@ -35,13 +37,15 @@
 {
     "_id": "tag:demodata.org,0002:ninjs_XYZ123",
     "type": "video",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2013-05-20T11:40:00Z",
+    "pubstatus": "usable",
+    "urgency": 7,
     "usageterms": "May use with writen permission from Red Bull only.",
     "byline": "Mike the Spike",
     "headline": "B.A.S.E. jumpers gather in Savoy Alps",
     "description_text": "Adrenaline junkies preparing for a jump.",
-    "description_xhtml": "<p>Adrenaline junkies preparing for a jump.</p>",
+    "description_html": "<p>Adrenaline junkies preparing for a jump.</p>",
     "place": [
         {"name": "Savoy"},
         {"name": "France"}
@@ -63,8 +67,10 @@
     "_id": "tag:demodata.org,0003:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-01-01T00:00:01Z",
+    "pubstatus": "usable",
+    "urgency": 8,
     "copyrightnotice": "Copyright 2015 Santa & Friends - Free to use for children.",
     "language": "en",
     "person": [
@@ -90,15 +96,17 @@
     "byline": "Santa Claus and John McWriter",
     "headline": "People in London celebrate New Year",
     "body_text": "LONDON, UK (DD.org) -- Everybody happily celebrating.",
-    "body_xhtml": "<p>LONDON, UK (DD.org) -- Everybody happily celebrating.</p>"
+    "body_html": "<p>LONDON, UK (DD.org) -- Everybody happily celebrating.</p>"
 }
 
 {
     "_id": "tag:demodata.org,0004:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 2,
+    "version": "v2",
     "versioncreated": "2015-01-01T01:25:08Z",
+    "pubstatus": "usable",
+    "urgency": 6,
     "copyrightnotice": "Copyright 2015 Santa & Friends - Free to use for children.",
     "language": "en",
     "person": [
@@ -124,15 +132,17 @@
     "byline": "Santa Claus and John McWriter",
     "headline": "People in UK celebrate New Year",
     "body_text": "LONDON, UK (DD.org) -- Everybody is celebrating.",
-    "body_xhtml": "<p>LONDON, UK (DD.org) -- Everybody is celebrating.</p>"
+    "body_html": "<p>LONDON, UK (DD.org) -- Everybody is celebrating.</p>"
 }
 
 {
     "_id": "tag:demodata.org,0005:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-01-31T12:41:55Z",
+    "pubstatus": "usable",
+    "urgency": 5,
     "copyrightnotice": "Copyright 2015 DemoData ltd., All Rights Reserved.",
     "language": "en",
     "person": [
@@ -157,15 +167,17 @@
     "byline": "Donald Banks",
     "headline": "Hollande proposes a new law",
     "body_text": "PARIS, FR -- At the press conference, there was...",
-    "body_xhtml": "<p>PARIS, FR -- At the press conference, there was...</p>"
+    "body_html": "<p>PARIS, FR -- At the press conference, there was...</p>"
 }
 
 {
     "_id": "tag:demodata.org,0006:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2014-12-06T08:35:25Z",
+    "pubstatus": "usable",
+    "urgency": 8,
     "copyrightnotice": "Copyright 2014 DemoData ltd., All Rights Reserved.",
     "language": "en",
     "person": [
@@ -189,15 +201,17 @@
     "byline": "Mister Journalist & co-workers",
     "headline": "Merkel says 2014 was 'successful'",
     "body_text": "BERLIN, DE -- The German Chancellor seemed convinced",
-    "body_xhtml": "<p>BERLIN, DE -- The German Chancellor seemed convinced</p>"
+    "body_html": "<p>BERLIN, DE -- The German Chancellor seemed convinced</p>"
 }
 
 {
     "_id": "tag:demodata.org,0007:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2014-12-06T08:35:25Z",
+    "pubstatus": "usable",
+    "urgency": 7,
     "copyrightnotice": "Copyright 2014 DemoData ltd., All Rights Reserved.",
     "language": "en",
     "person": [
@@ -221,15 +235,17 @@
     "byline": "Mister Journalist & co-workers",
     "headline": "Merkel says 2014 was 'successful'",
     "body_text": "BERLIN, DE -- The German Chancellor seemed convinced",
-    "body_xhtml": "<p>BERLIN, DE -- The German Chancellor seemed convinced</p>"
+    "body_html": "<p>BERLIN, DE -- The German Chancellor seemed convinced</p>"
 }
 
 {
     "_id": "tag:demodata.org,0008:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-05-02T17:12:39Z",
+    "pubstatus": "usable",
+    "urgency": 9,
     "copyrightnotice": "Free for non-commercial use",
     "language": "en",
     "person": [
@@ -250,15 +266,17 @@
     "byline": "Mr. Ice",
     "headline": "USA beats the Finns",
     "body_text": "OSTRAVA, CZ -- The result was 5:1.",
-    "body_xhtml": "<p>OSTRAVA, CZ -- The result was 5:1.</p>"
+    "body_html": "<p>OSTRAVA, CZ -- The result was 5:1.</p>"
 }
 
 {
     "_id": "tag:demodata.org,0009:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-05-20T22:19:10Z",
+    "pubstatus": "usable",
+    "urgency": 9,
     "copyrightnotice": "Ask Surcefabrcic z.ú. for permission",
     "language": "en",
     "person": [
@@ -281,17 +299,19 @@
     "byline": "Peter Lamut",
     "headline": "API demo content under development",
     "description_text": "The goal is to provide sample items & packages for testing",
-    "description_xhtml": "<p>The goal is to provide sample items &amp; packages for testing</p>",
+    "description_html": "<p>The goal is to provide sample items &amp; packages for testing</p>",
     "body_text": "This body text describes the whole thing.",
-    "body_xhtml": "<p>This body text describes the whole thing.</p>"
+    "body_html": "<p>This body text describes the whole thing.</p>"
 }
 
 {
     "_id": "tag:demodata.org,0010:ninjs_XYZ123",
     "type": "text",
     "profile": "text-only",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-03-21T12:05:49Z",
+    "pubstatus": "usable",
+    "urgency": 9,
     "language": "sl",
     "person": [
         {
@@ -315,15 +335,17 @@
     "headline": "Peter je šel na odlično kosilo",
     "description_text": "V gostilni pod Rožnikom so spekli okusne čevapčiče",
     "body_text": "Kosilo je bilo pripravljeno v 10-ih minutah in to je to.",
-    "body_xhtml": "<p>Kosilo je bilo pripravljeno v 10-ih minutah in to je to.</p>"
+    "body_html": "<p>Kosilo je bilo pripravljeno v 10-ih minutah in to je to.</p>"
 }
 
 {
     "_id": "tag:demodata.org,0011:ninjs_XYZ123",
     "type": "composite",
     "profile": "text-photo",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2015-05-03T07:48:51Z",
+    "pubstatus": "usable",
+    "urgency": 4,
     "copyrightnotice": "Licensed under MIT public license",
     "language": "en",
     "person": [
@@ -364,7 +386,7 @@
     "located": "Naples, Italy",
     "headline": "Exclusive interview with the great mafia boss", 
     "body_text": "Reporter: \"Don Vito Corleone, bongiorno!\", etc.",
-    "body_xhtml": "<b>Reporter:</b> &quot;Don Vito Corleone, bongiorno!&quot;, etc.",
+    "body_html": "<b>Reporter:</b> &quot;Don Vito Corleone, bongiorno!&quot;, etc.",
     "associations": {
         "mainpic": {
             "type": "picture",
@@ -372,7 +394,7 @@
             "byline": "Photo Grapher jr.",
             "headline": "Don Vito Corleone in a restaurant", 
             "description_text": "Mafia boss enjoying red wine at lunch",
-            "description_xhtml": "<p>Mafia boss enjoying red wine at lunch</p>",
+            "description_html": "<p>Mafia boss enjoying red wine at lunch</p>",
             "renditions": {
                 "main": {
                     "href": "http://ninjs.example.com/pictures/don_vito.png",
@@ -397,8 +419,10 @@
     "_id": "tag:demodata.org,0012:ninjs_XYZ123",
     "type": "composite",
     "profile": "text-photo",
-    "version": 1,
+    "version": "v1",
     "versioncreated": "2014-08-15T11:33:42Z",
+    "pubstatus": "usable",
+    "urgency": 8,
     "copyrightnotice": "Free to use for everyone",
     "language": "en",
     "person": [
@@ -439,7 +463,7 @@
     "located": "Bilbao city center, Spain",
     "headline": "McDonalds opens its own theme park",
     "body_text": "Want to try McRide or McGhostHouse?",
-    "body_xhtml": "<p>Want to try <em>McRide</em> or <em>McGhostHouse</em>?</p>",
+    "body_html": "<p>Want to try <em>McRide</em> or <em>McGhostHouse</em>?</p>",
     "associations": {
         "mainpic": {
             "type": "picture",
@@ -447,7 +471,7 @@
             "byline": "The Phototaker",
             "headline": "Spain's first McTheme Park, main entrance",
             "description_text": "Visitors waiting in a queue to visit McTheme Park",
-            "description_xhtml": "<p>Visitors waiting in a queue to visit McTheme Park</p>",
+            "description_html": "<p>Visitors waiting in a queue to visit McTheme Park</p>",
             "renditions": {
                 "main": {
                     "href": "http://ninjs.example.com/pictures/mcthemepark_orig.jpg",

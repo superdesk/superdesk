@@ -24,6 +24,7 @@ from superdesk import get_resource_service
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
+from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 
 
@@ -32,6 +33,13 @@ GUID_FIELD = 'guid'
 GUID_NEWSML = 'newsml'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
+ASSOCIATIONS = 'refs'
+ITEM_REF = 'residRef'
+ID_REF = 'idRef'
+MAIN_GROUP = 'main'
+ROOT_GROUP = 'root'
+SEQUENCE = 'sequence'
+PUBLISH_STATES = ['published', 'killed', 'corrected', 'scheduled']
 
 
 def update_version(updates, original):
@@ -272,6 +280,10 @@ def update_state(original, updates):
 
     original_state = original.get(config.CONTENT_STATE)
     if original_state not in ['ingested', 'in_progress', 'scheduled']:
+        if original.get(PACKAGE_TYPE) == TAKES_PACKAGE:
+            # skip any state transition validation for takes packages
+            # also don't change the stage of the package
+            return
         if not is_workflow_state_transition_valid('save', original_state):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
@@ -291,10 +303,16 @@ def is_update_allowed(archive_doc):
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
 
 
-def set_pub_status(doc, pub_status_value='usable'):
+def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
     """
-    Sets the value of pubstatus prooperty in metadata of doc in either ingest or archive repo
+    Handles existing data. For now the below are handled:
+        1. Sets the value of pubstatus property in metadata of doc in either ingest or archive repo
+        2. Sets the value of marked_for_not_publication
     """
 
-    if doc and 'pubstatus' in doc:
-        doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+    if doc:
+        if 'pubstatus' in doc:
+            doc['pubstatus'] = doc.get('pubstatus', pub_status_value).lower()
+
+        if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
+            doc['marked_for_not_publication'] = False

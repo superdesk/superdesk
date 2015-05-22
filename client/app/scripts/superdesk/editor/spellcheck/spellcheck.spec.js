@@ -64,17 +64,28 @@ describe('spellcheck', function() {
         expect(spellcheck.clean(p)).toBe('what is b<span class="mark"></span>uz');
     }));
 
-    it('can prevent input event when rendering errors', inject(function(spellcheck, $rootScope) {
-        var p = createParagraph(TEXT);
-        spellcheck.addEventListener(p);
-        var handler = jasmine.createSpy('test');
-        p.addEventListener('input', handler);
-        spellcheck.render(p);
-        $rootScope.$digest();
-        expect(handler).not.toHaveBeenCalled();
-        spellcheck.removeEventListener(p);
-        spellcheck.render(p);
-        $rootScope.$digest();
-        expect(handler).toHaveBeenCalled();
-    }));
+    describe('spellcheck menu', function() {
+        it('can toggle auto spellcheck', inject(function(editor, $controller, $rootScope) {
+            var ctrl = $controller('SpellcheckMenu');
+            expect(ctrl.isAuto).toBe(true);
+
+            var scope = $rootScope.$new(),
+                settingsHandle = jasmine.createSpy('handle');
+
+            scope.$on('editor:settings', settingsHandle);
+
+            ctrl.pushSettings();
+            expect(settingsHandle).toHaveBeenCalled();
+            expect(editor.settings.spellcheck).toBe(true);
+
+            ctrl.isAuto = false;
+            ctrl.pushSettings();
+            expect(editor.settings.spellcheck).toBe(false);
+
+            var spellcheckHandle = jasmine.createSpy('handle');
+            scope.$on('spellcheck:run', spellcheckHandle);
+            ctrl.spellcheck();
+            expect(spellcheckHandle).toHaveBeenCalled();
+        }));
+    });
 });

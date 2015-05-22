@@ -19,7 +19,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off, set_pub_status
+from .common import get_user, update_version, set_sign_off, handle_existing_data
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -41,12 +41,44 @@ import superdesk
 import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
-from .archive_composite import PackageService
+from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
 
 logger = logging.getLogger(__name__)
+
+
+def item_schema(extra=None):
+    """Create schema for item.
+
+    :param extra: extra fields to be added to schema
+    """
+    schema = {
+        'old_version': {
+            'type': 'number',
+        },
+        'last_version': {
+            'type': 'number',
+        },
+        'task': {'type': 'dict'},
+        'destination_groups': {
+            'type': 'list',
+            'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime',
+            'nullable': True
+        },
+        'marked_for_not_publication': {
+            'type': 'boolean',
+            'default': False
+        }
+    }
+    schema.update(metadata_schema)
+    if extra:
+        schema.update(extra)
+    return schema
 
 
 def get_subject(doc1, doc2=None):
@@ -92,25 +124,7 @@ class ArchiveVersionsResource(Resource):
 
 
 class ArchiveResource(Resource):
-    schema = {
-        'old_version': {
-            'type': 'number',
-        },
-        'last_version': {
-            'type': 'number',
-        },
-        'task': {'type': 'dict'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'default': None
-        }
-    }
-
-    schema.update(metadata_schema)
+    schema = item_schema()
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
@@ -142,6 +156,7 @@ def update_word_count(doc):
 
 class ArchiveService(BaseService):
     packageService = PackageService()
+    takesService = TakesPackageService()
     mediaService = ArchiveMediaService()
 
     def on_fetched(self, docs):
@@ -150,7 +165,8 @@ class ArchiveService(BaseService):
         """
 
         for item in docs[config.ITEMS]:
-            set_pub_status(item)
+            handle_existing_data(item)
+            self.takesService.enhance_with_package_info(item)
 
     def on_create(self, docs):
         on_create_item(docs)
@@ -195,12 +211,12 @@ class ArchiveService(BaseService):
         is_update_allowed(original)
         user = get_user()
 
-        if updates.get('publish_schedule'):
-            if original['state'] == 'scheduled':
-                # this is an descheduling action
-                self.deschedule_item(updates, original)
-                return
+        if 'publish_schedule' in updates and original['state'] == 'scheduled':
+            # this is an descheduling action
+            self.deschedule_item(updates, original)
+            return
 
+        if updates.get('publish_schedule'):
             if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None
@@ -308,7 +324,7 @@ class ArchiveService(BaseService):
                 get_resource_service('users').get_invisible_stages_ids(get_user().get('_id')):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
 
-        set_pub_status(item)
+        handle_existing_data(item)
 
         return item
 
@@ -443,18 +459,7 @@ class ArchiveService(BaseService):
 class AutoSaveResource(Resource):
     endpoint_name = 'archive_autosave'
     item_url = item_url
-    schema = {
-        '_id': {'type': 'string'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'default': None
-        }
-    }
-    schema.update(metadata_schema)
+    schema = item_schema({'_id': {'type': 'string'}})
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name

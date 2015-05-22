@@ -12,10 +12,10 @@ import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
-from apps.archive.common import aggregations, set_pub_status
-from eve.utils import ParsedRequest
+from apps.archive.common import aggregations, handle_existing_data
+from eve.utils import ParsedRequest, config
 from bson.objectid import ObjectId
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 import json
 import superdesk
 
@@ -52,6 +52,7 @@ class PublishedItemService(BaseService):
             doc['item_id'] = doc['_id']
             doc['_created'] = utcnow()
             doc['versioncreated'] = utcnow()
+            self.__set_published_item_expiry(doc)
             doc.pop('_id', None)
             doc.pop('lock_user', None)
             doc.pop('lock_time', None)
@@ -66,7 +67,7 @@ class PublishedItemService(BaseService):
             }
 
             item.update(updates)
-            set_pub_status(item)
+            handle_existing_data(item)
 
         return items
 
@@ -81,6 +82,10 @@ class PublishedItemService(BaseService):
             return super().get(req=request, lookup=None)
         except:
             return []
+
+    def is_published_before(self, item_id):
+        item = super().find_one(req=None, _id=item_id)
+        return 'last_publish_action' in item
 
     def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)
@@ -134,6 +139,14 @@ class PublishedItemService(BaseService):
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)
-        set_pub_status(item)
+        handle_existing_data(item)
 
         return item
+
+    def __set_published_item_expiry(self, doc):
+        desk_id = doc.get('task', {}).get('desk', None)
+        desk = {}
+        if desk_id:
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+        expiry_minutes = desk.get('published_item_expiry', config.PUBLISHED_ITEMS_EXPIRY_MINUTES)
+        doc['expiry'] = get_expiry_date(expiry_minutes)

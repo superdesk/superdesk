@@ -314,6 +314,7 @@
             link: function(scope) {
                 scope.limits = authoring.limits;
                 scope._editable = scope.origItem._editable;
+                scope._isInPublishedStates = authoring.isPublished(scope.origItem);
             }
         };
     }
@@ -634,7 +635,8 @@
                 }],
                 filters: [{action: 'list', type: 'archive'}],
                 condition: function(item) {
-                    return item.type === 'composite' && item.state !== 'published' && item.state !== 'killed';
+                    return !_.contains(['published', 'killed', 'corrected'], item.state) &&
+                        item.type === 'composite' && item.package_type !== 'takes';
                 }
             })
             .activity('view.package', {
@@ -684,7 +686,7 @@
                     }],
                 filters: [{action: 'create', type: 'package'}],
                 condition: function(item) {
-                    return item ? item.state !== 'killed' : true;
+                    return item ? item.state !== 'killed' && item.package_type !== 'takes' : true;
                 }
             })
             .activity('package.item', {
@@ -705,7 +707,7 @@
                     {action: 'list', type: 'archive'}
                 ],
                 condition: function(item) {
-                    return item.state !== 'killed';
+                    return item.state !== 'killed' && item.package_type !== 'takes';
                 }
             });
     }])

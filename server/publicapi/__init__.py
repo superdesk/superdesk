@@ -24,7 +24,7 @@ import logging
 import os
 
 from publicapi import settings
-from publicapi.errors import UnexpectedParameterError
+from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
 from superdesk.errors import SuperdeskError, SuperdeskApiError
@@ -43,6 +43,10 @@ def _set_error_handlers(app):
     :param app: an instance of `Eve <http://python-eve.org/>`_ application
     """
     @app.errorhandler(UnexpectedParameterError)
+    def unknown_parameter_handler(error):
+        return str(error), 422
+
+    @app.errorhandler(BadParameterValueError)
     def unknown_parameter_handler(error):
         return str(error), 422
 

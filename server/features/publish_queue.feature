@@ -153,6 +153,10 @@ Feature: Publish Queue
 
   @auth
   Scenario: Published Item should have published sequence number when published and placed in queue
+      Given the "validators"
+      """
+      [{"_id": "publish", "schema":{}}]
+      """
       Given "desks"
       """
       [{"name": "Sports"}]
@@ -195,7 +199,7 @@ Feature: Publish Queue
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get "published_seq_num" in "/publish_queue/123"
 
-  @auth
+  @auth @notification
   Scenario: Creating a new publish queue entry should add published sequence number
     Given empty "archive"
     Given empty "formatted_item"
@@ -254,3 +258,15 @@ Feature: Publish Queue
     }
     """
     Then we get "published_seq_num" in "/publish_queue/#archive._id#"
+    When we patch "/publish_queue/#publish_queue._id#"
+    """
+    {"state": "success"}
+    """
+    Then we get latest
+    """
+    {"state": "success"}
+    """
+    And we get notifications
+    """
+    [{"event": "publish_queue:update", "extra": {"queue_id": "#publish_queue._id#", "state": "success"}}]
+    """

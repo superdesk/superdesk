@@ -32,21 +32,29 @@ class ResourceConfigTestCase(ItemsResourceTestCase):
 
     def test_schema(self):
         field_types = {
+            'associations': 'dict',
+            'body_html': 'string',
             'body_text': 'string',
             'byline': 'string',
-            'guid': 'string',
+            'copyrightnotice': 'string',
+            'description_html': 'string',
+            'description_text': 'string',
             'headline': 'string',
             'language': 'string',
             'located': 'string',
             'mimetype': 'string',
+            'organization': 'list',
+            'person': 'list',
             'place': 'list',
+            'profile': 'string',
             'pubstatus': 'string',
             'renditions': 'dict',
-            'subject': 'string',
+            'subject': 'list',
             'type': 'string',
+            'uri': 'string',
             'urgency': 'integer',
             'usageterms': 'string',
-            'version': 'integer',
+            'version': 'string',
             'versioncreated': 'datetime',
         }
 

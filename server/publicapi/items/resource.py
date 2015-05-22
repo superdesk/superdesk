@@ -22,23 +22,32 @@ class ItemsResource(Resource):
     item_url = 'regex("[\w,.:-]+")'
 
     schema = {
-        'guid': {'type': 'string'},
-        'type': {'type': 'string'},
-        'mimetype': {'type': 'string'},
-        'version': {'type': 'integer'},
-        'versioncreated': {'type': 'datetime'},
-        'pubstatus': {'type': 'string'},
-        'usageterms': {'type': 'string'},
-        'language': {'type': 'string'},
-        'place': {'type': 'list'},
-        'subject': {'type': 'string'},
-        'urgency': {'type': 'integer'},
-        'byline': {'type': 'string'},
-        'located': {'type': 'string'},
-        'headline': {'type': 'string'},
+        'associations': {'type': 'dict'},
+        'body_html': {'type': 'string'},
         'body_text': {'type': 'string'},
+        'byline': {'type': 'string'},
+        'copyrightnotice': {'type': 'string'},
+        'description_html': {'type': 'string'},
+        'description_text': {'type': 'string'},
+        'headline': {'type': 'string'},
+        'language': {'type': 'string'},
+        'located': {'type': 'string'},
+        'mimetype': {'type': 'string'},
+        'organization': {'type': 'list'},
+        'person': {'type': 'list'},
+        'place': {'type': 'list'},
+        'profile': {'type': 'string'},
+        'pubstatus': {'type': 'string'},
         'renditions': {'type': 'dict'},
+        'subject': {'type': 'list'},
+        'type': {'type': 'string'},
+        'urgency': {'type': 'integer'},
+        'uri': {'type': 'string'},
+        'usageterms': {'type': 'string'},
+        'version': {'type': 'string'},
+        'versioncreated': {'type': 'datetime'},
     }
+
     datasource = {
         'filter': {'type': {'$ne': 'composite'}},
         'projection': {
@@ -46,5 +55,6 @@ class ItemsResource(Resource):
             '_updated': 0,
         }
     }
+
     item_methods = ['GET']
     resource_methods = ['GET']
