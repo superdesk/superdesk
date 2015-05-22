@@ -166,20 +166,28 @@
                     var values = Object.keys(scope.editGroups).map(function(key) {
                         return scope.editGroups[key];
                     });
-                    return values;
-                };
-
-                scope.save = function() {
-                    var values = Object.keys(scope.editGroups).map(function(key) {
-                        return scope.editGroups[key];
+                    values = _.filter(values, function(item) {
+                        return item.type !== 'desk';
                     });
-
                     values = _.sortBy(values, function(item) {
                         return item.order;
                     });
+                    return values;
+                };
 
+                scope.reorder = function(start, end) {
+                    var values = scope.getValues();
+                    if (end.index !== start.index) {
+                        values.splice(end.index, 0, values.splice(start.index, 1)[0]);
+                        _.each(values, function(item, index) {
+                            item.order = index;
+                        });
+                    }
+                };
+
+                scope.save = function() {
                     scope.groups.length = 0;
-                    _.each(values, function(item, index) {
+                    _.each(scope.getValues(), function(item, index) {
                         if (item.selected && item.type !== 'desk') {
                             scope.groups.push({_id: item._id, type: item.type});
                         }
@@ -192,6 +200,52 @@
                             WizardHandler.wizard('aggregatesettings').finish();
                         }));
                 };
+            }
+        };
+    }
+
+    function SortGroupsDirective() {
+        return {
+            link: function(scope, element) {
+
+                var updated = false;
+
+                element.sortable({
+                    items: '.sort-item',
+                    cursor: 'move',
+                    containment: '.groups',
+                    tolerance: 'pointer',
+                    placeholder: {
+                        element: function(current) {
+                            var height = current.height() - 20;
+                            return $('<li class="placeholder" style="height:' + height + 'px"></li>')[0];
+                        },
+                        update: function() {
+                            return;
+                        }
+                    },
+                    start: function(event, ui) {
+                        ui.item.data('start_index', ui.item.parent().find('li.sort-item').index(ui.item));
+                    },
+                    stop: function(event, ui) {
+                        if (updated) {
+                            updated = false;
+                            var start = {
+                                index: ui.item.data('start_index')
+                            };
+                            var end = {
+                                index: ui.item.parent().find('li.sort-item').index(ui.item)
+                            };
+                            ui.item.remove();
+                            scope.reorder(start, end);
+                            scope.$apply();
+                        }
+                    },
+                    update: function(event, ui) {
+                        updated = true;
+                    },
+                    cancel: '.fake'
+                });
             }
         };
     }
@@ -209,5 +263,6 @@
         });
     }])
     .controller('AggregateCtrl', AggregateCtrl)
-    .directive('sdAggregateSettings', AggregateSettingsDirective);
+    .directive('sdAggregateSettings', AggregateSettingsDirective)
+    .directive('sdSortGroups', SortGroupsDirective);
 })();

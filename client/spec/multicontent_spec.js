@@ -71,6 +71,26 @@ describe('multi content view', function() {
         expect(multicontent.getTextItem(0, 0)).toBe('item3');
     });
 
+    it('configure stage and search and then reorder', function() {
+        multicontent.showMulticontentSettings();
+        multicontent.toggleDesk(0);
+        multicontent.toggleStage(0, 2);
+        multicontent.nextStages();
+        multicontent.toggleSearch(0);
+        multicontent.toggleSearch(1);
+        multicontent.nextSearches();
+        multicontent.moveOrderItem(0, 1);
+        multicontent.saveSettings();
+        expect(multicontent.getTextItem(0, 0)).toBe('item1');
+        expect(multicontent.getTextItem(1, 0)).toBe('item6');
+
+        multicontent.showMulticontentSettings();
+        multicontent.nextStages();
+        multicontent.nextSearches();
+        expect(multicontent.getOrderItemText(0)).toBe('saved search item');
+        expect(multicontent.getOrderItemText(1)).toBe('Politic Desk : two');
+    });
+
     it('can search content', function() {
         multicontent.showMulticontentSettings();
         multicontent.toggleDesk(0);

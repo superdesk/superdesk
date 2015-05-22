@@ -49,18 +49,18 @@
             </div>
             
             <div sd-wizard-step data-title="{{ 'Reorder Sections' | translate }}" data-code="reorder">
-                    <div class="content people-stage">
-                         <div class="legend" translate>Reorder stages and saved searches for view</div>
-                         <div class="desk" ng-repeat="item in getValues() | orderBy:'group_order'">
-                             <div class="desk-title" ng-if="item.selected && item.type === 'stage'">
+                    <div class="legend" translate>Reorder stages and saved searches for view</div>
+                    <ul class="groups" sd-sort-groups>
+                         <li class="sort-item clearfix" ng-repeat="item in getValues()">
+                             <div class="group-title" ng-if="item.type === 'stage'">
                              {{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span>
                              </div>
-                             <div class="desk-title" ng-if="item.selected && item.type === 'search'">
+                             <div class="group-title" ng-if="item.type === 'search'">
                                  {{searchLookup[item._id].name}}
                              </div>
-                         </div>
-                         <div ng-show="" class="legend" translate>Reorder stages and saved searches for view</div>
-                    </div>
+                         </li>
+                         <li class="fake clearfix"><div></div></li>
+                    </ul>
                     <div class="modal-footer">
                         <button id="previousReorder" class="btn pull-left" ng-click="previous()" translate>Previous</button>
                         <button class="btn btn-primary" ng-click="save()" translate>Done</button>
