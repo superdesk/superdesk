@@ -1321,7 +1321,10 @@
                 scope.contentTemplates = null;
 
                 var fetchTemplates = function(numItems) {
-                    var params = {max_results: numItems || undefined};
+                    var params = {
+                        max_results: numItems || undefined,
+                        where: {template_type: 'create'}
+                    };
                     api.content_templates.query(params)
                     .then(function(result) {
                         scope.contentTemplates = result;
@@ -1329,6 +1332,59 @@
                 };
 
                 fetchTemplates(NUM_ITEMS);
+            }
+        };
+    }
+
+    TemplateSelectDirective.$inject = ['api'];
+    function TemplateSelectDirective(api) {
+        var PAGE_SIZE = 10;
+
+        var fetchTemplates = function(page, keyword) {
+            page = page || 1;
+            var params = {
+                max_results: PAGE_SIZE,
+                page: page
+            };
+            var criteria = {template_type: 'create'};
+            if (keyword) {
+                criteria.template_name = {'$regex': keyword, '$options': '-i'};
+            }
+            params.where = JSON.stringify({
+                '$and': [criteria]
+            });
+            return api.content_templates.query(params);
+        };
+
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/sd-template-select.html',
+            scope: {
+                selectAction: '=',
+                open: '='
+            },
+            link: function(scope) {
+                scope.maxPage = 1;
+                scope.options = {
+                    keyword: null,
+                    page: 1
+                };
+                scope.templates = null;
+
+                scope.close = function() {
+                    scope.open = false;
+                };
+
+                scope.select = function(template) {
+                    scope.selectAction(template);
+                };
+
+                scope.$watch('options', function() {
+                    fetchTemplates(scope.options.page, scope.options.keyword)
+                    .then(function(result) {
+                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
+                        scope.templates = result;
+                    });
+                }, true);
             }
         };
     }
@@ -1369,6 +1425,7 @@
         .directive('sdWordCount', WordCount)
         .directive('sdThemeSelect', ThemeSelectDirective)
         .directive('sdContentCreate', ContentCreateDirective)
+        .directive('sdTemplateSelect', TemplateSelectDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
