@@ -12,7 +12,7 @@
                 <div class="field">
                     <label translate>Templates</label>
                     <ul>
-                        <li ng-repeat="template in templates._items">
+                        <li ng-repeat="template in templates._items track by template._id">
                             <button class="btn btn-full" ng-click="select(template)">
                                 <span class="pull-left">{{ :: template.template_name }}</span>
                             </button>
