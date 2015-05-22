@@ -33,6 +33,31 @@
             $location.search('page', null);
         }
 
+        /*
+         * Function for finding object by string array for subject codes
+         */
+        this.getSubjectCodes = function (currentTags, subjectcodes) {
+            var queryArray = currentTags.selectedParameters, filteredArray = [];
+            if (!$location.search().q) {
+                return filteredArray;
+            }
+            for (var i = 0, queryArrayLength = queryArray.length; i < queryArrayLength; i++) {
+                var queryArrayElement = queryArray[i];
+                if (queryArrayElement.indexOf('subject.name') !== -1) {
+                    var elementName = queryArrayElement.substring(
+                            queryArrayElement.lastIndexOf('(') + 1,
+                            queryArrayElement.lastIndexOf(')')
+                            );
+                    for (var j = 0, subjectCodesLength = subjectcodes.length; j < subjectCodesLength; j++) {
+                        if (subjectcodes[j].name === elementName) {
+                            filteredArray.push(subjectcodes[j]);
+                        }
+                    }
+                }
+            }
+            return filteredArray;
+        };
+
         // sort public api
         this.setSort = sort;
         this.getSort = getSort;
@@ -888,8 +913,8 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'metadata',
-            function($location, $timeout, asset, api, tags, metadata) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata',
+            function($location, $timeout, asset, api, tags, search, metadata) {
             return {
                 scope: {
                     repo: '=',
@@ -1038,41 +1063,16 @@
                         })
                         .then(function (currentTags) {
                             scope.subjectitems = {
-                                subject: getSubjectCodes(currentTags)
+                                subject: search.getSubjectCodes(currentTags, scope.subjectcodes)
                             };
                         });
-
-                    /*
-                     * Function for finding object by string array for subject codes
-                     */
-                    function getSubjectCodes(currentTags) {
-                        var queryArray = currentTags.selectedParameters, filteredArray = [];
-                        if (!$location.search().q) {
-                            return filteredArray;
-                        }
-                        for (var i = 0, queryArrayLength = queryArray.length; i < queryArrayLength; i++) {
-                            var queryArrayElement = queryArray[i];
-                            if (queryArrayElement.indexOf('subject.name') !== -1) {
-                                var elementName = queryArrayElement.substring(
-                                        queryArrayElement.lastIndexOf('(') + 1,
-                                        queryArrayElement.lastIndexOf(')')
-                                        );
-                                for (var j = 0, subjectCodesLength = scope.subjectcodes.length; j < subjectCodesLength; j++) {
-                                    if (scope.subjectcodes[j].name === elementName) {
-                                        filteredArray.push(scope.subjectcodes[j]);
-                                    }
-                                }
-                            }
-                        }
-                        return filteredArray;
-                    }
 
                     /*
                      * Filter content by subject search
                      */
                     scope.subjectSearch = function (item) {
                         tags.initSelectedFacets().then(function (currentTags) {
-                            var subjectCodes = getSubjectCodes(currentTags);
+                            var subjectCodes = search.getSubjectCodes(currentTags, scope.subjectcodes);
                             if (item.subject.length > subjectCodes.length) {
                                 /* Adding subject codes to filter */
                                 var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')',

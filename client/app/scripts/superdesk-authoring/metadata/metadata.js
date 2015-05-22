@@ -272,18 +272,18 @@ function MetadataService(api, $q, staticMetadata) {
             }
         },
         removeSubjectTerm: function(term) {
-            var o = {},
-                self = this,
+            var self = this,
+                tempItem = {},
                 subjectCodesArray = self.subjectScope.item[self.subjectScope.field],
-                temp = _.without(subjectCodesArray, term);
+                filteredArray = _.without(subjectCodesArray, term);
 
-            if (temp.length === subjectCodesArray.length) {
-                _.remove(temp, {name: term});
+            if (filteredArray.length === subjectCodesArray.length) {
+                _.remove(filteredArray, {name: term});
             }
 
-            o[self.subjectScope.field] = temp;
+            tempItem[self.subjectScope.field] = filteredArray;
 
-            _.extend(self.subjectScope.item, o);
+            _.extend(self.subjectScope.item, tempItem);
 
             self.subjectScope.change({item: self.subjectScope.item});
         },
