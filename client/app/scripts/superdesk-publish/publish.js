@@ -150,6 +150,26 @@
         };
     }
 
+    DataConsistencyController.$inject = ['$scope', 'api'];
+    function DataConsistencyController($scope, api) {
+        $scope.consistency_records = null;
+
+        function fetchConsistencyRecords () {
+            var criteria = criteria || {};
+            criteria.max_results = 200;
+            return api.consistency.query(criteria);
+        }
+
+        $scope.reload = function() {
+            fetchConsistencyRecords().then(function(data) {
+                $scope.consistency_records = data._items;
+                $scope.lastRefreshedAt = new Date();
+            });
+        };
+
+        $scope.reload ();
+    }
+
     PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify'];
     function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
         $scope.subscribers = null;
@@ -687,20 +707,29 @@
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('/settings/publish', {
-                        label: gettext('Publish'),
-                        templateUrl: 'scripts/superdesk-publish/views/settings.html',
-                        controller: AdminPublishSettingsController,
-                        category: superdesk.MENU_SETTINGS,
-                        privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
-                        priority: 2000,
-                        beta: true
-                    })
+                    label: gettext('Publish'),
+                    templateUrl: 'scripts/superdesk-publish/views/settings.html',
+                    controller: AdminPublishSettingsController,
+                    category: superdesk.MENU_SETTINGS,
+                    privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
+                    priority: 2000,
+                    beta: true
+                })
                 .activity('/publish_queue', {
                     label: gettext('Publish Queue'),
                     templateUrl: 'scripts/superdesk-publish/views/publish-queue.html',
                     controller: PublishQueueController,
                     category: superdesk.MENU_MAIN,
                     privileges: {publish_queue: 1}
+                })
+                .activity('/settings/data_consistency', {
+                    label: gettext('Data Consistency'),
+                    templateUrl: 'scripts/superdesk-publish/views/data-consistency.html',
+                    controller: DataConsistencyController,
+                    category: superdesk.MENU_SETTINGS,
+                    privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
+                    priority: 2000,
+                    beta: true
                 });
         }])
         .config(['apiProvider', function(apiProvider) {
@@ -726,6 +755,12 @@
                 type: 'http',
                 backend: {
                     rel: 'publish_queue'
+                }
+            });
+            apiProvider.api('consistency', {
+                type: 'http',
+                backend: {
+                    rel: 'consistency'
                 }
             });
             apiProvider.api('formatted_item', {

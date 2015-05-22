@@ -122,6 +122,10 @@ CELERYBEAT_SCHEDULE = {
     'publish:remove_expired': {
         'task': 'apps.publish.content_purge',
         'schedule': crontab(minute=30)
+    },
+    'system:compare_repositories': {
+        'task': 'superdesk.data_consistency.compare_repos',
+        'schedule': timedelta(hours=1)
     }
 }
 
@@ -147,6 +151,7 @@ INSTALLED_APPS = [
     'superdesk.publish',
     'superdesk.macro_register',
     'superdesk.commands',
+    'superdesk.data_consistency',
 
     'apps.archive',
     'apps.stages',

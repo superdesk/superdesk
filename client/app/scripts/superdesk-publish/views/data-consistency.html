@@ -1,0 +1,33 @@
+<div id="data-consistency" sd-settings-view ng-init="tab = 'data-consistency'">
+	<button ng-click="reload()">Refresh</button><i style="float:right;">Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</i>
+
+	<hr />
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Collection</th>
+				<th>Mongo Records</th>
+				<th>Elastic Records</th>
+				<th>Identical Records</th>
+                <th>Mongo Only</th>
+				<th>Elastic Only</th>
+				<th>Inconsistent</th>
+				<th>Started At</th>
+				<th>Completed At</th>
+			</tr>
+		</thead>
+        <tbody>
+            <tr ng-repeat="consistency_record in consistency_records">
+                <td>{{ consistency_record.resource_name }}</td>
+                <td>{{ consistency_record.mongo }}</td>
+                <td>{{ consistency_record.elastic }}</td>
+                <td>{{ consistency_record.identical }}</td>
+                <td>{{ consistency_record.mongo_only }}</td>
+                <td>{{ consistency_record.elastic_only }}</td>
+                <td>{{ consistency_record.inconsistent }}</td>
+                <td>{{ consistency_record.started_at | dateTimeStringWithSecs}}</td>
+                <td>{{ consistency_record.completed_at | dateTimeStringWithSecs }}</td>
+            </tr>
+        </tbody>
+	</table>
+</div>
