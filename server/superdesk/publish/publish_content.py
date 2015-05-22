@@ -25,7 +25,7 @@ class PublishContent(superdesk.Command):
     """Runs deliveries"""
 
     def run(self, provider_type=None):
-        output_channels = superdesk.get_resource_service('output_channels').get(req=None, lookup={'is_active': True})
+        output_channels = superdesk.get_resource_service('output_channels').get(req=None, lookup={})
         output_channels = {str(output_channel['_id']): output_channel for output_channel in output_channels}
 
         for subscriber in superdesk.get_resource_service('subscribers').get(req=None, lookup={}):
