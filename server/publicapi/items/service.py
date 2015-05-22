@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from eve.utils import ParsedRequest
 from flask import current_app as app
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
+from publicapi.items import ItemsResource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from urllib.parse import urljoin, quote
@@ -276,9 +277,6 @@ class ItemsService(BaseService):
         include_fields = request_params.get('include_fields')
         exclude_fields = request_params.get('exclude_fields')
 
-        # if (include_fields is not None) and (exclude_fields is not None):
-        #     return  # TODO: raise BadparameterValueError
-
         # parse field filter parameters...
         strip_items = functools.partial(map, lambda s: s.strip())
         remove_empty = functools.partial(filter, None)
@@ -291,7 +289,28 @@ class ItemsService(BaseService):
             exclude_fields = exclude_fields.split(',')
             exclude_fields = set(remove_empty(strip_items(exclude_fields)))
 
-        # TODO: check for fields not in schema!
+        # check for semantically incorrect field filter values...
+        if (include_fields is not None) and (exclude_fields is not None):
+            err_msg = ('Cannot both include and exclude content fields '
+                       'at the same time.')
+            raise UnexpectedParameterError(desc=err_msg)
+
+        if include_fields is not None:
+            err_msg = 'Unknown content field to include ({}).'
+            for field in include_fields:
+                if field not in ItemsResource.schema:
+                    raise BadParameterValueError(desc=err_msg.format(field))
+
+        if exclude_fields is not None:
+            if 'uri' in exclude_fields:
+                err_msg = ('Cannot exclude a content field required by the '
+                           'NINJS format (uri).')
+                raise BadParameterValueError(desc=err_msg)
+
+            err_msg = 'Unknown content field to exclude ({}).'
+            for field in exclude_fields:
+                if field not in ItemsResource.schema:
+                    raise BadParameterValueError(desc=err_msg.format(field))
 
         return include_fields, exclude_fields
 

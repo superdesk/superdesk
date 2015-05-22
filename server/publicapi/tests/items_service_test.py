@@ -516,14 +516,81 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         self.assertEqual(len(args), 1)
         self.assertIsInstance(args[0], ParsedRequest)
 
-    # TODO: test URI should be mandatory in result? always present even if not
-    # whitelisted, error if trying to blacklist it in exclude_fields?
+    def test_raises_error_if_requesting_to_exclude_required_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('exclude_fields', 'uri')])
+        lookup = {'_id': 'my_item'}
 
-    # TODO: test exclude_fields and incldue_fields cannot use at the same time
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
 
-    # TODO: cannot include/exclude fields not in schema
+        with self.assertRaises(BadParameterValueError) as context:
+            instance.find_one(request, **lookup)
 
-    # TODO: cannot blacklist fields required by NINJS (uri)
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Cannot exclude a content field required by the NINJS format '
+            '(uri).'
+        )
+
+    def test_raises_error_if_field_whitelist_and_blackst_both_given(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('include_fields', 'language'),
+            ('exclude_fields', 'body_text'),
+        ])
+        lookup = {'_id': 'my_item'}
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance.find_one(request, **lookup)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Cannot both include and exclude content fields at the same time.'
+        )
+
+    def test_raises_error_if_whitelisting_unknown_content_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('include_fields', 'field_x')])
+        lookup = {'_id': 'my_item'}
+
+        from publicapi.errors import BadParameterValueError
+        from publicapi.items import ItemsResource
+
+        instance = self._make_one()
+
+        fake_schema = {'foo': 'schema_bar'}
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+            with self.assertRaises(BadParameterValueError) as context:
+                instance.find_one(request, **lookup)
+
+            ex = context.exception
+            self.assertEqual(
+                ex.desc, 'Unknown content field to include (field_x).')
+
+    def test_raises_error_if_blacklisting_unknown_content_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('exclude_fields', 'field_x')])
+        lookup = {'_id': 'my_item'}
+
+        from publicapi.errors import BadParameterValueError
+        from publicapi.items import ItemsResource
+
+        instance = self._make_one()
+
+        fake_schema = {'foo': 'schema_bar'}
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+            with self.assertRaises(BadParameterValueError) as context:
+                instance.find_one(request, **lookup)
+
+            ex = context.exception
+            self.assertEqual(
+                ex.desc, 'Unknown content field to exclude (field_x).')
 
     def test_filters_out_blacklisted_fields_if_requested(self):
         request = MagicMock()
