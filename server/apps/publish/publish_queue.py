@@ -10,6 +10,7 @@
 
 import logging
 from superdesk import get_resource_service
+from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 
@@ -88,8 +89,15 @@ class PublishQueueService(BaseService):
                 output_channel = output_channel_service.find_one(req=None, _id=doc['output_channel_id'])
                 doc['published_seq_num'] = output_channel_service.generate_sequence_number(output_channel)
 
-    def on_update(self, updates, original):
-        pass
+    def on_updated(self, updates, original):
+        if updates.get('state', '') != original.get('state', ''):
+            push_notification('publish_queue:update',
+                              queue_id=str(original['_id']),
+                              completed_at=(updates.get('completed_at').isoformat()
+                                            if updates.get('completed_at') else None),
+                              state=updates.get('state'),
+                              error_message=updates.get('error_message')
+                              )
 
     def delete_by_article_id(self, _id):
         lookup = {'item_id': _id}
