@@ -12,7 +12,7 @@
         <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && _isInProductionStates" ng-click="unlock()" translate>Unlock</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="!sending && !_editable && !item._locked && _isInProductionStates && publish_enabled"
+            ng-show="!sending && !_editable && !item._locked && _isInProductionStates && publish_enabled()"
             ng-click="lock()"
             translate>Edit</button>
 
@@ -50,20 +50,20 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "publish_enabled"
-            ng-show="_editable"
+            ng-if = "publish_enabled()"
+            ng-show="_editable && not_for_publication_visible"
             translate>{{action === "edit" ? "Publish": action}}</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="markForPublication(true)"
             ng-if="_isInProductionStates && not_for_publication_visible"
-            ng-show="_editable"
+            ng-show="_editable && not_for_publication_visible"
             translate>Mark for Not Publication</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="markForPublication(false)"
             ng-if="_isInProductionStates && !not_for_publication_visible"
-            ng-show="_editable"
+            ng-show="_editable && !not_for_publication_visible"
             translate>Mark for Publication</button>
 
         <div class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
