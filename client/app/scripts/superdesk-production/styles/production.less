@@ -9,16 +9,21 @@
 
 .prod-screen {
 	position: absolute;
-	margin-left: @search-widget-width;
-	margin-top: 1px;
-	float:right;
-	top: 0; right: 0; left: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    top: 0; right: 0;
 	.main-section {
 		.transition(all ease 0.3s);
 		&.auth-sendto {
 			right: @send-to-pane-width;
 			left: -@send-to-pane-width;
 		}
+        position: absolute;
+        top: 49px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding-bottom: 0 !important;
 	}
 }
 
@@ -26,87 +31,131 @@
 // -------------------------------------------------
 
 .production-dashboard {
-	padding: 40px;
-	overflow: auto;
-
-	.default-view {
-		margin-left: @search-widget-width;
-	}
-
-	.card-list {
-		width: 0;
-		margin: 0 auto;
-	}
-	.card-list > li {
-		width: 140px;
-		height: 170px;
-		float: left;
-		margin: 10px;
-		padding: 15px 20px;
-		position: relative;
-		.title {
-			max-height: 135px;
-			overflow: hidden;
-			font-size: 14px;
-			line-height: 22px;
-			max-height: 110px;
-			overflow: hidden;
-			.text-semibold();
-		}
-		.created {
-			position: absolute;
-			bottom: 15px;
-			left: 20px;
-			color: #888;
-			font-size: 12px;
-			width: 80%;
-			height:14%;
-			float:left;
-		}
-		.text {
-			font-size: 12px;
-			color: @gray;
-			line-height: 18px;
-		}
-		.close {
-			position: absolute;
-			right: 7px;
-			top: 3px;
-		}
-        .type-icon {
-			position: relative;
-			bottom: 6px;
-			margin: 0;
-			float: left;
-		}
-		.state-label {
-			position: relative;
-			bottom: 1px;
-			margin: auto;
-			float: right;
-		}
-		.subInfo {
-			position: absolute;
-			right: 15px;
-			bottom: 1px;
-			float: right;
-		}
-		.container {
-			.text-semibold();
-			color: #216678;
-			margin-right: 20px;
-		}
-	}
-	
     position: relative;
     height: 100%;
+    width: auto;
+    padding: 0;
 
+    .subnav {
+        position: absolute;
+        top: 0;
+    }
+
+    .list-pane {
+        position: absolute;
+        top: 0; bottom: 30px;
+        left: 0;
+        width: 50%;
+        border-right: 1px solid #e0e0e0;
+        overflow: hidden;
+        .border-box();
+
+        &.min { width: 48px; }
+        &.compact { width: 34%; }
+        &.max { width: 100%; }
+    }
+
+    .item-pane {
+        position: absolute;
+        top: 0; bottom: 30px;
+        right: 0;
+        width: 50%;
+        overflow: hidden;
+
+        &.min { width: auto; left: 48px; }
+        &.compact { width: 66%; }
+        &.max { width: 0; }
+
+        .main-article {
+            .border-box();
+            height: 100%;
+            padding: 60px 30px 30px;
+        }
+
+        .page-content-container {
+            top: 0;
+            left: 30px;
+            right: 30px;
+            bottom: 0;
+            height: auto;
+        }
+
+        .authoring-topbar {
+            margin-left: 10px;
+        }
+    }
+
+	.card-list {
+        height: 1%;
+        overflow: hidden;
+		margin: 0 auto;
+
+        & > li {
+    		width: 140px;
+    		height: 170px;
+    		float: left;
+    		margin: 10px;
+    		padding: 15px 20px;
+    		position: relative;
+    		.title {
+    			max-height: 135px;
+    			overflow: hidden;
+    			font-size: 14px;
+    			line-height: 22px;
+    			max-height: 110px;
+    			overflow: hidden;
+    			.text-semibold();
+    		}
+    		.created {
+    			position: absolute;
+    			bottom: 15px;
+    			left: 20px;
+    			color: #888;
+    			font-size: 12px;
+    			width: 80%;
+    			height:14%;
+    			float:left;
+    		}
+    		.text {
+    			font-size: 12px;
+    			color: @gray;
+    			line-height: 18px;
+    		}
+    		.close {
+    			position: absolute;
+    			right: 7px;
+    			top: 3px;
+    		}
+            .type-icon {
+    			position: relative;
+    			bottom: 6px;
+    			margin: 0;
+    			float: left;
+    		}
+    		.state-label {
+    			position: relative;
+    			bottom: 1px;
+    			margin: auto;
+    			float: right;
+    		}
+    		.subInfo {
+    			position: absolute;
+    			right: 15px;
+    			bottom: 1px;
+    			float: right;
+    		}
+    		.container {
+    			.text-semibold();
+    			color: #216678;
+    			margin-right: 20px;
+    		}
+    	}
+    }
+	
     .content-search {
         position: relative;
         background: @tabpane-background;
-        width: @search-widget-width;
         height: 100%;
-        overflow: hidden;
         &.extended {
             width: @search-widget-width + @search-widget-preview-width;
             float:right;
@@ -115,7 +164,7 @@
 
     .search-container {
         position: absolute;
-        width: @search-widget-width;
+        width: 100%;
         top: 0; left: 0; bottom: 0;
 
         .search-box {
@@ -154,7 +203,7 @@
         .content-list {
             position: absolute;
             top: 2*@nav-height;
-            bottom: @bottom-view-padding - 20px;
+            bottom: 0;
             left: 0;
             right: 0;
             padding: 10px;
@@ -209,20 +258,16 @@
         }
     }
 
-
-    width: auto;
-
     .widget-header {
         display: none;
     }
 
-    .tabcontent {
-        position: relative;
-        overflow: initial;
-        padding: 0;
+    .widget-aggregate {
+        position: absolute;
+        top: 49px; bottom: 0;
         left: 0; right: 0;
-        height: 100%;
     }
+
     .widget-content {
         position: relative;
         top: 0;
@@ -284,7 +329,7 @@
                 .stage-content {
                     margin: 5px 0 20px;
                     overflow: scroll;
-                    height: 326px;
+                    max-height: 326px;
                     position: relative;
                 }
             }

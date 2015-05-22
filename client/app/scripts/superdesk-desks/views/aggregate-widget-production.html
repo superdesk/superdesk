@@ -16,6 +16,21 @@
                             </button>
                         </li>
                     </ul>
+                    <ul ng-if="production.view.compact || production.view.medium">
+                        <li><span class="menu-label" translate>SPLIT MODE SETTINGS</span></li>
+                        <li>
+                            <button
+                                ng-disabled="production.view.compact"
+                                ng-click="production.compactView()"
+                                translate>Compact mode</button>
+                        </li>
+                        <li>
+                            <button
+                                ng-disabled="production.view.medium"
+                                ng-click="production.extendedView()"
+                                translate>Extended mode</button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

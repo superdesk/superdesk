@@ -3,11 +3,58 @@
 
     ProductionController.$inject = ['$scope', 'production', 'superdesk', 'authoring', '$location', 'referrer', '$timeout'];
     function ProductionController($scope, production, superdesk, authoring, $location, referrer, $timeout) {
+        var MAX_VIEW = {max: true},
+            MIN_VIEW = {min: true},
+            ITEM_VIEW = {medium: true},
+            COMPACT_VIEW = {compact: true};
+
+        this.view = MAX_VIEW;
+
+        this.openItem = openItem;
+        this.closeItem = closeItem;
+        this.closeList = closeList;
+        this.openList = openList;
+        this.closeEditor = closeEditor;
+        this.compactView = toggleCompactView;
+        this.extendedView = toggleExtendedView;
+
+        var vm = this,
+            listView = ITEM_VIEW;
+
+        function openItem(item) {
+            vm.item = item;
+            openList();
+        }
+
+        function closeItem() {
+            vm.item = null;
+            closeEditor();
+        }
+
+        function closeList() {
+            vm.view = MIN_VIEW;
+        }
+
+        function openList() {
+            vm.view = listView;
+        }
+
+        function closeEditor() {
+            vm.view = MAX_VIEW;
+        }
+
+        function toggleCompactView() {
+            vm.view = listView = COMPACT_VIEW;
+        }
+
+        function toggleExtendedView() {
+            vm.view = listView = ITEM_VIEW;
+        }
+
         $scope.productionPreview = true;
-        $scope.viewdefault = true;
         $scope.selected_id = null;
         $scope.$on('itemClosing', function() {
-            $scope.viewdefault = true;
+            vm.closeItem();
         });
 
         $scope.$on('handleItemPreview', function(event, item) {
@@ -15,15 +62,15 @@
             $scope.origItem = item;
             $scope.action = 'view';
             $scope._editable = false;
-            $scope.viewdefault = false;
             item._editable = false;
+            vm.openItem(item);
 
             var data = {};
             data.item = item;
             data.action = 'view';
-            $scope.viewdefault = false;
             $scope.$root.$broadcast('showPreview', data);
         });
+
         $scope.$on('handleItemEdit', function(event, item) {
             referrer.setReferrerUrl($location.path());
             item._editable = true;
@@ -38,7 +85,7 @@
                 $scope.$root.$broadcast('showPreview', data);
             })
             ['finally'](function() {
-                $scope.viewdefault = false;
+                vm.openItem(item);
             });
         });
     }
@@ -53,17 +100,18 @@
             });
         };
     }
-    var prod =  angular.module('superdesk.production', [
+
+    angular.module('superdesk.production', [
         'superdesk.editor',
         'superdesk.activity',
         'superdesk.authoring',
         'superdesk.authoring.widgets',
         'superdesk.desks',
         'superdesk.api'
-    ]);
+    ])
 
-    prod
         .service('production', ProductionService)
+        .controller('Production', ProductionController)
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('/workspace/production', {
@@ -71,7 +119,8 @@
                     label: gettext('Production'),
                     templateUrl: 'scripts/superdesk-production/views/production.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    controller: ProductionController
+                    controller: 'Production',
+                    controllerAs: 'production'
                 });
         }])
         .config(['apiProvider', function(apiProvider) {
@@ -80,5 +129,4 @@
                 backend: {rel: 'archive'}
             });
         }]);
-    return prod;
 })();

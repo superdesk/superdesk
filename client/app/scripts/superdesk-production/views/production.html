@@ -1,31 +1,18 @@
 <div class="production-dashboard">
-    <div class ="tabpane left-tabpane open-tabpane widget-aggregate">
-        <div class="tabcontent">
-            <div class="widget-content" style="top:50px;">
-                <div sd-production-agg-widget></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="default-view" ng-if="viewdefault">
+    <div class="list-pane" ng-class="production.view">
         <div class="subnav">
-            <h3 class="page-nav-title" translate>Authoring - opened articles</h3>
-            <div class="button-stack right-stack">      
-                <div class="navbtn dropdown strict" dropdown>
-                    <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-                    <ul class="dropdown-menu pull-right" sd-content-create></ul>
-                </div>
-            </div>
+            <button class="btn pull-right"
+                ng-disabled="production.view.min"
+                ng-click="production.closeList()">&lt;</button>
         </div>
-
-        <div sd-dashboard-production-articles></div>
+        <div ng-if="!production.view.min" sd-production-agg-widget class="widget-aggregate"></div>
+        <div ng-if="production.view.min" ng-click="production.openList()" class="widget-aggregate"></div>
     </div>
-</div>
-    <div ng-if="!viewdefault">
-        <div sd-authoring class="prod-screen">
-        <div sd-authoring-topbar></div>
-            <section class="main-section" ng-class="{'auth-sendto': views.send}">
 
+    <div class="item-pane" ng-if="!production.view.max" ng-class="production.view">
+        <div sd-authoring class="prod-screen">
+            <div sd-authoring-topbar></div>
+            <section class="main-section" ng-class="{'auth-sendto': views.send}">
                 <div class="page-content-container" ng-click="views.send = false">
                     <article class="theme-container" ng-class="{preview: !_editable}">
                         <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
@@ -40,11 +27,10 @@
                         <div class="fieldset" sd-article-edit></div>
                     </article>
                 </div>
-
-        </section>
-
-        <div sd-authoring-sidebar></div>
+            </section>
+            <div sd-authoring-sidebar></div>
         </div>
     </div>
+</div>
 
 <div sd-workqueue-production></div>

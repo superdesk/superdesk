@@ -10,7 +10,6 @@
           translate>{{ currentRoute.label }}</a>
         <div class="top-nav pull-left" ng-include="currentRoute.topTemplateUrl"></div>
       </div>
-
       <div class="nav pull-right">
           <button class="current-user pull-right" ng-click="toggleNotifications()">
               <span class="label label-info circle small" ng-show="notifications.unread">{{ notifications.unread }}</span>
@@ -25,7 +24,7 @@
       </div>
   </div>
 
-  <div id="main-menu">
+  <div id="main-menu" ng-if="flags.menu">
     <div class="header"></div>
     <div class="content">
       <ul>
