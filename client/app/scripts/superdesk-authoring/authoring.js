@@ -414,8 +414,8 @@
         };
     }
 
-    ConfirmDirtyService.$inject = ['$window', '$q', '$filter', 'api', 'modal', 'gettext'];
-    function ConfirmDirtyService($window, $q, $filter, api, modal, gettext) {
+    ConfirmDirtyService.$inject = ['$window', '$q', '$filter', 'api', 'modal', 'gettext', '$interpolate'];
+    function ConfirmDirtyService($window, $q, $filter, api, modal, gettext, $interpolate) {
         /**
          * Will ask for user confirmation for user confirmation if there are some changes which are not saved.
          * - Detecting changes via $scope.dirty - it's up to the controller to set it.
@@ -450,7 +450,7 @@
          */
         this.confirmPublish = function confirmPublish(action) {
             return modal.confirm(
-                gettext('There are some unsaved changes, do you want to save it and ' + action + ' now?'),
+                $interpolate(gettext('There are some unsaved changes, do you want to save it and {{ action }} now?'))({action: action}),
                 gettext('Save changes?'),
                 gettext('Save and ' + action),
                 gettext('Cancel')
