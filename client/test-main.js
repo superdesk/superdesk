@@ -51,6 +51,7 @@ tests.push('superdesk-authoring/macros/macros');
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-packaging/packaging');
 tests.push('superdesk-desks/desks');
+tests.push('superdesk-desks/aggregate');
 tests.push('superdesk-groups/groups');
 tests.push('superdesk-search/search');
 

@@ -380,5 +380,31 @@
 			"language_id": "en",
 			"content": ["alpha", "beta", "gama"]
         }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "saved search item",
+            "user": "-id user admin-"
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(item3)"
+                }
+            },
+            "name": "saved search item3",
+            "user": "-id user admin-"
+        }
     }
 ]

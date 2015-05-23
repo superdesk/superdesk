@@ -39,6 +39,10 @@ function Authoring() {
         return element(by.id('Search')).click();
     };
 
+    this.showMulticontent = function() {
+        element(by.id('Aggregate')).click();
+    };
+
     this.showVersions = function() {
         return element(by.id('Versions')).click();
     };
