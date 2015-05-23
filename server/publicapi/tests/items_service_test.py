@@ -175,6 +175,22 @@ class GetMethodTestCase(ItemsServiceTestCase):
             self.assertGreater(len(args), 1)
             self.assertEqual(sorted(list(args[1])), expected_whitelist)
 
+    @mock.patch('publicapi.items.service.ItemsService._set_fields_filter')
+    def test_sets_fields_filter_on_request_object(self, fake_set_fields_filter):
+        fake_request = MagicMock()
+        fake_request.args = MultiDict()
+        fake_request.projection = None
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(fake_request, lookup)
+
+        self.assertTrue(fake_set_fields_filter.called)
+        args, kwargs = fake_set_fields_filter.call_args
+
+        self.assertGreater(len(args), 0)
+        self.assertIs(args[0], fake_request)
+
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
         request.args = MultiDict()

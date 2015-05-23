@@ -89,10 +89,9 @@ class ItemsService(BaseService):
         date_filter = self._create_date_range_filter(start_date, end_date)
         query_filter.update(date_filter)
 
-        # include/exclude content fields from the result
-        # TODO:
-
         req.where = json.dumps(query_filter)
+
+        self._set_fields_filter(req)  # Eve's "projection"
 
         return super().get(req, lookup)
 
