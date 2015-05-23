@@ -38,8 +38,8 @@ class ItemsServiceTestCase(ApiTestCase):
         return self._get_target_class()(*args, **kwargs)
 
 
-class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
-    """Tests for the _check_request_params() helper method."""
+class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
+    """Tests for the _check_for_unknown_params() helper method."""
 
     def test_does_not_raise_an_error_on_valid_parameters(self):
         request = MagicMock()
@@ -47,7 +47,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         try:
-            instance._check_request_params(request, ('foo', 'sort_by', 'bar'))
+            instance._check_for_unknown_params(request, ('foo', 'sort_by', 'bar'))
         except Exception as ex:
             self.fail("Exception unexpectedly raised ({})".format(ex))
 
@@ -59,7 +59,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         with self.assertRaises(UnexpectedParameterError) as context:
-            instance._check_request_params(request, ('foo', 'bar'))
+            instance._check_for_unknown_params(request, ('foo', 'bar'))
 
         ex = context.exception
         self.assertEqual(ex.desc, 'Unexpected parameter (param_x)')
@@ -72,7 +72,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         with self.assertRaises(UnexpectedParameterError) as context:
-            instance._check_request_params(
+            instance._check_for_unknown_params(
                 request, whitelist=(), allow_filtering=False)
 
         ex = context.exception
@@ -90,7 +90,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         with self.assertRaises(UnexpectedParameterError) as context:
-            instance._check_request_params(
+            instance._check_for_unknown_params(
                 request, whitelist=(), allow_filtering=False)
 
         ex = context.exception
@@ -108,7 +108,7 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         with self.assertRaises(UnexpectedParameterError) as context:
-            instance._check_request_params(
+            instance._check_for_unknown_params(
                 request, whitelist=(), allow_filtering=False)
 
         ex = context.exception
@@ -122,11 +122,11 @@ class CheckRequestParamsMethodTestCase(ItemsServiceTestCase):
         request = MagicMock()
         request.args = MultiDict([('foo', 'value 1'), ('foo', 'value 2')])
 
-        from publicapi.errors import BadParameterValueError
+        from publicapi.errors import UnexpectedParameterError
         instance = self._make_one()
 
-        with self.assertRaises(BadParameterValueError) as context:
-            instance._check_request_params(request, whitelist=('foo',))
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._check_for_unknown_params(request, whitelist=('foo',))
 
         ex = context.exception
         self.assertEqual(
@@ -144,8 +144,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
         super().setUp()
         fake_super_get.reset_mock()
 
-    @mock.patch('publicapi.items.service.ItemsService._check_request_params')
-    def test_correctly_invokes_parameter_validation(self, fake_check_params):
+    @mock.patch('publicapi.items.service.ItemsService._check_for_unknown_params')
+    def test_correctly_invokes_parameter_validation(self, fake_check_unknown):
         fake_request = MagicMock()
         fake_request.args = MultiDict()
         lookup = {}
@@ -153,8 +153,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
         instance.get(fake_request, lookup)
 
-        self.assertTrue(fake_check_params.called)
-        args, kwargs = fake_check_params.call_args
+        self.assertTrue(fake_check_unknown.called)
+        args, kwargs = fake_check_unknown.call_args
 
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0], fake_request)
@@ -452,6 +452,116 @@ class ParseIsoDateMethodTestCase(ItemsServiceTestCase):
             klass._parse_iso_date('5th May 2015')
 
 
+class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
+    """Tests for the _set_fields_filter() helper method."""
+
+    def test_raises_error_if_requesting_to_exclude_required_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('exclude_fields', 'uri')])
+        request.projection = None
+
+        from publicapi.errors import BadParameterValueError
+        instance = self._make_one()
+
+        with self.assertRaises(BadParameterValueError) as context:
+            instance._set_fields_filter(request)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Cannot exclude a content field required by the NINJS format '
+            '(uri).'
+        )
+
+    def test_raises_error_if_field_whitelist_and_blacklist_both_given(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('include_fields', 'language'),
+            ('exclude_fields', 'body_text'),
+        ])
+        request.projection = None
+
+        from publicapi.errors import UnexpectedParameterError
+        instance = self._make_one()
+
+        with self.assertRaises(UnexpectedParameterError) as context:
+            instance._set_fields_filter(request)
+
+        ex = context.exception
+        self.assertEqual(
+            ex.desc,
+            'Cannot both include and exclude content fields at the same time.'
+        )
+
+    def test_raises_error_if_whitelisting_unknown_content_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('include_fields', 'field_x')])
+        request.projection = None
+
+        from publicapi.errors import BadParameterValueError
+        from publicapi.items import ItemsResource
+
+        instance = self._make_one()
+
+        fake_schema = {'foo': 'schema_bar'}
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+            with self.assertRaises(BadParameterValueError) as context:
+                instance._set_fields_filter(request)
+
+            ex = context.exception
+            self.assertEqual(
+                ex.desc, 'Unknown content field to include (field_x).')
+
+    def test_raises_error_if_blacklisting_unknown_content_field(self):
+        request = MagicMock()
+        request.args = MultiDict([('exclude_fields', 'field_x')])
+        request.projection = None
+
+        from publicapi.errors import BadParameterValueError
+        from publicapi.items import ItemsResource
+
+        instance = self._make_one()
+
+        fake_schema = {'foo': 'schema_bar'}
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+            with self.assertRaises(BadParameterValueError) as context:
+                instance._set_fields_filter(request)
+
+            ex = context.exception
+            self.assertEqual(
+                ex.desc, 'Unknown content field to exclude (field_x).')
+
+    def test_filters_out_blacklisted_fields_if_requested(self):
+        request = MagicMock()
+        request.args = MultiDict([('exclude_fields', 'language,version')])
+        request.projection = None
+
+        instance = self._make_one()
+        instance._set_fields_filter(request)
+
+        projection = json.loads(request.projection) if request.projection else {}
+        expected_projection = {
+            'language': 0,
+            'version': 0,
+        }
+        self.assertEqual(projection, expected_projection)
+
+    def test_filters_out_all_but_whitelisted_fields_if_requested(self):
+        request = MagicMock()
+        request.args = MultiDict([('include_fields', 'body_text,byline')])
+        request.projection = None
+
+        instance = self._make_one()
+        instance._set_fields_filter(request)
+
+        projection = json.loads(request.projection) if request.projection else {}
+        expected_projection = {
+            'body_text': 1,
+            'byline': 1,
+        }
+        self.assertEqual(projection, expected_projection)
+
+
 fake_super_find_one = MagicMock(name='fake super().find_one')
 
 
@@ -463,8 +573,8 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         super().setUp()
         fake_super_find_one.reset_mock()
 
-    @mock.patch('publicapi.items.service.ItemsService._check_request_params')
-    def test_correctly_invokes_parameter_validation(self, fake_check_params):
+    @mock.patch('publicapi.items.service.ItemsService._check_for_unknown_params')
+    def test_correctly_invokes_parameter_validation(self, fake_check_unknown):
         fake_request = MagicMock()
         fake_request.args = MultiDict()
         lookup = {'_id': 'my_item'}
@@ -472,8 +582,8 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
         instance.find_one(fake_request, **lookup)
 
-        self.assertTrue(fake_check_params.called)
-        args, kwargs = fake_check_params.call_args
+        self.assertTrue(fake_check_unknown.called)
+        args, kwargs = fake_check_unknown.call_args
 
         self.assertGreater(len(args), 0)
         self.assertEqual(args[0], fake_request)
@@ -490,6 +600,22 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
             # whitelist can also be passed as a positional argument
             self.assertGreater(len(args), 1)
             self.assertEqual(sorted(list(args[1])), expected_whitelist)
+
+    @mock.patch('publicapi.items.service.ItemsService._set_fields_filter')
+    def test_sets_fields_filter_on_request_object(self, fake_set_fields_filter):
+        fake_request = MagicMock()
+        fake_request.args = MultiDict()
+        fake_request.projection = None
+        lookup = {}
+
+        instance = self._make_one()
+        instance.find_one(fake_request, **lookup)
+
+        self.assertTrue(fake_set_fields_filter.called)
+        args, kwargs = fake_set_fields_filter.call_args
+
+        self.assertGreater(len(args), 0)
+        self.assertIs(args[0], fake_request)
 
     def test_invokes_superclass_method_with_given_arguments(self):
         request = MagicMock()
@@ -515,121 +641,3 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         args, kwargs = fake_super_find_one.call_args
         self.assertEqual(len(args), 1)
         self.assertIsInstance(args[0], ParsedRequest)
-
-    def test_raises_error_if_requesting_to_exclude_required_field(self):
-        request = MagicMock()
-        request.args = MultiDict([('exclude_fields', 'uri')])
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import BadParameterValueError
-        instance = self._make_one()
-
-        with self.assertRaises(BadParameterValueError) as context:
-            instance.find_one(request, **lookup)
-
-        ex = context.exception
-        self.assertEqual(
-            ex.desc,
-            'Cannot exclude a content field required by the NINJS format '
-            '(uri).'
-        )
-
-    def test_raises_error_if_field_whitelist_and_blackst_both_given(self):
-        request = MagicMock()
-        request.args = MultiDict([
-            ('include_fields', 'language'),
-            ('exclude_fields', 'body_text'),
-        ])
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import UnexpectedParameterError
-        instance = self._make_one()
-
-        with self.assertRaises(UnexpectedParameterError) as context:
-            instance.find_one(request, **lookup)
-
-        ex = context.exception
-        self.assertEqual(
-            ex.desc,
-            'Cannot both include and exclude content fields at the same time.'
-        )
-
-    def test_raises_error_if_whitelisting_unknown_content_field(self):
-        request = MagicMock()
-        request.args = MultiDict([('include_fields', 'field_x')])
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import BadParameterValueError
-        from publicapi.items import ItemsResource
-
-        instance = self._make_one()
-
-        fake_schema = {'foo': 'schema_bar'}
-        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
-            with self.assertRaises(BadParameterValueError) as context:
-                instance.find_one(request, **lookup)
-
-            ex = context.exception
-            self.assertEqual(
-                ex.desc, 'Unknown content field to include (field_x).')
-
-    def test_raises_error_if_blacklisting_unknown_content_field(self):
-        request = MagicMock()
-        request.args = MultiDict([('exclude_fields', 'field_x')])
-        lookup = {'_id': 'my_item'}
-
-        from publicapi.errors import BadParameterValueError
-        from publicapi.items import ItemsResource
-
-        instance = self._make_one()
-
-        fake_schema = {'foo': 'schema_bar'}
-        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
-            with self.assertRaises(BadParameterValueError) as context:
-                instance.find_one(request, **lookup)
-
-            ex = context.exception
-            self.assertEqual(
-                ex.desc, 'Unknown content field to exclude (field_x).')
-
-    def test_filters_out_blacklisted_fields_if_requested(self):
-        request = MagicMock()
-        request.args = MultiDict([
-            ('exclude_fields', 'language,version'),
-        ])
-        lookup = {'_id': 'my_item'}
-
-        instance = self._make_one()
-        instance.find_one(request, **lookup)
-
-        self.assertTrue(fake_super_find_one.called)
-        args, kwargs = fake_super_find_one.call_args
-        self.assertGreater(len(args), 0)
-
-        projection = json.loads(args[0].projection)
-        expected_projection = {
-            'language': 0,
-            'version': 0,
-        }
-        self.assertEqual(projection, expected_projection)
-
-    def test_filters_out_all_but_whitelisted_fields_if_requested(self):
-        request = MagicMock()
-        request.args = MultiDict([
-            ('include_fields', 'body_text,byline'),
-        ])
-        lookup = {'_id': 'my_item'}
-
-        instance = self._make_one()
-        instance.find_one(request, **lookup)
-
-        self.assertTrue(fake_super_find_one.called)
-        args, kwargs = fake_super_find_one.call_args
-        self.assertGreater(len(args), 0)
-
-        projection = json.loads(args[0].projection)
-        expected_projection = {
-            'body_text': 1,
-            'byline': 1,
-        }
-        self.assertEqual(projection, expected_projection)

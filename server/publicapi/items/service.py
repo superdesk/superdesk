@@ -48,17 +48,10 @@ class ItemsService(BaseService):
             req = ParsedRequest()
 
         allowed_params = ('include_fields', 'exclude_fields')
-
-        self._check_request_params(
+        self._check_for_unknown_params(
             req, whitelist=allowed_params, allow_filtering=False)
 
-        request_params = req.args or {}
-
-        # include/exclude content fields from the result
-        include_fields, exclude_fields = \
-            self._get_field_filter_params(request_params)
-        projection = self._create_field_filter(include_fields, exclude_fields)
-        req.projection = json.dumps(projection)
+        self._set_fields_filter(req)  # Eve's "projection"
 
         return super().find_one(req, **lookup)
 
@@ -80,12 +73,12 @@ class ItemsService(BaseService):
             'q', 'start_date', 'end_date',
             'include_fields', 'exclude_fields'
         )
-        self._check_request_params(req, whitelist=allowed_params)
+        self._check_for_unknown_params(req, whitelist=allowed_params)
 
+        # set the "q" filter
         request_params = req.args or {}
         query_filter = {}
 
-        # set the "q" filter
         if 'q' in request_params:
             # TODO: add validation for the "q" parameter when we define its
             # format and implement the corresponding actions
@@ -103,8 +96,10 @@ class ItemsService(BaseService):
 
         return super().get(req, lookup)
 
-    def _check_request_params(self, request, whitelist, allow_filtering=True):
-        """Check if the request contains only valid parameters.
+    def _check_for_unknown_params(
+        self, request, whitelist, allow_filtering=True
+    ):
+        """Check if the request contains only allowed parameters.
 
         :param req: object representing the HTTP request
         :type req: `eve.utils.ParsedRequest`
@@ -113,10 +108,10 @@ class ItemsService(BaseService):
             allowed (True by default). Used for disallowing it when retrieving
             a single object.
 
-        :raises BadParameterValueError: if the request contains more than one
-            value for any of the parameters
-        :raises UnexpectedParameterError: if the request contains a parameter
-            that is not whitelisted
+        :raises UnexpectedParameterError:
+            * if the request contains a parameter that is not whitelisted
+            * if the request contains more than one value for any of the
+              parameters
         """
         request_params = (request.args or MultiDict())
 
@@ -144,7 +139,7 @@ class ItemsService(BaseService):
 
             if len(request_params.getlist(param_name)) > 1:
                 desc = "Multiple values received for parameter ({})"
-                raise BadParameterValueError(desc=desc.format(param_name))
+                raise UnexpectedParameterError(desc=desc.format(param_name))
 
     def _get_date_range(self, request_params):
         """Extract the start and end date limits from request parameters.
@@ -246,6 +241,24 @@ class ItemsService(BaseService):
                 (end_date + timedelta(1)).isoformat()
 
         return date_filter
+
+    def _set_fields_filter(self, req):
+        """Set content fields filter on the request object (the "projection")
+        based on the request parameters.
+
+        It causes some of the content fields to be excluded from the retrieved
+        data.
+
+        :param req: object representing the HTTP request
+        :type req: `eve.utils.ParsedRequest`
+        """
+        request_params = req.args or {}
+
+        include_fields, exclude_fields = \
+            self._get_field_filter_params(request_params)
+        projection = self._create_field_filter(include_fields, exclude_fields)
+
+        req.projection = json.dumps(projection)
 
     def _get_field_filter_params(self, request_params):
         """Extract the list of content fields to keep in or remove from
