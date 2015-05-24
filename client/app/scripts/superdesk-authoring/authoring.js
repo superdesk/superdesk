@@ -532,16 +532,20 @@
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
 
-                $scope.publish_enabled = $scope.origItem && $scope.origItem.task && $scope.origItem.task.desk &&
+                $scope.publish_enabled = function() {
+                    return $scope.origItem  && !$scope.origItem.marked_for_not_publication &&
+                    $scope.origItem.task && $scope.origItem.task.desk &&
                     (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
                      ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
                      ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
 
+                };
+
                 $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
 
-                $scope.not_for_publication_visible = $scope.publish_enabled && !authoring.isPublished($scope.origItem) &&
+                $scope.not_for_publication_visible = $scope.publish_enabled() && !authoring.isPublished($scope.origItem) &&
                     !$scope.origItem.marked_for_not_publication;
 
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
@@ -626,7 +630,7 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
-                        $scope.not_for_publication_visible = $scope.publish_enabled && res.marked_for_not_publication === false;
+                        $scope.not_for_publication_visible = $scope.publish_enabled() && res.marked_for_not_publication === false;
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -717,7 +721,6 @@
                                 }
                             } else if (response.status === 412) {
                                 notify.error(gettext('Precondition Error: Item not published.'));
-                                $scope.publish_enabled = false;
                                 $scope.save_visible = false;
                             } else {
                                 notify.success(gettext('Item published.'));
