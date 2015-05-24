@@ -11,10 +11,13 @@
 
 
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
+from pip.download import PipSession
 import os
 
-SOURCE_FOLDER  = 'server'
+SOURCE_FOLDER = 'server'
 LONG_DESCRIPTION = open(os.path.join(SOURCE_FOLDER, 'README.md')).read()
+REQUIREMENTS = [str(ir.req) for ir in parse_requirements('server/requirements.txt', session=PipSession()) if not ir.url]
 
 setup(
     name='Superdesk-Server',
@@ -28,18 +31,7 @@ setup(
     platforms=['any'],
     package_dir={'': SOURCE_FOLDER},
     packages=find_packages(SOURCE_FOLDER),
-    install_requires=[
-        'Eve>=0.4',
-        'Eve-Elastic>=0.1.13',
-        'Flask>=0.10,<0.11',
-        'Flask-Mail>=0.9.0,<0.10',
-        'Flask-Script==2.0.5,<2.1',
-        'Flask-PyMongo>=0.3.0',
-        'autobahn[asyncio]>=0.8.15',
-        'celery[redis]>=3.1.13',
-        'bcrypt>=1.0.2',
-        'blinker>=1.3',
-    ],
+    install_requires=REQUIREMENTS,
     scripts=[
         os.path.join(SOURCE_FOLDER, 'settings.py'),
         os.path.join(SOURCE_FOLDER, 'app.py'),
