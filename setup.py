@@ -17,7 +17,8 @@ import os
 
 SOURCE_FOLDER = 'server'
 LONG_DESCRIPTION = open(os.path.join(SOURCE_FOLDER, 'README.md')).read()
-REQUIREMENTS = [str(ir.req) for ir in parse_requirements('server/requirements.txt', session=PipSession()) if not ir.url]
+REQUIREMENTS = [str(ir.req) for ir in parse_requirements('server/requirements.txt', session=PipSession())
+                if not (getattr(ir, 'link', False) or getattr(ir, 'url', False))]
 
 setup(
     name='Superdesk-Server',
