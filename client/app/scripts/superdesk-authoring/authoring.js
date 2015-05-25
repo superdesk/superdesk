@@ -452,7 +452,7 @@
             return modal.confirm(
                 $interpolate(gettext('There are some unsaved changes, do you want to save it and {{ action }} now?'))({action: action}),
                 gettext('Save changes?'),
-                gettext('Save and ' + action),
+                $interpolate(gettext('Save and {{ action }}'))({action: action}),
                 gettext('Cancel')
             );
         };
