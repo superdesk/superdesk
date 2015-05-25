@@ -253,8 +253,8 @@ define([
                             _.contains(['published', 'corrected'], item.state) &&
                             (item.type === 'text' || item.type === 'preformatted');
                     },
-                    controller: ['data', '$location', 'api', 'notify', 'session', 'desks',
-                        function(data, $location, api, notify, session, desks) {
+                    controller: ['data', '$location', 'api', 'notify', 'session', 'desks', 'superdesk',
+                        function(data, $location, api, notify, session, desks, superdesk) {
                             var pick_fields = ['family_id', 'abstract', 'anpa-category',
                                                 'pubstatus', 'destination_groups',
                                                 'slugline', 'urgency', 'subject', 'dateline',
@@ -268,11 +268,12 @@ define([
                             session.getIdentity()
                                 .then(function(user) {
                                     update_item.task.desk = user.desk? user.desk: desks.getCurrentDeskId();
+                                    update_item.state = 'in_progress';
                                     return api.archive.save({}, update_item);
                                 })
                                 .then(function(new_item) {
                                     notify.success(gettext('Update Created.'));
-                                    $location.url('/authoring/' + new_item._id);
+                                    superdesk.intent('author', 'article', new_item);
                                 }, function(response) {
                                     notify.error(gettext('Failed to generate update.'));
                                 });

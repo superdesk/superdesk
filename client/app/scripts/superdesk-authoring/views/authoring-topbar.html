@@ -47,11 +47,11 @@
 			 ng-disabled="!_editable"
 			 ng-if="highlight"
 			 translate>Export</button>
-
+        
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
             ng-if = "publish_enabled()"
-            ng-show="_editable && not_for_publication_visible"
+            ng-show="_editable"
             translate>{{action === "edit" ? "Publish": action}}</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
