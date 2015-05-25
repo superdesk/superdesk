@@ -30,8 +30,8 @@
         };
     }
 
-    var mod = angular.module('superdesk.list', ['superdesk.keyboard']);
-    mod.directive('sdListView', ['$location', 'keyboardManager', function($location, keyboardManager) {
+    var mod = angular.module('superdesk.list', ['superdesk.keyboard', 'superdesk.asset']);
+    mod.directive('sdListView', ['$location', 'keyboardManager', 'asset', function($location, keyboardManager, asset) {
         return {
             scope: {
                 select: '&',
@@ -40,7 +40,7 @@
             },
             replace: true,
             transclude: true,
-            templateUrl: 'scripts/superdesk/list/views/list-view.html',
+            templateUrl: asset.templateUrl('superdesk/list/views/list-view.html'),
             link: function(scope, elem, attrs) {
                 var UP = -1,
                     DOWN = 1;
@@ -99,10 +99,10 @@
         };
     }]);
 
-    mod.directive('sdSearchbar', ['$location', function($location) {
+    mod.directive('sdSearchbar', ['$location', 'asset', function($location, asset) {
         return {
             scope: true,
-            templateUrl: 'scripts/superdesk/list/views/searchbar.html',
+            templateUrl: asset.templateUrl('superdesk/list/views/searchbar.html'),
             link: function(scope, elem) {
                 var input = elem.find('#search-input');
                 scope.q = $location.search().q || null;
@@ -203,9 +203,9 @@
      * @items {object} Item container as received from server, with _items and _meta.
      * @limit {number} Number of items per page.
      */
-    mod.directive('sdPagination', ['$location', function($location) {
+    mod.directive('sdPagination', ['$location', 'asset', function($location, asset) {
         return {
-            templateUrl: 'scripts/superdesk/list/views/sdPagination.html',
+            templateUrl: asset.templateUrl('superdesk/list/views/sdPagination.html'),
             scope: {
                 items: '='
             },
@@ -256,9 +256,9 @@
 
     // Alternative sdPagination, doesn't use $location.
     // Should replace sdPagination.
-    mod.directive('sdPaginationAlt', [function() {
+    mod.directive('sdPaginationAlt', ['asset', function(asset) {
         return {
-            templateUrl: 'scripts/superdesk/list/views/sdPaginationAlt.html',
+            templateUrl: asset.templateUrl('superdesk/list/views/sdPaginationAlt.html'),
             scope: {
                 page: '=',
                 maxPage: '='

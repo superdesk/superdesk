@@ -6,7 +6,7 @@
  *
  * This module provides urls for static assets.
  */
-return angular.module('superdesk.asset', [])
+return angular.module('superdesk.asset', ['superdesk.config'])
     .provider('asset', [ '$injector', function ($injector) {
         this.templateUrl = function(path) {
             var config = $injector.get('config'),
