@@ -229,7 +229,7 @@ describe('authoring', function() {
                 state: 'submitted'
             });
 
-            authoring.publishConfirmation(item, edit, true);
+            authoring.publishConfirmation(item, edit, true, 'publish');
             $rootScope.$digest();
 
             expect(confirm.confirmPublish).toHaveBeenCalled();
