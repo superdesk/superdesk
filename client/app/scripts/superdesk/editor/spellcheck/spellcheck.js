@@ -231,6 +231,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     };
 }
 
+SpellcheckMenuController.$inject = ['editor', '$rootScope'];
 function SpellcheckMenuController(editor, $rootScope) {
     this.isAuto = editor.settings.spellcheck || true;
     this.spellcheck = spellcheck;
