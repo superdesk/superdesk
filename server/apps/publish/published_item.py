@@ -60,10 +60,20 @@ class PublishedItemService(BaseService):
     def get(self, req, lookup):
         # convert to the original _id so everything else works
         items = super().get(req, lookup)
+        ids = list(set([str(item['item_id']) for item in items]))
+        query = {'query': {'filtered': {'filter': {'terms': {'_id': ids}}}}}
+        archive_req = ParsedRequest()
+        archive_req.args = {'source': json.dumps(query)}
+        archive_items = superdesk.get_resource_service('archive').get(req=req, lookup=None)
         for item in items:
+            archive_items_list = [i for i in archive_items if i.get('_id') == item.get('item_id')]
+            archive_item = archive_items_list[0] if archive_items_list else {}
             updates = {
                 '_id': item['item_id'],
-                'item_id': item['_id']
+                'item_id': item['_id'],
+                'lock_user': archive_item.get('lock_user', None),
+                'lock_time': archive_item.get('lock_time', None),
+                'lock_session': archive_item.get('lock_session', None)
             }
 
             item.update(updates)

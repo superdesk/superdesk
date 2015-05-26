@@ -98,7 +98,7 @@ Feature: Content Publishing
         {"_issues": {"validator exception": "Publish failed due to {'headline': 'required field'}"}, "_status": "ERR"}
       """
 
-    @auth @test
+    @auth
     Scenario: Publish a user content fails if nothing queued
       Given the "validators"
       """
@@ -1256,7 +1256,7 @@ Feature: Content Publishing
         """
         When we patch "/archive/#TAKE#"
         """
-        {"body_html": "Take-2"}
+        {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
         """
         And we post to "/archive/#TAKE#/move"
         """
