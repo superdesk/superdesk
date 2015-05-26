@@ -665,21 +665,23 @@ class OnFetchedItemMethodTestCase(ItemsServiceTestCase):
 
     def setUp(self):
         super().setUp()
+
         self.app = Flask('test_app')
+        self.app.config['PUBLICAPI_URL'] = 'http://api.com'
+        self.app.config['URLS'] = {'items': 'items_endpoint'}
+
         self.app_context = self.app.app_context()
         self.app_context.push()
 
     def tearDown(self):
-        super().tearDown()
         self.app_context.pop()
+        super().tearDown()
 
     def test_sets_uri_field_on_fetched_document(self):
         document = {
             '_id': 'item:123',
-            'title': 'a test item'
+            'headline': 'a test item'
         }
-        self.app.config['PUBLICAPI_URL'] = 'http://api.com'
-        self.app.config['URLS'] = {'items': 'items_endpoint'}
 
         instance = self._make_one(datasource='items')
         instance.on_fetched_item(document)
@@ -689,29 +691,66 @@ class OnFetchedItemMethodTestCase(ItemsServiceTestCase):
             'http://api.com/items_endpoint/item%3A123'  # %3A == urlquote(':')
         )
 
+    def test_removes_non_ninjs_content_fields_from_fetched_document(self):
+        document = {
+            '_id': 'item:123',
+            '_etag': '12345abcde',
+            '_created': '12345abcde',
+            '_updated': '12345abcde',
+            'headline': 'breaking news'
+        }
+
+        instance = self._make_one(datasource='items')
+        instance.on_fetched_item(document)
+
+        for field in ('_created', '_etag', '_id', '_updated'):
+            self.assertNotIn(field, document)
+
+    def test_does_not_remove_hateoas_links_from_fetched_document(self):
+        document = {
+            '_id': 'item:123',
+            'headline': 'breaking news',
+            '_links': {
+                'self': {
+                    'href': 'link/to/item/itself',
+                    'title': 'Item'
+                }
+            }
+        }
+
+        instance = self._make_one(datasource='items')
+        instance.on_fetched_item(document)
+
+        expected_links = {
+            'self': {'href': 'link/to/item/itself', 'title': 'Item'}
+        }
+        self.assertEqual(document.get('_links'), expected_links)
+
 
 class OnFetchedMethodTestCase(ItemsServiceTestCase):
     """Tests for the on_fetched() method."""
 
     def setUp(self):
         super().setUp()
+
         self.app = Flask('test_app')
+        self.app.config['PUBLICAPI_URL'] = 'http://api.com'
+        self.app.config['URLS'] = {'items': 'items_endpoint'}
+
         self.app_context = self.app.app_context()
         self.app_context.push()
 
     def tearDown(self):
-        super().tearDown()
         self.app_context.pop()
+        super().tearDown()
 
     def test_sets_uri_field_on_all_fetched_documents(self):
         result = {
             '_items': [
-                {'_id': 'item:123', 'title': 'a test item'},
-                {'_id': 'item:555', 'title': 'another item'},
+                {'_id': 'item:123', 'headline': 'a test item'},
+                {'_id': 'item:555', 'headline': 'another item'},
             ]
         }
-        self.app.config['PUBLICAPI_URL'] = 'http://api.com'
-        self.app.config['URLS'] = {'items': 'items_endpoint'}
 
         instance = self._make_one(datasource='items')
         instance.on_fetched(result)
@@ -725,3 +764,72 @@ class OnFetchedMethodTestCase(ItemsServiceTestCase):
             documents[1].get('uri'),
             'http://api.com/items_endpoint/item%3A555'  # %3A == urlquote(':')
         )
+
+    def test_removes_non_ninjs_content_fields_from_all_fetched_documents(self):
+        result = {
+            '_items': [{
+                '_id': 'item:123',
+                '_etag': '12345abcde',
+                '_created': '12345abcde',
+                '_updated': '12345abcde',
+                'headline': 'breaking news',
+            }, {
+                '_id': 'item:555',
+                '_etag': '67890fedcb',
+                '_created': '2121abab',
+                '_updated': '2121abab',
+                'headline': 'good news',
+            }]
+        }
+
+        instance = self._make_one(datasource='items')
+        instance.on_fetched(result)
+
+        documents = result['_items']
+        for doc in documents:
+            for field in ('_created', '_etag', '_id', '_updated'):
+                self.assertNotIn(field, doc)
+
+    def test_does_not_remove_hateoas_links_from_fetched_documents(self):
+        result = {
+            '_items': [{
+                '_id': 'item:123',
+                '_etag': '12345abcde',
+                '_created': '12345abcde',
+                '_updated': '12345abcde',
+                'headline': 'breaking news',
+                '_links': {
+                    'self': {
+                        'href': 'link/to/item_123',
+                        'title': 'Item'
+                    }
+                }
+            }, {
+                '_id': 'item:555',
+                '_etag': '67890fedcb',
+                '_created': '2121abab',
+                '_updated': '2121abab',
+                'headline': 'good news',
+                '_links': {
+                    'self': {
+                        'href': 'link/to/item_555',
+                        'title': 'Item'
+                    }
+                }
+            }]
+        }
+
+        instance = self._make_one(datasource='items')
+        instance.on_fetched(result)
+
+        documents = result['_items']
+
+        expected_links = {
+            'self': {'href': 'link/to/item_123', 'title': 'Item'}
+        }
+        self.assertEqual(documents[0].get('_links'), expected_links)
+
+        expected_links = {
+            'self': {'href': 'link/to/item_555', 'title': 'Item'}
+        }
+        self.assertEqual(documents[1].get('_links'), expected_links)

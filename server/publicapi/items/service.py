@@ -98,22 +98,33 @@ class ItemsService(BaseService):
     def on_fetched_item(self, document):
         """Event handler when a single item is retrieved from database.
 
-        It sets the item's `uri` field.
+        It sets the item's `uri` field and removes all the fields added by the
+        `Eve` framework that are not part of the NINJS standard (except for
+        the HATEOAS `_links` object).
 
         :param dict document: fetched MongoDB document representing the item
         """
         self._set_uri(document)
 
+        for field_name in ('_id', '_etag', '_created', '_updated'):
+            document.pop(field_name, None)
+
     def on_fetched(self, result):
         """Event handler when a collection of items is retrieved from database.
 
-        It sets the `uri` field for each item in the fetched collection.
+        For each item in the fetched collection it sets its `uri` field and
+        removes from it all the fields added by the `Eve` framework that are
+        not part of the NINJS standard (except for the HATEOAS `_links`
+        object).
 
         :param dict result: dictionary contaning the list of MongoDB documents
             (the fetched items) and some metadata, e.g. pagination info
         """
         for document in result['_items']:
             self._set_uri(document)
+
+            for field_name in ('_id', '_etag', '_created', '_updated'):
+                document.pop(field_name, None)
 
     def _set_uri(self, document):
         """Set the given document's `uri` content field.
