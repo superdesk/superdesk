@@ -13,6 +13,7 @@ exports.constructUrl = function(base, uri) {
 
 var webdriver = require('selenium-webdriver');
 var LoginModal = require('./pages').login;
+var path = require('path');
 
 // authenticate if needed
 function login() {
@@ -81,7 +82,7 @@ function printLogs(prefix) {
     });
 }
 
-var clientSideScripts = require('./../../node_modules/protractor/lib/clientsidescripts.js');
+var clientSideScripts = require(path.resolve('node_modules') + '/protractor/lib/clientsidescripts.js');
 function waitForAngular(opt_description) {
     var description = opt_description ? ' - ' + opt_description : '';
     var self = browser;
