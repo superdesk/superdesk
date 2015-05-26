@@ -77,13 +77,6 @@ class ResourceConfigTestCase(PackagesResourceTestCase):
         filter_config = datasource.get('filter')
         self.assertEqual(filter_config, {'type': 'composite'})
 
-    def test_internal_fields_are_excluded_from_retrieved_data(self):
-        klass = self._get_target_class()
-        datasource = klass.datasource or {}
-        projection_settings = datasource.get('projection', {})
-        self.assertEqual(projection_settings.get('_created'), 0)
-        self.assertEqual(projection_settings.get('_updated'), 0)
-
     def test_allowed_item_http_methods(self):
         klass = self._get_target_class()
         self.assertEqual(klass.item_methods, ['GET'])

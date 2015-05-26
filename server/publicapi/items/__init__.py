@@ -9,8 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import superdesk
-from publicapi.items.service import ItemsService
 from publicapi.items.resource import ItemsResource
+from publicapi.items.service import ItemsService
 
 
 def init_app(app):

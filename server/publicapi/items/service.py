@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import functools
 import json
 import logging
 
@@ -15,6 +16,7 @@ from datetime import datetime, timedelta
 from eve.utils import ParsedRequest
 from flask import current_app as app
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
+from publicapi.items import ItemsResource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from urllib.parse import urljoin, quote
@@ -45,7 +47,11 @@ class ItemsService(BaseService):
         if req is None:
             req = ParsedRequest()
 
-        self._check_request_params(req, whitelist=(), allow_filtering=False)
+        allowed_params = ('include_fields', 'exclude_fields')
+        self._check_for_unknown_params(
+            req, whitelist=allowed_params, allow_filtering=False)
+
+        self._set_fields_filter(req)  # Eve's "projection"
 
         return super().find_one(req, **lookup)
 
@@ -63,13 +69,16 @@ class ItemsService(BaseService):
         if req is None:
             req = ParsedRequest()
 
-        allowed_params = ('q', 'start_date', 'end_date')
-        self._check_request_params(req, whitelist=allowed_params)
+        allowed_params = (
+            'q', 'start_date', 'end_date',
+            'include_fields', 'exclude_fields'
+        )
+        self._check_for_unknown_params(req, whitelist=allowed_params)
 
+        # set the "q" filter
         request_params = req.args or {}
         query_filter = {}
 
-        # set the "q" filter
         if 'q' in request_params:
             # TODO: add validation for the "q" parameter when we define its
             # format and implement the corresponding actions
@@ -82,10 +91,14 @@ class ItemsService(BaseService):
 
         req.where = json.dumps(query_filter)
 
+        self._set_fields_filter(req)  # Eve's "projection"
+
         return super().get(req, lookup)
 
-    def _check_request_params(self, request, whitelist, allow_filtering=True):
-        """Check if the request contains only valid parameters.
+    def _check_for_unknown_params(
+        self, request, whitelist, allow_filtering=True
+    ):
+        """Check if the request contains only allowed parameters.
 
         :param req: object representing the HTTP request
         :type req: `eve.utils.ParsedRequest`
@@ -94,10 +107,10 @@ class ItemsService(BaseService):
             allowed (True by default). Used for disallowing it when retrieving
             a single object.
 
-        :raises BadParameterValueError: if the request contains more than one
-            value for any of the parameters
-        :raises UnexpectedParameterError: if the request contains a parameter
-            that is not whitelisted
+        :raises UnexpectedParameterError:
+            * if the request contains a parameter that is not whitelisted
+            * if the request contains more than one value for any of the
+              parameters
         """
         request_params = (request.args or MultiDict())
 
@@ -125,7 +138,7 @@ class ItemsService(BaseService):
 
             if len(request_params.getlist(param_name)) > 1:
                 desc = "Multiple values received for parameter ({})"
-                raise BadParameterValueError(desc=desc.format(param_name))
+                raise UnexpectedParameterError(desc=desc.format(param_name))
 
     def _get_date_range(self, request_params):
         """Extract the start and end date limits from request parameters.
@@ -227,6 +240,129 @@ class ItemsService(BaseService):
                 (end_date + timedelta(1)).isoformat()
 
         return date_filter
+
+    def _set_fields_filter(self, req):
+        """Set content fields filter on the request object (the "projection")
+        based on the request parameters.
+
+        It causes some of the content fields to be excluded from the retrieved
+        data.
+
+        :param req: object representing the HTTP request
+        :type req: `eve.utils.ParsedRequest`
+        """
+        request_params = req.args or {}
+
+        include_fields, exclude_fields = \
+            self._get_field_filter_params(request_params)
+        projection = self._create_field_filter(include_fields, exclude_fields)
+
+        req.projection = json.dumps(projection)
+
+    def _get_field_filter_params(self, request_params):
+        """Extract the list of content fields to keep in or remove from
+        the response.
+
+        The parameter names are `include_fields` and `exclude_fields`. Both are
+        simple comma-separated lists, for example::
+
+            exclude_fields=  field_1, field_2,field_3,, ,field_4,
+
+        NOTE: any redundant spaces, empty field values and duplicate values are
+        gracefully ignored and do not cause an error.
+
+        :param dict request_params: request parameter names and their
+            corresponding values
+
+        :return: a (include_fields, exclude_fields) tuple with each item being
+            either a `set` of field names (as strings) or None if the request
+            does not contain the corresponding parameter
+
+        :raises BadParameterValueError:
+            * if the request contains both parameters at the same time
+            * if any of the parameters contain an unknown field name (i.e. not
+                defined in the resource schema)
+            * if `exclude_params` parameter contains a field name that is
+                required to be present in the response according to the NINJS
+                standard
+        """
+        include_fields = request_params.get('include_fields')
+        exclude_fields = request_params.get('exclude_fields')
+
+        # parse field filter parameters...
+        strip_items = functools.partial(map, lambda s: s.strip())
+        remove_empty = functools.partial(filter, None)
+
+        if include_fields is not None:
+            include_fields = include_fields.split(',')
+            include_fields = set(remove_empty(strip_items(include_fields)))
+
+        if exclude_fields is not None:
+            exclude_fields = exclude_fields.split(',')
+            exclude_fields = set(remove_empty(strip_items(exclude_fields)))
+
+        # check for semantically incorrect field filter values...
+        if (include_fields is not None) and (exclude_fields is not None):
+            err_msg = ('Cannot both include and exclude content fields '
+                       'at the same time.')
+            raise UnexpectedParameterError(desc=err_msg)
+
+        if include_fields is not None:
+            err_msg = 'Unknown content field to include ({}).'
+            for field in include_fields:
+                if field not in ItemsResource.schema:
+                    raise BadParameterValueError(desc=err_msg.format(field))
+
+        if exclude_fields is not None:
+            if 'uri' in exclude_fields:
+                err_msg = ('Cannot exclude a content field required by the '
+                           'NINJS format (uri).')
+                raise BadParameterValueError(desc=err_msg)
+
+            err_msg = 'Unknown content field to exclude ({}).'
+            for field in exclude_fields:
+                if field not in ItemsResource.schema:
+                    raise BadParameterValueError(desc=err_msg.format(field))
+
+        return include_fields, exclude_fields
+
+    def _create_field_filter(self, include_fields, exclude_fields):
+        """Create an `Eve` projection object that explicitly includes/excludes
+        particular content fields from results.
+
+        At least one of the parameters *must* be None. The created projection
+        uses either a whitlist or a blacklist approach (see below), it cannot
+        use both at the same time.
+
+        * If `include_fields` is not None, a blacklist approach is used. All
+            fields are _omittted_ from the result, except for those listed in
+            the `include_fields` set.
+        * If `exclude_fields` is not None, a whitelist approach is used. All
+            fields are _included_ in the result, except for those listed in the
+            `exclude_fields` set.
+        * If both parameters are None, no field filtering should be applied
+        and an empty dictionary is returned.
+
+        NOTE: fields required by the NINJS standard are _always_ included in
+        the result, regardless of the field filtering parameters.
+
+        :param include_fields: fields to explicitly include in result
+        :type include_fields: set of strings or None
+        :param exclude_fields: fields to explicitly exclude from result
+        :type exclude_fields: set of strings or None
+
+        :return: `Eve` projection filter (as a dictionary)
+        """
+        projection = {}
+
+        if include_fields is not None:
+            for field in include_fields:
+                projection[field] = 1
+        elif exclude_fields is not None:
+            for field in exclude_fields:
+                projection[field] = 0
+
+        return projection
 
     @staticmethod
     def _parse_iso_date(date_str):

@@ -50,10 +50,6 @@ class ItemsResource(Resource):
 
     datasource = {
         'filter': {'type': {'$ne': 'composite'}},
-        'projection': {
-            '_created': 0,
-            '_updated': 0,
-        }
     }
 
     item_methods = ['GET']
