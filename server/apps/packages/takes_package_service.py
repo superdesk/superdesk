@@ -81,7 +81,7 @@ class TakesPackageService():
         to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
 
         copy_from = package if (package.get(config.CONTENT_STATE) in PUBLISH_STATES) else target
-        for field in ['abstract', 'anpa-category', 'pubstatus', 'destination_groups',
+        for field in ['anpa-category', 'pubstatus', 'destination_groups',
                       'slugline', 'urgency', 'subject', 'dateline']:
             to[field] = copy_from.get(field)
 
