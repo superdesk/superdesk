@@ -62,6 +62,11 @@ define([
                     scope.items = null;
                     scope.keyword = null;
 
+                    scope.editable = false;
+                    if (scope.$parent._editable != null) {
+                        scope.editable = scope.$parent._editable;
+                    }
+
                     var _update = function() {
                         var criteria = scope.criteria || {};
                         if (scope.keyword && scope.searchKey) {
