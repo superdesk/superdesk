@@ -5,36 +5,44 @@ define([
 ], function(_, angular) {
     'use strict';
 
-    return angular.module('superdesk.workflow', [])
-        .run(['workflowService', angular.noop]) // make sure it's loaded
-        .service('workflowService',  ['preferencesService', '$rootScope', function(preferencesService, $rootScope) {
-            var _actions = [];
-            this.isActionAllowed = function isActionAllowed(item, actionName) {
+    WorkflowService.$inject = ['preferencesService'];
+    function WorkflowService(preferencesService) {
+        var _actions = [];
 
-                if (_.isUndefined(actionName) || _.isUndefined(item.state)) { return true; }
+        this.isActionAllowed = function isActionAllowed(item, actionName) {
 
-                var action = _.find(_actions, function(actionItem) {
-                    return actionItem.name === actionName;
-                });
+            if (_.isUndefined(actionName) || _.isUndefined(item.state)) { return true; }
 
-                if (action) {
-                    if (!_.isEmpty(action.include_states)) {
-                        return (_.findIndex(action.include_states, function(state) { return item.state === state; }) >= 0);
-                    } else if (!_.isEmpty(action.exclude_states)) {
-                        return (_.findIndex(action.exclude_states, function(state) { return item.state === state; }) === -1);
-                    }
+            var action = _.find(_actions, function(actionItem) {
+                return actionItem.name === actionName;
+            });
+
+            if (action) {
+                if (!_.isEmpty(action.include_states)) {
+                    return _.includes(action.include_states, item.state);
+                } else if (!_.isEmpty(action.exclude_states)) {
+                    return !_.includes(action.exclude_states, item.state);
                 }
+            }
 
-                return false;
-            };
+            return false;
+        };
 
-            this.setActions = function (actions) {
-                _actions = actions;
-            };
+        this.setActions = function (actions) {
+            _actions = actions;
+        };
 
-            preferencesService.getActions().then(this.setActions);
+        preferencesService.getActions().then(this.setActions);
+    }
 
-            $rootScope.isActionAllowed = angular.bind(this, this.isActionAllowed);
+    WorkflowController.$inject = ['workflow'];
+    function WorkflowController(workflow) {
+        this.isActionAllowed = angular.bind(workflow, workflow.isActionAllowed);
+    }
 
-        }]);
+    return angular.module('superdesk.workflow', [])
+        .service('workflow',  WorkflowService)
+        .controller('Workflow', WorkflowController)
+        .run(['workflow', angular.noop]) // make sure it's loaded
+        ;
 });

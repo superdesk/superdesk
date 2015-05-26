@@ -27,17 +27,15 @@ Feature: User preferences
         When we get "/preferences/#SESSION_ID#"
         When we patch latest
         """
-        {"user_preferences": {"archive:view": {"view": "compact" }}}
+        {"user_preferences": {"list:view": {"view": "compact" }}}
         """
 
         Then we get existing resource
         """
         {
             "user_preferences": {
-                "archive:view": {
-                    "category": "archive",
-                    "default": "mgrid",
-                    "label": "Users archive view format",
+                "list:view": {
+                    "default": "extended",
                     "type": "string",
                     "view": "compact"
                 }

@@ -16,7 +16,7 @@ define([
             test_preferences = {
                 'active_privileges': {'privilege1':1, 'privilege2':0},
                 'user_preferences': {
-                    'archive:view': {
+                    'list:view': {
                         'default': 'mgrid',
                         'label': 'Users archive view format',
                         'type': 'string',
@@ -102,7 +102,7 @@ define([
 
             $rootScope.$digest();
             var preferences;
-            preferencesService.get('archive:view').then(function(_preferences) {
+            preferencesService.get('list:view').then(function(_preferences) {
                 preferences = _preferences;
             });
 
@@ -143,7 +143,7 @@ define([
 
             $rootScope.$digest();
 
-            var preferences = preferencesService.get('archive:view');
+            var preferences = preferencesService.get('list:view');
             expect(preferences).not.toBe(null);
             expect(storage.getItem('preferences')).not.toBe(null);
 

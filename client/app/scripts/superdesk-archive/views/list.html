@@ -1,24 +1,70 @@
-<div class="subnav">
-	<div class="button-stack right-stack">   
-	    <div class="navbtn dropdown strict highlights-dropdown" 
-            dropdown sd-package-highlights-dropdown 
-            ng-if="type === 'archive' && selected.desk">
-        </div>         
-        <div class="navbtn dropdown strict" dropdown ng-if="type === 'archive'">
-            <button tooltip="{{ :: 'Create' | translate }}" tooltip-placement="left" class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-            <ul class="dropdown-menu pull-right" sd-content-create></ul>
+<div sd-list-layout>
+    <div class="list-layout" ng-class="layout.view" ng-show="!layout.view.min">
+        <div class="subnav">
+        	<div class="button-stack right-stack">   
+        	    <div class="navbtn dropdown strict highlights-dropdown" 
+                    dropdown sd-package-highlights-dropdown 
+                    ng-if="type === 'archive' && selected.desk">
+                </div>         
+                <div class="navbtn dropdown strict" dropdown ng-if="type === 'archive'">
+                    <button tooltip="{{ :: 'Create' | translate }}" tooltip-placement="left" class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+                    <ul class="dropdown-menu pull-right" sd-content-create></ul>
+                </div>
+
+                <div class="navbtn dropdown" dropdown>
+                    <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+                    <ul class="dropdown-menu" ng-if="layout.view.compact || layout.view.extended">
+                        <li>
+                            <button
+                                ng-disabled="layout.view.compact"
+                                ng-click="layout.compactView()"
+                                translate>Compact mode</button>
+                        </li>
+                        <li>
+                            <button
+                                ng-disabled="layout.view.extended"
+                                ng-click="layout.extendedView()"
+                                translate>Extended mode</button>
+                        </li>
+                    </ul>
+                </div>
+                <button class="navbtn resize pull-right"
+                    ng-click="layout.closeList()">&mapstoleft;</button>
+            </div>
+
+            <div class="desk-stages">
+                <div class="navbtn toggle-list" sd-desk-stages></div>
+            </div>
+        </div>
+
+        <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>
+
+        <section sd-search-container
+            class="archive main-section search-page-container"
+            ng-class="{'sidebar-open': flags.facets}">
+            <div class="archive-sidebar"
+                ng-if="flags.facets"
+                sd-search-facets
+                data-items="items"
+                data-desk="selected.desk"></div>
+            <div sd-search-results class="archive-content"></div>
+            <div sd-workqueue></div>
+        </section>
+    </div>
+
+    <div class="list-layout" ng-class="layout.view" ng-if="layout.view.min" ng-click="layout.openList()">
+        <div class="subnav">
+            <div class="button-stack right-stack">
+                <button disabled class="navbtn resize">&mapstoleft;</button>
+            </div>
         </div>
     </div>
 
-    <div class="desk-stages">
-        <div class="navbtn toggle-list" sd-desk-stages></div>
+    <div class="item-layout" ng-class="layout.view">
+        <div sd-authoring-embedded
+            data-item="selected.preview"
+            data-action="view"
+            data-layout="layout"
+        ></div>
     </div>
 </div>
-
-<div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>
-
-<section sd-search-container class="archive main-section search-page-container" ng-class="{'sidebar-open': flags.facets}">
-    <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selected.desk"></div>
-    <div sd-search-results class="archive-content"></div>
-    <div sd-workqueue></div>
-</section>

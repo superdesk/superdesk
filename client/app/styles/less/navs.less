@@ -336,8 +336,8 @@
 // SUBNAV
 // ------------
 .subnav {
-		position: fixed;
-		top: @nav-height;
+		position: absolute;
+		top: 0;
 		left: 0;
 		right: 0;
 		height:@subnav-height;
@@ -373,26 +373,41 @@
 }
 
 .button-stack {
-		height:@subnav-height !important;
-		position: relative;
-		margin: -10px 20px 0 -20px;
-		float: left;
+	height: @subnav-height !important;
+	position: relative;
+	margin: -10px 20px 0 -20px;
+	float: left;
+
+	> .btn {
+		margin-left: 20px;
+		margin-top: 10px;
+	}
+
+	> .navbtn {
+		.border-box();
+		width: 48px;
+		padding: 0;
+	}
+
+	> .navbtn .dropdown-toggle {
+		.border-box();
+		width: 100%;
+		padding: 0;
+	}
+
+	&.right-stack {
+		float: right;
+		margin: -10px -20px 0 20px;
+		.navbtn {
+				border-left: 1px solid #e0e0e0 !important;
+				border-right: 0 !important;
+				
+		}
 		> .btn {
-				margin-left: 20px;
-				margin-top: 10px;
+				margin-right: 20px;
+				margin-left: 0;
 		}
-		&.right-stack {
-				float: right;
-				margin: -10px -20px 0 20px;
-				.navbtn {
-						border-left: 1px solid #e0e0e0 !important;
-						border-right: 0 !important;
-				}
-				> .btn {
-						margin-right: 20px;
-						margin-left: 0;
-				}
-		}
+    }
 }
 
 .shortcut {

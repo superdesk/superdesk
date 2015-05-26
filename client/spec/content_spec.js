@@ -8,7 +8,8 @@ var openUrl = require('./helpers/utils').open,
 describe('Content', function() {
 
     function selectedHeadline() {
-        return element(by.binding('selected.preview.headline')).getText();
+        return element(by.css('.auth-screen'))
+            .element(by.binding('item.headline')).getText();
     }
 
     beforeEach(function(done) {
@@ -42,7 +43,8 @@ describe('Content', function() {
         expect(element(by.id('search-input')).isDisplayed()).toBe(true);
     });
 
-    it('can toggle view with v', function() {
+    // todo(petr): should it toggle compact/extended/full view?
+    xit('can toggle view with v', function() { // obsolete
         var body = $('body'),
             gridBtn = element.all(by.css('.view-select button')).first();
 
@@ -62,7 +64,16 @@ describe('Content', function() {
 
     function toggle(selectbox) {
         browser.actions().mouseMove(selectbox).perform();
-        selectbox.element(by.css('.sd-checkbox')).click();
+
+        browser.wait(function() {
+            return checkbox().isDisplayed();
+        });
+
+        checkbox().click();
+
+        function checkbox() {
+            return selectbox.element(by.css('.sd-checkbox'));
+        }
     }
 
     it('can select multiple items', function() {

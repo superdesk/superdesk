@@ -629,34 +629,21 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
-            function($location, preferencesService, packages, tags, asset) {
-            var update = {
-                'archive:view': {
-                    'allowed': [
-                        'mgrid',
-                        'compact'
-                    ],
-                    'category': 'archive',
-                    'view': 'mgrid',
-                    'default': 'mgrid',
-                    'label': 'Users archive view format',
-                    'type': 'string'
-                }
-            };
-
+        .directive('sdSearchResults', ['$location', 'packages', 'tags', 'asset',
+            function($location, packages, tags, asset) {
             return {
                 require: '^sdSearchContainer',
                 templateUrl: asset.templateUrl('superdesk-search/views/search-results.html'),
                 link: function(scope, elem, attr, controller) {
 
-                    var GRID_VIEW = 'mgrid',
-                        LIST_VIEW = 'compact';
+                    var LIST_VIEW = 'compact',
+                        multiSelectable = attr.multiSelectable != null;
 
-                    var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
-
+                    scope.view = LIST_VIEW;
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
+
+                    scope.uuid = uuid;
 
                     scope.preview = function preview(item) {
                         if (multiSelectable) {
@@ -684,26 +671,8 @@
                         });
                     };
 
-                    scope.setview = setView;
-
-                    var savedView;
-                    preferencesService.get('archive:view').then(function(result) {
-                        savedView = result.view;
-                        scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
-                    });
-
-                    scope.$on('key:v', toggleView);
-
-                    function setView(view) {
-                        update['archive:view'].view = view || 'mgrid';
-                        preferencesService.update(update, 'archive:view').then(function() {
-                            scope.view = view || 'mgrid';
-                        });
-                    }
-
-                    function toggleView() {
-                        var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
-                        return setView(nextView);
+                    function uuid(item) {
+                        return item._id + (item._etag || item._version || item._updated);
                     }
                 }
             };

@@ -62,7 +62,8 @@ describe('Content', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(3);
     });
 
-    it('can preview package in a package', function() {
+    // todo(petr): obsolete?
+    xit('can preview package in a package', function() {
         // populate package
         addItemsToPackage();
 

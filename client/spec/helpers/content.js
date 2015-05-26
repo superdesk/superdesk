@@ -5,13 +5,13 @@ module.exports = new Content();
 
 function Content() {
 
+    this.getItem = getItem;
+    this.editItem = editItem;
+    this.getCount = getCount;
+
     this.setListView = function() {
-        var list = element(by.css('[tooltip="switch to list view"]'));
-        return list.isDisplayed().then(function(isVisible) {
-            if (isVisible) {
-                list.click();
-            }
-        });
+        var list = element(by.css('.list-layout'));
+        return list.isDisplayed();
     };
 
     this.setGridView = function() {
@@ -23,14 +23,10 @@ function Content() {
         });
     };
 
-    this.getItem = function(item) {
-        return element.all(by.repeater('items._items')).get(item);
-    };
-
     this.actionOnItem = function(action, item) {
         var crtItem;
         return this.getItem(item)
-            .waitReady().then(function(elem) {
+            .then(function(elem) {
                 crtItem = elem;
                 return browser.actions().mouseMove(crtItem).perform();
             }).then(function() {
@@ -46,7 +42,25 @@ function Content() {
         expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe')).toContain(highlight);
     };
 
-    this.getCount = function () {
-        return element.all(by.repeater('items._items')).count();
-    };
+    function getCount() {
+        return items().count();
+    }
+
+    function getItem(index) {
+        var item = items().get(index || 0);
+        browser.wait(function() {
+            return item.isPresent();
+        });
+        return item;
+    }
+
+    function editItem(index) {
+        var item = getItem(index);
+        item.element(by.css('.headline')).click();
+        return element(by.id('authoring-edit-btn')).click();
+    }
+
+    function items() {
+        return element.all(by.repeater('items._items'));
+    }
 }

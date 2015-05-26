@@ -3,6 +3,11 @@ define(['angular', 'lodash'], function(angular, _) {
 
     return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.services.storage', 'superdesk.session'])
 
+        // name alias
+        .factory('preferences', ['preferencesService', function(preferencesService) {
+            return preferencesService;
+        }])
+
         .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session', 'notify', 'gettext',
             function PreferencesService($injector, $rootScope, $q, storage, session, notify, gettext) {
                 var USER_PREFERENCES = 'user_preferences',
@@ -12,7 +17,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     ACTIONS = 'allowed_actions',
                     userPreferences = {
                         'feature:preview': 1,
-                        'archive:view': 1,
+                        'list:view': 1,
                         'email:notification': 1,
                         'workqueue:items': 1,
                         'dashboard:ingest': 1,

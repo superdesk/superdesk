@@ -8,7 +8,7 @@
         <a href="#/workspace/ingest" translate>INGEST</a>
     </li>
     <li ng-class="{selected: currentRoute.href == '/workspace/content'}" ng-if="privileges.archive">
-        <a href="#/workspace/content" translate>CONTENT</a>
+        <a id="content-nav" href="#/workspace/content" translate>CONTENT</a>
     </li>
     <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" ng-show="selected.name">
         <a href="#/workspace/stream" translate>ACTIVITY STREAM</a>

@@ -7,7 +7,7 @@ define([
 
         beforeEach(module(workflowServiceSpec.name));
 
-        beforeEach(inject(function(preferencesService, $q, workflowService) {
+        beforeEach(inject(function(preferencesService, $q, workflow) {
             var actions = [
                 {
                     name: 'spike',
@@ -21,14 +21,14 @@ define([
                 }
             ];
 
-            workflowService.setActions(actions);
+            workflow.setActions(actions);
         }));
 
-        it('can perform actions', inject(function(workflowService, $rootScope) {
-            expect(workflowService.isActionAllowed({state: 'fetched'}, 'spike')).toBe(true);
-            expect(workflowService.isActionAllowed({state: 'spiked'}, 'spike')).toBe(false);
-            expect(workflowService.isActionAllowed({state: 'ingested'}, 'fetch_from_ingest')).toBe(true);
-            expect(workflowService.isActionAllowed({state: 'draft'}, 'fetch_from_ingest')).toBe(false);
+        it('can perform actions', inject(function(workflow) {
+            expect(workflow.isActionAllowed({state: 'fetched'}, 'spike')).toBe(true);
+            expect(workflow.isActionAllowed({state: 'spiked'}, 'spike')).toBe(false);
+            expect(workflow.isActionAllowed({state: 'ingested'}, 'fetch_from_ingest')).toBe(true);
+            expect(workflow.isActionAllowed({state: 'draft'}, 'fetch_from_ingest')).toBe(false);
         }));
     });
 });

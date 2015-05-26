@@ -29,17 +29,21 @@ function Workspace() {
                 if (desk.toUpperCase() === 'PERSONAL') {
                     return personal.click();
                 } else {
-                    return getDesk(desk).click();
+                    var promise = getDesk(desk).click();
+                    element(by.id('content-nav')).click();
+                    browser.wait(function() {
+                        return element(by.css('section.main-section')).isPresent();
+                    });
+
+                    return promise;
                 }
             }
         });
     };
 
     this.editItem = function(itemIndex, desk) {
-        return this.switchToDesk(desk || 'PERSONAL').then(
-            content.setListView
-        ).then(function() {
-            return content.actionOnItem('Edit item', itemIndex == null ? 1 : itemIndex);
+        return this.switchToDesk(desk || 'PERSONAL').then(function() {
+            return content.editItem(itemIndex || 0);
         });
     };
 }

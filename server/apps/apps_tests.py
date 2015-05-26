@@ -15,16 +15,10 @@ from apps.preferences import PreferencesService
 class Preference_Tests(TestCase):
     def setUp(self):
         self._default_user_settings = {
-            "archive:view": {
-                "default": "mgrid",
-                "label": "Users archive view format",
+            "list:view": {
+                "default": "extended",
                 "type": "string",
-                "category": "archive",
-                "allowed": [
-                    "mgrid",
-                    "compact"
-                ],
-                "view": "mgrid"
+                "view": "extended"
             },
             "feature:preview": {
                 "category": "feature",
@@ -57,7 +51,7 @@ class Preference_Tests(TestCase):
 
         self._user_update = {
             "user_preferences": {
-                "archive:view": {
+                "email:notification": {
                     "label": "Testing user preferences"
                 }
             }
@@ -87,23 +81,15 @@ class Preference_Tests(TestCase):
     def test_setting_partial_user_preferences_with_existing(self):
         update = self._user_update
         PreferencesService.update_user_prefs(self, update, {})
-        self.assertEqual(update["user_preferences"]["archive:view"]["label"], "Testing user preferences")
+        self.assertEqual(update["user_preferences"]["email:notification"]["label"], "Testing user preferences")
 
     def test_setting_partial_user_preferences_with_empty_existing(self):
         update = self._user_update
         existing_user_settings = {
-            "archive:view": {
-                "default": "mgrid",
-                "label": "Users archive view format",
-                "type": "string",
-                "category": "archive",
-                "allowed": [
-                    "mgrid",
-                    "compact"
-                ],
-                "view": "mgrid"
+            "email:notification": {
+                "view": "compact"
             }
         }
 
         PreferencesService.update_user_prefs(self, update, existing_user_settings)
-        self.assertEqual(update["user_preferences"]["archive:view"]["label"], "Testing user preferences")
+        self.assertEqual(update["user_preferences"]["email:notification"]["label"], "Testing user preferences")

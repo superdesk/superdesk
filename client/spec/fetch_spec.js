@@ -20,7 +20,6 @@ describe('Fetch', function() {
                     itemEL = elem;
                     return browser.actions().mouseMove(itemEL).perform();
                 }).then(function() {
-                    itemEL.element(by.className('more-activity-toggle')).click();
                     expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
                     expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
                 });
@@ -55,10 +54,8 @@ describe('Fetch', function() {
             return changeUrl('/#/workspace/content');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');
-        }).then(
-            content.setListView
-        );
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
+        });
+        expect(element.all(by.repeater('items._items')).count()).toBe(2);
     });
 
     it('can fetch from ingest with menu', function() {

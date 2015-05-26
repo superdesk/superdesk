@@ -86,13 +86,11 @@ class PreferencesResource(Resource):
         'category': 'feature'
     })
 
-    superdesk.register_default_user_preference('archive:view', {
+    superdesk.register_default_user_preference('list:view', {
         'type': 'string',
-        'allowed': ['mgrid', 'compact'],
-        'view': 'mgrid',
-        'default': 'mgrid',
-        'label': 'Users archive view format',
-        'category': 'archive'
+        'allowed': ['compact', 'extended'],
+        'view': 'extended',
+        'default': 'extended',
     })
 
     superdesk.register_default_user_preference('editor:theme', {

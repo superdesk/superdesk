@@ -25,4 +25,5 @@ e2e-test-results/
 *.sublime-project
 nbproject/
 coveralls.json
+chrome*
 lcov.info

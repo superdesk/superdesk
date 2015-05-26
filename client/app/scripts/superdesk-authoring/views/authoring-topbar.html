@@ -1,4 +1,9 @@
 <div id="subnav" class="subnav" ng-class="{'auth-sendto': views.send}">
+    <div class="button-stack">
+        <button class="navbtn resize"
+            ng-click="layout.closeEditor()">&mapsto;</button>
+    </div>
+
     <div class="authoring-topbar clearfix pull-left">
         <button class="stage stage-label" ng-show="stage" ng-click="openStage()">{{ stage.name }}</button>
         <div class="state-label state-{{item.state}}">{{item.state}}</div>
@@ -12,7 +17,8 @@
     <div class="button-stack right-stack">
         <button class="btn btn-medium pull-left" ng-if="action === 'view' && item._locked && can_unlock() && itemActions.save" ng-click="unlock()" translate>Unlock</button>
 
-        <button class="btn btn-medium pull-left"
+        <button id="authoring-edit-btn"
+            class="btn btn-medium pull-left"
             ng-show="action === 'view' && !item._locked && itemActions.edit"
             ng-click="lock()"
             translate>Edit</button>
@@ -105,11 +111,12 @@
             </div>
         </div>
 
-        <button id="send-to-btn" ng-show="privileges.move == 1 && _editable && isActionAllowed(item, 'move')"
+        <button id="send-to-btn"
+            ng-controller="Workflow as workflow"
+            ng-show="privileges.move == 1 && _editable && workflow.isActionAllowed(item, 'move')"
             class="navbtn navbtn-hover" title="{{ :: 'Send to desk' | translate }}"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
         </button>
-
     </div>
 </div>

@@ -39,20 +39,12 @@ a:hover {
 // ------------------------------------
 #main-container {
 	position:absolute;
-	top:0; right: 0; left:0;
-	padding-top:@topspace;
+	top: @topspace; right: 0; left:0; bottom: 0;
 	.box-sizing(border-box);
-	height:100%;
 	background: @background-main;
-	overflow-y:visible;
 	.transition( all 0.3s ease);
-	overflow-x:hidden; 
 	&.menu {
 		left: @sf-main-menu-width !important;
-		.subnav {
-			left: @sf-main-menu-width;
-			right: 0 !important;
-		}
 	}
 }
 
@@ -62,12 +54,11 @@ a:hover {
 
 .main-section {
 	position:absolute;
-	top: @subnav-height+@topspace;
+	top: @subnav-height;
 	bottom:0; left:0; right:0; 
 	margin:0;
 	padding:0;
 	z-index:1;
-	padding-bottom:35px !important; /* because of scratchpad*/
 	&.with-subnav {
 		.preview-layout {
 			top : @nav-height;
@@ -82,12 +73,15 @@ a:hover {
 			}
 		}
 	}
-}
 
-.main-section.search {
-	top: @topspace;
-}
+	&.search {
+		top: 0;
+	}
 
+	&.archive {
+		bottom: 30px;
+	}
+}
 
 // Preview layout
 // ------------------------------------
@@ -131,21 +125,21 @@ a:hover {
 		position:absolute;
 		background: @background-main;
 		top: 0;
-		right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
+		right: 0;
 		left: 0; bottom:0;
-		border-right: 1px solid #d0d0d0;
 		overflow: auto;
 		overflow-x: hidden;
 		z-index: 1;
 		.transition(right ease 0.2s);
 		.shadow-list-holder {
-			padding: 20px 20px 20px+@bottom-view-padding 20px;
+			padding: 20px;
 		}
 		> header {
 			background-color:@sd-background;
 		}
 		> .content {
-			overflow: auto;
+			overflow-y: scroll;
+			padding: 20px;
 		}
 	}
 	.preview-pane {
@@ -413,4 +407,65 @@ a:hover {
 			}
 		}
 	}
+}
+
+// content list + authoring
+
+.list-layout {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+
+	&.extended {
+		width: 50%;
+	}
+
+	&.compact {
+		width: 34%;
+	}
+
+	&.max {
+		width: 100%;
+	}
+
+	&.min {
+		width: 48px;
+	}
+}
+
+.item-layout {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+	.border-box();
+	border-left: 1px solid #d0d0d0;
+
+	&.extended {
+		width: 50%;
+	}
+
+	&.compact {
+		width: 66%;
+	}
+
+	&.max {
+		width: 0;
+	}
+
+	&.min {
+		left: 48px;
+	}
+
+	.auth-screen {
+		left: 0;
+	}
+}
+
+.navbtn.resize {
+	width: 48px;
+	font-size: 21px;
+	font-weight: normal;
 }

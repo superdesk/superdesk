@@ -6,13 +6,14 @@ var workspace = require('./helpers/workspace'),
     content = require('./helpers/content'),
     multicontent = require('./helpers/multicontent');
 
-describe('multi content view', function() {
+// todo(petr): those features should go to list
+xdescribe('multi content view', function() {
 
     beforeEach(function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
         content.setListView();
-        content.actionOnItem('Edit item', 0);
+        content.editItem(0);
         authoring.showMulticontent();
     });
 

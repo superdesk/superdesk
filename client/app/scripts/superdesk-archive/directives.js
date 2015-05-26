@@ -293,12 +293,11 @@
 
                     scope.$watch('view', function(view) {
                         switch (view) {
-                        case 'mlist':
-                        case 'compact':
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
-                            break;
-                        default:
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
+                            case 'compact':
+                                scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
+                                break;
+                            default:
+                                scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
                         }
                     });
 
@@ -467,20 +466,6 @@
                 }
             };
         }])
-
-        .directive('sdGridLayout', function() {
-            return {
-                templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',
-                scope: {items: '='},
-                link: function(scope, elem, attrs) {
-                    scope.view = 'mgrid';
-
-                    scope.preview = function(item) {
-                        scope.previewItem = item;
-                    };
-                }
-            };
-        })
 
         .service('familyService', ['api', 'desks', function(api, desks) {
             this.fetchItems = function(familyId, excludeItem) {

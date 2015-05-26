@@ -633,11 +633,12 @@
         'referrer',
         'macros',
         '$timeout',
-        '$q'
+        '$q',
+        '$rootScope'
     ];
     function AuthoringDirective(superdesk, notify, gettext, adminPublishSettingsService,
                                 desks, authoring, api, session, lock, privileges,
-                                ContentCtrl, $location, referrer, macros, $timeout, $q) {
+                                ContentCtrl, $location, referrer, macros, $timeout, $q, $rootScope) {
         return {
             link: function($scope) {
                 var _closing;
@@ -655,6 +656,15 @@
                 $scope.$watch('origItem', function(new_value, old_value) {
                     $scope.itemActions = authoring.itemActions(new_value);
                 });
+
+                $scope.publish_enabled = function() {
+                    return $scope.origItem && !$scope.origItem.marked_for_not_publication &&
+                    $scope.origItem.task && $scope.origItem.task.desk &&
+                    (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
+                     ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
+                     ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
+                };
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
@@ -1508,6 +1518,43 @@
         };
     }
 
+    AuthoringEmbeddedDirective.$inject = ['$controller'];
+    function AuthoringEmbeddedDirective($controller) {
+        var templateUrl = 'scripts/superdesk-authoring/views/authoring.html';
+        return {
+            scope: {
+                item: '=',
+                action: '@',
+                layout: '='
+            },
+            template: '<div ng-if="item" ng-include="template"></div>',
+            controller: ['$scope', AuthoringEmbeddedDirectiveController]
+        };
+
+        function AuthoringEmbeddedDirectiveController($scope) {
+            $scope.$watch('item', function(item) {
+                $scope.template = null;
+                if (item) {
+                    $scope.layout.openItem(item);
+                    $scope.$applyAsync(function($scope) {
+                        $scope.template = templateUrl;
+                        initAuthoring($scope);
+                    });
+                } else {
+                    $scope.layout.closeItem();
+                }
+            });
+        }
+
+        function initAuthoring($scope) {
+            $controller(AuthoringController, {
+                $scope: $scope,
+                item: $scope.item,
+                action: $scope.action
+            });
+        }
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.activity',
@@ -1539,6 +1586,7 @@
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
+        .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -1641,18 +1689,6 @@
                     },
                     authoring: true
                 })
-                .activity('view.text', {
-                    label: gettext('View item'),
-                    priority: 2000,
-                    icon: 'fullscreen',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('read_only', 'content_article', data.item);
-                    }],
-                    filters: [{action: 'list', type: 'archive'}],
-                    condition: function(item) {
-                        return item.type !== 'composite';
-                    }
-                })
                 .activity('read_only.content_article', {
                     category: '/authoring',
                     href: '/authoring/:_id/view',
@@ -1671,6 +1707,7 @@
                     authoring: true
                 });
         }])
+
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('move', {
                 type: 'http',

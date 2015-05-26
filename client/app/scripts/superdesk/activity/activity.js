@@ -249,7 +249,9 @@ define([
                      * @returns {string}
                      */
                     link: function getSuperdeskLink(activity, data) {
-                        return activityService.getLink(this.activity(activity), data);
+                        if (this.activity(activity)) {
+                            return activityService.getLink(this.activity(activity), data);
+                        }
                     },
 
                     /**

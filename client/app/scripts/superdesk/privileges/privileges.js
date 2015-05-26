@@ -30,10 +30,8 @@ function PrivilegesService($rootScope, $q, preferencesService) {
      */
     this.setUserPrivileges = function setUserPrivileges(privileges) {
         for (var privilege in privileges) {
-            if (privileges[privilege]) {
-                _privileges[privilege] = 1;
-            } else {
-                _privileges[privilege] = 0;
+            if (privileges.hasOwnProperty(privilege)) {
+                _privileges[privilege] = privileges[privilege] ? 1 : 0;
             }
         }
 

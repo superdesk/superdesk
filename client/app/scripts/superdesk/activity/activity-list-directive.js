@@ -3,8 +3,8 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['superdesk', 'activityService', 'workflowService', 'asset', 'notify',
-    function(superdesk, activityService, workflowService, asset, notify) {
+    return ['superdesk', 'activityService', 'workflow', 'asset', 'notify',
+    function(superdesk, activityService, workflow, asset, notify) {
         return {
             scope: {
                 item: '=',
@@ -45,7 +45,7 @@ define([
                             }, true);
                         }
 
-                        return workflowService.isActionAllowed(scope.item, activity.action);
+                        return workflow.isActionAllowed(scope.item, activity.action);
                     });
 
                     scope.limit = scope.activities.length > 6 ? 5 : 6 ;

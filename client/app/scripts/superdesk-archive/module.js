@@ -106,6 +106,79 @@ define([
         };
     }
 
+    ListLayoutController.$inject = ['preferences'];
+    function ListLayoutController(preferences) {
+        var MAX_VIEW = Object.freeze({max: true}),
+            MIN_VIEW = Object.freeze({min: true}),
+            ITEM_VIEW = Object.freeze({extended: true}),
+            COMPACT_VIEW = Object.freeze({compact: true});
+
+        this.view = MAX_VIEW;
+
+        this.openItem = openItem;
+        this.closeItem = closeItem;
+        this.closeList = closeList;
+        this.openList = openList;
+        this.closeEditor = closeEditor;
+        this.compactView = toggleCompactView;
+        this.extendedView = toggleExtendedView;
+
+        var vm = this,
+            listView;
+
+        return activate();
+
+        function activate() {
+            preferences.get('list:view').then(function(listPreferences) {
+                listView = listPreferences && listPreferences.view === 'compact' ? COMPACT_VIEW : ITEM_VIEW;
+            });
+        }
+
+        function openItem(item) {
+            vm.item = item;
+            openList();
+        }
+
+        function closeItem() {
+            vm.item = null;
+            closeEditor();
+        }
+
+        function closeList() {
+            vm.view = MIN_VIEW;
+        }
+
+        function openList() {
+            vm.view = listView;
+        }
+
+        function closeEditor() {
+            vm.view = MAX_VIEW;
+        }
+
+        function toggleCompactView() {
+            vm.view = listView = COMPACT_VIEW;
+            savePreferences();
+        }
+
+        function toggleExtendedView() {
+            vm.view = listView = ITEM_VIEW;
+            savePreferences();
+        }
+
+        function savePreferences() {
+            var view = Object.keys(vm.view)[0];
+            preferences.update({'list:view': {view: view}}, 'list:view');
+        }
+    }
+
+    function ListLayoutDirective() {
+        return {
+            controller: 'ListLayout',
+            controllerAs: 'layout'
+        };
+    }
+
     return angular.module('superdesk.archive', [
         'superdesk.search',
         'superdesk.archive.directives',
@@ -116,6 +189,10 @@ define([
 
         .service('spike', SpikeService)
         .service('multi', MultiService)
+
+        .controller('ListLayout', ListLayoutController)
+
+        .directive('sdListLayout', ListLayoutDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
