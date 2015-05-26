@@ -31,6 +31,11 @@
     <div class="main-article">
       <div class="fieldset">
         <div class="field">
+            <label for="template-name" translate>Template Name</label>
+            <input id="template-name" required
+              ng-model="template.template_name">
+        </div>
+        <div class="field">
             <label for="template-type" translate>Template Type</label>
             <select id="template-type" required
               ng-model="template.template_type"
