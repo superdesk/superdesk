@@ -62,7 +62,7 @@ define([
                     scope.items = null;
                     scope.keyword = null;
 
-                    scope.editable = false;
+                    scope.editable = true;
                     if (scope.$parent._editable != null) {
                         scope.editable = scope.$parent._editable;
                     }
