@@ -224,7 +224,6 @@ Feature: Link content in takes
         {
             "type": "text",
             "headline": "Take-1 headline=2",
-            "abstract": "Take-1 abstract",
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=2",
             "state": "draft",
@@ -252,7 +251,6 @@ Feature: Link content in takes
         {
             "type": "text",
             "headline": "Take-1 headline=3",
-            "abstract": "Take-1 abstract",
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=3",
             "state": "draft",
