@@ -451,6 +451,7 @@
 			position: absolute;
 			height: 32px;
 			border-top: 1px solid rgba(0,0,0,0.1);
+                        font-size: 0;
 			bottom: 0;
 			left: 0;
 			right: 0;
@@ -471,7 +472,7 @@
 					.actioning {
 						background-image: url("../../images/loading-small.gif");
 						background-repeat: no-repeat;
-	    				background-position: center;
+                                                background-position: center;
 						display: inline-block;
 						width: 100%;
 						height: 32px;
@@ -479,7 +480,15 @@
 						vertical-align: middle;
 						text-align: center;
 					}
+                                        i {
+                                            vertical-align: middle;
+                                        }
 				}
+                                .more-activity-dropdown {
+                                    li {
+                                        border-right: 0;
+                                    }
+                                }
 			}
 
 		}

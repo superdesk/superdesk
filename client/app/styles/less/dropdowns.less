@@ -331,7 +331,7 @@
 
 // Activity dropdowns
 // -------------------------------------------------
-.activity-dropdown {
+.activity-dropdown, .more-activity-dropdown {
     .dropdown-menu {
         .border-radius(0px);
         border:0;
@@ -339,6 +339,22 @@
         margin-top: -1px;
         &:before {
             display: none;
+        }
+    }
+}
+.more-activity-dropdown {
+    .dropdown-menu {
+        min-width: 0;
+        padding: 5px;
+        li {
+            display: inline-block;
+            vertical-align: middle;
+            a {
+                padding: 0;
+                i {
+                    margin-right: 0;
+                }
+            }
         }
     }
 }
