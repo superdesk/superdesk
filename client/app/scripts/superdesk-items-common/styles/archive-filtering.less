@@ -87,6 +87,63 @@
 				padding: 20px 15px;
 			}
 		}
+                .term-editor {
+                    + .dropdown-nested {
+                        position: absolute;
+                        right: 15px;
+                        margin-top: -22px;
+                        .dropdown-menu {
+                            max-height: 170px;
+                            .backlink {
+                                margin-top: 0;
+                            }
+                            button {
+                                font-size: 13px;
+                                padding: 5px 7px;
+                                color: #333333;
+                                height: auto;
+                                line-height: 18px;
+                                i { 
+                                    margin-top: -8px;
+                                    margin-right: 0;
+                                }
+                            }
+                            li {
+                                padding: 0;
+                                margin-left: 0;
+                            }
+                        }
+                    }
+                }
+                .terms {
+                    .user-select(none);
+                    clear: both;
+                    float: right;
+                    padding-top: 10px;
+                    margin-bottom: 15px;
+                    .clearfix();
+                    li {
+                        background: rgba(0,0,0,0.06);
+                        line-height: 26px;
+                        height: 26px;
+                        padding: 0 6px;
+                        .border-radius(3px);
+                        margin: 0 5px 5px 0;
+                        float: left;
+                        i {
+                            vertical-align: sub;
+                            margin-left: 5px;
+                            .opacity(40);
+                        }
+                        &:hover {
+                            cursor: pointer;
+                            background: rgba(0,0,0,0.1);
+                            i {
+                                .opacity(70);
+                            }
+                        }
+                    }
+                }
 	}
 
 

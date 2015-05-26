@@ -33,6 +33,31 @@
             $location.search('page', null);
         }
 
+        /*
+         * Function for finding object by string array for subject codes
+         */
+        this.getSubjectCodes = function (currentTags, subjectcodes) {
+            var queryArray = currentTags.selectedParameters, filteredArray = [];
+            if (!$location.search().q) {
+                return filteredArray;
+            }
+            for (var i = 0, queryArrayLength = queryArray.length; i < queryArrayLength; i++) {
+                var queryArrayElement = queryArray[i];
+                if (queryArrayElement.indexOf('subject.name') !== -1) {
+                    var elementName = queryArrayElement.substring(
+                            queryArrayElement.lastIndexOf('(') + 1,
+                            queryArrayElement.lastIndexOf(')')
+                            );
+                    for (var j = 0, subjectCodesLength = subjectcodes.length; j < subjectCodesLength; j++) {
+                        if (subjectcodes[j].name === elementName) {
+                            filteredArray.push(subjectcodes[j]);
+                        }
+                    }
+                }
+            }
+            return filteredArray;
+        };
+
         // sort public api
         this.setSort = sort;
         this.getSort = getSort;
@@ -566,20 +591,16 @@
             };
         }])
 
-        .directive('sdSearchTags', ['$location', '$route', 'tags', 'asset',
-            function($location, $route, tags, asset) {
+        .directive('sdSearchTags', ['$location', '$route', 'tags', 'asset', 'metadata',
+            function($location, $route, tags, asset, metadata) {
             return {
                 scope: {},
                 templateUrl: asset.templateUrl('superdesk-search/views/search-tags.html'),
                 link: function(scope, elem) {
 
-                    var update = function() {
-                        tags.initSelectedFacets().then(function(currentTags) {
-                            scope.tags = currentTags;
-                        });
-                    };
-
-                    update();
+                    tags.initSelectedFacets().then(function(currentTags) {
+                        scope.tags = currentTags;
+                    });
 
                     scope.removeFilter = function(type, key) {
                         tags.removeFacet(type, key);
@@ -590,6 +611,15 @@
                         if (params.q) {
                             params.q = params.q.replace(param, '').trim();
                             $location.search('q', params.q || null);
+                            // If it is subject code, remove it from left bar, too
+                            if (param.indexOf('subject.name:') !== -1) {
+                                var elementName = param.substring(
+                                    param.lastIndexOf('(') + 1,
+                                    param.lastIndexOf(')')
+                                );
+
+                                metadata.removeSubjectTerm(elementName);
+                            }
                         }
                     };
                 }
@@ -883,7 +913,8 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', function($location, $timeout, asset, api) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata',
+            function($location, $timeout, asset, api, tags, search, metadata) {
             return {
                 scope: {
                     repo: '=',
@@ -1020,6 +1051,50 @@
                             }, 0, false);
                         });
                     });
+
+                    /*
+                     * Converting to object and adding pre-selected subject codes to list in left sidebar
+                     */
+                    metadata
+                        .fetchSubjectcodes()
+                        .then(function () {
+                            scope.subjectcodes = metadata.values.subjectcodes;
+                            return tags.initSelectedFacets();
+                        })
+                        .then(function (currentTags) {
+                            scope.subjectitems = {
+                                subject: search.getSubjectCodes(currentTags, scope.subjectcodes)
+                            };
+                        });
+
+                    /*
+                     * Filter content by subject search
+                     */
+                    scope.subjectSearch = function (item) {
+                        tags.initSelectedFacets().then(function (currentTags) {
+                            var subjectCodes = search.getSubjectCodes(currentTags, scope.subjectcodes);
+                            if (item.subject.length > subjectCodes.length) {
+                                /* Adding subject codes to filter */
+                                var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')',
+                                    query = getQuery(),
+                                    q = (query === null ? addItemSubjectName : query + ' ' + addItemSubjectName);
+
+                                $location.search('q', q);
+                            } else {
+                                /* Removing subject codes from filter */
+                                var params = $location.search();
+                                if (params.q) {
+                                    for (var j = 0; j < subjectCodes.length; j++) {
+                                        if (item.subject.indexOf(subjectCodes[j]) === -1) {
+                                            var removeItemSubjectName = 'subject.name:(' + subjectCodes[j].name + ')';
+                                            params.q = params.q.replace(removeItemSubjectName, '').trim();
+                                            $location.search('q', params.q || null);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    };
                 }
             };
         }])

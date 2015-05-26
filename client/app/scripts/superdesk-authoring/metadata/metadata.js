@@ -144,8 +144,8 @@ function MetadataWordsListEditingDirective() {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-MetadataListEditingDirective.$inject = [];
-function MetadataListEditingDirective() {
+MetadataListEditingDirective.$inject = ['metadata'];
+function MetadataListEditingDirective(metadata) {
     return {
         scope: {
             item: '=',
@@ -158,6 +158,8 @@ function MetadataListEditingDirective() {
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
+
+            metadata.subjectScope = scope;
 
             scope.$watch('list', function(items) {
                 if (!items || !items[0].hasOwnProperty('parent')) {
@@ -226,15 +228,7 @@ function MetadataListEditingDirective() {
             };
 
             scope.removeTerm = function(term) {
-                var temp = _.without(scope.item[scope.field], term);
-
-                //build object
-                var o = {};
-                o[scope.field] = temp;
-
-                _.extend(scope.item, o);
-
-                scope.change({item: scope.item});
+                metadata.removeSubjectTerm(term);
             };
         }
     };
@@ -245,6 +239,7 @@ function MetadataService(api, $q, staticMetadata) {
 
     var service = {
         values: {},
+        subjectScope: null,
         loaded: null,
         fetchMetadataValues: function() {
             var self = this;
@@ -275,6 +270,22 @@ function MetadataService(api, $q, staticMetadata) {
                     return _item;
                 });
             }
+        },
+        removeSubjectTerm: function(term) {
+            var self = this,
+                tempItem = {},
+                subjectCodesArray = self.subjectScope.item[self.subjectScope.field],
+                filteredArray = _.without(subjectCodesArray, term);
+
+            if (filteredArray.length === subjectCodesArray.length) {
+                _.remove(filteredArray, {name: term});
+            }
+
+            tempItem[self.subjectScope.field] = filteredArray;
+
+            _.extend(self.subjectScope.item, tempItem);
+
+            self.subjectScope.change({item: self.subjectScope.item});
         },
         initialize: function() {
             if (!this.loaded) {
