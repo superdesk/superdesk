@@ -21,11 +21,15 @@
 
         Output Channel:
         <select id="outputChannelFilter" ng-model="selectedFilterChannel" ng-change="filterSchedule()"
-                ng-options="outputChannel.name for outputChannel in outputChannels" style="width: 20%"></select>
+                ng-options="outputChannel.name for outputChannel in outputChannels" style="width: 20%">
+                <option value=""></option>
+        </select>
 
         Subscriber:
         <select id="subscriberFilter" ng-model="selectedFilterSubscriber" ng-change="filterSchedule()"
-                ng-options="subscriber.name for subscriber in subscribers" style="width: 20%"></select>
+                ng-options="subscriber.name for subscriber in subscribers" style="width: 20%">
+                <option value=""></option>
+        </select>
     </span>
 
 	<hr />
@@ -49,7 +53,7 @@
 			</tr>
 		</thead>
         <tbody>
-            <tr ng-repeat="queue_item in publish_queue" class="{{queue_item.state | queueStatus}}">
+            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state | queueStatus}}">
                 <td>
                     <input type="checkbox" ng-show="queue_item.state !== 'canceled'" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected">
                     {{ queue_item.published_seq_num }}
