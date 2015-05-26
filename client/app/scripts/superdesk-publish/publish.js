@@ -150,18 +150,13 @@
     function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
-
         $scope.outputChannels = null;
         $scope.outputChannelLookup = {};
-
         $scope.publish_queue = [];
-
         $scope.selectedFilterChannel = null;
         $scope.selectedFilterSubscriber = null;
-
         $scope.multiSelectCount = 0;
         $scope.selectedQueueItems = [];
-
         $scope.showResendBtn = false;
         $scope.showCancelBtn = false;
 
@@ -213,7 +208,6 @@
 
                     $scope.publish_queue = queuedItems;
                     $scope.lastRefreshedAt = new Date();
-
                     $scope.showResendBtn = false;
                     $scope.showCacnelBtn = false;
                 });
@@ -243,6 +237,7 @@
             api.publish_queue.save([], queueItems).then(
                 function(response) {
                     $scope.reload();
+                    $scope.cancelSelection();
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues)) {
@@ -277,6 +272,8 @@
                 _.forEach($scope.selectedQueueItems, function(item) {
                     api.publish_queue.save(item, _updates).then(
                         function(response) {
+                            $scope.selectedQueueItems = _.without($scope.selectedQueueItems, item);
+                            $scope.multiSelectCount = $scope.selectedQueueItems.length;
                         },
                         function(response) {
                             notify.error(gettext('Error: Failed to cancel the schedule with Story Name: ' + item.unique_name));
@@ -297,9 +294,9 @@
 
                 $scope.publish_queue = queuedItems;
                 $scope.lastRefreshedAt = new Date();
-
                 $scope.showResendBtn = false;
-                $scope.showCacnelBtn = false;
+                $scope.showCancelBtn = false;
+                $scope.selectedQueueItems = [];
             });
         };
 
@@ -339,6 +336,7 @@
             $scope.selectedFilterChannel = null;
             $scope.selectedFilterSubscriber = null;
             $scope.selectedQueueItems = [];
+            $scope.multiSelectCount = 0;
             $scope.filterSchedule();
         };
 
