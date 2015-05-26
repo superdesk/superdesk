@@ -207,7 +207,7 @@ class BasePublishService(BaseService):
                             wrong_formatted_channels.append(output_channel)
                             continue
 
-                        pub_seq_num, formatted_doc = formatter.format(doc, output_channel)
+                        pub_seq_num, formatted_doc = formatter.format(doc, output_channel, selector_codes)
 
                         formatted_item = {'formatted_item': formatted_doc, 'format': output_channel['format'],
                                           'item_id': doc['_id'], 'item_version': doc.get('last_version', 0),

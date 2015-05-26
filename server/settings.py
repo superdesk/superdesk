@@ -281,3 +281,10 @@ MAX_VALUE_OF_PUBLISH_SEQUENCE = 9999
 
 # Defines default value for Source to be set for manually created articles
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = env('DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES', 'AAP')
+
+# Determines if the ODBC publishing mechanism will be used, If enabled then pyodbc must be installed along with it's
+# dependencies
+ODBC_PUBLISH = env('ODBC_PUBLISH', None)
+# ODBC test server connection string
+ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
+                                  'DRIVER=FreeTDS;DSN=NEWSDB;UID=???;PWD=???;DATABASE=News')

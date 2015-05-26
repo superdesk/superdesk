@@ -21,6 +21,10 @@
         email: {
             label: 'Email',
             templateUrl: 'scripts/superdesk-publish/views/email-config.html'
+        },
+        ODBC: {
+            label: 'ODBC',
+            templateUrl: 'scripts/superdesk-publish/views/odbc-config.html'
         }
     });
 
