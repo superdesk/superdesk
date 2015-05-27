@@ -36,7 +36,7 @@ exports.config = {
             takeScreenShotsOnlyForFailedSpecs: true
         }));
         */
-        require('./spec/helpers/setup');
+        require('./spec/helpers/setup')({fixture_profile: 'app_prepopulate_data'});
         require('jasmine-reporters');
         jasmine.getEnv().addReporter(
             new jasmine.JUnitXmlReporter('e2e-test-results', true, true)
