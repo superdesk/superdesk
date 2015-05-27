@@ -16,7 +16,7 @@
 				                 {{desk.name}}
 				                 <span sd-switch class="pull-right" ng-model="editGroups[desk._id].selected" ng-click="setDeskInfo(desk._id)"></span>
 				             </div>
-				             <ul class="stages clearfix" ng-if="editGroups[desk._id]">
+				             <ul class="stages clearfix" ng-if="editGroups[desk._id].selected">
 				                 <li ng-repeat="stage in deskStages[desk._id]">
 				                     <span sd-check ng-model="editGroups[stage._id].selected" ng-click="setStageInfo(stage._id)"></span> {{stage.name}}
 				                 </li>

@@ -167,7 +167,14 @@
                         return scope.editGroups[key];
                     });
                     values = _.filter(values, function(item) {
-                        return item.type !== 'desk';
+                        if (item.type === 'desk' || !item.selected) {
+                            return false;
+                        }
+                        if (item.type === 'stage') {
+                            var desk = scope.stageLookup[item._id].desk;
+                            return scope.editGroups[desk].selected;
+                        }
+                        return true;
                     });
                     values = _.sortBy(values, function(item) {
                         return item.order;
