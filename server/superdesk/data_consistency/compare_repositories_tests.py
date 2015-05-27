@@ -17,7 +17,7 @@ from eve.methods.common import resolve_document_etag
 from time import sleep
 
 
-class RebuildIndexTestCase(TestCase):
+class CompareRepositoriesTestCase(TestCase):
 
     def setUp(self):
         super().setUp()

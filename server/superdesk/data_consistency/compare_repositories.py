@@ -12,6 +12,8 @@
 import superdesk
 import requests
 from superdesk.utc import utcnow
+from eve.utils import ParsedRequest
+import json
 
 
 class CompareRepositories(superdesk.Command):
@@ -19,17 +21,20 @@ class CompareRepositories(superdesk.Command):
 
     def get_mongo_items(self, consistency_record, resource_name):
         # get the records from mongo in chunks
+        superdesk.resources['archive'].endpoint_schema['datasource']['projection'] = None
         service = superdesk.get_resource_service(resource_name)
         cursor = service.get_from_mongo(None, {})
         count = cursor.count()
         no_of_buckets = len(range(0, count, self.default_page_size))
         mongo_items = []
         updated_mongo_items = []
+        request = ParsedRequest()
+        request.projection = json.dumps({'_etag': 1, '_updated': 1})
         for x in range(0, no_of_buckets):
             skip = x * self.default_page_size
             print('Page : {}, skip: {}'.format(x + 1, skip))
             # don't get any new records since the elastic items are retrieved
-            cursor = service.get_from_mongo(None, {'_created': {'$lte': consistency_record['started_at']}})
+            cursor = service.get_from_mongo(request, {'_created': {'$lte': consistency_record['started_at']}})
             cursor.skip(skip)
             cursor.limit(self.default_page_size)
             cursor = list(cursor)
