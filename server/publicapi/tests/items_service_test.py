@@ -739,8 +739,11 @@ class OnFetchedMethodTestCase(ItemsServiceTestCase):
 
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.req_context = self.app.test_request_context('items/')
+        self.req_context.push()
 
     def tearDown(self):
+        self.req_context.pop()
         self.app_context.pop()
         super().tearDown()
 
@@ -833,3 +836,19 @@ class OnFetchedMethodTestCase(ItemsServiceTestCase):
             'self': {'href': 'link/to/item_555', 'title': 'Item'}
         }
         self.assertEqual(documents[1].get('_links'), expected_links)
+
+    def test_sets_collection_self_link_to_relative_original_url(self):
+        result = {
+            '_items': [],
+            '_links': {
+                'self': {'href': 'foo/bar/baz'}
+            }
+        }
+
+        request_url = 'items?start_date=1975-12-31#foo'
+        with self.app.test_request_context(request_url):
+            instance = self._make_one(datasource='items')
+            instance.on_fetched(result)
+
+        self_link = result.get('_links', {}).get('self', {}).get('href')
+        self.assertEqual(self_link, 'items?start_date=1975-12-31')
