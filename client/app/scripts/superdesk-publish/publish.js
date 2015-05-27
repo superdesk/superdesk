@@ -251,38 +251,6 @@
             );
         };
 
-        $scope.cancelSchedule = function(item) {
-            var _updates = {'state': 'canceled', 'error_message': 'canceled by user'};
-
-            if (angular.isDefined(item)) {
-                api.publish_queue.save(item, _updates).then(
-                    function(response) {
-                    },
-                    function(response) {
-                        if (angular.isDefined(response.data._issues)) {
-                            if (angular.isDefined(response.data._issues['validator exception'])) {
-                                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                            }
-                        } else {
-                            notify.error(gettext('Error: Failed to cancel the schedule'));
-                        }
-                    }
-                );
-            } else if ($scope.multiSelectCount > 0) {
-                _.forEach($scope.selectedQueueItems, function(item) {
-                    api.publish_queue.save(item, _updates).then(
-                        function(response) {
-                            $scope.selectedQueueItems = _.without($scope.selectedQueueItems, item);
-                            $scope.multiSelectCount = $scope.selectedQueueItems.length;
-                        },
-                        function(response) {
-                            notify.error(gettext('Error: Failed to cancel the schedule with Story Name: ' + item.unique_name));
-                        }
-                    );
-                });
-            }
-        };
-
         $scope.filterSchedule = function() {
             $scope.multiSelectCount = 0;
             fetchPublishQueue().then(function(queue) {
