@@ -46,4 +46,83 @@ class RebuildIndexTestCase(TestCase):
             self.assertEquals(consistency_record['identical'], 99)
             self.assertEquals(consistency_record['mongo_only'], 0)
             self.assertEquals(consistency_record['elastic_only'], 99)
-            self.assertEquals(consistency_record['inconsistent'], 99)
+            self.assertEquals(consistency_record['inconsistent'], 0)
+
+    def test_processing_results_all_equal(self):
+        with self.app.app_context():
+            consistency_record = {}
+            elastic_items = [('item-1', 'abc'), ('item-2', 'xyz')]
+            mongo_items = [('item-1', 'abc'), ('item-2', 'xyz')]
+            updated_mongo_items = []
+
+            CompareRepositories().process_results(consistency_record,
+                                                  elastic_items,
+                                                  mongo_items,
+                                                  updated_mongo_items)
+
+            self.assertEquals(consistency_record['mongo'], 2)
+            self.assertEquals(consistency_record['elastic'], 2)
+            self.assertEquals(consistency_record['identical'], 2)
+            self.assertEquals(consistency_record['mongo_only'], 0)
+            self.assertEquals(consistency_record['elastic_only'], 0)
+            self.assertEquals(consistency_record['inconsistent'], 0)
+
+    def test_processing_results_all_different(self):
+        with self.app.app_context():
+
+            consistency_record = {}
+            elastic_items = [('item-1', 'abc'), ('item-2', 'xyz')]
+            mongo_items = [('item-1', 'abcd'), ('item-2', 'wxyz')]
+            updated_mongo_items = []
+
+            CompareRepositories().process_results(consistency_record,
+                                                  elastic_items,
+                                                  mongo_items,
+                                                  updated_mongo_items)
+
+            self.assertEquals(consistency_record['mongo'], 2)
+            self.assertEquals(consistency_record['elastic'], 2)
+            self.assertEquals(consistency_record['identical'], 0)
+            self.assertEquals(consistency_record['mongo_only'], 0)
+            self.assertEquals(consistency_record['elastic_only'], 0)
+            self.assertEquals(consistency_record['inconsistent'], 2)
+
+    def test_processing_results_mongo_has_updated_items(self):
+        with self.app.app_context():
+
+            consistency_record = {}
+            elastic_items = [('item-1', 'abc'), ('item-2', 'xyz')]
+            mongo_items = [('item-1', 'abcd'), ('item-2', 'wxyz')]
+            updated_mongo_items = ['item-1']
+
+            CompareRepositories().process_results(consistency_record,
+                                                  elastic_items,
+                                                  mongo_items,
+                                                  updated_mongo_items)
+
+            self.assertEquals(consistency_record['mongo'], 2)
+            self.assertEquals(consistency_record['elastic'], 2)
+            self.assertEquals(consistency_record['identical'], 0)
+            self.assertEquals(consistency_record['mongo_only'], 0)
+            self.assertEquals(consistency_record['elastic_only'], 0)
+            self.assertEquals(consistency_record['inconsistent'], 1)
+
+    def test_processing_results_distinct_items_exists(self):
+        with self.app.app_context():
+
+            consistency_record = {}
+            elastic_items = [('item-1', 'abc'), ('item-2', 'xyz'), ('item-3', 'xyz')]
+            mongo_items = [('item-1', 'abc'), ('item-2', 'xyz'), ('item-4', 'xyz')]
+            updated_mongo_items = []
+
+            CompareRepositories().process_results(consistency_record,
+                                                  elastic_items,
+                                                  mongo_items,
+                                                  updated_mongo_items)
+
+            self.assertEquals(consistency_record['mongo'], 3)
+            self.assertEquals(consistency_record['elastic'], 3)
+            self.assertEquals(consistency_record['identical'], 2)
+            self.assertEquals(consistency_record['mongo_only'], 1)
+            self.assertEquals(consistency_record['elastic_only'], 1)
+            self.assertEquals(consistency_record['inconsistent'], 0)
