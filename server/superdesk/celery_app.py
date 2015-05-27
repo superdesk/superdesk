@@ -49,6 +49,8 @@ def cast_item(o):
         for k, v in o.items():
             if isinstance(v, dict):
                 cast_item(v)
+            elif isinstance(v, bool):
+                pass
             else:
                 o[k] = try_cast(v)
 
