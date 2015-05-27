@@ -50,3 +50,4 @@ def get_formatter(format_type, article_type):
 import apps.publish.formatters.nitf_formatter  # NOQA
 import apps.publish.formatters.aap_ipnews_formatter  # NOQA
 import apps.publish.formatters.anpa_formatter  # NOQA
+import apps.publish.formatters.ninjs_formatter  # NOQA

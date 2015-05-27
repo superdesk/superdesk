@@ -411,6 +411,9 @@ class FormatterError(SuperdeskPublishError):
     def AnpaFormatterError(cls, exception=None, destination=None):
         return FormatterError(7003, exception, destination)
 
+    @classmethod
+    def ninjsFormatterError(cls, exception=None, destination=None):
+        return FormatterError(8003, exception, destination)
 
 class SubscriberError(SuperdeskPublishError):
     _codes = {
@@ -515,3 +518,13 @@ class PublishFileError(SuperdeskPublishError):
     @classmethod
     def fileSaveError(cls, exception=None, destinations=None):
         return PublishFileError(13000, exception, destinations)
+
+
+class PublishPublicAPIError(SuperdeskPublishError):
+    _codes = {
+        14000: "Public API publish error",
+    }
+
+    @classmethod
+    def publicAPIError(cls, exception=None, destination=None):
+        return PublishPublicAPIError(14000, exception, destination)

@@ -33,3 +33,4 @@ import superdesk.publish.ftp  # NOQA
 import superdesk.publish.email  # NOQA
 import superdesk.publish.odbc  # NOQA
 import superdesk.publish.file_output  # NOQA
+import superdesk.publish.publicapi  # NOQA

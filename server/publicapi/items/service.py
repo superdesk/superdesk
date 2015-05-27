@@ -105,7 +105,7 @@ class ItemsService(BaseService):
 
         :param dict document: fetched MongoDB document representing the item
         """
-        self._set_uri(document)
+        document['uri'] = self._get_uri(document)
 
         for field_name in ('_id', '_etag', '_created', '_updated'):
             document.pop(field_name, None)
@@ -122,7 +122,7 @@ class ItemsService(BaseService):
             (the fetched items) and some metadata, e.g. pagination info
         """
         for document in result['_items']:
-            self._set_uri(document)
+            document['uri'] = self._get_uri(document)
 
             for field_name in ('_id', '_etag', '_created', '_updated'):
                 document.pop(field_name, None)
@@ -134,7 +134,7 @@ class ItemsService(BaseService):
                 url_parts.query
             )
 
-    def _set_uri(self, document):
+    def _get_uri(self, document):
         """Set the given document's `uri` content field.
 
         :param dict document: MongoDB document fetched from database
@@ -143,7 +143,7 @@ class ItemsService(BaseService):
             api_url=app.config['PUBLICAPI_URL'],
             endpoint=app.config['URLS'][self.datasource]
         )
-        document['uri'] = urljoin(resource_url, quote(document['_id']))
+        return urljoin(resource_url, quote(document['_id']))
 
     def _check_for_unknown_params(
         self, request, whitelist, allow_filtering=True
