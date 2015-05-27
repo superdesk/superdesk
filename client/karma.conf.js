@@ -17,6 +17,7 @@ module.exports = function(config) {
         files: [
             'app/scripts/bower_components/jquery/dist/jquery.js',
             'app/scripts/bower_components/angular/angular.js',
+            'app/scripts/bower_components/ng-lodash/build/ng-lodash.min.js',
             {pattern: 'app/**/*.js', included: false},
             {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
             'app/scripts/superdesk-*/**/*.html',
