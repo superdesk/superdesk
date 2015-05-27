@@ -28,7 +28,7 @@ class FormatterRegistry(type):
 class Formatter(metaclass=FormatterRegistry):
     """Base Formatter class for all types of Formatters like News ML 1.2, News ML G2, NITF, etc."""
 
-    def format(self, article, provider):
+    def format(self, article, provider, selector_codes=None):
         """Formats the article and returns the transformed string"""
         raise NotImplementedError()
 
@@ -48,3 +48,4 @@ def get_formatter(format_type, article_type):
 
 
 import apps.publish.formatters.nitf_formatter  # NOQA
+import apps.publish.formatters.aap_ipnews_formatter  # NOQA

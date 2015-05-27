@@ -22,7 +22,7 @@ class NITFFormatter(Formatter):
     """
     XML_ROOT = '<?xml version="1.0"?><!DOCTYPE nitf SYSTEM "../dtd/nitf-3-2.dtd">'
 
-    def format(self, article, destination):
+    def format(self, article, destination, selector_codes=None):
         try:
 
             pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)

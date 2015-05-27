@@ -387,12 +387,17 @@ class SuperdeskPublishError(SuperdeskError):
 
 class FormatterError(SuperdeskPublishError):
     _codes = {
-        7001: 'Article couldn"t be converted to NITF format'
+        7001: 'Article couldn"t be converted to NITF format',
+        7002: 'Article couldn"t be converted to AAP IPNews format'
     }
 
     @classmethod
     def nitfFormatterError(cls, exception=None, destination=None):
         return FormatterError(7001, exception, destination)
+
+    @classmethod
+    def AAPIpNewsFormatterError(clscls, exception=None, destination=None):
+        return FormatterError(7002, exception, destination)
 
 
 class SubscriberError(SuperdeskPublishError):
@@ -478,3 +483,13 @@ class PublishEmailError(SuperdeskPublishError):
     @classmethod
     def recipientNotFoundError(cls, exception=None, destination=None):
         return PublishEmailError(11001, exception, destination)
+
+
+class PublishODBCError(SuperdeskPublishError):
+    _codes = {
+        12000: "ODBC publish error"
+    }
+
+    @classmethod
+    def odbcError(cls, exception=None, destination=None):
+        return PublishODBCError(12000, exception, destination)
