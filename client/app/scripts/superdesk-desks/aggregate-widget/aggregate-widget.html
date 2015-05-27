@@ -1,0 +1,65 @@
+<div class="content-search" ng-class="{extended: agg.selected}" ng-controller="AggregateCtrl as agg">
+    <div class="search-container" ng-if="!agg.loading">
+        <div class="search-box">
+            <input type="text" placeholder="{{ :: 'Search' | translate }}"
+                ng-model="query"
+                ng-model-options="{debounce: 500}"
+                ng-change="agg.search(query)">
+        </div>
+
+        <div class="content-list">
+            <div class="desk" ng-repeat="group in agg.getGroups()">
+            
+                <div class="stage" ng-if="group.type === 'stage'" ng-show="total" ng-init="open = true">
+                    <div class="stage-header clearfix">
+                        <div class="line"></div>
+                        <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
+                            <i class="icon-chevron-down"></i>
+                        </button>
+                        <div  class="stage-name pull-left">
+                        {{agg.deskLookup[agg.stageLookup[group._id].desk].name}} : <span>{{agg.stageLookup[group._id].name}} {{group.type}}</span>
+                        </div>
+                        <span class="label pull-right">{{total}}</span>
+                    </div>
+                    <div class="stage-content" ng-show="open"
+                        sd-stage-items
+                        data-stage="group._id"
+                        data-total="total"
+                        data-allowed="true"
+                        data-show-empty="false"
+                        data-action="agg.preview(item)"
+                        data-selected="agg.selected"
+                        data-filter="agg.query">
+                    </div>
+                </div>
+            
+                <div class="stage" ng-if="group.type === 'search'" ng-show="total" ng-init="open = true">
+                    <div class="stage-header clearfix">
+                        <div class="line"></div>
+                        <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
+                            <i class="icon-chevron-down"></i>
+                        </button>
+                        <div class="stage-name pull-left">
+                        {{agg.searchLookup[group._id].name}}
+                        </div>
+                        <span class="label pull-right">{{total}}</span>
+                    </div>
+                    <div class="stage-content" ng-show="open"
+                        sd-stage-items
+                        data-saved-search="agg.searchLookup[group._id]"
+                        data-total="total"
+                        data-allowed="true"
+                        data-show-empty="false"
+                        data-action="agg.preview(item)"
+                        data-selected="agg.selected"
+                        data-filter="agg.query">
+                    </div>
+                </div>
+                
+        </div>
+        
+    </div>
+
+    <div ng-include="'scripts/superdesk-packaging/views/search-widget-preview.html'"></div>
+</div>
+
