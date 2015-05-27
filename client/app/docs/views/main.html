@@ -948,7 +948,7 @@
                                     <p>This is sample message inside modal!</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn" ng-click="close()" translate>Cancel</button>
+                                    <button class="btn" ng-click="closeModal()" translate>Cancel</button>
                                     <button class="btn btn-primary" ng-click="closeModal()" translate>Ok</button>
                                 </div>
                             </div>
@@ -967,6 +967,13 @@
                             scope.closeModal = function() {
                                 scope.isModalOpen = false;
                             };
+                            
+                            $(document).on('hidden.bs.modal', '.modal', function () {
+                                scope.modalActive = false;
+                                if (!scope.$$phase) {
+                                    scope.$digest();
+                                }
+                            });
                         </pre>
                     </div>
                     <p>Modal content itself is <strong>transcluded</strong>. Parts of modal are <code>modal-header</code>, <code>modal-body</code> and <code>modal-footer</code>. If presented, those parts have to be placed in the first level in html. Otherwise custom styling is needed.</p>

@@ -392,7 +392,12 @@
             $scope.desk.edit = null;
         };
 
-        $(document).on('hidden.bs.modal', '.modal', function () { $scope.modalActive = false; });
+        $(document).on('hidden.bs.modal', '.modal', function () {
+            $scope.modalActive = false;
+            if (!$scope.$$phase) {
+                $scope.$digest();
+            }
+        });
 
         $scope.remove = function(desk) {
             modal.confirm(gettext('Please confirm you want to delete desk.')).then(
@@ -411,6 +416,84 @@
                 }
             );
         };
+    }
+
+    AggregateWidgetCtrl.$inject = ['desks', 'preferencesService'];
+    function AggregateWidgetCtrl(desks, preferencesService) {
+
+        var PREFERENCES_KEY = 'agg:view',
+            self = this;
+
+        this.configured = false;
+        this.selected = null;
+        this.active = {};
+
+        this.setConfigured = function() {
+            this.configured = _.keys(this.active).length > 0;
+        };
+
+        desks.initialize()
+        .then(angular.bind(this, function() {
+            return preferencesService.get(PREFERENCES_KEY)
+                .then(angular.bind(this, function(active) {
+                    this.active = active != null ? active.active : {};
+                    this.setConfigured();
+                }));
+        }))
+        .then(angular.bind(this, function() {
+            return desks.fetchCurrentUserDesks()
+                .then(angular.bind(this, function (deskList) {
+                    this.desks = deskList;
+                    this.deskStages = desks.deskStages;
+                }));
+        }));
+
+        this.preview = function(item) {
+            this.selected = item;
+        };
+
+        this.closeModal = function() {
+            this.modalActive = false;
+        };
+
+        $(document).on('hidden.bs.modal', '.modal', function () {
+            self.closeModal();
+        });
+
+        this.edit = function() {
+            this.oldActive = this.active;
+            this.active = _.create(this.active);
+            this.modalActive = true;
+        };
+
+        this.cancel = function() {
+            this.active = this.oldActive;
+            this.closeModal();
+        };
+
+        this.isActive = angular.bind(this, function(item) {
+            if (this.searchAll || !this.configured) {
+                return true;
+            }
+
+            return !!this.active[item._id];
+        });
+
+        this.save = function() {
+            var updates = {};
+            updates[PREFERENCES_KEY] = {active: this.active};
+            preferencesService.update(updates, PREFERENCES_KEY)
+                .then(angular.bind(this, function() {
+                    this.setConfigured();
+                    this.closeModal();
+                }));
+        };
+
+        this.search = function(query) {
+            this.query = query;
+        };
+
+        this.searchAll = false;
     }
 
     var app = angular.module('superdesk.desks', [
