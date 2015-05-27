@@ -137,6 +137,13 @@
                     scope.closeModal();
                 };
 
+                $(document).on('hidden.bs.modal', '.modal', function () {
+                    scope.closeModal();
+                    if (!scope.$$phase) {
+                        scope.$digest();
+                    }
+                });
+
                 scope.setDeskInfo = function(_id) {
                     var item = scope.editGroups[_id];
                     item._id = _id;
