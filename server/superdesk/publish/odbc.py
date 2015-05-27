@@ -15,8 +15,10 @@ from superdesk import get_resource_service
 from superdesk.utc import utc
 from superdesk.errors import PublishODBCError
 import superdesk
+
 try:
     import pyodbc
+
     pyodbc_available = True
 except ImportError:
     pyodbc_available = False
@@ -43,16 +45,16 @@ class ODBCPublishService(PublishService):
         config = output_channel.get('config', {})
 
         try:
-            conn = pyodbc.connect(config['connection_string'])
-            item = formatted_item['formatted_item']
+            with pyodbc.connect(config['connection_string']) as conn:
+                item = formatted_item['formatted_item']
 
-            q_item = get_resource_service('publish_queue').find_one(req=None, formatted_item_id=formatted_item['_id'])
-            item['publish_date'] = q_item['_created'].replace(tzinfo=utc).astimezone(tz=None).strftime(
-                '%Y-%m-%d %H:%M:%S.%f')[:-3]
+                q_item = get_resource_service('publish_queue').find_one(req=None,
+                                                                        formatted_item_id=formatted_item['_id'])
+                item['publish_date'] = q_item['_created'].replace(tzinfo=utc).astimezone(tz=None).strftime(
+                    '%Y-%m-%d %H:%M:%S.%f')[:-3]
 
-            ret = self._CallStoredProc(conn, procName=config['stored_procedure'], paramDict=item)
-            conn.commit()
-            conn.close()
+                ret = self._CallStoredProc(conn, procName=config['stored_procedure'], paramDict=item)
+                conn.commit()
             return ret
         except Exception as ex:
             raise PublishODBCError(ex, output_channel)
@@ -68,6 +70,7 @@ class ODBCPublishService(PublishService):
              EXEC @ret = %s %s
              SELECT @ret""" % (procName, params)
         return int(conn.execute(sql).fetchone()[0])
+
 
 if pyodbc_available:
     register_transmitter('ODBC', ODBCPublishService(), errors)
