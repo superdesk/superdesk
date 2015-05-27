@@ -95,6 +95,48 @@ class ItemsService(BaseService):
 
         return super().get(req, lookup)
 
+    def on_fetched_item(self, document):
+        """Event handler when a single item is retrieved from database.
+
+        It sets the item's `uri` field and removes all the fields added by the
+        `Eve` framework that are not part of the NINJS standard (except for
+        the HATEOAS `_links` object).
+
+        :param dict document: fetched MongoDB document representing the item
+        """
+        self._set_uri(document)
+
+        for field_name in ('_id', '_etag', '_created', '_updated'):
+            document.pop(field_name, None)
+
+    def on_fetched(self, result):
+        """Event handler when a collection of items is retrieved from database.
+
+        For each item in the fetched collection it sets its `uri` field and
+        removes from it all the fields added by the `Eve` framework that are
+        not part of the NINJS standard (except for the HATEOAS `_links`
+        object).
+
+        :param dict result: dictionary contaning the list of MongoDB documents
+            (the fetched items) and some metadata, e.g. pagination info
+        """
+        for document in result['_items']:
+            self._set_uri(document)
+
+            for field_name in ('_id', '_etag', '_created', '_updated'):
+                document.pop(field_name, None)
+
+    def _set_uri(self, document):
+        """Set the given document's `uri` content field.
+
+        :param dict document: MongoDB document fetched from database
+        """
+        resource_url = '{api_url}/{endpoint}/'.format(
+            api_url=app.config['PUBLICAPI_URL'],
+            endpoint=app.config['URLS'][self.datasource]
+        )
+        document['uri'] = urljoin(resource_url, quote(document['_id']))
+
     def _check_for_unknown_params(
         self, request, whitelist, allow_filtering=True
     ):
@@ -380,16 +422,3 @@ class ItemsService(BaseService):
             return None
         else:
             return datetime.strptime(date_str, '%Y-%m-%d').date()
-
-    # TODO: add docstrings and tests for the methods below
-    def _set_uri(self, doc):
-        resource_url = app.config['PUBLICAPI_URL'] + '/' + app.config['URLS'][self.datasource] + '/'
-        doc['uri'] = urljoin(resource_url, quote(doc['_id']))
-
-    def on_fetched_item(self, doc):
-        self._set_uri(doc)
-
-    def on_fetched(self, res):
-        for doc in res['_items']:
-            self._set_uri(doc)
-        return res
