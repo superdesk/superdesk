@@ -79,16 +79,50 @@ describe('keyboardManager', function() {
         expect(handler).toHaveBeenCalled();
     }));
 
-    it('can broadcast ctrl+key events', inject(function($rootScope, $document) {
-        var handler = jasmine.createSpy('handler');
-        $rootScope.$on('key:ctrl:t', handler);
+    it('can broadcast shortcut events', inject(function($rootScope, $document) {
+        var handlerCtrl = jasmine.createSpy('handle');
+        var handlerCtrlShift = jasmine.createSpy('handle');
+        $rootScope.$on('key:ctrl:t', handlerCtrl);
+        $rootScope.$on('key:ctrl:shift:t', handlerCtrlShift);
 
-        var e = $.Event('keydown');
-        e.which = 't'.charCodeAt(0);
-        e.ctrlKey = true;
-        $(document.body).trigger(e);
-
+        elemKeydown('t', true);
         $rootScope.$digest();
-        expect(handler).toHaveBeenCalled();
+
+        expect(handlerCtrl).toHaveBeenCalled();
+        expect(handlerCtrlShift).not.toHaveBeenCalled();
+
+        elemKeydown('t', true, true);
+        $rootScope.$digest();
+
+        expect(handlerCtrl.calls.count()).toBe(1);
+        expect(handlerCtrlShift).toHaveBeenCalled();
     }));
+
+    it('can catch ctrl+shift events', inject(function($rootScope) {
+        var p = document.createElement('p');
+        p.contentEditable = true;
+        document.body.appendChild(p);
+        elemKeydown('t', true, false, p);
+
+        var handle = jasmine.createSpy('handle');
+        $rootScope.$on('key:ctrl:shift:t', handle);
+
+        elemKeydown('t', true, false, p);
+        $rootScope.$digest();
+
+        expect(handle).not.toHaveBeenCalled();
+
+        elemKeydown('t', true, true, p);
+        $rootScope.$digest();
+
+        expect(handle).toHaveBeenCalled();
+    }));
+
+    function elemKeydown(which, ctrl, shift, elem) {
+        var e = $.Event('keydown');
+        e.which = which.charCodeAt(0);
+        e.ctrlKey = ctrl;
+        e.shiftKey = shift;
+        $(elem || document.body).trigger(e);
+    }
 });

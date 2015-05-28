@@ -420,6 +420,7 @@ angular.module('superdesk.editor', [])
                 });
 
                 scope.$on('spellcheck:run', renderSpellcheck);
+                scope.$on('key:ctrl:shift:s', renderSpellcheck);
 
                 function updateModel() {
                     if (editor.readOnly) {
