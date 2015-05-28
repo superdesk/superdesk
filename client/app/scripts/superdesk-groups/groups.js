@@ -133,13 +133,6 @@
             $scope.group.edit = null;
         };
 
-        $(document).on('hidden.bs.modal', '.modal', function () {
-            $scope.modalActive = false;
-            if (!$scope.$$phase) {
-                $scope.$digest();
-            }
-        });
-
         $scope.remove = function(group) {
             modal.confirm(gettext('Are you sure you want to delete group?')).then(
                 function removeGroup() {

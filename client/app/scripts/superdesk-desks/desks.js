@@ -392,13 +392,6 @@
             $scope.desk.edit = null;
         };
 
-        $(document).on('hidden.bs.modal', '.modal', function () {
-            $scope.modalActive = false;
-            if (!$scope.$$phase) {
-                $scope.$digest();
-            }
-        });
-
         $scope.remove = function(desk) {
             modal.confirm(gettext('Please confirm you want to delete desk.')).then(
                 function runConfirmed() {

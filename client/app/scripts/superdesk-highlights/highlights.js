@@ -276,13 +276,6 @@
             $scope.modalActive = false;
         };
 
-        $(document).on('hidden.bs.modal', '.modal', function () {
-            $scope.modalActive = false;
-            if (!$scope.$$phase) {
-                $scope.$digest();
-            }
-        });
-
         $scope.save = function() {
             var _new = !_config._id;
             $scope.configEdit.desks = assignedDesks();
