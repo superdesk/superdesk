@@ -58,7 +58,6 @@ define([
                                     activity.unbind();
                                 }
                                 activity.unbind = scope.$on('key:' + activity.key, function() {
-                                    console.log(activity);
                                     scope.run(activity);
                                 });
                             }

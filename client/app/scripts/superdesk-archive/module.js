@@ -154,12 +154,11 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     action: 'spike',
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
-                        item.state !== 'killed' &&
-                        item.state !== 'published' &&
-                        item.state !== 'corrected' &&
-                        item.package_type !== 'takes';
-                    }
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
+                    },                    
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).spike;
+                    }]
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -183,12 +182,10 @@ define([
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {duplicate: 1},
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
-                            item.state !== 'killed' &&
-                            item.package_type !== 'takes';
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
-                    additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() !== 'personal';
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).duplicate;
                     }]
                 })
                 .activity('copy-content', {
@@ -213,23 +210,21 @@ define([
                     condition: function(item) {
                         return item.lock_user === null || angular.isUndefined(item.lock_user);
                     },
-                    additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() === 'personal';
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).copy;
                     }]
                 })
                 .activity('New Take', {
                     label: gettext('New Take'),
-                    icon: 'copy',
+                    icon: 'plus-small',
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
                     condition: function(item) {
-                        var state = (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
-                            item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted') &&
-                            (angular.isUndefined(item.takes) || item.takes.last_take === item._id) &&
-                            (angular.isUndefined(item.more_coming) || !item.more_coming);
-
-                        return state;
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).new_take;
+                    }],
                     controller: ['data', '$rootScope', 'desks', 'authoring', 'notify', 'superdesk',
                         function(data, $rootScope, desks, authoring, notify, superdesk) {
                             authoring.linkItem(data.item, null, desks.getCurrentDeskId())
@@ -245,14 +240,15 @@ define([
                 })
                 .activity('Re-write', {
                     label: gettext('Re-write'),
-                    icon: 'copy',
+                    icon: 'multi-star-color',
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
                     condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user)) &&
-                            _.contains(['published', 'corrected'], item.state) &&
-                            (item.type === 'text' || item.type === 'preformatted');
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).re_write;
+                    }],
                     controller: ['data', '$location', 'api', 'notify', 'session', 'desks', 'superdesk',
                         function(data, $location, api, notify, session, desks, superdesk) {
                             var pick_fields = ['family_id', 'abstract', 'anpa-category',

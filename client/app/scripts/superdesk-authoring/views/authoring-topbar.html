@@ -10,27 +10,25 @@
     </div>
 
     <div class="button-stack right-stack">
-        <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && _isInProductionStates" ng-click="unlock()" translate>Unlock</button>
+        <button class="btn btn-medium pull-left" ng-if="action === 'view' && item._locked && can_unlock() && itemActions.save" ng-click="unlock()" translate>Unlock</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="!sending && !_editable && !item._locked && _isInProductionStates && publish_enabled()"
+            ng-show="action === 'view' && !item._locked && itemActions.save"
             ng-click="lock()"
             translate>Edit</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="!sending && !_editable && !item._locked && item.state === 'scheduled'"
+            ng-show="action === 'view' && !item._locked && itemActions.deschedule"
             ng-click="deschedule()"
             translate>Deschedule</button>
 
         <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates
-                && item.state !== 'scheduled' && !takes_package"
+            ng-show="action === 'view' && !item._locked && itemActions.correct"
             ng-click="openAction('correct')"
             translate>Correct</button>
 
         <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates
-                && item.state !== 'scheduled' && !takes_package"
+            ng-show="action === 'view' && !item._locked && itemActions.kill"
             ng-click="openAction('kill')"
             translate>Kill</button>
 
@@ -39,7 +37,7 @@
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="save(item)"
             ng-show="_editable"
-            ng-if = "save_visible"
+            ng-if = "itemActions.save && action !== 'view'"
             ng-disabled="!save_enabled()"
             translate>Save</button>
 
@@ -51,21 +49,9 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "publish_enabled()"
+            ng-if = "(itemActions.publish || itemActions.kill || itemActions.correct) && action !== 'view'"
             ng-show="_editable"
             translate>{{action === "edit" ? "Publish": action}}</button>
-
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="markForPublication(true)"
-            ng-if="_isInProductionStates && not_for_publication_visible"
-            ng-show="_editable && not_for_publication_visible"
-            translate>Mark for Not Publication</button>
-
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="markForPublication(false)"
-            ng-if="_isInProductionStates && !not_for_publication_visible"
-            ng-show="_editable && !not_for_publication_visible"
-            translate>Mark for Publication</button>
 
         <div class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>

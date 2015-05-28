@@ -31,6 +31,25 @@
         more_coming: false
     };
 
+    var DEFAULT_ACTIONS = {
+        publish: 0,
+        correct: 0,
+        kill: 0,
+        deschedule: 0,
+        new_take: 0,
+        re_write: 0,
+        save: 0,
+        edit: 0,
+        mark_item: 0,
+        duplicate: 0,
+        copy: 0,
+        unlock: 0,
+        view: 1,
+        spike: 0,
+        unspike: 0,
+        package_item: 0
+    };
+
     /**
      * Extend content of dest
      *
@@ -136,14 +155,23 @@
         };
     }
 
-    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm'];
-    function AuthoringService($q, api, lock, autosave, confirm) {
+    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm', 'privileges', 'desks'];
+    function AuthoringService($q, api, lock, autosave, confirm, privileges, desks) {
+        var self = this;
 
         this.limits = {
             slugline: 24,
             headline: 64,
             'abstract': 160
         };
+
+        //TODO: have to trap desk update event for refereshing users desks.
+        this.userDesks = [];
+
+        desks.fetchCurrentUserDesks()
+            .then(function(desks_list) {
+                self.userDesks = desks_list._items;
+        });
 
         /**
          * Open an item for editing
@@ -327,6 +355,82 @@
             }
 
             return api.save('archive_link', {}, data, item);
+        };
+
+        /**
+        * Actions that it can perform on an item
+        * @param {Object} item : item
+        * @param {Object} privileges : user privileges
+        */
+        this.itemActions = function(item) {
+            if (item._id == 'urn:newsml:localhost:2015-05-28T23:31:46.721988:3afdc40a-e0fb-4b3c-aaf9-b7e0cf5ee79b') {
+                console.log(item);
+            }
+
+            var user_privileges = privileges.privileges;
+            var action = angular.extend({}, DEFAULT_ACTIONS);
+
+            if ((angular.isUndefined(item) || angular.isUndefined(user_privileges)) ||
+                (angular.isDefined(item.package_type) && item.package_type === 'takes') ||
+                (item.state === 'killed' || item.last_publish_action)) {
+                return action;
+            }
+
+            if (item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted') &&
+                (angular.isUndefined(item.takes) || item.takes.last_take === item._id) &&
+                (angular.isUndefined(item.more_coming) || !item.more_coming)) {
+                action.new_take = 1;
+            }
+
+            // item is published state - corrected, published, scheduled, killed
+            if (self.isPublished(item)) {                
+                if (item.state === 'scheduled') {
+                    action.deschedule = 1;
+                } else if (item.state === 'published' || item.state === 'corrected') {
+                    action.kill = user_privileges.kill;
+                    action.correct = user_privileges.correct;
+                }
+
+                if (_.contains(['published', 'corrected'], item.state) &&
+                    _.contains(['text', 'preformatted'], item.type) &&
+                    (angular.isUndefined(item.more_coming) || !item.more_coming)) {
+                    action.re_write = 1;
+                }
+
+            } else {
+                // production states i.e in_progress, routed, fetched, submitted.
+                action.save = 1;
+                if (!item.marked_for_not_publication) {
+                    if (item.task && item.task.desk && user_privileges.publish) {
+                        action.publish = 1;
+                    }
+                }
+
+                if (item.type !== 'composite') {
+                    action.edit = 1;
+                }
+
+                if (item.state === 'spiked') {
+                    action.unspike = 1;
+                } else {
+                    action.spike = 1;
+                }
+            }
+
+            //check for desk membership for edit rights.
+            if (item.task && item.task.desk) {
+                // in production
+                action.duplicate = user_privileges.duplicate;
+                var desk = _.find(self.userDesks, {'_id': item.task.desk});
+                if (!desk) {
+                    action = angular.extend({}, DEFAULT_ACTIONS);
+                }
+            } else {
+                // personal
+                action.copy = 1;
+            }
+
+            return action;
         };
     }
 
@@ -524,33 +628,36 @@
 
                 $scope.privileges = privileges.privileges;
                 $scope.content = new ContentCtrl($scope);
-
                 $scope.dirty = false;
                 $scope.views = {send: false};
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                $scope.itemActions = authoring.itemActions($scope.origItem);
 
-                $scope.publish_enabled = function() {
-                    return $scope.origItem  && !$scope.origItem.marked_for_not_publication &&
-                    $scope.origItem.task && $scope.origItem.task.desk &&
-                    (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
-                     ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
-                     ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
-                     ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
+                $scope.$watch('origItem', function(new_value, old_value) {
+                    $scope.itemActions = authoring.itemActions(new_value);
+                });
 
-                };
+                // $scope.publish_enabled = function() {
+                //     return $scope.origItem  && !$scope.origItem.marked_for_not_publication &&
+                //     $scope.origItem.task && $scope.origItem.task.desk &&
+                //     (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
+                //      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
+                //      ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
+                //      ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
+                // };
 
-                $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+                // $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
+                // $scope.not_for_publication_visible = $scope.publish_enabled() && !authoring.isPublished($scope.origItem) &&
+                //     !$scope.origItem.marked_for_not_publication;
+                //$scope.takes_package = (angular.isDefined($scope.origItem.package_type) &&
+                //     $scope.origItem.package_type === 'takes');
+
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
-
-                $scope.not_for_publication_visible = $scope.publish_enabled() && !authoring.isPublished($scope.origItem) &&
-                    !$scope.origItem.marked_for_not_publication;
-
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
                 $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
-                $scope.takes_package = (angular.isDefined($scope.origItem.package_type) && $scope.origItem.package_type === 'takes');
 
                 function resolveDestinations() {
                     if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
@@ -630,7 +737,7 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
-                        $scope.not_for_publication_visible = $scope.publish_enabled() && res.marked_for_not_publication === false;
+                        //$scope.not_for_publication_visible = $scope.publish_enabled() && res.marked_for_not_publication === false;
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -822,34 +929,36 @@
                     return $scope.dirty || $scope.item._autosave;
                 };
 
-                function updateEditorState (result) {
-                    extendItem($scope.item, result);
+                // function updateEditorState (result) {
+                //     extendItem($scope.item, result);
 
-                    //The current $digest cycle will mark $scope.dirty = true.
-                    //We need to postpone this code block for the next cycle.
-                    $timeout(function() {
-                        $scope.origItem.lock_user = $scope.item.lock_user = result.lock_user;
-                        $scope.item._locked = result._locked;
-                        $scope.origItem.lock_session = $scope.item.lock_session = result.lock_session;
-                        $scope._editable = $scope.item._editable = true;
-                        $scope.dirty = false;
-                        $scope.item._autosave = null;
-                    }, 200);
-                }
+                //     //The current $digest cycle will mark $scope.dirty = true.
+                //     //We need to postpone this code block for the next cycle.
+                //     $timeout(function() {
+                //         $scope.origItem.lock_user = $scope.item.lock_user = result.lock_user;
+                //         $scope.item._locked = result._locked;
+                //         $scope.origItem.lock_session = $scope.item.lock_session = result.lock_session;
+                //         $scope._editable = $scope.item._editable = true;
+                //         $scope.dirty = false;
+                //         $scope.item._autosave = null;
+                //     }, 200);
+                // }
 
+                // call the function to unlock and lock the story for editing.
                 $scope.unlock = function() {
                     lock.unlock($scope.item).then(function(unlocked_item) {
-                        lock.lock(unlocked_item, true).then(updateEditorState);
+                        $location.path('/authoring/' + $scope.item._id);
                     });
                 };
 
                 $scope.lock = function() {
-                    var path = $location.path();
-                    if (path.indexOf('/view') < 0) {
-                        lock.lock($scope.item, true).then(updateEditorState);
-                    } else {
-                        superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
-                    }
+                    superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
+                    // var path = $location.path();
+                    // if (path.indexOf('/view') < 0) {
+                    //     lock.lock($scope.item, true).then(updateEditorState);
+                    // } else {
+                    //     superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
+                    // }
                 };
 
                 $scope.openAction = function(action) {
@@ -871,11 +980,15 @@
                 $scope.$on('item:lock', function(_e, data) {
                     if ($scope.item._id === data.item && !_closing &&
                         session.sessionId !== data.lock_session) {
-                        var path = $location.path();
-                        if (path.indexOf('/view') < 0) {
-                            authoring.lock($scope.item, data.user);
+                        authoring.lock($scope.item, data.user);
+                        if ($scope.action !== 'view') {
                             $location.url($scope.referrerUrl);
                         }
+                        // var path = $location.path();
+                        // if (path.indexOf('/view') < 0) {
+                        //     authoring.lock($scope.item, data.user);
+                        //     $location.url($scope.referrerUrl);
+                        // }
                     }
                 });
 
@@ -887,6 +1000,10 @@
                         $scope.item._locked = false;
                         $scope.item.lock_session = null;
                         $scope.item.lock_user = null;
+                        if ($scope.action !== 'view') {
+                            console.log($scope.referrerUrl);
+                            $location.url($scope.referrerUrl);
+                        }
                     }
                 });
 
@@ -1463,12 +1580,11 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' &&
-                        item.state !== 'published' &&
-                        item.state !== 'scheduled' &&
-                        item.state !== 'corrected' &&
-                        item.state !== 'killed';
-                    }
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
+                    },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).edit;
+                    }]
                 })
                 .activity('kill.text', {
                     label: gettext('Kill item'),
@@ -1479,10 +1595,11 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' &&
-                        (item.state === 'published' ||  item.state === 'corrected') &&
-                        !item.last_publish_action && (item.lock_user === null || angular.isUndefined(item.lock_user));
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).kill;
+                    }],
                     privileges: {kill: 1}
                 })
                 .activity('kill.content_article', {
@@ -1511,10 +1628,11 @@
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite' &&
-                        (item.state === 'published' ||  item.state === 'corrected')  &&
-                        !item.last_publish_action && (item.lock_user === null || angular.isUndefined(item.lock_user));
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).correct;
+                    }],
                     privileges: {correct: 1}
                 })
                 .activity('correct.content_article', {
