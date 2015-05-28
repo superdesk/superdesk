@@ -20,9 +20,14 @@
      */
     .run(['$rootScope', '$document', function KeyEventBroadcast($rootScope, $document) {
         $document.on('keydown', function(e) {
-            if (e.target === document.body) { // $document.body is empty when testing
+            var ctrlKey = e.ctrlKey || e.metaKey,
+                shiftKey = e.shiftKey,
+                isGlobal = ctrlKey && shiftKey;
+            if (e.target === document.body || isGlobal) { // $document.body is empty when testing
                 var character = String.fromCharCode(e.which).toLowerCase(),
-                    modifier = e.ctrlKey || e.metaKey ? 'ctrl:' : '';
+                    modifier = '';
+                modifier += ctrlKey ? 'ctrl:' : '';
+                modifier += shiftKey ? 'shift:' : '';
                 $rootScope.$broadcast('key:' + modifier + character, e);
             }
         });
