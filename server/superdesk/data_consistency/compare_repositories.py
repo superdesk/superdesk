@@ -44,15 +44,16 @@ class CompareRepositories(superdesk.Command):
 
         return mongo_items, updated_mongo_items
 
-    def get_elastic_items(self, elasticsearch_index, elasticsearch_url):
+    def get_elastic_items(self, resource_name, elasticsearch_index, elasticsearch_url):
         # get the all hits from elastic
         post_data = {'fields': '_etag'}
-        response = requests.post('{}/{}/{}'.format(elasticsearch_url,
-                                                   elasticsearch_index,
-                                                   '_search?size=250000&q=*:*'),
+        response = requests.post('{}/{}/{}/{}'.format(elasticsearch_url,
+                                 elasticsearch_index,
+                                 resource_name,
+                                 '_search?size=250000&q=*:*'),
                                  params=post_data)
         elastic_results = response.json()["hits"]["hits"]
-        elastic_items = [(elastic_item['_id'], elastic_item["fields"]['_etag'][0])
+        elastic_items = [(elastic_item['_id'], elastic_item.get('fields', {}).get('_etag', [0])[0])
                          for elastic_item in elastic_results]
         return elastic_items
 
@@ -104,7 +105,7 @@ class CompareRepositories(superdesk.Command):
         consistency_record['started_at'] = utcnow()
         consistency_record['resource_name'] = resource_name
 
-        elastic_items = self.get_elastic_items(elasticsearch_index, elasticsearch_url)
+        elastic_items = self.get_elastic_items(resource_name, elasticsearch_index, elasticsearch_url)
         mongo_items, updated_mongo_items = self.get_mongo_items(consistency_record, resource_name)
         self.process_results(consistency_record, elastic_items, mongo_items, updated_mongo_items)
         superdesk.get_resource_service('consistency').post([consistency_record])

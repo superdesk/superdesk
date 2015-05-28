@@ -125,7 +125,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'system:compare_repositories': {
         'task': 'superdesk.data_consistency.compare_repos',
-        'schedule': timedelta(hours=1)
+        'schedule': timedelta(minutes=30)
     }
 }
 
