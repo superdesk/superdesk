@@ -76,8 +76,10 @@ define(['angular'], function(angular) {
                     });
 
                     $(document).on('hidden.bs.modal', '.modal', function () {
-                        scope.$parent.modalActive = false;
-                        scope.$parent.$evalAsync();
+                        if (scope.$parent) {
+                            scope.$parent.modalActive = false;
+                            scope.$parent.$evalAsync();
+                        }
                     });
 
                     function initialized() {
