@@ -50,7 +50,7 @@ MacrosController.$inject = ['$scope', 'macros', 'desks'];
 function MacrosController($scope, macros, desks) {
     macros.get().then(function() {
         var currentDeskId = desks.getCurrentDeskId();
-        if (currentDeskId != null) {
+        if (currentDeskId !== 'personal') {
             macros.getByDesk(desks.getCurrentDesk().name).then(function(_macros) {
                 $scope.macros = _macros;
             });

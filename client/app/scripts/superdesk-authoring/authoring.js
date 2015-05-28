@@ -1149,7 +1149,7 @@
                 scope.sendAndContinue = function() {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
-                    var activeDeskId = desks.activeDeskId;
+                    var activeDeskId = desks.getCurrentDeskId();
                     scope.item.more_coming = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {

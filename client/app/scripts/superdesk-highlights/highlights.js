@@ -35,7 +35,7 @@
                 return promise[key];
             } else {
                 var criteria = {};
-                if (desk) {
+                if (desk !== 'personal') {
                     criteria = {where: {'$or': [
                                                 {'desks': desk},
                                                 {'desks': {'$size': 0}}
@@ -110,7 +110,7 @@
                     return scope.item && scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
                 };
 
-                highlightsService.get(desks.activeDeskId).then(function(result) {
+                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlights = result._items;
                 });
             }
@@ -229,7 +229,7 @@
                     });
                 };
 
-                highlightsService.get(desks.activeDeskId).then(function(result) {
+                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlights = result._items;
                     scope.hasHighlights = _.size(scope.highlights) > 0;
                 });

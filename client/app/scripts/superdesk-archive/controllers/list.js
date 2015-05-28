@@ -90,7 +90,7 @@ define([
 
         var refreshItems = _.debounce(_refresh, 100);
         function _refresh() {
-            if (desks.activeDeskId) {
+            if (desks.getCurrentDeskId() !== 'personal') {
                 if ($scope.published) {
                     resource = api('published');
                 } else {
