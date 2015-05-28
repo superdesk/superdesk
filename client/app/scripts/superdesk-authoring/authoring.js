@@ -1326,7 +1326,7 @@
 
                 var fetchTemplates = function() {
                     var params = {
-                        max_results: NUM_ITEMS || undefined,
+                        max_results: NUM_ITEMS,
                         where: {
                             template_type: 'create',
                             template_desk: desks.activeDeskId
@@ -1340,9 +1340,7 @@
 
                 scope.$watch(function() {
                     return desks.activeDeskId;
-                }, function() {
-                    fetchTemplates();
-                });
+                }, fetchTemplates);
             }
         };
     }
@@ -1396,9 +1394,7 @@
                     scope.selectAction(template);
                 };
 
-                scope.$watch('options', function() {
-                    fetchTemplates();
-                }, true);
+                scope.$watchCollection('options', fetchTemplates);
             }
         };
     }

@@ -44,7 +44,7 @@
         <div class="field">
               <label for="template-desk" translate>Desk</label>
               <div class="control">
-                  <select ng-model="template.template_desk" ng-options="desk._id as desk.name for desk in desks._items">
+                  <select id="template-desk" ng-model="template.template_desk" ng-options="desk._id as desk.name for desk in desks._items">
                       <option value="" translate>Any</option>
                   </select>
               </div>
