@@ -38,7 +38,7 @@ class CompareRepositories(superdesk.Command):
             cursor.skip(skip)
             cursor.limit(self.default_page_size)
             cursor = list(cursor)
-            mongo_items.extend([(mongo_item['_id'], mongo_item['_etag']) for mongo_item in cursor])
+            mongo_items.extend([(str(mongo_item['_id']), mongo_item['_etag']) for mongo_item in cursor])
             updated_mongo_items.extend([mongo_item['_id'] for mongo_item in cursor
                                        if mongo_item['_updated'] > consistency_record['started_at']])
 
@@ -53,7 +53,7 @@ class CompareRepositories(superdesk.Command):
                                  '_search?size=250000&q=*:*'),
                                  params=post_data)
         elastic_results = response.json()["hits"]["hits"]
-        elastic_items = [(elastic_item['_id'], elastic_item.get('fields', {}).get('_etag', [0])[0])
+        elastic_items = [(str(elastic_item['_id']), elastic_item.get('fields', {}).get('_etag', [0])[0])
                          for elastic_item in elastic_results]
         return elastic_items
 
