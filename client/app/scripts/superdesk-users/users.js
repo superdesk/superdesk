@@ -193,8 +193,8 @@
         return userservice;
     }
 
-    UserListController.$inject = ['$scope', '$location', 'api'];
-    function UserListController($scope, $location, api) {
+    UserListController.$inject = ['$scope', '$location', 'api', 'lodash'];
+    function UserListController($scope, $location, api, _) {
         var DEFAULT_SIZE = 25;
 
         $scope.selected = {user: null};
@@ -874,9 +874,9 @@
         }])
 
         .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session',
-            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager', 'lodash',
         function(api, gettext, notify, usersService, userList, session, $location, $route, superdesk, features,
-                 asset, privileges, desks, keyboardManager) {
+                 asset, privileges, desks, keyboardManager, _) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
