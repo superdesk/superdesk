@@ -23,8 +23,9 @@ define('angular', [], function() {
 define('main', [
     'gettext',
     'angular',
-    'superdesk/superdesk'
-], function(gettext, angular, superdesk) {
+    'superdesk/superdesk',
+    'lodash'
+], function(gettext, angular, superdesk, lodash) {
     'use strict';
 
     return function bootstrap(config, apps) {
