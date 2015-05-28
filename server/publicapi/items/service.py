@@ -15,11 +15,12 @@ import logging
 from datetime import datetime, timedelta
 from eve.utils import ParsedRequest
 from flask import current_app as app
+from flask import request
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 from publicapi.items import ItemsResource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
-from urllib.parse import urljoin, quote
+from urllib.parse import urljoin, urlparse, quote
 from werkzeug.datastructures import MultiDict
 
 
@@ -125,6 +126,13 @@ class ItemsService(BaseService):
 
             for field_name in ('_id', '_etag', '_created', '_updated'):
                 document.pop(field_name, None)
+
+        if '_links' in result:  # might not be present if HATEOAS disabled
+            url_parts = urlparse(request.url)
+            result['_links']['self']['href'] = '{}?{}'.format(
+                url_parts.path[1:],  # relative path, remove opening slash
+                url_parts.query
+            )
 
     def _set_uri(self, document):
         """Set the given document's `uri` content field.
