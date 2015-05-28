@@ -28,4 +28,4 @@ class LegalArchiveDataLayer(Mongo):
         self.remove(resource, lookup)
 
     def create(self, resource, docs, **kwargs):
-        self.insert(resource, docs)
+        return self.insert(resource, docs)

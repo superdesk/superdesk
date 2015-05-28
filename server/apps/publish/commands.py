@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class PublishedRemoveExpiredContent(superdesk.Command):
+class RemoveExpiredPublishContent(superdesk.Command):
     """
     Remove expired items from published.
     """
@@ -28,11 +28,14 @@ class PublishedRemoveExpiredContent(superdesk.Command):
         logger.info('Removing expired content from published')
         now = date_to_str(utcnow())
         items = self.get_expired_items(now)
+
         while items.count() > 0:
             for item in items:
-                logger.info('deleting {} with headline {} -- expiry: {} now: {}'.
-                            format(item['_id'], item['headline'], item['expiry'], now))
-                superdesk.get_resource_service('published').delete_action({'_id': str(item['_id'])})
+                logger.info('deleting article of type {} with id {} and headline {} -- expired on: {} now: {}'.
+                            format(item['type'], item['_id'], item['headline'], item['expiry'], now))
+
+                superdesk.get_resource_service('published').remove_expired(item)
+
             items = self.get_expired_items(now)
 
     def get_expired_items(self, now):
@@ -52,4 +55,4 @@ class PublishedRemoveExpiredContent(superdesk.Command):
         }
         return query
 
-superdesk.command('publish:remove_expired', PublishedRemoveExpiredContent())
+superdesk.command('publish:remove_expired', RemoveExpiredPublishContent())
