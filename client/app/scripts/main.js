@@ -25,7 +25,7 @@ define('main', [
     'angular',
     'superdesk/superdesk',
     'lodash'
-], function(gettext, angular, superdesk, lodash) {
+], function(gettext, angular, superdesk, _) {
     'use strict';
 
     return function bootstrap(config, apps) {
