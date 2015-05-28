@@ -29,14 +29,15 @@
         };
     }
 
-    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'adminPublishSettingsService'];
-    function TemplatesDirective(gettext, notify, api, templates, modal, adminPublishSettingsService) {
+    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'adminPublishSettingsService', 'desks'];
+    function TemplatesDirective(gettext, notify, api, templates, modal, adminPublishSettingsService, desks) {
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
                 $scope.content_templates = null;
                 $scope.origTemplate = null;
                 $scope.template = null;
+                $scope.desks = null;
 
                 function fetchTemplates() {
                     templates.fetchContentTemplates().then(
@@ -45,6 +46,11 @@
                         }
                     );
                 }
+
+                desks.initialize()
+                .then(function() {
+                    $scope.desks = desks.desks;
+                });
 
                 $scope.types = templates.types;
 

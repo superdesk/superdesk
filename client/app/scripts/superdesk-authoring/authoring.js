@@ -1315,18 +1315,22 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api'];
-    function ContentCreateDirective(api) {
+    ContentCreateDirective.$inject = ['api', 'desks'];
+    function ContentCreateDirective(api, desks) {
         var NUM_ITEMS = 5;
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
+                scope.numItems = NUM_ITEMS;
                 scope.contentTemplates = null;
 
-                var fetchTemplates = function(numItems) {
+                var fetchTemplates = function() {
                     var params = {
-                        max_results: numItems || undefined,
-                        where: {template_type: 'create'}
+                        max_results: NUM_ITEMS || undefined,
+                        where: {
+                            template_type: 'create',
+                            template_desk: desks.activeDeskId
+                        }
                     };
                     api.content_templates.query(params)
                     .then(function(result) {
@@ -1334,30 +1338,18 @@
                     });
                 };
 
-                fetchTemplates(NUM_ITEMS);
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, function() {
+                    fetchTemplates();
+                });
             }
         };
     }
 
-    TemplateSelectDirective.$inject = ['api'];
-    function TemplateSelectDirective(api) {
+    TemplateSelectDirective.$inject = ['api', 'desks'];
+    function TemplateSelectDirective(api, desks) {
         var PAGE_SIZE = 10;
-
-        var fetchTemplates = function(page, keyword) {
-            page = page || 1;
-            var params = {
-                max_results: PAGE_SIZE,
-                page: page
-            };
-            var criteria = {template_type: 'create'};
-            if (keyword) {
-                criteria.template_name = {'$regex': keyword, '$options': '-i'};
-            }
-            params.where = JSON.stringify({
-                '$and': [criteria]
-            });
-            return api.content_templates.query(params);
-        };
 
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-template-select.html',
@@ -1366,6 +1358,29 @@
                 open: '='
             },
             link: function(scope) {
+                var fetchTemplates = function() {
+                    var page = scope.options.page || 1;
+                    var params = {
+                        max_results: PAGE_SIZE,
+                        page: page
+                    };
+                    var criteria = {
+                        template_type: 'create',
+                        template_desk: desks.activeDeskId
+                    };
+                    if (scope.options.keyword) {
+                        criteria.template_name = {'$regex': scope.options.keyword, '$options': '-i'};
+                    }
+                    params.where = JSON.stringify({
+                        '$and': [criteria]
+                    });
+                    api.content_templates.query(params)
+                    .then(function(result) {
+                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
+                        scope.templates = result;
+                    });
+                };
+
                 scope.maxPage = 1;
                 scope.options = {
                     keyword: null,
@@ -1382,11 +1397,7 @@
                 };
 
                 scope.$watch('options', function() {
-                    fetchTemplates(scope.options.page, scope.options.keyword)
-                    .then(function(result) {
-                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
-                        scope.templates = result;
-                    });
+                    fetchTemplates();
                 }, true);
             }
         };
