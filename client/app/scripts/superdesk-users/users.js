@@ -594,8 +594,7 @@
 
     return angular.module('superdesk.users', [
         'superdesk.activity',
-        'superdesk.asset',
-        'ngLodash'
+        'superdesk.asset'
     ])
 
         .controller('UserEditController', UserEditController) // make it available to user.profile
