@@ -43,6 +43,9 @@ class ConsistencyRecordResource(Resource):
         },
         'inconsistent': {
             'type': 'integer'
+        },
+        'records': {
+            'type': 'dict'
         }
     }
     datasource = {'default_sort': [('_created', -1)]}

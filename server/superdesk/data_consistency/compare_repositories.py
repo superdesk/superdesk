@@ -90,6 +90,16 @@ class CompareRepositories(superdesk.Command):
         consistency_record['elastic_only'] = len(elastic_only)
         consistency_record['inconsistent'] = len(different_items)
 
+        records = {}
+        if len(mongo_only) > 0:
+            records['mongo_only'] = list(mongo_only)
+        if len(elastic_only) > 0:
+            records['elastic_only'] = list(elastic_only)
+        if len(different_items) > 0:
+            records['inconsistent'] = list(different_items)
+
+        consistency_record['records'] = records
+
     def run(self, resource_name, elasticsearch_url, elasticsearch_index):
         """
         Compares the records in mongo and elastic for a given collection
