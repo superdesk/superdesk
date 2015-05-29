@@ -32,22 +32,22 @@
     };
 
     var DEFAULT_ACTIONS = {
-        publish: 0,
-        correct: 0,
-        kill: 0,
-        deschedule: 0,
-        new_take: 0,
-        re_write: 0,
-        save: 0,
-        edit: 0,
-        mark_item: 0,
-        duplicate: 0,
-        copy: 0,
-        unlock: 0,
-        view: 1,
-        spike: 0,
-        unspike: 0,
-        package_item: 0
+        publish: false,
+        correct: false,
+        kill: false,
+        deschedule: false,
+        new_take: false,
+        re_write: false,
+        save: false,
+        edit: false,
+        mark_item: false,
+        duplicate: false,
+        copy: false,
+        unlock: false,
+        view: true,
+        spike: false,
+        unspike: false,
+        package_item: false
     };
 
     /**
@@ -171,7 +171,7 @@
         desks.fetchCurrentUserDesks()
             .then(function(desks_list) {
                 self.userDesks = desks_list._items;
-        });
+            });
 
         /**
          * Open an item for editing
@@ -304,6 +304,11 @@
             return !!item.lock_user && !lock.isLocked(item);
         };
 
+        /**
+         * Test if an item is published
+         *
+         * @param {Object} item
+         */
         this.isPublished = function isPublished(item) {
             return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
         };
@@ -363,71 +368,78 @@
         * @param {Object} privileges : user privileges
         */
         this.itemActions = function(item) {
-            if (item._id == 'urn:newsml:localhost:2015-05-28T23:31:46.721988:3afdc40a-e0fb-4b3c-aaf9-b7e0cf5ee79b') {
-                console.log(item);
-            }
-
+            var current_item = item && angular.isDefined(item.archive_item) ? item.archive_item : item;
             var user_privileges = privileges.privileges;
             var action = angular.extend({}, DEFAULT_ACTIONS);
 
-            if ((angular.isUndefined(item) || angular.isUndefined(user_privileges)) ||
-                (angular.isDefined(item.package_type) && item.package_type === 'takes') ||
-                (item.state === 'killed' || item.last_publish_action)) {
+            // takes packages are readonly.
+            // killed item and item that have last publish action are readonly
+            if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
+                (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes') ||
+                (current_item.state === 'killed') ||
+                (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
                 return action;
             }
 
-            if (item.state !== 'killed' && (item.type === 'text' || item.type === 'preformatted') &&
-                (angular.isUndefined(item.takes) || item.takes.last_take === item._id) &&
-                (angular.isUndefined(item.more_coming) || !item.more_coming)) {
-                action.new_take = 1;
+            //if not the last published version
+            if ((angular.isDefined(item.archive_item) && item._version !== item.archive_item._version) &&
+                self.isPublished(current_item)) {
+                return action;
+            }
+
+            // new take should be on the text item that are closed or last take but not killed.
+            if (current_item.state !== 'killed' && (current_item.type === 'text' || current_item.type === 'preformatted') &&
+                (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) {
+                action.new_take = true;
             }
 
             // item is published state - corrected, published, scheduled, killed
-            if (self.isPublished(item)) {                
-                if (item.state === 'scheduled') {
-                    action.deschedule = 1;
-                } else if (item.state === 'published' || item.state === 'corrected') {
+            if (self.isPublished(current_item)) {
+                if (current_item.state === 'scheduled') {
+                    action.deschedule = true;
+                } else if (current_item.state === 'published' || current_item.state === 'corrected') {
                     action.kill = user_privileges.kill;
                     action.correct = user_privileges.correct;
                 }
 
-                if (_.contains(['published', 'corrected'], item.state) &&
-                    _.contains(['text', 'preformatted'], item.type) &&
-                    (angular.isUndefined(item.more_coming) || !item.more_coming)) {
-                    action.re_write = 1;
+                if (_.contains(['published', 'corrected'], current_item.state) &&
+                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) {
+                    action.re_write = true;
                 }
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
-                action.save = 1;
-                if (!item.marked_for_not_publication) {
-                    if (item.task && item.task.desk && user_privileges.publish) {
-                        action.publish = 1;
+                action.save = true;
+                if (!current_item.marked_for_not_publication) {
+                    if (current_item.task && current_item.task.desk && user_privileges.publish) {
+                        action.publish = true;
                     }
                 }
 
-                if (item.type !== 'composite') {
-                    action.edit = 1;
-                }
-
-                if (item.state === 'spiked') {
-                    action.unspike = 1;
-                } else {
-                    action.spike = 1;
-                }
+                action.edit = current_item.type !== 'composite';
+                action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
+                action.spike = current_item.state !== 'spiked' && user_privileges.spike;
             }
 
+            //mark item for highlights
+            action.mark_item = (current_item.task && current_item.task.desk &&
+                current_item.state !== 'killed' && current_item.package_type === 'takes');
+
+            action.package_item = item.state !== 'killed' && item.package_type !== 'takes';
+
             //check for desk membership for edit rights.
-            if (item.task && item.task.desk) {
+            if (current_item.task && current_item.task.desk) {
                 // in production
                 action.duplicate = user_privileges.duplicate;
-                var desk = _.find(self.userDesks, {'_id': item.task.desk});
+                var desk = _.find(self.userDesks, {'_id': current_item.task.desk});
                 if (!desk) {
                     action = angular.extend({}, DEFAULT_ACTIONS);
                 }
             } else {
                 // personal
-                action.copy = 1;
+                action.copy = true;
             }
 
             return action;

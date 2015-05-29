@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from apps.packages import TakesPackageService
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import metadata_schema, not_analyzed
@@ -60,20 +61,33 @@ class PublishedItemService(BaseService):
     def get(self, req, lookup):
         # convert to the original _id so everything else works
         items = super().get(req, lookup)
-        ids = list(set([str(item['item_id']) for item in items]))
-        query = {'query': {'filtered': {'filter': {'terms': {'_id': ids}}}}}
+        ids = list(set([item['item_id'] for item in items]))
+        query = {'$and': [{'_id': {'$in': ids}}]}
         archive_req = ParsedRequest()
-        archive_req.args = {'source': json.dumps(query)}
-        archive_items = superdesk.get_resource_service('archive').get(req=req, lookup=None)
+        archive_req.max_results = len(ids)
+        # can't access published from elastic due filter on the archive resource hence going to mongo
+        archive_items = list(superdesk.get_resource_service('archive').get_from_mongo(req=archive_req, lookup=query))
+        #
+        takes_service = TakesPackageService()
+        for item in archive_items:
+            takes_service.enhance_with_package_info(item)
+
         for item in items:
-            archive_items_list = [i for i in archive_items if i.get('_id') == item.get('item_id')]
-            archive_item = archive_items_list[0] if archive_items_list else {}
+            try:
+                archive_item = [i for i in archive_items if i.get('_id') == item.get('item_id')][0]
+            except IndexError:
+                logger.exception(('Data inconsistency found for the published item {}. '
+                                 'Cannot find item {} in the archive collection.')
+                                 .format(item['_id'], item['item_id']))
+                archive_item = {}
+
             updates = {
                 '_id': item['item_id'],
                 'item_id': item['_id'],
                 'lock_user': archive_item.get('lock_user', None),
                 'lock_time': archive_item.get('lock_time', None),
-                'lock_session': archive_item.get('lock_session', None)
+                'lock_session': archive_item.get('lock_session', None),
+                'archive_item': archive_item if archive_item else None
             }
 
             item.update(updates)

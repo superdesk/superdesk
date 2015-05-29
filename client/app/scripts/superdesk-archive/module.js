@@ -155,7 +155,7 @@ define([
                     action: 'spike',
                     condition: function(item) {
                         return (item.lock_user === null || angular.isUndefined(item.lock_user));
-                    },                    
+                    },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).spike;
                     }]
