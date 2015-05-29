@@ -1036,9 +1036,9 @@
                     .then(function(res) {
                         if (res) {
                             console.log('work is saved');
-                            $window.location.reload(true);
-                            $location.path('/workspace/content');
                             desks.setCurrentDeskId(null);
+                            $location.path('/workspace/content');
+                            $window.location.reload(true);
                         }
                     }, function(response) {
                         notify.error(gettext('Error: Saving work on configuration changes.'));
