@@ -102,10 +102,31 @@
             return groupsService;
         }])
         .directive('sdGroupeditBasic', GroupeditBasicDirective)
-        .directive('sdGroupeditPeople', GroupeditPeopleDirective);
+        .directive('sdGroupeditPeople', GroupeditPeopleDirective)
+        .directive('sdGroupsConfig', function() {
+            return {
+                controller: GroupsConfigController
+            };
+        })
+        .directive('sdGroupsConfigModal', function() {
+            return {
+                require: '^sdGroupsConfig',
+                templateUrl: 'scripts/superdesk-groups/views/groups-config-modal.html',
+                link: function(scope, elem, attrs, ctrl) {
 
-    GroupsSettingsController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler', 'modal'];
-    function GroupsSettingsController($scope, gettext, notify, api, groups, WizardHandler, modal) {
+                }
+            };
+        });
+
+    GroupsSettingsController.$inject = ['$scope', 'groups'];
+    function GroupsSettingsController($scope, groups) {
+        groups.initialize().then(function() {
+            $scope.groups = groups.groups;
+        });
+    }
+
+    GroupsConfigController.$inject = ['$scope', 'gettext', 'notify', 'api', 'groups', 'WizardHandler', 'modal'];
+    function GroupsConfigController ($scope, gettext, notify, api, groups, WizardHandler, modal) {
 
         $scope.modalActive = false;
         $scope.step = {
@@ -114,17 +135,11 @@
         $scope.group = {
             edit: null
         };
-        $scope.groups = {};
-
-        groups.initialize()
-        .then(function() {
-            $scope.groups = groups.groups;
-        });
 
         $scope.openGroup = function(step, group) {
-            $scope.group.edit = group;
             $scope.modalActive = true;
             $scope.step.current = step;
+            $scope.group.edit = group;
         };
 
         $scope.cancel = function() {

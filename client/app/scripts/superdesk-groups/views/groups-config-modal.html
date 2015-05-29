@@ -1,0 +1,65 @@
+<div sd-modal data-model="modalActive" class="add-group-popup modal-large modal-static" >
+
+	<div class="modal-header">
+		<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+		<h3 ng-show="!group.edit._id" translate>Add New Group</h3>
+		<h3 ng-show="group.edit._id" translate>Edit "{{group.edit.name}}" Group</h3>
+	</div>
+
+	<div class="modal-body" sd-wizard data-name="usergroups" data-current-step="step.current" data-finish="cancel()">
+
+		<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
+			<div sd-groupedit-basic>
+				<form name="generalStep">
+					<div class="content">
+						<fieldset>
+							<span class="pull-right" sd-character-count data-item="group.edit.name" data-limit="limits.group"></span>
+							<div class="field">
+								<label translate>Group name</label>
+								<input type="text" class="fullwidth-input" ng-model="group.edit.name" ng-keyup="handleEdit($event);" required>
+							</div>
+							<div class="field">
+								<label translate>Group description</label>
+								<textarea class="fullwidth-input" ng-model="group.edit.description"></textarea>
+							</div>
+						</fieldset>
+						<p ng-if="message">{{ message }}</p>
+						<span ng-show="_errorUniqueness" translate>Group with name "{{ group.edit.name }}" already exists.</span>
+						<p ng-show="_errorLimits" translate>Character limit exceeded, group can not be created/updated.</p>
+						<span ng-show="_error" translate>There was a problem, group not created/updated.</span>
+					</div>
+					<div class="modal-footer">
+					  	<button class="btn btn-primary" ng-click="save(group.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people" data-disabled="!group.edit._id">
+			<div sd-groupedit-people>
+				<div class="content people-stage">
+					<div class="header" sd-user-select-list data-exclude="groupMembers" data-onchoose="add(user)"></div>
+					<div class="content">
+						<p ng-if="message">{{ message }}</p>
+						<div class="member-list clearfix">
+							<ul>
+								<li ng-repeat="user in groupMembers" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
+									<i class="icon-close-small" ng-click="remove(user)"></i>
+									<figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
+									<div class="name">{{user.display_name}}</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button>
+				  	<button class="btn btn-primary" ng-click="save()" translate>Done</button>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+</div>
