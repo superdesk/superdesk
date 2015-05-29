@@ -265,6 +265,23 @@
             });
         };
 
+        this.saveWorkConfirmation = function saveWorkAuthoring(orig, diff, isDirty, message) {
+            var promise = $q.when();
+            if (isDirty) {
+                if (this.isEditable(diff)) {
+                    promise = confirm.confirmSaveWork(message)
+                        .then(angular.bind(this, function save() {
+                            return this.saveWork(orig, diff);
+                        }), function(err) { // ignore saving
+                            console.log(err);
+                            return $q.when();
+                        });
+                }
+            }
+
+            return promise;
+        };
+
         /**
          * Autosave the changes
          *
@@ -297,6 +314,31 @@
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
+                return item;
+            });
+        };
+
+         /**
+         * Save the item as new item in workspace when any critical configuration changes occur
+         *
+         * @param {Object} orig
+         * @param {Object} item
+         */
+        this.saveWork = function saveWork(orig, item) {
+            var _orig = {type: orig.type, version: 0, task: {desk: null, stage: null, user: orig.task.user}};
+            var _diff = _.omit(item, 'unique_name');
+            _diff = _.omit(_diff, 'unique_id');
+            var diff = extendItem(_orig, _diff);
+            /*return api.save('archive', {}, diff).then(function(_item) {
+                item._autosave = null;
+                //item._locked = lock.isLocked(item);
+                return item;
+            }, function(err) { // cancel saving
+                return $q.when();
+            });*/
+            return api('archive').save(diff).then(function(_item) {
+                item._autosave = null;
+                //item._locked = lock.isLocked(item);
                 return item;
             });
         };
@@ -585,6 +627,12 @@
             );
         };
 
+        this.confirmSaveWork = function confirmSavework(msg) {
+            return modal.confirm(
+                $interpolate(gettext('{{ message }} Configuration has changed. Save story to your workspace?'))({message: msg})
+            );
+        };
+
         /**
          * Make user aware that an item was unlocked
          *
@@ -641,11 +689,12 @@
         'referrer',
         'macros',
         '$timeout',
-        '$q'
+        '$q',
+        '$window'
     ];
     function AuthoringDirective(superdesk, notify, gettext, adminPublishSettingsService,
                                 desks, authoring, api, session, lock, privileges,
-                                ContentCtrl, $location, referrer, macros, $timeout, $q) {
+                                ContentCtrl, $location, referrer, macros, $timeout, $q, $window) {
         return {
             link: function($scope) {
                 var _closing;
@@ -977,6 +1026,24 @@
 
                 // init
                 $scope.closePreview();
+
+                $scope.$on('savework', SaveWorkOnChange);
+
+                function SaveWorkOnChange() {
+                    var changeMsg = 'Desk/Stage/User';
+
+                    authoring.saveWorkConfirmation($scope.origItem, $scope.item, $scope.dirty, changeMsg)
+                    .then(function(res) {
+                        if (res) {
+                            console.log('work is saved');
+                            $window.location.reload(true);
+                            $location.path('/workspace/content');
+                            desks.setCurrentDeskId(null);
+                        }
+                    }, function(response) {
+                        notify.error(gettext('Error: Saving work on configuration changes.'));
+                    });
+                }
 
                 $scope.$on('item:lock', function(_e, data) {
                     if ($scope.item._id === data.item && !_closing &&
