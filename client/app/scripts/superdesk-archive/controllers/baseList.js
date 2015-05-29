@@ -36,7 +36,7 @@ define(['lodash'], function(_) {
             if (filterDesk) {
                 if (desks.getCurrentStageId()) {
                     query.filter({term: {'task.stage': desks.getCurrentStageId()}});
-                } else if (desks.getCurrentDeskId()) {
+                } else if (desks.getCurrentDeskId() !== 'personal') {
                     query.filter({term: {'task.desk': desks.getCurrentDeskId()}});
                 }
             }

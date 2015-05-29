@@ -30,7 +30,7 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
         var filters = [];
         var self = this;
 
-        if (desks.getCurrentDeskId()) {
+        if (desks.getCurrentDeskId() !== 'personal') {
             //desk filter
             filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
         } else {
@@ -265,9 +265,9 @@ function StagesCtrlFactory(api, desks) {
             };
 
             $scope.$watch(function() {
-                return desks.activeDeskId;
+                return desks.getCurrentDeskId();
             }, function() {
-                self.reload(desks.activeDeskId);
+                self.reload(desks.getCurrentDeskId());
             });
         });
     };

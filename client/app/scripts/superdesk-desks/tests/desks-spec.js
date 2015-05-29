@@ -28,21 +28,21 @@ describe('desks service', function() {
             spyOn(preferencesService, 'get').and.returnValue($q.when('missing'));
             spyOn(preferencesService, 'update');
             spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
-            desks.fetchCurrentUserDesks();
+            desks.userDesks = desks.fetchCurrentUserDesks();
             $rootScope.$digest();
-            expect(desks.activeDeskId).toBe('foo');
+            expect(desks.getCurrentDeskId()).toBe('foo');
             expect(preferencesService.update).not.toHaveBeenCalled();
         })
     );
 
-    it('can checks if current desk is part of user desks',
+    it('can checks if current desk is part of user desks, personal will be selected',
         inject(function(desks, session, api, preferencesService, $q, $rootScope) {
             spyOn(preferencesService, 'get').and.returnValue($q.when('missing'));
             spyOn(preferencesService, 'update');
             spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: []}));
-            desks.fetchCurrentUserDesks();
+            desks.userDesks = desks.fetchCurrentUserDesks();
             $rootScope.$digest();
-            expect(desks.activeDeskId).toBe(null);
+            expect(desks.getCurrentDeskId()).toBe('personal');
             expect(preferencesService.update).not.toHaveBeenCalled();
         })
     );

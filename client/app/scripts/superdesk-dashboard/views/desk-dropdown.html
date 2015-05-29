@@ -5,7 +5,7 @@
 </button>
 
 <ul id="select-desk-menu" class="dropdown-menu" role="menu">
-    <li ng-repeat="desk in userDesks track by desk._id" ng-if="desk !== selected">
+    <li ng-repeat="desk in userDesks track by desk._id" ng-if="desk._id !== selected._id">
         <button option="{{ desk.name | uppercase }}" ng-click="select(desk)">{{ desk.name }}</button>
     </li>
     <li ng-if="selected.name"><button option="PERSONAL" ng-click="select({_id: 'personal'})" translate>Personal</button></li>

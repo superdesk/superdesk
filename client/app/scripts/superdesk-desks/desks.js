@@ -52,7 +52,7 @@
         };
 
         $scope.openDeskView = function(desk, target) {
-            desks.setCurrentDesk(desk);
+            desks.setCurrentDeskId(desk._id);
             superdesk.intent('view', target);
         };
 
@@ -568,29 +568,19 @@
                      * Fetch current user desks and make sure active desk is present in there
                      */
                     fetchCurrentUserDesks: function() {
-                        if (userDesks) {
-                            return $q.when(userDesks);
+                        var self = this;
+                        if (self.userDesks) {
+                            return $q.when(self.userDesks);
                         }
 
-                        if (!userDesksPromise) {
-                            userDesksPromise = this.fetchCurrentDeskId() // make sure there will be current desk
+                        return this.fetchCurrentDeskId() // make sure there will be current desk
                                 .then(angular.bind(session, session.getIdentity))
                                 .then(angular.bind(this, this.fetchUserDesks))
                                 .then(angular.bind(this, function(desks) {
-                                    userDesks = desks;
-                                    if (desks._items.length) {
-                                        if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
-                                            this.activeDeskId = desks._items[0]._id;
-                                        }
-                                    } else if (this.activeDeskId) {
-                                        this.activeDeskId = null;
-                                    }
+                                    self.userDesks = desks;
                                     setActive(this);
                                     return desks;
                                 }));
-                        }
-
-                        return userDesksPromise;
                     },
 
                     fetchCurrentDeskId: function() {
@@ -600,7 +590,8 @@
                         }
 
                         return preferencesService.get('desk:last_worked').then(function(result) {
-                            if (angular.isDefined(result) && result !== '') {
+                            self.activeDeskId = null;
+                            if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
                         });
@@ -618,11 +609,13 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (this.activeDeskId === 'personal') {
-                            return '';
-                        } else {
-                            return this.activeDeskId;
+                        if (this.activeDeskId === 'personal' || !this.userDesks || !this.userDesks._items.length) {
+                            return 'personal';
                         }
+                        if (!this.activeDeskId || !_.find(this.userDesks._items, {_id: this.activeDeskId})) {
+                            return this.userDesks._items[0]._id;
+                        }
+                        return this.activeDeskId;
                     },
                     setCurrentDeskId: function(deskId) {
                         if (this.activeDeskId !== deskId) {
@@ -631,7 +624,7 @@
                             setActive(this);
                             preferencesService.update({
                                 'desk:last_worked': this.activeDeskId,
-                                'stage:items': [this.activeStageId]
+                                'stage:items': []
                             }, 'desk:last_worked');
                         }
                     },
@@ -648,20 +641,14 @@
                             }, 'desk:last_worked');
                         }
                     },
-                    fetchCurrentDesk: function() {
-                        return api.desks.getById(this.getCurrentDeskId());
-                    },
                     fetchDeskById: function(Id) {
                         return api.desks.getById(Id);
                     },
-                    setCurrentDesk: function(desk) {
-                        this.setCurrentDeskId(desk ? desk._id : null);
-                    },
                     getCurrentDesk: function() {
-                        if (!this.activeDeskId || this.activeDeskId === 'personal') {
+                        if (this.getCurrentDeskId() === 'personal') {
                             return {'_id': 'personal'};
                         } else {
-                            return this.deskLookup[this.activeDeskId];
+                            return this.deskLookup[this.getCurrentDeskId()];
                         }
                     },
                     setWorkspace: function(deskId, stageId) {

@@ -18,18 +18,19 @@ define([
 
                 scope.select = function selectDesk(desk) {
                     scope.selected = desk;
-                    desks.setCurrentDesk(desk._id === 'personal' ? null : desk);
+                    desks.setCurrentDeskId(desk._id);
 
                     if (desk._id === 'personal') {
                         $location.path('/workspace/content') ;
                     }
                 };
 
-                desks.fetchCurrentUserDesks()
-                    .then(function(userDesks) {
+                desks.initialize().then(function() {
+                    desks.fetchCurrentUserDesks().then(function(userDesks) {
                         scope.userDesks = userDesks._items;
-                        scope.selected = _.find(scope.userDesks, {_id: desks.activeDeskId}) || null;
+                        scope.selected = desks.getCurrentDesk();
                     });
+                });
             }
         };
     }

@@ -188,7 +188,7 @@ define([
                             item.package_type !== 'takes';
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() !== null;
+                        return desks.getCurrentDeskId() !== 'personal';
                     }]
                 })
                 .activity('copy-content', {
@@ -214,7 +214,7 @@ define([
                         return item.lock_user === null || angular.isUndefined(item.lock_user);
                     },
                     additionalCondition:['desks', 'item', function(desks, item) {
-                        return desks.getCurrentDeskId() === null;
+                        return desks.getCurrentDeskId() === 'personal';
                     }]
                 })
                 .activity('New Take', {
