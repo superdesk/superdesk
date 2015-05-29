@@ -198,7 +198,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.render = function render(elem) {
         var node = elem;
         return this.errors(node.textContent).then(function(errors) {
-            isRendering = true;
+            editor.stopEvents = true;
             editor.storeSelection(node);
 
             angular.forEach(errors, function(error) {
@@ -207,7 +207,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
 
             setErrorClass(node);
             editor.resetSelection(node);
-            isRendering = false;
+            editor.stopEvents = false;
         });
     };
 

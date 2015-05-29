@@ -54,17 +54,26 @@ function EditorService() {
     this.resetSelection = function resetSelection(node) {
         var marks = node.getElementsByClassName(MARKER_CLASS),
             selection = document.getSelection(),
-            range = document.createRange();
+            range = document.createRange(),
+            mark = marks.item(0);
 
         if (selection.rangeCount) {
             selection.removeAllRanges();
         }
 
-        while (marks.length) {
-            var mark = marks.item(0);
-            range.setStartBefore(mark);
-            selection.addRange(range);
-            mark.parentNode.removeChild(mark);
+        if (mark) {
+            var prev = mark.previousSibling;
+            if (prev && prev.nodeType === TEXT_TYPE) {
+                // firefox issue with contenteditable
+                // more info at https://github.com/timdown/rangy/issues/17
+                removeNode(mark);
+                selection.collapse(prev, prev.length);
+            } else {
+                range.setStartBefore(mark);
+                selection.addRange(range);
+                selection.collapseToStart();
+                removeNode(mark);
+            }
         }
     };
 
@@ -73,6 +82,10 @@ function EditorService() {
         this.editor = null;
         this.readOnly = false;
     };
+
+    function removeNode(node) {
+        node.parentNode.removeChild(node);
+    }
 
     function preventEditing(event) {
         event.preventDefault();
@@ -353,35 +366,7 @@ angular.module('superdesk.editor', [])
                     updateTimeout,
                     renderTimeout;
 
-                /**
-                 * Remove spellcheck highlights from node
-                 */
-                function removeSpellcheck(node) {
-                    editor.storeSelection(node);
-                    var html = spellcheck.clean(node);
-                    node.innerHTML = html;
-                    editor.resetSelection(node);
-                    return html;
-                }
-
-                function updateModel() {
-                    if (editor.readOnly) {
-                        return;
-                    }
-
-                    var html = removeSpellcheck(editorElem[0]);
-                    scope.$applyAsync(function() {
-                        ngModel.$setViewValue(html);
-                        spellcheck.render(editorElem[0]);
-                    });
-                }
-
-                ngModel.$viewChangeListeners.push(function renderSpellcheck() {
-                    $timeout.cancel(renderTimeout);
-                    renderTimeout = $timeout(function() {
-                        spellcheck.render(editorElem[0]);
-                    }, 200, false);
-                });
+                ngModel.$viewChangeListeners.push(changeListener);
 
                 ngModel.$render = function renderEditor() {
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
@@ -488,10 +473,11 @@ angular.module('superdesk.editor', [])
                         node = editorElem[0];
                     }
 
-                    var selection = editor.storeSelection(node),
-                        html = spellcheck.clean(node);
+                    editor.storeSelection(node);
+                    var html = spellcheck.clean(node);
+
                     node.innerHTML = html;
-                    editor.resetSelection(node, selection);
+                    editor.resetSelection(node);
                     return html;
                 }
             }
