@@ -579,7 +579,7 @@
                                 .then(angular.bind(this, function(desks) {
                                     userDesks = desks;
                                     if (desks._items.length) {
-                                        if (!this.activeDeskId || !_.find(desks._items, {_id: this.activeDeskId})) {
+                                        if (this.activeDeskId !== '' && !_.find(desks._items, {_id: this.activeDeskId})) {
                                             this.activeDeskId = desks._items[0]._id;
                                         }
                                     } else if (this.activeDeskId) {
@@ -600,7 +600,7 @@
                         }
 
                         return preferencesService.get('desk:last_worked').then(function(result) {
-                            if (angular.isDefined(result) && result !== '') {
+                            if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
                         });
@@ -618,11 +618,7 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (this.activeDeskId === 'personal') {
-                            return '';
-                        } else {
-                            return this.activeDeskId;
-                        }
+                        return this.activeDeskId;
                     },
                     setCurrentDeskId: function(deskId) {
                         if (this.activeDeskId !== deskId) {
@@ -655,10 +651,10 @@
                         return api.desks.getById(Id);
                     },
                     setCurrentDesk: function(desk) {
-                        this.setCurrentDeskId(desk ? desk._id : null);
+                        this.setCurrentDeskId(desk ? desk._id : '');
                     },
                     getCurrentDesk: function() {
-                        if (!this.activeDeskId || this.activeDeskId === 'personal') {
+                        if (!this.activeDeskId || this.activeDeskId === '') {
                             return {'_id': 'personal'};
                         } else {
                             return this.deskLookup[this.activeDeskId];
