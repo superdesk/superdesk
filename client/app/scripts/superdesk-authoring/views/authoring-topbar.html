@@ -13,7 +13,7 @@
         <button class="btn btn-medium pull-left" ng-if="action === 'view' && item._locked && can_unlock() && itemActions.save" ng-click="unlock()" translate>Unlock</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="action === 'view' && !item._locked && itemActions.save"
+            ng-show="action === 'view' && !item._locked && itemActions.edit"
             ng-click="lock()"
             translate>Edit</button>
 

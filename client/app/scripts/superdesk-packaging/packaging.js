@@ -706,9 +706,9 @@
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
-                condition: function(item) {
-                    return item.state !== 'killed' && item.package_type !== 'takes';
-                }
+                additionalCondition:['authoring', 'item', function(authoring, item) {
+                    return authoring.itemActions(item).package_item;
+                }]
             });
     }])
     .config(['apiProvider', function(apiProvider) {

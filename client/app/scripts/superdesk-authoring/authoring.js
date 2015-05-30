@@ -411,21 +411,21 @@
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
-                action.save = true;
+                action.save = current_item.state !== 'spiked';
                 if (!current_item.marked_for_not_publication) {
                     if (current_item.task && current_item.task.desk && user_privileges.publish) {
                         action.publish = true;
                     }
                 }
 
-                action.edit = current_item.type !== 'composite';
+                action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked';
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
                 action.spike = current_item.state !== 'spiked' && user_privileges.spike;
             }
 
             //mark item for highlights
             action.mark_item = (current_item.task && current_item.task.desk &&
-                current_item.state !== 'killed' && current_item.package_type === 'takes');
+                current_item.state !== 'killed' && current_item.package_type !== 'takes');
 
             action.package_item = item.state !== 'killed' && item.package_type !== 'takes';
 
