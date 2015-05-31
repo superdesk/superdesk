@@ -1,6 +1,6 @@
 <div sd-settings-view>
 
-	<div class="split-content">
+	<div class="split-content" sd-highlights-config>
 
 		<div class="header">
 			<h2 translate>Highlights configurations</h2>
@@ -24,98 +24,7 @@
 				</ul>
 			</div>
 	    </div>
-	</div>
 
-	<div sd-modal data-model="modalActive" class="highlights-config-popup moz-scroll-fix responsive-popup hide" >
-
-		<div class="modal-header">
-			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-			<h3 ng-show="!configEdit._id" translate>Create highlight configuration</h3>
-			<h3 ng-show="configEdit._id" translate>Edit highlight configuration</h3>
-		</div>
-
-		<div class="modal-body">
-			<form name="highlightForm">
-				<fieldset>
-					<div class="field">
-						<label translate>Configuration name</label>
-						<input type="text" class="fullwidth-input" ng-model="configEdit.name" required>
-					</div>
-					<div class="field">
-						<label translate>Assigned desks</label>
-						<div class="multi-select">
-							<ul>
-								<li ng-repeat="desk in assignedDesks">
-									<span sd-check ng-model="desk.included"></span>
-									<span class="text" ng-click="desk.included = !desk.included">{{desk.name}}</span>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<div class="field" tooltip="{{ :: 'When creating a highlights package' | translate }}">
-						<label translate>Automatically insert items from:</label>
-						<select ng-model="configEdit.auto_insert" class="input-small">
-							<option value="{{ :: auto.day }}" ng-selected="configEdit.auto_insert === auto.day" translate>Today</option>
-							<option value="{{ :: auto.week }}" ng-selected="configEdit.auto_insert === auto.week" translate>This week</option>
-							<option ng-repeat="hour in hours"
-								value="{{ :: getHourVal(hour) }}"
-								ng-selected="configEdit.auto_insert === getHourVal(hour)" translate>Last {{ hour }} hours</option>
-						</select>
-					</div>
-                    <div class="field">
-                    	<label translate>Package groups</label>
-                        <button class="btn btn-info add"
-                            sd-focus-element data-target="#insert-group"
-                            ng-click="editGroup(''); selectedGroup = null"
-                            ng-disabled="editingGroup">
-                            <i class="icon-plus-small icon-white"></i>
-                            Add group
-                        </button>
-                        <div class="content">
-                            <ul class="pills-list pills-editable clearfix">
-
-                                <li ng-repeat="group in configEdit.groups"
-                                   	ng-class="{editable: isActiveGroup(group)}">
-
-                                        <h6 ng-if="!isActiveGroup(group)">{{ group }}</h6>
-
-										<span ng-if="isActiveGroup(group)" sd-character-count data-item="editingGroup.name" data-limit="limits"></span>
-                                        <span>
-                                            <input type="text" ng-if="isActiveGroup(group)" id="edit-group" ng-model="editingGroup.name" ng-keyup="handleGroupEdit($event);" />
-                                        </span>
-
-                                        <div class="actions" ng-if="!editingGroup">
-                                            <button ng-click="editGroup(group)" sd-focus-element data-target="#edit-group">
-                                                <i class="icon-pencil" ></i>
-                                            </button>
-                                            <button ng-click="removeGroup(group)">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </div>
-
-                                </li>
-
-                                <span ng-if="editingGroup && !editingGroup.id" sd-character-count data-item="editingGroup.name" data-limit="limits"></span>
-                                <div class="editable" ng-show="editingGroup && !editingGroup.id">
-                                    <span>
-                                        <input type="text" id="insert-group" ng-model="editingGroup.name" ng-keyup="handleGroupEdit($event);" />
-                                    </span>
-                                </div>
-                                <div ng-if="editingGroup">
-                                    <button class="btn" ng-click="cancelGroup()" translate>Cancel</button>
-                                    <button class="btn btn-primary" ng-click="saveGroup()" ng-disabled="_errorLimits" translate>Save</button>
-                                </div>
-                                <p ng-show="_errorLimits" translate>Character limit exceeded, group can not be created/updated.</p>
-                            </ul>
-                        </div>
-				</fieldset>
-				<p ng-if="message">{{ message }}</p>
-			</form>
-		</div>
-
-		<div class="modal-footer">
-		  	<button class="btn" ng-click="cancel()" translate>Cancel</button>
-		  	<button class="btn btn-primary" ng-click="save()" ng-disabled="!highlightForm.$valid || editingGroup" translate>Save</button>
-		</div>
+    	<div sd-highlights-config-modal ></div>
 	</div>
 </div>

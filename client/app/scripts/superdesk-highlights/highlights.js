@@ -237,21 +237,25 @@
         };
     }
 
-    HighlightsSettingsController.$inject = ['$scope', 'highlightsService', 'desks', 'api', 'gettext', 'notify', 'modal'];
-    function HighlightsSettingsController($scope, highlightsService, desks, api, gettext, notify, modal) {
+    HighlightsSettingsController.$inject = ['$scope', 'desks'];
+    function HighlightsSettingsController($scope, desks) {
+        desks.initialize().then(function() {
+            $scope.desks = desks.deskLookup;
+        });
+
+        $scope.hours = _.range(1, 25);
+        $scope.auto = {day: 'now/d', week: 'now/w'};
+    }
+
+    HighlightsConfigController.$inject = ['$scope', 'highlightsService', 'desks', 'api', 'gettext', 'notify', 'modal'];
+    function HighlightsConfigController($scope, highlightsService, desks, api, gettext, notify, modal) {
 
         highlightsService.get().then(function(items) {
             $scope.configurations = items;
         });
 
-        desks.initialize().then(function() {
-            $scope.desks = desks.deskLookup;
-        });
-
         $scope.configEdit = {};
         $scope.modalActive = false;
-        $scope.hours = _.range(1, 25);
-        $scope.auto = {day: 'now/d', week: 'now/w'};
         $scope.limits = 45;
 
         var _config;
@@ -394,6 +398,20 @@
     .directive('sdPackageHighlightsDropdown', PackageHighlightsDropdownDirective)
     .directive('sdHighlightsTitle', HighlightsTitleDirective)
     .directive('sdSearchHighlights', SearchHighlightsDirective)
+    .directive('sdHighlightsConfig', function() {
+        return {
+            controller: HighlightsConfigController
+        };
+    })
+    .directive('sdHighlightsConfigModal', function() {
+        return {
+            require: '^sdHighlightsConfig',
+            templateUrl: 'scripts/superdesk-highlights/views/highlights_config_modal.html',
+            link: function(scope, elem, attrs, ctrl) {
+
+            }
+        };
+    })
     .config(['superdeskProvider', function(superdesk) {
         superdesk
         .activity('mark.item', {

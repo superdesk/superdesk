@@ -25,14 +25,14 @@
                 };
 
                 //Modals
-                scope.isModalOpen = false;
+                scope.modalActive = false;
 
                 scope.openModal = function() {
-                    scope.isModalOpen = true;
+                    scope.modalActive = true;
                 };
 
                 scope.closeModal = function() {
-                    scope.isModalOpen = false;
+                    scope.modalActive = false;
                 };
 
                 //Select boxes

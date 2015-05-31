@@ -920,7 +920,7 @@
                     <div class="docs-preview">
                         <div class="preview-area">
                             <button class="btn" ng-click="openModal()">Show modal</button>
-                            <div sd-modal data-model="isModalOpen">
+                            <div sd-modal data-model="modalActive">
                                 <div class="modal-header">
                                     <button class="close" ng-click="closeModal()"><i class="icon-close-small"></i></button>
                                     <h3>Sample modal</h3>
@@ -937,7 +937,7 @@
 
                         <pre class="prettyprint lang-html linenums">
                             <button class="btn" ng-click="openModal()" ng-non-bindable>Show modal</button>
-                            <div sd-modal data-model="isModalOpen" ng-non-bindable>
+                            <div sd-modal data-model="modalActive" ng-non-bindable>
                                 <div class="modal-header">
                                     <button class="close" ng-click="closeModal()">
                                         <i class="icon-close-small"></i>
@@ -948,7 +948,7 @@
                                     <p>This is sample message inside modal!</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn" ng-click="close()" translate>Cancel</button>
+                                    <button class="btn" ng-click="closeModal()" translate>Cancel</button>
                                     <button class="btn btn-primary" ng-click="closeModal()" translate>Ok</button>
                                 </div>
                             </div>
@@ -958,14 +958,14 @@
 
                     <div class="docs-preview">
                         <pre class="prettyprint lang-js linenums">
-                            scope.isModalOpen = false;
+                            scope.modalActive = false;
 
                             scope.openModal = function() {
-                                scope.isModalOpen = true;
+                                scope.modalActive = true;
                             };
 
                             scope.closeModal = function() {
-                                scope.isModalOpen = false;
+                                scope.modalActive = false;
                             };
                         </pre>
                     </div>
@@ -1016,7 +1016,7 @@
                     <p>All classes should be added to the root element:</p>
                     <div class="docs-preview">
                         <pre class="prettyprint lang-html linenums">
-                            <div sd-modal data-model="isModalOpen" class="modal-large modal-strech" ng-non-bindable>
+                            <div sd-modal data-model="modalActive" class="modal-large modal-strech" ng-non-bindable>
                                 <div class="modal-header">...</div>
                                 <div class="modal-body">...</div>
                                 <div class="modal-footer">...</div>
