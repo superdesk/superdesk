@@ -20,7 +20,8 @@ describe('Fetch', function() {
                     itemEL = elem;
                     return browser.actions().mouseMove(itemEL).perform();
                 }).then(function() {
-                    expect(itemEL.element.findElements(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
+                    itemEL.element(by.className('more-activity-toggle')).click();
+                    expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
                     expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
                 });
 
@@ -30,7 +31,7 @@ describe('Fetch', function() {
                     itemEL = elem;
                     return browser.actions().mouseMove(itemEL).perform();
                 }).then(function() {
-                    expect(itemEL.element.findElements(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
+                    expect(itemEL.element(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
                     expect(browser.driver.isElementPresent(by.css('[title="Duplicate"]'))).toBe(false);
                 });
         }
