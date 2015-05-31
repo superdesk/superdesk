@@ -645,7 +645,7 @@
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
-                $scope.action = $scope.action || ($scope.editable ? 'edit' : 'view');
+                $scope.action = $scope.action || ($scope._editable ? 'edit' : 'view');
                 $scope.itemActions = authoring.itemActions($scope.origItem);
 
                 $scope.$watch('origItem', function(new_value, old_value) {

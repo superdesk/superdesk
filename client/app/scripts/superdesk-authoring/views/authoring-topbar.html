@@ -3,9 +3,9 @@
         <button class="stage stage-label" ng-show="stage" ng-click="openStage()">{{ stage.name }}</button>
         <div class="state-label state-{{item.state}}">{{item.state}}</div>
         <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
-        <span class="lock-info" ng-show="item._locked"><i class="icon-lock-red"></i></span>
+        <span class="lock-info" ng-show="item._locked && item.lock_user"><i class="icon-lock-red"></i></span>
         <span class="lock-text" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
-        <span class="lock-text" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
+        <span class="lock-text" ng-show="item._locked && !isLockedByMe() && item.lock_user" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
         <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
     </div>
 
@@ -37,7 +37,7 @@
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="save(item)"
             ng-show="_editable"
-            ng-if = "itemActions.save && action !== 'view'"
+            ng-if = "itemActions.save && action === 'edit'"
             ng-disabled="!save_enabled()"
             translate>Save</button>
 
