@@ -60,6 +60,9 @@ class PublishedItemService(BaseService):
         """
         self.enhance_with_archive_items(docs[config.ITEMS])
 
+    def on_fetched_item(self, doc):
+        self.enhance_with_archive_items([doc])
+
     def on_create(self, docs):
         # the same content can be published more than once
         # so it is necessary to have a new _id and preserve the original
@@ -72,43 +75,6 @@ class PublishedItemService(BaseService):
             doc.pop('_id', None)
             doc.pop('lock_user', None)
             doc.pop('lock_time', None)
-
-    # def get(self, req, lookup):
-    #     # convert to the original _id so everything else works
-    #     items = super().get(req, lookup)
-    #     ids = list(set([item['item_id'] for item in items]))
-    #     query = {'$and': [{'_id': {'$in': ids}}]}
-    #     archive_req = ParsedRequest()
-    #     archive_req.max_results = len(ids)
-    #     # can't access published from elastic due filter on the archive resource hence going to mongo
-    #     archive_items = list(superdesk.get_resource_service('archive').get_from_mongo(req=archive_req, lookup=query))
-    #
-    #     takes_service = TakesPackageService()
-    #     for item in archive_items:
-    #         takes_service.enhance_with_package_info(item)
-    #
-    #     for item in items:
-    #         try:
-    #             archive_item = [i for i in archive_items if i.get('_id') == item.get('item_id')][0]
-    #         except IndexError:
-    #             logger.exception(('Data inconsistency found for the published item {}. '
-    #                              'Cannot find item {} in the archive collection.')
-    #                              .format(item['_id'], item['item_id']))
-    #             archive_item = {}
-    #
-    #         updates = {
-    #             '_id': item['item_id'],
-    #             'item_id': item['_id'],
-    #             'lock_user': archive_item.get('lock_user', None),
-    #             'lock_time': archive_item.get('lock_time', None),
-    #             'lock_session': archive_item.get('lock_session', None),
-    #             'archive_item': archive_item if archive_item else None
-    #         }
-    #
-    #         item.update(updates)
-    #         handle_existing_data(item)
-    #
-    #     return items
 
     def on_delete(self, doc):
         self.insert_into_text_archive(doc)
