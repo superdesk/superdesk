@@ -15,6 +15,7 @@ from superdesk.services import BaseService
 import superdesk
 from apps.tasks import default_status
 from superdesk.notification import push_notification
+from superdesk.activity import add_activity, ACTIVITY_UPDATE
 
 desks_schema = {
     'name': {
@@ -118,10 +119,43 @@ class DesksService(BaseService):
         super().delete(lookup)
 
     def on_deleted(self, doc):
-        push_notification(self.notification_key, deleted=1, desk_id=str(doc.get('_id')))
+        desk_user_ids = [str(member['user']) for member in doc.get('members', [])]
+        push_notification(self.notification_key,
+                          deleted=1,
+                          user_ids=desk_user_ids,
+                          desk_id=str(doc.get('_id')))
 
     def on_updated(self, updates, original):
-        push_notification(self.notification_key, updated=1, desk_id=str(original.get('_id')))
+        self.__send_notification(updates, original)
+
+    def __compare_members(self, original, updates):
+        original_members = set([member['user'] for member in original])
+        updates_members = set([member['user'] for member in updates])
+        added = updates_members - original_members
+        removed = original_members - updates_members
+        return added, removed
+
+    def __send_notification(self, updates, desk):
+        desk_id = desk['_id']
+
+        if 'members' in updates:
+            added, removed = self.__compare_members(desk.get('members', {}), updates['members'])
+            if len(removed) > 0:
+                push_notification('desk_membership_revoked',
+                                  updated=1,
+                                  user_ids=[str(item) for item in removed],
+                                  desk_id=str(desk_id))
+
+            for added_user in added:
+                user = superdesk.get_resource_service('users').find_one(req=None, _id=added_user)
+                add_activity(ACTIVITY_UPDATE,
+                             'user {{user}} has been added to desk {{desk}}: Please re-login.',
+                             self.datasource,
+                             notify=added,
+                             user=user.get('username'),
+                             desk=desk.get('name'))
+        else:
+            push_notification(self.notification_key, updated=1, desk_id=str(desk.get('_id')))
 
 
 class UserDesksResource(Resource):
