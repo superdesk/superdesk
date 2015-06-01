@@ -25,6 +25,10 @@
         ODBC: {
             label: 'ODBC',
             templateUrl: 'scripts/superdesk-publish/views/odbc-config.html'
+        },
+        File: {
+            label: 'File',
+            templateUrl: 'scripts/superdesk-publish/views/file-config.html'
         }
     });
 
