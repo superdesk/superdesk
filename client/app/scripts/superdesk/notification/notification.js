@@ -22,7 +22,9 @@
         ws.onmessage = function(event) {
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
-            reloadService.reload(msg.event);
+            console.log(msg);
+            //reloadService.reload(msg.event);
+            //reloadService.reload(msg.data);
         };
 
         ws.onerror = function(event) {
@@ -33,7 +35,8 @@
     return angular.module('superdesk.notification', [])
         .service('reloadService', ['$window', '$rootScope', function($window, $rootScope) {
             this.reload = function(msgEvent, $location) {
-                if (msgEvent === 'desk') {
+                //if (msgEvent === 'desk') {
+                if (msgEvent === 'ping') {
                     console.log(msgEvent);
                     if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
                         console.log('notification on authoring page');
