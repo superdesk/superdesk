@@ -19,6 +19,10 @@
 
         var ws = new WebSocket(config.server.ws);
 
+        ws.onopen = function () {
+            ws.send('Ping');
+        };
+
         ws.onmessage = function(event) {
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
