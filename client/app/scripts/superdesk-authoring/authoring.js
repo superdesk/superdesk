@@ -325,21 +325,13 @@
          * @param {Object} item
          */
         this.saveWork = function saveWork(orig, item) {
-            var _orig = {type: orig.type, version: 0, task: {desk: null, stage: null, user: orig.task.user}};
-            var _diff = _.omit(item, 'unique_name');
-            _diff = _.omit(_diff, 'unique_id');
+            var _orig = {type: orig.type, version: 1, task: {desk: null, stage: null, user: orig.task.user}};
+            var _diff = _.omit(item, ['unique_name', 'unique_id', '_id', 'guid']);
             var diff = extendItem(_orig, _diff);
-            /*return api.save('archive', {}, diff).then(function(_item) {
-                item._autosave = null;
-                //item._locked = lock.isLocked(item);
-                return item;
-            }, function(err) { // cancel saving
-                return $q.when();
-            });*/
             return api('archive').save(diff).then(function(_item) {
-                item._autosave = null;
+                _item._autosave = null;
                 //item._locked = lock.isLocked(item);
-                return item;
+                return _item;
             });
         };
 
