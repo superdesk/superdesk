@@ -22,6 +22,24 @@ Feature: Role Resource
         Then we get "privileges"
 
     @auth
+    @notification
+    Scenario: Revoke privileges from a given role
+        Given "roles"
+            """
+            [{"name": "Admin", "privileges": {"ingest":  1, "archive": 1}}]
+            """
+
+        When we patch given
+            """
+            {"privileges": {"ingest":  0}}
+            """
+        Then we get updated response
+        Then we get notifications
+            """
+            [{"event": "role_privileges_revoked", "extra": {"updated": 1, "role_id": "#roles._id#"}}]
+            """
+
+    @auth
     Scenario: Check permissions on read with role
         Given "roles"
             """
@@ -157,3 +175,29 @@ Feature: Role Resource
             """
         When we delete "/roles/#roles._id#"
         Then we get response code 403
+
+    @auth
+    @notification
+    Scenario: Change user role
+        Given "roles"
+            """
+            [{"name": "A" }]
+            """
+        Given "users"
+            """
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#roles._id#"}]
+            """
+        When we post to "/roles"
+            """
+            [{"name": "B" }]
+            """
+        And we patch "/users/foo"
+            """
+            {"role": "#roles._id#"}
+            """
+        Then we get updated response
+        Then we get notifications
+            """
+            [{"event": "user_role_changed", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+            """
+
