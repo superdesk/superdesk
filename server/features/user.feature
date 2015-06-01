@@ -136,7 +136,45 @@ Feature: User Resource
         Then the field "display_name" value is "first Testing"
 
     @auth
-    Scenario: Change user status
+    @dbauth
+    @notification
+    Scenario: Update user type
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true, "user_type": "administrator"}]
+        """
+        When we patch "/users/foo"
+        """
+        {"user_type": "user"}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_type_changed", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+
+    @auth
+    @dbauth
+    @notification
+    Scenario: Update user privilege
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true,
+        "privileges": {"kill" : 1, "archive" : 1}}]
+        """
+        When we patch "/users/foo"
+        """
+        {"privileges": {"kill" : 0}}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_privileges_revoked", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+
+    @auth
+    @notification
+    Scenario: Change user status - inactivated
         Given "users"
         """
         [{"username": "foo", "email": "foo@bar.co", "is_active": true}]
@@ -146,9 +184,35 @@ Feature: User Resource
         {"is_active": false}
         """
         Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_inactivated", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
         When we change user status to "enabled and active" using "/users/foo"
         """
         {"is_active": true}
+        """
+        Then we get updated response
+
+    @auth
+    @notification
+    Scenario: Change user status - disabled
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.co", "is_enabled": true}]
+        """
+        When we patch "/users/foo"
+        """
+        {"is_enabled": false}
+        """
+        Then we get updated response
+        Then we get notifications
+        """
+        [{"event": "user_disabled", "extra": {"updated": 1, "user_id": "#users._id#"}}]
+        """
+        When we change user status to "enabled and active" using "/users/foo"
+        """
+        {"is_enabled": true}
         """
         Then we get updated response
 

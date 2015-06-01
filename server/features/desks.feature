@@ -116,7 +116,8 @@ Feature: Desks
         """
 
     @auth
-    Scenario: Cannot delete desk if it is assigned as a default desk to user(s)
+    @notification
+    Scenario: Remove user from desk membership
         Given "users"
         """
         [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
@@ -125,12 +126,12 @@ Feature: Desks
         """
         [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
         """
-        When we patch "/users/#users._id#"
+        When we patch "/desks/#desks._id#"
         """
-        {"desk": "#desks._id#"}
+        { "members": []}
         """
-        And we delete "/desks/#desks._id#"
-        Then we get error 412
+        Then we get updated response
+        Then we get notifications
         """
-        {"_message": "Cannot delete desk as it is assigned as default desk to user(s)."}
+        [{"event": "desk_membership_revoked", "extra": {"updated": 1, "user_ids": ["#users._id#"]}}]
         """
