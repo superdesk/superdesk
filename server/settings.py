@@ -179,6 +179,7 @@ INSTALLED_APPS = [
     'apps.validators',
     'apps.validate',
     'apps.publicapi_publish'
+    'apps.messaging',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

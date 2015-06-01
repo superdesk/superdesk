@@ -36,7 +36,6 @@ logger.addHandler(logging.StreamHandler())
 
 def log(log_msg):
     logger.info(log_msg)
-    print(log_msg)
 
 
 class BroadcastProtocol(WebSocketServerProtocol):
