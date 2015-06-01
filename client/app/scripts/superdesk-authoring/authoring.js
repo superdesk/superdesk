@@ -47,7 +47,8 @@
         view: true,
         spike: false,
         unspike: false,
-        package_item: false
+        package_item: false,
+        multi_edit: false
     };
 
     /**
@@ -425,9 +426,12 @@
 
             //mark item for highlights
             action.mark_item = (current_item.task && current_item.task.desk &&
-                current_item.state !== 'killed' && current_item.package_type !== 'takes');
+                current_item.state !== 'killed' && current_item.package_type !== 'takes' &&
+                user_privileges.mark_for_highlights);
 
             action.package_item = item.state !== 'killed' && item.package_type !== 'takes';
+            action.multi_edit = _.contains(['text', 'preformatted'], item.type) &&
+                !_.contains(['killed', 'scheduled'], item.state);
 
             //check for desk membership for edit rights.
             if (current_item.task && current_item.task.desk) {

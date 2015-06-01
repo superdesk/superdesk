@@ -19,7 +19,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off, handle_existing_data
+from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -47,38 +47,6 @@ from superdesk.utc import utcnow
 import datetime
 
 logger = logging.getLogger(__name__)
-
-
-def item_schema(extra=None):
-    """Create schema for item.
-
-    :param extra: extra fields to be added to schema
-    """
-    schema = {
-        'old_version': {
-            'type': 'number',
-        },
-        'last_version': {
-            'type': 'number',
-        },
-        'task': {'type': 'dict'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'nullable': True
-        },
-        'marked_for_not_publication': {
-            'type': 'boolean',
-            'default': False
-        }
-    }
-    schema.update(metadata_schema)
-    if extra:
-        schema.update(extra)
-    return schema
 
 
 def get_subject(doc1, doc2=None):

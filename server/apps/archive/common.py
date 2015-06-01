@@ -21,6 +21,8 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import SERVER_DOMAIN
 from superdesk import get_resource_service
+from superdesk.resource import Resource
+from apps.content import metadata_schema
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -316,3 +318,35 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
 
         if doc_type == 'archive' and 'marked_for_not_publication' not in doc:
             doc['marked_for_not_publication'] = False
+
+
+def item_schema(extra=None):
+    """Create schema for item.
+
+    :param extra: extra fields to be added to schema
+    """
+    schema = {
+        'old_version': {
+            'type': 'number',
+        },
+        'last_version': {
+            'type': 'number',
+        },
+        'task': {'type': 'dict'},
+        'destination_groups': {
+            'type': 'list',
+            'schema': Resource.rel('destination_groups', True)
+        },
+        'publish_schedule': {
+            'type': 'datetime',
+            'nullable': True
+        },
+        'marked_for_not_publication': {
+            'type': 'boolean',
+            'default': False
+        }
+    }
+    schema.update(metadata_schema)
+    if extra:
+        schema.update(extra)
+    return schema
