@@ -11,9 +11,6 @@
 
 'use strict';
 
-var TEXT_TYPE = 3,
-    MARKER_CLASS = 'sdmark';
-
 function click(target) {
     target.dispatchEvent(new MouseEvent('click'));
 }
@@ -29,52 +26,21 @@ function EditorService() {
     /**
      * Store current anchor position within given node
      */
-    this.storeSelection = function storeSelection(node) {
-        var selection = document.getSelection();
-        if (selection.anchorNode == null) {
-            return;
-        }
-
-        var next,
-            span = document.createElement('span');
-
-        if (selection.anchorNode.nodeType === TEXT_TYPE) {
-            next = selection.anchorNode.splitText(selection.anchorOffset);
-        } else {
-            next = null;
-        }
-
-        span.classList.add(MARKER_CLASS);
-        selection.anchorNode.parentNode.insertBefore(span, next);
+    this.storeSelection = function storeSelection() {
+        vm.stopEvents = true;
+        vm.selection = window.rangy ? window.rangy.saveSelection() : null;
     };
 
     /**
      * Reset stored anchor position in given node
      */
     this.resetSelection = function resetSelection(node) {
-        var marks = node.getElementsByClassName(MARKER_CLASS),
-            selection = document.getSelection(),
-            range = document.createRange(),
-            mark = marks.item(0);
-
-        if (selection.rangeCount) {
-            selection.removeAllRanges();
+        if (vm.selection) {
+            window.rangy.restoreSelection(vm.selection);
+            vm.selection = null;
         }
 
-        if (mark) {
-            var prev = mark.previousSibling;
-            if (prev && prev.nodeType === TEXT_TYPE) {
-                // firefox issue with contenteditable
-                // more info at https://github.com/timdown/rangy/issues/17
-                removeNode(mark);
-                selection.collapse(prev, prev.length);
-            } else {
-                range.setStartBefore(mark);
-                selection.addRange(range);
-                selection.collapseToStart();
-                removeNode(mark);
-            }
-        }
+        vm.stopEvents = false;
     };
 
     this.clear = function() {
@@ -82,10 +48,6 @@ function EditorService() {
         this.editor = null;
         this.readOnly = false;
     };
-
-    function removeNode(node) {
-        node.parentNode.removeChild(node);
-    }
 
     function preventEditing(event) {
         event.preventDefault();
@@ -242,7 +204,7 @@ function FindReplaceCommand(rootNode) {
     };
 
     function find(node, stopHighlight) {
-        if (node.nodeType === TEXT_TYPE) {
+        if (node.nodeType === Node.TEXT_NODE) {
             var color,
                 selection = document.getSelection(),
                 index = node.wholeText.indexOf(needle),
@@ -312,7 +274,7 @@ angular.module('superdesk.editor', [])
 
             var lines = 0;
             while (p) {
-                if (p.childNodes.length && p.childNodes[0].nodeType === TEXT_TYPE) {
+                if (p.childNodes.length && p.childNodes[0].nodeType === Node.TEXT_NODE) {
                     lines += getLineCount(p.childNodes[0].wholeText);
                 } else if (p.childNodes.length) {
                     lines += 1; // empty paragraph
@@ -329,7 +291,7 @@ angular.module('superdesk.editor', [])
         function getLineColumn() {
             var column, lines,
                 selection = window.getSelection();
-            if (selection.anchorNode.nodeType === TEXT_TYPE) {
+            if (selection.anchorNode.nodeType === Node.TEXT_NODE) {
                 var text = selection.anchorNode.wholeText.substring(0, selection.anchorOffset);
                 var node = selection.anchorNode;
                 column = text.length + 1;
