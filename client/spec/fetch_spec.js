@@ -20,6 +20,7 @@ describe('Fetch', function() {
                     itemEL = elem;
                     return browser.actions().mouseMove(itemEL).perform();
                 }).then(function() {
+                    itemEL.element(by.className('more-activity-toggle')).click();
                     expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
                     expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
                 });

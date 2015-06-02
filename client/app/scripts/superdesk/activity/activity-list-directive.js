@@ -47,6 +47,9 @@ define([
 
                         return workflowService.isActionAllowed(scope.item, activity.action);
                     });
+
+                    scope.limit = scope.activities.length > 6 ? 5 : 6 ;
+
                     // register key shortcuts for single instance of activity list - in preview sidebar
                     if (scope.single) {
                         angular.forEach(scope.activities, function(activity) {
