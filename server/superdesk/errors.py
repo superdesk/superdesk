@@ -138,6 +138,13 @@ class InvalidFileType(SuperdeskError):
         super().__init__('Invalid file type %s' % type, payload={})
 
 
+class BulkIndexError(SuperdeskError):
+    """Exception raised when bulk index operation fails.."""
+
+    def __init__(self, resource=None, errors=None):
+        super().__init__('Failed to bulk index resource {} errors: {}'.format(resource, errors), payload={})
+
+
 class PrivilegeNameError(Exception):
     pass
 

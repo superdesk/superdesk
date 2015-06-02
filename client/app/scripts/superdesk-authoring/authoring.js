@@ -43,7 +43,6 @@
         mark_item: false,
         duplicate: false,
         copy: false,
-        unlock: false,
         view: true,
         spike: false,
         unspike: false,
@@ -377,26 +376,23 @@
             // killed item and item that have last publish action are readonly
             if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
                 (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes') ||
-                (current_item.state === 'killed') ||
+                (current_item.state === 'killed') || 
                 (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
                 return action;
             }
 
-            //if not the last published version
-            if ((angular.isDefined(item.archive_item) && item._version !== item.archive_item._version) &&
-                self.isPublished(current_item)) {
-                return action;
-            }
-
             // new take should be on the text item that are closed or last take but not killed.
-            if (current_item.state !== 'killed' && (current_item.type === 'text' || current_item.type === 'preformatted') &&
+            action.new_take = current_item.state !== 'killed' && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) {
-                action.new_take = true;
-            }
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
+                //if not the last published version
+                if ((angular.isDefined(item.archive_item) && item._version !== item.archive_item._version)) {
+                    return angular.extend({}, DEFAULT_ACTIONS);
+                }
+
                 if (current_item.state === 'scheduled') {
                     action.deschedule = true;
                 } else if (current_item.state === 'published' || current_item.state === 'corrected') {
@@ -404,20 +400,24 @@
                     action.correct = user_privileges.correct;
                 }
 
-                if (_.contains(['published', 'corrected'], current_item.state) &&
+                action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
                     _.contains(['text', 'preformatted'], current_item.type) &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) {
-                    action.re_write = true;
-                }
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming));
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
-                action.save = current_item.state !== 'spiked';
-                if (!current_item.marked_for_not_publication) {
-                    if (current_item.task && current_item.task.desk && user_privileges.publish) {
-                        action.publish = true;
-                    }
+
+                //if spiked 
+                if (current_item.state === 'spiked') {
+                    action = angular.extend({}, DEFAULT_ACTIONS);
+                    action.unspike = true;
+                    return action;
                 }
+
+                action.save = current_item.state !== 'spiked';
+                action.publish = !current_item.marked_for_not_publication && 
+                        current_item.task && current_item.task.desk && 
+                        user_privileges.publish;
 
                 action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked';
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
@@ -425,9 +425,9 @@
             }
 
             //mark item for highlights
-            action.mark_item = (current_item.task && current_item.task.desk &&
+            action.mark_item = (current_item.task && current_item.task.desk && 
                 current_item.state !== 'killed' && current_item.package_type !== 'takes' &&
-                user_privileges.mark_for_highlights);
+                 user_privileges.mark_for_highlights);
 
             action.package_item = item.state !== 'killed' && item.package_type !== 'takes';
             action.multi_edit = _.contains(['text', 'preformatted'], item.type) &&
@@ -655,21 +655,6 @@
                 $scope.$watch('origItem', function(new_value, old_value) {
                     $scope.itemActions = authoring.itemActions(new_value);
                 });
-
-                // $scope.publish_enabled = function() {
-                //     return $scope.origItem  && !$scope.origItem.marked_for_not_publication &&
-                //     $scope.origItem.task && $scope.origItem.task.desk &&
-                //     (($scope.privileges.publish === 1 && !authoring.isPublished($scope.origItem)) ||
-                //      ($scope.origItem.state === 'published' && $scope.privileges.kill === 1) ||
-                //      ($scope.origItem.state === 'published' && $scope.privileges.correct === 1) ||
-                //      ($scope.origItem.state === 'corrected' && !$scope.origItem.last_publish_action && $scope.privileges.correct === 1));
-                // };
-
-                // $scope.save_visible = $scope._editable && !authoring.isPublished($scope.origItem);
-                // $scope.not_for_publication_visible = $scope.publish_enabled() && !authoring.isPublished($scope.origItem) &&
-                //     !$scope.origItem.marked_for_not_publication;
-                //$scope.takes_package = (angular.isDefined($scope.origItem.package_type) &&
-                //     $scope.origItem.package_type === 'takes');
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
@@ -1017,7 +1002,6 @@
                         $scope.item.lock_session = null;
                         $scope.item.lock_user = null;
                         if ($scope.action !== 'view') {
-                            console.log($scope.referrerUrl);
                             $location.url($scope.referrerUrl);
                         }
                     }
