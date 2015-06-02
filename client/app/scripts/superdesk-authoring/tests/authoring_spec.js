@@ -583,7 +583,7 @@ describe('authoring actions', function() {
             };
 
             itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 

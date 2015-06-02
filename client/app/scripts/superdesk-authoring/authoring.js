@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    var CONTENT_FIELDS_DEFAULTS = {
+    var CONTENT_FIELDS_DEFAULTS = Object.freeze({
         headline: '',
         slugline: '',
         body_html: null,
@@ -29,9 +29,9 @@
         marked_for_not_publication: false,
         pubstatus: null,
         more_coming: false
-    };
+    });
 
-    var DEFAULT_ACTIONS = {
+    var DEFAULT_ACTIONS = Object.freeze({
         publish: false,
         correct: false,
         kill: false,
@@ -48,7 +48,7 @@
         unspike: false,
         package_item: false,
         multi_edit: false
-    };
+    });
 
     /**
      * Extend content of dest
@@ -739,7 +739,6 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
-                        //$scope.not_for_publication_visible = $scope.publish_enabled() && res.marked_for_not_publication === false;
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -940,12 +939,6 @@
 
                 $scope.lock = function() {
                     superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
-                    // var path = $location.path();
-                    // if (path.indexOf('/view') < 0) {
-                    //     lock.lock($scope.item, true).then(updateEditorState);
-                    // } else {
-                    //     superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
-                    // }
                 };
 
                 $scope.openAction = function(action) {
@@ -971,11 +964,6 @@
                         if ($scope.action !== 'view') {
                             $location.url($scope.referrerUrl);
                         }
-                        // var path = $location.path();
-                        // if (path.indexOf('/view') < 0) {
-                        //     authoring.lock($scope.item, data.user);
-                        //     $location.url($scope.referrerUrl);
-                        // }
                     }
                 });
 
