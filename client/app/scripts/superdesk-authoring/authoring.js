@@ -376,7 +376,7 @@
             // killed item and item that have last publish action are readonly
             if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
                 (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes') ||
-                (current_item.state === 'killed') || 
+                (current_item.state === 'killed') ||
                 (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
                 return action;
             }
@@ -407,7 +407,7 @@
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
 
-                //if spiked 
+                //if spiked
                 if (current_item.state === 'spiked') {
                     action = angular.extend({}, DEFAULT_ACTIONS);
                     action.unspike = true;
@@ -415,8 +415,8 @@
                 }
 
                 action.save = current_item.state !== 'spiked';
-                action.publish = !current_item.marked_for_not_publication && 
-                        current_item.task && current_item.task.desk && 
+                action.publish = !current_item.marked_for_not_publication &&
+                        current_item.task && current_item.task.desk &&
                         user_privileges.publish;
 
                 action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked';
@@ -425,7 +425,7 @@
             }
 
             //mark item for highlights
-            action.mark_item = (current_item.task && current_item.task.desk && 
+            action.mark_item = (current_item.task && current_item.task.desk &&
                 current_item.state !== 'killed' && current_item.package_type !== 'takes' &&
                  user_privileges.mark_for_highlights);
 

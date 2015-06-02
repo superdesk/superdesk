@@ -347,7 +347,6 @@ describe('lock service', function() {
     }));
 });
 
-
 describe('authoring actions', function() {
     var user_desks = [{'_id': 'desk1'}, {'_id': 'desk2'}];
 
@@ -358,8 +357,10 @@ describe('authoring actions', function() {
     */
     function allowedActions(actions, keys) {
         _.forOwn(actions, function(value, key) {
+
             //console.log('checking state for', key, value, _.contains(keys, key));
-            if(_.contains(keys, key)) {
+
+            if (_.contains(keys, key)) {
                 expect(value).toBeTruthy();
             } else {
                 expect(value).toBeFalsy();
@@ -374,8 +375,8 @@ describe('authoring actions', function() {
     beforeEach(inject(function(desks, $q) {
         spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items:user_desks}));
     }));
-    
-    it('can perform actions if the item is located on the personal workspace', 
+
+    it('can perform actions if the item is located on the personal workspace',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
                 '_id': 'test',
@@ -391,14 +392,14 @@ describe('authoring actions', function() {
                 'unspike': true,
                 'mark_for_highlights': true,
                 'unlock': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'copy', 'view', 
-                'spike', 'package_item', 'multi_edit']);
-    }));
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'copy', 'view',
+                    'spike', 'package_item', 'multi_edit']);
+        }));
 
     it('can perform actions if the item is located on the desk',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -420,14 +421,14 @@ describe('authoring actions', function() {
                 'mark_for_highlights': true,
                 'unlock': true,
                 'publish': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike', 
-                'mark_item', 'package_item', 'multi_edit', 'publish']);
-    }));
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+                    'mark_item', 'package_item', 'multi_edit', 'publish']);
+        }));
 
     it('cannot publish if user does not have publish privileges on the desk',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -449,14 +450,14 @@ describe('authoring actions', function() {
                 'mark_for_highlights': true,
                 'unlock': true,
                 'publish': false
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike', 
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
                 'mark_item', 'package_item', 'multi_edit']);
-    }));
+        }));
 
     it('can only view the item if the user does not have desk membership',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -477,13 +478,13 @@ describe('authoring actions', function() {
                 'unspike': true,
                 'mark_for_highlights': true,
                 'unlock': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view']);
-    }));
+        }));
 
     it('can only view the item if the item is killed',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -504,13 +505,13 @@ describe('authoring actions', function() {
                 'unspike': true,
                 'mark_for_highlights': true,
                 'unlock': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view']);
-    }));
+        }));
 
     it('can only view item if the item is spiked',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -531,14 +532,13 @@ describe('authoring actions', function() {
                 'unspike': true,
                 'mark_for_highlights': true,
                 'unlock': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view', 'unspike']);
-    }));
-
+        }));
 
     it('Cannot perform new take if more coming is true or take is not last take on the desk',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -561,12 +561,12 @@ describe('authoring actions', function() {
                 'mark_for_highlights': true,
                 'unlock': true,
                 'publish': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike', 
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
 
             item = {
@@ -579,13 +579,13 @@ describe('authoring actions', function() {
                 },
                 'takes': {
                         'last_take': 'take2'
-                }                
+                }
             };
 
             itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike', 
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
-    }));
+        }));
 
     it('Can peform new take',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -610,12 +610,12 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike', 
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
 
             item = {
@@ -643,7 +643,7 @@ describe('authoring actions', function() {
             itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
                 'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
-    }));
+        }));
 
     it('Can perform correction or kill on published item',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -680,14 +680,14 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': true,
                 'kill': true
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
                 'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
-    }));
+        }));
 
     it('Cannot perform correction or kill on published item without privileges',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
@@ -724,18 +724,28 @@ describe('authoring actions', function() {
                 'publish': true,
                 'correct': false,
                 'kill': false
-            }; 
+            };
 
             privileges.setUserPrivileges(user_privileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
                 'mark_item', 'package_item', 'multi_edit', 're_write']);
-    }));
+        }));
 
     it('Can only view if the item is not the current version',
-            inject(function(privileges, desks, authoring, $q, $rootScope) {
-                var item = {
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'published',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_version': 8,
+                'archive_item': {
                     '_id': 'test',
                     'state': 'published',
                     'marked_for_not_publication': false,
@@ -744,35 +754,25 @@ describe('authoring actions', function() {
                         'desk': 'desk1'
                     },
                     'more_coming': false,
-                    '_version': 8,
-                    'archive_item': {
-                        '_id': 'test',
-                        'state': 'published',
-                        'marked_for_not_publication': false,
-                        'type': 'text',
-                        'task': {
-                            'desk': 'desk1'
-                        },
-                        'more_coming': false,
-                        '_version': 10
-                    }
-                };
+                    '_version': 10
+                }
+            };
 
-                var user_privileges = {
-                    'duplicate': true,
-                    'mark_item': false,
-                    'spike': true,
-                    'unspike': true,
-                    'mark_for_highlights': true,
-                    'unlock': true,
-                    'publish': true,
-                    'correct': true,
-                    'kill': true
-                }; 
+            var user_privileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true
+            };
 
-                privileges.setUserPrivileges(user_privileges);
-                $rootScope.$digest();
-                var itemActions = authoring.itemActions(item);
-                allowedActions(itemActions, ['view']);
+            privileges.setUserPrivileges(user_privileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['view']);
         }));
 });

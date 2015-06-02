@@ -174,7 +174,7 @@ define([
                     action: 'unspike',
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).unspike;
-                    }]                    
+                    }]
                 })
                 .activity('duplicate-content', {
                     label: gettext('Duplicate'),
