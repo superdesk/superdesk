@@ -931,21 +931,6 @@
                     return $scope.dirty || $scope.item._autosave;
                 };
 
-                // function updateEditorState (result) {
-                //     extendItem($scope.item, result);
-
-                //     //The current $digest cycle will mark $scope.dirty = true.
-                //     //We need to postpone this code block for the next cycle.
-                //     $timeout(function() {
-                //         $scope.origItem.lock_user = $scope.item.lock_user = result.lock_user;
-                //         $scope.item._locked = result._locked;
-                //         $scope.origItem.lock_session = $scope.item.lock_session = result.lock_session;
-                //         $scope._editable = $scope.item._editable = true;
-                //         $scope.dirty = false;
-                //         $scope.item._autosave = null;
-                //     }, 200);
-                // }
-
                 // call the function to unlock and lock the story for editing.
                 $scope.unlock = function() {
                     lock.unlock($scope.item).then(function(unlocked_item) {
