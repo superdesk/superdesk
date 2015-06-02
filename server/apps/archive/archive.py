@@ -131,8 +131,13 @@ class ArchiveService(BaseService):
         """
         Overriding this to handle existing data in Mongo & Elastic
         """
+        self.__enhance_items(docs[config.ITEMS])
 
-        for item in docs[config.ITEMS]:
+    def on_fetched_item(self, doc):
+        self.__enhance_items([doc])
+
+    def __enhance_items(self, items):
+        for item in items:
             handle_existing_data(item)
             self.takesService.enhance_with_package_info(item)
 
@@ -293,7 +298,6 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
 
         handle_existing_data(item)
-
         return item
 
     def restore_version(self, id, doc, original):

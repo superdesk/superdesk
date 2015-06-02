@@ -14,6 +14,7 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.content import not_analyzed
 from apps.archive.common import aggregations, handle_existing_data, item_schema
+from apps.archive.archive import SOURCE as ARCHIVE
 from eve.utils import ParsedRequest, config
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow, get_expiry_date
@@ -88,7 +89,7 @@ class PublishedItemService(BaseService):
                 archive_req = ParsedRequest()
                 archive_req.max_results = len(ids)
                 # can't access published from elastic due filter on the archive resource hence going to mongo
-                archive_items = list(superdesk.get_resource_service('archive')
+                archive_items = list(superdesk.get_resource_service(ARCHIVE)
                                      .get_from_mongo(req=archive_req, lookup=query))
 
                 takes_service = TakesPackageService()
