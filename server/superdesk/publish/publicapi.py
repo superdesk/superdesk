@@ -15,6 +15,7 @@ from superdesk import get_resource_service
 from superdesk.errors import PublishPublicAPIError
 from superdesk.publish import register_transmitter
 from superdesk.publish.publish_service import PublishService
+from datetime import datetime
 
 
 errors = [PublishPublicAPIError.publicAPIError().get_error_description()]
@@ -25,10 +26,11 @@ class PublicAPIPublishService(PublishService):
 
     def _transmit(self, formatted_item, subscriber, destination):
         item = json.loads(formatted_item['formatted_item'])
+        self._fix_dates(item)
         if item['type'] == ITEM_TYPE_COMPOSITE:
-            publicapiService = get_resource_service('public_packages')
+            publicapiService = get_resource_service('publish_packages')
         else:
-            publicapiService = get_resource_service('public_items')
+            publicapiService = get_resource_service('publish_items')
         try:
             public_item = publicapiService.find_one(req=None, _id=item['_id'])
             if public_item:
@@ -38,4 +40,9 @@ class PublicAPIPublishService(PublishService):
         except Exception as ex:
             raise PublishPublicAPIError.publicAPIError(ex, destination)
 
-register_transmitter('publicapi', PublicAPIPublishService(), errors)
+    def _fix_dates(self, item):
+        for field, value in item.items():
+            if isinstance(value, dict) and '$date' in value:
+                item[field] = datetime.utcfromtimestamp(value['$date'] / 1000)
+
+register_transmitter('PublicArchive', PublicAPIPublishService(), errors)

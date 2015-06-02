@@ -23,7 +23,7 @@ class NINJSFormatter(Formatter):
     direct_copy_properties = ['versioncreated', 'usageterms', 'subject', 'language', 'headline',
                               'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located']
 
-    def format(self, article, destination):
+    def format(self, article, destination, selector_codes=None):
         try:
             pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
 
@@ -33,11 +33,11 @@ class NINJSFormatter(Formatter):
             ninjs['type'] = self._get_type(article)
             try:
                 ninjs['byline'] = self._get_byline(article)
-            except Exception:
+            except:
                 pass
-            for property in self.direct_copy_properties:
-                if property in article:
-                    ninjs[property] = article[property]
+            for copy_property in self.direct_copy_properties:
+                if copy_property in article:
+                    ninjs[copy_property] = article[copy_property]
             if article['type'] == 'composite':
                 article['associations'] = self._get_associations(article)
 
@@ -45,13 +45,13 @@ class NINJSFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.ninjsFormatterError(ex, destination)
 
-    def can_format(self, format_type):
+    def can_format(self, format_type, article_type):
         return format_type == 'ninjs'
 
     def _get_byline(self, article):
         if 'byline' in article:
             return article['byline']
-        user = superdesk.get_resource_service('users').find_one(article['original_creator'])
+        user = superdesk.get_resource_service('users').find_one(req=None, _id=article['original_creator'])
         if user:
             return user['display_name']
         raise Exception('User not found')

@@ -32,7 +32,7 @@ class Formatter(metaclass=FormatterRegistry):
         """Formats the article and returns the transformed string"""
         raise NotImplementedError()
 
-    def can_format(self, format_type):
+    def can_format(self, format_type, article_type):
         """Test if formatter can format for given type."""
         raise NotImplementedError()
 

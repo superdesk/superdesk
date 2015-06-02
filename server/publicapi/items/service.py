@@ -135,7 +135,7 @@ class ItemsService(BaseService):
             )
 
     def _get_uri(self, document):
-        """Set the given document's `uri` content field.
+        """Return the given document's `uri`.
 
         :param dict document: MongoDB document fetched from database
         """
