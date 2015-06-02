@@ -199,14 +199,14 @@ function SpellcheckService($q, api, dictionaries, editor) {
         var node = elem;
         return this.errors(node.textContent).then(function(errors) {
             editor.stopEvents = true;
-            var selection = editor.storeSelection(node);
+            editor.storeSelection(node);
 
             angular.forEach(errors, function(error) {
                 hiliteError(node, error);
             });
 
             setErrorClass(node);
-            editor.resetSelection(node, selection);
+            editor.resetSelection(node);
             editor.stopEvents = false;
         });
     };
