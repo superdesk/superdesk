@@ -48,23 +48,15 @@ describe('Search', function() {
         var subject = element.all(by.css('.dropdown-nested')).first();
         var subjectToggle = subject.element(by.css('.dropdown-toggle'));
 
-        filterPanelButton.click().then(
-            function () {
-                return element.all(by.css('[ng-click="toggleModule()"]')).first().click();
-            }).then(
-            function () {
-                return subjectToggle.click();
-            }).then(
-            function () {
-                return subject.all(by.css('.nested-toggle')).first().click();
-            }).then(
-            function () {
-                return subject.all(by.repeater('term in activeTree')).first().click();
-            }).then(function () {
-            expect(element.all(by.repeater('item in items._items')).count()).toBe(0);
-            expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
-            expect(element.all(by.repeater('t in item[field]')).count()).toBe(1);
-        });
+        filterPanelButton.click();
+        element.all(by.css('[ng-click="toggleModule()"]')).first().click();
+        subjectToggle.click();
+        subject.all(by.css('.nested-toggle')).first().click();
+        subject.all(by.repeater('term in activeTree')).first().click();
+
+        expect(element.all(by.repeater('t in item[field]')).count()).toBe(1);
+        expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
+        expect(element.all(by.repeater('item in items._items')).count()).toBe(0);
     });
 
     it('can filter by state', function() {
