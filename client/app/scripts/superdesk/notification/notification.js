@@ -22,10 +22,13 @@
         'stage': 'Stage is created/updated/deleted',
         'stage_visibility_updated': 'Stage visibility change'
     };
-    //var userDesks;
-    WebSocketProxy.$inject = ['$rootScope', 'config', 'reloadService'];
-    function WebSocketProxy($rootScope, config, reloadService) {
+    var userDesks;
+    WebSocketProxy.$inject = ['$rootScope', 'config', 'reloadService', 'desks'];
+    function WebSocketProxy($rootScope, config, reloadService, desks) {
         //console.log(session.identity);
+        desks.fetchCurrentUserDesks().then(function (desk_list) {
+            userDesks = desk_list._items;
+        });
 
         if (!config.server.ws) {
             return;
@@ -37,7 +40,7 @@
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
             if (msg.data !== 'ping') {
-                reloadService.reload(msg);
+                reloadService.reload(msg, userDesks);
             }
             //reloadService.reload(msg.data);
         };
@@ -47,19 +50,17 @@
         };
     }
 
-    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks'];
-    function ReloadService($window, $rootScope, session, desks) {
-        /* desks.fetchCurrentUserDesks().then(function (desk_list) {
-            userDesks = desk_list._items;
-        });*/
+    ReloadService.$inject = ['$window', '$rootScope', 'session'];
+    function ReloadService($window, $rootScope, session) {
+       
         this.reload = function(msg) {
             if (ReloadIdentifier[msg.event] != null) {
                 console.log('This is RELOAD Event');
-                /*if (msg.extra.desk_id != null) {
+                if (msg.extra.desk_id != null) {
                     if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
-                        console.log('event related to current userdsk event related to current user desk');
+                        console.log('event related to current userdesk event related to current user desk');
                     }
-                }*/
+                }
                 if (msg.extra.user_ids != null) {
                     if (msg.extra.user_ids.indexOf(session.identity._id)  !== -1) {
                         console.log('event related to current user');
