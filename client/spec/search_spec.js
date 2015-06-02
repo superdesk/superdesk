@@ -43,11 +43,11 @@ describe('Search', function() {
     it('can search by subject codes field', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        
+
         var filterPanelButton = element(by.css('.fitler-trigger'));
         var subject = element.all(by.css('.dropdown-nested')).first();
         var subjectToggle = subject.element(by.css('.dropdown-toggle'));
-        
+
         filterPanelButton.click().then(
             function(){
                 return element.all(by.css('[ng-click="toggleModule()"]')).first().click();
