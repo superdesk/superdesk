@@ -39,8 +39,8 @@ describe('Search', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(1);
         expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
     });
-    
-    it('can search by subject codes field', function() {
+
+    it('can search by subject codes field', function () {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
@@ -49,10 +49,10 @@ describe('Search', function() {
         var subjectToggle = subject.element(by.css('.dropdown-toggle'));
 
         filterPanelButton.click().then(
-            function(){
+            function () {
                 return element.all(by.css('[ng-click="toggleModule()"]')).first().click();
             }).then(
-            function(){             
+            function () {
                 return subjectToggle.click();
             }).then(
             function () {
@@ -61,10 +61,10 @@ describe('Search', function() {
             function () {
                 return subject.all(by.repeater('term in activeTree')).first().click();
             }).then(function () {
-                expect(element.all(by.repeater('item in items._items')).count()).toBe(0);
-                expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
-                expect(element.all(by.repeater('t in item[field]')).count()).toBe(1);
-            });
+            expect(element.all(by.repeater('item in items._items')).count()).toBe(0);
+            expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
+            expect(element.all(by.repeater('t in item[field]')).count()).toBe(1);
+        });
     });
 
     it('can filter by state', function() {
