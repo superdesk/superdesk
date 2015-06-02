@@ -403,7 +403,7 @@ class BasePublishService(BaseService):
                                 ]
 
         for metadata in metadata_tobe_copied:
-            package[metadata] = take[metadata]
+            package[metadata] = take.get(metadata)
 
     def update_published_collection(self, published_item):
         get_resource_service('published').update_published_items(published_item['_id'],
