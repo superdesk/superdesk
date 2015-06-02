@@ -318,7 +318,7 @@
             });
         };
 
-         /**
+        /**
          * Save the item as new item in workspace when any critical configuration changes occur
          *
          * @param {Object} orig
