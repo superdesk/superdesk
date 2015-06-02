@@ -421,7 +421,8 @@
 
                 action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked';
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
-                action.spike = current_item.state !== 'spiked' && user_privileges.spike;
+                action.spike = current_item.state !== 'spiked' && user_privileges.spike &&
+                    (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id);
             }
 
             //mark item for highlights
