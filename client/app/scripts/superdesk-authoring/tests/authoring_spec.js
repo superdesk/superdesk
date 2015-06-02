@@ -164,6 +164,7 @@ describe('authoring', function() {
             confirmDefer = $q.defer();
             spyOn(confirm, 'confirm').and.returnValue(confirmDefer.promise);
             spyOn(confirm, 'confirmPublish').and.returnValue(confirmDefer.promise);
+            spyOn(confirm, 'confirmSaveWork').and.returnValue(confirmDefer.promise);
             spyOn(lock, 'unlock').and.returnValue($q.when());
         }));
 
@@ -247,6 +248,27 @@ describe('authoring', function() {
 
             expect(api.update).toHaveBeenCalledWith('archive_publish', edit, {});
             expect(lock.unlock).toHaveBeenCalled();
+        }));
+        it('confirms if an item is dirty and save work in personal', inject(function(authoring, api, confirm, lock, $q, $rootScope) {
+            var edit = Object.create(item);
+            _.extend(edit, {
+                task: {desk: null, stage: null, user:1},
+                type: 'text',
+                version: 1
+            });
+
+            authoring.saveWorkConfirmation(item, edit, true, 'User is disabled');
+            $rootScope.$digest();
+
+            expect(confirm.confirmSaveWork).toHaveBeenCalled();
+
+            spyOn(api, 'save').and.returnValue($q.when(_.extend({}, edit, {})));
+
+            authoring.saveWork(edit);
+            $rootScope.$digest();
+
+            expect(api.save).toHaveBeenCalledWith('archive', {}, edit);
+
         }));
     });
 });

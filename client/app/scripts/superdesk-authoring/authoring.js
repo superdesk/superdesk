@@ -328,9 +328,8 @@
             var _orig = {type: orig.type, version: 1, task: {desk: null, stage: null, user: orig.task.user}};
             var _diff = _.omit(item, ['unique_name', 'unique_id', '_id', 'guid']);
             var diff = extendItem(_orig, _diff);
-            return api('archive').save(diff).then(function(_item) {
+            return api.save('archive', {}, diff).then(function(_item) {
                 _item._autosave = null;
-                //item._locked = lock.isLocked(item);
                 return _item;
             });
         };
