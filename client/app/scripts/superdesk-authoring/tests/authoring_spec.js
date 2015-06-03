@@ -67,23 +67,24 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
-    xit('unlocks a locked item and locks by current user', inject(function(authoring, lock, $rootScope, $timeout, api, $q) {
-        //TODO: have to revisit the test later on.
-        spyOn(api, 'save').and.returnValue($q.when({}));
+    it('unlocks a locked item and locks by current user',
+        inject(function(authoring, lock, $rootScope, $timeout, api, $q, $location) {
 
-        var lockedItem = {guid: GUID, _locked: true, lock_user: 'user:5'};
-        var $scope = startAuthoring(lockedItem, 'edit');
-        $rootScope.$digest();
+            spyOn(api, 'save').and.returnValue($q.when({}));
+            spyOn(lock, 'unlock').and.returnValue($q.when({}));
 
-        $scope.unlock();
-        $timeout.flush(5000);
-        $rootScope.$digest();
-        expect(lock.isLocked($scope.item)).toBe(false);
-        expect($scope.item.lock_user).toBe(USER);
-    }));
+            var lockedItem = {guid: GUID, _id: GUID, _locked: true, lock_user: 'user:5'};
+            var $scope = startAuthoring(lockedItem, 'edit');
+            $rootScope.$digest();
+
+            $scope.unlock();
+            $timeout.flush(5000);
+            $rootScope.$digest();
+            expect($location.path(), '/authoring/' + $scope.item._id);
+        }));
 
     it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
-        var $scope = startAuthoring(item, 'edit'),
+        var $scope = startAuthoring({guid: GUID, _id: GUID}, 'edit'),
             headline = 'test headline';
 
         expect($scope.dirty).toBe(false);

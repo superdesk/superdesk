@@ -40,7 +40,7 @@
             <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
         </dl>
 
-        <span ng-if="item.marked_for_not_publication == true" class="not_for_publication" translate>Not for publication</span>
+        <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not for publication</div>       
 
         <div ng-if="item.archived" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
     </div>
