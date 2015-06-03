@@ -385,6 +385,8 @@
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
 
+            var lockedByMe = !lock.isLocked(item);
+
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
                 //if not the last published version
@@ -395,8 +397,8 @@
                 if (current_item.state === 'scheduled') {
                     action.deschedule = true;
                 } else if (current_item.state === 'published' || current_item.state === 'corrected') {
-                    action.kill = user_privileges.kill;
-                    action.correct = user_privileges.correct;
+                    action.kill = user_privileges.kill && lockedByMe;
+                    action.correct = user_privileges.correct && lockedByMe;
                 }
 
                 action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
@@ -418,7 +420,7 @@
                         current_item.task && current_item.task.desk &&
                         user_privileges.publish;
 
-                action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked';
+                action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked' && lockedByMe;
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
                 action.spike = current_item.state !== 'spiked' && user_privileges.spike &&
                     (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id);
@@ -1568,9 +1570,6 @@
                         superdesk.intent('author', 'article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
-                    },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).edit;
                     }]
@@ -1583,9 +1582,6 @@
                         superdesk.intent('kill', 'content_article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
-                    },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).kill;
                     }],
@@ -1616,9 +1612,6 @@
                         superdesk.intent('correct', 'content_article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    condition: function(item) {
-                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
-                    },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).correct;
                     }],
