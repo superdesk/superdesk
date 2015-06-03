@@ -92,7 +92,14 @@
                 <ul ng-if="_editable" ng-controller="SpellcheckMenu as spellcheckMenu">
                     <li><span class="menu-label" translate>Spell Checker</span></li>
                     <li>
-                        <button type="button" translate>Run automatically <span class="pull-right" sd-switch="" ng-model="spellcheckMenu.isAuto" ng-change="spellcheckMenu.pushSettings()"></span></button></li>
+                        <span>
+                            <span class="pull-right"
+                                sd-switch
+                                ng-model="spellcheckMenu.isAuto"
+                                ng-change="spellcheckMenu.pushSettings()"></span>
+                            <span translate>Run automatically</span>
+                        </span>
+                    </li>
                     <li>
                         <button type="button"
                             ng-click="spellcheckMenu.spellcheck()"
