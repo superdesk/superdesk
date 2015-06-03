@@ -578,7 +578,7 @@ describe('authoring actions', function() {
                     'desk': 'desk1'
                 },
                 'takes': {
-                        'last_take': 'take2'
+                    'last_take': 'take2'
                 }
             };
 
