@@ -24,4 +24,64 @@ describe('templates', function() {
             });
         }));
     });
+
+    describe('templates service', function() {
+        beforeEach(inject(function($q, api) {
+            spyOn(api.content_templates, 'query').and.returnValue($q.when());
+        }));
+        it('can fetch templates using default parameters', inject(function(api, templates) {
+            templates.fetchTemplates();
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1
+            });
+        }));
+        it('can fetch templates using page parameters', inject(function(api, templates) {
+            templates.fetchTemplates(2, 25);
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 25,
+                page: 2
+            });
+        }));
+        it('can fetch templates using type parameter', inject(function(api, templates) {
+            templates.fetchTemplates(undefined, undefined, 'create');
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$and":[{"template_type":"create"}]}'
+            });
+        }));
+        it('can fetch templates using desk parameter', inject(function(api, templates) {
+            templates.fetchTemplates(undefined, undefined, undefined, 'desk1');
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$and":[{"template_desk":"desk1"}]}'
+            });
+        }));
+        it('can fetch templates using personal desk parameter', inject(function(api, templates) {
+            templates.fetchTemplates(undefined, undefined, undefined, 'personal');
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$and":[{"template_desk":null}]}'
+            });
+        }));
+        it('can fetch templates using keyword parameter', inject(function(api, templates) {
+            templates.fetchTemplates(undefined, undefined, undefined, undefined, 'keyword');
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$and":[{"template_name":{"$regex":"keyword","$options":"-i"}}]}'
+            });
+        }));
+        it('can fetch templates using all parameters', inject(function(api, templates) {
+            templates.fetchTemplates(25, 2, 'create', 'desk1', 'keyword');
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 2,
+                page: 25,
+                where: '{"$and":[{"template_type":"create","template_desk":"desk1","template_name":{"$regex":"keyword","$options":"-i"}}]}'
+            });
+        }));
+    });
 });

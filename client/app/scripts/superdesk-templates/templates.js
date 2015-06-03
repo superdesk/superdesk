@@ -18,14 +18,41 @@
 
     TemplatesService.$inject = ['api', '$q', 'gettext'];
     function TemplatesService(api, $q, gettext) {
+        var PAGE_SIZE = 10;
 
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
             {_id: 'create', label: gettext('Create')}
         ];
 
-        this.fetchContentTemplates = function fetchContentTemplates() {
-            return api.find('content_templates');
+        this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, keyword) {
+            page = page || 1;
+            pageSize = pageSize || PAGE_SIZE;
+
+            var criteria = {};
+            if (type !== undefined) {
+                criteria.template_type = type;
+            }
+            if (desk !== undefined) {
+                desk = (desk === 'personal') ? null : desk;
+                criteria.template_desk = desk;
+            }
+            if (keyword) {
+                criteria.template_name = {'$regex': keyword, '$options': '-i'};
+            }
+            var params = {
+                max_results: pageSize,
+                page: page
+            };
+            if (!_.isEmpty(criteria)) {
+                params.where = JSON.stringify({
+                    '$and': [criteria]
+                });
+            }
+            return api.content_templates.query(params)
+            .then(function(result) {
+                return result;
+            });
         };
     }
 
@@ -40,9 +67,9 @@
                 $scope.desks = null;
 
                 function fetchTemplates() {
-                    templates.fetchContentTemplates().then(
-                        function(content_templates) {
-                            $scope.content_templates = content_templates;
+                    templates.fetchTemplates(1, 50).then(
+                        function(result) {
+                            $scope.content_templates = result;
                         }
                     );
                 }

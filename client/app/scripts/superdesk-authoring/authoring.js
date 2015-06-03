@@ -1315,38 +1315,30 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks'];
-    function ContentCreateDirective(api, desks) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates'];
+    function ContentCreateDirective(api, desks, templates) {
         var NUM_ITEMS = 5;
+
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
                 scope.numItems = NUM_ITEMS;
                 scope.contentTemplates = null;
 
-                var fetchTemplates = function() {
-                    var params = {
-                        max_results: NUM_ITEMS,
-                        where: {
-                            template_type: 'create',
-                            template_desk: desks.activeDeskId
-                        }
-                    };
-                    api.content_templates.query(params)
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, function() {
+                    templates.fetchTemplates(1, NUM_ITEMS, 'create', desks.activeDeskId)
                     .then(function(result) {
                         scope.contentTemplates = result;
                     });
-                };
-
-                scope.$watch(function() {
-                    return desks.activeDeskId;
-                }, fetchTemplates);
+                });
             }
         };
     }
 
-    TemplateSelectDirective.$inject = ['api', 'desks'];
-    function TemplateSelectDirective(api, desks) {
+    TemplateSelectDirective.$inject = ['api', 'desks', 'templates'];
+    function TemplateSelectDirective(api, desks, templates) {
         var PAGE_SIZE = 10;
 
         return {
@@ -1356,29 +1348,6 @@
                 open: '='
             },
             link: function(scope) {
-                var fetchTemplates = function() {
-                    var page = scope.options.page || 1;
-                    var params = {
-                        max_results: PAGE_SIZE,
-                        page: page
-                    };
-                    var criteria = {
-                        template_type: 'create',
-                        template_desk: desks.activeDeskId
-                    };
-                    if (scope.options.keyword) {
-                        criteria.template_name = {'$regex': scope.options.keyword, '$options': '-i'};
-                    }
-                    params.where = JSON.stringify({
-                        '$and': [criteria]
-                    });
-                    api.content_templates.query(params)
-                    .then(function(result) {
-                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
-                        scope.templates = result;
-                    });
-                };
-
                 scope.maxPage = 1;
                 scope.options = {
                     keyword: null,
@@ -1394,7 +1363,13 @@
                     scope.selectAction(template);
                 };
 
-                scope.$watchCollection('options', fetchTemplates);
+                scope.$watchCollection('options', function() {
+                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
+                    .then(function(result) {
+                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
+                        scope.templates = result;
+                    });
+                });
             }
         };
     }
