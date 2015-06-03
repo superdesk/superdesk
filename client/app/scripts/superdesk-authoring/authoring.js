@@ -1423,49 +1423,31 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api'];
-    function ContentCreateDirective(api) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates'];
+    function ContentCreateDirective(api, desks, templates) {
         var NUM_ITEMS = 5;
+
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
+                scope.numItems = NUM_ITEMS;
                 scope.contentTemplates = null;
 
-                var fetchTemplates = function(numItems) {
-                    var params = {
-                        max_results: numItems || undefined,
-                        where: {template_type: 'create'}
-                    };
-                    api.content_templates.query(params)
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, function() {
+                    templates.fetchTemplates(1, NUM_ITEMS, 'create', desks.activeDeskId)
                     .then(function(result) {
                         scope.contentTemplates = result;
                     });
-                };
-
-                fetchTemplates(NUM_ITEMS);
+                });
             }
         };
     }
 
-    TemplateSelectDirective.$inject = ['api'];
-    function TemplateSelectDirective(api) {
+    TemplateSelectDirective.$inject = ['api', 'desks', 'templates'];
+    function TemplateSelectDirective(api, desks, templates) {
         var PAGE_SIZE = 10;
-
-        var fetchTemplates = function(page, keyword) {
-            page = page || 1;
-            var params = {
-                max_results: PAGE_SIZE,
-                page: page
-            };
-            var criteria = {template_type: 'create'};
-            if (keyword) {
-                criteria.template_name = {'$regex': keyword, '$options': '-i'};
-            }
-            params.where = JSON.stringify({
-                '$and': [criteria]
-            });
-            return api.content_templates.query(params);
-        };
 
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-template-select.html',
@@ -1489,13 +1471,13 @@
                     scope.selectAction(template);
                 };
 
-                scope.$watch('options', function() {
-                    fetchTemplates(scope.options.page, scope.options.keyword)
+                scope.$watchCollection('options', function() {
+                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
                     .then(function(result) {
                         scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
                         scope.templates = result;
                     });
-                }, true);
+                });
             }
         };
     }

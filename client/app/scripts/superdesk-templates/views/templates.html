@@ -41,6 +41,15 @@
               ng-model="template.template_type"
               ng-options="type._id as type.label for type in types"></select>
         </div>
+        <div class="field">
+              <label for="template-desk" translate>Desk</label>
+              <div class="control">
+                  <select id="template-desk" ng-model="template.template_desk" ng-options="desk._id as desk.name for desk in desks._items">
+                      <option value="" translate>Any</option>
+                  </select>
+              </div>
+          </div>
+
       </div>
       <div class="fieldset" sd-article-edit></div>
     </div>
