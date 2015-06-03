@@ -436,11 +436,11 @@
             //check for desk membership for edit rights.
             if (current_item.task && current_item.task.desk) {
                 // in production
-                action.duplicate = user_privileges.duplicate;
                 var desk = _.find(self.userDesks, {'_id': current_item.task.desk});
                 if (!desk) {
                     action = angular.extend({}, DEFAULT_ACTIONS);
                 }
+                action.duplicate = user_privileges.duplicate;
             } else {
                 // personal
                 action.copy = true;
