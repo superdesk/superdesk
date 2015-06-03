@@ -38,7 +38,13 @@ Feature: Link content in takes
             "slugline": "comics",
             "anpa_take_key": "Take=2",
             "state": "draft",
-            "original_creator": "#CONTEXT_USER_ID#"
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
         }
         """
         When we get "archive"
@@ -100,7 +106,13 @@ Feature: Link content in takes
             "slugline": "comics",
             "anpa_take_key": "Take=3",
             "state": "draft",
-            "original_creator": "#CONTEXT_USER_ID#"
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
         }
         """
         When we get "archive"
@@ -227,7 +239,13 @@ Feature: Link content in takes
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=2",
             "state": "draft",
-            "original_creator": "#CONTEXT_USER_ID#"
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
         }
         """
         When we patch "/archive/#TAKE#"
@@ -254,6 +272,12 @@ Feature: Link content in takes
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=3",
             "state": "draft",
-            "original_creator": "#CONTEXT_USER_ID#"
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
         }
         """

@@ -79,6 +79,8 @@ class BasePublishService(BaseService):
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item=original)
+        user = get_user()
+        push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
     def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
@@ -403,7 +405,7 @@ class BasePublishService(BaseService):
                                 ]
 
         for metadata in metadata_tobe_copied:
-            package[metadata] = take[metadata]
+            package[metadata] = take.get(metadata)
 
     def update_published_collection(self, published_item):
         get_resource_service('published').update_published_items(published_item['_id'],

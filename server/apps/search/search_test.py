@@ -30,10 +30,10 @@ class SearchServiceTestCase(TestCase):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{'task': {'desk': 1}, 'state': 'in_progress'}])
-            self.app.data.insert('archive', [{'task': {'desk': 1}, 'state': 'published'}])
-            self.app.data.insert('published', [{'task': {'desk': 1}, 'state': 'published'}])
-            self.app.data.insert('published', [{'task': {'desk': 1}, 'state': 'killed'}])
+            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, 'state': 'in_progress'}])
+            self.app.data.insert('archive', [{'_id': '123', 'task': {'desk': 1}, 'state': 'published'}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, 'state': 'published'}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, 'state': 'killed'}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener

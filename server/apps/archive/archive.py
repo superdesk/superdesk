@@ -19,7 +19,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off, handle_existing_data
+from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -47,38 +47,6 @@ from superdesk.utc import utcnow
 import datetime
 
 logger = logging.getLogger(__name__)
-
-
-def item_schema(extra=None):
-    """Create schema for item.
-
-    :param extra: extra fields to be added to schema
-    """
-    schema = {
-        'old_version': {
-            'type': 'number',
-        },
-        'last_version': {
-            'type': 'number',
-        },
-        'task': {'type': 'dict'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
-        'publish_schedule': {
-            'type': 'datetime',
-            'nullable': True
-        },
-        'marked_for_not_publication': {
-            'type': 'boolean',
-            'default': False
-        }
-    }
-    schema.update(metadata_schema)
-    if extra:
-        schema.update(extra)
-    return schema
 
 
 def get_subject(doc1, doc2=None):
@@ -163,8 +131,13 @@ class ArchiveService(BaseService):
         """
         Overriding this to handle existing data in Mongo & Elastic
         """
+        self.__enhance_items(docs[config.ITEMS])
 
-        for item in docs[config.ITEMS]:
+    def on_fetched_item(self, doc):
+        self.__enhance_items([doc])
+
+    def __enhance_items(self, items):
+        for item in items:
             handle_existing_data(item)
             self.takesService.enhance_with_package_info(item)
 
@@ -264,6 +237,7 @@ class ArchiveService(BaseService):
             self.packageService.on_updated(updates, original)
 
         user = get_user()
+
         if '_version' in updates:
             updated = copy(original)
             updated.update(updates)
@@ -271,7 +245,8 @@ class ArchiveService(BaseService):
                          self.datasource, item=updated,
                          version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
-            push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
+
+        push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
     def on_replace(self, document, original):
         remove_unwanted(document)
@@ -325,7 +300,6 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
 
         handle_existing_data(item)
-
         return item
 
     def restore_version(self, id, doc, original):

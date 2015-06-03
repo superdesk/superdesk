@@ -10,6 +10,7 @@
 
 
 import superdesk
+from superdesk.errors import BulkIndexError
 
 
 class IndexFromMongo(superdesk.Command):
@@ -41,7 +42,13 @@ class IndexFromMongo(superdesk.Command):
             cursor.limit(bucket_size)
             items = list(cursor)
             print('Inserting {} items'.format(len(items)))
-            superdesk.app.data._search_backend(mongo_collection_name).bulk_insert(mongo_collection_name, items)
+            success, failed = superdesk.app.data._search_backend(mongo_collection_name).bulk_insert(
+                mongo_collection_name, items)
+            print('Inserted {} items'.format(success))
+            if failed:
+                print('Failed to do bulk insert of items {}. Errors: {}'.format(len(failed), failed))
+                raise BulkIndexError(resource=mongo_collection_name, errors=failed)
+
         return 'Finished indexing collection {}'.format(mongo_collection_name)
 
 

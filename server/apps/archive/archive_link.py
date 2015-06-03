@@ -10,9 +10,10 @@
 
 from flask import request
 
-from superdesk import get_resource_service, Service, Resource
+from superdesk import get_resource_service, Service
+from superdesk.resource import Resource, build_custom_hateoas
 from apps.packages import TakesPackageService
-from apps.archive.common import item_url
+from apps.archive.common import item_url, CUSTOM_HATEOAS
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
 import logging
@@ -56,4 +57,5 @@ class ArchiveLinkService(Service):
 
         linked_item = self.packageService.link_as_next_take(target, link)
         doc.update(linked_item)
+        build_custom_hateoas(CUSTOM_HATEOAS, doc)
         return [linked_item['_id']]

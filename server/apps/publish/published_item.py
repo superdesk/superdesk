@@ -9,10 +9,12 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from apps.packages import TakesPackageService
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from apps.content import metadata_schema, not_analyzed
-from apps.archive.common import aggregations, handle_existing_data
+from apps.content import not_analyzed
+from apps.archive.common import aggregations, handle_existing_data, item_schema
+from apps.archive.archive import SOURCE as ARCHIVE
 from eve.utils import ParsedRequest, config
 from bson.objectid import ObjectId
 from superdesk.utc import utcnow, get_expiry_date
@@ -23,15 +25,18 @@ logger = logging.getLogger(__name__)
 
 
 class PublishedItemResource(Resource):
-
     datasource = {
         'search_backend': 'elastic',
         'aggregations': aggregations,
         'elastic_filter': {'terms': {'state': ['scheduled', 'published', 'killed', 'corrected']}},
-        'default_sort': [('_updated', -1)]
+        'default_sort': [('_updated', -1)],
+        'projection': {
+            'old_version': 0,
+            'last_version': 0
+        }
     }
 
-    schema = {
+    published_item_fields = {
         'item_id': {
             'type': 'string',
             'mapping': not_analyzed
@@ -39,15 +44,30 @@ class PublishedItemResource(Resource):
         'last_publish_action': {'type': 'string'}
     }
 
-    schema.update(metadata_schema)
+    schema = item_schema(published_item_fields)
     etag_ignore_fields = ['_id', 'last_publish_action', 'highlights', 'item_id']
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
+    additional_lookup = {
+        'url': 'regex("[\w,.:-]+")',
+        'field': 'item_id'
+    }
 
 
 class PublishedItemService(BaseService):
+    def on_fetched(self, docs):
+        """
+        Overriding this to handle existing data in Mongo & Elastic.
+        There could be a possible performance hit in regards to enhance the documents.
+        """
+        self.enhance_with_archive_items(docs[config.ITEMS])
+
+    def on_fetched_item(self, doc):
+        self.enhance_with_archive_items([doc])
+
     def on_create(self, docs):
         # the same content can be published more than once
         # so it is necessary to have a new _id and preserve the original
+        # storing the _version in last version and delete
         for doc in docs:
             doc['item_id'] = doc['_id']
             doc['_created'] = utcnow()
@@ -57,32 +77,46 @@ class PublishedItemService(BaseService):
             doc.pop('lock_user', None)
             doc.pop('lock_time', None)
 
-    def get(self, req, lookup):
-        # convert to the original _id so everything else works
-        items = super().get(req, lookup)
-        ids = list(set([str(item['item_id']) for item in items]))
-        query = {'query': {'filtered': {'filter': {'terms': {'_id': ids}}}}}
-        archive_req = ParsedRequest()
-        archive_req.args = {'source': json.dumps(query)}
-        archive_items = superdesk.get_resource_service('archive').get(req=req, lookup=None)
-        for item in items:
-            archive_items_list = [i for i in archive_items if i.get('_id') == item.get('item_id')]
-            archive_item = archive_items_list[0] if archive_items_list else {}
-            updates = {
-                '_id': item['item_id'],
-                'item_id': item['_id'],
-                'lock_user': archive_item.get('lock_user', None),
-                'lock_time': archive_item.get('lock_time', None),
-                'lock_session': archive_item.get('lock_session', None)
-            }
-
-            item.update(updates)
-            handle_existing_data(item)
-
-        return items
-
     def on_delete(self, doc):
         self.insert_into_text_archive(doc)
+
+    def enhance_with_archive_items(self, items):
+        if items:
+            ids = list(set([item.get('item_id') for item in items if item.get('item_id')]))
+            archive_items = []
+            if ids:
+                query = {'$and': [{'_id': {'$in': ids}}]}
+                archive_req = ParsedRequest()
+                archive_req.max_results = len(ids)
+                # can't access published from elastic due filter on the archive resource hence going to mongo
+                archive_items = list(superdesk.get_resource_service(ARCHIVE)
+                                     .get_from_mongo(req=archive_req, lookup=query))
+
+                takes_service = TakesPackageService()
+                for item in archive_items:
+                    handle_existing_data(item)
+                    takes_service.enhance_with_package_info(item)
+
+            for item in items:
+                try:
+                    archive_item = [i for i in archive_items if i.get('_id') == item.get('item_id')][0]
+                except IndexError:
+                    logger.exception(('Data inconsistency found for the published item {}. '
+                                      'Cannot find item {} in the archive collection.')
+                                     .format(item.get('_id'), item.get('item_id')))
+                    archive_item = {}
+
+                updates = {
+                    '_id': item.get('item_id'),
+                    'item_id': item.get('_id'),
+                    'lock_user': archive_item.get('lock_user', None),
+                    'lock_time': archive_item.get('lock_time', None),
+                    'lock_session': archive_item.get('lock_session', None),
+                    'archive_item': archive_item if archive_item else None
+                }
+
+                item.update(updates)
+                handle_existing_data(item)
 
     def get_other_published_items(self, _id):
         try:

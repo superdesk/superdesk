@@ -10,7 +10,7 @@
 
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
-from .common import aggregations
+from .common import aggregations, CUSTOM_HATEOAS
 from .archive import ArchiveResource
 import superdesk
 
@@ -36,12 +36,11 @@ class UserContentResource(Resource):
 
 
 class UserContentService(BaseService):
-    custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 
     def get(self, req, lookup):
         docs = super().get(req, lookup)
         for doc in docs:
-            build_custom_hateoas(self.custom_hateoas, doc)
+            build_custom_hateoas(CUSTOM_HATEOAS, doc)
         return docs
 
 

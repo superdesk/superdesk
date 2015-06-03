@@ -3,34 +3,32 @@
         <button class="stage stage-label" ng-show="stage" ng-click="openStage()">{{ stage.name }}</button>
         <div class="state-label state-{{item.state}}">{{item.state}}</div>
         <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
-        <span class="lock-info" ng-show="item._locked"><i class="icon-lock-red"></i></span>
+        <span class="lock-info" ng-show="item._locked && item.lock_user"><i class="icon-lock-red"></i></span>
         <span class="lock-text" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
-        <span class="lock-text" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
+        <span class="lock-text" ng-show="item._locked && !isLockedByMe() && item.lock_user" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
         <span ng-if="item.highlights" sd-highlights-title data-item="item" data-orientation="'bottom'"></span>
     </div>
 
     <div class="button-stack right-stack">
-        <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock() && _isInProductionStates" ng-click="unlock()" translate>Unlock</button>
+        <button class="btn btn-medium pull-left" ng-if="action === 'view' && item._locked && can_unlock() && itemActions.save" ng-click="unlock()" translate>Unlock</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="!sending && !_editable && !item._locked && _isInProductionStates && publish_enabled()"
+            ng-show="action === 'view' && !item._locked && itemActions.edit"
             ng-click="lock()"
             translate>Edit</button>
 
         <button class="btn btn-medium pull-left"
-            ng-show="!sending && !_editable && !item._locked && item.state === 'scheduled'"
+            ng-show="action === 'view' && !item._locked && itemActions.deschedule"
             ng-click="deschedule()"
             translate>Deschedule</button>
 
         <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates
-                && item.state !== 'scheduled' && !takes_package"
+            ng-show="action === 'view' && !item._locked && itemActions.correct"
             ng-click="openAction('correct')"
             translate>Correct</button>
 
         <button class="btn btn-medium btn-info pull-left"
-            ng-show="!sending && !_editable && !item._locked && !_isInProductionStates
-                && item.state !== 'scheduled' && !takes_package"
+            ng-show="action === 'view' && !item._locked && itemActions.kill"
             ng-click="openAction('kill')"
             translate>Kill</button>
 
@@ -39,7 +37,7 @@
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="save(item)"
             ng-show="_editable"
-            ng-if = "save_visible"
+            ng-if = "itemActions.save && action === 'edit'"
             ng-disabled="!save_enabled()"
             translate>Save</button>
 
@@ -51,28 +49,16 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "publish_enabled()"
+            ng-if = "(itemActions.publish || itemActions.kill || itemActions.correct) && action !== 'view'"
             ng-show="_editable"
             translate>{{action === "edit" ? "Publish": action}}</button>
-
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="markForPublication(true)"
-            ng-if="_isInProductionStates && not_for_publication_visible"
-            ng-show="_editable && not_for_publication_visible"
-            translate>Mark for Not Publication</button>
-
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="markForPublication(false)"
-            ng-if="_isInProductionStates && !not_for_publication_visible"
-            ng-show="_editable && !not_for_publication_visible"
-            translate>Mark for Publication</button>
 
         <div class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
-       <div class="navbtn dropdown strict highlights-dropdown pull-left" ng-if="item.task && item.task.desk"
+       <div class="navbtn dropdown strict highlights-dropdown pull-left" ng-if="item.task && item.task.desk && itemActions.mark_item"
             title="{{ :: 'Mark item' | translate }}" dropdown>
 			<button class="dropdown-toggle" dropdown-toggle>
 			<i class="svg-icon-add-to-list"></i>
@@ -80,7 +66,7 @@
 			<ul class="dropdown-menu pull-right" sd-mark-highlights-dropdown></ul>
 	   </div>
 
-        <div ng-if="item.type === 'text'" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
+        <div ng-if="action.multi_edit" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
