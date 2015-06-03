@@ -365,7 +365,6 @@
         /**
         * Actions that it can perform on an item
         * @param {Object} item : item
-        * @param {Object} privileges : user privileges
         */
         this.itemActions = function(item) {
             var current_item = item && angular.isDefined(item.archive_item) ? item.archive_item : item;
