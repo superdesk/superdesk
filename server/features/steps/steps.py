@@ -158,7 +158,7 @@ def patch_current_user(context, data):
 
 def apply_placeholders(context, text):
     placeholders = getattr(context, 'placeholders', {})
-    for placeholder in findall('#([^#]+)#', text):
+    for placeholder in findall('#([^#"]+)#', text):
         if placeholder not in placeholders:
             try:
                 resource_name, field_name = placeholder.lower().split('.', maxsplit=1)

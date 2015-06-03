@@ -13,6 +13,6 @@ from publicapi.items.resource import ItemsResource
 
 class PublicItemsResource(ItemsResource):
     datasource = {'source': 'items'}
-    item_methods = ['DELETE', 'PATCH']
-    resource_methods = ['POST']
+    item_methods = ['DELETE', 'PATCH', 'GET']
+    resource_methods = ['POST', 'GET']
     privileges = {'POST': 'publish_queue', 'DELETE': 'publish_queue', 'PATCH': 'publish_queue'}

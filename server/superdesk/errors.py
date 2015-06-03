@@ -413,7 +413,7 @@ class FormatterError(SuperdeskPublishError):
 
     @classmethod
     def ninjsFormatterError(cls, exception=None, destination=None):
-        return FormatterError(8003, exception, destination)
+        return FormatterError(7004, exception, destination)
 
 class SubscriberError(SuperdeskPublishError):
     _codes = {
