@@ -273,7 +273,6 @@
                         .then(angular.bind(this, function save() {
                             return this.saveWork(orig, diff);
                         }), function(err) { // ignore saving
-                            console.log(err);
                             return $q.when();
                         });
                 }
@@ -1017,16 +1016,13 @@
 
                 // init
                 $scope.closePreview();
-
                 $scope.$on('savework', SaveWorkOnChange);
-
                 function SaveWorkOnChange() {
                     var changeMsg = 'Desk/Stage/User';
 
                     authoring.saveWorkConfirmation($scope.origItem, $scope.item, $scope.dirty, changeMsg)
                     .then(function(res) {
                         if (res) {
-                            console.log('work is saved');
                             desks.setCurrentDeskId(null);
                             $location.path('/workspace/content');
                             $window.location.reload(true);

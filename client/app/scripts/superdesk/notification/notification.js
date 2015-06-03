@@ -9,26 +9,20 @@
  */
 (function() {
     'use strict';
-
-    var ReloadIdentifier = {
-        'user_disabled': 'User is disabled',
-        'user_inactivated': 'User is inactivated',
-        'user_role_changed': 'User role is changed',
-        'user_type_changed': 'User type is changed',
-        'user_privileges_revoked': 'User privileges are revoked',
-        'role_privileges_revoked': 'Role role_privileges_revoked',
-        'desk_membership_revoked': 'User removed from desk',
-        'desk': 'Desk is deleted/updated',
-        'stage': 'Stage is created/updated/deleted',
-        'stage_visibility_updated': 'Stage visibility change'
-    };
-    var userDesks;
-    WebSocketProxy.$inject = ['$rootScope', 'config', 'reloadService', 'desks'];
-    function WebSocketProxy($rootScope, config, reloadService, desks) {
-        //console.log(session.identity);
-        desks.fetchCurrentUserDesks().then(function (desk_list) {
-            userDesks = desk_list._items;
-        });
+    WebSocketProxy.$inject = ['$rootScope', 'config'];
+    function WebSocketProxy($rootScope, config) {
+        var ReloadEvents = {
+            'user_disabled': 'User is disabled',
+            'user_inactivated': 'User is inactivated',
+            'user_role_changed': 'User role is changed',
+            'user_type_changed': 'User type is changed',
+            'user_privileges_revoked': 'User privileges are revoked',
+            'role_privileges_revoked': 'Role role_privileges_revoked',
+            'desk_membership_revoked': 'User removed from desk',
+            'desk': 'Desk is deleted/updated',
+            'stage': 'Stage is created/updated/deleted',
+            'stage_visibility_updated': 'Stage visibility change'
+        };
 
         if (!config.server.ws) {
             return;
@@ -39,10 +33,9 @@
         ws.onmessage = function(event) {
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
-            if (msg.data !== 'ping') {
-                reloadService.reload(msg, userDesks);
+            if (_.has(ReloadEvents, msg.event)) {
+                $rootScope.$broadcast('reload', msg);
             }
-            //reloadService.reload(msg.data);
         };
 
         ws.onerror = function(event) {
@@ -50,35 +43,90 @@
         };
     }
 
-    ReloadService.$inject = ['$window', '$rootScope', 'session'];
-    function ReloadService($window, $rootScope, session) {
-       
-        this.reload = function(msg) {
-            if (ReloadIdentifier[msg.event] != null) {
-                console.log('This is RELOAD Event');
-                if (msg.extra.desk_id != null) {
-                    if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
-                        console.log('event related to current userdesk event related to current user desk');
-                    }
-                }
-                if (msg.extra.user_ids != null) {
-                    if (msg.extra.user_ids.indexOf(session.identity._id)  !== -1) {
-                        console.log('event related to current user');
-                    }
-                }
-                if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
-                    console.log('notification on authoring page');
-                    //this.broadcast(ReloadIdentifier['user_disabled']);
-                } else {
-                    console.log('notification on non-authoring page');
-                    //$window.location.reload(true);
-                }
-            }
+    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks'];
+    function ReloadService($window, $rootScope, session, desks) {
+        var userDesks;
+        desks.fetchCurrentUserDesks().then(function (desk_list) {
+            userDesks = desk_list._items;
+        });
+
+        var userEvents = {
+            'user_disabled': 'User is disabled',
+            'user_inactivated': 'User is inactivated',
+            'user_role_changed': 'User role is changed',
+            'user_type_changed': 'User type is changed',
+            'user_privileges_revoked': 'User privileges are revoked'
+        };
+        var roleEvents = {
+            'role_privileges_revoked': 'Role role_privileges_revoked'
+        };
+        var deskEvents = {
+            'desk_membership_revoked': 'User removed from desk',
+            'desk': 'Desk is deleted/updated'
+        };
+        var stageEvents = {
+            'stage': 'Stage is created/updated/deleted',
+            'stage_visibility_updated': 'Stage visibility change'
         };
 
-        this.broadcast = function(msg) {
+        $rootScope.$on('reload', function(event, msg) {
+
+            var _result = reloadIdentifier(msg);
+
+            if (_result.reload === true) {
+                if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
+                    broadcast(_result.message);
+                } else {
+                    $window.location.reload(true);
+                }
+            }
+        });
+
+        function broadcast(msg) {
             $rootScope.$broadcast('savework', msg);
-        };
+        }
+
+        function reloadIdentifier(msg) {
+            var result = {
+                reload: false,
+                message: null
+            };
+            if (_.has(userEvents, msg.event)) {
+                if (msg.extra.user_id != null) {
+                    if (msg.extra.user_id.indexOf(session.identity._id)  !== -1) {
+                        result.message = userEvents[msg.event];
+                        result.reload = true;
+                    }
+                }
+            }
+
+            if (_.has(roleEvents, msg.event)) {
+                if (msg.extra.role_id.indexOf(session.identity.role)  !== -1) {
+                    result.message = roleEvents[msg.event];
+                    result.reload = true;
+                }
+            }
+
+            if (_.has(deskEvents, msg.event)) {
+                if (msg.extra.desk_id != null && msg.extra.user_ids != null) {
+                    if (_.find(userDesks, {_id: msg.extra.desk_id}) != null && msg.extra.user_ids.indexOf(session.identity._id)  !== -1) {
+                        result.message = deskEvents[msg.event];
+                        result.reload = true;
+                    }
+                }
+            }
+
+            if (_.has(stageEvents, msg.event)) {
+                if (msg.extra.desk_id != null) {
+                    if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
+                        result.message = stageEvents[msg.event];
+                        result.reload = true;
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 
     return angular.module('superdesk.notification', ['superdesk.desks'])
