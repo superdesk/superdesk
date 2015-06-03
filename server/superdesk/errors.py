@@ -388,7 +388,8 @@ class SuperdeskPublishError(SuperdeskError):
 class FormatterError(SuperdeskPublishError):
     _codes = {
         7001: 'Article couldn"t be converted to NITF format',
-        7002: 'Article couldn"t be converted to AAP IPNews format'
+        7002: 'Article couldn"t be converted to AAP IPNews format',
+        7003: 'Article couldn"t be converted to ANPA'
     }
 
     @classmethod
@@ -398,6 +399,10 @@ class FormatterError(SuperdeskPublishError):
     @classmethod
     def AAPIpNewsFormatterError(clscls, exception=None, destination=None):
         return FormatterError(7002, exception, destination)
+
+    @classmethod
+    def AnpaFormatterError(cls, exception=None, destination=None):
+        return FormatterError(7003, exception, destination)
 
 
 class SubscriberError(SuperdeskPublishError):
@@ -493,3 +498,13 @@ class PublishODBCError(SuperdeskPublishError):
     @classmethod
     def odbcError(cls, exception=None, destination=None):
         return PublishODBCError(12000, exception, destination)
+
+
+class PublishFileError(SuperdeskPublishError):
+    _codes = {
+        13000: "File publish error"
+    }
+
+    @classmethod
+    def fileSaveError(cls, exception=None, destinations=None):
+        return PublishFileError(13000, exception, destinations)
