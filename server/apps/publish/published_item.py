@@ -76,6 +76,7 @@ class PublishedItemService(BaseService):
             doc.pop('_id', None)
             doc.pop('lock_user', None)
             doc.pop('lock_time', None)
+            doc.pop('lock_session', None)
 
     def on_delete(self, doc):
         self.insert_into_text_archive(doc)
