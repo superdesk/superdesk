@@ -363,7 +363,8 @@ define([
     function DatepickerDirective() {
         return {
             scope: {
-                dt: '=ngModel'
+                dt: '=ngModel',
+                disabled: '=ngDisabled'
             },
             templateUrl: 'scripts/superdesk/ui/views/sd-datepicker.html'
         };
@@ -519,7 +520,8 @@ define([
     function TimepickerDirective() {
         return {
             scope: {
-                tt: '=ngModel'
+                tt: '=ngModel',
+                disabled: '=ngDisabled'
             },
             templateUrl: 'scripts/superdesk/ui/views/sd-timepicker.html',
             link: function(scope) {

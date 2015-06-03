@@ -166,8 +166,8 @@
 		<ul class="basic-list">
 			<li class="auto">
 				<label translate>Publish Schedule</label>
-				<div sd-datepicker ng-model="item.publish_schedule_date"></div>
-				<div sd-timepicker ng-model="item.publish_schedule_time"></div>
+				<div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
+				<div sd-timepicker ng-model="item.publish_schedule_time" ng-disabled="!_editable"></div>
 			</li>
 		</ul>
 	</div>
