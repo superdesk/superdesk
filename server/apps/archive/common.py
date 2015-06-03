@@ -42,6 +42,7 @@ MAIN_GROUP = 'main'
 ROOT_GROUP = 'root'
 SEQUENCE = 'sequence'
 PUBLISH_STATES = ['published', 'killed', 'corrected', 'scheduled']
+CUSTOM_HATEOAS = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 
 
 def update_version(updates, original):

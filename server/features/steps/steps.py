@@ -413,7 +413,7 @@ def when_we_get_dictionary(context, dictionary_id):
 
 
 @then('we get latest')
-def steo_impl_we_get_latest(context):
+def step_impl_we_get_latest(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
@@ -618,8 +618,11 @@ def step_impl_then_get_new(context):
 
 @then('we get next take')
 def step_impl_then_get_next_take(context):
-    data = step_impl_then_get_new(context)
+    step_impl_we_get_latest(context)
+    data = get_json_data(context.response)
     set_placeholder(context, 'TAKE', data['_id'])
+    set_placeholder(context, 'TAKE_PACKAGE', data['takes']['_id'])
+    test_json(context)
 
 
 @then('we get error {code}')

@@ -10,19 +10,16 @@
 
 from flask import request
 from superdesk.resource import Resource, build_custom_hateoas
-from .common import get_user, get_auth, item_url
+from .common import get_user, get_auth, item_url, CUSTOM_HATEOAS
 from superdesk.services import BaseService
 from apps.common.components.utils import get_component
 from apps.item_lock.components.item_lock import ItemLock
 
 
-custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
-
-
 def _update_returned_document(doc, item):
     doc.clear()
     doc.update(item)
-    build_custom_hateoas(custom_hateoas, doc)
+    build_custom_hateoas(CUSTOM_HATEOAS, doc)
     return [doc['_id']]
 
 
