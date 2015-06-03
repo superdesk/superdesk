@@ -237,6 +237,7 @@ class ArchiveService(BaseService):
             self.packageService.on_updated(updates, original)
 
         user = get_user()
+
         if '_version' in updates:
             updated = copy(original)
             updated.update(updates)
@@ -244,7 +245,8 @@ class ArchiveService(BaseService):
                          self.datasource, item=updated,
                          version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
-            push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
+
+        push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
     def on_replace(self, document, original):
         remove_unwanted(document)

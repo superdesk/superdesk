@@ -953,6 +953,16 @@
                     return authoring.autosave(item);
                 };
 
+                function refreshItem() {
+                    authoring.open($scope.item._id, true)
+                        .then(function(item) {
+                            $scope.origItem = item;
+                            $scope.dirty = false;
+                            $scope.closePreview();
+                            $scope._editable = $scope.item._editable = false;
+                        });
+                }
+
                 // init
                 $scope.closePreview();
 
@@ -977,6 +987,12 @@
                         if ($scope.action !== 'view') {
                             $location.url($scope.referrerUrl);
                         }
+                    }
+                });
+
+                $scope.$on('item:updated', function(_e, data) {
+                    if ($scope.action === 'view') {
+                        refreshItem();
                     }
                 });
 
