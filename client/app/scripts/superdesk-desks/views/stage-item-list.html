@@ -14,8 +14,8 @@
 					<span class="headline">{{item.headline}}</span>
 				</div>
 				<div class="action" ng-if="allowed">
-					<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="bottom"><i class="icon-external"></i></button>
-			 		<button ng-click="edit(item); $event.stopPropagation();" tooltip="Edit" tooltip-placement="bottom"><i class="icon-pencil"></i></button>
+					<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="{{$last ? 'left' : 'bottom'}}"><i class="icon-external"></i></button>
+			 		<button ng-click="edit(item); $event.stopPropagation();" tooltip="Edit" tooltip-placement="{{$last ? 'left' : 'bottom'}}"><i class="icon-pencil"></i></button>
 				</div>
 			</div>
 		</li>
