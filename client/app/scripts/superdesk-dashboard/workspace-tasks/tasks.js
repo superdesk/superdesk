@@ -81,18 +81,18 @@ function TasksController($scope, $timeout, api, notify, desks, tasks) {
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, fetchTasks);
-
-    function fetch() {
-        var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
-        tasks.fetch(status).then(function(list) {
-            $scope.tasks = list;
-        });
-    }
+    }, function() {
+        fetchTasks();
+    });
 
     function fetchTasks() {
         $timeout.cancel(timeout);
-        timeout = $timeout(fetch, 300, false);
+        timeout = $timeout(function() {
+            var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
+            tasks.fetch(status).then(function(list) {
+                $scope.tasks = list;
+            });
+        }, 300, false);
     }
 
     $scope.preview = function(item) {
