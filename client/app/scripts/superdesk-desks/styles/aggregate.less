@@ -3,14 +3,12 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-
 @search-widget-width: @tabpane-extended-width;
 @search-widget-preview-width: 440px;
 
 //widget tabpane
 .widget-search.tabpane,
 .widget-aggregate.tabpane {
-
     width: auto;
 
     .widget-header {
@@ -35,16 +33,17 @@
             height: 100%;
         }
     }
+}
 
-
+.sd-widget.search,
+.tabpane .sd-widget.aggregate {
+    position: relative;
+    height: 100%;
 }
 
 //widget content
 .sd-widget.search,
 .sd-widget.aggregate {
-    position: relative;
-    height: 100%;
-
     .content-search {
         position: relative;
         background: @tabpane-background;
@@ -64,7 +63,7 @@
         .search-box {
             position: absolute;
             left: 0; right: 0; top: 0;
-            height: @nav-height;
+            height: @nav-height+1;
             border-bottom: 1px solid #dcdcdc;
             background: #fff url(../../images/search-icon.png) no-repeat 15px 16px;
             input {
@@ -96,7 +95,7 @@
         }
         .content-list {
             position: absolute;
-            top: 2*@nav-height;
+            top: @nav-height;
             bottom: @bottom-view-padding - 20px;
             left: 0;
             right: 0;
@@ -271,67 +270,102 @@
 
 
 .sd-widget.aggregate {
-    .search-container {
-        .content-list {
-            .stage {
-                margin: 10px 0 15px;
-                .stage-header {
-                    position: relative;
-                    .line {
-                        position: absolute;
-                        left: 20px; right: 0; top: 7px;
-                        height: 1px;
-                        background: #dcdcdc;
-                    }
-                    .toggle {
-                        border: 0;
-                        background: @tabpane-background;
-                        margin: -5px 0 0 -5px;
-                        &.closed {
-                            i {
-                                .rotate(-90deg);
-                            }
+    .content-list {
+        .stage {
+            margin: 10px 0 15px;
+            .stage-header {
+                position: relative;
+                .line {
+                    position: absolute;
+                    left: 20px; right: 0; top: 7px;
+                    height: 1px;
+                    background: #dcdcdc;
+                }
+                .toggle {
+                    border: 0;
+                    background: @tabpane-background;
+                    margin: -5px 0 0 -5px;
+                    &.closed {
+                        i {
+                            .rotate(-90deg);
                         }
                     }
-                    .stage-name {
-                        text-transform: uppercase;
-                        background: @tabpane-background;
-                        position: relative;
-                        padding: 0 15px 0 5px;
-                        margin: -2px;
-                        font-size: 11px;
-                        .text-semibold();
-                        span {
-                            color: @gray;
-                        }
-                    }
-                    .label {
-                        position: relative;
-                        background: #4aa8eb;
-                        color: @white;
-                        border: 3px solid @tabpane-background;
-                        .border-radius(10px);
-                        .text-semibold();
-                        margin-top: -3px;
-                        margin-right: -3px;
-                        font-size: 11px;
-                    }
                 }
-                .stage-content {
-                    margin: 5px 0 20px;
-                    overflow: scroll;
-                    height: 326px;
+                .stage-name {
+                    text-transform: uppercase;
+                    background: @tabpane-background;
                     position: relative;
+                    padding: 0 15px 0 5px;
+                    margin: -2px;
+                    font-size: 11px;
+                    .text-semibold();
+                    span {
+                        color: @gray;
+                    }
                 }
+                .label {
+                    position: relative;
+                    background: #4aa8eb;
+                    color: @white;
+                    border: 3px solid @tabpane-background;
+                    .border-radius(10px);
+                    .text-semibold();
+                    margin-top: -3px;
+                    margin-right: -3px;
+                    font-size: 11px;
+                }
+            }
+            .stage-content {
+                margin: 5px 0 20px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                max-height: 326px;
+                position: relative;
+            }
+        }
+    }
+    .content-list-holder {
+        position: absolute;
+        top: 38px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        .stage {
+            .stage-header {
+                margin-left: 10px;
+                .toggle, .stage-name {
+                    background-color: @white;
+                }
+            }
+        }
+        .desk {
+            width: 99%;
+        }
+    }
+    .preview.preview-widget {
+        ul.nav {
+            height: 35px;
+            line-height: 35px;
+            background: inherit;
+            > li {
+                > button {
+                    height: 35px;
+                    line-height: 19px;
+                }
+            }
+        }
+        .content-item-preview {
+            .content-container, .metadata-view {
+                top: 70px;
             }
         }
     }
 }
 
 .aggregate-widget-config {
-	.modal-body {
-		padding-top: 0;
-	}
+    .modal-body {
+        padding-top: 0;
+    }
     .legend {
         color: @grayLight;
         text-transform: uppercase;
@@ -345,15 +379,15 @@
         padding: 15px 0;
     }
     .stages {
-		li {
-			float: left;
-			margin-bottom:15px;
-			.border-box();
-			width: 33%;
-			overflow: hidden;
-			height: 18px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+        li {
+            float: left;
+            margin-bottom:15px;
+            .border-box();
+            width: 33%;
+            overflow: hidden;
+            height: 18px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
