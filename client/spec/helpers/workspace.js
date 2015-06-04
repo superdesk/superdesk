@@ -11,6 +11,12 @@ function Workspace() {
         return openUrl('/#/workspace/content');
     };
 
+    this.openContent = this.open;
+
+    this.openIngest = function() {
+        return openUrl('/#/workspace/ingest');
+    };
+
     this.getDesk = function(name) {
         var desks = element.all(by.repeater('desk in userDesks'));
         return desks.all(by.css('[option="' + name.toUpperCase() + '"]'));

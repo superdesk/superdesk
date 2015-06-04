@@ -19,7 +19,7 @@ define([
          *
          * @param {Object} item
          */
-        this.isSelected = function isSelected(item) {
+        this.isSelected = function(item) {
             return !!_.find(items, {_id: item._id});
         };
 
@@ -28,7 +28,7 @@ define([
          *
          * @param {Object} item
          */
-        this.toggle = function toggle(item) {
+        this.toggle = function(item) {
             item.selected = !this.isSelected(item);
             if (item.selected) {
                 items = _.union(items, [item]);
@@ -39,22 +39,29 @@ define([
         };
 
         /**
-         * Get list of selected items
+         * Get list of selected items ids
          */
-        this.getQueue = function getQueue() {
+        this.getIds = function() {
             return _.map(items, '_id');
         };
 
         /**
          * Reset to empty
          */
-        this.reset = function reset() {
+        this.reset = function() {
             _.each(items, function(item) {
                 item.selected = false;
             });
 
             items = [];
             this.count = 0;
+        };
+
+        /**
+         * Get list of selected items
+         */
+        this.getItems = function() {
+            return items;
         };
 
         // main

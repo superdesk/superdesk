@@ -6,7 +6,7 @@
         <div class="buttons"></div>
     </div>
 
-    <div class="media" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
+    <div class="media multi" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'" ng-mouseenter="hover=true" ng-mouseleave="hover=false">
         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
         <span class="text">
             <small title="{{ item.headline }}">{{item.headline | limitTo: 90}}</small>

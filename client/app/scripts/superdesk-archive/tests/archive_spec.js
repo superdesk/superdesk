@@ -20,15 +20,23 @@ describe('content', function() {
         expect(api.update).toHaveBeenCalledWith('archive_unspike', item, {});
     }));
 
-    describe('multi module', function() {
+    describe('multi service', function() {
         it('can reset on route change', inject(function(multi, $rootScope) {
             multi.toggle({_id: 1});
             expect(multi.count).toBe(1);
+            expect(multi.getIds()).toEqual([1]);
 
             $rootScope.$broadcast('$routeChangeStart');
             $rootScope.$digest();
 
             expect(multi.count).toBe(0);
+        }));
+
+        it('can get list of items', inject(function(multi) {
+            var items = [{_id: 1}, {_id: 2}];
+            multi.toggle(items[0]);
+            multi.toggle(items[1]);
+            expect(multi.getItems()).toEqual(items);
         }));
     });
 

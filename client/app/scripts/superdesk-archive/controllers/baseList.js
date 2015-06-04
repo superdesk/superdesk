@@ -23,8 +23,9 @@ define(['lodash'], function(_) {
             }
             if ($location.search().fetch) {
                 self.fetchItem(decodeURIComponent($location.search().fetch))
-                .then(function() {
+                .then(function(item) {
                     $scope.selected.preview = null;
+                    $scope.selected.fetch = item;
                 });
             }
         });

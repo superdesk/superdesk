@@ -3,7 +3,7 @@
 <div ng-click="clickAction(item)">
     <span class="state-border"></span>
 
-    <div class="list-field type-icon" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+    <div class="list-field type-icon multi" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
         <i class="filetype-icon-{{item.type}}" ng-hide="hover || multi.selected"></i>
         <span sd-check ng-model="multi.selected" ng-change="toggleSelected()" ng-show="hover || multi.selected"></span>
     </div>

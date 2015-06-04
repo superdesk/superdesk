@@ -36,9 +36,7 @@ class FetchResource(Resource):
     schema = {
         'desk': Resource.rel('desks', False, required=True),
         'stage': Resource.rel('stages', False, nullable=True),
-        'macro': {
-            'type': 'string'
-        },
+        'macro': {'type': 'string'},
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)

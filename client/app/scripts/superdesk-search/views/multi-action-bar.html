@@ -6,8 +6,20 @@
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
 	<div class="pull-right" ng-if="type === 'archive'">
-		<button class="navbtn" ng-click="multiedit()" tooltip="{{ :: 'Multiedit' | translate }}" tooltip-placement="bottom">
+		<button class="navbtn" ng-click="multiedit()" title="{{ :: 'Multiedit' | translate }}">
     		<i class="big-icon-multiedit"></i>
         </button>
 	</div>
+
+	<div class="pull-right" ng-if="type === 'ingest'">
+		<button id="fetch-all-btn" class="navbtn"
+		 	title="{{ :: 'Fetch' | translate }}"
+			ng-click="action.send()">
+			<i class="big-icon-archive"></i>
+		</button>
+		<button id="fetch-all-as-btn" class="navbtn"
+			title="{{ :: 'Fetch as' | translate }}"
+			ng-click="action.sendAs()">
+			<i class="big-icon-archive"></i>
+		</button>
 </div>

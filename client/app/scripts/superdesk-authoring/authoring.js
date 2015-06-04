@@ -1191,8 +1191,8 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring'];
-    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope, authoring) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring', 'send'];
+    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope, authoring, send) {
         return {
             scope: {
                 item: '=',
@@ -1212,14 +1212,31 @@
                 scope.selectedMacro = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
 
-                scope.$watch('item', function() {
-                    if (scope.item) {
-                        desks.initialize()
-                        .then(fetchDesks)
-                        .then(fetchStages)
-                        .then(fetchMacros);
+                scope.$watch('item', activateItem);
+                scope.$watch(send.getConfig, activateConfig);
+
+                function activateConfig(config, oldConfig) {
+                    if (config !== oldConfig) {
+                        scope.isActive = !!config;
+                        scope.item = scope.isActive ? {} : null;
+                        scope.config = config;
+                        activate();
                     }
-                });
+                }
+
+                function activateItem(item) {
+                    scope.isActive = !!item;
+                    activate();
+                }
+
+                function activate() {
+                    if (scope.isActive) {
+                        desks.initialize()
+                            .then(fetchDesks)
+                            .then(fetchStages)
+                            .then(fetchMacros);
+                    }
+                }
 
                 scope.close = function() {
                     if (scope.$parent.views) {
@@ -1227,7 +1244,12 @@
                     } else {
                         scope.item = null;
                     }
+
                     $location.search('fetch', null);
+
+                    if (scope.config) {
+                        scope.config.reject();
+                    }
                 };
 
                 scope.selectDesk = function(desk) {
@@ -1240,6 +1262,7 @@
                 scope.selectStage = function(stage) {
                     scope.selectedStage = stage;
                 };
+
                 scope.selectMacro = function(macro) {
                     if (scope.selectedMacro === macro) {
                         scope.selectedMacro = null;
@@ -1247,6 +1270,7 @@
                         scope.selectedMacro = macro;
                     }
                 };
+
                 scope.send = function(open) {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
@@ -1256,7 +1280,15 @@
                     } else if (scope.mode === 'archive') {
                         return sendContent(deskId, stageId, scope.selectedMacro, open);
                     } else if (scope.mode === 'ingest') {
-                        return sendIngest(deskId, stageId, scope.selectedMacro, open);
+                        if (scope.config) {
+                            scope.config.resolve({
+                                desk: deskId,
+                                stage: stageId,
+                                macro: scope.selectedMacro ? scope.selectedMacro.name : null
+                            });
+                        } else {
+                            return sendIngest(deskId, stageId, scope.selectedMacro, open);
+                        }
                     }
                 };
 
@@ -1281,20 +1313,15 @@
                         });
                 };
 
-                var runMacro = function(item, macro) {
-                    var p;
+                function runMacro(item, macro) {
                     if (macro) {
-                        p = macros.call(macro, item)
-                        .then(function(result) {
-                            return api.save('archive', item, extendItem({}, result));
-                        });
-                    } else {
-                        p = $q.when(item);
+                        return macros.call(macro, item, true);
                     }
-                    return p;
-                };
 
-                var sendAuthoring = function(deskId, stageId, macro, sendAndContinue) {
+                    return $q.when(item);
+                }
+
+                function sendAuthoring(deskId, stageId, macro, sendAndContinue) {
                     var deferred;
 
                     if (sendAndContinue) {
@@ -1333,9 +1360,9 @@
                     if (sendAndContinue) {
                         return deferred.promise;
                     }
-                };
+                }
 
-                var sendContent = function(deskId, stageId, macro, open) {
+                function sendContent(deskId, stageId, macro, open) {
                     var finalItem;
                     api.save('duplicate', {}, {desk: scope.item.task.desk}, scope.item)
                     .then(function(item) {
@@ -1362,25 +1389,14 @@
                             $rootScope.$broadcast('item:fetch');
                         }
                     });
-                };
+                }
 
-                var sendIngest = function(deskId, stageId, macro, open) {
-                    var finalItem;
-                    api.save('fetch', {}, {desk: deskId}, scope.item)
-                    .then(function(item) {
-                        return runMacro(item, macro);
-                    })
-                    .then(function(item) {
-                        finalItem = item;
-                        return api.find('tasks', item._id);
-                    })
-                    .then(function(_task) {
-                        scope.task = _task;
-                        api.save('tasks', scope.task, {
-                            task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
-                        });
-                    })
-                    .then(function() {
+                function sendIngest(deskId, stageId, macro, open) {
+                    return send.sendAs(scope.item, {
+                        desk: deskId,
+                        stage: stageId,
+                        macro: macro
+                    }).then(function(finalItem) {
                         notify.success(gettext('Item fetched.'));
                         if (open) {
                             $location.url('/authoring/' + finalItem._id);
@@ -1388,7 +1404,7 @@
                             $rootScope.$broadcast('item:fetch');
                         }
                     });
-                };
+                }
 
                 function fetchDesks() {
                     var p = desks.initialize()
