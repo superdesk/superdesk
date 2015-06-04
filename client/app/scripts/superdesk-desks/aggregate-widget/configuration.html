@@ -1,0 +1,14 @@
+<div ng-controller="AggregateCtrl as agg" ng-if="!agg.loading">
+    <div ng-init="agg.edit()"
+         sd-aggregate-settings 
+         data-modal-active="agg.modalActive"
+         data-desks="agg.desks" 
+         data-desk-stages="agg.deskStages"
+         data-searches="agg.searches"
+         data-desk-lookup="agg.deskLookup" 
+         data-stage-lookup="agg.stageLookup"
+         data-search-lookup="agg.searchLookup"
+         data-groups="agg.groups",
+         data-edit-groups="agg.editGroups">
+    </div>
+</div>

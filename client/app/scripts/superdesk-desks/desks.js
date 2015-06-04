@@ -414,6 +414,7 @@
     var app = angular.module('superdesk.desks', [
         'superdesk.users',
         'superdesk.authoring.widgets',
+        'superdesk.aggregate.widgets',
         'superdesk.aggregate.sidebar'
     ]);
 
