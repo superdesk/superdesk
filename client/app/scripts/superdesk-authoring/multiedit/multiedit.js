@@ -193,6 +193,7 @@
 
                 function openItem() {
                     authoring.open(scope.article).then(function(item) {
+                        scope.origItem = item;
                         scope.item = _.create(item);
                         scope._editable = authoring.isEditable(item);
                         scope.isMediaType = _.contains(['audio', 'video', 'picture'], scope.item.type);
@@ -212,7 +213,7 @@
                 };
 
                 scope.save = function(item, form) {
-                    return authoring.save(item).then(function(res) {
+                    return authoring.save(scope.origItem, item).then(function(res) {
                         if (form) {
                             form.$setPristine();
                         }
