@@ -118,9 +118,17 @@
 
             if (_.has(stageEvents, msg.event)) {
                 if (msg.extra.desk_id != null) {
-                    if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
-                        result.message = stageEvents[msg.event];
-                        result.reload = true;
+                    if (msg.event === 'stage_visibility_updated') {
+                        if (_.find(userDesks, {_id: msg.extra.desk_id}) == null &&
+                            ($window.location.hash.match('/search') != null || $window.location.hash.match('/authoring/') != null)) {
+                            result.message = stageEvents[msg.event];
+                            result.reload = true;
+                        }
+                    } else if (msg.event === 'stage') {
+                        if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
+                            result.message = stageEvents[msg.event];
+                            result.reload = true;
+                        }
                     }
                 }
             }
