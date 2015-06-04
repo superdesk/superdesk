@@ -246,7 +246,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         ex = context.exception
         self.assertEqual(
             ex.desc,
-            ("start_date parameter must be an ISO 8601 date (YYYY-MM-DD) "
+            ("start_date parameter must be a valid ISO 8601 date (YYYY-MM-DD) "
              "without the time part"))
 
     def test_raises_correct_error_on_invalid_end_date_parameter(self):
@@ -263,7 +263,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         ex = context.exception
         self.assertEqual(
             ex.desc,
-            ("end_date parameter must be an ISO 8601 date (YYYY-MM-DD) "
+            ("end_date parameter must be a valid ISO 8601 date (YYYY-MM-DD) "
              "without the time part"))
 
     def test_raises_correct_error_if_start_date_greater_than_end_date(self):
