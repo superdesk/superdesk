@@ -14,6 +14,7 @@ import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 from superdesk.io.iptc import subject_codes
+import textwrap
 
 
 class AAPIpNewsFormatter(Formatter):
@@ -30,26 +31,47 @@ class AAPIpNewsFormatter(Formatter):
             pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(output_channel)
 
             odbc_item = {}
-            odbc_item['originator'] = article.get('originator', None)
+            odbc_item['originator'] = article.get('source', None)
             odbc_item['sequence'] = pub_seq_num
             odbc_item['category'] = article.get('anpa-category', {}).get('qcode')  # @category
-            odbc_item['headline'] = article.get('headline', '')  # @headline
-            odbc_item['author'] = article.get('byline', '')  # @author
-            odbc_item['keyword'] = article.get('slugline', None)
+            odbc_item['headline'] = article.get('headline', '').replace('\'', '\'\'')  # @headline
+            odbc_item['author'] = article.get('byline', '').replace('\'', '\'\'')  # @author
+            odbc_item['keyword'] = article.get('slugline', None).replace('\'', '\'\'')
 
-            if article['subject'][0]:
-                odbc_item['subject_reference'] = article['subject'][0].get('qcode', None)
+            if article['subject'][0] and 'qcode' in article['subject'][0]:
+                odbc_item['subject_reference'] = article['subject'][0].get('qcode', '        ')
                 if odbc_item['subject_reference']:
                     odbc_item['subject'] = subject_codes[odbc_item['subject_reference'][:2] + '000000']
-                    odbc_item['subject_matter'] = subject_codes[odbc_item['subject_reference'][:5] + '000']
-                    odbc_item['subject_detail'] = subject_codes[odbc_item['subject_reference']]
+                    if odbc_item['subject_reference'][2:5] != '000':
+                        odbc_item['subject_matter'] = subject_codes[odbc_item['subject_reference'][:5] + '000']
+                    else:
+                        odbc_item['subject_matter'] = ''
+                    if not odbc_item['subject_reference'].endswith('000'):
+                        odbc_item['subject_detail'] = subject_codes[odbc_item['subject_reference']]
+                    else:
+                        odbc_item['subject_detail'] = ''
+            else:
+                odbc_item['subject_reference'] = '        '
+                odbc_item['subject'] = ''
+                odbc_item['subject_matter'] = ''
+                odbc_item['subject_detail'] = ''
 
             odbc_item['take_key'] = article.get('anpa_take_key', None)  # @take_key
             odbc_item['usn'] = article.get('unique_id', None)  # @usn
             if article['type'] == 'preformatted':
                 odbc_item['article_text'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
             elif article['type'] == 'text':
-                text = BeautifulSoup(article.get('body_html', '')).text
+                soup = BeautifulSoup(article.get('body_html', ''))
+                text = ''
+                for p in soup.findAll('p'):
+                    text += '\x19\r\n'
+                    ptext = p.get_text('\n')
+                    for l in ptext.split('\n'):
+                        if len(l) > 80:
+                            text += textwrap.fill(l, 80).replace('\n', ' \r\n')
+                        else:
+                            text += l + ' \r\n'
+
                 text = text.replace('\'', '\'\'')
                 odbc_item['article_text'] = text
 
@@ -63,7 +85,7 @@ class AAPIpNewsFormatter(Formatter):
                 odbc_item['texttab'] = 't'
             odbc_item['wordcount'] = article.get('word_count', None)  # @wordcount
             odbc_item['news_item_type'] = 'News'
-            odbc_item['priority'] = article.get('priority', None)  # @priority
+            odbc_item['priority'] = article.get('priority', 'r')  # @priority
             odbc_item['service_level'] = 'a'  # @service_level
 
             sel_codes = selector_codes[output_channel['_id']]
