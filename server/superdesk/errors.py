@@ -415,6 +415,7 @@ class FormatterError(SuperdeskPublishError):
     def ninjsFormatterError(cls, exception=None, destination=None):
         return FormatterError(7004, exception, destination)
 
+
 class SubscriberError(SuperdeskPublishError):
     _codes = {
         8001: 'Subscriber is closed'

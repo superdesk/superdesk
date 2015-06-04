@@ -13,6 +13,7 @@ from publicapi.packages.resource import PackagesResource
 
 class PublicPackagesResource(PackagesResource):
     datasource = {'source': 'items'}
-    item_methods = ['DELETE', 'PATCH', 'GET']
+    item_methods = ['DELETE', 'PATCH', 'GET', 'DELETE']
     resource_methods = ['POST', 'GET']
-    privileges = {'POST': 'publish_queue', 'DELETE': 'publish_queue', 'PATCH': 'publish_queue'}
+    privileges = {'POST': 'publish_queue', 'DELETE': 'publish_queue', 'PATCH': 'publish_queue',
+                  'DELETE': 'publish_queue'}
