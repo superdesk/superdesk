@@ -272,7 +272,7 @@
                     promise = confirm.confirmSaveWork(message)
                         .then(angular.bind(this, function save() {
                             return this.saveWork(orig, diff);
-                        }), function(err) { // ignore saving
+                        }), function(err) { // cancel
                             return $q.when();
                         });
                 }
@@ -619,7 +619,7 @@
 
         this.confirmSaveWork = function confirmSavework(msg) {
             return modal.confirm(
-                $interpolate(gettext('{{ message }} Configuration has changed. Save story to your workspace?'))({message: msg})
+                $interpolate(gettext('Configuration has changed, {{ message }}. Save story to your workspace?'))({message: msg})
             );
         };
 
@@ -1016,21 +1016,19 @@
 
                 // init
                 $scope.closePreview();
-                $scope.$on('savework', SaveWorkOnChange);
-                function SaveWorkOnChange() {
-                    var changeMsg = 'Desk/Stage/User';
-
+                $scope.$on('savework', function(e, msg) {
+                    var changeMsg = msg;
                     authoring.saveWorkConfirmation($scope.origItem, $scope.item, $scope.dirty, changeMsg)
                     .then(function(res) {
-                        if (res) {
-                            desks.setCurrentDeskId(null);
-                            $location.path('/workspace/content');
-                            $window.location.reload(true);
-                        }
+                        desks.setCurrentDesk(null);
+                        $location.url('/workspace/content');
+                        referrer.setReferrerUrl('/workspace/content');
+                        $window.location.reload(true);
                     }, function(response) {
                         notify.error(gettext('Error: Saving work on configuration changes.'));
+                        $window.location.reload(true);
                     });
-                }
+                });
 
                 $scope.$on('item:lock', function(_e, data) {
                     if ($scope.item._id === data.item && !_closing &&
