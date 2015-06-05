@@ -1023,13 +1023,13 @@
                         desks.setCurrentDesk(null);
                         $location.url('/workspace/content');
                         referrer.setReferrerUrl('/workspace/content');
-                        $window.location.reload(true);
                     }, function(response) {
                         notify.error(gettext('Error: Saving work on configuration changes.'));
+                    })
+                    ['finally'](function() {
                         $window.location.reload(true);
                     });
                 });
-
                 $scope.$on('item:lock', function(_e, data) {
                     if ($scope.item._id === data.item && !_closing &&
                         session.sessionId !== data.lock_session) {
