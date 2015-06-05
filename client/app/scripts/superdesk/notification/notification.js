@@ -73,7 +73,7 @@
 
             var _result = reloadIdentifier(msg);
 
-            if (_result.reload === true) {
+            if (_result.reload) {
                 if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
                     broadcast(_result.message);
                 } else {
