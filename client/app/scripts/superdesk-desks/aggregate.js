@@ -111,7 +111,7 @@
     AggregateSettingsDirective.$inject = ['desks', 'preferencesService', 'WizardHandler'];
     function AggregateSettingsDirective(desks, preferencesService, WizardHandler) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/aggregate-settings.html',
+            templateUrl: 'scripts/superdesk-desks/views/aggregate-settings-configuration.html',
             scope: {
                 modalActive: '=',
                 desks: '=',
@@ -121,7 +121,8 @@
                 stageLookup: '=',
                 searchLookup: '=',
                 groups: '=',
-                editGroups: '='
+                editGroups: '=',
+                type: '@'
             },
             link: function(scope, elem) {
 
@@ -191,6 +192,10 @@
                         return item.order;
                     });
                     return values;
+                };
+
+                scope.isWidget = function() {
+                    return this.type === 'widget' ? true : false;
                 };
 
                 scope.reorder = function(start, end) {

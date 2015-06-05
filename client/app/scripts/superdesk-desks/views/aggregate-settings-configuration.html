@@ -1,0 +1,4 @@
+<div class="add-group-popup" ng-if="isWidget()" ng-include="'scripts/superdesk-desks/views/aggregate-settings.html'"></div>
+<div ng-if="!isWidget()" sd-modal data-model="modalActive" class="add-group-popup modal-large modal-static">
+    <div class="modal-strech" ng-include="'scripts/superdesk-desks/views/aggregate-settings.html'"></div>
+</div>
