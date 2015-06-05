@@ -21,7 +21,8 @@ class NINJSFormatter(Formatter):
     NINJS Formatter
     """
     direct_copy_properties = ['versioncreated', 'usageterms', 'subject', 'language', 'headline',
-                              'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located']
+                              'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located',
+                              '_created', '_updated']
 
     def format(self, article, destination, selector_codes=None):
         try:
