@@ -386,12 +386,13 @@
                 return action;
             }
 
+            var is_read_only_state = _.contains(['spiked', 'scheduled', 'killed'], current_item.state);
+            var lockedByMe = !lock.isLocked(item);
+
             // new take should be on the text item that are closed or last take but not killed.
-            action.new_take = current_item.state !== 'killed' && (current_item.type === 'text' || current_item.type === 'preformatted') &&
+            action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
-
-            var lockedByMe = !lock.isLocked(item);
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -434,12 +435,11 @@
 
             //mark item for highlights
             action.mark_item = (current_item.task && current_item.task.desk &&
-                current_item.state !== 'killed' && current_item.package_type !== 'takes' &&
+                !is_read_only_state && current_item.package_type !== 'takes' &&
                  user_privileges.mark_for_highlights);
 
-            action.package_item = item.state !== 'killed' && item.package_type !== 'takes';
-            action.multi_edit = _.contains(['text', 'preformatted'], item.type) &&
-                !_.contains(['killed', 'scheduled'], item.state);
+            action.package_item = !is_read_only_state && item.package_type !== 'takes';
+            action.multi_edit = _.contains(['text', 'preformatted'], item.type) && !is_read_only_state;
 
             //check for desk membership for edit rights.
             if (current_item.task && current_item.task.desk) {
@@ -448,7 +448,7 @@
                 if (!desk) {
                     action = angular.extend({}, DEFAULT_ACTIONS);
                 }
-                action.duplicate = user_privileges.duplicate;
+                action.duplicate = user_privileges.duplicate && !is_read_only_state;
             } else {
                 // personal
                 action.copy = true;
@@ -662,7 +662,7 @@
 
                 $scope.$watch('origItem', function(new_value, old_value) {
                     $scope.itemActions = authoring.itemActions(new_value);
-                });
+                }, true);
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
@@ -971,7 +971,7 @@
                             $scope.origItem = item;
                             $scope.dirty = false;
                             $scope.closePreview();
-                            $scope._editable = $scope.item._editable = false;
+                            $scope.item._editable = $scope._editable;
                         });
                 }
 
@@ -993,9 +993,9 @@
                         session.sessionId !== data.lock_session) {
                         authoring.unlock($scope.item, data.user);
                         $scope._editable = $scope.item._editable = false;
-                        $scope.item._locked = false;
-                        $scope.item.lock_session = null;
-                        $scope.item.lock_user = null;
+                        $scope.origItem._locked = $scope.item._locked = false;
+                        $scope.origItem.lock_session = $scope.item.lock_session = null;
+                        $scope.origItem.lock_user = $scope.item.lock_user = null;
                         if ($scope.action !== 'view') {
                             $location.url($scope.referrerUrl);
                         }
@@ -1003,7 +1003,7 @@
                 });
 
                 $scope.$on('item:updated', function(_e, data) {
-                    if ($scope.action === 'view') {
+                    if (data.item === $scope.origItem._id && $scope.action === 'view') {
                         refreshItem();
                     }
                 });

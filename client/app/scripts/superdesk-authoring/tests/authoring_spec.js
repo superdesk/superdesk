@@ -776,4 +776,47 @@ describe('authoring actions', function() {
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view']);
         }));
+
+    it('Can only view and deschedule if the item is scheduled',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'scheduled',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_version': 8,
+                'archive_item': {
+                    '_id': 'test',
+                    'state': 'scheduled',
+                    'marked_for_not_publication': false,
+                    'type': 'text',
+                    'task': {
+                        'desk': 'desk1'
+                    },
+                    'more_coming': false,
+                    '_version': 8
+                }
+            };
+
+            var user_privileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true
+            };
+
+            privileges.setUserPrivileges(user_privileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['view', 'deschedule']);
+        }));
 });

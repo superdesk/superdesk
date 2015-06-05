@@ -37,8 +37,10 @@
 			<div class="data">{{item.pubstatus}}</div>
 		</li>
 		<li ng-if="_isInProductionStates">
-			<label ng-if="_editable" translate>Mark For Not Publication</label>
-			<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
+			<label ng-if="_editable" translate>Not For Publication</label>
+			<span ng-if="_editable" tooltip="{{ item.marked_for_not_publication ? 'Not For Publication' : 'For Publication'  | translate }}" tooltip-placement="top">
+				<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
+			</span>
 			<label ng-if="!_editable" translate>
 				<span class="state-label not-for-publication" translate>Not for Publication</span>
 			</label>
