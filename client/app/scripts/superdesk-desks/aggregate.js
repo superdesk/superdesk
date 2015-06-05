@@ -268,7 +268,7 @@
         };
     }
 
-    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets'])
+    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets', 'superdesk.desks'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
         .widget('aggregate', {
