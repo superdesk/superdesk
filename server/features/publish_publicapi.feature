@@ -1,6 +1,7 @@
 Feature: Publish content to the public API
 
     @auth
+    @notification
     Scenario: Publish a text item
 	    Given empty "formatted_item"
         Given empty "stages"
@@ -58,35 +59,31 @@ Feature: Publish content to the public API
         """
  		When we publish "item1" with "publish" type and "published" state
 		Then we get OK response
+        And we get notifications
+	    """
+	    [{"event": "item:publish", "extra": {"item": "item1"}}]
+	    """
 		And we get existing resource
         """
-        {"version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+        {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
         When we get "/publish_queue"
         Then we get existing resource
         """
-        {"_items": [{"state": "success"}]}
+        {"_items": [{"state": "pending"}]}
         """
-	    And we get notifications
-	    """
-	    [{"event": "publish_queue:update", "extra": {"queue_id": "#publish_queue._id#", "state": "success"}}]
-	    """
-	    When we get "/publish_items/item1"
-	    Then we get existing resource
+        When we get "/published"
+        Then we get existing resource
+        """
+        {"_items" : [{"guid": "item1", "_version": 2, "state": "published"}]}
+        """
+        When we get "/formatted_item"
+        Then we get list with 1 items
         """
         {
-        	"_id": "item1",
-        	"version": "1",
-        	"type": "text",
-        	"versioncreated": "2015-06-01T22:19:08+0000",
-        	"subject": [{"name": "medical research", "parent": "07000000", "qcode": "07005000"}],
-        	"state": "submitted",
-        	"pubstatus": "usable",
-        	"urgency": 1,
-        	"byline": "John Doe",
-        	"language": "en",
-        	"headline": "some headline",
-        	"slugline": "some slugline",
-        	"body_html": "item content"
+          "_items":
+            [
+              {"format": "ninjs"}
+            ]
         }
         """
