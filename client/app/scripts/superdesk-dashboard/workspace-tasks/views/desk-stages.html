@@ -16,7 +16,7 @@
     	style="max-width:{{100/(stages.stages.length + 3)}}%">
     	<a href="" ng-click="toggleSpike()" translate>Spiked</a>
     </li>
-    <li ng-if="type === 'archive'" class="stage-label" 
+    <li ng-if="type === 'archive' && stages.stages.length" class="stage-label" 
         ng-class="{active: published}"
         style="max-width:{{100/(stages.stages.length + 3)}}%">
         <a href="" ng-click="togglePublished()" translate>Published</a>

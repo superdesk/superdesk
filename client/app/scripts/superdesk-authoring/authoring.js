@@ -61,11 +61,16 @@
     }
 
     function stripHtml(item) {
-        var elem = document.createElement('div');
-        elem.innerHTML = item.headline? item.headline: '';
-        if (elem.textContent !== '') {
-            item.headline = elem.textContent;
-        }
+        var fields = ['headline', 'abstract'];
+        _.each(fields, function(key) {
+            if (angular.isDefined(item[key])) {
+                var elem = document.createElement('div');
+                elem.innerHTML = item[key];
+                if (elem.textContent !== '') {
+                    item[key] = elem.textContent;
+                }
+            }
+        });
     }
 
     /**
@@ -247,6 +252,7 @@
                 delete diff.publish_schedule;
             }
 
+            stripHtml(diff);
             var endpoint = 'archive_' + action;
             return api.update(endpoint, orig, diff)
             .then(function(result) {
@@ -722,6 +728,15 @@
                     }
                 }, true);
 
+                $scope.$watch('item.marked_for_not_publication', function(newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        var item = _.create($scope.origItem);
+                        $scope.dirty = true;
+                        item.marked_for_not_publication = newValue;
+                        $scope.itemActions = authoring.itemActions(item);
+                    }
+                });
+
                 $scope.proofread = false;
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
@@ -864,11 +879,6 @@
                             notify.error(gettext(res));
                         });
                     }
-                };
-
-                $scope.markForPublication = function(isArticlePublishable) {
-                    $scope.item.marked_for_not_publication = isArticlePublishable;
-                    return $scope.save();
                 };
 
                 $scope.deschedule = function() {

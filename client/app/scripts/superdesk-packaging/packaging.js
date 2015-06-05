@@ -637,7 +637,10 @@
                 condition: function(item) {
                     return !_.contains(['published', 'killed', 'corrected'], item.state) &&
                         item.type === 'composite' && item.package_type !== 'takes';
-                }
+                },
+                additionalCondition:['authoring', 'item', function(authoring, item) {
+                    return authoring.itemActions(item).package_item;
+                }]
             })
             .activity('view.package', {
                 label: gettext('View item'),

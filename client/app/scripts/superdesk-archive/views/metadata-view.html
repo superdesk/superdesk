@@ -1,7 +1,10 @@
 <div class="metadata-view">
     <dl>
         <dt translate>State</dt>
-        <dd><div class="state-label state-{{item.state}}">{{item.state}}</div></dd>
+        <dd>
+            <div class="state-label state-{{item.state}}">{{item.state}}</div>
+            <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
+        </dd>
     </dl>
     <dl ng-if="item.guid">
         <dt translate>GUID</dt>
@@ -54,7 +57,6 @@
         <dt translate>Ingest provider sequence</dt>
         <dd>{{ item.ingest_provider_sequence }}</dd>
     </dl>
-
     <!-- copyright details details -->
     <dl ng-if="item.copyrightholder">
         <dt translate>Copyright holder</dt>
