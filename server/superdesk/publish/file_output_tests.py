@@ -13,46 +13,52 @@ import os
 from superdesk.tests import TestCase
 from superdesk.publish.file_output import FilePublishService
 from superdesk.errors import PublishFileError
-from apps.archive import init_app
 
 
 class FileOutputTest(TestCase):
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            init_app(self.app)
+        self.fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+        self.output_channel = {'config': {'file_path': self.fixtures}}
 
-    def test_file_write(self):
-        fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-
-        output_channel = {'config': {'file_path': fixtures}}
-
+    def test_file_write_binary(self):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
                 'formatted_item': b'I was here'
                 }
         service = FilePublishService()
         try:
-            service._transmit(item, {}, output_channel)
+            service._transmit(item, {}, self.output_channel)
             self.assertTrue(True)
         finally:
-            path = os.path.join(fixtures, 'test_file_name-1.txt')
+            path = os.path.join(self.fixtures, 'test_file_name-1.txt')
+            if os.path.isfile(path):
+                os.remove(path)
+
+    def test_file_write_string(self):
+        item = {'item_id': 'test_file_name',
+                'item_version': 1,
+                'formatted_item': 'I was here'
+                }
+        service = FilePublishService()
+        try:
+            service._transmit(item, {}, self.output_channel)
+            self.assertTrue(True)
+        finally:
+            path = os.path.join(self.fixtures, 'test_file_name-1.txt')
             if os.path.isfile(path):
                 os.remove(path)
 
     def test_file_write_fail(self):
-        with self.app.app_context():
-            fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+        self.fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__) + '/xyz'))
+        item = {'item_id': 'test_file_name',
+                'item_version': 1,
+                'formatted_item': 'I was here'
+                }
 
-            output_channel = {'config': {'file_path': fixtures}}
-
-            item = {'item_id': 'test_file_name',
-                    'item_version': 1,
-                    'formatted_item': 'I was here'
-                    }
-            service = FilePublishService()
-            try:
-                service._transmit(item, {}, output_channel)
-            except PublishFileError as ex:
-                self.assertEqual(ex.message, 'File publish error')
-                self.assertEqual(ex.code, 13000)
+        service = FilePublishService()
+        try:
+            service._transmit(item, {}, self.output_channel)
+        except PublishFileError as ex:
+            self.assertEqual(ex.message, 'File publish error')
+            self.assertEqual(ex.code, 13000)

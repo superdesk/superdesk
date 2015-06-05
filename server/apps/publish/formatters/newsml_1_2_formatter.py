@@ -53,12 +53,12 @@ class NewsML12Formatter(Formatter):
             self.__format_news_management(article, news_item)
             self.__format_news_component(article, news_item)
 
-            return pub_seq_num, self.XML_ROOT + str(etree.tostring(newsml))
+            return pub_seq_num, self.XML_ROOT + etree.tostring(newsml).decode('utf-8')
         except Exception as ex:
             raise FormatterError.newml12FormatterError(ex, destination)
 
     def __format_news_envelope(self, article, news_envelope, pub_seq_num):
-        SubElement(news_envelope, 'TransmissionId').text = pub_seq_num
+        SubElement(news_envelope, 'TransmissionId').text = str(pub_seq_num)
         SubElement(news_envelope, 'DateAndTime').text = self.now.strftime('%Y%m%dT%H%M%S+0000')
         SubElement(news_envelope, 'Priority', {'FormalName': article.get('priority', '')})
 
@@ -85,10 +85,12 @@ class NewsML12Formatter(Formatter):
     def __format_news_management(self, article, news_item):
         news_management = SubElement(news_item, "NewsManagement")
         SubElement(news_management, 'NewsItemType', {'FormalName': 'News'})
-        SubElement(news_management, 'FirstCreated').text = article['firstcreated']
-        SubElement(news_management, 'ThisRevisionCreated').text = article['versioncreated']
+        SubElement(news_management, 'FirstCreated').text = \
+            article['firstcreated'].strftime('%Y%m%dT%H%M%S+0000')
+        SubElement(news_management, 'ThisRevisionCreated').text = \
+            article['versioncreated'].strftime('%Y%m%dT%H%M%S+0000')
         SubElement(news_management, 'Status', {'FormalName': article['pubstatus']})
-        SubElement(news_management, 'Urgency', {'FormalName': article['urgency']})
+        SubElement(news_management, 'Urgency', {'FormalName': str(article['urgency'])})
         if article['state'] == 'corrected':
             SubElement(news_management, 'Instruction', {'FormalName': 'Correction'})
         else:
@@ -110,7 +112,7 @@ class NewsML12Formatter(Formatter):
         SubElement(news_lines, 'ByLine').text = article.get('byline', '')
         SubElement(news_lines, 'DateLine').text = article.get('dateline', '')
         SubElement(news_lines, 'CreditLine').text = article.get('creditline', '')
-        SubElement(news_lines, 'KeywordLine').text = article.get('keywords')[0]
+        SubElement(news_lines, 'KeywordLine').text = article.get('slugline', '')
 
     def __format_rights_metadata(self, article, main_news_component):
         rights_metadata = SubElement(main_news_component, "RightsMetadata")
@@ -123,8 +125,8 @@ class NewsML12Formatter(Formatter):
         SubElement(usage_rights, 'Geography').text = article.get('place', article.get('located', ''))
         SubElement(usage_rights, 'RightsHolder').text = article.get('source', article.get('original_source', ''))
         SubElement(usage_rights, 'Limitations').text = self.LIMITATIONS
-        SubElement(usage_rights, 'StartDate').text = self.now
-        SubElement(usage_rights, 'EndDate').text = self.now
+        SubElement(usage_rights, 'StartDate').text = self.now.strftime('%Y%m%dT%H%M%S+0000')
+        SubElement(usage_rights, 'EndDate').text = self.now.strftime('%Y%m%dT%H%M%S+0000')
 
     def __format_descriptive_metadata(self, article, main_news_component):
         descriptive_metadata = SubElement(main_news_component, "DescriptiveMetadata")

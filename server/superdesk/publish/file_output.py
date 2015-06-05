@@ -20,16 +20,21 @@ class FilePublishService(PublishService):
         config = output_channel.get('config', {})
 
         try:
-            item = formatted_item['formatted_item']
-            if isinstance(item, bytes):
-                with open('{}/{}-{}.{}'.format(config['file_path'], formatted_item['item_id'].replace(':', '-'),
-                                               str(formatted_item.get('item_version', '')),
-                                               'txt'), 'wb') as f:
-                    f.write(item)
+            if isinstance(formatted_item['formatted_item'], bytes):
+                self.copy_file(config, formatted_item)
+            elif isinstance(formatted_item['formatted_item'], str):
+                formatted_item['formatted_item'] = formatted_item['formatted_item'].encode('utf-8')
+                self.copy_file(config, formatted_item)
             else:
                 raise Exception
         except Exception as ex:
             raise PublishFileError.fileSaveError(ex, output_channel)
 
+    def copy_file(self, config, formatted_item):
+        with open('{}/{}-{}.{}'.format(config['file_path'],
+                                       formatted_item['item_id'].replace(':', '-'),
+                                       str(formatted_item.get('item_version', '')),
+                                       'txt'), 'wb') as f:
+            f.write(formatted_item['formatted_item'])
 
 register_transmitter('File', FilePublishService(), errors)
