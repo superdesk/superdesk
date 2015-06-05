@@ -208,7 +208,7 @@ class ItemsService(BaseService):
             * if the start date is bigger than the end date
         """
         # check date limits' format...
-        err_msg = ("{} parameter must be an ISO 8601 date (YYYY-MM-DD) "
+        err_msg = ("{} parameter must be a valid ISO 8601 date (YYYY-MM-DD) "
                    "without the time part")
 
         try:
