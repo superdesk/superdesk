@@ -15,6 +15,7 @@ from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 from superdesk.io.iptc import subject_codes
 import textwrap
+from io import StringIO
 
 
 class AAPIpNewsFormatter(Formatter):
@@ -62,18 +63,16 @@ class AAPIpNewsFormatter(Formatter):
                 odbc_item['article_text'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
             elif article['type'] == 'text':
                 soup = BeautifulSoup(article.get('body_html', ''))
-                text = ''
+                text = StringIO()
                 for p in soup.findAll('p'):
-                    text += '\x19\r\n'
+                    text.write('\x19\r\n')
                     ptext = p.get_text('\n')
                     for l in ptext.split('\n'):
                         if len(l) > 80:
-                            text += textwrap.fill(l, 80).replace('\n', ' \r\n')
+                            text.write(textwrap.fill(l, 80).replace('\n', ' \r\n'))
                         else:
-                            text += l + ' \r\n'
-
-                text = text.replace('\'', '\'\'')
-                odbc_item['article_text'] = text
+                            text.write(l + ' \r\n')
+                odbc_item['article_text'] = text.getvalue().replace('\'', '\'\'')
 
             if 'genre' in article:
                 odbc_item['genre'] = article['genre'][0].get('name', None)
