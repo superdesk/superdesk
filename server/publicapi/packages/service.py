@@ -22,3 +22,18 @@ class PackagesService(ItemsService):
 
     Serves mainly as a proxy to the data layer.
     """
+
+    def on_fetched_item(self, document):
+        self._set_associations_uri(document)
+        super().on_fetched_item(document)
+
+    def on_fetched(self, res):
+        for doc in res['_items']:
+            self._set_associations_uri(doc)
+        super().on_fetched(res)
+
+    def _set_associations_uri(self, doc):
+        associations = []
+        for doc_id in doc.get('associations', []):
+            associations.append(self._get_uri(doc_id))
+        doc['associations'] = associations

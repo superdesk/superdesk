@@ -48,6 +48,7 @@ def get_test_settings():
     test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
     test_settings['MONGO_DBNAME'] = 'sptests'
     test_settings['LEGAL_ARCHIVE_DBNAME'] = 'sptests_legal'
+    test_settings['PUBLICAPI_DBNAME'] = 'sptests_publicapi'
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
     test_settings['SUPERDESK_TESTING'] = True

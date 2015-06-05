@@ -29,6 +29,10 @@
         File: {
             label: 'File',
             templateUrl: 'scripts/superdesk-publish/views/file-config.html'
+        },
+        PublicArchive: {
+            label: 'Public Archive',
+            templateUrl: 'scripts/superdesk-publish/views/public-archive-config.html'
         }
     });
 

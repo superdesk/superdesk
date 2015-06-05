@@ -190,7 +190,7 @@ class BasePublishService(BaseService):
 
                 destination_groups = self.resolve_destination_groups(
                     doc.get('destination_groups'))
-                output_channels, selector_codes, format_types = \
+                output_channels, selector_codes, _format_types = \
                     self.resolve_output_channels(destination_groups.values())
 
                 for output_channel in output_channels.values():

@@ -21,6 +21,8 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+from publicapi.settings import MONGO_DBNAME as PUBLICAPI_DBNAME  # noqa @UnusedImport
+
 
 def env(variable, fallback_value=None):
     env_value = os.environ.get(variable, '')
@@ -179,6 +181,7 @@ INSTALLED_APPS = [
     'apps.text_archive',
     'apps.validators',
     'apps.validate',
+    'apps.publicapi_publish'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

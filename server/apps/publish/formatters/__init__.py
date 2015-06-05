@@ -32,7 +32,7 @@ class Formatter(metaclass=FormatterRegistry):
         """Formats the article and returns the transformed string"""
         raise NotImplementedError()
 
-    def can_format(self, format_type):
+    def can_format(self, format_type, article_type):
         """Test if formatter can format for given type."""
         raise NotImplementedError()
 
@@ -50,3 +50,4 @@ def get_formatter(format_type, article_type):
 import apps.publish.formatters.nitf_formatter  # NOQA
 import apps.publish.formatters.aap_ipnews_formatter  # NOQA
 import apps.publish.formatters.anpa_formatter  # NOQA
+import apps.publish.formatters.ninjs_formatter  # NOQA
