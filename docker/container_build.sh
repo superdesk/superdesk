@@ -24,7 +24,6 @@ export COMPOSE_PROJECT_NAME=build_$INSTANCE
 
 # clean-up container stuff:
 cd $SCRIPT_DIR &&
-. ./docker-compose.yml.sh > docker-compose.yml &&
 docker-compose stop;
 docker-compose kill;
 docker-compose rm --force;
