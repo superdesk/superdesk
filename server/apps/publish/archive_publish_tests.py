@@ -7,16 +7,17 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from datetime import timedelta
+
+from eve.utils import config
+
 from apps.common.components.utils import get_component
 from apps.legal_archive.components.archive_component import LegalArchive
 from apps.legal_archive.components.formatted_items_component import FormattedItems
 from apps.legal_archive.components.publish_queue_component import PublishQueue
-
 from superdesk.tests import TestCase
-from apps.publish import init_app, archive_publish, publish_queue, RemoveExpiredPublishContent
+from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
 from superdesk.utc import utcnow
-from datetime import timedelta
-from eve.utils import config
 from superdesk import get_resource_service
 import superdesk
 
