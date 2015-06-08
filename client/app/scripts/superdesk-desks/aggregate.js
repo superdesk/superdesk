@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    AggregateCtrl.$inject = ['api', 'session', 'desks', 'preferencesService'];
-    function AggregateCtrl(api, session, desks, preferencesService) {
+    AggregateCtrl.$inject = ['api', 'session', 'desks', 'preferencesService', 'storage'];
+    function AggregateCtrl(api, session, desks, preferencesService, storage) {
         var PREFERENCES_KEY = 'agg:view';
         var self = this;
         this.loading = true;
@@ -94,6 +94,17 @@
                 });
             }
             return this.allStages;
+        };
+
+        this.state = storage.getItem('agg:state') || {};
+
+        this.switchState = function(key) {
+            this.state[key] = !this.getState(key);
+            storage.setItem('agg:state', this.state);
+        };
+
+        this.getState = function(key) {
+            return (this.state[key] === undefined) ? true : this.state[key];
         };
     }
 
@@ -257,7 +268,7 @@
         };
     }
 
-    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets'])
+    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets', 'superdesk.desks'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
         .widget('aggregate', {

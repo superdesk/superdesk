@@ -23,10 +23,10 @@
         <div class="content-list">
             <div class="desk" ng-repeat="group in agg.getGroups()">
             
-                <div class="stage" ng-if="group.type === 'stage'" ng-show="total" ng-init="open = true">
+                <div class="stage" ng-if="group.type === 'stage'" ng-show="total">
                     <div class="stage-header clearfix">
                         <div class="line"></div>
-                        <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
+                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
                             <i class="icon-chevron-down"></i>
                         </button>
                         <div  class="stage-name pull-left">
@@ -34,7 +34,7 @@
                         </div>
                         <span class="label pull-right">{{total}}</span>
                     </div>
-                    <div class="stage-content" ng-show="open"
+                    <div class="stage-content" ng-show="agg.getState(group._id)"
                         sd-stage-items
                         data-stage="group._id"
                         data-total="total"
@@ -46,10 +46,10 @@
                     </div>
                 </div>
             
-                <div class="stage" ng-if="group.type === 'search'" ng-show="total" ng-init="open = true">
+                <div class="stage" ng-if="group.type === 'search'" ng-show="total">
                     <div class="stage-header clearfix">
                         <div class="line"></div>
-                        <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
+                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
                             <i class="icon-chevron-down"></i>
                         </button>
                         <div class="stage-name pull-left">
@@ -57,7 +57,7 @@
                         </div>
                         <span class="label pull-right">{{total}}</span>
                     </div>
-                    <div class="stage-content" ng-show="open"
+                    <div class="stage-content" ng-show="agg.getState(group._id)"
                         sd-stage-items
                         data-saved-search="agg.searchLookup[group._id]"
                         data-total="total"

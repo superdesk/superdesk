@@ -23,14 +23,14 @@ describe('desks service', function() {
         expect(userDesks.length).toBe(2);
     }));
 
-    it('can pick a first desk if user has no current desk selected',
+    it('can pick personal desk if user has no current desk selected',
         inject(function(desks, session, api, preferencesService, $q, $rootScope) {
             spyOn(preferencesService, 'get').and.returnValue($q.when('missing'));
             spyOn(preferencesService, 'update');
-            spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
+            spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: []}));
             desks.userDesks = desks.fetchCurrentUserDesks();
             $rootScope.$digest();
-            expect(desks.getCurrentDeskId()).toBe('foo');
+            expect(desks.getCurrentDeskId()).toBe('personal');
             expect(preferencesService.update).not.toHaveBeenCalled();
         })
     );
