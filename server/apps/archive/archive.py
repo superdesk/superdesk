@@ -33,7 +33,6 @@ from apps.content import metadata_schema
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
-from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from superdesk.etree import get_word_count
 from superdesk.notification import push_notification
 from copy import copy
@@ -168,7 +167,6 @@ class ArchiveService(BaseService):
         if packages:
             self.packageService.on_created(packages)
 
-        get_component(LegalArchiveProxy).create(docs)
         user = get_user()
         for doc in docs:
             subject = get_subject(doc)
@@ -231,7 +229,6 @@ class ArchiveService(BaseService):
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
-        get_component(LegalArchiveProxy).update(original, updates)
 
         if original['type'] == 'composite':
             self.packageService.on_updated(updates, original)

@@ -41,7 +41,7 @@ class TextArchiveService(BaseService):
 
     def on_deleted(self, doc):
         user = get_user()
-        push_notification('item:deleted', item=str(doc['_id']), user=str(user.get('_id')))
+        push_notification('item:deleted:archive:text', item=str(doc['_id']), user=str(user.get('_id')))
 
 
 superdesk.privilege(name='textarchive',

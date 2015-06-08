@@ -9,10 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
-from apps.legal_archive.models.legal_archive import LegalArchiveModel
+from apps.legal_archive.models.archive_model import LegalArchiveModel
 from apps.common.components.utils import get_component
 from apps.legal_archive.components.error import Error
-from copy import copy, deepcopy
 
 
 class LegalArchive(BaseComponent):
@@ -21,24 +20,22 @@ class LegalArchive(BaseComponent):
 
     @classmethod
     def name(cls):
-        return 'legal_archive'
+        return 'archive'
+
+    def find_one(self, filter, projection=None):
+        try:
+            return get_model(LegalArchiveModel).find_one(filter, projection)
+        except Exception as e:
+            get_component(Error).create(LegalArchiveModel.name(), filter, str(e))
 
     def create(self, items):
-        citems = deepcopy(items)
-        for citem in citems:
-            citem['_id_document'] = citem['_id']
-            del citem['_id']
         try:
-            return get_model(LegalArchiveModel).create(citems)
+            return get_model(LegalArchiveModel).create(items)
         except Exception as e:
             get_component(Error).create(LegalArchiveModel.name(), items, str(e))
 
-    def update(self, original, updates):
-        updated = copy(original)
-        updated.update(updates)
-        updated['_id_document'] = original['_id']
-        del updated['_id']
+    def replace(self, filter, doc, etag=None):
         try:
-            return get_model(LegalArchiveModel).create([updated])
+            return get_model(LegalArchiveModel).replace(filter, doc, etag=None)
         except Exception as e:
-            get_component(Error).create(LegalArchiveModel.name(), [updated], str(e))
+            get_component(Error).create(LegalArchiveModel.name(), doc, str(e))

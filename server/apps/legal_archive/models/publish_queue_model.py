@@ -7,14 +7,14 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from apps.common.models.base_model import BaseModel
+from apps.item_lock.models.item import ItemValidator
 
-from apps.common.models.io.base_proxy import BaseProxy
 
-
-class EveProxy(BaseProxy):
-    """
-    Data layer implementation used to connect the models to the Eve data layer.
-    Transforms the model data layer API into Eve data layer calls.
-    """
+class PublishQueueModel(BaseModel):
     def __init__(self, data_layer):
-        self.data_layer = data_layer
+        BaseModel.__init__(self, 'publish_queue', data_layer, {}, ItemValidator())
+
+    @classmethod
+    def name(cls):
+        return 'publish_queue'

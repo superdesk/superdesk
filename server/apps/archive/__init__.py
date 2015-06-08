@@ -15,7 +15,7 @@ import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveSaveService
-from .commands import ArchiveRemoveExpiredContent
+from .commands import RemoveExpiredSpikeContent
 from .ingest import IngestResource, IngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
@@ -123,4 +123,4 @@ def init_app(app):
 
 @celery.task
 def content_purge():
-    ArchiveRemoveExpiredContent().run()
+    RemoveExpiredSpikeContent().run()
