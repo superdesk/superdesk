@@ -29,6 +29,14 @@ elastic:
   volumes:
    - ../data/elastic:/usr/share/elasticsearch/data
 
+postfix:
+  image: catatnight/postfix
+  ports:
+  - "25:25"
+  environment:
+  - maildomain=mail.sourcefabric.org
+  - smtp_user=user:pwd
+
 backend:
   build: ../server
   command: sh /opt/superdesk/scripts/fig_wrapper.sh honcho start
@@ -37,6 +45,7 @@ backend:
    - redis
    - elastic
    - logstash
+   - postfix
   environment:
    - MONGOLAB_URI=mongodb://mongodb:27017/test
    - LEGAL_ARCHIVE_URI=mongodb://mongodb:27017/test
@@ -52,12 +61,12 @@ backend:
    - AMAZON_SECRET_ACCESS_KEY
    - REUTERS_USERNAME
    - REUTERS_PASSWORD
-   - MAIL_SERVER
-   - MAIL_PORT
-   - MAIL_USE_TLS
-   - MAIL_USE_SSL
-   - MAIL_USERNAME
-   - MAIL_PASSWORD
+   - MAIL_SERVER=postfix
+   - MAIL_PORT=25
+   - MAIL_USE_TLS=false
+   - MAIL_USE_SSL=false
+   - MAIL_USERNAME=user
+   - MAIL_PASSWORD=pwd
    - SENTRY_DSN
    - SUPERDESK_URL=http://127.0.0.1/api
    - SUPERDESK_CLIENT_URL=http://127.0.0.1
