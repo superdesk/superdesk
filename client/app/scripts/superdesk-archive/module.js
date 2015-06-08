@@ -20,7 +20,7 @@ define([
          * @param {Object} item
          */
         this.isSelected = function(item) {
-            return !!_.find(items, {_id: item._id});
+            return item.selected;
         };
 
         /**
@@ -29,7 +29,6 @@ define([
          * @param {Object} item
          */
         this.toggle = function(item) {
-            item.selected = !this.isSelected(item);
             if (item.selected) {
                 items = _.union(items, [item]);
             } else {
@@ -46,6 +45,13 @@ define([
         };
 
         /**
+         * Get list of selected items
+         */
+        this.getItems = function() {
+            return items;
+        };
+
+        /**
          * Reset to empty
          */
         this.reset = function() {
@@ -55,13 +61,6 @@ define([
 
             items = [];
             this.count = 0;
-        };
-
-        /**
-         * Get list of selected items
-         */
-        this.getItems = function() {
-            return items;
         };
 
         // main
@@ -79,7 +78,7 @@ define([
          *
          * @param {Object} item
          */
-        this.spike = function spike(item) {
+        this.spike = function(item) {
             return api.update(SPIKE_RESOURCE, item, {state: 'spiked'})
                 .then(function() {
                     if ($location.search()._id === item._id) {
@@ -98,7 +97,7 @@ define([
          *
          * @param {Object} item
          */
-        this.unspike = function unspike(item) {
+        this.unspike = function(item) {
             return api.update(UNSPIKE_RESOURCE, item, {})
                 .then(function() {
                     if ($location.search()._id === item._id) {

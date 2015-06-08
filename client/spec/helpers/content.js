@@ -55,9 +55,18 @@ function Content() {
      */
     this.count = this.getCount;
 
-    this.selectItem = function(index) {
-        var item = element.all(by.repeater('items._items')).get(index);
-        browser.actions().mouseMove(item.element(by.className('multi'))).perform();
-        item.element(by.model('multi.selected')).click();
+    this.selectItem = function(item) {
+        var crtItem;
+        return this.getItem(item)
+            .waitReady().then(function(elem) {
+                crtItem = elem;
+                return browser.actions()
+                       .mouseMove(crtItem.element(by.className('filetype-icon-text')))
+                       .perform();
+            }).then(function() {
+                return crtItem
+                    .element(by.css('[ng-change="toggleSelected(item)"]'))
+                    .click();
+            });
     };
 }

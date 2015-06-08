@@ -22,7 +22,7 @@ describe('content', function() {
 
     describe('multi service', function() {
         it('can reset on route change', inject(function(multi, $rootScope) {
-            multi.toggle({_id: 1});
+            multi.toggle({_id: 1, selected: true});
             expect(multi.count).toBe(1);
             expect(multi.getIds()).toEqual([1]);
 
@@ -33,7 +33,7 @@ describe('content', function() {
         }));
 
         it('can get list of items', inject(function(multi) {
-            var items = [{_id: 1}, {_id: 2}];
+            var items = [{_id: 1, selected: true}, {_id: 2, selected: true}];
             multi.toggle(items[0]);
             multi.toggle(items[1]);
             expect(multi.getItems()).toEqual(items);
@@ -43,18 +43,19 @@ describe('content', function() {
     describe('media box directive', function() {
         it('can select item for multi editing', inject(function(multi, $rootScope, $compile) {
             var scope = $rootScope.$new();
-            scope.item = item;
+            scope.item = {_id: 1};
 
             $compile('<div sd-media-box></div>')(scope);
             scope.$digest();
 
-            expect(scope.multi.selected).toBe(false);
-            scope.toggleSelected();
-            expect(scope.multi.selected).toBe(true);
+            expect(multi.getItems().length).toBe(0);
+            scope.item.selected = true;
+            scope.toggleSelected(scope.item);
+            expect(multi.getItems().length).toBe(1);
 
             multi.reset();
             $rootScope.$digest();
-            expect(scope.multi.selected).toBe(false);
+            expect(multi.getItems().length).toBe(0);
         }));
     });
 
