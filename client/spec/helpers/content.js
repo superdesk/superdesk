@@ -49,4 +49,15 @@ function Content() {
     this.getCount = function () {
         return element.all(by.repeater('items._items')).count();
     };
+
+    /**
+     * @alias this.getCount
+     */
+    this.count = this.getCount;
+
+    this.selectItem = function(index) {
+        var item = element.all(by.repeater('items._items')).get(index);
+        browser.actions().mouseMove(item.element(by.className('multi'))).perform();
+        item.element(by.model('multi.selected')).click();
+    };
 }

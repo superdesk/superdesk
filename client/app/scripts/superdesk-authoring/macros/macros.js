@@ -34,13 +34,16 @@ function MacrosService(api, autosave) {
 
     this.call = triggerMacro;
 
-    function triggerMacro(macro, item) {
+    function triggerMacro(macro, item, commit) {
         return api.save('macros', {
             macro: macro.name,
-            item: _.omit(item) // get all the properties as shallow copy
+            item: _.omit(item), // get all the properties as shallow copy
+            commit: !!commit
         }).then(function(res) {
             angular.extend(item, res.item);
-            autosave.save(item);
+            if (!commit) {
+                autosave.save(item);
+            }
             return item;
         });
     }

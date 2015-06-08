@@ -1,4 +1,4 @@
-<div class="pane-holder" ng-class="{show: !selected.preview && !selected.fetch}">
+<div class="pane-holder" ng-class="{show: isActive}">
     <div class="send-to-pane">
         <header>
             <h3 translate ng-show="mode !== 'archive'">Send</h3>
@@ -46,7 +46,7 @@
                     <button class="cancel" ng-click="close()" translate>cancel</button>
                 </li>
                 <li>
-                    <button class="send" ng-click="send()"
+                    <button id="send-item-btn" class="send" ng-click="send()"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
                 </li>
@@ -56,9 +56,10 @@
                     translate>send and continue</button>
                 </li>                
                 <li ng-show="mode !== 'authoring'">
-                    <button class="send" ng-click="send(true)"
-                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
-                    translate>send and open</button>
+                    <button class="send"
+                        ng-click="send(true)"
+                        ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage) || config"
+                        translate>send and open</button>
                 </li>
             </ul>
         </div>

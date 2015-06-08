@@ -37,7 +37,7 @@ define('main', [
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {
-            angular.bootstrap(body, apps);
+            angular.bootstrap(body, apps, {strictDi: true});
             window.superdeskIsReady = true;
         });
     };

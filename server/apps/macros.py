@@ -35,6 +35,11 @@ class MacrosService(superdesk.Service):
         ids = []
         for doc in docs:
             doc['item'] = self.execute_macro(doc['item'], doc['macro'])
+            if doc.get('commit'):
+                item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item']['_id'])
+                updates = doc['item'].copy()
+                updates.pop('_id')
+                superdesk.get_resource_service('archive').update(item['_id'], updates, item)
             ids.append(doc['macro'])
         return ids
 
@@ -56,6 +61,10 @@ class MacrosResource(superdesk.Resource):
         },
         'item': {
             'type': 'dict',
+        },
+        'commit': {
+            'type': 'boolean',
+            'default': False,
         },
     }
 

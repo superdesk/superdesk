@@ -1,20 +1,19 @@
 
 'use strict';
 
-var openUrl = require('./helpers/utils').open,
-    changeUrl = require('./helpers/utils').changeUrl,
-    workspace = require('./helpers/pages').workspace,
+var workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content;
 
 describe('Fetch', function() {
-
-    beforeEach(function(done) {openUrl('/#/workspace/content').then(done);});
+    beforeEach(function() {
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
+    });
 
     it('items in personal should have copy icon and in desk should have duplicate icon',
         function() {
             var itemEL;
-
-            workspace.switchToDesk('SPORTS DESK').then(content.setListView);
             content.getItem(0).waitReady().then(
                 function(elem) {
                     itemEL = elem;
@@ -25,7 +24,8 @@ describe('Fetch', function() {
                     expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
                 });
 
-            workspace.switchToDesk('PERSONAL').then(content.setListView);
+            workspace.switchToDesk('PERSONAL');
+            content.setListView();
             content.getItem(0).waitReady().then(
                 function(elem) {
                     itemEL = elem;
@@ -38,95 +38,50 @@ describe('Fetch', function() {
     );
 
     it('can fetch from ingest with keyboards', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
         var body;
-        changeUrl('/#/workspace/ingest').then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(function() {
-            // select & fetch item
-            body = $('body');
-            return body.sendKeys(protractor.Key.DOWN);
-        }).then(function() {
-            return body.sendKeys('f');
-        }).then(function() {
-            // go to content and see it there
-            return changeUrl('/#/workspace/content');
-        }).then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(
-            content.setListView
-        );
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
+        workspace.openIngest();
+        // select & fetch item
+        body = $('body');
+        body.sendKeys(protractor.Key.DOWN);
+        body.sendKeys('f');
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        expect(content.count()).toBe(3);
     });
 
     it('can fetch from ingest with menu', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        changeUrl('/#/workspace/ingest').then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(
-            content.setListView
-        ).then(function() {
-            return content.actionOnItem('Fetch', 0);
-        }).then(function() {
-            return changeUrl('/#/workspace/content');
-        }).then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(
-            content.setListView
-        );
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
-    });
-
-    xit('can fetch from content with keyboards', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
-        browser.get('/#/workspace/ingest');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        workspace.openIngest();
         content.actionOnItem('Fetch', 0);
-        browser.get('/#/workspace/content');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
-
-        // select & fetch item
-        var body = $('body');
-        body.sendKeys(protractor.Key.DOWN);
-        body.sendKeys('f');
-
-        // go to content and see it there
-        workspace.switchToDesk('PERSONAL');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
-        expect(element.all(by.repeater('items._items')).count()).toBe(4);
+        workspace.openContent();
+        expect(content.count()).toBe(3);
     });
 
     it('can fetch from content with menu', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        changeUrl('/#/workspace/ingest').then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(
-            content.setListView
-        ).then(function() {
-            return content.actionOnItem('Fetch', 0);
-        }).then(function() {
-            return changeUrl('/#/workspace/content');
-        }).then(function() {
-            return workspace.switchToDesk('PERSONAL');
-        }).then(
-            content.setListView
-        );
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
-        content.actionOnItem('Copy', 0).then(function() {
-            return workspace.switchToDesk('SPORTS DESK');
-        }).then(function() {
-            return workspace.switchToDesk('PERSONAL');
-        });
-        expect(element.all(by.repeater('items._items')).count()).toBe(4);
+        workspace.openIngest();
+        content.actionOnItem('Fetch', 0);
+        workspace.openContent();
+        workspace.switchToDesk('PERSONAL');
+        expect(content.count()).toBe(3);
+        content.actionOnItem('Copy', 0);
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.switchToDesk('PERSONAL');
+        expect(content.count()).toBe(4);
+    });
+
+    it('can fetch multiple items', function() {
+        workspace.openIngest();
+        content.selectItem(0);
+        element(by.id('fetch-all-btn')).click();
+        workspace.openContent();
+        expect(content.count()).toBe(3);
+    });
+
+    it('can fetch as multiple items', function() {
+        workspace.openIngest();
+        content.selectItem(0);
+        element(by.id('fetch-all-as-btn')).click();
+        element(by.id('send-item-btn')).click();
+        workspace.openContent();
+        expect(content.count()).toBe(3);
     });
 });

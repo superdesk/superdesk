@@ -419,6 +419,9 @@
     ])
         .service('search', SearchService)
         .service('tags', TagService)
+
+        .controller('MultiActionBar', MultiActionBarController)
+
         .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
@@ -1202,12 +1205,14 @@
         .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
         function(asset, multi, multiEdit) {
             return {
+                controller: 'MultiActionBar',
+                controllerAs: 'action',
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
                 link: function(scope) {
                     scope.multi = multi;
 
                     scope.multiedit = function() {
-                        multiEdit.create(multi.getQueue());
+                        multiEdit.create(multi.getIds());
                         multiEdit.open();
                     };
                 }
@@ -1227,4 +1232,19 @@
         }])
 
         ;
+
+    MultiActionBarController.$inject = ['multi', 'send'];
+    function MultiActionBarController(multi, send) {
+        this.send = sendAll;
+        this.sendAs = sendAllAs;
+
+        function sendAll() {
+            return send.all(multi.getItems());
+        }
+
+        function sendAllAs() {
+            return send.allAs(multi.getItems());
+        }
+    }
+
 })();

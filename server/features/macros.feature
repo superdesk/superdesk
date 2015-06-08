@@ -44,6 +44,25 @@ Feature: Macros
             """
 
     @auth
+    Scenario: Trigger macro and commit
+        Given "archive"
+            """
+            [{"_id": "item1", "guid": "item1", "type": "text"}]
+            """
+
+        When we post to "/macros"
+            """
+            {"macro": "usd_to_aud", "item": {"_id": "item1", "body_html": "$10"}, "commit": true}
+            """
+        Then we get new resource
+
+        When we get "/archive/item1"
+        Then we get existing resource
+            """
+            {"body_html": "$12"}
+            """
+
+    @auth
     Scenario: Return an error when triggering unknown macro
         When we post to "/macros"
             """

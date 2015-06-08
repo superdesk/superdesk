@@ -8,11 +8,19 @@ define([
 ], function(angular, d3, moment, BaseListController) {
     'use strict';
 
+    angular.module('superdesk.ingest.send', [
+        'superdesk.api',
+        'superdesk.desks'
+        ])
+        .service('send', SendService)
+        ;
+
     var app = angular.module('superdesk.ingest', [
         'superdesk.search',
         'superdesk.dashboard',
         'superdesk.widgets.ingest',
-        'superdesk.widgets.ingeststats'
+        'superdesk.widgets.ingeststats',
+        'superdesk.ingest.send'
     ]);
 
     app.value('providerTypes', {
@@ -204,10 +212,7 @@ define([
         };
 
         this.fetchItem = function(id) {
-            return api.ingest.getById(id)
-            .then(function(item) {
-                $scope.selected.fetch = item;
-            });
+            return api.ingest.getById(id);
         };
 
         var oldQuery = _.omit($location.search(), '_id');
@@ -1316,19 +1321,8 @@ define([
                 label: gettext('Fetch'),
                 icon: 'archive',
                 monitor: true,
-                controller: ['api', 'data', 'desks', function(api, data, desks) {
-                    api
-                        .save('fetch', {}, {desk: desks.getCurrentDeskId()}, data.item)
-                        .then(
-                            function(archiveItem) {
-                                data.item.task_id = archiveItem.task_id;
-                                data.item.archived = archiveItem._created;
-                            }, function(response) {
-                                data.item.error = response;
-                            })
-                    ['finally'](function() {
-                        data.item.actioning.archive = false;
-                    });
+                controller: ['send', 'data', function(send, data) {
+                    return send.one(data.item);
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
@@ -1403,5 +1397,109 @@ define([
         });
     }]);
 
+    SendService.$inject = ['desks', 'api', '$q'];
+    function SendService(desks, api, $q) {
+        this.one = sendOne;
+        this.all = sendAll;
+
+        this.oneAs = sendOneAs;
+        this.allAs = sendAllAs;
+
+        this.config = null;
+        this.getConfig = getConfig;
+
+        var vm = this;
+
+        /**
+         * Send given item to a current user desk
+         *
+         * @param {Object} item
+         * @returns {Promise}
+         */
+        function sendOne(item) {
+            return api
+                .save('fetch', {}, {desk: desks.getCurrentDeskId()}, item)
+                .then(
+                    function(archiveItem) {
+                        item.task_id = archiveItem.task_id;
+                        item.archived = archiveItem._created;
+                    }, function(response) {
+                        item.error = response;
+                    })
+                ['finally'](function() {
+                    item.actioning.archive = false;
+                });
+        }
+
+        /**
+         * Send all given items to current user desk
+         *
+         * @param {Array} items
+         */
+        function sendAll(items) {
+            angular.forEach(items, sendOne);
+        }
+
+        /**
+         * Send given item using config
+         *
+         * @param {Object} item
+         * @param {Object} config
+         * @param {string} config.desk - desk id
+         * @param {string} config.stage - stage id
+         * @param {string} config.macro - macro name
+         * @returns {Promise}
+         */
+        function sendOneAs(item, config) {
+            var data = getData(config);
+            return api.save('fetch', {}, data, item);
+
+            function getData(config) {
+                var data = {
+                    desk: config.desk
+                };
+
+                if (config.stage) {
+                    data.stage = config.stage;
+                }
+
+                if (config.macro) {
+                    data.macro = config.macro;
+                }
+
+                return data;
+            }
+        }
+
+        /**
+         * Send all given item using config once it's resolved
+         *
+         * At first it only creates a deffered config which is
+         * picked by SendItem directive, once used sets the destination
+         * it gets resolved and items are sent.
+         *
+         * @param {Array} items
+         */
+        function sendAllAs(items) {
+            vm.config = $q.defer();
+            vm.config.promise.then(function(config) {
+                vm.config = null;
+                angular.forEach(items, function(item) {
+                    sendOneAs(item, config);
+                });
+            });
+        }
+
+        /**
+         * Get deffered config if any. Used in $watch
+         *
+         * @returns {Object|null}
+         */
+        function getConfig() {
+            return vm.config;
+        }
+    }
+
     return app;
+
 });
