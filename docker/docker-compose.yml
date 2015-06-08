@@ -31,8 +31,6 @@ elastic:
 
 postfix:
   image: catatnight/postfix
-  ports:
-  - "25:25"
   environment:
   - maildomain=mail.sourcefabric.org
   - smtp_user=user:pwd
