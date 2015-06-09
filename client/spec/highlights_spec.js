@@ -255,4 +255,33 @@ describe('HIGHLIGHTS', function() {
             expect(content.getCount()).toBe(5);
         });
     });
+
+    describe('multi mark for highlights:', function() {
+        beforeEach(function() {
+            openUrl('/#/workspace/content');
+        });
+
+        it('multi mark for highlights', function() {
+            workspace.switchToDesk('SPORTS DESK');
+            content.setListView();
+            content.selectItem(0);
+            content.selectItem(1);
+            highlights.multiMarkHighlight('Highlight one');
+            content.checkMarkedForHighlight('Highlight one', 0);
+            content.checkMarkedForHighlight('Highlight one', 1);
+        });
+
+        it('multi mark for highlights, in case of partial mark for selected items', function() {
+            workspace.switchToDesk('SPORTS DESK');
+            content.setListView();
+            content.actionOnItem('Mark item', 0);
+            highlights.selectHighlight(content.getItem(0), 'Highlight one');
+            content.checkMarkedForHighlight('Highlight one', 0);
+            content.selectItem(0);
+            content.selectItem(1);
+            highlights.multiMarkHighlight('Highlight one');
+            content.selectItem(0);
+            content.checkMarkedForHighlight('Highlight one', 1);
+        });
+    });
 });

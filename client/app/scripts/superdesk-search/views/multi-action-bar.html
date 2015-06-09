@@ -5,6 +5,14 @@
 		translate-n="multi.count"
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
+    <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive'"
+         title="{{ :: 'Mark item' | translate }}" dropdown>
+         <button class="dropdown-toggle" dropdown-toggle>
+         <i class="svg-icon-add-to-list"></i>
+         </button>
+         <ul class="dropdown-menu pull-right" sd-multi-mark-highlights-dropdown></ul>
+    </div>
+
 	<div class="pull-right" ng-if="type === 'archive'">
 		<button class="navbtn" ng-click="multiedit()" title="{{ :: 'Multiedit' | translate }}">
     		<i class="big-icon-multiedit"></i>

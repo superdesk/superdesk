@@ -146,4 +146,11 @@ function Highlights() {
     this.exportHighlights = function() {
         element(by.id('export')).click();
     };
+
+    this.multiMarkHighlight = function(name) {
+        var elem = element(by.css('[class="multi-action-bar ng-scope"]'));
+        elem.element(by.className('svg-icon-add-to-list')).click();
+        elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
+        browser.sleep(200);
+    };
 }

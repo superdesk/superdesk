@@ -13,8 +13,8 @@
             <span sd-item-container data-item="item" class="container"></span>
         </span>
 
-        <div class="selectbox" ng-show="hover || multi.selected">
-            <span sd-check ng-model="multi.selected" ng-change="toggleSelected()"></span>
+        <div class="selectbox" ng-show="hover || item.selected">
+            <span sd-check ng-model="item.selected" ng-change="toggleSelected(item)"></span>
         </div>
     </div>
 

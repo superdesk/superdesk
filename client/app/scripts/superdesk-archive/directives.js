@@ -344,13 +344,8 @@
                         return false;
                     };
 
-                    // here we make a copy which we can modify without affecting data
-                    scope.multi = angular.extend({
-                        selected: multi.isSelected(scope.item)
-                    }, scope.item);
-
-                    scope.toggleSelected = function() {
-                        multi.toggle(scope.multi);
+                    scope.toggleSelected = function(item) {
+                        multi.toggle(item);
                     };
                 }
             };

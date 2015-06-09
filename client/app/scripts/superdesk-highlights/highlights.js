@@ -24,7 +24,7 @@
         /**
          * Fetches and caches highlights, or returns from the cache.
          */
-        service.get = function get(desk) {
+        service.get = function(desk) {
             var DEFAULT_CACHE_KEY = '_nodesk';
             var key = desk || DEFAULT_CACHE_KEY;
             var value = cache.get(key);
@@ -66,14 +66,14 @@
         /**
          * Mark an item for a highlight
          */
-        service.mark_item = function mark_item(highlight, marked_item) {
+        service.markItem = function(highlight, marked_item) {
             return api.markForHighlights.create({highlights: highlight, marked_item: marked_item});
         };
 
         /**
          * Create empty highlight package
          */
-        service.createEmptyHighlight = function createEmptyHighlight(highlight) {
+        service.createEmptyHighlight = function(highlight) {
             var pkg_defaults = {
                 headline: highlight.name,
                 highlight: highlight._id
@@ -97,8 +97,8 @@
             templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown_directive.html',
             link: function(scope) {
 
-                scope.mark_item = function mark_item(highlight) {
-                    highlightsService.mark_item(highlight._id, scope.item._id);
+                scope.markItem = function(highlight) {
+                    highlightsService.markItem(highlight._id, scope.item._id);
                     if (!scope.item.highlights) {
                         scope.item.highlights = [highlight._id];
                     } else {
@@ -106,8 +106,42 @@
                     }
                 };
 
-                scope.is_marked = function is_marked(highlight) {
+                scope.isMarked = function(highlight) {
                     return scope.item && scope.item.highlights && scope.item.highlights.indexOf(highlight._id) >= 0;
+                };
+
+                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                    scope.highlights = result._items;
+                });
+            }
+        };
+    }
+
+    MultiMarkHighlightsDropdownDirective.$inject = ['desks', 'highlightsService', 'multi'];
+    function MultiMarkHighlightsDropdownDirective(desks, highlightsService, multi) {
+        return {
+            templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown_directive.html',
+            link: function(scope) {
+
+                scope.markItem = function(highlight) {
+                    angular.forEach(multi.getItems(), function(item) {
+                        if (!item.highlights) {
+                            item.highlights = [highlight._id];
+                        } else if (item.highlights.indexOf(highlight._id) === -1) {
+                            item.highlights = [highlight._id].concat(item.highlights);
+                        } else {
+                            return;
+                        }
+                        highlightsService.markItem(highlight._id, item._id);
+                    });
+                    multi.reset();
+                };
+
+                scope.isMarked = function(highlight) {
+                    var result = _.find(multi.getItems(), function(item) {
+                        return !item.highlights || item.highlights.indexOf(highlight._id) === -1;
+                    });
+                    return !result;
                 };
 
                 highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
@@ -198,7 +232,7 @@
             scope: {highlight_id: '=highlight'},
             templateUrl: 'scripts/superdesk-highlights/views/search_highlights_dropdown_directive.html',
             link: function(scope) {
-                scope.selectHighlight = function selectHighlight(highlight) {
+                scope.selectHighlight = function(highlight) {
                     scope.highlight_id = null;
                     if (highlight) {
                         scope.highlight_id = highlight._id;
@@ -222,7 +256,7 @@
             templateUrl: 'scripts/superdesk-highlights/views/package_highlights_dropdown_directive.html',
             link: function(scope) {
 
-                scope.createHighlight = function createHighlight(highlight) {
+                scope.createHighlight = function(highlight) {
                     highlightsService.createEmptyHighlight(highlight)
                     .then(function(new_package) {
                         superdesk.intent('author', 'package', new_package);
@@ -395,6 +429,7 @@
     app
     .service('highlightsService', HighlightsService)
     .directive('sdMarkHighlightsDropdown', MarkHighlightsDropdownDirective)
+    .directive('sdMultiMarkHighlightsDropdown', MultiMarkHighlightsDropdownDirective)
     .directive('sdPackageHighlightsDropdown', PackageHighlightsDropdownDirective)
     .directive('sdHighlightsTitle', HighlightsTitleDirective)
     .directive('sdSearchHighlights', SearchHighlightsDirective)
