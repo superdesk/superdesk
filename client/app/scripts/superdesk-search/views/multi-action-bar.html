@@ -5,6 +5,12 @@
 		translate-n="multi.count"
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
+    <div class="pull-right" ng-if="type === 'archive'">
+        <button class="navbtn" ng-click="createPackage()" title="{{ :: 'Create Package' | translate }}">
+            <i class="icon-package-plus"></i>
+        </button>
+    </div>
+    
     <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive'"
          title="{{ :: 'Mark item' | translate }}" dropdown>
          <button class="dropdown-toggle" dropdown-toggle>
@@ -22,12 +28,12 @@
 	<div class="pull-right" ng-if="type === 'ingest'">
 		<button id="fetch-all-btn" class="navbtn"
 		 	title="{{ :: 'Fetch' | translate }}"
-			ng-click="action.send()">
+			ng-click="send()">
 			<i class="big-icon-archive"></i>
 		</button>
 		<button id="fetch-all-as-btn" class="navbtn"
 			title="{{ :: 'Fetch as' | translate }}"
-			ng-click="action.sendAs()">
+			ng-click="sendAs()">
 			<i class="big-icon-archive"></i>
 		</button>
 </div>

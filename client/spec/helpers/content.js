@@ -69,4 +69,10 @@ function Content() {
                     .click();
             });
     };
+
+    this.createPackageFromItems = function() {
+        var elem = element(by.css('[class="multi-action-bar ng-scope"]'));
+        elem.element(by.className('icon-package-plus')).click();
+        browser.sleep(500);
+    };
 }

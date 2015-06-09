@@ -83,6 +83,15 @@ describe('Content', function() {
         expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
     });
 
+    it('create package from multiple items', function() {
+        workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
+        content.selectItem(0);
+        content.selectItem(1);
+        content.createPackageFromItems();
+        expect(authoring.getGroupItems('MAIN').count()).toBe(2);
+    });
+
     function addItemsToPackage() {
         workspace.switchToDesk('Personal').then(
             content.setListView
