@@ -23,6 +23,7 @@
 								<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 							</div>
 							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry"></div>
+							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="published_item_expiry" data-header="Published Item Expiry"></div>
 						</fieldset>
 						<p ng-if="message">{{ message }}</p>
 						<span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
@@ -114,10 +115,8 @@
 							<label class="label globalread" ng-if="selected.default_incoming == null || selected.default_incoming">
 								{{:: 'Default incomming stage' }}
 							</label>
-							<label class="label globalread" ng-if="selected.published_stage !== null && selected.published_stage">
-								{{:: 'Published Stage' }}
-							</label>
 							<label translate>Stage description: {{ selected.description}}</label>
+							<label translate>Content expiry:</label>
 							<div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
 						</div>
 
@@ -132,14 +131,13 @@
 								<span sd-switch ng-model="editStage.default_incoming"></span>
 							</div>
 							<div class="field">
-								<label>{{:: 'Default published stage' | translate }}</label>
-								<span sd-switch ng-model="editStage.published_stage"></span>
-							</div>
-							<div class="field">
 								<label translate>Stage description</label>
 								<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
 							</div>
-							<div sd-content-expiry data-item="editStage" data-preview="false" data-expiryfield="content_expiry"></div>
+							<div class="field">
+								<label translate>Content expiry</label>
+								<div sd-content-expiry data-item="editStage" data-preview="false" data-expiryfield="content_expiry"></div>
+							</div>
 						</div>
 					</div>
 				</div>
