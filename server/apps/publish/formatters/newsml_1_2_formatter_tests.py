@@ -12,6 +12,9 @@ from superdesk.tests import TestCase
 from apps.publish.formatters.newsml_1_2_formatter import NewsML12Formatter
 import xml.etree.ElementTree as etree
 import datetime
+from nose.tools import assert_raises
+from superdesk.errors import FormatterError
+from apps.publish import init_app
 
 
 class Newsml12FormatterTest(TestCase):
@@ -51,15 +54,24 @@ class Newsml12FormatterTest(TestCase):
         self.newsml = etree.Element("NewsML")
         self.formatter = NewsML12Formatter()
         self.formatter.now = self.now
+        self.formatter.string_now = self.now.strftime('%Y%m%dT%H%M%S+0000')
+        with self.app.app_context():
+            init_app(self.app)
+
+    def test_newsml_formatter_raises_error(self):
+        with self.app.app_context():
+            with assert_raises(FormatterError):
+                self.article.pop('anpa-category', None)
+                self.formatter.format(self.article, {'name': 'OC1'}, None)
 
     def test_format_news_envelope(self):
-        self.formatter._NewsML12Formatter__format_news_envelope(self.article, self.newsml, 7)
+        self.formatter._format_news_envelope(self.article, self.newsml, 7)
         self.assertEquals(self.newsml.find('TransmissionId').text, '7')
         self.assertEquals(self.newsml.find('DateAndTime').text, '20150613T114519+0000')
         self.assertEquals(self.newsml.find('Priority').get('FormalName'), '1')
 
     def test_format_identification(self):
-        self.formatter._NewsML12Formatter__format_identification(self.article, self.newsml)
+        self.formatter._format_identification(self.article, self.newsml)
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/ProviderId').text, 'aap.com.au')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/DateId').text, '20150613')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/NewsItemId').text, 'urn:localhost.abc')
@@ -70,12 +82,12 @@ class Newsml12FormatterTest(TestCase):
     def test_format_identification_for_corrections(self):
         self.article['state'] = 'corrected'
         self.article['_version'] = 7
-        self.formatter._NewsML12Formatter__format_identification(self.article, self.newsml)
+        self.formatter._format_identification(self.article, self.newsml)
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/RevisionId').get('PreviousRevision'), '6')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/RevisionId').get('Update'), 'A')
 
     def test_format_news_management(self):
-        self.formatter._NewsML12Formatter__format_news_management(self.article, self.newsml)
+        self.formatter._format_news_management(self.article, self.newsml)
         self.assertEquals(self.newsml.find('NewsManagement/NewsItemType').get('FormalName'), 'News')
         self.assertEquals(self.newsml.find('NewsManagement/FirstCreated').text, '20150613T114519+0000')
         self.assertEquals(self.newsml.find('NewsManagement/ThisRevisionCreated').text, '20150613T114519+0000')
@@ -85,11 +97,11 @@ class Newsml12FormatterTest(TestCase):
 
     def test_format_news_management_for_corrections(self):
         self.article['state'] = 'corrected'
-        self.formatter._NewsML12Formatter__format_news_management(self.article, self.newsml)
+        self.formatter._format_news_management(self.article, self.newsml)
         self.assertEquals(self.newsml.find('NewsManagement/Instruction').get('FormalName'), 'Correction')
 
     def test_format_news_component(self):
-        self.formatter._NewsML12Formatter__format_news_component(self.article, self.newsml)
+        self.formatter._format_news_component(self.article, self.newsml)
         self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/Role').
                           get('FormalName'), 'Main')
         self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/Headline').
