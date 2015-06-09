@@ -60,6 +60,23 @@ class RssIngestService(IngestService):
     * type - field's data type
     """
 
+    IMG_MIME_TYPES = (
+        'image/bmp',
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+    )
+    """
+    Supported MIME types for ingesting external images referenced by the
+    RSS entries.
+    """
+
+    IMG_FILE_SUFFIXES = ('.bmp', '.gif', '.jpeg', '.jpg', '.png',)
+    """
+    Supported image filename extensions for ingesting (used for the
+    <media:thumbnail> tags - they lack the "type" attribute).
+    """
+
     def _update(self, provider):
         """Check data provider for data updates and returns new items (if any).
 
@@ -93,7 +110,16 @@ class RssIngestService(IngestService):
         for entry in data.entries:
             t_entry_updated = utcfromtimestamp(timegm(entry.updated_parsed))
 
-            if t_entry_updated > t_provider_updated:
+            if t_entry_updated <= t_provider_updated:
+                continue
+
+            # If the entry references any images, create a package from it,
+            # otherwise treat it as a simple text item (even if it might
+            # reference other media types, e.g. video clips).
+            image_urls = self._extract_image_links(entry)
+            if image_urls:
+                raise NotImplementedError()  # TODO: create a package
+            else:
                 item = self._create_item(entry, field_aliases)
                 self.add_timestamps(item)
                 new_items.append(item)
@@ -132,6 +158,37 @@ class RssIngestService(IngestService):
             else:
                 raise IngestApiError.apiGeneralError(
                     Exception(response.reason), provider)
+
+    def _extract_image_links(self, rss_entry):
+        """Extract URLs of all images referenced by the given RSS entry.
+
+        Images can be referenced via `<enclosure>`, `<media:thumbnail>` or
+        `<media:content>` RSS tag and must be listed among the allowed image
+        types. All other links to external media are ignored.
+
+        Duplicate URLs are omitted from the result.
+
+        :param rss_entry: parsed RSS item (entry)
+        :type rss_entry: :py:class:`feedparser.FeedParserDict`
+
+        :return: a list of all unique image URLs found (as strings)
+        """
+        img_links = set()
+
+        for link in getattr(rss_entry, 'links', []):
+            if link.get('type') in self.IMG_MIME_TYPES:
+                img_links.add(link['href'])
+
+        for item in getattr(rss_entry, 'media_thumbnail', []):
+            url = item.get('url', '')
+            if url.endswith(self.IMG_FILE_SUFFIXES):
+                img_links.add(url)
+
+        for item in getattr(rss_entry, 'media_content', []):
+            if item.get('type') in self.IMG_MIME_TYPES:
+                img_links.add(item['url'])
+
+        return list(img_links)
 
     def _create_item(self, data, field_aliases=None):
         """Create a new content item from RSS feed data.
