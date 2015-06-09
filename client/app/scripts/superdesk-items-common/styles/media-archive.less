@@ -423,7 +423,7 @@
 .mgrid-view, #scratchpad {
 	.media-box {
 		.action {
-                    display: none;
+            display: none;
 			height:33px;
 			position: absolute;
 			left: 0;
@@ -493,6 +493,11 @@
 
 		}
 	}
+}
+
+.fetched-desk-tooltip {
+	border:0;
+	background: transparent;
 }
 
 .mgrid-view {
@@ -632,6 +637,12 @@
 				line-height: 18px;
 				position: relative;
 				margin-left: 142px;
+				dl {
+					margin: 0;
+				}
+				dt, dd {
+					display: inline-block;
+				}
 			}
 			.state-label {
 				margin-top: 2px;

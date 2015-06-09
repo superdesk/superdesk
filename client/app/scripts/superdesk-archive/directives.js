@@ -243,6 +243,15 @@
                             familyService.fetchDesks(scope.item, false)
                                 .then(function(desks) {
                                     scope.desks = desks;
+                                    scope.tooltipText = '';
+
+                                    for (var i = 1; i < desks.length; i++) {
+                                        scope.tooltipText += desks[i].desk.name;
+
+                                        if (i !== desks.length - 1) {
+                                            scope.tooltipText += ', ';
+                                        }
+                                    }
                                 });
                         }
                     });

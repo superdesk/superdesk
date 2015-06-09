@@ -1,4 +1,6 @@
 <dl ng-if="desks.length">
-	<dt translate>fetched in:</dt>
-	<dd ng-repeat="desk in desks track by desk.desk._id"><a ng-href="">{{desk.desk.name}} ({{desk.count}})</a>{{$last ? '' : ', '}} </dd>
+	<dt translate>fetched in</dt>
+	<dd ng-repeat="desk in desks track by desk.desk._id"><a ng-if="$first" ng-href="">{{desk.desk.name}} ({{desk.count}})</a>{{$first && desks.length > 1 ? ', ' : ''}} </dd>
+
+	<button ng-if="desks.length>1" class="fetched-desk-tooltip" tooltip="{{tooltipText}}" tooltip-placement="right"><i class="icon-dots"></i></button>
 </dl>
