@@ -396,7 +396,9 @@ class FormatterError(SuperdeskPublishError):
     _codes = {
         7001: 'Article couldn"t be converted to NITF format',
         7002: 'Article couldn"t be converted to AAP IPNews format',
-        7003: 'Article couldn"t be converted to ANPA'
+        7003: 'Article couldn"t be converted to ANPA',
+        7004: 'Article couldn"t be converted to NinJS',
+        7005: 'Article couldn"t be converted to NewsML 1.2 format'
     }
 
     @classmethod
@@ -414,6 +416,10 @@ class FormatterError(SuperdeskPublishError):
     @classmethod
     def ninjsFormatterError(cls, exception=None, destination=None):
         return FormatterError(7004, exception, destination)
+
+    @classmethod
+    def newml12FormatterError(cls, exception=None, destination=None):
+        return FormatterError(7005, exception, destination)
 
 
 class SubscriberError(SuperdeskPublishError):

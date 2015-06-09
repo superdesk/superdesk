@@ -42,7 +42,7 @@ class NITFFormatter(Formatter):
             self.__format_body_head(article, body_head)
             self.__format_body_end(article, body_end)
 
-            return pub_seq_num, self.XML_ROOT + str(etree.tostring(nitf))
+            return pub_seq_num, self.XML_ROOT + etree.tostring(nitf).decode('utf-8')
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, destination)
 
