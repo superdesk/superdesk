@@ -262,6 +262,138 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
         self.assertIs(ex.provider, self.fake_provider)
 
 
+class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
+    """Tests for the _extract_image_links() method."""
+
+    def test_extracts_enclosure_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.jpg',
+                'type': 'image/jpeg',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_2.png',
+                'type': 'image/png',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+        )
+
+    def test_omits_enclosure_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'alternative',
+                'href': 'http://foo.bar/81fecd',
+                'type': 'text/html',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.tiff',
+                'type': 'image/tiff',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_thumbnail_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/small_img.jpg'},
+            {'url': 'http://foo.bar/thumb_x.png'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/small_img.jpg', 'http://foo.bar/thumb_x.png']
+        )
+
+    def test_omits_media_thumbnail_links_to_non_supported_formats(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/image.tiff'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_content_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image_1.jpg',
+                'type': 'image/jpeg',
+            }, {
+                'url': 'http://foo.bar/image_2.png',
+                'type': 'image/png',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+        )
+
+    def test_omits_media_content_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/music.mp3',
+                'type': 'audio/mpeg3',
+            }, {
+                'url': 'http://foo.bar/video.avi',
+                'type': 'video/avi',
+            }, {
+                'url': 'http://foo.bar/image_1.tiff',
+                'type': 'image/tiff',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_omits_duplicate_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }
+        ]
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/jpeg',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, ['http://foo.bar/image.png'])
+
+
 class CreateItemMethodTestCase(RssIngestServiceTest):
     """Tests for the _create_item() method."""
 
