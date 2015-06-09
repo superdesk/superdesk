@@ -373,14 +373,15 @@ class PublishedItemService(BaseService):
         legal_formatted_items_service = get_resource_service(LEGAL_FORMATTED_ITEM_NAME)
         legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
 
-        lookup = {config.ID_FIELD: legal_archive_doc[config.ID_FIELD]}
-        article_in_legal_archive = legal_archive_service.find_one(None, lookup)
+        article_in_legal_archive = legal_archive_service.find_one(_id=legal_archive_doc[config.ID_FIELD], req=None)
         if article_in_legal_archive:
-            legal_archive_service.put(lookup, legal_archive_doc)
+            legal_archive_service.put(legal_archive_doc[config.ID_FIELD], legal_archive_doc)
         else:
             legal_archive_service.post([legal_archive_doc])
 
-        legal_archive_versions_service.post(legal_archive_doc_versions)
+        if legal_archive_doc_versions:
+            legal_archive_versions_service.post(legal_archive_doc_versions)
+
         legal_formatted_items_service.post(formatted_items)
         legal_publish_queue_service.post(queue_items)
 

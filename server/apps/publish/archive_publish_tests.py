@@ -330,7 +330,7 @@ class ArchivePublishTestCase(TestCase):
             item = text_archive.find_one(req=None, _id=str(original['_id']))
             self.assertEquals(item['item_id'], self.articles[0]['_id'])
 
-            legal_archive_doc = legal_archive_service.find_one(None, {'_id': self.articles[0]['_id']})
+            legal_archive_doc = legal_archive_service.find_one(_id=self.articles[0]['_id'], req=None)
             self.assertIsNotNone(legal_archive_doc, 'Article cannot be none in Legal Archive')
 
             formatted_items = legal_formatted_items_service.get(None, {'item_id': self.articles[0]['_id']})
