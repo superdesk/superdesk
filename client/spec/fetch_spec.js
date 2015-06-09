@@ -68,6 +68,14 @@ describe('Fetch', function() {
         expect(content.count()).toBe(4);
     });
 
+    it('can fetch as', function() {
+        workspace.openIngest();
+        content.actionOnItem('Fetch As', 0);
+        content.send();
+        workspace.openContent();
+        expect(content.count()).toBe(3);
+    });
+
     it('can fetch multiple items', function() {
         workspace.openIngest();
         content.selectItem(0);
@@ -80,7 +88,7 @@ describe('Fetch', function() {
         workspace.openIngest();
         content.selectItem(0);
         element(by.id('fetch-all-as-btn')).click();
-        element(by.id('send-item-btn')).click();
+        content.send();
         workspace.openContent();
         expect(content.count()).toBe(3);
     });

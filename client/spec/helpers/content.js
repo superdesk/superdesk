@@ -5,6 +5,8 @@ module.exports = new Content();
 
 function Content() {
 
+    this.send = send;
+
     this.setListView = function() {
         var list = element(by.css('[tooltip="switch to list view"]'));
         return list.isDisplayed().then(function(isVisible) {
@@ -91,4 +93,8 @@ function Content() {
         elem.element(by.className('icon-package-plus')).click();
         browser.sleep(500);
     };
+
+    function send() {
+        return element(by.id('send-item-btn')).click();
+    }
 }

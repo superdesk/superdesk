@@ -1,37 +1,16 @@
-<li ng-repeat="activity in activities | limitTo:limit" class="item-field">
-    <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" ng-if=":: !activity.dropdown" ng-click="run(activity, $event)">
-        <i class="icon-{{ :: activity.icon }} {{!activity.monitor|| !item.actioning[activity._id] || 'actioning'}}" ng-show=":: activity.icon"></i>
-        <span>{{ :: activity.label | translate }}</span>
-    </a>
-    <div ng-if=":: activity.dropdown" class="dropdown activity-dropdown" sd-dropdown-position dropdown>
-        <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" class="dropdown-toggle" dropdown-toggle>
-            <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
-            <span>{{ :: activity.label | translate }} <i class="icon-chevron-right-thin submenu-icon"></i></span>
-        </a>
-        <ul class="dropdown-menu right-submenu" ng-include="activity.templateUrl">
-        </ul>
-    </div>
-</li>
+<li class="item-field"
+    ng-repeat="activity in activities | limitTo:limit"
+    sd-activity-item></li>
+
 <li ng-if="activities.length > 6" class="item-field">
     <div class="dropdown more-activity-dropdown" sd-dropdown-position dropdown>
         <a class="dropdown-toggle more-activity-toggle" dropdown-toggle>
             <i class="icon-dots-vertical"></i>
         </a>
         <ul class="dropdown-menu">
-            <li ng-repeat="activity in activities | limitTo:-(activities.length-5)" class="item-field">
-                <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" ng-if=":: !activity.dropdown" ng-click="run(activity, $event)">
-                    <i class="icon-{{ :: activity.icon }} {{!activity.monitor|| !item.actioning[activity._id] || 'actioning'}}" ng-show=":: activity.icon"></i>
-                    <span>{{ :: activity.label | translate }}</span>
-                </a>
-                <div ng-if=":: activity.dropdown" class="dropdown activity-dropdown" sd-dropdown-position dropdown>
-                    <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" class="dropdown-toggle" dropdown-toggle>
-                        <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
-                        <span>{{ :: activity.label | translate }} <i class="icon-chevron-right-thin submenu-icon"></i></span>
-                    </a>
-                    <ul class="dropdown-menu right-submenu" ng-include="activity.templateUrl">
-                    </ul>
-                </div>
-            </li>
+            <li class="item-field"
+                ng-repeat="activity in activities | limitTo:-(activities.length-5)"
+                sd-activity-item></li>
         </ul>
     </div>
 </li>
