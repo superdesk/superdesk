@@ -57,7 +57,7 @@ class ODBCPublishService(PublishService):
                 conn.commit()
             return ret
         except Exception as ex:
-            raise PublishODBCError(ex, output_channel)
+            raise PublishODBCError.odbcError(ex, output_channel)
 
     def _CallStoredProc(self, conn, procName, paramDict):
         params = ''
