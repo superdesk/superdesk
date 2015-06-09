@@ -15,3 +15,14 @@ Feature: Templates fetching
     """
     {"_id": "", "template_name": "kill", "anpa_take_key": "TAKEDOWN"}
     """
+
+    @auth
+    Scenario: User can create personal template
+        When we post to "content_templates"
+        """
+        {"template_name": "personla", "template_type": "create", "template_desk": null}
+        """
+        Then we get new resource
+        """
+        {"template_desk": null}
+        """

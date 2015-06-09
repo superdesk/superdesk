@@ -29,7 +29,7 @@ class ContentTemplatesResource(Resource):
             'allowed': ['create', 'kill'],
             'default': 'create',
         },
-        'template_desk': Resource.rel('desks', embeddable=False),
+        'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
         'destination_groups': {
             'type': 'list',
             'schema': Resource.rel('destination_groups', True)
