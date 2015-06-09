@@ -81,7 +81,6 @@ class AapIpNewsFormatterTest(TestCase):
             output_channel = self.app.data.find('output_channels', None, None)[0]
             f = AAPIpNewsFormatter()
             seq, item = f.format(article, output_channel, self.sel_codes)
-            print(item['article_text'])
             expected = '\r\nThe story body line 1 \r\nLine 2 \r\n\r\nabcdefghi abcdefghi abcdefghi abcdefghi ' \
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
             self.assertEquals(item['article_text'], expected)
