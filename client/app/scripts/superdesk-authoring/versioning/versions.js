@@ -2,42 +2,52 @@
 
 'use strict';
 
-VersioningController.$inject = ['$scope', 'authoring', 'api', 'notify', 'lock'];
-function VersioningController($scope, authoring, api, notify, lock) {
+VersioningController.$inject = ['$scope', 'authoring', 'api', 'notify', 'lock', 'desks'];
+function VersioningController($scope, authoring, api, notify, lock, desks) {
 
     $scope.last = null;
     $scope.versions = null;
     $scope.selected = null;
-    $scope.users = {};
+    $scope.users = null;
     $scope.canRevert = false;
-
-    function fetchUser(id) {
-        api.users.getById(id)
-        .then(function(result) {
-            $scope.users[id] = result;
-        });
-    }
+    $scope.desks = null;
+    $scope.stages = null;
 
     function fetchVersions() {
-        $scope.canRevert = authoring.isEditable($scope.item) && !authoring.isPublished($scope.item);
-        return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
-        .then(function(result) {
-            _.each(result._items, function(version) {
-                var creator = version.creator || version.original_creator;
-                if (creator && !$scope.users[creator]) {
-                    fetchUser(creator);
-                }
+        desks.initialize()
+            .then(function() {
+                $scope.desks = desks.desks;
+                $scope.stages = desks.deskStages;
+                $scope.users = desks.users;
+                $scope.canRevert = authoring.isEditable($scope.item) && !authoring.isPublished($scope.item);
+                return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
+                .then(function(result) {
+                    _.each(result._items, function(version) {
+                        if (version.task) {
+                            if (version.task.desk) {
+                                var versiondesk = desks.deskLookup[version.task.desk];
+                                version.desk = versiondesk && versiondesk.name;
+                            }
+                            if (version.task.stage) {
+                                var versionstage = desks.stageLookup[version.task.stage];
+                                version.stage = versionstage && versionstage.name;
+                            }
+                        }
+                        if (version.version_creator || version.original_creator) {
+                            var versioncreator = desks.userLookup[version.version_creator || version.original_creator];
+                            version.creator = versioncreator && versioncreator.display_name;
+                        }
+                    });
+                    $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_version').reverse();
+                    $scope.last = lastVersion();
+
+                    if ($scope.item._autosave) {
+                        $scope.selected = $scope.item._autosave;
+                    } else {
+                        $scope.openVersion($scope.last);
+                    }
+                });
             });
-
-            $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_version').reverse();
-            $scope.last = lastVersion();
-
-            if ($scope.item._autosave) {
-                $scope.selected = $scope.item._autosave;
-            } else {
-                $scope.openVersion($scope.last);
-            }
-        });
     }
 
     /**
