@@ -11,13 +11,48 @@
 from superdesk.resource import Resource
 
 
-class ErrorsResource(Resource):
-    endpoint_name = 'errors'
-    schema = {
-        'resource': {'type': 'string'},
-        'docs': {'type': 'list'},
-        'result': {'type': 'string'}
-    }
-    resource_methods = []
-    item_methods = []
+MONGO_PREFIX = 'LEGAL'
+LEGAL_ARCHIVE_NAME = 'legal_archive'
+LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
+LEGAL_FORMATTED_ITEM_NAME = 'legal_formatted_item'
+LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
+
+
+class LegalArchiveResource(Resource):
+    endpoint_name = LEGAL_ARCHIVE_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
     resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalArchiveVersionsResource(Resource):
+    endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalFormattedItemResource(Resource):
+    endpoint_name = LEGAL_FORMATTED_ITEM_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalPublishQueueResource(Resource):
+    endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX

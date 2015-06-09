@@ -8,42 +8,29 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.legal_archive.components.archive_component import LegalArchive
-from apps.common.components.utils import register_component
-from apps.common.models.utils import register_model
-from apps.legal_archive.components.archive_versions_component import LegalArchiveVersions
-from apps.legal_archive.components.formatted_items_component import FormattedItems
-from apps.legal_archive.components.publish_queue_component import PublishQueue
-from apps.legal_archive.models.archive_model import LegalArchiveModel
-from apps.legal_archive.datalayer import LegalArchiveDataLayer
-from apps.legal_archive.models.archive_versions_model import LegalArchiveVersionsModel
-from apps.legal_archive.models.formatted_items_model import FormattedItemsModel
-from apps.legal_archive.models.publish_queue_model import PublishQueueModel
-from apps.legal_archive.resource import ErrorsResource
-from apps.legal_archive.components.error import Error
-from apps.legal_archive.models.errors import ErrorsModel
-from superdesk.services import BaseService
-from apps.common.models.io.eve_proxy import EveProxy
+import logging
+from superdesk import Service, get_backend
+from .resource import LegalArchiveResource, LegalArchiveVersionsResource, LegalFormattedItemResource, \
+    LegalPublishQueueResource, LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
+    LEGAL_FORMATTED_ITEM_NAME
+
+
+logger = logging.getLogger(__name__)
 
 
 def init_app(app):
-    data_layer = LegalArchiveDataLayer(app)
+    endpoint_name = LEGAL_ARCHIVE_NAME
+    service = Service(endpoint_name, backend=get_backend())
+    LegalArchiveResource(endpoint_name, app=app, service=service)
 
-    register_model(LegalArchiveModel(EveProxy(data_layer)))
-    register_component(LegalArchive(app))
+    endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
+    service = Service(endpoint_name, backend=get_backend())
+    LegalArchiveVersionsResource(endpoint_name, app=app, service=service)
 
-    register_model(LegalArchiveVersionsModel(EveProxy(data_layer)))
-    register_component(LegalArchiveVersions(app))
+    endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
+    service = Service(endpoint_name, backend=get_backend())
+    LegalPublishQueueResource(endpoint_name, app=app, service=service)
 
-    register_model(FormattedItemsModel(EveProxy(data_layer)))
-    register_component(FormattedItems(app))
-
-    register_model(PublishQueueModel(EveProxy(data_layer)))
-    register_component(PublishQueue(app))
-
-    register_model(ErrorsModel(EveProxy(data_layer)))
-    register_component(Error(app))
-
-    endpoint_name = 'errors'
-    service = BaseService(endpoint_name, backend=data_layer)
-    ErrorsResource(endpoint_name, app=app, service=service)
+    endpoint_name = LEGAL_FORMATTED_ITEM_NAME
+    service = Service(endpoint_name, backend=get_backend())
+    LegalFormattedItemResource(endpoint_name, app=app, service=service)

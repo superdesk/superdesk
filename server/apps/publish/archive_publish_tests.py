@@ -11,12 +11,9 @@ from datetime import timedelta
 
 from eve.utils import config
 
-from apps.common.components.utils import get_component
-from apps.legal_archive.components.archive_component import LegalArchive
-from apps.legal_archive.components.formatted_items_component import FormattedItems
-from apps.legal_archive.components.publish_queue_component import PublishQueue
 from superdesk.tests import TestCase
 from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
+from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_PUBLISH_QUEUE_NAME, LEGAL_FORMATTED_ITEM_NAME
 from superdesk.utc import utcnow
 from superdesk import get_resource_service
 import superdesk
@@ -314,6 +311,9 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             published_service = get_resource_service('published')
             text_archive = get_resource_service('text_archive')
+            legal_archive_service = get_resource_service(LEGAL_ARCHIVE_NAME)
+            legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
+            legal_formatted_items_service = get_resource_service(LEGAL_FORMATTED_ITEM_NAME)
 
             original = self.articles[0].copy()
             get_resource_service('archive_publish').queue_transmission(original)
@@ -330,16 +330,16 @@ class ArchivePublishTestCase(TestCase):
             item = text_archive.find_one(req=None, _id=str(original['_id']))
             self.assertEquals(item['item_id'], self.articles[0]['_id'])
 
-            legal_archive_doc = get_component(LegalArchive).find_one(filter={'_id': self.articles[0]['_id']})
+            legal_archive_doc = legal_archive_service.find_one(None, {'_id': self.articles[0]['_id']})
             self.assertIsNotNone(legal_archive_doc, 'Article cannot be none in Legal Archive')
 
-            formatted_items = get_component(FormattedItems).find(filter={'item_id': self.articles[0]['_id']})
+            formatted_items = legal_formatted_items_service.get(None, {'item_id': self.articles[0]['_id']})
             self.assertGreaterEqual(formatted_items.count(), 1, 'Formatted Items must be greate than or equal to 1')
             for formatted_item in formatted_items:
                 self.assertEquals(formatted_item['item_id'], self.articles[0]['_id'])
                 self.assertEquals(formatted_item['item_version'], self.articles[0]['_version'])
 
-            queue_items = get_component(PublishQueue).find(filter={'item_id': self.articles[0]['_id']})
+            queue_items = legal_publish_queue_service.get(None, {'item_id': self.articles[0]['_id']})
             self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greate than or equal to 1')
 
     def test_cannot_remove_scheduled_content(self):

@@ -11,11 +11,8 @@
 import logging
 import json
 from eve.methods.common import resolve_document_etag
-from apps.common.components.utils import get_component
-from apps.legal_archive.components.archive_component import LegalArchive
-from apps.legal_archive.components.archive_versions_component import LegalArchiveVersions
-from apps.legal_archive.components.formatted_items_component import FormattedItems
-from apps.legal_archive.components.publish_queue_component import PublishQueue
+from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
+    LEGAL_FORMATTED_ITEM_NAME
 import superdesk
 
 from apps.packages import TakesPackageService
@@ -370,17 +367,22 @@ class PublishedItemService(BaseService):
         logging.info('Upserting Legal Archive Repo with article %s' % legal_archive_doc.get('unique_name'))
 
         resolve_document_etag(legal_archive_doc, ARCHIVE)
-        legal_archive_component = get_component(LegalArchive)
-        lookup = {config.ID_FIELD: legal_archive_doc[config.ID_FIELD]}
-        article_in_legal_archive = legal_archive_component.find_one(lookup)
-        if article_in_legal_archive:
-            legal_archive_component.replace(lookup, legal_archive_doc)
-        else:
-            legal_archive_component.create([legal_archive_doc])
 
-        get_component(LegalArchiveVersions).create(legal_archive_doc_versions)
-        get_component(FormattedItems).create(formatted_items)
-        get_component(PublishQueue).create(queue_items)
+        legal_archive_service = get_resource_service(LEGAL_ARCHIVE_NAME)
+        legal_archive_versions_service = get_resource_service(LEGAL_ARCHIVE_VERSIONS_NAME)
+        legal_formatted_items_service = get_resource_service(LEGAL_FORMATTED_ITEM_NAME)
+        legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
+
+        lookup = {config.ID_FIELD: legal_archive_doc[config.ID_FIELD]}
+        article_in_legal_archive = legal_archive_service.find_one(None, lookup)
+        if article_in_legal_archive:
+            legal_archive_service.put(lookup, legal_archive_doc)
+        else:
+            legal_archive_service.post([legal_archive_doc])
+
+        legal_archive_versions_service.post(legal_archive_doc_versions)
+        legal_formatted_items_service.post(formatted_items)
+        legal_publish_queue_service.post(queue_items)
 
         logging.info('Upsert completed for article %s' % legal_archive_doc.get('unique_name'))
 

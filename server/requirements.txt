@@ -17,7 +17,7 @@ beautifulsoup4==4.3.2
 blinker==1.3
 celery[redis]==3.1.18
 elasticsearch==1.4.0
-feedparser==5.2.0.post1
+feedparser==5.2.0
 flake8==2.4.0
 gunicorn==19.3.0
 honcho==0.6.6
@@ -41,6 +41,6 @@ python3-ldap==0.9.7
 behave==1.2.5
 wooper==0.4.2
 
-git+git://github.com/superdesk/eve@f88946#egg=Eve==0.6-dev
+git+git://github.com/amagdas/eve@sync-to-0.6#egg=Eve==0.6.1-dev
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
 -e hg+http://bitbucket.org/haypo/hachoir3/#egg=hachoir3
