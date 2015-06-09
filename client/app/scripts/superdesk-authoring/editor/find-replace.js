@@ -17,8 +17,6 @@ FindReplaceDirective.$inject = ['$timeout', '$rootScope', 'editor'];
  */
 function FindReplaceDirective($timeout, $rootScope, editor) {
     return {
-        controller: function($scope) {
-        },
         link: function(scope, elem) {
             scope.to = '';
             scope.from = '';
