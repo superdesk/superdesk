@@ -387,7 +387,7 @@
             }
 
             var is_read_only_state = _.contains(['spiked', 'scheduled', 'killed'], current_item.state);
-            var lockedByMe = !lock.isLocked(item);
+            var lockedByMe = !lock.isLocked(current_item);
 
             // new take should be on the text item that are closed or last take but not killed.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
