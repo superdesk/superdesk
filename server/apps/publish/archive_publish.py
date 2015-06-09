@@ -13,6 +13,7 @@ from eve.utils import config, document_etag
 from eve.validation import ValidationError
 from copy import copy
 import logging
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
 import superdesk
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
@@ -143,7 +144,7 @@ class BasePublishService(BaseService):
             user = get_user()
             push_notification('item:publish:closed:channels' if any_channel_closed else 'item:publish',
                               item=str(id), unique_name=archived_item['unique_name'],
-                              desk=str(archived_item['task']['desk']),
+                              desk=str(archived_item.get('task', {}).get('desk', '')),
                               user=str(user.get('_id', '')))
             original.update(super().find_one(req=None, _id=id))
         except SuperdeskApiError as e:
@@ -160,12 +161,23 @@ class BasePublishService(BaseService):
     def publish(self, doc, updates, target_output_channels=None):
         any_channel_closed, wrong_formatted_channels, queued = \
             self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
-        source, task = self.__send_to_publish_stage_and_set_source(doc)
+
+        # source, task = self.__send_to_publish_stage_and_set_source(doc)
+        # if updates:
+        #     if task:
+        #         updates['task'] = task
+        #     if source:
+        #         updates['source'] = source
+
         if updates:
-            if task:
-                updates['task'] = task
-            if source:
-                updates['source'] = source
+            desk = None
+
+            if doc.get('task', {}).get('desk'):
+                desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+
+            if not doc.get('ingest_provider'):
+                updates['source'] = desk['source'] if desk and desk.get('source', '') \
+                    else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
         user = get_user()
 
