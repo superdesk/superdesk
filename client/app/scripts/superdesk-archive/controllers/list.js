@@ -6,9 +6,10 @@ define([
 
     ArchiveListController.$inject = [
         '$scope', '$injector', '$location', '$q', 'superdesk',
-        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', 'notify'
+        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', 'notify', 'multi'
     ];
-    function ArchiveListController($scope, $injector, $location, $q, superdesk, session, api, desks, ContentCtrl, StagesCtrl, notify) {
+    function ArchiveListController($scope, $injector, $location, $q, superdesk, session, api, desks, ContentCtrl,
+        StagesCtrl, notify, multi) {
 
         var resource,
             self = this;
@@ -59,6 +60,7 @@ define([
             }
 
             $scope.stages.select(stage);
+            multi.reset();
         };
 
         $scope.openUpload = function openUpload() {

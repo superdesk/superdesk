@@ -38,7 +38,7 @@ define([
         };
 
         /**
-         * Get list of selected items ids
+         * Get list of selected items identifiers
          */
         this.getIds = function() {
             return _.map(items, '_id');
@@ -93,6 +93,15 @@ define([
         };
 
         /**
+         * Spike given items.
+         *
+         * @param {Object} items
+         */
+        this.spikeMultiple = function spikeMultiple(items) {
+            items.forEach(this.spike);
+        };
+
+        /**
          * Unspike given item.
          *
          * @param {Object} item
@@ -109,6 +118,15 @@ define([
                 ['finally'](function() {
                     item.actioning.unspike = false;
                 });
+        };
+
+        /**
+         * Unspike given items.
+         *
+         * @param {Object} items
+         */
+        this.unspikeMultiple = function unspikeMultiple(items) {
+            items.forEach(this.unspike);
         };
     }
 

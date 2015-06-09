@@ -1200,8 +1200,8 @@
             };
         })
 
-        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify',
-        function(asset, multi, multiEdit, send, packages, superdesk, notify) {
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify', 'spike', 'authoring',
+        function(asset, multi, multiEdit, send, packages, superdesk, notify, spike, authoring) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
                 link: function(scope) {
@@ -1218,6 +1218,24 @@
                     scope.multiedit = function() {
                         multiEdit.create(multi.getIds());
                         multiEdit.open();
+                    };
+
+                    scope.spikeItems = function() {
+                        spike.spikeMultiple(multi.getItems());
+                        multi.reset();
+                    };
+
+                    scope.unspikeItems = function() {
+                        spike.unspikeMultiple(multi.getItems());
+                        multi.reset();
+                    };
+
+                    scope.canSpikeItems = function() {
+                        var canSpike = true;
+                        multi.getItems().forEach(function(item) {
+                            canSpike = canSpike && authoring.itemActions(item).spike;
+                        });
+                        return canSpike;
                     };
 
                     scope.createPackage = function() {
