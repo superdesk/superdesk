@@ -122,7 +122,7 @@
                 searchLookup: '=',
                 groups: '=',
                 editGroups: '=',
-                type: '@'
+                widget: '@'
             },
             link: function(scope, elem) {
 
@@ -192,10 +192,6 @@
                         return item.order;
                     });
                     return values;
-                };
-
-                scope.isWidget = function() {
-                    return this.type === 'widget' ? true : false;
                 };
 
                 scope.reorder = function(start, end) {

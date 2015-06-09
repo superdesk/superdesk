@@ -5,7 +5,7 @@
 
 <div class="modal-body" sd-wizard data-name="aggregatesettings" data-current-step="step.current" data-finish="cancel()">
 
-    <div sd-wizard-step data-title="{{ 'Desks' | translate }}" data-code="desks">
+    <div sd-wizard-step data-title="{{ :: 'Desks' | translate }}" data-code="desks">
         <div class="content">
 
             <div class="legend" translate>Select desks for view</div>
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div sd-wizard-step data-title="{{ 'Saved Searches' | translate }}" data-code="searches">
+    <div sd-wizard-step data-title="{{ :: 'Saved Searches' | translate }}" data-code="searches">
         <div class="content">
             <div class="legend" translate>Select saved searches for view</div>
             <div class="desk" ng-repeat="search in searches">
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <div sd-wizard-step data-title="{{ 'Reorder Sections' | translate }}" data-code="reorder">
+    <div sd-wizard-step data-title="{{ :: 'Reorder Sections' | translate }}" data-code="reorder">
         <div class="legend" translate>Reorder stages and saved searches for view</div>
         <ul class="groups" sd-sort-groups>
             <li class="sort-item clearfix" ng-repeat="item in getValues()">
