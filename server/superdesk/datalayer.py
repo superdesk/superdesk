@@ -73,10 +73,10 @@ class SuperdeskDataLayer(DataLayer):
         if resource.endswith(app.config['VERSIONS']):
             return
         datasource = self.datasource(resource)
-        backend = config.SOURCES[datasource[0]].get('search_backend', None)
+        backend = config.SOURCES.get(datasource[0], {}).get('search_backend', None)
         return getattr(self, backend) if backend is not None else None
 
     def _backend(self, resource):
         datasource = self.datasource(resource)
-        backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
+        backend = config.SOURCES.get(datasource[0], {'backend': 'mongo'}).get('backend', 'mongo')
         return getattr(self, backend)

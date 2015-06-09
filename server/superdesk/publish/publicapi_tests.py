@@ -69,6 +69,8 @@ class PublicAPITest(TestCase):
                 service._transmit(formatted_item, {}, {})
                 item = publicapiService.find_one(req=None, _id='item1')
                 del item['_etag']
+                del item['_created']
+                del item['_updated']
                 self.assertDictEqual(item, published_item, 'Invalid published item')
             finally:
                 publicapiService.delete({'_id': 'item1'})

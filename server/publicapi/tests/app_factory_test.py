@@ -54,7 +54,7 @@ class ApiApplicationFactoryTestCase(ApiTestCase):
 
         self.assertEqual(
             sorted(app.settings.get('DOMAIN', {}).keys()),
-            ['domain_one', 'domain_two']
+            ['domain_one', 'domain_two', 'oplog']
         )
         self.assertEqual(
             app.settings.get('INSTALLED_APPS'),
