@@ -11,7 +11,7 @@
 from superdesk.resource import Resource
 
 
-MONGO_PREFIX = 'LEGAL'
+MONGO_PREFIX = 'LEGAL_ARCHIVE'
 LEGAL_ARCHIVE_NAME = 'legal_archive'
 LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
 LEGAL_FORMATTED_ITEM_NAME = 'legal_formatted_item'

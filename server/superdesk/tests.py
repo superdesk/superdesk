@@ -72,7 +72,7 @@ def drop_mongo(app):
     with app.app_context():
         try:
             app.data.mongo.pymongo(prefix='MONGO').cx.drop_database(app.config['MONGO_DBNAME'])
-            app.data.mongo.pymongo(prefix='LEGAL').cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
+            app.data.mongo.pymongo(prefix='LEGAL_ARCHIVE').cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
         except AttributeError:
             pass
 
