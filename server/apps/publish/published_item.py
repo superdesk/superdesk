@@ -10,17 +10,16 @@
 
 import logging
 import json
-from eve.methods.common import resolve_document_etag
-from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
-    LEGAL_FORMATTED_ITEM_NAME
-import superdesk
-
-from apps.packages import TakesPackageService
 
 from eve.versioning import versioned_id_field
 from eve.utils import ParsedRequest, config
 from bson.objectid import ObjectId
+from flask import current_app as app
 
+from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
+    LEGAL_FORMATTED_ITEM_NAME
+import superdesk
+from apps.packages import TakesPackageService
 from apps.users.services import get_display_name
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -29,7 +28,6 @@ from apps.archive.common import aggregations, handle_existing_data, item_schema
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow, get_expiry_date
 from superdesk import get_resource_service
-from flask import current_app as app
 
 logger = logging.getLogger(__name__)
 
@@ -409,7 +407,7 @@ class PublishedItemService(BaseService):
     def __denormalize_user_dg_desk(self, legal_archive_doc):
 
         # De-normalizing User Details
-        if legal_archive_doc.get('original_creator') :
+        if legal_archive_doc.get('original_creator'):
             legal_archive_doc['original_creator'] = self.__get_user_name(legal_archive_doc['original_creator'])
 
         if legal_archive_doc.get('version_creator'):
@@ -430,7 +428,7 @@ class PublishedItemService(BaseService):
 
         # De-normalizing Desk and Stage details
         if legal_archive_doc.get('task'):
-            if legal_archive_doc['task'].get('desk') :
+            if legal_archive_doc['task'].get('desk'):
                 desk = get_resource_service('desks').find_one(req=None, _id=str(legal_archive_doc['task']['desk']))
                 legal_archive_doc['task']['desk'] = desk['name']
                 logging.info('De-normalized desk details for article %s' % legal_archive_doc.get('unique_name'))
