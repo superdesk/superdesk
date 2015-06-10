@@ -65,7 +65,7 @@ function MetadataDropdownDirective() {
     return {
         scope: {
             list: '=',
-            disabled: '=',
+            disabled: '=ngDisabled',
             item: '=',
             field: '@',
             change: '&'
