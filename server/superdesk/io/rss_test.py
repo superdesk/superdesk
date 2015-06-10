@@ -10,6 +10,7 @@
 
 
 from datetime import datetime
+from requests.exceptions import RequestException
 from superdesk.tests import TestCase
 from time import struct_time
 from unittest import mock
@@ -392,6 +393,73 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
         links = self.instance._extract_image_links(rss_entry)
 
         self.assertCountEqual(links, ['http://foo.bar/image.png'])
+
+
+class FetchImagesMethodTestCase(RssIngestServiceTest):
+    """Tests for the _fetch_images() method."""
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_fetches_images_from_all_given_urls(self, requests_get):
+        url_1 = 'http://foo.bar/image_1.jpg'
+        url_2 = 'http://foo.bar/image_2.jpg'
+        links = [url_1, url_2]
+
+        response_1 = MagicMock(name='response_1')
+        response_1.ok = True
+        response_1.url = url_1
+        response_1.content = b'img_1 data'
+
+        response_2 = MagicMock(name='response_2')
+        response_2.ok = True
+        response_2.url = url_2
+        response_2.content = b'img_2 data'
+
+        wrong_response = MagicMock(name='wrong_response')
+        wrong_response.ok = True
+        wrong_response.url = 'http://should.not/be/called'
+        wrong_response.content = b'wrong image'
+
+        def side_effect(url, *args, **kwargs):
+            response = {url_1: response_1, url_2: response_2}
+            return response.get(url, wrong_response)
+
+        requests_get.side_effect = side_effect
+
+        result = self.instance._fetch_images(links)
+
+        expected_result = {
+            url_1: b'img_1 data',
+            url_2: b'img_2 data'
+        }
+        self.assertEqual(result, expected_result)
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_silently_omits_image_on_request_error(self, requests_get):
+        links = ['http://imagine.this/timeouts']
+        requests_get.side_effect = RequestException
+
+        try:
+            result = self.instance._fetch_images(links)
+        except Exception as ex:
+            self.fail('Error unexpectedly raised.')
+        else:
+            self.assertEqual(result, {})
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_silently_omits_image_on_non_ok_response(self, requests_get):
+        links = ['http://imagine.this/is/not/found']
+
+        response = MagicMock()
+        response.ok = False
+
+        requests_get.return_value = response
+
+        try:
+            result = self.instance._fetch_images(links)
+        except Exception as ex:
+            self.fail('Error unexpectedly raised.')
+        else:
+            self.assertEqual(result, {})
 
 
 class CreateItemMethodTestCase(RssIngestServiceTest):
