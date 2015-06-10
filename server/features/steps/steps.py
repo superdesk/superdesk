@@ -46,6 +46,7 @@ external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 def test_json(context):
     try:
         response_data = json.loads(context.response.get_data())
+        # pprint.pprint(response_data)
     except Exception:
         fail_and_print_body(context.response, 'response is not valid json')
     context_data = json.loads(apply_placeholders(context, context.text))

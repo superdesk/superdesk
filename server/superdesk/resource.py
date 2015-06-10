@@ -55,6 +55,7 @@ class Resource():
     endpoint_schema = None
     resource_preferences = None
     etag_ignore_fields = []
+    mongo_prefix = None
 
     def __init__(self, endpoint_name, app, service, endpoint_schema=None):
         self.endpoint_name = endpoint_name
@@ -89,6 +90,8 @@ class Resource():
                 endpoint_schema.update({'resource_title': self.resource_title})
             if self.etag_ignore_fields:
                 endpoint_schema.update({'etag_ignore_fields': self.etag_ignore_fields})
+            if self.mongo_prefix:
+                endpoint_schema.update({'mongo_prefix': self.mongo_prefix})
         self.endpoint_schema = endpoint_schema
 
         on_fetched_resource = getattr(app, 'on_fetched_resource_%s' % self.endpoint_name)

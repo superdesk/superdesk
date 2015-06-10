@@ -53,7 +53,7 @@ class SuperdeskDataLayer(DataLayer):
         return superdesk.get_resource_service(resource).update(id=id_, updates=updates, original=original)
 
     def update_all(self, resource, query, updates):
-        datasource = self._datasource(resource)
+        datasource = self.datasource(resource)
         driver = self._backend(resource).driver
         collection = driver.db[datasource[0]]
         return collection.update(query, {'$set': updates}, multi=True)
@@ -72,11 +72,11 @@ class SuperdeskDataLayer(DataLayer):
     def _search_backend(self, resource):
         if resource.endswith(app.config['VERSIONS']):
             return
-        datasource = self._datasource(resource)
-        backend = config.SOURCES[datasource[0]].get('search_backend', None)
+        datasource = self.datasource(resource)
+        backend = config.SOURCES.get(datasource[0], {}).get('search_backend', None)
         return getattr(self, backend) if backend is not None else None
 
     def _backend(self, resource):
-        datasource = self._datasource(resource)
-        backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
+        datasource = self.datasource(resource)
+        backend = config.SOURCES.get(datasource[0], {'backend': 'mongo'}).get('backend', 'mongo')
         return getattr(self, backend)

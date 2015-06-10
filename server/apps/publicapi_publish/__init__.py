@@ -8,19 +8,16 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.publicapi_publish.datalayer import PublicAPIDataLayer
-from superdesk.services import BaseService
+from superdesk import Service, get_backend
 from apps.publicapi_publish.items import PublicItemsResource
 from apps.publicapi_publish.packages import PublicPackagesResource
 
 
 def init_app(app):
-    datalayer = PublicAPIDataLayer(app)
-
     endpoint_name = 'publish_items'
-    service = BaseService(endpoint_name, backend=datalayer)
+    service = Service(endpoint_name, backend=get_backend())
     PublicItemsResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'publish_packages'
-    service = BaseService(endpoint_name, backend=datalayer)
+    service = Service(endpoint_name, backend=get_backend())
     PublicPackagesResource(endpoint_name, app=app, service=service)

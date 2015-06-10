@@ -13,31 +13,32 @@ from superdesk.tests import TestCase
 from eve.utils import date_to_str
 from apps.archive import init_app
 from superdesk.utc import get_expiry_date, utcnow
-from apps.archive.commands import ArchiveRemoveExpiredContent
+from apps.archive.commands import RemoveExpiredSpikeContent
 from apps.archive import ArchiveService
 from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
 from datetime import datetime, timedelta
 
 
-class ArchiveRemoveExpiredContentTestCase(TestCase):
+class RemoveSpikedContentTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
+
         with self.app.app_context():
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(-10), 'state': 'draft'}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(0), 'state': 'draft'}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(10), 'state': 'draft'}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(20), 'state': 'draft'}])
-            self.app.data.insert('archive', [{'expiry': get_expiry_date(30), 'state': 'draft'}])
-            self.app.data.insert('archive', [{'expiry': None, 'state': 'draft'}])
-            self.app.data.insert('archive', [{'unique_id': 97, 'state': 'draft'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(-10), 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(0), 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(10), 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(20), 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'expiry': get_expiry_date(30), 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'expiry': None, 'state': 'spiked'}])
+            self.app.data.insert('archive', [{'unique_id': 97, 'state': 'spiked'}])
             init_app(self.app)
 
     def test_query_getting_expired_content(self):
         with self.app.app_context():
             now = date_to_str(utcnow())
-            expiredItems = ArchiveRemoveExpiredContent().get_expired_items(now)
+            expiredItems = RemoveExpiredSpikeContent().get_expired_items(now)
             self.assertEquals(2, expiredItems.count())
 
 

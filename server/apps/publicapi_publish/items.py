@@ -15,5 +15,6 @@ class PublicItemsResource(ItemsResource):
     datasource = {'source': 'items'}
     item_methods = ['DELETE', 'PATCH', 'GET', 'DELETE']
     resource_methods = ['POST', 'GET']
+    mongo_prefix = 'PUBLICAPI'
     privileges = {'POST': 'publish_queue', 'DELETE': 'publish_queue', 'PATCH': 'publish_queue',
                   'DELETE': 'publish_queue'}

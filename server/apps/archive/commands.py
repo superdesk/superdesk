@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ArchiveRemoveExpiredContent(superdesk.Command):
+class RemoveExpiredSpikeContent(superdesk.Command):
     """
     Remove expired items form archive after they have been spiked.
     """
@@ -28,26 +28,29 @@ class ArchiveRemoveExpiredContent(superdesk.Command):
         logger.info('Removing expired content')
         now = date_to_str(utcnow())
         items = self.get_expired_items(now)
+
         while items.count() > 0:
             for item in items:
                 logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
                 superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
+
             items = self.get_expired_items(now)
 
     def get_expired_items(self, now):
-        query_filter = self.get_query_for_expired_items(now)
+        query_filter = self.__get_query_for_expired_items(now)
         req = ParsedRequest()
         req.max_results = 25
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
 
-    def get_query_for_expired_items(self, now):
+    def __get_query_for_expired_items(self, now):
         query = {'and':
                  [
+                     {'term': {'state': 'spiked'}},
                      {'range': {'expiry': {'lte': now}}}
                  ]
                  }
         return superdesk.json.dumps(query)
 
 
-superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
+superdesk.command('archive:remove_spiked_if_expired', RemoveExpiredSpikeContent())

@@ -9,45 +9,50 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.resource import Resource
-from apps.archive.common import item_url
-from superdesk.services import BaseService
-from apps.common.models.utils import get_model
-from apps.legal_archive.models.legal_archive import LegalArchiveModel
-from apps.content import metadata_schema
+
+
+MONGO_PREFIX = 'LEGAL_ARCHIVE'
+LEGAL_ARCHIVE_NAME = 'legal_archive'
+LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
+LEGAL_FORMATTED_ITEM_NAME = 'legal_formatted_item'
+LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
 
 
 class LegalArchiveResource(Resource):
-    endpoint_name = 'legal_archive'
-    schema = metadata_schema
-    item_url = item_url
+    endpoint_name = LEGAL_ARCHIVE_NAME
+    schema = {}
     resource_methods = ['GET']
     item_methods = ['GET']
     resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
 
 
-class LegalArchiveService(BaseService):
-    def find_one(self, req, **lookup):
-        if '_id' in lookup:
-            lookup['guid'] = lookup['_id']
-            del lookup['_id']
-        req.sort = '-_version'
-        for arg in req.args.items():
-            if arg[0] == 'version':
-                lookup['_version'] = arg[1]
-        res = self.backend.find(self.datasource, req, lookup)
-        return res[0]
-
-    def get(self, req, lookup):
-        return get_model(LegalArchiveModel).find(lookup)
-
-
-class ErrorsResource(Resource):
-    endpoint_name = 'errors'
-    schema = {
-        'resource': {'type': 'string'},
-        'docs': {'type': 'list'},
-        'result': {'type': 'string'}
-    }
-    resource_methods = []
-    item_methods = []
+class LegalArchiveVersionsResource(Resource):
+    endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
     resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalFormattedItemResource(Resource):
+    endpoint_name = LEGAL_FORMATTED_ITEM_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalPublishQueueResource(Resource):
+    endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    resource_title = endpoint_name
+    internal_resource = True
+    mongo_prefix = MONGO_PREFIX

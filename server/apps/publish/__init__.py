@@ -20,7 +20,7 @@ from apps.publish.subscribers import SubscribersResource, SubscribersService
 from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
 from apps.publish.formatted_item import FormattedItemResource, FormattedItemService
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
-from apps.publish.commands import PublishedRemoveExpiredContent  # noqa
+from apps.publish.commands import RemoveExpiredPublishContent  # noqa
 from superdesk.celery_app import celery
 from superdesk import get_backend
 
@@ -80,4 +80,4 @@ def init_app(app):
 
 @celery.task
 def content_purge():
-    PublishedRemoveExpiredContent().run()
+    RemoveExpiredPublishContent().run()

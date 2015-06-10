@@ -30,7 +30,7 @@ cache_for = 3600 * 24 * 30  # 30d cache
 
 @bp.route('/upload/<path:media_id>/raw', methods=['GET'])
 def get_upload_as_data_uri(media_id):
-    media_file = app.media.get(media_id)
+    media_file = app.media.get(media_id, 'upload')
     if media_file:
         data = wrap_file(request.environ, media_file, buffer_size=1024 * 256)
         response = app.response_class(

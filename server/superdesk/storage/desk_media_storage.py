@@ -20,11 +20,11 @@ logger = logging.getLogger(__name__)
 
 class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
 
-    def get(self, _id):
+    def get(self, _id, resource):
         logger.debug('Getting media file with id= %s' % _id)
         if isinstance(_id, str):
             _id = ObjectId(_id)
-        media_file = super().get(_id)
+        media_file = super().get(_id, resource)
         if media_file and media_file.metadata:
             for k, v in media_file.metadata.items():
                 try:
@@ -34,13 +34,14 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
 
         return media_file
 
-    def put(self, content, filename=None, content_type=None, metadata=None):
-        _id = self.fs().put(content, content_type=content_type, filename=filename, metadata=metadata)
+    def put(self, content, filename=None, content_type=None, metadata=None, resource=None):
+        _id = self.fs(resource).put(content, content_type=content_type, filename=filename, metadata=metadata)
         return _id
 
-    def fs(self):
+    def fs(self, resource):
+        resource = resource or 'upload'
         driver = self.app.data.mongo
-        px = driver.current_mongo_prefix()
+        px = driver.current_mongo_prefix(resource)
         if px not in self._fs:
             self._fs[px] = GridFS(driver.pymongo(prefix=px).db)
         return self._fs[px]

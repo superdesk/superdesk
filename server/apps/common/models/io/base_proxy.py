@@ -14,10 +14,10 @@ from eve import ID_FIELD
 
 
 class BaseProxy(DataLayer):
-    '''
+    """
     Data layer implementation used to connect the models to the data layer.
     Transforms the model data layer API into Eve data layer calls.
-    '''
+    """
     def __init__(self, data_layer):
         self.data_layer = data_layer
 
@@ -30,11 +30,15 @@ class BaseProxy(DataLayer):
         req.projection = projection
         return self.data_layer.find_one(resource, req, **filter)
 
-    def find(self, resource, filter, projection, **options):
+    def find(self, resource, lookup, projection, **options):
         req = ParsedRequest()
         req.args = {}
         req.projection = projection
-        return self.data_layer.find(resource, req, filter)
+
+        if hasattr(self.data_layer, 'find'):
+            return self.data_layer.find(resource, req, lookup)
+        else:
+            return self.data_layer.get(resource, req, lookup)
 
     def create(self, resource, docs):
         return self.data_layer.create(resource, docs)
