@@ -125,3 +125,23 @@ table {
     background-color: @tableBackgroundHover;
   }
 }
+
+
+// STYLED TABLE
+// ------------
+.table.styled-table {
+    border-top: 2px solid #d7d7d7;
+    th, td {
+        vertical-align: middle;
+        background: @white;
+        &.align-right {
+            text-align: right;
+        }
+    }
+    th {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 11px;
+        color: #333;
+    }
+}

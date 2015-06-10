@@ -68,12 +68,40 @@
 }
 
 // Publish Queue
-
 .multi-action-bar {
-  box-sizing: border-box;
-  position: relative;
-  width: 100%;
-  top: 0;
-  left: 0;
-  padding-left: 16px;
+    #multi-select-count {
+        margin-left: 15px;
+    }
+}
+
+.subnav {
+    &.active {
+        background-color: @white;
+    }
+}
+
+.publish-queue {
+    header {
+        .sortbar {
+            margin-left: 10px;
+        }
+        .refresh-box {
+            span {
+                font-style: italic;
+                padding: 16px 0;
+                line-height: 16px;
+                margin-right: 20px;
+            }
+            button {
+                background: none;
+                border: 0;
+                padding: 15px 16px;
+                border-left: 1px solid #dfdfdf;
+                .opacity(60);
+                &:hover {
+                    .opacity(80);
+                }
+            }
+        }
+    }
 }
