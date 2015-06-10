@@ -14,6 +14,7 @@ import requests
 
 from calendar import timegm
 from collections import namedtuple
+from concurrent import futures
 from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
@@ -60,6 +61,23 @@ class RssIngestService(IngestService):
     * type - field's data type
     """
 
+    IMG_MIME_TYPES = (
+        'image/bmp',
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+    )
+    """
+    Supported MIME types for ingesting external images referenced by the
+    RSS entries.
+    """
+
+    IMG_FILE_SUFFIXES = ('.bmp', '.gif', '.jpeg', '.jpg', '.png',)
+    """
+    Supported image filename extensions for ingesting (used for the
+    <media:thumbnail> tags - they lack the "type" attribute).
+    """
+
     def _update(self, provider):
         """Check data provider for data updates and returns new items (if any).
 
@@ -93,7 +111,17 @@ class RssIngestService(IngestService):
         for entry in data.entries:
             t_entry_updated = utcfromtimestamp(timegm(entry.updated_parsed))
 
-            if t_entry_updated > t_provider_updated:
+            if t_entry_updated <= t_provider_updated:
+                continue
+
+            # If the entry references any images, create a package from it,
+            # otherwise treat it as a simple text item (even if it might
+            # reference other media types, e.g. video clips).
+            image_urls = self._extract_image_links(entry)
+            if image_urls:
+                images = self._fetch_images(image_urls)  # TODO: test is called
+                raise NotImplementedError(images)  # TODO: create a package
+            else:
                 item = self._create_item(entry, field_aliases)
                 self.add_timestamps(item)
                 new_items.append(item)
@@ -132,6 +160,77 @@ class RssIngestService(IngestService):
             else:
                 raise IngestApiError.apiGeneralError(
                     Exception(response.reason), provider)
+
+    def _extract_image_links(self, rss_entry):
+        """Extract URLs of all images referenced by the given RSS entry.
+
+        Images can be referenced via `<enclosure>`, `<media:thumbnail>` or
+        `<media:content>` RSS tag and must be listed among the allowed image
+        types. All other links to external media are ignored.
+
+        Duplicate URLs are omitted from the result.
+
+        :param rss_entry: parsed RSS item (entry)
+        :type rss_entry: :py:class:`feedparser.FeedParserDict`
+
+        :return: a list of all unique image URLs found (as strings)
+        """
+        img_links = set()
+
+        for link in getattr(rss_entry, 'links', []):
+            if link.get('type') in self.IMG_MIME_TYPES:
+                img_links.add(link['href'])
+
+        for item in getattr(rss_entry, 'media_thumbnail', []):
+            url = item.get('url', '')
+            if url.endswith(self.IMG_FILE_SUFFIXES):
+                img_links.add(url)
+
+        for item in getattr(rss_entry, 'media_content', []):
+            if item.get('type') in self.IMG_MIME_TYPES:
+                img_links.add(item['url'])
+
+        return list(img_links)
+
+    def _fetch_images(self, image_urls):
+        """Fetch images from the given list of URLs.
+
+        It is assumed that each URL points to an image file. The images are
+        downloaded in parallel. Any errors are silently ignored and the image
+        whose download has failed is exluded from the result.
+
+        NOTE: The `image_urls` iterable should not return any duplicates in
+        order to avoid unnecessary repeated downloads of the same image.
+
+        :param image_urls: URLs of the images to fetch
+        :type image_urls: iterable
+
+        :return: A dictionary containing the successfully downloaded images.
+            The keys are image URLs, and the values the corresponding image
+            data as a binary string.
+        """
+        images = {}
+
+        with futures.ThreadPoolExecutor(max_workers=5) as executor:
+            downloads = []
+
+            for url in image_urls:
+                future = executor.submit(requests.get, url, timeout=10)
+                downloads.append(future)
+
+            for download in futures.as_completed(downloads, timeout=60):
+                try:
+                    response = download.result()
+                except requests.exceptions.RequestException:
+                    pass  # TODO: what here? error or silently ignore?
+                    # url = ex.request.url (if exists)... there's also ex.args
+                else:
+                    if response.ok:
+                        images[response.url] = response.content
+                    else:
+                        pass  # TODO: what here? error or silently ignore?
+
+        return images
 
     def _create_item(self, data, field_aliases=None):
         """Create a new content item from RSS feed data.

@@ -10,6 +10,7 @@
 
 
 from datetime import datetime
+from requests.exceptions import RequestException
 from superdesk.tests import TestCase
 from time import struct_time
 from unittest import mock
@@ -260,6 +261,205 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
         self.assertEqual(ex.name, 'general_error')
         self.assertEqual(ex.orig_ex.args[0], 'server down')
         self.assertIs(ex.provider, self.fake_provider)
+
+
+class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
+    """Tests for the _extract_image_links() method."""
+
+    def test_extracts_enclosure_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.jpg',
+                'type': 'image/jpeg',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_2.png',
+                'type': 'image/png',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+        )
+
+    def test_omits_enclosure_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'alternative',
+                'href': 'http://foo.bar/81fecd',
+                'type': 'text/html',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.tiff',
+                'type': 'image/tiff',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_thumbnail_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/small_img.jpg'},
+            {'url': 'http://foo.bar/thumb_x.png'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/small_img.jpg', 'http://foo.bar/thumb_x.png']
+        )
+
+    def test_omits_media_thumbnail_links_to_non_supported_formats(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/image.tiff'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_content_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image_1.jpg',
+                'type': 'image/jpeg',
+            }, {
+                'url': 'http://foo.bar/image_2.png',
+                'type': 'image/png',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+        )
+
+    def test_omits_media_content_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/music.mp3',
+                'type': 'audio/mpeg3',
+            }, {
+                'url': 'http://foo.bar/video.avi',
+                'type': 'video/avi',
+            }, {
+                'url': 'http://foo.bar/image_1.tiff',
+                'type': 'image/tiff',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_omits_duplicate_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }
+        ]
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/jpeg',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, ['http://foo.bar/image.png'])
+
+
+class FetchImagesMethodTestCase(RssIngestServiceTest):
+    """Tests for the _fetch_images() method."""
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_fetches_images_from_all_given_urls(self, requests_get):
+        url_1 = 'http://foo.bar/image_1.jpg'
+        url_2 = 'http://foo.bar/image_2.jpg'
+        links = [url_1, url_2]
+
+        response_1 = MagicMock(name='response_1')
+        response_1.ok = True
+        response_1.url = url_1
+        response_1.content = b'img_1 data'
+
+        response_2 = MagicMock(name='response_2')
+        response_2.ok = True
+        response_2.url = url_2
+        response_2.content = b'img_2 data'
+
+        wrong_response = MagicMock(name='wrong_response')
+        wrong_response.ok = True
+        wrong_response.url = 'http://should.not/be/called'
+        wrong_response.content = b'wrong image'
+
+        def side_effect(url, *args, **kwargs):
+            response = {url_1: response_1, url_2: response_2}
+            return response.get(url, wrong_response)
+
+        requests_get.side_effect = side_effect
+
+        result = self.instance._fetch_images(links)
+
+        expected_result = {
+            url_1: b'img_1 data',
+            url_2: b'img_2 data'
+        }
+        self.assertEqual(result, expected_result)
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_silently_omits_image_on_request_error(self, requests_get):
+        links = ['http://imagine.this/timeouts']
+        requests_get.side_effect = RequestException
+
+        try:
+            result = self.instance._fetch_images(links)
+        except Exception as ex:
+            self.fail('Error unexpectedly raised.')
+        else:
+            self.assertEqual(result, {})
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_silently_omits_image_on_non_ok_response(self, requests_get):
+        links = ['http://imagine.this/is/not/found']
+
+        response = MagicMock()
+        response.ok = False
+
+        requests_get.return_value = response
+
+        try:
+            result = self.instance._fetch_images(links)
+        except Exception as ex:
+            self.fail('Error unexpectedly raised.')
+        else:
+            self.assertEqual(result, {})
 
 
 class CreateItemMethodTestCase(RssIngestServiceTest):
