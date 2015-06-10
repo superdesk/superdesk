@@ -419,7 +419,7 @@
     ])
         .service('search', SearchService)
         .service('tags', TagService)
-
+        .controller('MultiActionBar', MultiActionBarController)
         .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
@@ -1200,54 +1200,14 @@
             };
         })
 
-        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify', 'spike', 'authoring',
-        function(asset, multi, multiEdit, send, packages, superdesk, notify, spike, authoring) {
+        .directive('sdMultiActionBar', ['asset', 'multi',
+        function(asset, multi) {
             return {
+                controller: 'MultiActionBar',
+                controllerAs: 'action',
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
                 link: function(scope) {
                     scope.multi = multi;
-
-                    scope.send  = function() {
-                        return send.all(multi.getItems());
-                    };
-
-                    scope.sendAs = function() {
-                        return send.allAs(multi.getItems());
-                    };
-
-                    scope.multiedit = function() {
-                        multiEdit.create(multi.getIds());
-                        multiEdit.open();
-                    };
-
-                    scope.spikeItems = function() {
-                        spike.spikeMultiple(multi.getItems());
-                        multi.reset();
-                    };
-
-                    scope.unspikeItems = function() {
-                        spike.unspikeMultiple(multi.getItems());
-                        multi.reset();
-                    };
-
-                    scope.canSpikeItems = function() {
-                        var canSpike = true;
-                        multi.getItems().forEach(function(item) {
-                            canSpike = canSpike && authoring.itemActions(item).spike;
-                        });
-                        return canSpike;
-                    };
-
-                    scope.createPackage = function() {
-                        packages.createPackageFromItems(multi.getItems())
-                        .then(function(new_package) {
-                            superdesk.intent('author', 'package', new_package);
-                        }, function(response) {
-                            if (response.status === 403 && response.data && response.data._message) {
-                                notify.error(gettext(response.data._message), 3000);
-                            }
-                        });
-                    };
                 }
             };
         }])
@@ -1263,5 +1223,50 @@
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html')
             });
         }]);
+
+    MultiActionBarController.$inject = ['multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify', 'spike', 'authoring'];
+    function MultiActionBarController(multi, multiEdit, send, packages, superdesk, notify, spike, authoring) {
+        this.send  = function() {
+            return send.all(multi.getItems());
+        };
+
+        this.sendAs = function() {
+            return send.allAs(multi.getItems());
+        };
+
+        this.multiedit = function() {
+            multiEdit.create(multi.getIds());
+            multiEdit.open();
+        };
+
+        this.createPackage = function() {
+            packages.createPackageFromItems(multi.getItems())
+            .then(function(new_package) {
+                superdesk.intent('author', 'package', new_package);
+            }, function(response) {
+                if (response.status === 403 && response.data && response.data._message) {
+                    notify.error(gettext(response.data._message), 3000);
+                }
+            });
+        };
+
+        this.spikeItems = function() {
+            spike.spikeMultiple(multi.getItems());
+            multi.reset();
+        };
+
+        this.unspikeItems = function() {
+            spike.unspikeMultiple(multi.getItems());
+            multi.reset();
+        };
+
+        this.canSpikeItems = function() {
+            var canSpike = true;
+            multi.getItems().forEach(function(item) {
+                canSpike = canSpike && authoring.itemActions(item).spike;
+            });
+            return canSpike;
+        };
+    }
 
 })();

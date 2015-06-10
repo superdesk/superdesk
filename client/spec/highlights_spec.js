@@ -276,11 +276,10 @@ describe('HIGHLIGHTS', function() {
             content.setListView();
             content.actionOnItem('Mark item', 0);
             highlights.selectHighlight(content.getItem(0), 'Highlight one');
-            content.checkMarkedForHighlight('Highlight one', 0);
             content.selectItem(0);
             content.selectItem(1);
             highlights.multiMarkHighlight('Highlight one');
-            content.selectItem(0);
+            content.checkMarkedForHighlight('Highlight one', 0);
             content.checkMarkedForHighlight('Highlight one', 1);
         });
     });

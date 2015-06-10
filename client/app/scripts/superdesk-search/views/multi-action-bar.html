@@ -6,7 +6,7 @@
 		translate-plural="{{ multi.count }} Items selected">{{ multi.count }} Item selected</span>
 
     <div class="pull-right" ng-if="type === 'archive'">
-        <button class="navbtn" ng-click="createPackage()" title="{{ :: 'Create Package' | translate }}">
+        <button class="navbtn" ng-click="action.createPackage()" title="{{ :: 'Create Package' | translate }}">
             <i class="icon-package-plus"></i>
         </button>
     </div>
@@ -20,14 +20,14 @@
     </div>
 
 	<div class="pull-right" ng-if="type === 'archive'">
-		<button class="navbtn" ng-click="multiedit()" title="{{ :: 'Multiedit' | translate }}">
+		<button class="navbtn" ng-click="action.multiedit()" title="{{ :: 'Multiedit' | translate }}">
     		<i class="big-icon-multiedit"></i>
         </button>
-        <button class="navbtn" ng-click="spikeItems()" tooltip="{{ :: 'Spike' | translate }}" tooltip-placement="bottom"
-        	ng-if="!spike && !publish && canSpikeItems()">
+        <button class="navbtn" ng-click="action.spikeItems()" tooltip="{{ :: 'Spike' | translate }}" tooltip-placement="bottom"
+        	ng-if="!spike && !publish && action.canSpikeItems()">
         	<i class="icon-remove"></i>
         </button>
-        <button class="navbtn" ng-click="unspikeItems()" tooltip="{{ :: 'Unspike' | translate }}" tooltip-placement="bottom" ng-if="spike">
+        <button class="navbtn" ng-click="action.unspikeItems()" tooltip="{{ :: 'Unspike' | translate }}" tooltip-placement="bottom" ng-if="spike">
         	<i class="icon-revert"></i>
         </button>
 	</div>
@@ -35,12 +35,12 @@
 	<div class="pull-right" ng-if="type === 'ingest'">
 		<button id="fetch-all-btn" class="navbtn"
 		 	title="{{ :: 'Fetch' | translate }}"
-			ng-click="send()">
+			ng-click="action.send()">
 			<i class="big-icon-archive"></i>
 		</button>
 		<button id="fetch-all-as-btn" class="navbtn"
 			title="{{ :: 'Fetch as' | translate }}"
-			ng-click="sendAs()">
+			ng-click="action.sendAs()">
 			<i class="big-icon-archive"></i>
 		</button>
 </div>

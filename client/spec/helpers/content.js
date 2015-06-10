@@ -75,11 +75,11 @@ function Content() {
     };
 
     this.spikeItems = function() {
-        element(by.css('[ng-click="spikeItems()"]')).click();
+        element(by.css('[ng-click="action.spikeItems()"]')).click();
     };
 
     this.unspikeItems = function() {
-        element(by.css('[ng-click="unspikeItems()"]')).click();
+        element(by.css('[ng-click="action.unspikeItems()"]')).click();
     };
 
     this.selectSpikedList = function() {
