@@ -349,9 +349,8 @@
 		}
 		dl {
 			.clearfix();
-			font-size:11px;
+			font-size: 11px;
 			height: 1%;
-			overflow: hidden;
 			margin:0 2px;
 			dt {
 				width:auto;
@@ -376,6 +375,10 @@
 					overflow:hidden;
 					text-overflow:ellipsis;
 					white-space: nowrap;
+				}
+				&.dropdown:hover .dropdown-menu {
+				    display: block;
+				    min-width: 100%;     
 				}
 			}
 		}
@@ -642,6 +645,10 @@
 				}
 				dt, dd {
 					display: inline-block;
+					&.dropdown:hover .dropdown-menu {
+					    display: block;  
+					    min-width: 100%;  
+					}
 				}
 			}
 			.state-label {

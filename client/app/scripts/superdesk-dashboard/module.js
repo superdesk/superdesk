@@ -21,7 +21,7 @@ define([
                     desks.setCurrentDeskId(desk._id);
 
                     if (desk._id === 'personal') {
-                        $location.path('/workspace/content') ;
+                        $location.path('/workspace/content');
                     }
                 };
 
