@@ -125,10 +125,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.publish.content_purge',
         'schedule': crontab(minute=30)
     },
-    'system:compare_repositories': {
-        'task': 'superdesk.data_consistency.compare_repos',
-        'schedule': timedelta(minutes=30)
-    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
