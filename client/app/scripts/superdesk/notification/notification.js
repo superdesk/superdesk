@@ -46,9 +46,9 @@
 
     ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks'];
     function ReloadService($window, $rootScope, session, desks) {
-        this.userDesks = [];
-        this.result = null;
         var _this = this;
+        _this.userDesks = [];
+        _this.result = null;
         desks.fetchCurrentUserDesks().then(function (desk_list) {
             _this.userDesks = desk_list._items;
         });
