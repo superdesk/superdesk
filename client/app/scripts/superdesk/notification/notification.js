@@ -9,8 +9,9 @@
  */
 (function() {
     'use strict';
-    WebSocketProxy.$inject = ['$rootScope', 'config'];
-    function WebSocketProxy($rootScope, config) {
+
+    WebSocketProxy.$inject = ['$rootScope', 'config', 'desks'];
+    function WebSocketProxy($rootScope, config, desks, session) {
         var ReloadEvents = {
             'user_disabled': 'User is disabled',
             'user_inactivated': 'User is inactivated',
@@ -45,11 +46,12 @@
 
     ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks'];
     function ReloadService($window, $rootScope, session, desks) {
-        var userDesks;
+        this.userDesks = [];
+        this.result = null;
+        var _this = this;
         desks.fetchCurrentUserDesks().then(function (desk_list) {
-            userDesks = desk_list._items;
+            _this.userDesks = desk_list._items;
         });
-
         var userEvents = {
             'user_disabled': 'User is disabled',
             'user_inactivated': 'User is inactivated',
@@ -70,23 +72,24 @@
         };
 
         $rootScope.$on('reload', function(event, msg) {
-
-            var _result = reloadIdentifier(msg);
-
-            if (_result.reload) {
+            _this.result = _this.reloadIdentifier(msg);
+            _this.reload(_this.result);
+        });
+        this.reload = function(result) {
+            if (result.reload) {
                 if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
-                    broadcast(_result.message);
+                    _this.broadcast(result.message);
                 } else {
                     $window.location.reload(true);
                 }
             }
-        });
+        };
 
-        function broadcast(msg) {
+        this.broadcast = function(msg) {
             $rootScope.$broadcast('savework', msg);
-        }
+        };
 
-        function reloadIdentifier(msg) {
+        this.reloadIdentifier = function(msg) {
             var result = {
                 reload: false,
                 message: null
@@ -106,10 +109,10 @@
                     result.reload = true;
                 }
             }
-
             if (_.has(deskEvents, msg.event)) {
                 if (msg.extra.desk_id != null && msg.extra.user_ids != null) {
-                    if (_.find(userDesks, {_id: msg.extra.desk_id}) != null && msg.extra.user_ids.indexOf(session.identity._id)  !== -1) {
+                    if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) != null &&
+                        msg.extra.user_ids.indexOf(session.identity._id)  !== -1) {
                         result.message = deskEvents[msg.event];
                         result.reload = true;
                     }
@@ -119,22 +122,21 @@
             if (_.has(stageEvents, msg.event)) {
                 if (msg.extra.desk_id != null) {
                     if (msg.event === 'stage_visibility_updated') {
-                        if (_.find(userDesks, {_id: msg.extra.desk_id}) == null &&
+                        if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) == null &&
                             ($window.location.hash.match('/search') != null || $window.location.hash.match('/authoring/') != null)) {
                             result.message = stageEvents[msg.event];
                             result.reload = true;
                         }
                     } else if (msg.event === 'stage') {
-                        if (_.find(userDesks, {_id: msg.extra.desk_id}) != null) {
+                        if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) != null) {
                             result.message = stageEvents[msg.event];
                             result.reload = true;
                         }
                     }
                 }
             }
-
             return result;
-        }
+        };
     }
 
     return angular.module('superdesk.notification', ['superdesk.desks'])

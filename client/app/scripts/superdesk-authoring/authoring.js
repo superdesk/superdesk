@@ -619,7 +619,8 @@
 
         this.confirmSaveWork = function confirmSavework(msg) {
             return modal.confirm(
-                $interpolate(gettext('Configuration has changed, {{ message }}. Save story to your workspace?'))({message: msg})
+                $interpolate(gettext('Configuration has changed, {{ message }}. Would you like to save story to your workspace?'))
+                ({message: msg})
             );
         };
 
@@ -1020,7 +1021,7 @@
                     var changeMsg = msg;
                     authoring.saveWorkConfirmation($scope.origItem, $scope.item, $scope.dirty, changeMsg)
                     .then(function(res) {
-                        desks.setCurrentDesk(null);
+                        desks.setCurrentDeskId(null);
                         $location.url('/workspace/content');
                         referrer.setReferrerUrl('/workspace/content');
                     }, function(response) {
