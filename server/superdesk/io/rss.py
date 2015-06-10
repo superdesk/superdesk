@@ -14,6 +14,7 @@ import requests
 
 from calendar import timegm
 from collections import namedtuple
+from concurrent import futures
 from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
@@ -118,7 +119,8 @@ class RssIngestService(IngestService):
             # reference other media types, e.g. video clips).
             image_urls = self._extract_image_links(entry)
             if image_urls:
-                raise NotImplementedError()  # TODO: create a package
+                images = self._fetch_images(image_urls, provider)  # TODO: test is called
+                raise NotImplementedError(images)  # TODO: create a package
             else:
                 item = self._create_item(entry, field_aliases)
                 self.add_timestamps(item)
@@ -130,7 +132,8 @@ class RssIngestService(IngestService):
         """Fetch the latest feed data.
 
         :param dict config: RSS resource configuration
-        :param provider: data provider instance
+        :param provider: data provider instance, needed as an argument when
+            raising ingest errors
         :return: fetched RSS data
         :rtype: str
 
@@ -189,6 +192,49 @@ class RssIngestService(IngestService):
                 img_links.add(item['url'])
 
         return list(img_links)
+
+    def _fetch_images(self, image_urls, provider):
+        """Fetch images from the given list of URLs.
+
+        It is assumed that each URL points to an image file. The images are
+        downloaded in parallel. If *any* of the downloads fails, an error is
+        raised.
+
+        NOTE: The `image_urls` iterable should not return any duplicates in
+        order to avoid unnecessary repeated downloads of the same image.
+
+        :param image_urls: URLs of the images to fetch
+        :type image_urls: iterable
+        :param provider: data provider instance, needed as an argument when
+            raising ingest errors
+
+        :return: A dictionary containing the successfully downloaded images.
+            The keys are image URLs, and the values the corresponding image
+            data as a binary string.
+        """
+        images = {}
+
+        with futures.ThreadPoolExecutor(max_workers=5) as executor:
+            downloads = []
+
+            for url in image_urls:
+                future = executor.submit(requests.get, url, timeout=10)
+                downloads.append(future)
+
+            for download in futures.as_completed(downloads, timeout=60):
+                try:
+                    response = download.result()
+                except requests.exceptions.RequestException as ex:
+                    raise IngestApiError.apiRequestError(
+                        exception=ex, provider=provider)
+                else:
+                    if response.ok:
+                        images[response.url] = response.content
+                    else:
+                        raise IngestApiError.apiRequestError(
+                            exception=None, provider=provider)
+
+        return images
 
     def _create_item(self, data, field_aliases=None):
         """Create a new content item from RSS feed data.

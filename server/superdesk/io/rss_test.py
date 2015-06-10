@@ -10,6 +10,7 @@
 
 
 from datetime import datetime
+from requests.exceptions import RequestException
 from superdesk.tests import TestCase
 from time import struct_time
 from unittest import mock
@@ -41,6 +42,10 @@ class FakeIngestApiError(Exception):
     @classmethod
     def apiAuthError(cls, exception, provider):
         return RssError('auth_error', exception, provider)
+
+    @classmethod
+    def apiRequestError(cls, exception, provider):
+        return RssError('request_error', exception, provider)
 
 
 class FakeParseError(Exception):
@@ -76,7 +81,7 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         mock.side_effect = None
 
     def setUp(self):
-        super(UpdateMethodTestCase, self).setUp()
+        super().setUp()
         self._hard_reset_mock(feed_parse)
         self.instance._fetch_data = MagicMock(return_value='<rss>foo</rss>')
         self.instance._create_item = MagicMock(return_value={})
@@ -163,7 +168,7 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
     """Tests for the _fetch_data() method."""
 
     def setUp(self):
-        super(FetchDataMethodTestCase, self).setUp()
+        super().setUp()
         requests_get.reset_mock()
         self.fake_provider = MagicMock(name='fake provider')
 
@@ -392,6 +397,87 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
         links = self.instance._extract_image_links(rss_entry)
 
         self.assertCountEqual(links, ['http://foo.bar/image.png'])
+
+
+@mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
+class FetchImagesMethodTestCase(RssIngestServiceTest):
+    """Tests for the _fetch_images() method."""
+
+    def setUp(self):
+        super().setUp()
+        self.fake_provider = MagicMock(name='fake provider')
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_fetches_images_from_all_given_urls(self, requests_get):
+        url_1 = 'http://foo.bar/image_1.jpg'
+        url_2 = 'http://foo.bar/image_2.jpg'
+        links = [url_1, url_2]
+
+        response_1 = MagicMock(name='response_1')
+        response_1.ok = True
+        response_1.url = url_1
+        response_1.content = b'img_1 data'
+
+        response_2 = MagicMock(name='response_2')
+        response_2.ok = True
+        response_2.url = url_2
+        response_2.content = b'img_2 data'
+
+        wrong_response = MagicMock(name='wrong_response')
+        wrong_response.ok = True
+        wrong_response.url = 'http://should.not/be/called'
+        wrong_response.content = b'wrong image'
+
+        def side_effect(url, *args, **kwargs):
+            response = {url_1: response_1, url_2: response_2}
+            return response.get(url, wrong_response)
+
+        requests_get.side_effect = side_effect
+
+        result = self.instance._fetch_images(links, self.fake_provider)
+
+        expected_result = {
+            url_1: b'img_1 data',
+            url_2: b'img_2 data'
+        }
+        self.assertEqual(result, expected_result)
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_raises_error_on_request_error(self, requests_get):
+        requests_get.side_effect = RequestException
+        links = ['http://imagine.this/timeouts']
+
+        try:
+            with self.assertRaises(RssError) as exc_context:
+                self.instance._fetch_images(links, self.fake_provider)
+        except AssertionError:
+            raise
+        except:
+            self.fail('Unexpected exception type raised.')
+
+        ex = exc_context.exception
+        self.assertEqual(ex.name, 'request_error')
+        self.assertIs(ex.provider, self.fake_provider)
+
+    @mock.patch('superdesk.io.rss.requests.get')
+    def test_raises_error_on_non_ok_response(self, requests_get):
+        response = MagicMock()
+        response.ok = False
+
+        requests_get.return_value = response
+        links = ['http://imagine.this/is/not/found']
+
+        try:
+            with self.assertRaises(RssError) as exc_context:
+                self.instance._fetch_images(links, self.fake_provider)
+        except AssertionError:
+            raise
+        except:
+            self.fail('Unexpected exception type raised.')
+
+        ex = exc_context.exception
+        self.assertEqual(ex.name, 'request_error')
+        self.assertIs(ex.provider, self.fake_provider)
 
 
 class CreateItemMethodTestCase(RssIngestServiceTest):
