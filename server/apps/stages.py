@@ -66,6 +66,12 @@ class StagesResource(Resource):
         'is_visible': {
             'type': 'boolean',
             'default': True
+        },
+        'incoming_macro': {
+            'type': 'string'
+        },
+        'outgoing_macro': {
+            'type': 'string'
         }
     }
 
