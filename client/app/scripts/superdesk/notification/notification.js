@@ -123,7 +123,7 @@
                 if (msg.extra.desk_id != null) {
                     if (msg.event === 'stage_visibility_updated') {
                         if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) == null &&
-                            ($window.location.hash.match('/search') != null || $window.location.hash.match('/authoring/') != null)) {
+                        ($window.location.hash.match('/search') != null || $window.location.hash.match('/authoring/') != null)) {
                             result.message = stageEvents[msg.event];
                             result.reload = true;
                         }

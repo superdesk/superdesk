@@ -24,7 +24,7 @@ describe('Reload Service', function() {
         });
     });
 
-    it('can check reloadEvents on raised event', inject(function($window, desks, session, api, preferencesService, $q) {
+    it('can check reloadEvents on raised event for desk', inject(function($window, desks, session, api, preferencesService, $q) {
         spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
         spyOn(api, 'get').and.returnValue($q.when({_items: [{_id: '5567ff31102454c7bac47644'}, {_id: '55394997102454b5ea111bd5'}]}));
         rootScope.$apply();
@@ -34,6 +34,25 @@ describe('Reload Service', function() {
         rootScope.$broadcast('reload', msg);
         expect(reload).toHaveBeenCalledWith(Object({reload: true, message: 'User removed from desk'}));
         expect(reloadService.result.reload).toBe(true);
-
     }));
+
+    it('can check reloadEvents on raised event for stage', inject(function($window, desks, session, api, preferencesService, $q) {
+        msg = {
+            event: 'stage',
+            extra: {
+                        desk_id: '5567ff31102454c7bac47644',
+                        user_ids: ['1']
+                    }
+        };
+        spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
+        spyOn(api, 'get').and.returnValue($q.when({_items: [{_id: '5567ff31102454c7bac47644'}, {_id: '55394997102454b5ea111bd5'}]}));
+        rootScope.$apply();
+        expect(reloadService.userDesks.length).toBe(2);
+
+        var reload = spyOn(reloadService, 'reload');
+        rootScope.$broadcast('reload', msg);
+        expect(reload).toHaveBeenCalledWith(Object({reload: true, message: 'Stage is created/updated/deleted'}));
+        expect(reloadService.result.reload).toBe(true);
+    }));
+
 });
