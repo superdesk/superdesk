@@ -111,7 +111,7 @@
     AggregateSettingsDirective.$inject = ['desks', 'preferencesService', 'WizardHandler'];
     function AggregateSettingsDirective(desks, preferencesService, WizardHandler) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/aggregate-settings.html',
+            templateUrl: 'scripts/superdesk-desks/views/aggregate-settings-configuration.html',
             scope: {
                 modalActive: '=',
                 desks: '=',
@@ -121,7 +121,8 @@
                 stageLookup: '=',
                 searchLookup: '=',
                 groups: '=',
-                editGroups: '='
+                editGroups: '=',
+                widget: '@'
             },
             link: function(scope, elem) {
 

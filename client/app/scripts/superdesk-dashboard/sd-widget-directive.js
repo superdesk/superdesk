@@ -21,11 +21,17 @@ define([
             transclude: true,
             scope: {widget: '='},
             link: function(scope, element, attrs) {
-                scope.openConfiguration = function() {
+                scope.openConfiguration = function () {
                     $modal.open({
                         templateUrl: require.toUrl('./views/configuration.html'),
                         controller: require('./configuration-controller'),
                         scope: scope
+                    });
+                    /*
+                     * If other type of modal is opened, close it
+                     */
+                    $(document).on('shown.bs.modal', '.modal', function () {
+                        $(this).modal('hide');
                     });
                 };
             }
