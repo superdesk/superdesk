@@ -233,12 +233,14 @@ class PublishedItemService(BaseService):
         :param doc: doc in 'published' collection
         """
 
+        logging.info("Starting the workflow for removing the expired publish item with id: %s" % doc['item_id'])
+
         # Step 1
         if 'type' in doc and doc['type'] in ['text', 'preformatted']:
-            self.__insert_into_or_remove_from_text_archive(doc)
+            self._insert_into_or_remove_from_text_archive(doc)
 
         # Step 2
-        formatted_item_ids, publish_queue_items = self.__upsert_into_legal_archive(doc)
+        formatted_item_ids, publish_queue_items = self._upsert_into_legal_archive(doc)
         for formatted_item_id in formatted_item_ids:
             get_resource_service('formatted_item').delete_action(lookup={config.ID_FIELD: formatted_item_id})
 
@@ -257,7 +259,9 @@ class PublishedItemService(BaseService):
 
             get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: doc['item_id']})
 
-    def __insert_into_or_remove_from_text_archive(self, doc):
+        logging.info("Completed the workflow for removing the expired publish item with id: %s" % doc['item_id'])
+
+    def _insert_into_or_remove_from_text_archive(self, doc):
         """
         If the state of the article is published, check if it's been killed after publishing. If article has been killed
         then return otherwise insert into text_archive.
@@ -299,9 +303,21 @@ class PublishedItemService(BaseService):
                         'as the state of an article is killed.'.format(doc['item_id'], doc.get('headline'),
                                                                        doc.get('_version'), doc.get('expiry')))
 
-    def __upsert_into_legal_archive(self, doc):
+    def _upsert_into_legal_archive(self, doc):
         """
-        Checks if the article is available in legal archive. If available updates the article otherwise inserts.
+        For the expired published article represented by doc, do the below:
+            1.  Fetch version history of article so that version_history_doc['_version'] <= doc['_version'].
+            2.  De-normalize the expired article and each version of the article
+            3.  Fetch Formatted Items and Transmission Details so that formatted_item['item_version'] == doc['_version']
+            4.  De-normalize the Transmission Details
+            5.  An article can be published more than time before it's removed from production database, it's important
+                to check if the article already exists in Legal Archive DB. If exists then replace the article in
+                Legal Archive DB, otherwise create.
+            6.  Create the Version History of the article in Legal Archive DB.
+            7.  Create the Formatted Items and Transmission Details in Legal Archive DB.
+
+        :param: doc - expired doc from 'published' collection.
+        :return: formatted items and transmission details
         """
 
         legal_archive_doc = doc.copy()
@@ -314,14 +330,14 @@ class PublishedItemService(BaseService):
 
         logging.info('Removed Irrelevant properties from the article %s' % legal_archive_doc.get('unique_name'))
 
-        # Fetch Formatted Items
+        # Step 3 - Fetch Formatted Items
         lookup = {'item_id': legal_archive_doc[config.ID_FIELD], 'item_version': legal_archive_doc[config.VERSION]}
         formatted_items = list(get_resource_service('formatted_item').get(req=None, lookup=lookup))
         assert len(formatted_items) > 0, \
             "Formatted Item(s) are empty for a published item %s" % legal_archive_doc[config.ID_FIELD]
         logging.info('Fetched formatted items for the article %s' % legal_archive_doc.get('unique_name'))
 
-        # Fetch Publish Queue Items
+        # Step 3 - Fetch Publish Queue Items
         formatted_item_ids = [str(formatted_item[config.ID_FIELD]) for formatted_item in formatted_items]
         query = {'$and': [{'formatted_item_id': {'$in': formatted_item_ids}}]}
         queue_items = list(get_resource_service('publish_queue').get(req=None, lookup=query))
@@ -329,12 +345,13 @@ class PublishedItemService(BaseService):
             "Transmission Details are empty for published item %s" % legal_archive_doc[config.ID_FIELD]
         logging.info('Fetched transmission details for article %s' % legal_archive_doc.get('unique_name'))
 
-        output_channel_ids = list(set([str(queue_item['output_channel_id']) for queue_item in queue_items]))
+        # Step 4
+        output_channel_ids = list({str(queue_item['output_channel_id']) for queue_item in queue_items})
         query = {'$and': [{config.ID_FIELD: {'$in': output_channel_ids}}]}
         output_channels = list(get_resource_service('output_channels').get(req=None, lookup=query))
         output_channels = {str(output_channel[config.ID_FIELD]): output_channel for output_channel in output_channels}
 
-        subscriber_ids = list(set([str(queue_item['subscriber_id']) for queue_item in queue_items]))
+        subscriber_ids = list({str(queue_item['subscriber_id']) for queue_item in queue_items})
         query = {'$and': [{config.ID_FIELD: {'$in': subscriber_ids}}]}
         subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
         subscribers = {str(subscriber[config.ID_FIELD]): subscriber for subscriber in subscribers}
@@ -346,10 +363,10 @@ class PublishedItemService(BaseService):
         logging.info(
             'De-normalized the Transmission Detail records of article %s' % legal_archive_doc.get('unique_name'))
 
-        # De-normalizing the legal archive doc
+        # Step 2 - De-normalizing the legal archive doc
         self.__denormalize_user_dg_desk(legal_archive_doc)
 
-        # Get Version History
+        # Step 1 - Get Version History
         req = ParsedRequest()
         req.sort = '[("%s", 1)]' % config.VERSION
         lookup = {'$and': [{versioned_id_field(): legal_archive_doc[config.ID_FIELD]},
@@ -363,15 +380,13 @@ class PublishedItemService(BaseService):
             legal_archive_doc_versions.append(versioned_doc)
         logging.info('Fetched version history for article %s' % legal_archive_doc.get('unique_name'))
 
-        # Upserting Legal Archive
-        logging.info('Upserting Legal Archive Repo with article %s' % legal_archive_doc.get('unique_name'))
-
-        resolve_document_etag(legal_archive_doc, ARCHIVE)
-
         legal_archive_service = get_resource_service(LEGAL_ARCHIVE_NAME)
         legal_archive_versions_service = get_resource_service(LEGAL_ARCHIVE_VERSIONS_NAME)
         legal_formatted_items_service = get_resource_service(LEGAL_FORMATTED_ITEM_NAME)
         legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
+
+        # Step 5 - Upserting Legal Archive
+        logging.info('Upserting Legal Archive Repo with article %s' % legal_archive_doc.get('unique_name'))
 
         article_in_legal_archive = legal_archive_service.find_one(_id=legal_archive_doc[config.ID_FIELD], req=None)
         if article_in_legal_archive:
@@ -379,9 +394,11 @@ class PublishedItemService(BaseService):
         else:
             legal_archive_service.post([legal_archive_doc])
 
+        # Step 6
         if legal_archive_doc_versions:
             legal_archive_versions_service.post(legal_archive_doc_versions)
 
+        # Step 7
         legal_formatted_items_service.post(formatted_items)
         legal_publish_queue_service.post(queue_items)
 
@@ -392,15 +409,15 @@ class PublishedItemService(BaseService):
     def __denormalize_user_dg_desk(self, legal_archive_doc):
 
         # De-normalizing User Details
-        if 'original_creator' in legal_archive_doc:
+        if legal_archive_doc.get('original_creator') :
             legal_archive_doc['original_creator'] = self.__get_user_name(legal_archive_doc['original_creator'])
 
-        if 'version_creator' in legal_archive_doc:
+        if legal_archive_doc.get('version_creator'):
             legal_archive_doc['version_creator'] = self.__get_user_name(legal_archive_doc['version_creator'])
         logging.info('De-normalized User Details for article %s' % legal_archive_doc.get('unique_name'))
 
         # De-normalizing Destination Groups
-        if 'destination_groups' in legal_archive_doc:
+        if legal_archive_doc.get('destination_groups'):
             destination_groups = []
 
             for destination_group_id in legal_archive_doc['destination_groups']:
@@ -412,18 +429,18 @@ class PublishedItemService(BaseService):
             logging.info('De-normalized Destination Groups for article %s' % legal_archive_doc.get('unique_name'))
 
         # De-normalizing Desk and Stage details
-        if 'task' in legal_archive_doc:
-            if 'desk' in legal_archive_doc['task']:
+        if legal_archive_doc.get('task'):
+            if legal_archive_doc['task'].get('desk') :
                 desk = get_resource_service('desks').find_one(req=None, _id=str(legal_archive_doc['task']['desk']))
                 legal_archive_doc['task']['desk'] = desk['name']
                 logging.info('De-normalized desk details for article %s' % legal_archive_doc.get('unique_name'))
 
-            if 'stage' in legal_archive_doc['task']:
+            if legal_archive_doc['task'].get('stage'):
                 stage = get_resource_service('stages').find_one(req=None, _id=str(legal_archive_doc['task']['stage']))
                 legal_archive_doc['task']['stage'] = stage['name']
                 logging.info('De-normalized stage details for article %s' % legal_archive_doc.get('unique_name'))
 
-            if 'user' in legal_archive_doc['task']:
+            if legal_archive_doc['task'].get('user'):
                 legal_archive_doc['task']['user'] = self.__get_user_name(legal_archive_doc['task']['user'])
 
     def __get_user_name(self, user_id):
