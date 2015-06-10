@@ -23,7 +23,7 @@
             });
         };
 
-        this.createPackageFromItems = function createPackageFromItems(items, defaults) {
+        this.createPackageFromItems = function (items, defaults) {
             var idRef = 'main';
             var item = items[0];
             var new_package = {
@@ -34,19 +34,19 @@
                 type: 'composite'
             };
             var groups = [{
-                role: 'grpRole:NEP',
-                refs: [{idRef: idRef}],
-                id: 'root'
-            }];
-            _.forEach(items, function(item) {
-                groups.push(getGroupFor(item, idRef));
-            });
+                    role: 'grpRole:NEP',
+                    refs: [{idRef: idRef}],
+                    id: 'root'
+                },
+                getGroupFor(null, idRef)
+            ];
             new_package = setDefaults(new_package, defaults);
             new_package.groups = groups;
+            this.addItemsToPackage(new_package, idRef, items);
             return api.archive.save(new_package);
         };
 
-        this.createEmptyPackage = function createEmptyPackage(defaults, idRef) {
+        this.createEmptyPackage = function(defaults, idRef) {
             idRef = idRef || 'main';
             var new_package = {
                 headline: '',
@@ -68,7 +68,7 @@
 
         };
 
-        this.addItemsToPackage = function addToPackage(current, group_id, items) {
+        this.addItemsToPackage = function(current, group_id, items) {
 
             var origGroups = _.cloneDeep(current.groups);
 
@@ -237,7 +237,7 @@
             getPackageItems();
         }, true);
 
-        $scope.addItemToGroup = function addItemsToGroup(group, item) {
+        $scope.addItemToGroup = function(group, item) {
             packages.addItemsToPackage($scope.item, group, [item]);
             $scope.autosave($scope.item);
         };

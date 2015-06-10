@@ -420,8 +420,6 @@
         .service('search', SearchService)
         .service('tags', TagService)
 
-        .controller('MultiActionBar', MultiActionBarController)
-
         .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
@@ -1202,18 +1200,35 @@
             };
         })
 
-        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit',
-        function(asset, multi, multiEdit) {
+        .directive('sdMultiActionBar', ['asset', 'multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify',
+        function(asset, multi, multiEdit, send, packages, superdesk, notify) {
             return {
-                controller: 'MultiActionBar',
-                controllerAs: 'action',
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
                 link: function(scope) {
                     scope.multi = multi;
 
+                    scope.send  = function() {
+                        return send.all(multi.getItems());
+                    };
+
+                    scope.sendAs = function() {
+                        return send.allAs(multi.getItems());
+                    };
+
                     scope.multiedit = function() {
                         multiEdit.create(multi.getIds());
                         multiEdit.open();
+                    };
+
+                    scope.createPackage = function() {
+                        packages.createPackageFromItems(multi.getItems())
+                        .then(function(new_package) {
+                            superdesk.intent('author', 'package', new_package);
+                        }, function(response) {
+                            if (response.status === 403 && response.data && response.data._message) {
+                                notify.error(gettext(response.data._message), 3000);
+                            }
+                        });
                     };
                 }
             };
@@ -1229,22 +1244,6 @@
                 controller: SearchController,
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html')
             });
-        }])
-
-        ;
-
-    MultiActionBarController.$inject = ['multi', 'send'];
-    function MultiActionBarController(multi, send) {
-        this.send = sendAll;
-        this.sendAs = sendAllAs;
-
-        function sendAll() {
-            return send.all(multi.getItems());
-        }
-
-        function sendAllAs() {
-            return send.allAs(multi.getItems());
-        }
-    }
+        }]);
 
 })();

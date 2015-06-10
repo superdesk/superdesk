@@ -46,6 +46,7 @@ describe('search service', function() {
 
         beforeEach(module('superdesk.archive'));
         beforeEach(module('superdesk.authoring.multiedit'));
+        beforeEach(module('superdesk.packaging'));
 
         beforeEach(inject(function($rootScope, $compile) {
             scope = $rootScope.$new();
