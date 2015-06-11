@@ -23,6 +23,13 @@
 		<button class="navbtn" ng-click="multiedit()" title="{{ :: 'Multiedit' | translate }}">
     		<i class="big-icon-multiedit"></i>
         </button>
+        <button class="navbtn" ng-click="spikeItems()" tooltip="{{ :: 'Spike' | translate }}" tooltip-placement="bottom"
+        	ng-if="!spike && !publish && canSpikeItems()">
+        	<i class="icon-remove"></i>
+        </button>
+        <button class="navbtn" ng-click="unspikeItems()" tooltip="{{ :: 'Unspike' | translate }}" tooltip-placement="bottom" ng-if="spike">
+        	<i class="icon-revert"></i>
+        </button>
 	</div>
 
 	<div class="pull-right" ng-if="type === 'ingest'">

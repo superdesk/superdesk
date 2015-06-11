@@ -23,6 +23,10 @@ function Content() {
         });
     };
 
+    this.getItems = function() {
+        return element.all(by.repeater('items._items'));
+    };
+
     this.getItem = function(item) {
         return element.all(by.repeater('items._items')).get(item);
     };
@@ -68,6 +72,18 @@ function Content() {
                     .element(by.css('[ng-change="toggleSelected(item)"]'))
                     .click();
             });
+    };
+
+    this.spikeItems = function() {
+        element(by.css('[ng-click="spikeItems()"]')).click();
+    };
+
+    this.unspikeItems = function() {
+        element(by.css('[ng-click="unspikeItems()"]')).click();
+    };
+
+    this.selectSpikedList = function() {
+        element(by.css('[ng-click="toggleSpike()"')).click();
     };
 
     this.createPackageFromItems = function() {
