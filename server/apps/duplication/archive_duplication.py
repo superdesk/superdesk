@@ -55,7 +55,7 @@ class DuplicateService(BaseService):
             if current_desk_of_item is None or str(current_desk_of_item) != str(doc.get('desk')):
                 raise SuperdeskApiError.preconditionFailedError(message='Duplicate is allowed within the same desk.')
 
-            send_to(archived_doc, doc.get('desk'))
+            send_to(doc=archived_doc, desk_id=doc.get('desk'))
             new_guid = archive_service.duplicate_content(archived_doc)
             guid_of_duplicated_items.append(new_guid)
 

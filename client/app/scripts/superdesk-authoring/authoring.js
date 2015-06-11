@@ -1351,6 +1351,10 @@
                                 $location.url(scope.$parent.referrerUrl);
                             }
                         }, function(err) {
+                            if (err.data._issues['validator exception']) {
+                                notify.error(err.data._issues['validator exception']);
+                            }
+
                             if (sendAndContinue) {
                                 return deferred.reject(err);
                             }

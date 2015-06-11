@@ -90,7 +90,7 @@ class FetchService(BaseService):
             generate_unique_id_and_name(dest_doc)
 
             dest_doc[config.VERSION] = 1
-            send_to(dest_doc, desk_id, stage_id)
+            send_to(doc=dest_doc, desk_id=desk_id, stage_id=stage_id)
             dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
             dest_doc[INGEST_ID] = dest_doc[FAMILY_ID] = ingest_doc['_id']
 
