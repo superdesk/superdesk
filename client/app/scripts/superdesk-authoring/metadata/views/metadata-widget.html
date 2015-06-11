@@ -167,7 +167,7 @@
 			</li>
 		</ul>
 	</div>
-	<div sd-toggle-box data-title="Publishing" data-open="true">
+	<div sd-toggle-box data-title="Publishing" data-open="true" ng-hide="['published', 'killed', 'corrected'].indexOf(item.state)!=-1">
 		<ul class="basic-list">
 			<li class="auto">
 				<label translate>Publish Schedule</label>
