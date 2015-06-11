@@ -150,7 +150,7 @@ function MetadataListEditingDirective(metadata) {
         scope: {
             item: '=',
             field: '@',
-            disabled: '=',
+            disabled: '=ngDisabled',
             list: '=',
             unique: '@',
             postprocessing: '&',
