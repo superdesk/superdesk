@@ -63,6 +63,7 @@ def after_scenario(context, scenario):
     if 'clean' in scenario.tags:
         try:
             os.remove(get_macro_path('behave_macro.py'))
+            os.remove(get_macro_path('validate_headline_macro.py'))
         except:
             pass
 
