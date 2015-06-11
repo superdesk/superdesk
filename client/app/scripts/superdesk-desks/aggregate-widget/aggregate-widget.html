@@ -59,6 +59,31 @@
                              data-filter="agg.query">
                         </div>
                     </div>
+                    
+                    <div class="stage" ng-if="group.type === 'personal'" ng-show="total" ng-init="open = true">
+
+                        <div class="stage-header clearfix">
+                            <div class="line"></div>
+                            <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
+                                <i class="icon-chevron-down"></i>
+                            </button>
+                            <div class="stage-name pull-left">
+                                {{agg.searchLookup[group._id].name}}
+                            </div>
+                            <span class="label pull-right">{{total}}</span>
+                        </div>
+
+                        <div class="stage-content" ng-show="open"
+                             sd-stage-items
+                             data-stage="personal"
+                             data-total="total"
+                             data-allowed="true"
+                             data-show-empty="false"
+                             data-action="agg.preview(item)"
+                             data-selected="agg.selected"
+                             data-filter="agg.query">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

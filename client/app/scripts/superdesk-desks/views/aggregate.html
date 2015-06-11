@@ -69,6 +69,27 @@
                     </div>
                 </div>
                 
+                <div class="stage" ng-if="group.type === 'personal'" ng-show="total">
+                    <div class="stage-header clearfix">
+                        <div class="line"></div>
+                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
+                            <i class="icon-chevron-down"></i>
+                        </button>
+                        <div class="stage-name pull-left" translate>Personal</div>
+                        <span class="label pull-right">{{total}}</span>
+                    </div>
+                    <div class="stage-content" ng-show="agg.getState(group._id)"
+                        sd-stage-items
+                        data-stage="'personal'"
+                        data-total="total"
+                        data-allowed="true"
+                        data-show-empty="false"
+                        data-action="agg.preview(item)"
+                        data-selected="agg.selected"
+                        data-filter="agg.query">
+                    </div>
+                </div>
+                
         </div>
     </div>
 

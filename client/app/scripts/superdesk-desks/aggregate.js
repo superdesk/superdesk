@@ -176,6 +176,15 @@
                     }
                 };
 
+                scope.setPersonalInfo = function() {
+                    var item = scope.editGroups.personal;
+                    if (!item.type) {
+                        item._id = 'personal';
+                        item.type = 'personal';
+                        item.order = _.size(scope.editGroups);
+                    }
+                };
+
                 scope.getValues = function() {
                     var values = Object.keys(scope.editGroups).map(function(key) {
                         return scope.editGroups[key];
@@ -187,6 +196,9 @@
                         if (item.type === 'stage') {
                             var desk = scope.stageLookup[item._id].desk;
                             return scope.editGroups[desk].selected;
+                        }
+                        if (item.type === 'personal') {
+                            return scope.editGroups.personal.selected;
                         }
                         return true;
                     });

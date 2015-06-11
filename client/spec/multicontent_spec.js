@@ -33,6 +33,16 @@ describe('multi content view', function() {
         expect(multicontent.getTextItem(0, 0)).toBe('item6');
     });
 
+    it('configure personal and show it on multicontent view', function() {
+        multicontent.showMulticontentSettings();
+        multicontent.togglePersonal();
+        multicontent.nextStages();
+        multicontent.nextSearches();
+        multicontent.saveSettings();
+        expect(multicontent.getTextItem(0, 1)).toBe('item1');
+        expect(multicontent.getTextItem(0, 2)).toBe('item2');
+    });
+
     it('configure a saved search and show it on multicontent view', function() {
         multicontent.showMulticontentSettings();
         multicontent.nextStages();
