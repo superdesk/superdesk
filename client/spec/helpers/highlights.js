@@ -150,7 +150,8 @@ function Highlights() {
     this.multiMarkHighlight = function(name) {
         var elem = element(by.css('[class="multi-action-bar ng-scope"]'));
         elem.element(by.className('svg-icon-add-to-list')).click();
+        browser.sleep(200);
         elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
-        browser.sleep(1000);
+        browser.sleep(200);
     };
 }

@@ -71,7 +71,7 @@ describe('search service', function() {
             scope.multi.toggle({_id: 'foo', selected: true});
             scope.multi.toggle({_id: 'bar', selected: true});
 
-            scope.multiedit();
+            scope.action.multiedit();
             expect(multiEdit.create).toHaveBeenCalledWith(['foo', 'bar']);
             expect(multiEdit.open).toHaveBeenCalled();
         }));
