@@ -459,14 +459,4 @@ class PublishedItemService(BaseService):
         :return: True if orphan in archive collection, False otherwise.
         """
 
-        query = {'query': {'filtered': {'filter': {'and': [{'term': {'type': 'composite'}}]},
-                                        'query': {
-                                            'match': {'groups.refs.guid': {'query': doc['item_id'], 'operator': 'AND'}}}
-                                        }}}
-
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(query)}
-
-        items = get_resource_service(ARCHIVE).get(req=request, lookup=None)
-
-        return items.count() == 0
+        return get_resource_service(ARCHIVE).get_packages(doc['item_id']).count() == 0

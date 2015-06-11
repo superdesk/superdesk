@@ -16,8 +16,11 @@
                 <span class="user">{{ :: 'by' | translate }} {{ version.creator }}</span>
             </div>
             <h6 ng-class="{'no-title': !version.headline }">{{ :: version.headline || ('Untitled' | translate) }}</h6>
-            <div class="footer">                
-            	<span ng-show='version.desk'>{{ :: 'Desk:' | translate }} {{version.desk}}</span><span ng-show='version.stage'>/{{version.stage}}</span>
+            <div class="desk-details">
+                <span ng-show='version.desk'>{{ :: 'desk:' | translate }} {{version.desk}}</span>
+                <span class="pull-right" ng-show='version.stage'>{{ :: 'stage:' | translate }} {{version.stage}}</span>
+            </div>
+            <div class="footer">
                 <em>{{ :: 'version' | translate }}: {{ version._version }}</em>
                 <div class="state-label state-{{ :: version.state}}">{{ :: version.state }}</div>
 	            <button class="btn btn-light btn-mini pull-right"
