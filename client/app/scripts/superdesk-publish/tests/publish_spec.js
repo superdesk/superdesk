@@ -273,15 +273,18 @@ describe('publish queue', function() {
         expect($scope.multiSelectCount).toBe(0);
     }));
 
-    it('can pass values to filter function', inject(function($rootScope) {
-        $rootScope.$digest();
-        expect($scope.publish_queue.length).toBe(3);
+    it('sets the selected filter channel', inject(function($rootScope) {
+        var channelValue = {foo: 'bar'};
         $scope.selectedFilterChannel = null;
+        $scope.filterSchedule(channelValue, 'channel');
+        expect($scope.selectedFilterChannel).toEqual(channelValue);
+    }));
+
+    it('sets the selected filter subscriber', inject(function($rootScope) {
+        var subscriberValue = {foo: 'bar'};
         $scope.selectedFilterSubscriber = null;
-        $scope.filterSchedule($scope.publish_queue[0], 'channel');
-        expect($scope.selectedFilterChannel).toEqual($scope.publish_queue[0]);
-        $scope.filterSchedule($scope.publish_queue[0], 'subscriber');
-        expect($scope.selectedFilterSubscriber).toEqual($scope.publish_queue[0]);
+        $scope.filterSchedule(subscriberValue, 'subscriber');
+        expect($scope.selectedFilterSubscriber).toEqual(subscriberValue);
     }));
 
     it('can resend single publish queue item', inject(function($rootScope, api, $q) {
