@@ -61,6 +61,7 @@ class RssIngestService(IngestService):
     * type - field's data type
     """
 
+    # TODO: remove bmp, add tiff (to be consistent with media.renditions)
     IMG_MIME_TYPES = (
         'image/bmp',
         'image/gif',
@@ -114,17 +115,21 @@ class RssIngestService(IngestService):
             if t_entry_updated <= t_provider_updated:
                 continue
 
-            # If the entry references any images, create a package from it,
-            # otherwise treat it as a simple text item (even if it might
-            # reference other media types, e.g. video clips).
+            item = self._create_item(entry, field_aliases)
+            self.add_timestamps(item)
+
+            # If the entry references any images, create picture items from
+            # them and create a package containing them and the entry itself.
+            # If there are no image references, treat entry as a simple text
+            # item, even if it might reference other media types, e.g. videos.
             image_urls = self._extract_image_links(entry)
             if image_urls:
-                images = self._fetch_images(image_urls, provider)  # TODO: test is called
-                raise NotImplementedError(images)  # TODO: create a package
-            else:
-                item = self._create_item(entry, field_aliases)
-                self.add_timestamps(item)
+                image_items = self._create_image_items(image_urls, item)
+                new_items.extend(image_items)
                 new_items.append(item)
+                item = self._create_package(item, image_items)
+
+            new_items.append(item)
 
         return [new_items]
 
@@ -193,6 +198,7 @@ class RssIngestService(IngestService):
 
         return list(img_links)
 
+    # TODO: delete this, the downloads will be handled elsewhere
     def _fetch_images(self, image_urls, provider):
         """Fetch images from the given list of URLs.
 
@@ -266,6 +272,63 @@ class RssIngestService(IngestService):
             item[field.name] = field_value
 
         return item
+
+    def _create_image_items(self, image_links, text_item):
+        """ TODO: docstring"""
+        image_items = []
+
+        for image_url in image_links:
+            img_item = {
+                'guid': image_url,
+                'type': 'picture',
+                'firstcreated': text_item.get('firstcreated'),
+                'versioncreated': text_item.get('versioncreated'),
+                'renditions': {
+                    'baseImage': {
+                        'href': image_url
+                    }
+                }
+            }
+            image_items.append(img_item)
+
+        return image_items
+
+    def _create_package(self, text_item, image_items):
+        """TODO: change dosctring... explain side effect (versioncrated for
+        image items )
+
+        Wrap given text item and images into a new content package.
+
+        TODO: change image_links dosctring
+
+        :param dict text_item: text content of the package
+        :param dict images: (image_url, image_data) pairs to be added to the
+            package as picture items
+        :return: the created content package
+        :rtype: dict
+        """
+        package = {
+            'type': 'composite',
+            'groups': [
+                {
+                    'id': 'root',
+                    'role': 'grpRole:NEP',
+                    'refs': [{'idRef': 'main'}],
+                }, {
+                    'id': 'main',
+                    'role': 'main',
+                    'refs': [],
+                }
+            ]
+        }
+
+        item_references = package['groups'][1]['refs']
+        item_references.append({'residRef': text_item['guid']})
+
+        for image in image_items:
+            item_references.append({'residRef': image['guid']})
+
+        return package
 
 
 register_provider(PROVIDER, RssIngestService(), errors)

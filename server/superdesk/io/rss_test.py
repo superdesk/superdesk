@@ -85,6 +85,9 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         self._hard_reset_mock(feed_parse)
         self.instance._fetch_data = MagicMock(return_value='<rss>foo</rss>')
         self.instance._create_item = MagicMock(return_value={})
+        self.instance._extract_image_links = MagicMock(return_value=[])
+        self.instance._fetch_images = MagicMock()
+        self.instance._wrap_into_package = MagicMock()
 
     def test_raises_ingest_error_if_fetching_data_fails(self):
         self.instance._fetch_data.side_effect = FakeIngestApiError
@@ -160,6 +163,46 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         self.assertEqual(len(returned), 1)
         items = returned[0]
         self.assertEqual(len(items), 0)
+
+    # TODO: adjust when package structure is known
+    def DISABLEDtest_returns_package_if_feed_entry_contains_image_links(self):
+        feed_parse.return_value = MagicMock(
+            entries=[
+                MagicMock(
+                    updated_parsed=struct_time(
+                        [2015, 2, 25, 17, 11, 11, 0, 0, 0])
+                ),
+            ]
+        )
+
+        fake_item = dict(
+            guid='fake_item',
+            firstcreated=datetime(2015, 2, 25, 17, 11, 11),
+            versioncreated=datetime(2015, 2, 25, 17, 11, 11),
+        )
+        fake_fetched_images = {
+            'http://image.one': b'image data'
+        }
+        fake_package = MagicMock(name='fake_package')
+
+        item_url = 'http://link.to/fake_item'
+        self.instance._create_item.return_value = fake_item
+        self.instance._extract_image_links.return_value = [item_url]
+        self.instance._fetch_images.return_value = fake_fetched_images
+        self.instance._wrap_into_package.return_value = fake_package
+
+        returned = self.instance._update(
+            {'last_updated': datetime(2015, 2, 24)}
+        )
+
+        self.instance._wrap_into_package.assert_called_with(
+            fake_item, fake_fetched_images)
+
+        # TODO: check that both image_items and the package itself have been
+        # added to the returne newitems list
+        self.assertEqual(len(returned), 1)
+        items = returned[0]
+        self.assertEqual(items, [fake_package])
 
 
 @mock.patch('superdesk.io.rss.requests.get', requests_get)
@@ -413,20 +456,23 @@ class FetchImagesMethodTestCase(RssIngestServiceTest):
         url_2 = 'http://foo.bar/image_2.jpg'
         links = [url_1, url_2]
 
-        response_1 = MagicMock(name='response_1')
-        response_1.ok = True
-        response_1.url = url_1
-        response_1.content = b'img_1 data'
+        response_1 = MagicMock(
+            name='response_1',
+            ok=True,
+            url=url_1,
+            content=b'img_1 data')
 
-        response_2 = MagicMock(name='response_2')
-        response_2.ok = True
-        response_2.url = url_2
-        response_2.content = b'img_2 data'
+        response_2 = MagicMock(
+            name='response_2',
+            ok=True,
+            url=url_2,
+            content=b'img_2 data')
 
-        wrong_response = MagicMock(name='wrong_response')
-        wrong_response.ok = True
-        wrong_response.url = 'http://should.not/be/called'
-        wrong_response.content = b'wrong image'
+        wrong_response = MagicMock(
+            name='wrong_response',
+            ok=True,
+            url='http://should.not/be/called',
+            content=b'wrong image')
 
         def side_effect(url, *args, **kwargs):
             response = {url_1: response_1, url_2: response_2}
@@ -532,3 +578,39 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
         self.assertEqual(item.get('headline'), 'Breaking News!')
         self.assertEqual(item.get('abstract'), 'Something happened...')
         self.assertEqual(item.get('body_html'), 'This is body text.')
+
+
+class WrapIntoPackageMethodTestCase(RssIngestServiceTest):
+    """Tests for the _wrap_into_package() method."""
+
+    def test_creates_package_from_given_text_item_and_images(self):
+        pass  # TODO: implement when it's clear how a package should look like
+
+    # TODO: delete
+    # mixed package example from packages.feature:
+    #
+    # {
+    #     "groups": [
+    #         {
+    #             "id": "root",
+    #             "refs": [{"idRef": "main"}],
+    #             "role": "grpRole:NEP"
+    #         },
+    #         {
+    #             "id": "main",
+    #             "role": "main"
+    #             "refs": [
+    #                 {
+    #                     "headline": "test package with text",
+    #                     "residRef": "tag:example.com,0000:newsml_BRE9A606",
+    #                     "slugline": "awesome article"
+    #                 },
+    #                 {
+    #                     "headline": "test package with pic",
+    #                     "residRef": "tag:example.com,0000:newsml_BRE9A605",
+    #                     "slugline": "awesome picture"
+    #                 },
+    #             ],
+    #         }
+    #     ]
+    # }
