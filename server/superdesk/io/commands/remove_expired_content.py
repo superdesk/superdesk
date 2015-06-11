@@ -52,6 +52,7 @@ def remove_expired_data(provider):
     print('Removing expired content for provider: %s' % provider.get('_id', 'Detached items'))
     minutes_to_keep_content = provider.get('content_expiry', INGEST_EXPIRY_MINUTES)
     expiration_date = utcnow() - timedelta(minutes=minutes_to_keep_content)
+    ingest_service = superdesk.get_resource_service('ingest')
 
     items = get_expired_items(provider, expiration_date)
 
@@ -63,8 +64,7 @@ def remove_expired_data(provider):
 
     if ids:
         print('Removing items %s' % ids)
-        superdesk.app.data._backend('ingest').remove('ingest', {'_id': {'$in': ids}})
-        remove_items_from_elastic(ids)
+        ingest_service.delete({'_id': {'$in': ids}})
 
     for file_id in file_ids:
         print('Deleting file: ', file_id)
@@ -78,16 +78,6 @@ def remove_expired_data(provider):
 def get_expired_items(provider_id, expiration_date):
     query_filter = get_query_for_expired_items(provider_id, expiration_date)
     return superdesk.get_resource_service('ingest').get_from_mongo(lookup=query_filter, req=None)
-
-
-def remove_items_from_elastic(ids):
-    batch_size = 500
-    print("total documents to be removed {}".format(len(ids)))
-    for i in range(0, len(ids), batch_size):
-        batch = ids[i:i + batch_size]
-        query = {'query': {'terms': {'ingest._id': batch}}}
-        superdesk.app.data._search_backend('ingest').remove('ingest', query)
-        print("Removed {} documents from ingest.".format(len(batch)))
 
 
 def get_query_for_expired_items(provider, expiration_date):
