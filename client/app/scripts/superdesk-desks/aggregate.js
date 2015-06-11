@@ -122,6 +122,7 @@
                 searchLookup: '=',
                 groups: '=',
                 editGroups: '=',
+                close: '&',
                 widget: '@'
             },
             link: function(scope, elem) {
@@ -135,6 +136,7 @@
                 scope.closeModal = function() {
                     scope.step.current = 'desks';
                     scope.modalActive = false;
+                    scope.close();
                 };
 
                 scope.previous = function() {
