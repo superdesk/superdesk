@@ -65,7 +65,7 @@ function MetadataDropdownDirective() {
     return {
         scope: {
             list: '=',
-            disabled: '=',
+            disabled: '=ngDisabled',
             item: '=',
             field: '@',
             change: '&'
@@ -150,7 +150,7 @@ function MetadataListEditingDirective(metadata) {
         scope: {
             item: '=',
             field: '@',
-            disabled: '=',
+            disabled: '=ngDisabled',
             list: '=',
             unique: '@',
             postprocessing: '&',
