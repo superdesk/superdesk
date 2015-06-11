@@ -31,6 +31,7 @@ logger.setLevel(logging.INFO)
 handler = SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))
 handler.setFormatter(Formatter(debug_log_format))
 logger.addHandler(handler)
+logger.addHandler(logging.StreamHandler())
 
 
 def log(log_msg):
