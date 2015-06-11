@@ -136,7 +136,6 @@ Feature: User Resource
         Then the field "display_name" value is "first Testing"
 
     @auth
-    @dbauth
     @notification
     Scenario: Update user type
         Given "users"
@@ -154,7 +153,6 @@ Feature: User Resource
         """
 
     @auth
-    @dbauth
     @notification
     Scenario: Update user privilege
         Given "users"
