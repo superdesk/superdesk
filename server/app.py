@@ -30,8 +30,9 @@ from logging.handlers import SysLogHandler
 from settings import LOG_SERVER_ADDRESS, LOG_SERVER_PORT
 
 
-logging.basicConfig(handlers=[SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))])
+logging.basicConfig(handlers=[logging.StreamHandler(), SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))])
 logger = logging.getLogger('superdesk')
+logger.setLevel(logging.INFO)
 sentry = Sentry(register_signal=False, wrap_wsgi=False)
 
 
