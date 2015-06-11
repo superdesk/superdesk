@@ -1392,10 +1392,10 @@
                 }
 
                 function sendIngest(deskId, stageId, macro, open) {
-                    return send.sendAs(scope.item, {
+                    return send.oneAs(scope.item, {
                         desk: deskId,
                         stage: stageId,
-                        macro: macro
+                        macro: macro ? macro.name : macro
                     }).then(function(finalItem) {
                         notify.success(gettext('Item fetched.'));
                         if (open) {

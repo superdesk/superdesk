@@ -3,7 +3,6 @@ define([
     'lodash',
     'require',
     './activity-list-directive',
-    './activity-item-directive',
     './activity-chooser-directive',
     './activity-modal-directive'
 ], function(angular, _, require) {
@@ -482,9 +481,16 @@ define([
         });
     }]);
     module.directive('sdActivityList', require('./activity-list-directive'));
-    module.directive('sdActivityItem', require('./activity-item-directive'));
+    module.directive('sdActivityItem', ActivityItemDirective);
     module.directive('sdActivityChooser', require('./activity-chooser-directive'));
     module.directive('sdActivityModal', require('./activity-modal-directive'));
+
+    ActivityItemDirective.$inject = ['asset'];
+    function ActivityItemDirective(asset) {
+        return {
+            templateUrl: asset.templateUrl('superdesk/activity/views/activity-item.html')
+        };
+    }
 
     return module;
 });
