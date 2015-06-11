@@ -1,4 +1,15 @@
 <dl ng-if="desks.length">
-	<dt translate>fetched in:</dt>
-	<dd ng-repeat="desk in desks track by desk.desk._id"><a ng-href="">{{desk.desk.name}} ({{desk.count}})</a>{{$last ? '' : ', '}} </dd>
+	<dt translate>fetched in</dt>
+	<dd ng-if="desks.length<3" ng-repeat="desk in desks track by desk.desk._id"><a ng-click="selectFetched(desk)">{{desk.desk.name}} ({{desk.count}})</a>{{$last ? '' : ', '}} </dd>
+
+    <dd ng-if="desks.length>2" class="dropdown dropup more-actions" dropdown>
+        <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots"></i></button>
+        <div class="dropdown-menu">
+            <ul>
+                <li ng-repeat="desk in desks track by desk.desk._id">
+                    <a ng-click="selectFetched(desk)">{{desk.desk.name}} ({{desk.count}})</a>
+                </li>
+            </ul>
+        </div>
+    </dd> 
 </dl>

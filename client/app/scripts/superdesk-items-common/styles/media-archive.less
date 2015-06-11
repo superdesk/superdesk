@@ -349,9 +349,8 @@
 		}
 		dl {
 			.clearfix();
-			font-size:11px;
+			font-size: 11px;
 			height: 1%;
-			overflow: hidden;
 			margin:0 2px;
 			dt {
 				width:auto;
@@ -376,6 +375,10 @@
 					overflow:hidden;
 					text-overflow:ellipsis;
 					white-space: nowrap;
+				}
+				&.dropdown:hover .dropdown-menu {
+				    display: block;
+				    min-width: 100%;     
 				}
 			}
 		}
@@ -422,7 +425,7 @@
 .mgrid-view, #scratchpad {
 	.media-box {
 		.action {
-                    display: none;
+            display: none;
 			height:33px;
 			position: absolute;
 			left: 0;
@@ -492,6 +495,11 @@
 
 		}
 	}
+}
+
+.fetched-desk-tooltip {
+	border:0;
+	background: transparent;
 }
 
 .mgrid-view {
@@ -631,6 +639,16 @@
 				line-height: 18px;
 				position: relative;
 				margin-left: 142px;
+				dl {
+					margin: 0;
+				}
+				dt, dd {
+					display: inline-block;
+					&.dropdown:hover .dropdown-menu {
+					    display: block;  
+					    min-width: 100%;  
+					}
+				}
 			}
 			.state-label {
 				margin-top: 2px;
