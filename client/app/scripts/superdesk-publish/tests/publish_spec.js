@@ -273,14 +273,14 @@ describe('publish queue', function() {
         expect($scope.multiSelectCount).toBe(0);
     }));
 
-    it('sets the selected filter channel', inject(function($rootScope) {
+    it('sets the selected filter channel', inject(function() {
         var channelValue = {foo: 'bar'};
         $scope.selectedFilterChannel = null;
         $scope.filterSchedule(channelValue, 'channel');
         expect($scope.selectedFilterChannel).toEqual(channelValue);
     }));
 
-    it('sets the selected filter subscriber', inject(function($rootScope) {
+    it('sets the selected filter subscriber', inject(function() {
         var subscriberValue = {foo: 'bar'};
         $scope.selectedFilterSubscriber = null;
         $scope.filterSchedule(subscriberValue, 'subscriber');
