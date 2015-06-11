@@ -283,7 +283,13 @@
             );
         };
 
-        $scope.filterSchedule = function() {
+        $scope.filterSchedule = function(item, type) {
+            if (type === 'channel') {
+                $scope.selectedFilterChannel = item;
+            } else if (type === 'subscriber') {
+                $scope.selectedFilterSubscriber = item;
+            }
+
             $scope.multiSelectCount = 0;
             fetchPublishQueue().then(function(queue) {
                 var queuedItems = queue._items;
