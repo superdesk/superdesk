@@ -32,13 +32,13 @@ class ArchivePublishTestCase(TestCase):
             'name': 'dest1',
             'delivery_type': 'ftp',
             'config': {'address': '127.0.0.1', 'username': 'test'}}]},
-                            {'_id': '2', 'name': 'sub1', 'is_active': True, 'destinations': [{
-                                'name': 'dest2',
-                                'delivery_type': 'file copy',
-                                'config': {'address': '/share/copy'}}, {
-                                'name': 'dest3',
-                                'delivery_type': 'Email',
-                                'config': {'address': 'send@gmail.com'}}]}]
+            {'_id': '2', 'name': 'sub1', 'is_active': True,
+             'destinations': [{'name': 'dest2',
+                               'delivery_type': 'file copy',
+                               'config': {'address': '/share/copy'}},
+                              {'name': 'dest3',
+                               'delivery_type': 'Email',
+                               'config': {'address': 'send@gmail.com'}}]}]
 
         self.output_channels = [{'_id': '1', 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': ['1']},
                                 {'_id': '2', 'name': 'oc2', 'is_active': False, 'format': 'nitf',
