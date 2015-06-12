@@ -43,6 +43,10 @@
         <dt translate>Version creator</dt>
         <dd>{{ versionCreator }}</dd>
     </dl>
+    <dl ng-if="item.sign_off">
+        <dt translate>Sign-off</dt>
+        <dd>{{ item.sign_off }}</dd>
+    </dl>
 
     <!-- ingest details -->
     <dl ng-if="item.original_source">
@@ -131,7 +135,7 @@
         <dt translate>Signal</dt>
         <dd>{{ item.signal }}</dd>
     </dl>
-    <dl ng-if="item.bydlne">
+    <dl ng-if="item.byline">
         <dt translate>Byline</dt>
         <dd>{{ item.byline }}</dd>
     </dl>
