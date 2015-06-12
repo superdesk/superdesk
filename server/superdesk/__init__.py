@@ -38,9 +38,6 @@ resources = dict()
 eve_backend = EveBackend()
 default_user_preferences = dict()
 default_session_preferences = dict()
-
-
-logger = logging.getLogger(__name__)
 signals = blinker.Namespace()
 
 
@@ -50,16 +47,19 @@ class Command(BaseCommand):
     Reason being the flask-script's run the commands using test_request_context() which is invalid.
     That's the reason we are inheriting the Flask-Script's Command to overcome this issue.
     """
+    logging.basicConfig(handlers=[logging.StreamHandler()])
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
     def __call__(self, _app=None, *args, **kwargs):
         try:
             with app.app_context():
                 res = self.run(*args, **kwargs)
-                print('Command finished with: ', res)
+                self.logger.info('Command finished with: {}'.format(res))
                 return 0
         except Exception as ex:
-            print('Uhoh, an exception occured while running the command...')
-            logger.exception(ex)
+            self.logger.info('Uhoh, an exception occured while running the command...')
+            self.logger.exception(ex)
             return 1
 
 
