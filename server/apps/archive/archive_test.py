@@ -11,7 +11,6 @@ from superdesk import get_resource_service
 
 from superdesk.tests import TestCase
 from eve.utils import date_to_str, config
-from apps.archive import init_app
 from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent
 from apps.archive import ArchiveService
@@ -121,8 +120,7 @@ class RemoveSpikedContentTestCase(TestCase):
                                         'type': 'text'
                                     }
                                 ],
-                                'role': 'grpRole:main'
-                            },
+                                'role': 'grpRole:main'},
                             {
                                 'id': 'story',
                                 'refs': [
