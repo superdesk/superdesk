@@ -37,11 +37,14 @@ def get_upload_as_data_uri(media_id):
             data,
             mimetype=media_file.content_type,
             direct_passthrough=True)
-        response.content_length = media_file.length
-        response.last_modified = media_file.upload_date
-        response.set_etag(media_file.md5)
-        response.cache_control.max_age = cache_for
-        response.cache_control.s_max_age = cache_for
+        try:
+            response.content_length = media_file.length
+            response.last_modified = media_file.upload_date
+            response.set_etag(media_file.md5)
+            response.cache_control.max_age = cache_for
+            response.cache_control.s_max_age = cache_for
+        except Exception:
+            pass
         response.cache_control.public = True
         response.make_conditional(request)
         return response
@@ -49,8 +52,11 @@ def get_upload_as_data_uri(media_id):
 
 
 def url_for_media(media_id):
-    return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
-                   _external=True, _schema=superdesk.config.URL_PROTOCOL)
+    try:
+        return app.media.url_for_media(media_id)
+    except AttributeError:
+        return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
+                       _external=True, _schema=superdesk.config.URL_PROTOCOL)
 
 
 def init_app(app):

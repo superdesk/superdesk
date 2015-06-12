@@ -37,8 +37,13 @@ class AmazonMediaStorage(MediaStorage):
     def __init__(self, app=None):
         super().__init__(app)
         username, api_key, endpoint = self.read_from_config()
+        self.endpoint = endpoint
         self.conn = tinys3.Connection(username, api_key, tls=True, endpoint=endpoint)
         self.user_metadata_header = 'x-amz-meta-'
+
+    def url_for_media(self, media_id):
+        protocol = 'https' if self.app.config.get('S3_USE_HTTPS', False) else 'http'
+        return '%s://%s.%s/%s' % (protocol, self.container_name, self.endpoint, media_id)
 
     def read_from_config(self):
         if 'AMAZON_REGION' in self.app.config:
