@@ -33,19 +33,18 @@ class AppScaffoldDataCommand(superdesk.Command):
         desk_id = desk['_id']
         stage_id = desk['incoming_stage']
 
-        min_size = 100
-        bucket_size = min_size if min_size < no_of_stories else no_of_stories
+        bucket_size = min(100, no_of_stories)
 
         no_of_buckets = len(range(0, no_of_stories, bucket_size))
 
         for x in range(0, no_of_buckets):
             skip = x * bucket_size * skip_index
-            print('Page : {}, skip: {}'.format(x + 1, skip))
+            self.logger.info('Page : {}, skip: {}'.format(x + 1, skip))
             cursor = get_resource_service('text_archive').get_from_mongo(None, {})
             cursor.skip(skip)
             cursor.limit(bucket_size)
             items = list(cursor)
-            print('Inserting {} items'.format(len(items)))
+            self.logger.info('Inserting {} items'.format(len(items)))
             archive_items = []
 
             for item in items:
