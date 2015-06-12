@@ -1,0 +1,99 @@
+<section class="search main-section search-page-container sidebar-open">
+
+  <div class="archive-sidebar"> <!-- Search widget -->
+    <div class="header">
+      <div class="icon">
+        <i class="icon-filter-large"></i>
+      </div>
+      <ul>
+        <li translate>Search</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <div >
+        <div data-context="context" class="pull-left">
+          <form>
+            <fieldset>
+              <div class="field">
+                <label for="search-headline">
+                  {{:: 'Headline' | translate}}
+                </label>
+                <div class="control">
+                  <input type="text" id="search-headline" ng-model="meta.headline" tabindex="1">
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="search-slugline">
+                  {{:: 'Keyword' | translate}}
+
+                </label>
+                <div class="control">
+                  <input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="2">
+                </div>
+              </div>
+
+              <div class="multiple">
+                <div class="field">
+                  <label for="search-storyname">
+                    {{:: 'Story Name' | translate}}
+                  </label>
+                  <input type="text" id="search-storyname" ng-model="meta.unique_name" tabindex="3">
+                </div>
+                <div class="field">
+                  <label for="search-storytext">
+                    {{:: 'Story Text' | translate}}
+                  </label>
+                  <input type="text" id="search-storytext" ng-model="meta.body_html" tabindex="4">
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="search-creator">
+                  {{:: 'Creator' | translate}}
+                </label>
+                <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="5">
+              </div>
+
+              <div class="field">
+                <label for="search-subject">
+                  {{:: 'Subject' | translate}}
+                </label>
+                <div class="control">
+                  <div sd-meta-terms data-item="subjectitems" data-field="subject" data-unique="qcode" data-list="subjectcodes" data-change="subjectSearch(subjectitems)"></div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+          <div class="actions">
+            <button class="btn btn-info pull-right" ng-click="search()" tabindex="7" translate>Go</button>
+            <button class="btn btn-info pull-right" ng-click="clear()" tabindex="8" translate>Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="archive-content">
+    <div class="list-pane list-view">
+        <header class="search-page-header">
+            <!-- <div sd-item-sortbar></div> -->
+            <!-- <div sd-item-searchbar data-context="context" class="searchbar-flex-handler"></div> -->
+            <!-- <div sd-pagination data-items="items"></div> -->
+        </header>
+
+        <div class="content" sd-updown data-items="items">
+            <div class="loading-indicator" ng-show="loading" translate>loading</div>
+
+            <div sd-shadow>
+                <ul class="compact-view list-view">
+                    <!-- <li ng-repeat="item in items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}"> -->
+                    <!--     <div sd-media-box></div> -->
+                    <!-- </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>

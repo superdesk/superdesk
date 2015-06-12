@@ -46,7 +46,8 @@ define([
         'superdesk.dashboard.world-clock',
         'superdesk.workspace.content',
         'superdesk.workspace.tasks',
-        'superdesk.itemList'
+        'superdesk.itemList',
+        'superdesk.legal_archive'
     ])
 
     .service('workspace', require('./workspace-service'))
