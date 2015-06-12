@@ -27,169 +27,172 @@ import superdesk
 
 
 class ArchivePublishTestCase(TestCase):
-    subscribers = [{'_id': '1', 'name': 'sub1', 'is_active': True, 'destinations': [{
-                    'name': 'dest1',
-                    'delivery_type': 'ftp',
-                    'config': {'address': '127.0.0.1', 'username': 'test'}}]},
-                   {'_id': '2', 'name': 'sub1', 'is_active': True, 'destinations': [{
-                    'name': 'dest2',
-                    'delivery_type': 'file copy',
-                    'config': {'address': '/share/copy'}}, {
-                       'name': 'dest3',
-                       'delivery_type': 'Email',
-                       'config': {'address': 'send@gmail.com'}}]}]
+    def init_data(self):
+        self.subscribers = [{'_id': '1', 'name': 'sub1', 'is_active': True, 'destinations': [{
+            'name': 'dest1',
+            'delivery_type': 'ftp',
+            'config': {'address': '127.0.0.1', 'username': 'test'}}]},
+                            {'_id': '2', 'name': 'sub1', 'is_active': True, 'destinations': [{
+                                'name': 'dest2',
+                                'delivery_type': 'file copy',
+                                'config': {'address': '/share/copy'}}, {
+                                'name': 'dest3',
+                                'delivery_type': 'Email',
+                                'config': {'address': 'send@gmail.com'}}]}]
 
-    output_channels = [{'_id': '1', 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': ['1']},
-                       {'_id': '2', 'name': 'oc2', 'is_active': False, 'format': 'nitf', 'destinations': ['1', '2']},
-                       {'_id': '3', 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': ['2']},
-                       {'_id': '4', 'name': 'oc4', 'is_active': True,
-                        'is_digital': True, 'format': 'nitf', 'destinations': ['2']}]
+        self.output_channels = [{'_id': '1', 'name': 'oc1', 'is_active': True, 'format': 'nitf', 'destinations': ['1']},
+                                {'_id': '2', 'name': 'oc2', 'is_active': False, 'format': 'nitf',
+                                 'destinations': ['1', '2']},
+                                {'_id': '3', 'name': 'oc3', 'is_active': True, 'format': 'anpa', 'destinations': ['2']},
+                                {'_id': '4', 'name': 'oc4', 'is_active': True,
+                                 'is_digital': True, 'format': 'nitf', 'destinations': ['2']}]
 
-    destination_groups = [{'_id': '1', 'name': 'dg1'},
-                          {'_id': '2', 'name': 'dg2', 'destination_groups': ['1']},
-                          {'_id': '3', 'name': 'dg3',
-                           'output_channels': [{'channel': '1', 'selector_codes': ['A', 'B']}]},
-                          {'_id': '4', 'name': 'dg4',
-                           'output_channels': [{'channel': '1', 'selector_codes': ['Y']},
-                                               {'channel': '2', 'selector_codes': ['X', 'B']},
-                                               {'channel': '4'}]},
-                          {'_id': '5', 'name': 'dg5',
-                           'output_channels': [{'channel': '2', 'selector_codes': ['A']},
-                                               {'channel': '3', 'selector_codes': ['X', 'y']}]}]
+        self.destination_groups = [{'_id': '1', 'name': 'dg1'},
+                                   {'_id': '2', 'name': 'dg2', 'destination_groups': ['1']},
+                                   {'_id': '3', 'name': 'dg3',
+                                    'output_channels': [{'channel': '1', 'selector_codes': ['A', 'B']}]},
+                                   {'_id': '4', 'name': 'dg4',
+                                    'output_channels': [{'channel': '1', 'selector_codes': ['Y']},
+                                                        {'channel': '2', 'selector_codes': ['X', 'B']},
+                                                        {'channel': '4'}]},
+                                   {'_id': '5', 'name': 'dg5',
+                                    'output_channels': [{'channel': '2', 'selector_codes': ['A']},
+                                                        {'channel': '3', 'selector_codes': ['X', 'y']}]}]
 
-    articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 '_id': '1',
-                 'type': 'text',
-                 'last_version': 3,
-                 '_version': 4,
-                 'body_html': 'Test body',
-                 'destination_groups': ['4'],
-                 'urgency': 4,
-                 'headline': 'Two students missing',
-                 'pubstatus': 'usable',
-                 'firstcreated': utcnow(),
-                 'byline': 'By Alan Karben',
-                 'ednote': 'Andrew Marwood contributed to this article',
-                 'dateline': 'Sydney',
-                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
-                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
-                            {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'published',
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'unique_name': '#1'},
-                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
-                 '_id': '2',
-                 'last_version': 3,
-                 '_version': 4,
-                 'body_html': 'Test body of the second article',
-                 'destination_groups': ['4'],
-                 'urgency': 4,
-                 'headline': 'Another two students missing',
-                 'pubstatus': 'usable',
-                 'firstcreated': utcnow(),
-                 'byline': 'By Alan Karben',
-                 'ednote': 'Andrew Marwood contributed to this article',
-                 'dateline': 'Sydney',
-                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
-                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
-                            {'qcode': '04001002', 'name': 'Weather'}],
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'state': 'scheduled',
-                 'publish_schedule': "2016-05-30T10:00:00+0000",
-                 'type': 'text',
-                 'unique_name': '#2'},
-                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fa',
-                 '_id': '3',
-                 'last_version': 3,
-                 '_version': 4,
-                 'body_html': 'Test body',
-                 'destination_groups': ['4'],
-                 'urgency': 4,
-                 'headline': 'Two students missing killed',
-                 'pubstatus': 'usable',
-                 'firstcreated': utcnow(),
-                 'byline': 'By Alan Karben',
-                 'ednote': 'Andrew Marwood contributed to this article killed',
-                 'dateline': 'Sydney',
-                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
-                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
-                            {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'killed',
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'type': 'text',
-                 'unique_name': '#3'},
-                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fb',
-                 '_id': '4',
-                 'last_version': 3,
-                 '_version': 4,
-                 'body_html': 'Take-1 body',
-                 'destination_groups': ['4'],
-                 'urgency': 4,
-                 'headline': 'Take-1 headline',
-                 'abstract': 'Abstract for take-1',
-                 'anpa-category': {'qcode': 'A', 'name': 'Sport'},
-                 'pubstatus': 'done',
-                 'firstcreated': utcnow(),
-                 'byline': 'By Alan Karben',
-                 'dateline': 'Sydney',
-                 'slugline': 'taking takes',
-                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
-                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
-                            {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'in-progress',
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'type': 'text',
-                 'unique_name': '#4'},
-                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fg',
-                 '_id': '5',
-                 'last_version': 3,
-                 '_version': 4,
-                 'body_html': 'Take-2 body',
-                 'destination_groups': ['4'],
-                 'urgency': 4,
-                 'headline': 'Take-2 headline',
-                 'abstract': 'Abstract for take-1',
-                 'anpa-category': {'qcode': 'A', 'name': 'Sport'},
-                 'pubstatus': 'done',
-                 'firstcreated': utcnow(),
-                 'byline': 'By Alan Karben',
-                 'dateline': 'Sydney',
-                 'slugline': 'taking takes',
-                 'keywords': ['Student', 'Crime', 'Police', 'Missing'],
-                 'subject':[{'qcode': '17004000', 'name': 'Statistics'},
-                            {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'published',
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'type': 'text',
-                 'unique_name': '#5'},
-                {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
-                 '_id': '6',
-                 'last_version': 2,
-                 '_version': 3,
-                 'type': 'composite',
-                 'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
-                            {
-                                'id': 'main',
-                                'refs': [
-                                    {
-                                        'location': 'archive',
-                                        'guid': '5',
-                                        'type': 'text'
-                                    },
-                                    {
-                                        'location': 'archive',
-                                        'guid': '4',
-                                        'type': 'text'
-                                    }
-                                ],
-                                'role': 'grpRole:main'}],
-                 'firstcreated': utcnow(),
-                 'expiry': utcnow() + timedelta(minutes=20),
-                 'unique_name': '#6'}]
+        self.articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
+                          '_id': '1',
+                          'type': 'text',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Test body',
+                          'destination_groups': ['4'],
+                          'urgency': 4,
+                          'headline': 'Two students missing',
+                          'pubstatus': 'usable',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'ednote': 'Andrew Marwood contributed to this article',
+                          'dateline': 'Sydney',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'state': 'published',
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'unique_name': '#1'},
+                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
+                          '_id': '2',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Test body of the second article',
+                          'destination_groups': ['4'],
+                          'urgency': 4,
+                          'headline': 'Another two students missing',
+                          'pubstatus': 'usable',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'ednote': 'Andrew Marwood contributed to this article',
+                          'dateline': 'Sydney',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'state': 'scheduled',
+                          'publish_schedule': "2016-05-30T10:00:00+0000",
+                          'type': 'text',
+                          'unique_name': '#2'},
+                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fa',
+                          '_id': '3',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Test body',
+                          'destination_groups': ['4'],
+                          'urgency': 4,
+                          'headline': 'Two students missing killed',
+                          'pubstatus': 'usable',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'ednote': 'Andrew Marwood contributed to this article killed',
+                          'dateline': 'Sydney',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'state': 'killed',
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'type': 'text',
+                          'unique_name': '#3'},
+                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fb',
+                          '_id': '4',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Take-1 body',
+                          'destination_groups': ['4'],
+                          'urgency': 4,
+                          'headline': 'Take-1 headline',
+                          'abstract': 'Abstract for take-1',
+                          'anpa-category': {'qcode': 'A', 'name': 'Sport'},
+                          'pubstatus': 'done',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'dateline': 'Sydney',
+                          'slugline': 'taking takes',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'state': 'in-progress',
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'type': 'text',
+                          'unique_name': '#4'},
+                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fg',
+                          '_id': '5',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Take-2 body',
+                          'destination_groups': ['4'],
+                          'urgency': 4,
+                          'headline': 'Take-2 headline',
+                          'abstract': 'Abstract for take-1',
+                          'anpa-category': {'qcode': 'A', 'name': 'Sport'},
+                          'pubstatus': 'done',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'dateline': 'Sydney',
+                          'slugline': 'taking takes',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'state': 'published',
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'type': 'text',
+                          'unique_name': '#5'},
+                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
+                          '_id': '6',
+                          'last_version': 2,
+                          config.VERSION: 3,
+                          'type': 'composite',
+                          'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
+                                     {
+                                         'id': 'main',
+                                         'refs': [
+                                             {
+                                                 'location': 'archive',
+                                                 'guid': '5',
+                                                 'type': 'text'
+                                             },
+                                             {
+                                                 'location': 'archive',
+                                                 'guid': '4',
+                                                 'type': 'text'
+                                             }
+                                         ],
+                                         'role': 'grpRole:main'}],
+                          'firstcreated': utcnow(),
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'unique_name': '#6'}]
 
     def setUp(self):
         super().setUp()
         with self.app.app_context():
+            self.init_data()
             self.app.data.insert('output_channels', self.output_channels)
             self.app.data.insert('subscribers', self.subscribers)
             self.app.data.insert('destination_groups', self.destination_groups)
@@ -326,7 +329,7 @@ class ArchivePublishTestCase(TestCase):
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(6, queue_items.count())
 
-            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend())\
+            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()) \
                 .delete_by_article_id(self.articles[1]['_id'])
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEquals(0, queue_items.count())
@@ -361,7 +364,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertGreaterEqual(formatted_items.count(), 1, 'Formatted Items must be greater than or equal to 1')
             for formatted_item in formatted_items:
                 self.assertEquals(formatted_item['item_id'], self.articles[0]['_id'])
-                self.assertEquals(formatted_item['item_version'], self.articles[0]['_version'])
+                self.assertEquals(formatted_item['item_version'], self.articles[0][config.VERSION])
 
             self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
 
@@ -415,7 +418,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertEquals(1, published_items.count())
 
             killed = self.articles[2].copy()
-            killed['_version'] += 1
+            killed[config.VERSION] += 1
             get_resource_service('archive_publish').queue_transmission(killed)
             published_service.post([killed])
 
@@ -433,7 +436,6 @@ class ArchivePublishTestCase(TestCase):
 
     def test_processing_very_first_take(self):
         with self.app.app_context():
-
             original_package, updated_package = get_resource_service('archive_publish').process_takes(
                 self.articles[4], self.articles[5]['_id'])
 
@@ -444,7 +446,6 @@ class ArchivePublishTestCase(TestCase):
 
     def test_processing_second_take_where_first_take_published(self):
         with self.app.app_context():
-
             original_package, updated_package = get_resource_service('archive_publish').process_takes(
                 self.articles[3], self.articles[5]['_id'])
 
@@ -477,14 +478,14 @@ class ArchivePublishTestCase(TestCase):
 
             # Killing the published article and manually inserting the version of the article as unittests use
             # service directly
-            _version = doc['_version'] + 1
+            _current_version = doc[config.VERSION] + 1
             get_resource_service('archive_kill').patch(id=doc['_id'],
-                                                       updates={'_version': _version})
+                                                       updates={config.VERSION: _current_version})
             killed_version = {
                 'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                 versioned_id_field(): '1',
                 'type': 'text',
-                '_version': _version,
+                config.VERSION: _current_version,
                 'body_html': 'Test body',
                 'destination_groups': ['4'],
                 'urgency': 4,
@@ -514,7 +515,7 @@ class ArchivePublishTestCase(TestCase):
             article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original['item_id'])
             self.assertIsNotNone(article_in_production)
             self.assertEquals(article_in_production['state'], 'killed')
-            self.assertEquals(article_in_production['_version'], _version)
+            self.assertEquals(article_in_production[config.VERSION], _current_version)
 
             # Validate the collections in Legal Archive
             article_in_legal_archive, article_versions_in_legal_archive, formatted_items, queue_items = \
@@ -529,7 +530,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertGreaterEqual(formatted_items.count(), 1, 'Formatted Items must be greater than or equal to 1')
             for formatted_item in formatted_items:
                 self.assertEquals(formatted_item['item_id'], original['item_id'])
-                self.assertEquals(formatted_item['item_version'], self.articles[0]['_version'])
+                self.assertEquals(formatted_item['item_version'], self.articles[0][config.VERSION])
 
             self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
 
@@ -548,7 +549,7 @@ class ArchivePublishTestCase(TestCase):
 
             # Validate the collections in Legal Archive
             article_in_legal_archive, article_versions_in_legal_archive, formatted_items, queue_items = \
-                self.__get_legal_archive_details(original['item_id'], article_version=_version,
+                self.__get_legal_archive_details(original['item_id'], article_version=_current_version,
                                                  publishing_action='killed')
 
             self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
@@ -560,7 +561,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertGreaterEqual(formatted_items.count(), 1, 'Formatted Items must be greater than or equal to 1')
             for formatted_item in formatted_items:
                 self.assertEquals(formatted_item['item_id'], original['item_id'])
-                self.assertEquals(formatted_item['item_version'], _version)
+                self.assertEquals(formatted_item['item_version'], _current_version)
 
             self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
 
@@ -568,7 +569,7 @@ class ArchivePublishTestCase(TestCase):
         return [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '1',
                  'type': 'text',
-                 '_version': 1,
+                 config.VERSION: 1,
                  'destination_groups': ['4'],
                  'urgency': 4,
                  'pubstatus': 'usable',
@@ -584,7 +585,7 @@ class ArchivePublishTestCase(TestCase):
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '1',
                  'type': 'text',
-                 '_version': 2,
+                 config.VERSION: 2,
                  'destination_groups': ['4'],
                  'urgency': 4,
                  'headline': 'Two students missing',
@@ -601,7 +602,7 @@ class ArchivePublishTestCase(TestCase):
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '1',
                  'type': 'text',
-                 '_version': 3,
+                 config.VERSION: 3,
                  'destination_groups': ['4'],
                  'urgency': 4,
                  'headline': 'Two students missing',
@@ -619,7 +620,7 @@ class ArchivePublishTestCase(TestCase):
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '1',
                  'type': 'text',
-                 '_version': 4,
+                 config.VERSION: 4,
                  'body_html': 'Test body',
                  'destination_groups': ['4'],
                  'urgency': 4,

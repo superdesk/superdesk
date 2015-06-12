@@ -23,7 +23,7 @@
         unique_name: '',
         keywords: [],
         description: null,
-        destination_groups: null,
+        destination_groups: [],
         sign_off: null,
         publish_schedule: null,
         marked_for_not_publication: false,
@@ -397,7 +397,7 @@
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
                 //if not the last published version
-                if ((angular.isDefined(item.archive_item) && item._version !== item.archive_item._version)) {
+                if ((angular.isDefined(item.archive_item) && item._current_version !== item.archive_item._current_version)) {
                     return angular.extend({}, DEFAULT_ACTIONS);
                 }
 

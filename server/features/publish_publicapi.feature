@@ -65,7 +65,7 @@ Feature: Publish content to the public API
 	    """
 		And we get existing resource
         """
-        {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+        {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
         When we get "/publish_queue"
         Then we get existing resource
@@ -75,7 +75,7 @@ Feature: Publish content to the public API
         When we get "/published"
         Then we get existing resource
         """
-        {"_items" : [{"guid": "item1", "_version": 2, "state": "published"}]}
+        {"_items" : [{"guid": "item1", "_current_version": 2, "state": "published"}]}
         """
         When we get "/formatted_item"
         Then we get list with 1 items

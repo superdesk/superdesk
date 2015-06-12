@@ -81,7 +81,7 @@ class Newsml12FormatterTest(TestCase):
 
     def test_format_identification_for_corrections(self):
         self.article['state'] = 'corrected'
-        self.article['_version'] = 7
+        self.article['_current_version'] = 7
         self.formatter._format_identification(self.article, self.newsml)
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/RevisionId').get('PreviousRevision'), '6')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/RevisionId').get('Update'), 'A')

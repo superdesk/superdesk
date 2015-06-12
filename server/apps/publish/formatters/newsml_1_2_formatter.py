@@ -56,7 +56,7 @@ class NewsML12Formatter(Formatter):
         SubElement(news_identifier, 'ProviderId').text = AAP_PROVIDER_ID
         SubElement(news_identifier, 'DateId').text = self.now.strftime("%Y%m%d")
         SubElement(news_identifier, 'NewsItemId').text = article['_id']
-        SubElement(news_identifier, 'RevisionId', revision).text = str(article.get('_version', ''))
+        SubElement(news_identifier, 'RevisionId', revision).text = str(article.get('_current_version', ''))
         SubElement(news_identifier, 'PublicIdentifier').text = article['_id']
         SubElement(identification, "DateLabel").text = self.now.strftime("%A %d %B %Y")
 
@@ -65,7 +65,7 @@ class NewsML12Formatter(Formatter):
         # For the re-writes 'RelatesTo' field will be user
         revision = {'PreviousRevision': '0', 'Update': 'N'}
         if article['state'] == 'corrected':
-            revision['PreviousRevision'] = str(article.get('_version') - 1)
+            revision['PreviousRevision'] = str(article.get('_current_version') - 1)
             revision['Update'] = 'A'
         return revision
 

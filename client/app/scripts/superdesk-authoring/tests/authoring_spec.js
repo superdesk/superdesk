@@ -657,7 +657,7 @@ describe('authoring actions', function() {
                     'desk': 'desk1'
                 },
                 'more_coming': false,
-                '_version': 10,
+                '_current_version': 10,
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
@@ -667,7 +667,7 @@ describe('authoring actions', function() {
                         'desk': 'desk1'
                     },
                     'more_coming': false,
-                    '_version': 10
+                    '_current_version': 10
                 }
             };
 
@@ -701,7 +701,7 @@ describe('authoring actions', function() {
                     'desk': 'desk1'
                 },
                 'more_coming': false,
-                '_version': 10,
+                '_current_version': 10,
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
@@ -711,7 +711,7 @@ describe('authoring actions', function() {
                         'desk': 'desk1'
                     },
                     'more_coming': false,
-                    '_version': 10
+                    '_current_version': 10
                 }
             };
 
@@ -745,7 +745,7 @@ describe('authoring actions', function() {
                     'desk': 'desk1'
                 },
                 'more_coming': false,
-                '_version': 8,
+                '_current_version': 8,
                 'archive_item': {
                     '_id': 'test',
                     'state': 'published',
@@ -755,7 +755,7 @@ describe('authoring actions', function() {
                         'desk': 'desk1'
                     },
                     'more_coming': false,
-                    '_version': 10
+                    '_current_version': 10
                 }
             };
 
@@ -788,7 +788,7 @@ describe('authoring actions', function() {
                     'desk': 'desk1'
                 },
                 'more_coming': false,
-                '_version': 8,
+                '_current_version': 8,
                 'archive_item': {
                     '_id': 'test',
                     'state': 'scheduled',
@@ -798,7 +798,7 @@ describe('authoring actions', function() {
                         'desk': 'desk1'
                     },
                     'more_coming': false,
-                    '_version': 8
+                    '_current_version': 8
                 }
             };
 

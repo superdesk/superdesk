@@ -47,8 +47,8 @@ CUSTOM_HATEOAS = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 
 def update_version(updates, original):
     """Increment version number if possible."""
-    if '_version' in updates and original.get('version', 0) == 0:
-        updates.setdefault('version', updates['_version'])
+    if config.VERSION in updates and original.get('version', 0) == 0:
+        updates.setdefault('version', updates[config.VERSION])
 
 
 def on_create_item(docs):
@@ -336,7 +336,7 @@ def item_schema(extra=None):
         'task': {'type': 'dict'},
         'destination_groups': {
             'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
+            'schema': Resource.rel('destination_groups', embeddable=True, nullable=True)
         },
         'publish_schedule': {
             'type': 'datetime',

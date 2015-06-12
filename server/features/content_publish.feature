@@ -50,7 +50,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -58,12 +58,12 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we get "/published"
       Then we get existing resource
       """
-      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_version": 2, "state": "published", "destination_groups":["#destgroup1#"],
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
 
@@ -88,7 +88,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -148,7 +148,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "type": "text", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -208,7 +208,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "type": "image", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "type": "image", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -271,7 +271,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
         "body_html": "Test Document body"}]
@@ -280,7 +280,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "scheduled"}
+      {"_current_version": 2, "state": "scheduled"}
       """
 
       When we get "/publish_queue"
@@ -347,7 +347,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
         "body_html": "Test Document body"}]
@@ -356,7 +356,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "scheduled"}
+      {"_current_version": 2, "state": "scheduled"}
       """
 
       When we get "/publish_queue"
@@ -379,7 +379,7 @@ Feature: Content Publishing
       {
           "_items": [
               {
-                  "_version": 3,
+                  "_current_version": 3,
                   "state": "in_progress"
               }
           ]
@@ -440,7 +440,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -494,7 +494,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -502,7 +502,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
 
     @auth
@@ -549,7 +549,7 @@ Feature: Content Publishing
         """
         And "archive"
           """
-          [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+          [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
             "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
             "body_html": "Test Document body"}]
           """
@@ -559,7 +559,7 @@ Feature: Content Publishing
           """
         Then we get existing resource
           """
-            {"_id": "#archive._id#", "guid": "123", "headline": "testing", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+            {"_id": "#archive._id#", "guid": "123", "headline": "testing", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
             "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
           """
         When we publish "#archive._id#" with "publish" type and "published" state
@@ -613,7 +613,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -628,7 +628,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 3, "state": "killed", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 3, "state": "killed", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
@@ -680,7 +680,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -695,7 +695,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
@@ -747,7 +747,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -762,7 +762,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
@@ -812,7 +812,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -830,7 +830,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we publish "#archive._id#" with "correct" type and "corrected" state
       """
@@ -844,17 +844,17 @@ Feature: Content Publishing
           "_items": [
               {
                   "headline": "test",
-                  "_version": 2,
+                  "_current_version": 2,
                   "state": "published"
               },
               {
                   "headline": "test-1",
-                  "_version": 3,
+                  "_current_version": 3,
                   "state": "corrected"
               },
               {
                   "headline": "test-2",
-                  "_version": 4,
+                  "_current_version": 4,
                   "state": "corrected"
               }
           ]
@@ -865,7 +865,7 @@ Feature: Content Publishing
     Scenario: User can't publish without a privilege
       Given "archive"
       """
-      [{"headline": "test", "_version": 1, "state": "fetched"}]
+      [{"headline": "test", "_current_version": 1, "state": "fetched"}]
       """
       And we login as user "foo" with password "bar"
       """
@@ -878,7 +878,7 @@ Feature: Content Publishing
     Scenario: User can't publish a draft item
       Given "archive"
       """
-      [{"headline": "test", "_version": 1, "state": "draft"}]
+      [{"headline": "test", "_current_version": 1, "state": "draft"}]
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
@@ -927,7 +927,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched", "destination_groups": ["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "body_html": "Test Document body"}]
       """
@@ -968,11 +968,11 @@ Feature: Content Publishing
 		{
             "_items": [
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "groups": [
                         {
                             "refs": [
@@ -988,19 +988,19 @@ Feature: Content Publishing
                     "type": "composite"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published"
                 }
             ]
@@ -1163,12 +1163,12 @@ Feature: Content Publishing
 		{
             "_items": [
                 {
-                    "_version": 3,
+                    "_current_version": 3,
                     "state": "published",
                     "body_html": "Take-1"
                 },
                 {
-                    "_version": 2,
+                    "_current_version": 2,
                     "state": "published",
                     "type": "composite",
                     "package_type": "takes",
@@ -1275,19 +1275,19 @@ Feature: Content Publishing
             "_items": [
                 {
                     "_id": "123",
-                    "_version": 3,
+                    "_current_version": 3,
                     "state": "published",
                     "body_html": "Take-1"
                 },
                 {
-                    "_version": 3,
+                    "_current_version": 3,
                     "state": "published",
                     "type": "composite",
                     "package_type": "takes",
                     "body_html": "Take-1<br>Take-2<br>"
                 },
                 {
-                    "_version": 4,
+                    "_current_version": 4,
                     "state": "published",
                     "body_html": "Take-2"
                 }
@@ -1418,7 +1418,7 @@ Feature: Content Publishing
       """
       Given "archive"
       """
-      [{"guid": "123", "headline": "test", "body_html": "body", "_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "body_html": "body", "_current_version": 1, "state": "fetched", "destination_groups":["#destgroup1#"],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       When we post to "/stages" with success
@@ -1429,5 +1429,5 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
+      {"_current_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
       """
