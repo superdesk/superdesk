@@ -37,14 +37,11 @@ def get_upload_as_data_uri(media_id):
             data,
             mimetype=media_file.content_type,
             direct_passthrough=True)
-        try:
-            response.content_length = media_file.length
-            response.last_modified = media_file.upload_date
-            response.set_etag(media_file.md5)
-            response.cache_control.max_age = cache_for
-            response.cache_control.s_max_age = cache_for
-        except Exception:
-            pass
+        response.content_length = media_file.length
+        response.last_modified = media_file.upload_date
+        response.set_etag(media_file.md5)
+        response.cache_control.max_age = cache_for
+        response.cache_control.s_max_age = cache_for
         response.cache_control.public = True
         response.make_conditional(request)
         return response
