@@ -2,11 +2,10 @@ import os
 import json
 import superdesk
 import pymongo
-import logging
-
 
 from superdesk import get_resource_service
 from flask import current_app as app
+
 
 """
 App initialization information, maps resource name to the file containing the data
@@ -26,8 +25,6 @@ __entities__ = {
                          ('state', pymongo.ASCENDING)], False)
 }
 
-logger = logging.getLogger(__name__)
-
 
 class AppInitializeWithDataCommand(superdesk.Command):
     """
@@ -43,7 +40,7 @@ class AppInitializeWithDataCommand(superdesk.Command):
     ]
 
     def run(self, entity_name=None):
-        print('Starting data import')
+        self.logger.info('Starting data import')
 
         if entity_name:
             (file_name, index_params, do_patch) = __entities__[entity_name]
@@ -54,10 +51,10 @@ class AppInitializeWithDataCommand(superdesk.Command):
             try:
                 self.import_file(name, file_name, index_params, do_patch)
             except Exception as ex:
-                print('Exception loading entity {} from {}'.format(name, file_name))
-                logger.exception(ex)
+                self.logger.info('Exception loading entity {} from {}'.format(name, file_name))
+                self.logger.exception(ex)
 
-        print('Data import finished')
+        self.logger.info('Data import finished')
         return 0
 
     def import_file(self, entity_name, file_name, index_params, do_patch=False):
@@ -72,10 +69,10 @@ class AppInitializeWithDataCommand(superdesk.Command):
                 existing_data = []
                 existing = service.get_from_mongo(None, {})
                 if not do_patch and existing.count() > 0:
-                    print('Data already exists for {} none will be loaded'.format(entity_name))
+                    self.logger.info('Data already exists for {} none will be loaded'.format(entity_name))
                     return
                 elif do_patch and existing.count() > 0:
-                    print('Data already exists for {} it will be updated'.format(entity_name))
+                    self.logger.info('Data already exists for {} it will be updated'.format(entity_name))
                 if do_patch:
                     for item in existing:
                         for loaded_item in data:
@@ -87,11 +84,11 @@ class AppInitializeWithDataCommand(superdesk.Command):
                 if existing_data and do_patch:
                     for item in existing_data:
                         service.patch(item['_id'], item)
-                print('File {} imported successfully.'.format(file_name))
+                self.logger.info('File {} imported successfully.'.format(file_name))
 
         if index_params:
-            app.data.mongo.pymongo().db[entity_name].create_index(index_params)
-            print('Index for {} created successfully.'.format(entity_name))
+            app.data.mongo.pymongo(resource=entity_name).db[entity_name].create_index(index_params)
+            self.logger.info('Index for {} created successfully.'.format(entity_name))
 
 
 superdesk.command('app:initialize_data', AppInitializeWithDataCommand())
