@@ -20,44 +20,27 @@ class FilterConditionTests(TestCase):
     def setUp(self):
         super().setUp()
         with self.app.app_context():
-            self.app.data.insert('archive', [{'_id': '1', 'headline': 'story'}])
-            self.app.data.insert('archive', [{'_id': '2', 'headline': 'prtorque'}])
-            self.app.data.insert('archive', [{'_id': '3'}])
-            self.app.data.insert('archive', [{'_id': '4'}])
-            self.app.data.insert('archive', [{'_id': '5'}])
-            self.app.data.insert('archive', [{'_id': '6'}])
+            self.app.data.insert('archive', [{'_id': '1', 'headline': 'story', 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '2', 'headline': 'prtorque', 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '3', 'urgency': 3, 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '4', 'urgency': 4, 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '5', 'urgency': 2, 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '6', 'state': 'fetched'}])
 
-    def get_expired_items(self, now):
-        query_filter = self.get_query_for_expired_items(now)
-        req = ParsedRequest()
-        req.sort = '_created'
-        req.max_results = 100
-        return superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=query_filter)
-
-    def get_query_for_expired_items(self, now):
-        query = {
-            '$and': [
-                {'expiry': {'$lte': now}},
-                {'state': {'$ne': 'scheduled'}}
-            ]
-        }
-        return query
-
-
-    def test_using_like_filter_complete_string(self):
+    def test_mongo_using_like_filter_complete_string(self):
         f = FilterConditionService()
         doc = {'field': 'headline', 'operator': 'like', 'value': 'story'}
-        f.translate_to_mongo(doc)
+        f._translate_to_mongo_query(doc)
         with self.app.app_context():
             req = ParsedRequest()
             docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
             self.assertEquals(1, docs.count())
             self.assertEquals('1', docs[0]['_id'])
 
-    def test_using_like_filter_partial_string(self):
+    def test_mongo_using_like_filter_partial_string(self):
         f = FilterConditionService()
         doc = {'field': 'headline', 'operator': 'like', 'value': 'tor'}
-        f.translate_to_mongo(doc)
+        f._translate_to_mongo_query(doc)
         with self.app.app_context():
             req = ParsedRequest()
             docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
@@ -65,31 +48,86 @@ class FilterConditionTests(TestCase):
             self.assertEquals('1', docs[0]['_id'])
             self.assertEquals('2', docs[1]['_id'])
 
-    def test_using_startswith_filter(self):
+    def test_mongo_using_startswith_filter(self):
         f = FilterConditionService()
-        doc = {'field': 'headline', 'operator': 'like', 'value': 'tor'}
-        f.translate_to_mongo(doc)
+        doc = {'field': 'headline', 'operator': 'startswith', 'value': 'Sto'}
+        f._translate_to_mongo_query(doc)
+        with self.app.app_context():
+            req = ParsedRequest()
+            docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
+            self.assertEquals(1, docs.count())
+            self.assertEquals('1', docs[0]['_id'])
+
+    def test_mongo_using_endswith_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'endswith', 'value': 'Que'}
+        f._translate_to_mongo_query(doc)
+        with self.app.app_context():
+            req = ParsedRequest()
+            docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
+            self.assertEquals(1, docs.count())
+            self.assertEquals('2', docs[0]['_id'])
+
+    def test_mongo_using_notlike_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'notlike', 'value': 'Que'}
+        f._translate_to_mongo_query(doc)
+        with self.app.app_context():
+            req = ParsedRequest()
+            docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
+            self.assertEquals(5, docs.count())
+            self.assertEquals('1', docs[0]['_id'])
+
+    def test_mongo_using_in_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'urgency', 'operator': 'in', 'value': '3,4'}
+        f._translate_to_mongo_query(doc)
         with self.app.app_context():
             req = ParsedRequest()
             docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
             self.assertEquals(2, docs.count())
+            self.assertEquals('3', docs[0]['_id'])
+            self.assertEquals('4', docs[1]['_id'])
+
+    def test_mongo_using_notin_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'urgency', 'operator': 'nin', 'value': '2,3,4'}
+        f._translate_to_mongo_query(doc)
+        with self.app.app_context():
+            req = ParsedRequest()
+            docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=doc['mongo_translation'])
+            self.assertEquals(3, docs.count())
             self.assertEquals('1', docs[0]['_id'])
             self.assertEquals('2', docs[1]['_id'])
+
+    def test_elastic_using_in_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'urgency', 'operator': 'in', 'value': '3,4'}
+        f._translate_to_elastic_query(doc)
+        with self.app.app_context():
+            req = ParsedRequest()
+            req.args = {'source': json.dumps({'query': {'filtered': {'filter': doc['elastic_translation']}}})}
+            #req.args = {'source': json.dumps({'query': {'filtered': {'filter': {'term': {'_id': '1'}}}}})}
+            docs = superdesk.get_resource_service('archive').get(req=req, lookup=None)
+            self.assertEquals(2, docs.count())
+            self.assertEquals('4', docs[0]['_id'])
+            self.assertEquals('3', docs[1]['_id'])
+
 
     def test_get_operator(self):
         f = FilterConditionService()
-        self.assertEquals(f.get_operator('in'), '$in')
-        self.assertEquals(f.get_operator('nin'), '$nin')
-        self.assertEquals(f.get_operator('like'), '$regex')
-        self.assertEquals(f.get_operator('notlike'), '$not')
-        self.assertEquals(f.get_operator('startswith'), '$regex')
-        self.assertEquals(f.get_operator('endswith'), '$regex')
+        self.assertEquals(f._get_mongo_operator('in'), '$in')
+        self.assertEquals(f._get_mongo_operator('nin'), '$nin')
+        self.assertEquals(f._get_mongo_operator('like'), '$regex')
+        self.assertEquals(f._get_mongo_operator('notlike'), '$not')
+        self.assertEquals(f._get_mongo_operator('startswith'), '$regex')
+        self.assertEquals(f._get_mongo_operator('endswith'), '$regex')
 
     def test_get_value(self):
         f = FilterConditionService()
-        self.assertEquals(f.get_value('in', '1,2'), [1,2])
-        self.assertEquals(f.get_value('nin', '3'), ['3'])
-        self.assertEquals(f.get_value('like', 'test'), '.*test.*')
-        self.assertEquals(f.get_value('notlike', 'test'), '.*test.*')
-        self.assertEquals(f.get_value('startswith', 'test'), '/^test/i')
-        self.assertEquals(f.get_value('endswith', 'test'), '/.*test/i')
+        self.assertEquals(f._get_mongo_value('in', '1,2'), [1,2])
+        self.assertEquals(f._get_mongo_value('nin', '3'), ['3'])
+        self.assertEquals(f._get_mongo_value('like', 'test'), '.*test.*')
+        self.assertEquals(f._get_mongo_value('notlike', 'test'), '.*test.*')
+        self.assertEquals(f._get_mongo_value('startswith', 'test'), '/^test/i')
+        self.assertEquals(f._get_mongo_value('endswith', 'test'), '/.*test/i')

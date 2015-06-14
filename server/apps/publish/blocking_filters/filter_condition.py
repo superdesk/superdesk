@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+import re
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 
@@ -52,6 +53,10 @@ class FilterConditionResource(Resource):
         'mongo_translation': {
             'type': 'string',
             'nullable': True
+        },
+        'elastic_translation': {
+            'type': 'string',
+            'nullable': True
         }
     }
 
@@ -68,31 +73,52 @@ class FilterConditionResource(Resource):
 class FilterConditionService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            doc['mongo_translation'] = self.translate_to_mongo(doc)
+            doc['mongo_translation'] = self._translate_to_mongo_query(doc)
 
-    def translate_to_mongo(self, doc):
+    def _translate_to_mongo_query(self, doc):
         field = doc['field']
-        operator = self.get_operator(doc['operator'])
-        value = self.get_value(doc['operator'], doc['value'])
+        operator = self._get_mongo_operator(doc['operator'])
+        value = self._get_mongo_value(doc['operator'], doc['value'])
         doc['mongo_translation'] = {field: {operator: value}}
 
-    def get_operator(self, operator):
+    def _get_mongo_operator(self, operator):
         if operator in ['like', 'startswith', 'endswith']:
             return '$regex'
+#            return '$regex', {'$options': 'si'}
         elif operator == 'notlike':
             return '$not'
         else:
             return '${}'.format(operator)
 
-    def get_value(self, operator, value):
+    def _get_mongo_value(self, operator, value):
         if operator == 'startswith':
-            return '/^{}/i'.format(value)
+            return re.compile('^{}'.format(value), re.IGNORECASE)
         elif operator == 'like' or operator == 'notlike':
-            return '.*{}.*'.format(value)
+            return re.compile('.*{}.*'.format(value), re.IGNORECASE)
         elif operator == 'endswith':
-            return '/.*{}/i'.format(value)
+            return re.compile('.*{}'.format(value), re.IGNORECASE)
         else:
             if value.find(',') > 0:
                 return [int(x) for x in value.split(',') if x.strip().isdigit()]
             else:
                 return [value]
+
+    def _translate_to_elastic_query(self, doc):
+        field = doc['field']
+        operator = self._get_elastic_operator(doc['operator'])
+        value = self._get_mongo_value(doc['operator'], doc['value'])
+        doc['elastic_translation'] = {operator: {field: value}}
+
+    def _get_elastic_operator(self, operator):
+        if operator == 'in':
+            return "terms"
+
+    def _get_elastic_value(self, operator, value):
+        if operator == 'in':
+            if value.find(',') > 0:
+                value = [int(x) for x in value.split(',') if x.strip().isdigit()]
+            else:
+                value = [value]
+
+            return value
+
