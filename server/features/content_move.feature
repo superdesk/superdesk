@@ -114,7 +114,7 @@ Feature: Move or Send Content to another desk
         """
         [{"task": {"desk": "#desks._id#", "stage": "#stages._id#"}}]
         """
-        Then we get error 412
+        Then we get error 400
         """
         {"_message": "Error:'Headline cannot be empty!' in incoming rule:Validate Headline for stage:another stage"}
         """
@@ -192,7 +192,7 @@ Feature: Move or Send Content to another desk
         """
         [{"task": {"desk": "#desks._id#", "stage": "#stages._id#"}}]
         """
-        Then we get error 412
+        Then we get error 400
         """
         {"_message": "Error:'Headline cannot be empty!' in outgoing rule:Validate Headline for stage:New"}
         """

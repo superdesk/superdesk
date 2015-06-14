@@ -120,7 +120,7 @@ def apply_stage_rule(doc, update, stage, is_incoming):
                         rule_type,
                         macro.get('label'),
                         stage.get('name'))
-            raise SuperdeskApiError.preconditionFailedError(message)
+            raise SuperdeskApiError.badRequestError(message)
 
 
 class TaskResource(Resource):
