@@ -878,8 +878,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope', 'desks', 'notify',
-            function(gettext, api, WizardHandler, tasks, $rootScope, desks, notify) {
+        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope', 'desks', 'notify', 'macros',
+            function(gettext, api, WizardHandler, tasks, $rootScope, desks, notify, macros) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -889,6 +889,12 @@
                     scope.limits = limits;
 
                     scope.statuses = tasks.statuses;
+
+                    if (scope.desk.edit && scope.desk.edit._id) {
+                        macros.getByDesk(scope.desk.edit.name).then(function(macros) {
+                            scope.macros = macros;
+                        });
+                    }
 
                     scope.$watch('step.current', function(step, previous) {
                         if (step === 'stages') {

@@ -10,7 +10,7 @@
 
 
 import superdesk
-
+from superdesk.errors import SuperdeskApiError
 from superdesk.utils import ListCursor
 from superdesk.macro_register import macros
 
@@ -32,19 +32,25 @@ class MacrosService(superdesk.Service):
             return ListCursor([get_public_props(macro) for macro in macros])
 
     def create(self, docs, **kwargs):
-        ids = []
-        for doc in docs:
-            doc['item'] = self.execute_macro(doc['item'], doc['macro'])
-            if doc.get('commit'):
-                item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item']['_id'])
-                updates = doc['item'].copy()
-                updates.pop('_id')
-                superdesk.get_resource_service('archive').update(item['_id'], updates, item)
-            ids.append(doc['macro'])
-        return ids
+        try:
+            ids = []
+            for doc in docs:
+                doc['item'] = self.execute_macro(doc['item'], doc['macro'])
+                if doc.get('commit'):
+                    item = superdesk.get_resource_service('archive').find_one(req=None, _id=doc['item']['_id'])
+                    updates = doc['item'].copy()
+                    updates.pop('_id')
+                    superdesk.get_resource_service('archive').update(item['_id'], updates, item)
+                ids.append(doc['macro'])
+            return ids
+        except Exception as ex:
+            raise SuperdeskApiError.internalError(str(ex))
+
+    def get_macro_by_name(self, macro_name):
+        return macros.find(macro_name)
 
     def execute_macro(self, doc, macro_name):
-        macro = macros.find(macro_name)
+        macro = self.get_macro_by_name(macro_name)
         return macro['callback'](doc)
 
 

@@ -2,8 +2,8 @@
 
 'use strict';
 
-MacrosService.$inject = ['api', 'autosave'];
-function MacrosService(api, autosave) {
+MacrosService.$inject = ['api', 'autosave', 'notify'];
+function MacrosService(api, autosave, notify) {
     this.get = function() {
         return api.query('macros')
             .then(angular.bind(this, function(macros) {
@@ -45,6 +45,10 @@ function MacrosService(api, autosave) {
                 autosave.save(item);
             }
             return item;
+        }, function(err) {
+            if (angular.isDefined(err.data._message)) {
+                notify.error(gettext('Error: ' + err.data._message));
+            }
         });
     }
 }

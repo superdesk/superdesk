@@ -47,7 +47,7 @@ class AapMMService(superdesk.Service):
                 dest_doc['ingest_provider'] = str(provider[superdesk.config.ID_FIELD])
 
             dest_doc[config.VERSION] = 1
-            send_to(dest_doc, doc.get('desk'), doc.get('stage'))
+            send_to(doc=dest_doc, update=None, desk_id=doc.get('desk'), stage_id=doc.get('stage'))
             dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
             dest_doc[INGEST_ID] = archived_doc['_id']
             dest_doc[FAMILY_ID] = archived_doc['_id']

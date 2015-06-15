@@ -73,7 +73,7 @@ class MoveService(BaseService):
 
         original = dict(archived_doc)
 
-        send_to(archived_doc, doc.get('task', {}).get('desc'), doc.get('task', {}).get('stage'))
+        send_to(doc=archived_doc, desk_id=doc.get('task', {}).get('desc'), stage_id=doc.get('task', {}).get('stage'))
 
         if archived_doc[config.CONTENT_STATE] not in ['published', 'scheduled', 'killed']:
             archived_doc[config.CONTENT_STATE] = 'submitted'
