@@ -288,7 +288,7 @@ Feature: Link content in takes
         }
         """
 
-    @auth @test
+    @auth
     Scenario: Spiked the last take of the takes package
         Given "desks"
         """
@@ -440,7 +440,8 @@ Feature: Link content in takes
                         }
                     ],
                     "type": "composite",
-                    "package_type": "takes"
+                    "package_type": "takes",
+                    "sequence": 3
                 },
                 {
                     "_id": "#TAKE2#",
@@ -503,7 +504,8 @@ Feature: Link content in takes
                         }
                     ],
                     "type": "composite",
-                    "package_type": "takes"
+                    "package_type": "takes",
+                    "sequence": 2
                 },
                 {
                     "_id": "#TAKE2#",
