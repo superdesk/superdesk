@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 
@@ -17,13 +18,11 @@ logger = logging.getLogger(__name__)
 
 class PublishFilterResource(Resource):
     schema = {
-        'blocking_filter': {
+        'publish_filter': {
             'type': 'list',
             'schema': {
                 'type': 'list',
-                'schema': {
-                    'filter_expression': Resource.rel('filter_condition')
-                }
+                'schema': Resource.rel('filter_condition', True)
             }
         },
         'name': {
@@ -49,5 +48,17 @@ class PublishFilterResource(Resource):
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
 
-class BlockingFilterService(BaseService):
-    pass
+class PublishFilterService(BaseService):
+    def on_create(self, docs):
+        for doc in docs:
+            doc['mongo_query'] = self._join_mongo_queries(doc)
+
+    def _join_mongo_queries(self, doc):
+        expressions = []
+        for expression in doc.get('publish_filter', []):
+            filter_conditions = []
+            for filter_condition_id in expression:
+                filter_condition = get_resource_service('filter_condition').find_one(req=None, _id=filter_condition_id)
+                filter_conditions.append(filter_condition['mongo_query'])
+            expressions.append({'$and': filter_conditions})
+        return {'$or': expressions}

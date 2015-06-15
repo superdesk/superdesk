@@ -73,7 +73,8 @@ class FilterConditionResource(Resource):
 class FilterConditionService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            doc['mongo_translation'] = self._translate_to_mongo_query(doc)
+            self._translate_to_mongo_query(doc)
+            self._translate_to_elastic_query(doc)
 
     def _translate_to_mongo_query(self, doc):
         field = doc['field']
