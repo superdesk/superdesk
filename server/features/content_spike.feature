@@ -5,7 +5,7 @@ Feature: Content Spiking
         Given empty "archive"
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1, "state": "draft"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 1, "state": "draft"}]
             """
 
         When we spike "item-1"
@@ -25,7 +25,7 @@ Feature: Content Spiking
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
+        [{"_id": "item-1", "guid": "item-1", "_current_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
         """
         When we spike "item-1"
         Then we get OK response
@@ -62,7 +62,7 @@ Feature: Content Spiking
         Given we have "administrator" as type of user
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "state": "draft"}]
+            [{"_id": "item-1", "guid": "item-1", "_current_version": 1, "headline": "test", "state": "draft"}]
             """
 
         When we spike "item-1"
@@ -82,7 +82,7 @@ Feature: Content Spiking
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
+        [{"_id": "item-1", "guid": "item-1", "_current_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
         """
         When we spike "item-1"
         And we unspike "item-1"

@@ -157,7 +157,7 @@ class ArchiveService(BaseService):
 
             # let client create version 0 docs
             if doc.get('version') == 0:
-                doc['_version'] = doc['version']
+                doc[config.VERSION] = doc['version']
 
             if not doc.get('ingest_provider'):
                 doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
@@ -235,12 +235,12 @@ class ArchiveService(BaseService):
 
         user = get_user()
 
-        if '_version' in updates:
+        if config.VERSION in updates:
             updated = copy(original)
             updated.update(updates)
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          self.datasource, item=updated,
-                         version=updates['_version'], subject=get_subject(updates, original),
+                         version=updates[config.VERSION], subject=get_subject(updates, original),
                          type=updated['type'])
 
         push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
@@ -306,7 +306,8 @@ class ArchiveService(BaseService):
         if (not all([item_id, old_version, last_version])):
             return None
 
-        old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id, _version=old_version)
+        old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id,
+                                                                _current_version=old_version)
         if old is None:
             raise SuperdeskApiError.notFoundError('Invalid version %s' % old_version)
 

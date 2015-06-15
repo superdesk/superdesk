@@ -11,6 +11,7 @@
 import flask
 import logging
 from flask import current_app as app
+from eve.utils import config
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
@@ -203,7 +204,7 @@ class UsersService(BaseService):
         if items_locked_by_user and items_locked_by_user.count():
             for item in items_locked_by_user:
                 # delete the item if nothing is saved so far
-                if item['_version'] == 1 and item['state'] == 'draft':
+                if item[config.VERSION] == 1 and item['state'] == 'draft':
                     get_resource_service('archive').delete(lookup={'_id': item['_id']})
                 else:
                     archive_service.update(item['_id'], doc_to_unlock, item)

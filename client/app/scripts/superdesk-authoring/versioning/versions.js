@@ -38,7 +38,7 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
                             version.creator = versioncreator && versioncreator.display_name;
                         }
                     });
-                    $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_version').reverse();
+                    $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_current_version').reverse();
                     $scope.last = lastVersion();
 
                     if ($scope.item._autosave) {
@@ -55,11 +55,11 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
      */
     function lastVersion() {
         if ($scope.item._latest_version) {
-            return _.find($scope.versions._items, {_version: $scope.item._latest_version});
+            return _.find($scope.versions._items, {_current_version: $scope.item._latest_version});
         }
 
         return _.max($scope.versions._items, function(version) {
-            return version._version || version.version || version._updated;
+            return version._current_version || version.version || version._updated;
         });
     }
 

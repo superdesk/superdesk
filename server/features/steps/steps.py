@@ -532,7 +532,7 @@ def step_impl_when_restore_version(context, version):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
-    text = '{"type": "text", "old_version": %s, "last_version": %s}' % (version, data.get('_version'))
+    text = '{"type": "text", "old_version": %s, "last_version": %s}' % (version, data.get('_current_version'))
     context.response = context.client.put(get_prefixed_url(context.app, href), data=text, headers=headers)
     assert_ok(context.response)
 
@@ -945,7 +945,7 @@ def step_impl_then_file(context):
 @then('we get version {version}')
 def step_impl_then_get_version(context, version):
     assert_200(context.response)
-    expect_json_contains(context.response, {'_version': int(version)})
+    expect_json_contains(context.response, {'_current_version': int(version)})
 
 
 @then('the field "{field}" value is "{value}"')

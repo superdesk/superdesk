@@ -58,7 +58,7 @@ class EveBackend():
 
     def create_in_mongo(self, endpoint_name, docs, **kwargs):
         for doc in docs:
-            doc.setdefault(app.config['ETAG'], document_etag(doc))
+            doc.setdefault(config.ETAG, document_etag(doc))
             self.set_default_dates(doc)
 
         backend = self._backend(endpoint_name)
@@ -79,7 +79,7 @@ class EveBackend():
         :param original: original document
         """
         # change etag on update so following request will refetch it
-        updates.setdefault(app.config['LAST_UPDATED'], utcnow())
+        updates.setdefault(config.LAST_UPDATED, utcnow())
         if config.ETAG not in updates:
             updated = original.copy()
             updated.update(updates)
@@ -137,6 +137,10 @@ class EveBackend():
         res = backend.remove(endpoint_name, {config.ID_FIELD: {'$in': ids}})
         if res and res.get('n', 0) > 0 and search_backend is not None:
             self._remove_documents_from_search_backend(endpoint_name, ids)
+
+        if res and res.get('n', 0) == 0:
+            logger.warn("No documents for {} resource were deleted using lookup {}".format(endpoint_name, lookup))
+
         return res
 
     def _remove_documents_from_search_backend(self, endpoint_name, ids):
@@ -168,5 +172,5 @@ class EveBackend():
 
     def set_default_dates(self, doc):
         now = utcnow()
-        doc.setdefault(app.config['DATE_CREATED'], now)
-        doc.setdefault(app.config['LAST_UPDATED'], now)
+        doc.setdefault(config.DATE_CREATED, now)
+        doc.setdefault(config.LAST_UPDATED, now)

@@ -224,7 +224,7 @@ Feature: Authentication
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 1}]
         """
         When we post to "/archive/item-1/lock"
         """

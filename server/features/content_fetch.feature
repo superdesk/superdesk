@@ -74,13 +74,13 @@ Feature: Fetch Items from Ingest
       {
           "_items": [
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
                   "type": "picture"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "groups": [
                       {
                           "refs": [
@@ -96,25 +96,25 @@ Feature: Fetch Items from Ingest
                   "type": "composite"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
                   "type": "picture"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
                   "type": "text"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
                   "type": "picture"
               },
               {
-                  "_version": 1,
+                  "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
                   "type": "text"

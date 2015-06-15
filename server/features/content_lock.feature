@@ -25,7 +25,7 @@ Feature: Content Locking
     Scenario: Unlocking version 0 draft item deletes the item
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 0, "state": "draft"}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 0, "state": "draft"}]
         """
         When we post to "/archive/item-1/lock"
         """
@@ -47,7 +47,7 @@ Feature: Content Locking
     Scenario: Unlocking version 1+ item unlockes the item
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 1}]
         """
         When we post to "/archive/item-1/lock"
         """
@@ -113,7 +113,7 @@ Feature: Content Locking
         """
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 2,
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 2,
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
         """
         When we post to "/archive/item-1/lock"
@@ -196,7 +196,7 @@ Feature: Content Locking
     Scenario: Force unlock if item is locked in another session
         Given "archive"
         """
-        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 2}]
+        [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 2}]
         """
         When we post to "/archive/item-1/lock"
         """

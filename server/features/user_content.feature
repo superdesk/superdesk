@@ -74,7 +74,7 @@ Feature: User Content
         """
         Then we get new resource
         """
-        {"_version": 0, "version": 0}
+        {"_current_version": 0, "version": 0}
         """
 
         When we get user "content"
@@ -86,7 +86,7 @@ Feature: User Content
         """
         Then we get updated response
         """
-        {"_version": 1, "version": 1}
+        {"_current_version": 1, "version": 1}
         """
 
         When we get user "content"

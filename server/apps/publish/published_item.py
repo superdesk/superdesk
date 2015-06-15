@@ -295,19 +295,20 @@ class PublishedItemService(BaseService):
             if items.count() == 0:
                 text_archive_service.post([doc.copy()])
                 logger.info('Inserted published item {} with headline {} and version {} and expiry {}.'.
-                            format(doc['item_id'], doc.get('headline'), doc.get('_version'), doc.get('expiry')))
+                            format(doc['item_id'], doc.get('headline'), doc.get(config.VERSION), doc.get('expiry')))
         elif doc.get('state') == 'killed':
             text_archive_service.delete_action({config.ID_FIELD: doc[config.ID_FIELD]})
             logger.info('Deleted published item {} with headline {} and version {} and expiry {} '
                         'as the state of an article is killed.'.format(doc['item_id'], doc.get('headline'),
-                                                                       doc.get('_version'), doc.get('expiry')))
+                                                                       doc.get(config.VERSION), doc.get('expiry')))
 
     def _upsert_into_legal_archive(self, doc):
         """
         For the expired published article represented by doc, do the below:
-            1.  Fetch version history of article so that version_history_doc['_version'] <= doc['_version'].
+            1.  Fetch version history of article so that version_history_doc[config.VERSION] <= doc[config.VERSION].
             2.  De-normalize the expired article and each version of the article
-            3.  Fetch Formatted Items and Transmission Details so that formatted_item['item_version'] == doc['_version']
+            3.  Fetch Formatted Items and Transmission Details
+                so that formatted_item['item_version'] == doc[config.VERSION]
             4.  De-normalize the Transmission Details
             5.  An article can be published more than time before it's removed from production database, it's important
                 to check if the article already exists in Legal Archive DB. If exists then replace the article in

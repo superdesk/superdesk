@@ -20,7 +20,7 @@ Feature: Move or Send Content to another desk
         When we get "/archive/123"
         Then we get existing resource
         """
-        { "headline": "test1", "guid": "123", "state": "submitted", "_version": 2,
+        { "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
           "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
         """
 
@@ -47,7 +47,7 @@ Feature: Move or Send Content to another desk
         When we get "/archive/123"
         Then we get existing resource
         """
-        { "headline": "test1", "guid": "123", "state": "submitted", "_version": 2,
+        { "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
           "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
         """
 
@@ -81,7 +81,7 @@ Feature: Move or Send Content to another desk
         When we get "/archive/123"
         Then we get existing resource
         """
-        { "headline": "test1", "guid": "123", "state": "submitted", "_version": 2,
+        { "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
           "task": {"desk": "#desks._id#", "stage": "#stages._id#", "user": "#CONTEXT_USER_ID#"}}
         """
 
