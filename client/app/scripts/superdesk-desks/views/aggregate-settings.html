@@ -20,6 +20,11 @@
                     </li>
                 </ul>
             </div>
+            <div class="desk">
+                <div class="desk-title" translate>Personal
+                    <span sd-switch class="pull-right" ng-model="editGroups['personal'].selected" ng-click="setPersonalInfo()"></span>
+                </div>
+            </div>
             <div ng-show="" class="legend" translate>Select saved searches to view</div>
 
         </div>
@@ -56,6 +61,7 @@
                 <div class="group-title" ng-if="item.type === 'search'">
                     {{searchLookup[item._id].name}}
                 </div>
+                <div class="group-title" ng-if="item.type === 'personal'" translate>Personal</div>
             </li>
             <li class="fake clearfix"><div></div></li>
         </ul>

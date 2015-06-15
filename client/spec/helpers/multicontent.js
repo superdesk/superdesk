@@ -103,6 +103,10 @@ function Multicontent() {
         this.getStage(desk, stage).element(by.css('[ng-click="setStageInfo(stage._id)"]')).click();
     };
 
+    this.togglePersonal = function() {
+        element(by.css('[ng-click="setPersonalInfo()"]')).click();
+    };
+
     this.toggleSearch = function(search) {
         this.getSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
     };

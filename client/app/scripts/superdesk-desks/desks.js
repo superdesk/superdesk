@@ -63,8 +63,8 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$rootScope', '$timeout', '$q', '$location', '$anchorScroll'];
+    function StageItemListDirective(search, api, superdesk, desks, $rootScope, $timeout, $q, $location, $anchorScroll) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
@@ -99,7 +99,14 @@
                 function queryItems(queryString) {
                     query = search.query(scope.savedSearch ? scope.savedSearch.filter.query : {});
                     if (scope.stage) {
-                        query.filter({term: {'task.stage': scope.stage}});
+                        if (scope.stage === 'personal') {
+                            query.filter({and: [
+                                {term: {'original_creator': $rootScope.currentUser._id}},
+                                {not: {exists: {field: 'task.desk'}}}
+                            ]});
+                        } else {
+                            query.filter({term: {'task.stage': scope.stage}});
+                        }
                     }
                     query.size(25);
 
