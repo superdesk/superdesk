@@ -84,7 +84,6 @@ class FilterConditionService(BaseService):
     def _get_mongo_operator(self, operator):
         if operator in ['like', 'startswith', 'endswith']:
             return '$regex'
-#            return '$regex', {'$options': 'si'}
         elif operator == 'notlike':
             return '$not'
         else:
@@ -104,21 +103,31 @@ class FilterConditionService(BaseService):
                 return [value]
 
     def _translate_to_elastic_query(self, doc):
-        field = doc['field']
         operator = self._get_elastic_operator(doc['operator'])
-        value = self._get_mongo_value(doc['operator'], doc['value'])
-        doc['elastic_translation'] = {operator: {field: value}}
+        value = self._get_elastic_value(doc, doc['operator'], doc['value'])
+        doc['elastic_translation'] = {operator: {doc['field']: value}}
 
     def _get_elastic_operator(self, operator):
-        if operator == 'in':
-            return "terms"
+        if operator in ['in', 'nin']:
+            return 'terms'
+        else:
+            return 'query_string'
 
-    def _get_elastic_value(self, operator, value):
-        if operator == 'in':
+    def _get_elastic_value(self, doc, operator, value):
+        if operator in ['in', 'nin']:
             if value.find(',') > 0:
                 value = [int(x) for x in value.split(',') if x.strip().isdigit()]
             else:
                 value = [value]
+        elif operator in ['like', 'notlike']:
+            value = '{}:*{}*'.format(doc['field'], value)
+            doc['field'] = 'query'
+        elif operator == 'startswith':
+            value = '{}:{}*'.format(doc['field'], value)
+            doc['field'] = 'query'
+        elif operator == 'endswith':
+            value = '{}:*{}'.format(doc['field'], value)
+            doc['field'] = 'query'
+        return value
 
-            return value
 
