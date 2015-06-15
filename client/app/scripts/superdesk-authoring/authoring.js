@@ -1024,8 +1024,6 @@
                         desks.setCurrentDeskId(null);
                         $location.url('/workspace/content');
                         referrer.setReferrerUrl('/workspace/content');
-                    }, function(response) {
-                        notify.error(gettext('Error: Saving work on configuration changes.'));
                     })
                     ['finally'](function() {
                         $window.location.reload(true);

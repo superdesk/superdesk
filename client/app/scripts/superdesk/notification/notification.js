@@ -12,18 +12,19 @@
 
     WebSocketProxy.$inject = ['$rootScope', 'config', 'desks'];
     function WebSocketProxy($rootScope, config, desks, session) {
-        var ReloadEvents = {
-            'user_disabled': 'User is disabled',
-            'user_inactivated': 'User is inactivated',
-            'user_role_changed': 'User role is changed',
-            'user_type_changed': 'User type is changed',
-            'user_privileges_revoked': 'User privileges are revoked',
-            'role_privileges_revoked': 'Role role_privileges_revoked',
-            'desk_membership_revoked': 'User removed from desk',
-            'desk': 'Desk is deleted/updated',
-            'stage': 'Stage is created/updated/deleted',
-            'stage_visibility_updated': 'Stage visibility change'
-        };
+
+        var ReloadEvents = [
+            'user_disabled',
+            'user_inactivated',
+            'user_role_changed',
+            'user_type_changed',
+            'user_privileges_revoked',
+            'role_privileges_revoked',
+            'desk_membership_revoked',
+            'desk',
+            'stage',
+            'stage_visibility_updated'
+        ];
 
         if (!config.server.ws) {
             return;
@@ -34,7 +35,7 @@
         ws.onmessage = function(event) {
             var msg = angular.fromJson(event.data);
             $rootScope.$broadcast(msg.event, msg.extra);
-            if (_.has(ReloadEvents, msg.event)) {
+            if (_.contains(ReloadEvents, msg.event)) {
                 $rootScope.$broadcast('reload', msg);
             }
         };
@@ -44,8 +45,8 @@
         };
     }
 
-    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks'];
-    function ReloadService($window, $rootScope, session, desks) {
+    ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks', 'gettext'];
+    function ReloadService($window, $rootScope, session, desks, gettext) {
         var _this = this;
         _this.userDesks = [];
         _this.result = null;
@@ -78,7 +79,7 @@
         this.reload = function(result) {
             if (result.reload) {
                 if ($window.location.hash != null && $window.location.hash.match('/authoring/') != null) {
-                    _this.broadcast(result.message);
+                    _this.broadcast(gettext(result.message));
                 } else {
                     $window.location.reload(true);
                 }
