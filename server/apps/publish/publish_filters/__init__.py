@@ -11,7 +11,7 @@
 
 import logging
 from superdesk import get_backend
-from apps.publish.blocking_filters.filter_condition import FilterConditionService, FilterConditionResource
+from apps.publish.publish_filters.filter_condition import FilterConditionService, FilterConditionResource
 
 logger = logging.getLogger(__name__)
 

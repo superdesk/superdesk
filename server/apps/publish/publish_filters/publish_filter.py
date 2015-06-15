@@ -15,7 +15,7 @@ from superdesk.services import BaseService
 logger = logging.getLogger(__name__)
 
 
-class BlockingFilterResource(Resource):
+class PublishFilterResource(Resource):
     schema = {
         'blocking_filter': {
             'type': 'list',
@@ -30,7 +30,11 @@ class BlockingFilterResource(Resource):
             'type': 'string',
             'nullable': False,
         },
-        'mongo_translation': {
+        'mongo_query': {
+            'type': 'string',
+            'nullable': True
+        },
+        'elastic_query': {
             'type': 'string',
             'nullable': True
         }

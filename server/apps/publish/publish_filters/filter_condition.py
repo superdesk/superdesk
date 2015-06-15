@@ -50,11 +50,11 @@ class FilterConditionResource(Resource):
             'type': 'string',
             'nullable': False,
         },
-        'mongo_translation': {
+        'mongo_query': {
             'type': 'string',
             'nullable': True
         },
-        'elastic_translation': {
+        'elastic_query': {
             'type': 'string',
             'nullable': True
         }
@@ -79,7 +79,7 @@ class FilterConditionService(BaseService):
         field = doc['field']
         operator = self._get_mongo_operator(doc['operator'])
         value = self._get_mongo_value(doc['operator'], doc['value'])
-        doc['mongo_translation'] = {field: {operator: value}}
+        doc['mongo_query'] = {field: {operator: value}}
 
     def _get_mongo_operator(self, operator):
         if operator in ['like', 'startswith', 'endswith']:
@@ -105,7 +105,7 @@ class FilterConditionService(BaseService):
     def _translate_to_elastic_query(self, doc):
         operator = self._get_elastic_operator(doc['operator'])
         value = self._get_elastic_value(doc, doc['operator'], doc['value'])
-        doc['elastic_translation'] = {operator: {doc['field']: value}}
+        doc['elastic_query'] = {operator: {doc['field']: value}}
 
     def _get_elastic_operator(self, operator):
         if operator in ['in', 'nin']:
