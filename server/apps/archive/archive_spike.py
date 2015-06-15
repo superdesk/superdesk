@@ -23,6 +23,7 @@ from .common import get_user, item_url, is_assigned_to_a_desk
 
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
+from apps.packages import PackageService, TakesPackageService
 
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,9 @@ class ArchiveUnspikeResource(ArchiveResource):
 
 
 class ArchiveSpikeService(BaseService):
+
+    def on_update(self, updates, original):
+        pass
 
     def update(self, id, updates, original):
         user = get_user(required=True)

@@ -12,7 +12,7 @@ import logging
 from eve.versioning import resolve_document_version
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
-
+from flask import current_app as app
 from collections import Counter
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
