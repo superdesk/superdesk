@@ -14,7 +14,6 @@ import requests
 
 from calendar import timegm
 from collections import namedtuple
-from concurrent import futures
 from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
@@ -118,8 +117,8 @@ class RssIngestService(IngestService):
             item = self._create_item(entry, field_aliases)
             self.add_timestamps(item)
 
-            # If the entry references any images, create picture items from
-            # them and create a package containing them and the entry itself.
+            # If the RSS entry references any images, create picture items from
+            # them and create a package referencing them and the entry itself.
             # If there are no image references, treat entry as a simple text
             # item, even if it might reference other media types, e.g. videos.
             image_urls = self._extract_image_links(entry)
@@ -198,50 +197,6 @@ class RssIngestService(IngestService):
 
         return list(img_links)
 
-    # TODO: delete this, the downloads will be handled elsewhere
-    def _fetch_images(self, image_urls, provider):
-        """Fetch images from the given list of URLs.
-
-        It is assumed that each URL points to an image file. The images are
-        downloaded in parallel. If *any* of the downloads fails, an error is
-        raised.
-
-        NOTE: The `image_urls` iterable should not return any duplicates in
-        order to avoid unnecessary repeated downloads of the same image.
-
-        :param image_urls: URLs of the images to fetch
-        :type image_urls: iterable
-        :param provider: data provider instance, needed as an argument when
-            raising ingest errors
-
-        :return: A dictionary containing the successfully downloaded images.
-            The keys are image URLs, and the values the corresponding image
-            data as a binary string.
-        """
-        images = {}
-
-        with futures.ThreadPoolExecutor(max_workers=5) as executor:
-            downloads = []
-
-            for url in image_urls:
-                future = executor.submit(requests.get, url, timeout=10)
-                downloads.append(future)
-
-            for download in futures.as_completed(downloads, timeout=60):
-                try:
-                    response = download.result()
-                except requests.exceptions.RequestException as ex:
-                    raise IngestApiError.apiRequestError(
-                        exception=ex, provider=provider)
-                else:
-                    if response.ok:
-                        images[response.url] = response.content
-                    else:
-                        raise IngestApiError.apiRequestError(
-                            exception=None, provider=provider)
-
-        return images
-
     def _create_item(self, data, field_aliases=None):
         """Create a new content item from RSS feed data.
 
@@ -274,7 +229,17 @@ class RssIngestService(IngestService):
         return item
 
     def _create_image_items(self, image_links, text_item):
-        """ TODO: docstring"""
+        """Create a list of picture items that represent the external images
+        located on given URLs.
+
+        Each created item's `firstcreated` and `versioncreated` fields are set
+        to the same value as the values of these fields in `text_item`.
+
+        :param iterable image_links: list of image URLs
+        :param dict text_item: the "main" text item the images are related to
+
+        :return: list of created image items (as dicts)
+        """
         image_items = []
 
         for image_url in image_links:
@@ -294,16 +259,15 @@ class RssIngestService(IngestService):
         return image_items
 
     def _create_package(self, text_item, image_items):
-        """TODO: change dosctring... explain side effect (versioncrated for
-        image items )
+        """Create a new content package from given content items.
 
-        Wrap given text item and images into a new content package.
+        The package's `main` group contains only the references to given items,
+        not the items themselves. In the list of references, the reference to
+        the text item preceeds the references to image items.
 
-        TODO: change image_links dosctring
-
-        :param dict text_item: text content of the package
-        :param dict images: (image_url, image_data) pairs to be added to the
-            package as picture items
+        :param dict text_item: item representing the text content
+        :param list image_items: list of items (dicts) representing the images
+            related to the text content
         :return: the created content package
         :rtype: dict
         """

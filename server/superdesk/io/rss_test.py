@@ -10,7 +10,6 @@
 
 
 from datetime import datetime
-from requests.exceptions import RequestException
 from superdesk.tests import TestCase
 from time import struct_time
 from unittest import mock
@@ -42,10 +41,6 @@ class FakeIngestApiError(Exception):
     @classmethod
     def apiAuthError(cls, exception, provider):
         return RssError('auth_error', exception, provider)
-
-    @classmethod
-    def apiRequestError(cls, exception, provider):
-        return RssError('request_error', exception, provider)
 
 
 class FakeParseError(Exception):
@@ -164,8 +159,7 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         items = returned[0]
         self.assertEqual(len(items), 0)
 
-    # TODO: adjust when package structure is known
-    def DISABLEDtest_returns_package_if_feed_entry_contains_image_links(self):
+    def test_returns_items_and_package_list_if_entry_contains_image_urls(self):
         feed_parse.return_value = MagicMock(
             entries=[
                 MagicMock(
@@ -175,34 +169,41 @@ class UpdateMethodTestCase(RssIngestServiceTest):
             ]
         )
 
-        fake_item = dict(
-            guid='fake_item',
+        fake_text_item = dict(
+            guid='fake_text_item',
             firstcreated=datetime(2015, 2, 25, 17, 11, 11),
             versioncreated=datetime(2015, 2, 25, 17, 11, 11),
         )
-        fake_fetched_images = {
-            'http://image.one': b'image data'
-        }
+        item_url = 'http://link.to/fake_item'
+        fake_image_items = [
+            {'guid': 'http://link.to/image_1.jpg'},
+            {'guid': 'http://link.to/image_2.jpg'},
+        ]
         fake_package = MagicMock(name='fake_package')
 
-        item_url = 'http://link.to/fake_item'
-        self.instance._create_item.return_value = fake_item
-        self.instance._extract_image_links.return_value = [item_url]
-        self.instance._fetch_images.return_value = fake_fetched_images
-        self.instance._wrap_into_package.return_value = fake_package
+        self.instance._create_item = MagicMock(return_value=fake_text_item)
+        self.instance._extract_image_links = MagicMock(return_value=[item_url])
+        self.instance._create_image_items = MagicMock(
+            return_value=fake_image_items)
+        self.instance._create_package = MagicMock(return_value=fake_package)
 
         returned = self.instance._update(
-            {'last_updated': datetime(2015, 2, 24)}
+            {'last_updated': datetime(1965, 2, 24)}
         )
 
-        self.instance._wrap_into_package.assert_called_with(
-            fake_item, fake_fetched_images)
+        self.instance._create_package.assert_called_with(
+            fake_text_item, fake_image_items)
 
-        # TODO: check that both image_items and the package itself have been
-        # added to the returne newitems list
         self.assertEqual(len(returned), 1)
         items = returned[0]
-        self.assertEqual(items, [fake_package])
+
+        expected_items = [
+            fake_text_item,
+            {'guid': 'http://link.to/image_1.jpg'},
+            {'guid': 'http://link.to/image_2.jpg'},
+            fake_package,
+        ]
+        self.assertCountEqual(items, expected_items)
 
 
 @mock.patch('superdesk.io.rss.requests.get', requests_get)
@@ -442,90 +443,6 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
         self.assertCountEqual(links, ['http://foo.bar/image.png'])
 
 
-@mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
-class FetchImagesMethodTestCase(RssIngestServiceTest):
-    """Tests for the _fetch_images() method."""
-
-    def setUp(self):
-        super().setUp()
-        self.fake_provider = MagicMock(name='fake provider')
-
-    @mock.patch('superdesk.io.rss.requests.get')
-    def test_fetches_images_from_all_given_urls(self, requests_get):
-        url_1 = 'http://foo.bar/image_1.jpg'
-        url_2 = 'http://foo.bar/image_2.jpg'
-        links = [url_1, url_2]
-
-        response_1 = MagicMock(
-            name='response_1',
-            ok=True,
-            url=url_1,
-            content=b'img_1 data')
-
-        response_2 = MagicMock(
-            name='response_2',
-            ok=True,
-            url=url_2,
-            content=b'img_2 data')
-
-        wrong_response = MagicMock(
-            name='wrong_response',
-            ok=True,
-            url='http://should.not/be/called',
-            content=b'wrong image')
-
-        def side_effect(url, *args, **kwargs):
-            response = {url_1: response_1, url_2: response_2}
-            return response.get(url, wrong_response)
-
-        requests_get.side_effect = side_effect
-
-        result = self.instance._fetch_images(links, self.fake_provider)
-
-        expected_result = {
-            url_1: b'img_1 data',
-            url_2: b'img_2 data'
-        }
-        self.assertEqual(result, expected_result)
-
-    @mock.patch('superdesk.io.rss.requests.get')
-    def test_raises_error_on_request_error(self, requests_get):
-        requests_get.side_effect = RequestException
-        links = ['http://imagine.this/timeouts']
-
-        try:
-            with self.assertRaises(RssError) as exc_context:
-                self.instance._fetch_images(links, self.fake_provider)
-        except AssertionError:
-            raise
-        except:
-            self.fail('Unexpected exception type raised.')
-
-        ex = exc_context.exception
-        self.assertEqual(ex.name, 'request_error')
-        self.assertIs(ex.provider, self.fake_provider)
-
-    @mock.patch('superdesk.io.rss.requests.get')
-    def test_raises_error_on_non_ok_response(self, requests_get):
-        response = MagicMock()
-        response.ok = False
-
-        requests_get.return_value = response
-        links = ['http://imagine.this/is/not/found']
-
-        try:
-            with self.assertRaises(RssError) as exc_context:
-                self.instance._fetch_images(links, self.fake_provider)
-        except AssertionError:
-            raise
-        except:
-            self.fail('Unexpected exception type raised.')
-
-        ex = exc_context.exception
-        self.assertEqual(ex.name, 'request_error')
-        self.assertIs(ex.provider, self.fake_provider)
-
-
 class CreateItemMethodTestCase(RssIngestServiceTest):
     """Tests for the _create_item() method."""
 
@@ -580,37 +497,76 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
         self.assertEqual(item.get('body_html'), 'This is body text.')
 
 
-class WrapIntoPackageMethodTestCase(RssIngestServiceTest):
-    """Tests for the _wrap_into_package() method."""
+class CreateImageItemsMethodTestCase(RssIngestServiceTest):
+    """Tests for the _create_image_items() method."""
 
-    def test_creates_package_from_given_text_item_and_images(self):
-        pass  # TODO: implement when it's clear how a package should look like
+    def test_creates_image_items_from_given_urls(self):
+        links = [
+            'http://foo.bar/image_1.jpg',
+            'http://baz.ban/image_2.jpg',
+        ]
+        text_item = {
+            'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+            'versioncreated': datetime(2015, 3, 19, 17, 20, 45)
+        }
 
-    # TODO: delete
-    # mixed package example from packages.feature:
-    #
-    # {
-    #     "groups": [
-    #         {
-    #             "id": "root",
-    #             "refs": [{"idRef": "main"}],
-    #             "role": "grpRole:NEP"
-    #         },
-    #         {
-    #             "id": "main",
-    #             "role": "main"
-    #             "refs": [
-    #                 {
-    #                     "headline": "test package with text",
-    #                     "residRef": "tag:example.com,0000:newsml_BRE9A606",
-    #                     "slugline": "awesome article"
-    #                 },
-    #                 {
-    #                     "headline": "test package with pic",
-    #                     "residRef": "tag:example.com,0000:newsml_BRE9A605",
-    #                     "slugline": "awesome picture"
-    #                 },
-    #             ],
-    #         }
-    #     ]
-    # }
+        result = self.instance._create_image_items(links, text_item)
+
+        expected = [
+            {
+                'guid': 'http://foo.bar/image_1.jpg',
+                'type': 'picture',
+                'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+                'versioncreated': datetime(2015, 3, 19, 17, 20, 45),
+                'renditions': {
+                    'baseImage': {
+                        'href': 'http://foo.bar/image_1.jpg'
+                    }
+                }
+            }, {
+                'guid': 'http://baz.ban/image_2.jpg',
+                'type': 'picture',
+                'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+                'versioncreated': datetime(2015, 3, 19, 17, 20, 45),
+                'renditions': {
+                    'baseImage': {
+                        'href': 'http://baz.ban/image_2.jpg'
+                    }
+                }
+            }
+        ]
+        self.assertCountEqual(result, expected)
+
+
+class CreatePackageMethodTestCase(RssIngestServiceTest):
+    """Tests for the _create_package() method."""
+
+    def test_creates_package_from_given_text_and_image_items(self):
+        text_item = {'guid': 'main_text'}
+        img_item_1 = {'guid': 'image_1'}
+        img_item_2 = {'guid': 'image_2'}
+
+        package = self.instance._create_package(
+            text_item,
+            [img_item_1, img_item_2]
+        )
+
+        expected = {
+            'type': 'composite',
+            'groups': [
+                {
+                    'id': 'root',
+                    'role': 'grpRole:NEP',
+                    'refs': [{'idRef': 'main'}],
+                }, {
+                    'id': 'main',
+                    'role': 'main',
+                    'refs': [
+                        {'residRef': 'main_text'},
+                        {'residRef': 'image_1'},
+                        {'residRef': 'image_2'},
+                    ],
+                }
+            ]
+        }
+        self.assertEqual(package, expected)
