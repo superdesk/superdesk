@@ -344,8 +344,8 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
                 'type': 'text/html',
             }, {
                 'rel': 'enclosure',
-                'href': 'http://foo.bar/image_1.tiff',
-                'type': 'image/tiff',
+                'href': 'http://foo.bar/image_1.bmp',
+                'type': 'image/bmp',
             }
         ]
 
@@ -356,21 +356,21 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
     def test_extracts_media_thumbnail_links(self):
         rss_entry = MagicMock()
         rss_entry.media_thumbnail = [
-            {'url': 'http://foo.bar/small_img.jpg'},
-            {'url': 'http://foo.bar/thumb_x.png'},
+            {'url': 'http://foo.bar/small_img.gif'},
+            {'url': 'http://foo.bar/thumb_x.tiff'},
         ]
 
         links = self.instance._extract_image_links(rss_entry)
 
         self.assertCountEqual(
             links,
-            ['http://foo.bar/small_img.jpg', 'http://foo.bar/thumb_x.png']
+            ['http://foo.bar/small_img.gif', 'http://foo.bar/thumb_x.tiff']
         )
 
     def test_omits_media_thumbnail_links_to_non_supported_formats(self):
         rss_entry = MagicMock()
         rss_entry.media_thumbnail = [
-            {'url': 'http://foo.bar/image.tiff'},
+            {'url': 'http://foo.bar/image.bmp'},
         ]
 
         links = self.instance._extract_image_links(rss_entry)
@@ -381,11 +381,11 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
         rss_entry = MagicMock()
         rss_entry.media_content = [
             {
-                'url': 'http://foo.bar/image_1.jpg',
+                'url': 'http://foo.bar/image_1.jpeg',
                 'type': 'image/jpeg',
             }, {
-                'url': 'http://foo.bar/image_2.png',
-                'type': 'image/png',
+                'url': 'http://foo.bar/image_2.tiff',
+                'type': 'image/tiff',
             }
         ]
 
@@ -393,7 +393,7 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
 
         self.assertCountEqual(
             links,
-            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+            ['http://foo.bar/image_1.jpeg', 'http://foo.bar/image_2.tiff']
         )
 
     def test_omits_media_content_links_to_non_supported_mime_types(self):
@@ -406,8 +406,8 @@ class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
                 'url': 'http://foo.bar/video.avi',
                 'type': 'video/avi',
             }, {
-                'url': 'http://foo.bar/image_1.tiff',
-                'type': 'image/tiff',
+                'url': 'http://foo.bar/image_1.bmp',
+                'type': 'image/bmp',
             }
         ]
 
