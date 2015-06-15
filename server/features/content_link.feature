@@ -30,7 +30,7 @@ Feature: Link content in takes
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE"
         """
         {
             "type": "text",
@@ -67,6 +67,7 @@ Feature: Link content in takes
                                 {
                                     "headline": "test1=2",
                                     "slugline": "comics",
+                                    "residRef": "#TAKE#",
                                     "sequence": 2
                                 }
                             ]
@@ -79,6 +80,7 @@ Feature: Link content in takes
                     "last_take": ""
                 },
                 {
+                    "_id": "#TAKE#",
                     "headline": "test1=2",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}],
@@ -98,9 +100,10 @@ Feature: Link content in takes
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE2"
         """
         {
+            "_id": "#TAKE2#",
             "type": "text",
             "headline": "test1=3",
             "slugline": "comics",
@@ -144,6 +147,7 @@ Feature: Link content in takes
                     "package_type": "takes"
                 },
                 {
+                    "_id": "#TAKE#",
                     "headline": "test1=2",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}],
@@ -157,7 +161,7 @@ Feature: Link content in takes
                     "takes": {}
                 },
                 {
-                    "guid": "#TAKE#",
+                    "_id": "#TAKE2#",
                     "headline": "test1=3",
                     "type": "text",
                     "linked_in_packages": [{"package_type": "takes"}],
@@ -231,9 +235,10 @@ Feature: Link content in takes
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE"
         """
         {
+            "_id": "#TAKE#",
             "type": "text",
             "headline": "Take-1 headline=2",
             "slugline": "Take-1 slugline",
@@ -264,9 +269,10 @@ Feature: Link content in takes
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE2"
         """
         {
+            "_id": "#TAKE2#",
             "type": "text",
             "headline": "Take-1 headline=3",
             "slugline": "Take-1 slugline",
@@ -281,3 +287,242 @@ Feature: Link content in takes
             "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
         }
         """
+
+    @auth @test
+    Scenario: Spiked the last take of the takes package
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "archive"
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take",
+            "guid": "123",
+            "state": "draft",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            }
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take as "TAKE2"
+        """
+        {
+            "_id": "#TAKE2#",
+            "type": "text",
+            "headline": "test1=2",
+            "slugline": "comics",
+            "anpa_take_key": "Take=2",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+        }
+        """
+        When we get "archive"
+        Then we get list with 3 items
+        """
+        {
+            "_items": [
+                {
+                    "groups": [
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                },
+                                {
+                                    "headline": "test1=2",
+                                    "slugline": "comics",
+                                    "residRef": "#TAKE2#",
+                                    "sequence": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "type": "composite",
+                    "package_type": "takes",
+                    "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+                    "sequence": 2,
+                    "last_take": ""
+                },
+                {
+                    "_id": "#TAKE2#",
+                    "headline": "test1=2",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
+                },
+                {
+                    "guid": "123",
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "takes": {}
+                }
+            ]
+        }
+        """
+        When we post to "archive/#TAKE2#/link"
+        """
+        [{}]
+        """
+        Then we get next take as "LAST_TAKE"
+        """
+        {
+            "_id": "#LAST_TAKE#",
+            "type": "text",
+            "headline": "test1=3",
+            "slugline": "comics",
+            "anpa_take_key": "Take=3",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+        }
+        """
+        When we get "archive"
+        Then we get list with 4 items
+        """
+        {
+            "_items": [
+                {
+                    "groups": [
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                },
+                                {
+                                    "headline": "test1=2",
+                                    "slugline": "comics",
+                                    "residRef": "#TAKE2#",
+                                    "sequence": 2
+                                },
+                                {
+                                    "headline": "test1=3",
+                                    "slugline": "comics",
+                                    "residRef": "#LAST_TAKE#",
+                                    "sequence": 3
+                                }
+                            ]
+                        }
+                    ],
+                    "type": "composite",
+                    "package_type": "takes"
+                },
+                {
+                    "_id": "#TAKE2#",
+                    "headline": "test1=2",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "guid": "123",
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "_id": "#LAST_TAKE#",
+                    "headline": "test1=3",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                }
+            ]
+        }
+        """
+        When we spike "#TAKE2#"
+        Then we get response code 400
+        """
+        {"_issues": {"validator exception": "400: Only last take of the package can be spiked."}, "_status": "ERR"}
+        """
+        When we spike "123"
+        Then we get response code 400
+        """
+        {"_issues": {"validator exception": "400: Only last take of the package can be spiked."}, "_status": "ERR"}
+        """
+        When we spike "#LAST_TAKE#"
+        Then we get OK response
+        And we get spiked content "#LAST_TAKE#"
+        When we get "archive"
+        Then we get list with 4 items
+        """
+        {
+            "_items": [
+                {
+                    "groups": [
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                },
+                                {
+                                    "headline": "test1=2",
+                                    "slugline": "comics",
+                                    "residRef": "#TAKE2#",
+                                    "sequence": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "type": "composite",
+                    "package_type": "takes"
+                },
+                {
+                    "_id": "#TAKE2#",
+                    "headline": "test1=2",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "guid": "123",
+                    "headline": "test1",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}]
+                },
+                {
+                    "_id": "#LAST_TAKE#",
+                    "headline": "test1=3",
+                    "type": "text",
+                    "linked_in_packages": [{"package_type": "takes"}],
+                    "state": "spiked"
+                }
+
+

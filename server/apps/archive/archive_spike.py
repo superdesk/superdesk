@@ -16,6 +16,7 @@ from flask import current_app as app
 
 
 from superdesk import get_resource_service
+from superdesk.errors import SuperdeskApiError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
@@ -63,9 +64,12 @@ class ArchiveUnspikeResource(ArchiveResource):
 class ArchiveSpikeService(BaseService):
 
     def on_update(self, updates, original):
-        pass
+        takes_service = TakesPackageService()
+        if not takes_service.can_spike_takes_package_item(original):
+            raise SuperdeskApiError.badRequestError(message="Only last take of the package can be spiked.")
 
     def update(self, id, updates, original):
+        package_service = PackageService()
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
@@ -81,7 +85,7 @@ class ArchiveSpikeService(BaseService):
 
         item = self.backend.update(self.datasource, id, updates, original)
         push_notification('item:spike', item=str(item.get('_id')), user=str(user))
-
+        package_service.remove_spiked_refs_from_package(id)
         return item
 
 

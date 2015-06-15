@@ -12,14 +12,14 @@ import logging
 from eve.versioning import resolve_document_version
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
-from flask import current_app as app
 from collections import Counter
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE
-from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP, insert_into_versions
+from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, \
+    ROOT_GROUP, insert_into_versions, SEQUENCE
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
 
@@ -232,7 +232,6 @@ class PackageService():
         Before removing checks if the package has been processed. If processed the package is skipped.
         :return: package[config.ID_FIELD]
         """
-
         groups = package['groups']
 
         if processed_packages is None:
@@ -244,7 +243,7 @@ class PackageService():
                 sub_package = self.find_one(req=None, _id=sub_package_id)
                 return self.remove_refs_in_package(sub_package, ref_id_to_remove)
 
-        new_groups = [{'id': group['id'], 'role': group['role'],
+        new_groups = [{'id': group['id'], 'role': group.get('role'),
                        'refs': [ref for ref in group['refs'] if ref.get('guid') != ref_id_to_remove]}
                       for group in groups]
         new_root_refs = [{'idRef': group['id']} for group in new_groups if group['id'] != 'root']
@@ -255,6 +254,12 @@ class PackageService():
                 break
 
         updates = {config.LAST_UPDATED: utcnow(), 'groups': new_groups}
+
+        # if takes package then adjust the reference.
+        # safe to do this as take can only be in one takes package.
+        if package.get(PACKAGE_TYPE) == TAKES_PACKAGE:
+            updates[SEQUENCE] = package[SEQUENCE] - 1
+
         resolve_document_version(updates, ARCHIVE, 'PATCH', package)
 
         get_resource_service(ARCHIVE).patch(package[config.ID_FIELD], updates)
@@ -266,3 +271,12 @@ class PackageService():
     def _get_associations(self, doc):
         return [assoc for group in doc.get('groups', [])
                 for assoc in group.get(ASSOCIATIONS, [])]
+
+    def remove_spiked_refs_from_package(self, doc_id):
+        packages = self.get_packages(doc_id)
+        if packages.count() > 0:
+            processed_packages = []
+            for package in packages:
+                if str(package[config.ID_FIELD]) not in processed_packages:
+                    processed_packages.extend(
+                        self.remove_refs_in_package(package, doc_id, processed_packages))

@@ -13,12 +13,12 @@ from eve.utils import config
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, ITEM_TYPE_COMPOSITE, PACKAGE
+from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, \
+    ITEM_TYPE_COMPOSITE, PACKAGE, LAST_TAKE
 from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
 from .package_service import get_item_ref, create_root_group
 
 
-LAST_TAKE = 'last_take'
 logger = logging.getLogger(__name__)
 
 
@@ -128,3 +128,18 @@ class TakesPackageService():
             archive_service.patch(takes_package_id, takes_package)
 
         return link
+
+    def can_spike_takes_package_item(self, doc):
+        """
+        checks whether if the item is the last item of the takes package.
+        if the item is not the last item then raise expection
+        :param doc: take of a spike package
+        """
+        if doc and doc.get(LINKED_IN_PACKAGES):
+            package_id = self.get_take_package_id(doc)
+            if package_id:
+                takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+                if takes_package[LAST_TAKE] != doc['_id']:
+                    return False
+
+        return True
