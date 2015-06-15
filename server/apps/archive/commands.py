@@ -12,6 +12,7 @@
 from eve.utils import ParsedRequest, date_to_str
 import superdesk
 from superdesk.utc import utcnow
+from .archive import SOURCE as ARCHIVE
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,38 +20,41 @@ logger = logging.getLogger(__name__)
 
 class RemoveExpiredSpikeContent(superdesk.Command):
     """
-    Remove expired items form archive after they have been spiked.
+    Removes expired articles whose state is 'spiked' form archive.
     """
+
     def run(self):
         self.remove_expired_content()
 
     def remove_expired_content(self):
-        logger.info('Removing expired content')
+        logger.info('Removing expired content if spiked')
+
         now = date_to_str(utcnow())
         items = self.get_expired_items(now)
 
         while items.count() > 0:
             for item in items:
                 logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
-                superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
+                superdesk.get_resource_service(ARCHIVE).remove_expired(item)
 
             items = self.get_expired_items(now)
 
     def get_expired_items(self, now):
-        query_filter = self.__get_query_for_expired_items(now)
+        query_filter = self._get_query_for_expired_items(now)
         req = ParsedRequest()
-        req.max_results = 25
-        req.args = {'filter': query_filter}
-        return superdesk.get_resource_service('archive').get(req, None)
+        req.max_results = 100
 
-    def __get_query_for_expired_items(self, now):
-        query = {'and':
-                 [
-                     {'term': {'state': 'spiked'}},
-                     {'range': {'expiry': {'lte': now}}}
-                 ]
-                 }
-        return superdesk.json.dumps(query)
+        return superdesk.get_resource_service(ARCHIVE).get_from_mongo(req=req, lookup=query_filter)
+
+    def _get_query_for_expired_items(self, now):
+        query = {
+            '$and': [
+                {'expiry': {'$lte': now}},
+                {'state': 'spiked'}
+            ]
+        }
+
+        return query
 
 
 superdesk.command('archive:remove_spiked_if_expired', RemoveExpiredSpikeContent())

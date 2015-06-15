@@ -24,7 +24,7 @@ from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
-from eve.versioning import resolve_document_version
+from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
@@ -207,9 +207,9 @@ class ArchiveService(BaseService):
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
 
-        updates.setdefault('original_creator', original['original_creator'])
+        updates.setdefault('original_creator', original.get('original_creator'))
 
-        str_user_id = str(user.get('_id'))
+        str_user_id = str(user.get('_id')) if user else None
         if lock_user and str(lock_user) != str_user_id and not force_unlock:
             raise SuperdeskApiError.forbiddenError('The item was locked by another user')
 
@@ -411,6 +411,26 @@ class ArchiveService(BaseService):
                     return False, 'Item belongs to another user.'
 
         return True, ''
+
+    def remove_expired(self, doc):
+        """
+        Removes the article from production if the state is spiked
+        """
+
+        assert doc[config.CONTENT_STATE] == 'spiked', \
+            "Article state is %s. Only Spiked Articles can be removed" % doc[config.CONTENT_STATE]
+
+        doc_id = str(doc[config.ID_FIELD])
+        super().delete_action({config.ID_FIELD: doc_id})
+        get_resource_service('archive_versions').delete(lookup={versioned_id_field(): doc_id})
+
+        packages = self.packageService.get_packages(doc_id)
+        if packages.count() > 0:
+            processed_packages = []
+            for package in packages:
+                if str(package[config.ID_FIELD]) not in processed_packages:
+                    processed_packages.extend(
+                        self.packageService.remove_refs_in_package(package, doc_id, processed_packages))
 
     def __is_req_for_save(self, doc):
         """
