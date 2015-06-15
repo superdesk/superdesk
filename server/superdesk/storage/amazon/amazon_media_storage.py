@@ -47,11 +47,11 @@ class AmazonMediaStorage(MediaStorage):
         return '%s://%s.%s/%s' % (protocol, self.container_name, self.endpoint, media_id)
 
     def read_from_config(self):
-        region = self.app.config.get('AMAZON_REGION', 's3') or 's3'
+        region = self.app.config.get('AMAZON_REGION', 'us-east-1') or 'us-east-1'
         username = self.app.config['AMAZON_ACCESS_KEY_ID']
         api_key = self.app.config['AMAZON_SECRET_ACCESS_KEY']
         self.container_name = self.app.config['AMAZON_CONTAINER_NAME']
-        endpoint = '%s.amazonaws.com' % region
+        endpoint = 's3-%s.amazonaws.com' % region
         return username, api_key, endpoint
 
     def get_bucket_objects(self, marker=None, bucket=None):
