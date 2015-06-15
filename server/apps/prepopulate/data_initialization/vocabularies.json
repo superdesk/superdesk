@@ -106,5 +106,24 @@
             {"is_active": true, "name": "Repeat", "value": "Repeat"},
             {"is_active": true, "name": "Content Warning", "value": "Content Warning"}
         ]
+    },
+    {
+        "_id": "rightsinfo",
+        "items": [
+            {
+                "is_active": true,
+                "name": "AAP",
+                "copyrightHolder": "Australian Associated Press",
+                "copyrightNotice": "AAP content is owned by or licensed to Australian Associated Press Pty Limited (AAP) and is\r\ncopyright protected.  AAP content is published on an \"as is\" basis for personal use only and\r\nmust not be copied, republished, rewritten, resold or redistributed, whether by caching,\r\nframing or similar means, without AAP's prior written permission.  AAP and its licensors\r\nare not liable for any loss, through negligence or otherwise, resulting from errors or\r\nomissions in or reliance on AAP content.  The globe symbol and \"AAP\" are registered trade marks.\r\nFurther this AAP content is supplied to the direct recipient pursuant to an Information Supply\r\nAgreement with AAP (AAP Information Supply Agreement).  The direct recipient has a non-exclusive,\r\nnon-transferable right to display this AAP content in accordance with and subject to the\r\nterms of the AAP Information Supply Agreement.",
+                "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
+            },
+            {
+                "is_active": true,
+                "name": "default",
+                "copyrightHolder": "Australian Associated Press",
+                "copyrightNotice": "AAP content is owned by or licensed to Australian Associated Press Pty Limited (AAP) and is\r\ncopyright protected.  AAP content is published on an \"as is\" basis for personal use only and\r\nmust not be copied, republished, rewritten, resold or redistributed, whether by caching,\r\nframing or similar means, without AAP's prior written permission.  AAP and its licensors\r\nare not liable for any loss, through negligence or otherwise, resulting from errors or\r\nomissions in or reliance on AAP content.  The globe symbol and \"AAP\" are registered trade marks.\r\nFurther this AAP content is supplied to the direct recipient pursuant to an Information Supply\r\nAgreement with AAP (AAP Information Supply Agreement).  The direct recipient has a non-exclusive,\r\nnon-transferable right to display this AAP content in accordance with and subject to the\r\nterms of the AAP Information Supply Agreement.",
+                "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
+            }
+        ]
     }
 ]
