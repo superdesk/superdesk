@@ -60,19 +60,18 @@ class RssIngestService(IngestService):
     * type - field's data type
     """
 
-    # TODO: remove bmp, add tiff (to be consistent with media.renditions)
     IMG_MIME_TYPES = (
-        'image/bmp',
         'image/gif',
         'image/jpeg',
         'image/png',
+        'image/tiff',
     )
     """
     Supported MIME types for ingesting external images referenced by the
     RSS entries.
     """
 
-    IMG_FILE_SUFFIXES = ('.bmp', '.gif', '.jpeg', '.jpg', '.png',)
+    IMG_FILE_SUFFIXES = ('.gif', '.jpeg', '.jpg', '.png', '.tif', '.tiff')
     """
     Supported image filename extensions for ingesting (used for the
     <media:thumbnail> tags - they lack the "type" attribute).
