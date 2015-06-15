@@ -28,14 +28,6 @@ class PublishFilterResource(Resource):
         'name': {
             'type': 'string',
             'nullable': False,
-        },
-        'mongo_query': {
-            'type': 'string',
-            'nullable': True
-        },
-        'elastic_query': {
-            'type': 'string',
-            'nullable': True
         }
     }
 
@@ -50,15 +42,41 @@ class PublishFilterResource(Resource):
 
 class PublishFilterService(BaseService):
     def on_create(self, docs):
-        for doc in docs:
-            doc['mongo_query'] = self._join_mongo_queries(doc)
+        pass
 
-    def _join_mongo_queries(self, doc):
+    def build_mongo_query(self, doc):
+        filter_condition_service = get_resource_service('filter_condition')
         expressions = []
         for expression in doc.get('publish_filter', []):
             filter_conditions = []
             for filter_condition_id in expression:
-                filter_condition = get_resource_service('filter_condition').find_one(req=None, _id=filter_condition_id)
-                filter_conditions.append(filter_condition['mongo_query'])
-            expressions.append({'$and': filter_conditions})
-        return {'$or': expressions}
+                filter_condition = filter_condition_service.find_one(req=None, _id=filter_condition_id)
+                mongo_query = filter_condition_service.get_mongo_query(filter_condition)
+                filter_conditions.append(mongo_query)
+
+            if len(filter_conditions) > 1:
+                expressions.append({'$and': filter_conditions})
+            else:
+                expressions.extend(filter_conditions)
+
+        if len(expressions) > 1:
+            return {'$or': expressions}
+        else:
+            return expressions[0]
+
+    def build_elastic_query(self, doc):
+        query = {'source': {'query': 'x'}}
+        filter_condition_service = get_resource_service('filter_condition')
+        for expression in doc.get('publish_filter', []):
+            filter_conditions = {'query': {}}
+            for filter_condition_id in expression:
+                filter_condition = filter_condition_service.find_one(req=None, _id=filter_condition_id)
+                elastic_query = filter_condition_service.get_elastic_query(filter_condition)
+
+                if 'filtered' in elastic_query:
+                    if 'filtered' in filter_conditions['query']:
+                        filter_conditions['query']['filtered']['filter']['bool']['should'].\
+                            extend(elastic_query['filtered']['filter']['bool']['should'])
+                    else:
+                        filter_conditions['query']['filtered']['filter']['bool']['should'] = \
+                            elastic_query['filtered']['filter']['bool']['should']

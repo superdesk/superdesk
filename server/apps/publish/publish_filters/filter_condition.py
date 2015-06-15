@@ -49,14 +49,6 @@ class FilterConditionResource(Resource):
         'value': {
             'type': 'string',
             'nullable': False,
-        },
-        'mongo_query': {
-            'type': 'string',
-            'nullable': True
-        },
-        'elastic_query': {
-            'type': 'string',
-            'nullable': True
         }
     }
 
@@ -72,15 +64,13 @@ class FilterConditionResource(Resource):
 
 class FilterConditionService(BaseService):
     def on_create(self, docs):
-        for doc in docs:
-            self._translate_to_mongo_query(doc)
-            self._translate_to_elastic_query(doc)
+        pass
 
-    def _translate_to_mongo_query(self, doc):
+    def get_mongo_query(self, doc):
         field = doc['field']
         operator = self._get_mongo_operator(doc['operator'])
         value = self._get_mongo_value(doc['operator'], doc['value'])
-        doc['mongo_query'] = {field: {operator: value}}
+        return {field: {operator: value}}
 
     def _get_mongo_operator(self, operator):
         if operator in ['like', 'startswith', 'endswith']:
@@ -98,15 +88,18 @@ class FilterConditionService(BaseService):
         elif operator == 'endswith':
             return re.compile('.*{}'.format(value), re.IGNORECASE)
         else:
-            if value.find(',') > 0:
-                return [int(x) for x in value.split(',') if x.strip().isdigit()]
+            if isinstance(value, str) and value.find(',') > 0:
+                if value.split(',')[0].strip().isdigit():
+                    return [int(x) for x in value.split(',') if x.strip().isdigit()]
+                else:
+                    value.split(',')
             else:
                 return [value]
 
-    def _translate_to_elastic_query(self, doc):
+    def get_elastic_query(self, doc):
         operator = self._get_elastic_operator(doc['operator'])
         value = self._get_elastic_value(doc, doc['operator'], doc['value'])
-        doc['elastic_query'] = {operator: {doc['field']: value}}
+        return {operator: {doc['field']: value}}
 
     def _get_elastic_operator(self, operator):
         if operator in ['in', 'nin']:
