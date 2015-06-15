@@ -18,6 +18,7 @@ from flask import current_app as app
 
 from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
     LEGAL_FORMATTED_ITEM_NAME
+from apps.packages.package_service import PackageService
 import superdesk
 from apps.packages import TakesPackageService
 from apps.users.services import get_display_name
@@ -459,4 +460,4 @@ class PublishedItemService(BaseService):
         :return: True if orphan in archive collection, False otherwise.
         """
 
-        return get_resource_service(ARCHIVE).get_packages(doc['item_id']).count() == 0
+        return PackageService().get_packages(doc['item_id']).count() == 0

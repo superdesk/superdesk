@@ -7,7 +7,6 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-import json
 
 from apps.users.services import current_user_has_privilege
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
@@ -20,14 +19,14 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
 from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
-from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema, insert_into_versions
+from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config, ParsedRequest
+from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.users.services import is_admin
 from apps.content import metadata_schema
@@ -425,65 +424,13 @@ class ArchiveService(BaseService):
         super().delete_action({config.ID_FIELD: doc_id})
         get_resource_service('archive_versions').delete(lookup={versioned_id_field(): doc_id})
 
-        packages = self.get_packages(doc_id)
+        packages = self.packageService.get_packages(doc_id)
         if packages.count() > 0:
             processed_packages = []
             for package in packages:
                 if str(package[config.ID_FIELD]) not in processed_packages:
-                    processed_packages.extend(self.remove_refs_in_package(package, doc_id, processed_packages))
-
-    def get_packages(self, doc_id):
-        """
-        Retrieves if an article identified by doc_id is referenced in a package.
-        :return: articles of type composite
-        """
-
-        query = {'query': {'filtered': {'filter': {'and': [{'term': {'type': 'composite'}}]},
-                                        'query': {
-                                            'match': {'groups.refs.guid': {'query': doc_id, 'operator': 'AND'}}}
-                                        }}}
-
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(query)}
-
-        return get_resource_service(SOURCE).get(req=request, lookup=None)
-
-    def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
-        """
-        Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
-        Before removing checks if the package has been processed. If processed the package is skipped.
-        :return: package[config.ID_FIELD]
-        """
-
-        groups = package['groups']
-
-        if processed_packages is None:
-            processed_packages = []
-
-        sub_package_ids = [ref['guid'] for group in groups for ref in group['refs'] if ref.get('type') == 'composite']
-        for sub_package_id in sub_package_ids:
-            if sub_package_id not in processed_packages:
-                sub_package = self.find_one(req=None, _id=sub_package_id)
-                return self.remove_refs_in_package(sub_package, ref_id_to_remove)
-
-        new_groups = [{'id': group['id'], 'role': group['role'],
-                       'refs': [ref for ref in group['refs'] if ref.get('guid') != ref_id_to_remove]}
-                      for group in groups]
-        new_root_refs = [{'idRef': group['id']} for group in new_groups if group['id'] != 'root']
-
-        for group in new_groups:
-            if group['id'] == 'root':
-                group['refs'] = new_root_refs
-                break
-
-        updates = {config.LAST_UPDATED: utcnow(), 'groups': new_groups}
-        resolve_document_version(updates, SOURCE, 'PATCH', package)
-
-        self.patch(package[config.ID_FIELD], updates)
-        insert_into_versions(id_=package[config.ID_FIELD])
-
-        sub_package_ids.append(package[config.ID_FIELD])
-        return sub_package_ids
+                    processed_packages.extend(
+                        self.packageService.remove_refs_in_package(package, doc_id, processed_packages))
 
     def __is_req_for_save(self, doc):
         """

@@ -9,17 +9,19 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from eve.versioning import resolve_document_version
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
 
 from collections import Counter
-from eve.utils import config
+from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE
-from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP
-
+from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, ROOT_GROUP, insert_into_versions
+from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.utc import utcnow
 
 logger = logging.getLogger(__name__)
 package_create_signal = superdesk.signals.signal('package.create')
@@ -210,6 +212,56 @@ class PackageService():
             message = 'Trying to create a circular reference to: ' + item_id
             logger.error(message)
             raise ValidationError(message)
+
+    def get_packages(self, doc_id):
+        """
+        Retrieves if an article identified by doc_id is referenced in a package.
+        :return: articles of type composite
+        """
+
+        query = {'$and': [{'type': 'composite'}, {'groups.refs.guid': doc_id}]}
+
+        request = ParsedRequest()
+        request.max_results = 100
+
+        return get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query)
+
+    def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
+        """
+        Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
+        Before removing checks if the package has been processed. If processed the package is skipped.
+        :return: package[config.ID_FIELD]
+        """
+
+        groups = package['groups']
+
+        if processed_packages is None:
+            processed_packages = []
+
+        sub_package_ids = [ref['guid'] for group in groups for ref in group['refs'] if ref.get('type') == 'composite']
+        for sub_package_id in sub_package_ids:
+            if sub_package_id not in processed_packages:
+                sub_package = self.find_one(req=None, _id=sub_package_id)
+                return self.remove_refs_in_package(sub_package, ref_id_to_remove)
+
+        new_groups = [{'id': group['id'], 'role': group['role'],
+                       'refs': [ref for ref in group['refs'] if ref.get('guid') != ref_id_to_remove]}
+                      for group in groups]
+        new_root_refs = [{'idRef': group['id']} for group in new_groups if group['id'] != 'root']
+
+        for group in new_groups:
+            if group['id'] == 'root':
+                group['refs'] = new_root_refs
+                break
+
+        updates = {config.LAST_UPDATED: utcnow(), 'groups': new_groups}
+        resolve_document_version(updates, ARCHIVE, 'PATCH', package)
+
+        get_resource_service(ARCHIVE).patch(package[config.ID_FIELD], updates)
+        insert_into_versions(id_=package[config.ID_FIELD])
+
+        sub_package_ids.append(package[config.ID_FIELD])
+        return sub_package_ids
 
     def _get_associations(self, doc):
         return [assoc for group in doc.get('groups', [])
