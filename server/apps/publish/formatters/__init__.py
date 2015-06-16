@@ -52,3 +52,4 @@ import apps.publish.formatters.aap_ipnews_formatter  # NOQA
 import apps.publish.formatters.anpa_formatter  # NOQA
 import apps.publish.formatters.ninjs_formatter  # NOQA
 import apps.publish.formatters.newsml_1_2_formatter  # NOQA
+import apps.publish.formatters.newsml_g2_formatter  # NOQA

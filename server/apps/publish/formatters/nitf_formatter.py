@@ -27,24 +27,28 @@ class NITFFormatter(Formatter):
 
             pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
 
-            nitf = etree.Element("nitf")
-            head = SubElement(nitf, "head")
-            body = SubElement(nitf, "body")
-            body_head = SubElement(body, "body.head")
-            body_content = SubElement(body, "body.content")
-            body_content.text = article['body_html']
-            body_end = SubElement(body, "body.end")
-
-            etree.Element('doc-id', attrib={'id-string': article['guid']})
-
-            self.__append_meta(article, head, destination, pub_seq_num)
-            self.__format_head(article, head)
-            self.__format_body_head(article, body_head)
-            self.__format_body_end(article, body_end)
+            nitf = self.get_nitf(article, destination, pub_seq_num)
 
             return pub_seq_num, self.XML_ROOT + etree.tostring(nitf).decode('utf-8')
         except Exception as ex:
             raise FormatterError.nitfFormatterError(ex, destination)
+
+    def get_nitf(self, article, destination, pub_seq_num):
+        nitf = etree.Element("nitf")
+        head = SubElement(nitf, "head")
+        body = SubElement(nitf, "body")
+        body_head = SubElement(body, "body.head")
+        body_content = SubElement(body, "body.content")
+        body_content.text = article['body_html']
+        body_end = SubElement(body, "body.end")
+
+        etree.Element('doc-id', attrib={'id-string': article['guid']})
+
+        self.__append_meta(article, head, destination, pub_seq_num)
+        self.__format_head(article, head)
+        self.__format_body_head(article, body_head)
+        self.__format_body_end(article, body_end)
+        return nitf
 
     def __format_head(self, article, head):
         title = SubElement(head, 'title')

@@ -14,7 +14,7 @@ from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
 from superdesk.utc import utcnow
-from aap_settings import AAP_LIMITATIONS, AAP_PROVIDER_ID, AAP_USAGE_TYPE
+from aap_settings import AAP_PROVIDER_ID
 
 
 class NewsML12Formatter(Formatter):
@@ -102,16 +102,21 @@ class NewsML12Formatter(Formatter):
         SubElement(news_lines, 'KeywordLine').text = article.get('slugline', '')
 
     def _format_rights_metadata(self, article, main_news_component):
+        all_rights = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='rightsinfo')
+        rights_key = article.get('source', article.get('original_source', 'default'))
+        default_rights = next(info for info in all_rights['items'] if info['name'] == 'default')
+        rights = next((info for info in all_rights['items'] if info['name'] == rights_key), default_rights)
+
         rights_metadata = SubElement(main_news_component, "RightsMetadata")
         copyright = SubElement(rights_metadata, "Copyright")
-        SubElement(copyright, 'CopyrightHolder').text = article.get('source', article.get('original_source', ''))
+        SubElement(copyright, 'CopyrightHolder').text = rights['copyrightHolder']
         SubElement(copyright, 'CopyrightDate').text = self.now.strftime("%Y")
 
         usage_rights = SubElement(rights_metadata, "UsageRights")
-        SubElement(usage_rights, 'UsageType').text = AAP_USAGE_TYPE
+        SubElement(usage_rights, 'UsageType').text = rights['copyrightNotice']
         SubElement(usage_rights, 'Geography').text = article.get('place', article.get('located', ''))
         SubElement(usage_rights, 'RightsHolder').text = article.get('source', article.get('original_source', ''))
-        SubElement(usage_rights, 'Limitations').text = AAP_LIMITATIONS
+        SubElement(usage_rights, 'Limitations').text = rights['usageTerms']
         SubElement(usage_rights, 'StartDate').text = self.string_now
         SubElement(usage_rights, 'EndDate').text = self.string_now
 
