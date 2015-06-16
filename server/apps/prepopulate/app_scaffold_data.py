@@ -56,7 +56,10 @@ class AppScaffoldDataCommand(superdesk.Command):
 
                 dest_doc[app.config['VERSION']] = 1
                 dest_doc['state'] = 'fetched'
-                send_to(dest_doc, desk_id, stage_id)
+                user_id = desk.get('members', [{'user': None}])[0].get('user')
+                dest_doc['original_creator']= user_id
+                dest_doc['version_creator']= user_id
+                send_to(dest_doc, desk_id=desk_id, stage_id=stage_id, user_id=user_id)
                 dest_doc[FAMILY_ID] = item['_id']
 
                 remove_unwanted(dest_doc)
