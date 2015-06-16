@@ -1,4 +1,4 @@
-<section class="search main-section search-page-container sidebar-open">
+<section class="search main-section legal-page-container sidebar-open">
 
   <div class="archive-sidebar"> <!-- Search widget -->
     <div class="header">
@@ -78,22 +78,22 @@
   <div class="archive-content">
     <div class="list-pane list-view">
         <header class="search-page-header">
-            <!-- <div sd-item-sortbar></div> -->
+            <div sd-item-sortbar></div>
             <!-- <div sd-item-searchbar data-context="context" class="searchbar-flex-handler"></div> -->
-            <!-- <div sd-pagination data-items="items"></div> -->
+            <div sd-pagination data-items="items"></div>
         </header>
 
-        <div class="content" sd-updown data-items="items">
+        <div class="content" sd-updown data-items="items._items">
             <div class="loading-indicator" ng-show="loading" translate>loading</div>
-
             <div sd-shadow>
                 <ul class="compact-view list-view">
-                    <!-- <li ng-repeat="item in items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}"> -->
-                    <!--     <div sd-media-box></div> -->
-                    <!-- </li> -->
+                  <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
+                    <div sd-media-box></div>
+                  </li>
                 </ul>
             </div>
         </div>
+
     </div>
   </div>
 </section>

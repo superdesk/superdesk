@@ -42,20 +42,23 @@
     LegalArchiveController.$inject = ['$scope', '$location', 'legal'];
     function LegalArchiveController($scope, $location, legal) {
         $scope.meta = {};
-        $scope.items = null;
+        var default_items = Object.freeze({_meta: {max_results: 25, page: 1, total: 1}});
+        $scope.items = default_items;
+        $scope.loading = false;
 
         $scope.search = function () {
             console.log($scope.meta);
+            $scope.loading = true;
             legal.query($scope.meta).then(function(items) {
                 console.log(items);
+                $scope.loading = false;
                 $scope.items = items;
-
             });
         };
 
         $scope.clear = function () {
             $scope.meta = {};
-            $scope.items = null;
+            $scope.items = default_items;
         };
     }
 
