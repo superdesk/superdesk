@@ -289,7 +289,7 @@
                 }
             };
         }])
-        .directive('sdMediaBox', ['lock', 'multi', function(lock, multi) {
+        .directive('sdMediaBox', ['$location', 'lock', 'multi', function($location, lock, multi) {
             return {
                 restrict: 'A',
                 templateUrl: 'scripts/superdesk-archive/views/media-box.html',
@@ -344,6 +344,7 @@
 
                     scope.clickAction =  function clickAction(item) {
                         if (typeof scope.preview === 'function') {
+                            $location.search('fetch', null);
                             return scope.preview(item);
                         }
                         return false;

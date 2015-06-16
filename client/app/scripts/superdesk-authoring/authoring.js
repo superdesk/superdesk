@@ -1438,6 +1438,7 @@
                     })
                     .then(function() {
                         notify.success(gettext('Item sent.'));
+                        scope.close();
                         if (open) {
                             $location.url('/authoring/' + finalItem._id);
                         } else {
