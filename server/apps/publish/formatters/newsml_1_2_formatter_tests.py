@@ -82,7 +82,7 @@ class Newsml12FormatterTest(TestCase):
 
     def test_format_identification(self):
         self.formatter._format_identification(self.article, self.newsml)
-        self.assertEquals(self.newsml.find('Identification/NewsIdentifier/ProviderId').text, 'aap.com.au')
+        self.assertEquals(self.newsml.find('Identification/NewsIdentifier/ProviderId').text, 'sourcefabric.org')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/DateId').text, '20150613')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/NewsItemId').text, 'urn:localhost.abc')
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/RevisionId').get('PreviousRevision'), '0')

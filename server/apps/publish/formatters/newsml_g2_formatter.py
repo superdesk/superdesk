@@ -14,7 +14,7 @@ from apps.publish.formatters import Formatter
 from superdesk.utc import utcnow
 import superdesk
 from superdesk.errors import FormatterError
-from aap_settings import AAP_PROVIDER_ID
+from settings import NEWSML_PROVIDER_ID
 from apps.publish.formatters.nitf_formatter import NITFFormatter
 
 
@@ -50,7 +50,7 @@ class NewsMLG2Formatter(Formatter):
     def _format_header(self, article, newsMessage, pub_seq_num):
         header = SubElement(newsMessage, 'header')
         SubElement(header, 'sent').text = self.string_now
-        SubElement(header, 'sender').text = AAP_PROVIDER_ID
+        SubElement(header, 'sender').text = NEWSML_PROVIDER_ID
         # MAY NEED TO EXPAND THIS
         SubElement(header, 'transmitId').text = str(pub_seq_num)
         SubElement(header, 'origin').text = article.get('original_source', 'AAP')
@@ -115,7 +115,7 @@ class NewsMLG2Formatter(Formatter):
 
     def _format_provider(self, itemMeta):
         provider = SubElement(itemMeta, 'provider')
-        SubElement(provider, 'name').text = AAP_PROVIDER_ID
+        SubElement(provider, 'name').text = NEWSML_PROVIDER_ID
 
     def _format_versioncreated(self, article, itemMeta):
         SubElement(itemMeta, 'versionCreated').text = article['versioncreated'].strftime('%Y-%m-%dT%H:%M:%S+00:00')

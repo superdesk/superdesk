@@ -14,7 +14,7 @@ from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
 from superdesk.utc import utcnow
-from aap_settings import AAP_PROVIDER_ID
+from settings import NEWSML_PROVIDER_ID
 
 
 class NewsML12Formatter(Formatter):
@@ -53,7 +53,7 @@ class NewsML12Formatter(Formatter):
         revision = self._process_revision(article)
         identification = SubElement(news_item, "Identification")
         news_identifier = SubElement(identification, "NewsIdentifier")
-        SubElement(news_identifier, 'ProviderId').text = AAP_PROVIDER_ID
+        SubElement(news_identifier, 'ProviderId').text = NEWSML_PROVIDER_ID
         SubElement(news_identifier, 'DateId').text = self.now.strftime("%Y%m%d")
         SubElement(news_identifier, 'NewsItemId').text = article['_id']
         SubElement(news_identifier, 'RevisionId', revision).text = str(article.get('_current_version', ''))
