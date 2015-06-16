@@ -629,3 +629,39 @@ class ArchivePublishTestCase(TestCase):
             self.assertIsNotNone(updated_package)
             self.assertEqual(updated_package['body_html'], 'Take-2 body<br>Take-1 body<br>')
             self.assertEqual(updated_package['headline'], 'Take-1 headline')
+
+def test_can_publish_article(self):
+        with self.app.app_context():
+            self.app.data.insert('filter_condition',
+                                 [{'_id': 1,
+                                   'field': 'headline',
+                                   'operator': 'like',
+                                   'value': 'tor',
+                                   'name': 'test-1'}])
+            self.app.data.insert('filter_condition',
+                                 [{'_id': 2,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': 2,
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_condition',
+                                 [{'_id': 3,
+                                   'field': 'headline',
+                                   'operator': 'endswith',
+                                   'value': 'tor',
+                                   'name': 'test-3'}])
+            self.app.data.insert('filter_condition',
+                                 [{'_id': 4,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2,3,4',
+                                   'name': 'test-4'}])
+            self.app.data.insert('publish_filter',
+                                 [{'_id': 1,
+                                   'publish_filter': [[4, 3], [1, 2]],
+                                   'name': 'pf-1'}])
+
+            can_it = get_resource_service('archive_publish').\
+                can_publish(self.subscribers[0], self.articles[6])
+
+            self.assertTrue(can_it)
