@@ -523,13 +523,17 @@ Feature: Link content in takes
                     "_id": "#LAST_TAKE#",
                     "headline": "test1=3",
                     "type": "text",
-                    "linked_in_packages": [{"package_type": "takes"}],
                     "state": "spiked"
                 }
+            ]
         }
         """
+        When we spike "#TAKE2#"
+        Then we get OK response
+        And we get spiked content "#TAKE2#"
 
-    @auth @test
+
+    @auth
     Scenario: Killing a takes packages spikes all unpublished takes.
         Given the "validators"
         """
@@ -615,6 +619,34 @@ Feature: Link content in takes
         [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get OK response
+        When we get "archive/#TAKE_PACKAGE#"
+        Then we get existing resource
+        """
+        {
+            "last_take": "#TAKE2#",
+            "sequence": 2,
+            "groups":[
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                },
+                                {
+                                    "headline": "test1=2",
+                                    "slugline": "comics",
+                                    "residRef": "#TAKE2#",
+                                    "sequence": 2
+                                }
+                            ]
+                        }
+                ]
+        }
+        """
         When we post to "archive/#TAKE2#/link"
         """
         [{}]
@@ -642,6 +674,14 @@ Feature: Link content in takes
         [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get OK response
+        When we get "archive/#TAKE_PACKAGE#"
+        Then we get existing resource
+        """
+        {
+            "last_take": "#TAKE3#",
+            "sequence": 3
+        }
+        """
         When we publish "123" with "publish" type and "published" state
         Then we get OK response
         When we publish "123" with "kill" type and "killed" state

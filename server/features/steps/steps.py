@@ -1510,6 +1510,7 @@ def logout(context):
 
 @then('we get "{url}" and match')
 def we_get_and_match(context, url):
+    url = apply_placeholders(context, url)
     response_data = get_res(url, context)
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,

@@ -429,8 +429,8 @@ class KillPublishService(BasePublishService):
     def __init__(self, datasource=None, backend=None):
         super().__init__(datasource=datasource, backend=backend)
 
-    def on_updated(self, updates, original):
-        super().on_updated(updates, original)
+    def on_update(self, updates, original):
+        super().on_update(updates, original)
         TakesPackageService().process_killed_takes_package(original)
 
 

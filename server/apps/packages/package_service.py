@@ -17,7 +17,7 @@ from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE
+from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE
 from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, \
     ROOT_GROUP, insert_into_versions, SEQUENCE
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -258,7 +258,14 @@ class PackageService():
         # if takes package then adjust the reference.
         # safe to do this as take can only be in one takes package.
         if package.get(PACKAGE_TYPE) == TAKES_PACKAGE:
-            updates[SEQUENCE] = package[SEQUENCE] - 1
+            new_sequence = package[SEQUENCE] - 1
+            updates[SEQUENCE] = new_sequence
+            last_take_group = [reference for reference in
+                               [new_group.get('refs') for new_group in new_groups if new_group['id'] == 'main'][0]
+                               if reference.get(SEQUENCE) == new_sequence]
+
+            if last_take_group:
+                updates[LAST_TAKE] = last_take_group[0].get(ITEM_REF)
 
         resolve_document_version(updates, ARCHIVE, 'PATCH', package)
 

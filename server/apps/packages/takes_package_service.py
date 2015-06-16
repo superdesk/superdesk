@@ -9,8 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-import json
-from eve.methods.common import resolve_document_etag
 from eve.utils import config, ParsedRequest
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
@@ -143,8 +141,7 @@ class TakesPackageService():
             package_id = self.get_take_package_id(doc)
             if package_id:
                 takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
-                if takes_package[LAST_TAKE] != doc['_id']:
-                    return False
+                return takes_package[LAST_TAKE] == doc['_id']
 
         return True
 
@@ -158,10 +155,14 @@ class TakesPackageService():
         if takes_package_id:
             request = ParsedRequest()
             request.max_results = 100
-            request.sort = [('_created', -1)]
-            query = {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id}
-            take_items = archive_service.get_from_mongo(req=request, lookup=query)
+            request.sort = '[("unique_id", -1)]'
+            query = {
+                '$and': [
+                    {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id},
+                    {config.CONTENT_STATE: {'$nin': ['killed', 'corrected', 'published']}}
+                ]}
 
+            take_items = archive_service.get_from_mongo(req=request, lookup=query)
             spike_service = get_resource_service('archive_spike')
             for item in take_items:
                 updates = {config.CONTENT_STATE: 'spiked'}
