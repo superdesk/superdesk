@@ -1,4 +1,14 @@
-from .chat_session import ChatResource, ChatService
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+from .chat_session import ChatResource, ChatService, CHAT_SESSIONS
 from .messages import MessageResource, MessageService
 from superdesk import get_backend, intrinsic_privilege
 import logging
@@ -8,13 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 def init_app(app):
-    endpoint_name = 'chat_session'
-    service = ChatService(endpoint_name, backend=get_backend())
-    ChatResource(endpoint_name, app=app, service=service)
+    service = ChatService(CHAT_SESSIONS, backend=get_backend())
+    ChatResource(CHAT_SESSIONS, app=app, service=service)
 
     endpoint_name = 'chat_message'
     service = MessageService(endpoint_name, backend=get_backend())
     MessageResource(endpoint_name, app=app, service=service)
 
-    intrinsic_privilege('chat_session', method=['POST', 'PATCH'])
+    intrinsic_privilege(CHAT_SESSIONS, method=['POST', 'PATCH'])
     intrinsic_privilege('chat_message', method=['POST', 'PATCH', 'DELETE'])
