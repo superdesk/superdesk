@@ -21,7 +21,8 @@ from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
 from superdesk.errors import SuperdeskApiError
 from apps.auth.errors import UserInactiveError
-
+from superdesk.notification import push_notification
+import superdesk
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +91,16 @@ def get_invisible_stages(user):
     return get_resource_service('stages').get_stages_by_visibility(False, user_desk_ids)
 
 
+def compare_preferences(original, updates):
+    original_keys = set(original.keys())
+    updates_keys = set(updates.keys())
+    intersect_keys = original_keys.intersection(updates_keys)
+    added = updates_keys - original_keys
+    removed = original_keys - updates_keys
+    modified = {o: (original[o], updates[o]) for o in intersect_keys if original[o] != updates[o]}
+    return added, removed, modified
+
+
 class UsersService(BaseService):
 
     def __is_invalid_operation(self, user, updates, method):
@@ -141,6 +152,37 @@ class UsersService(BaseService):
             if can_send_mail:
                 send_user_status_changed_email([user['email']], status)
 
+    def __send_notification(self, updates, user):
+        user_id = user['_id']
+
+        if 'is_enabled' in updates and not updates['is_enabled']:
+            push_notification('user_disabled', updated=1, user_id=str(user_id))
+        elif 'is_active' in updates and not updates['is_active']:
+            push_notification('user_inactivated', updated=1, user_id=str(user_id))
+        elif 'role' in updates:
+            push_notification('user_role_changed', updated=1, user_id=str(user_id))
+        elif 'privileges' in updates:
+            added, removed, modified = compare_preferences(user.get('privileges', {}), updates['privileges'])
+            if len(removed) > 0 or (1, 0) in modified.values():
+                push_notification('user_privileges_revoked', updated=1, user_id=str(user_id))
+            if len(added) > 0:
+                add_activity(ACTIVITY_UPDATE,
+                             'user {{user}} is granted new privileges: Please re-login.',
+                             self.datasource,
+                             notify=[user_id],
+                             user=user.get('display_name', user.get('username')))
+        elif 'user_type' in updates:
+            if not is_admin(updates):
+                push_notification('user_type_changed', updated=1, user_id=str(user_id))
+            else:
+                add_activity(ACTIVITY_UPDATE,
+                             'user {{user}} is updated to administrator: Please re-login.',
+                             self.datasource,
+                             notify=[user_id],
+                             user=user.get('display_name', user.get('username')))
+        else:
+            push_notification('user', updated=1, user_id=str(user_id))
+
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
@@ -172,6 +214,7 @@ class UsersService(BaseService):
         if 'role' in updates or 'privileges' in updates:
             get_resource_service('preferences').on_update(updates, user)
         self.__handle_status_changed(updates, user)
+        self.__send_notification(updates, user)
 
     def on_delete(self, user):
         """
@@ -254,6 +297,9 @@ class UsersService(BaseService):
 
     def get_users_by_user_type(self, user_type='user'):
         return list(self.get(req=None, lookup={'user_type': user_type}))
+
+    def get_users_by_role(self, role_id):
+        return list(self.get(req=None, lookup={'role': role_id}))
 
     def get_invisible_stages(self, user_id):
         user = self.find_one(_id=user_id, req=None)
@@ -381,3 +427,25 @@ class RolesService(BaseService):
     def get_default_role_id(self):
         role = self.find_one(req=None, is_default=True)
         return role.get('_id') if role is not None else None
+
+    def on_updated(self, updates, role):
+        self.__send_notification(updates, role)
+
+    def __send_notification(self, updates, role):
+        role_id = role['_id']
+
+        role_users = superdesk.get_resource_service('users').get_users_by_role(role_id)
+        notified_users = [user['_id'] for user in role_users]
+
+        if 'privileges' in updates:
+            added, removed, modified = compare_preferences(role.get('privileges', {}), updates['privileges'])
+            if len(removed) > 0 or (1, 0) in modified.values():
+                push_notification('role_privileges_revoked', updated=1, role_id=str(role_id))
+            if len(added) > 0:
+                add_activity(ACTIVITY_UPDATE,
+                             'role {{role}} is granted new privileges: Please re-login.',
+                             self.datasource,
+                             notify=notified_users,
+                             role=role.get('name'))
+        else:
+            push_notification('role', updated=1, user_id=str(role_id))

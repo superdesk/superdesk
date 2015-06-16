@@ -12,7 +12,7 @@
 import flask
 import superdesk
 from superdesk.tests import TestCase
-from .services import UsersService
+from apps.users.services import UsersService, compare_preferences
 
 
 class PrivilegesTestCase(TestCase):
@@ -43,3 +43,27 @@ class PrivilegesTestCase(TestCase):
             doc_old = self.service.find_one(None, _id=ids[0])
             self.service.update(ids[0], {'role': '1'}, doc_old)
             self.assertIsNotNone(self.service.find_one(req=None, role='1'))
+
+    def test_compare_preferences(self):
+        original_preferences = {
+            "unlock": 1,
+            "archive": 1,
+            "spike": 1,
+            "unspike": 1,
+            "ingest_move": 0
+        }
+
+        updated_preferences = {
+            "unlock": 0,
+            "archive": 1,
+            "spike": 1,
+            "ingest": 1,
+            "ingest_move": 1,
+        }
+
+        added, removed, modified = compare_preferences(original_preferences, updated_preferences)
+        self.assertEquals(1, len(added))
+        self.assertEquals(1, len(removed))
+        self.assertEquals(2, len(modified))
+        self.assertTrue((1, 0) in modified.values())
+        self.assertTrue((0, 1) in modified.values())

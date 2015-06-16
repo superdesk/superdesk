@@ -103,8 +103,11 @@ class StagesService(BaseService):
     def on_created(self, docs):
         for doc in docs:
             if 'desk' in doc:
-                push_notification(self.notification_key, created=1, stage_id=str(doc.get('_id')),
-                                  desk_id=str(doc.get('desk')), is_visible=doc.get('is_visible', True))
+                push_notification(self.notification_key,
+                                  created=1,
+                                  stage_id=str(doc.get('_id')),
+                                  desk_id=str(doc.get('desk')),
+                                  is_visible=doc.get('is_visible', True))
             if doc.get('default_incoming', False):
                 self.set_desk_ref(doc, 'incoming_stage')
 
@@ -120,7 +123,10 @@ class StagesService(BaseService):
                 raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
 
     def on_deleted(self, doc):
-        push_notification(self.notification_key, deleted=1, stage_id=str(doc.get('_id')), desk_id=str(doc.get('desk')))
+        push_notification(self.notification_key,
+                          deleted=1,
+                          stage_id=str(doc.get('_id')),
+                          desk_id=str(doc.get('desk')))
 
     def on_update(self, updates, original):
         if updates.get('content_expiry') == 0:
@@ -142,11 +148,17 @@ class StagesService(BaseService):
                 raise SuperdeskApiError.forbiddenError(message='Must have one incoming stage in a desk')
 
     def on_updated(self, updates, original):
-        if ('content_expiry' in updates and updates['content_expiry'] != original.get('content_expiry', None)) or \
-                ('is_visible' in updates and updates['is_visible'] != original.get('is_visible', True)):
-            push_notification(self.notification_key, updated=1, stage_id=str(original['_id']),
+        if 'is_visible' in updates and updates['is_visible'] != original.get('is_visible', True):
+            push_notification('stage_visibility_updated',
+                              updated=1,
+                              stage_id=str(original['_id']),
                               desk_id=str(original['desk']),
                               is_visible=updates.get('is_visible', original.get('is_visible', True)))
+        else:
+            push_notification(self.notification_key,
+                              updated=1,
+                              stage_id=str(original.get('_id')),
+                              desk_id=str(original.get('desk')))
 
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})

@@ -10,8 +10,8 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService', '$location'];
-    function DeskDropdownDirective(desks, $route, preferencesService, $location) {
+    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService', '$location', 'reloadService'];
+    function DeskDropdownDirective(desks, $route, preferencesService, $location, reloadService) {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
