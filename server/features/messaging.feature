@@ -65,6 +65,27 @@ Feature: Messaging
         """
 
     @auth
+    Scenario: Fetching a Chat Session should give recipients
+        Given empty "chat_sessions"
+        When we post to "users" with "foobar" and success
+        """
+        {"username": "foobar", "email": "foobar@foobar.com", "is_active": true, "sign_off": "foobar"}
+        """
+        And we post to "/groups"
+        """
+        {"name": "Sports group", "members": [{"user": "#foobar#"}]}
+        """
+        And we post to "chat_sessions" with success
+        """
+        {"groups": ["#groups._id#"]}
+        """
+        And we get "/chat_sessions/#chat_sessions._id#"
+        Then we get existing resource
+        """
+        {"creator": "#CONTEXT_USER_ID#", "groups": ["#groups._id#"], "recipients": ["#foobar#"]}
+        """
+
+    @auth
     @notification
     Scenario: Recipients receive message when sender sends message
         Given empty "chat_sessions"

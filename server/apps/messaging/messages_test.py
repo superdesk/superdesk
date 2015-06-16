@@ -47,7 +47,7 @@ class MessagingTestCase(TestCase):
             chat_session_ids = get_resource_service(CHAT_SESSIONS).post(
                 [{'users': ['user2'], 'desks': ['desk1'], 'groups': ['group1']}])
 
-            recipients = get_resource_service('chat_message').resolve_message_recipients(
+            recipients = get_resource_service(CHAT_SESSIONS).resolve_message_recipients(
                 {'chat_session': chat_session_ids[0]})
 
             self.assertEquals(len(recipients), 3)

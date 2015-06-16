@@ -19,10 +19,11 @@ log = logging.getLogger(__name__)
 
 
 class BaseService():
-    '''
+    """
     Base service for all endpoints, defines the basic implementation
     for CRUD datalayer functionality.
-    '''
+    """
+
     datasource = None
 
     def __init__(self, datasource=None, backend=None):
@@ -53,7 +54,7 @@ class BaseService():
     def on_deleted(self, doc):
         pass
 
-    def on_fetched(self, doc):
+    def on_fetched(self, docs):
         pass
 
     def on_fetched_item(self, doc):
