@@ -38,6 +38,38 @@ Feature: Subscribers
     """
 
   @auth
+  Scenario: Update a subscriber with publish filter
+    Given empty "filter_condition"
+    When we post to "/filter_condition" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filter"
+    When we post to "/publish_filter" with success
+    """
+    [{"publish_filter": [["#filter_condition._id#"]], "name": "soccer-only"}]
+    """
+
+    Then we get latest
+    Given empty "subscribers"
+    When we post to "/subscribers"
+    """
+    {
+      "name":"News1","subscriber_type":"media","destinations":[{"name":"destination1","delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+    }
+    """
+    And we patch latest
+    """
+    {"publish_filter":{"filter_id":"#publish_filter._id#"}}
+    """
+    Then we get updated response
+    """
+    {"publish_filter":{"filter_id":"#publish_filter._id#", "filter_type":"blocking"}}
+    """
+
+  @auth
   Scenario: Deleting a Subscriber is not allowed
     Given empty "subscribers"
     When we post to "/subscribers"

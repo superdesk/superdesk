@@ -70,6 +70,18 @@ class SubscribersResource(Resource):
                     'config': {'type': 'dict'}
                 }
             }
+        },
+        'publish_filter': {
+            'type': 'dict',
+            'schema': {
+                'filter_id': Resource.rel('publish_filter', nullable=True),
+                'filter_type': {
+                    'type': 'string',
+                    'default': 'blocking',
+                    'allowed': ['blocking', 'permitting'],
+                    'required': True
+                }
+            }
         }
     }
 
