@@ -61,7 +61,6 @@ class FilterConditionResource(Resource):
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
 
-
 class FilterConditionService(BaseService):
     def on_create(self, docs):
         pass
@@ -109,10 +108,13 @@ class FilterConditionService(BaseService):
 
     def _get_elastic_value(self, doc, operator, value):
         if operator in ['in', 'nin']:
-            if value.find(',') > 0:
-                value = [int(x) for x in value.split(',') if x.strip().isdigit()]
+            if isinstance(value, str) and value.find(',') > 0:
+                if value.split(',')[0].strip().isdigit():
+                    return [int(x) for x in value.split(',') if x.strip().isdigit()]
+                else:
+                    value.split(',')
             else:
-                value = [value]
+                return [value]
         elif operator in ['like', 'notlike']:
             value = '{}:*{}*'.format(doc['field'], value)
             doc['field'] = 'query'
@@ -123,5 +125,3 @@ class FilterConditionService(BaseService):
             value = '{}:*{}'.format(doc['field'], value)
             doc['field'] = 'query'
         return value
-
-

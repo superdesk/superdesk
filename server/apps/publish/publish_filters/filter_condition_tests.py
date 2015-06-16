@@ -22,7 +22,7 @@ class FilterConditionTests(TestCase):
         super().setUp()
         self.req = ParsedRequest()
         with self.app.app_context():
-            self.app.data.insert('archive', [{'_id': '1', 'headline': 'story', 'state': 'fetched'}])
+            self.app.data.insert('archive', [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'}])
             self.app.data.insert('archive', [{'_id': '2', 'headline': 'prtorque', 'state': 'fetched'}])
             self.app.data.insert('archive', [{'_id': '3', 'urgency': 3, 'state': 'fetched'}])
             self.app.data.insert('archive', [{'_id': '4', 'urgency': 4, 'state': 'fetched'}])
@@ -58,7 +58,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertEquals(2, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
@@ -91,7 +91,7 @@ class FilterConditionTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             self.assertEquals(5, docs.count())
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 
     def test_mongo_using_in_filter(self):
@@ -113,7 +113,7 @@ class FilterConditionTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             self.assertEquals(3, docs.count())
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
 
@@ -124,7 +124,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self._setup_elastic_args(query)
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertEquals(2, docs.count())
             self.assertTrue('4' in doc_ids)
             self.assertTrue('3' in doc_ids)
@@ -137,7 +137,7 @@ class FilterConditionTests(TestCase):
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             self.assertEquals(4, docs.count())
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertTrue('6' in doc_ids)
             self.assertTrue('5' in doc_ids)
 
@@ -149,7 +149,7 @@ class FilterConditionTests(TestCase):
             self._setup_elastic_args(query, 'keyword')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             self.assertEquals(2, docs.count())
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
 
@@ -161,7 +161,7 @@ class FilterConditionTests(TestCase):
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             self.assertEquals(5, docs.count())
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 
     def test_elastic_using_startswith_filter(self):
@@ -195,7 +195,7 @@ class FilterConditionTests(TestCase):
 
     def test_get_mongo_value(self):
         f = FilterConditionService()
-        self.assertEquals(f._get_mongo_value('in', '1,2'), [1,2])
+        self.assertEquals(f._get_mongo_value('in', '1,2'), [1, 2])
         self.assertEquals(f._get_mongo_value('nin', '3'), ['3'])
         self.assertEquals(f._get_mongo_value('like', 'test'), re.compile('.*test.*', re.IGNORECASE))
         self.assertEquals(f._get_mongo_value('notlike', 'test'), re.compile('.*test.*', re.IGNORECASE))

@@ -13,7 +13,6 @@ from apps.publish.publish_filters.publish_filter import PublishFilterService
 from eve.utils import ParsedRequest
 import json
 import superdesk
-import re
 
 
 class PublishFilterTests(TestCase):
@@ -60,10 +59,11 @@ class PublishFilterTests(TestCase):
             query = f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            doc_ids = [doc['_id'] for doc in docs]
-            self.assertEquals(2, docs.count())
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEquals(3, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_condition(self):
         f = PublishFilterService()
@@ -72,30 +72,68 @@ class PublishFilterTests(TestCase):
             query = f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            doc_ids = [doc['_id'] for doc in docs]
-            self.assertEquals(1, docs.count())
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEquals(4, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
             self.assertTrue('5' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_condition(self):
+    def test_build_mongo_query_using_like_filter_multi_condition2(self):
         f = PublishFilterService()
         doc = {'publish_filter': [[4, 3]], 'name': 'pf-1'}
         with self.app.app_context():
             query = f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
             self.assertEquals(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_condition(self):
+    def test_build_mongo_query_using_like_filter_multi_condition3(self):
         f = PublishFilterService()
         doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
         with self.app.app_context():
             query = f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            doc_ids = [doc['_id'] for doc in docs]
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEquals(1, docs.count())
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_elastic_query_using_like_filter_single_condition(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[1]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = f.build_elastic_query(doc)
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEquals(3, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_elastic_query_using_like_filter_multi_condition(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[1], [2]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = f.build_elastic_query(doc)
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEquals(4, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
+            self.assertTrue('5' in doc_ids)
+
+    def test_build_elastic_query_using_like_filter_multi_condition2(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = f.build_elastic_query(doc)
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
             self.assertEquals(1, docs.count())
             self.assertTrue('3' in doc_ids)

@@ -65,18 +65,13 @@ class PublishFilterService(BaseService):
             return expressions[0]
 
     def build_elastic_query(self, doc):
-        query = {'source': {'query': 'x'}}
+        expressions = {'should': []}
         filter_condition_service = get_resource_service('filter_condition')
         for expression in doc.get('publish_filter', []):
-            filter_conditions = {'query': {}}
+            filter_conditions = {'must': []}
             for filter_condition_id in expression:
                 filter_condition = filter_condition_service.find_one(req=None, _id=filter_condition_id)
                 elastic_query = filter_condition_service.get_elastic_query(filter_condition)
-
-                if 'filtered' in elastic_query:
-                    if 'filtered' in filter_conditions['query']:
-                        filter_conditions['query']['filtered']['filter']['bool']['should'].\
-                            extend(elastic_query['filtered']['filter']['bool']['should'])
-                    else:
-                        filter_conditions['query']['filtered']['filter']['bool']['should'] = \
-                            elastic_query['filtered']['filter']['bool']['should']
+                filter_conditions['must'].append(elastic_query)
+            expressions['should'].append({'bool': filter_conditions})
+        return {'query': {'filtered': {'query': {'bool': expressions}}}}

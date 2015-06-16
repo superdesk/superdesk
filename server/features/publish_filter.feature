@@ -10,13 +10,6 @@ Feature: Publish Filter
     """
 
     Then we get latest
-#    When we post to "/filter_condition" with success
-#    """
-#    [{"name": "soccer", "field": "anpa-category", "operator": "in", "value": "1"},
-#     {"name": "baseball", "field": "anpa-category", "operator": "in", "value": "2"},
-#     {"name": "tennis", "field": "anpa-category", "operator": "in", "value": "3"},
-#     {"name": "ski", "field": "anpa-category", "operator": "in", "value": "4"}]
-#    """
     Given empty "publish_filter"
     When we post to "/publish_filter" with success
     """
