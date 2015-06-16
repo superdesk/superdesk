@@ -162,13 +162,6 @@ class BasePublishService(BaseService):
         any_channel_closed, wrong_formatted_channels, queued = \
             self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
 
-        # source, task = self.__send_to_publish_stage_and_set_source(doc)
-        # if updates:
-        #     if task:
-        #         updates['task'] = task
-        #     if source:
-        #         updates['source'] = source
-
         if updates:
             desk = None
 
@@ -346,19 +339,6 @@ class BasePublishService(BaseService):
                     insert_into_versions(doc=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
-
-    def __send_to_publish_stage_and_set_source(self, doc):
-        task = source = ''
-        desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
-
-        if (not doc.get('ingest_provider')) and desk.get('source', ''):
-            source = desk['source']
-
-        if desk.get('published_stage') and doc['task']['stage'] != desk['published_stage']:
-            doc['task']['stage'] = desk['published_stage']
-            task = get_resource_service('move').move_content(doc['_id'], doc)['task']
-
-        return source, task
 
     def process_takes(self, take, package_id):
         """

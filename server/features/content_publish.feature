@@ -1375,7 +1375,7 @@ Feature: Content Publishing
       And we post to "/stages" with success
       """
       [
-        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#", "published_stage": true}
+        {"name": "another stage", "description": "another stage", "task_status": "in_progress", "desk": "#desks._id#"}
       ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
@@ -1423,7 +1423,7 @@ Feature: Content Publishing
       """
       When we post to "/stages" with success
       """
-      [{"name": "Published Stage", "task_status": "done", "desk": "#desks._id#", "published_stage": true}]
+      [{"name": "Published Stage", "task_status": "done", "desk": "#desks._id#"}]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
