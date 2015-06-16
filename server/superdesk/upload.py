@@ -49,8 +49,11 @@ def get_upload_as_data_uri(media_id):
 
 
 def url_for_media(media_id):
-    return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
-                   _external=True, _schema=superdesk.config.URL_PROTOCOL)
+    try:
+        return app.media.url_for_media(media_id)
+    except AttributeError:
+        return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
+                       _external=True, _schema=superdesk.config.URL_PROTOCOL)
 
 
 def init_app(app):

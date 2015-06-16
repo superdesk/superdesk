@@ -15,6 +15,7 @@ from superdesk.errors import SuperdeskApiError
 import logging
 import json
 from io import BytesIO
+import unittest
 
 logger = logging.getLogger(__name__)
 
@@ -37,18 +38,20 @@ class AmazonMediaStorage(MediaStorage):
     def __init__(self, app=None):
         super().__init__(app)
         username, api_key, endpoint = self.read_from_config()
+        self.endpoint = endpoint
         self.conn = tinys3.Connection(username, api_key, tls=True, endpoint=endpoint)
         self.user_metadata_header = 'x-amz-meta-'
 
+    def url_for_media(self, media_id):
+        protocol = 'https' if self.app.config.get('S3_USE_HTTPS', False) else 'http'
+        return '%s://%s.%s/%s' % (protocol, self.container_name, self.endpoint, media_id)
+
     def read_from_config(self):
-        if 'AMAZON_REGION' in self.app.config:
-            region = self.app.config['AMAZON_REGION']
-        else:
-            region = 's3'
+        region = self.app.config.get('AMAZON_REGION', 'us-east-1') or 'us-east-1'
         username = self.app.config['AMAZON_ACCESS_KEY_ID']
         api_key = self.app.config['AMAZON_SECRET_ACCESS_KEY']
         self.container_name = self.app.config['AMAZON_CONTAINER_NAME']
-        endpoint = '%s.amazonaws.com' % region
+        endpoint = 's3-%s.amazonaws.com' % region
         return username, api_key, endpoint
 
     def get_bucket_objects(self, marker=None, bucket=None):
@@ -157,3 +160,24 @@ class AmazonMediaStorage(MediaStorage):
                 logger.exception(ex)
             # File not found
             return (False, None)
+
+
+class AmazonMediaStorageTestCase(unittest.TestCase):
+
+    def test_url_for_media(self):
+        import settings
+        # create a dummy app containing only the settings
+        app = type('MyObject', (object,), {})
+        setattr(app, 'config', settings.__dict__)
+        media_id = '123'
+        # set s3 settings and test the output
+        app.config['AMAZON_CONTAINER_NAME'] = 'AMAZON_CONTAINER_NAME'
+        app.config['S3_USE_HTTPS'] = True
+        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
+                          'https://AMAZON_CONTAINER_NAME.s3.amazonaws.com/%s' % (media_id))
+        app.config['S3_USE_HTTPS'] = False
+        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
+                          'http://AMAZON_CONTAINER_NAME.s3.amazonaws.com/%s' % (media_id))
+        app.config['AMAZON_REGION'] = 'AMAZON_REGION'
+        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
+                          'http://AMAZON_CONTAINER_NAME.AMAZON_REGION.amazonaws.com/%s' % (media_id))
