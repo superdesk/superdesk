@@ -426,6 +426,13 @@ class KillPublishService(BasePublishService):
     publish_type = 'kill'
     published_state = 'killed'
 
+    def __init__(self, datasource=None, backend=None):
+        super().__init__(datasource=datasource, backend=backend)
+
+    def on_updated(self, updates, original):
+        super().on_updated(updates, original)
+        TakesPackageService().process_killed_takes_package(original)
+
 
 class CorrectPublishResource(BasePublishResource):
 

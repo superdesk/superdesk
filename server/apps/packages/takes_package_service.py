@@ -9,7 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from eve.utils import config
+import json
+from eve.methods.common import resolve_document_etag
+from eve.utils import config, ParsedRequest
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -18,12 +20,10 @@ from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_T
 from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
 from .package_service import get_item_ref, create_root_group
 
-
 logger = logging.getLogger(__name__)
 
 
 class TakesPackageService():
-
     def get_take_package_id(self, item):
         """
         Checks if the item is in a 'takes' package and returns the package id
@@ -37,11 +37,16 @@ class TakesPackageService():
             raise SuperdeskApiError.forbiddenError(message=message)
         return takes_package[0] if takes_package else None
 
-    def enhance_with_package_info(self, item):
+    def get_take_package(self, item):
         package_id = self.get_take_package_id(item)
         if package_id:
             takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
-            item.setdefault(TAKES_PACKAGE, takes_package)
+            return takes_package
+
+    def enhance_with_package_info(self, item):
+        package = self.get_take_package(item)
+        if package:
+            item.setdefault(TAKES_PACKAGE, package)
 
     def __link_items__(self, takes_package, target, link):
         sequence = takes_package.get(SEQUENCE, 0) if takes_package else 0
@@ -67,7 +72,6 @@ class TakesPackageService():
         return take_info[0:take_index] if take_info[take_index + 1:].isdigit() else take_info
 
     def __copy_metadata__(self, target, to, package):
-        # TODO: length validation may be required.
         # if target is the first take hence default sequence is for first take.
         sequence = package.get(SEQUENCE, 1) if package else 1
         sequence = self.__next_sequence__(sequence)
@@ -143,3 +147,22 @@ class TakesPackageService():
                     return False
 
         return True
+
+    def process_killed_takes_package(self, doc):
+        """
+        If the takes packages is killed then spike the unpublished item
+        """
+        takes_package_id = self.get_take_package_id(doc)
+        archive_service = get_resource_service(ARCHIVE)
+
+        if takes_package_id:
+            request = ParsedRequest()
+            request.max_results = 100
+            request.sort = [('_created', -1)]
+            query = {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id}
+            take_items = archive_service.get_from_mongo(req=request, lookup=query)
+
+            spike_service = get_resource_service('archive_spike')
+            for item in take_items:
+                updates = {config.CONTENT_STATE: 'spiked'}
+                spike_service.patch(item['_id'], updates)
