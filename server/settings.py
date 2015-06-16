@@ -292,3 +292,6 @@ ODBC_PUBLISH = env('ODBC_PUBLISH', None)
 # ODBC test server connection string
 ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
                                   'DRIVER=FreeTDS;DSN=NEWSDB;UID=???;PWD=???;DATABASE=News')
+
+# This value gets injected into NewsML 1.2 and G2 output documents.
+NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')

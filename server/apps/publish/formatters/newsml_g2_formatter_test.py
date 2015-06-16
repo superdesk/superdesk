@@ -74,7 +74,7 @@ class NewsMLG2FormatterTest(TestCase):
             xml = etree.fromstring(doc)
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}sender').text,
-                'aap.com.au')
+                'sourcefabric.org')
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}origin').text, 'AAP')
             self.assertEquals(xml.find(
@@ -85,7 +85,7 @@ class NewsMLG2FormatterTest(TestCase):
                 '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
                 '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}provider/' +
                 '{http://iptc.org/std/nar/2006-10-01/}name').text,
-                'aap.com.au')
+                'sourcefabric.org')
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
                 '{http://iptc.org/std/nar/2006-10-01/}contentMeta/{http://iptc.org/std/nar/2006-10-01/}headline').text,
