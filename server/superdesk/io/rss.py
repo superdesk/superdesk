@@ -21,6 +21,8 @@ from superdesk.io import register_provider
 from superdesk.io.ingest_service import IngestService
 from superdesk.utils import merge_dicts
 
+from urllib.parse import quote as urlquote, urlsplit, urlunsplit
+
 
 PROVIDER = 'rss'
 
@@ -77,6 +79,33 @@ class RssIngestService(IngestService):
     <media:thumbnail> tags - they lack the "type" attribute).
     """
 
+    def __init__(self):
+        super().__init__()
+        self.auth_info = None
+
+    def prepare_href(self, url):
+        """Prepare a link to an external resource (e.g. an image file) so
+        that it can be directly used by the ingest machinery for fetching it.
+
+        If provider requires authentication, basic HTTP authentication info is
+        added to the given url, otherwise it is returned unmodified.
+
+        :param str url: the original URL as extracted from an RSS entry
+
+        :return: prepared URL
+        :rtype: str
+        """
+        if self.auth_info:
+            userinfo_part = '{}:{}@'.format(
+                urlquote(self.auth_info['username']),
+                urlquote(self.auth_info['password'])
+            )
+            scheme, netloc, path, query, fragment = urlsplit(url)
+            netloc = userinfo_part + netloc
+            url = urlunsplit((scheme, netloc, path, query, fragment))
+
+        return url
+
     def _update(self, provider):
         """Check data provider for data updates and returns new items (if any).
 
@@ -88,6 +117,12 @@ class RssIngestService(IngestService):
         :raises ParserError: if retrieved RSS data cannot be parsed
         """
         config = provider.get('config', {})
+
+        if config.get('auth_required'):
+            self.auth_info = {
+                'username': config.get('username', ''),
+                'password': config.get('password', '')
+            }
 
         try:
             xml_data = self._fetch_data(config, provider)

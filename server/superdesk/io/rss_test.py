@@ -60,6 +60,40 @@ class RssIngestServiceTest(TestCase):
             self.instance = RssIngestService()
 
 
+class InstanceInitTestCase(RssIngestServiceTest):
+    """Tests if instance is correctly initialized on creation."""
+
+    def test_initializes_auth_info_to_none(self):
+        if hasattr(self.instance, 'auth_info'):
+            self.assertIsNone(self.instance.auth_info)
+        else:
+            self.fail('auth_info attribute not initialized')
+
+
+class PrepareHrefMethodTestCase(RssIngestServiceTest):
+    """Tests for the prepare_href() method."""
+
+    def test_returns_unchanged_link_if_no_auth_info(self):
+        self.instance.auth_info = None
+        url = 'http://domain.com/images/foo.jpg'
+
+        returned = self.instance.prepare_href(url)
+
+        self.assertEqual(returned, url)
+
+    def test_returns_link_with_auth_data_if_available(self):
+        self.instance.auth_info = {
+            'username': 'john doe',
+            'password': 'abc+007'
+        }
+        url = 'http://domain.com/images/foo.jpg'
+
+        returned = self.instance.prepare_href(url)
+
+        self.assertEqual(
+            returned, 'http://john%20doe:abc%2B007@domain.com/images/foo.jpg')
+
+
 @mock.patch('superdesk.io.rss.feedparser.parse', feed_parse)
 @mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
 @mock.patch('superdesk.io.rss.ParserError.parseMessageError', FakeParseError)
@@ -83,6 +117,23 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         self.instance._extract_image_links = MagicMock(return_value=[])
         self.instance._fetch_images = MagicMock()
         self.instance._wrap_into_package = MagicMock()
+
+    def test_stores_auth_info_in_instance_if_auth_required(self):
+        self.instance.auth_info = None
+        fake_provider = {
+            'config': {
+                'auth_required': True,
+                'username': 'james',
+                'password': 'bond+007',
+            }
+        }
+
+        self.instance._update(fake_provider)
+
+        self.assertEqual(
+            self.instance.auth_info,
+            {'username': 'james', 'password': 'bond+007'}
+        )
 
     def test_raises_ingest_error_if_fetching_data_fails(self):
         self.instance._fetch_data.side_effect = FakeIngestApiError
