@@ -1,4 +1,3 @@
-
 Feature: Publish Queue
 
   @auth
@@ -191,8 +190,7 @@ Feature: Publish Queue
         "name": "another stage",
         "description": "another stage",
         "task_status": "in_progress",
-        "desk": "#desks._id#",
-        "published_stage": true
+        "desk": "#desks._id#"
         }
       ]
       """

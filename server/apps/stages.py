@@ -46,10 +46,6 @@ class StagesResource(Resource):
             'type': 'boolean',
             'default': False
         },
-        'published_stage': {
-            'type': 'boolean',
-            'default': False
-        },
         'task_status': {
             'type': 'string',
             'allowed': task_statuses,
