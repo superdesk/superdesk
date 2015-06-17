@@ -60,6 +60,40 @@ class RssIngestServiceTest(TestCase):
             self.instance = RssIngestService()
 
 
+class InstanceInitTestCase(RssIngestServiceTest):
+    """Tests if instance is correctly initialized on creation."""
+
+    def test_initializes_auth_info_to_none(self):
+        if hasattr(self.instance, 'auth_info'):
+            self.assertIsNone(self.instance.auth_info)
+        else:
+            self.fail('auth_info attribute not initialized')
+
+
+class PrepareHrefMethodTestCase(RssIngestServiceTest):
+    """Tests for the prepare_href() method."""
+
+    def test_returns_unchanged_link_if_no_auth_info(self):
+        self.instance.auth_info = None
+        url = 'http://domain.com/images/foo.jpg'
+
+        returned = self.instance.prepare_href(url)
+
+        self.assertEqual(returned, url)
+
+    def test_returns_link_with_auth_data_if_available(self):
+        self.instance.auth_info = {
+            'username': 'john doe',
+            'password': 'abc+007'
+        }
+        url = 'http://domain.com/images/foo.jpg'
+
+        returned = self.instance.prepare_href(url)
+
+        self.assertEqual(
+            returned, 'http://john%20doe:abc%2B007@domain.com/images/foo.jpg')
+
+
 @mock.patch('superdesk.io.rss.feedparser.parse', feed_parse)
 @mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
 @mock.patch('superdesk.io.rss.ParserError.parseMessageError', FakeParseError)
@@ -76,10 +110,30 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         mock.side_effect = None
 
     def setUp(self):
-        super(UpdateMethodTestCase, self).setUp()
+        super().setUp()
         self._hard_reset_mock(feed_parse)
         self.instance._fetch_data = MagicMock(return_value='<rss>foo</rss>')
         self.instance._create_item = MagicMock(return_value={})
+        self.instance._extract_image_links = MagicMock(return_value=[])
+        self.instance._fetch_images = MagicMock()
+        self.instance._wrap_into_package = MagicMock()
+
+    def test_stores_auth_info_in_instance_if_auth_required(self):
+        self.instance.auth_info = None
+        fake_provider = {
+            'config': {
+                'auth_required': True,
+                'username': 'james',
+                'password': 'bond+007',
+            }
+        }
+
+        self.instance._update(fake_provider)
+
+        self.assertEqual(
+            self.instance.auth_info,
+            {'username': 'james', 'password': 'bond+007'}
+        )
 
     def test_raises_ingest_error_if_fetching_data_fails(self):
         self.instance._fetch_data.side_effect = FakeIngestApiError
@@ -156,6 +210,52 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         items = returned[0]
         self.assertEqual(len(items), 0)
 
+    def test_returns_items_and_package_list_if_entry_contains_image_urls(self):
+        feed_parse.return_value = MagicMock(
+            entries=[
+                MagicMock(
+                    updated_parsed=struct_time(
+                        [2015, 2, 25, 17, 11, 11, 0, 0, 0])
+                ),
+            ]
+        )
+
+        fake_text_item = dict(
+            guid='fake_text_item',
+            firstcreated=datetime(2015, 2, 25, 17, 11, 11),
+            versioncreated=datetime(2015, 2, 25, 17, 11, 11),
+        )
+        item_url = 'http://link.to/fake_item'
+        fake_image_items = [
+            {'guid': 'http://link.to/image_1.jpg'},
+            {'guid': 'http://link.to/image_2.jpg'},
+        ]
+        fake_package = MagicMock(name='fake_package')
+
+        self.instance._create_item = MagicMock(return_value=fake_text_item)
+        self.instance._extract_image_links = MagicMock(return_value=[item_url])
+        self.instance._create_image_items = MagicMock(
+            return_value=fake_image_items)
+        self.instance._create_package = MagicMock(return_value=fake_package)
+
+        returned = self.instance._update(
+            {'last_updated': datetime(1965, 2, 24)}
+        )
+
+        self.instance._create_package.assert_called_with(
+            fake_text_item, fake_image_items)
+
+        self.assertEqual(len(returned), 1)
+        items = returned[0]
+
+        expected_items = [
+            fake_text_item,
+            {'guid': 'http://link.to/image_1.jpg'},
+            {'guid': 'http://link.to/image_2.jpg'},
+            fake_package,
+        ]
+        self.assertCountEqual(items, expected_items)
+
 
 @mock.patch('superdesk.io.rss.requests.get', requests_get)
 @mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
@@ -163,7 +263,7 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
     """Tests for the _fetch_data() method."""
 
     def setUp(self):
-        super(FetchDataMethodTestCase, self).setUp()
+        super().setUp()
         requests_get.reset_mock()
         self.fake_provider = MagicMock(name='fake provider')
 
@@ -262,6 +362,138 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
         self.assertIs(ex.provider, self.fake_provider)
 
 
+class ExtractImageLinksMethodTestCase(RssIngestServiceTest):
+    """Tests for the _extract_image_links() method."""
+
+    def test_extracts_enclosure_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.jpg',
+                'type': 'image/jpeg',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_2.png',
+                'type': 'image/png',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpg', 'http://foo.bar/image_2.png']
+        )
+
+    def test_omits_enclosure_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'alternative',
+                'href': 'http://foo.bar/81fecd',
+                'type': 'text/html',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image_1.bmp',
+                'type': 'image/bmp',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_thumbnail_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/small_img.gif'},
+            {'url': 'http://foo.bar/thumb_x.tiff'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/small_img.gif', 'http://foo.bar/thumb_x.tiff']
+        )
+
+    def test_omits_media_thumbnail_links_to_non_supported_formats(self):
+        rss_entry = MagicMock()
+        rss_entry.media_thumbnail = [
+            {'url': 'http://foo.bar/image.bmp'},
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_extracts_media_content_img_links(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image_1.jpeg',
+                'type': 'image/jpeg',
+            }, {
+                'url': 'http://foo.bar/image_2.tiff',
+                'type': 'image/tiff',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(
+            links,
+            ['http://foo.bar/image_1.jpeg', 'http://foo.bar/image_2.tiff']
+        )
+
+    def test_omits_media_content_links_to_non_supported_mime_types(self):
+        rss_entry = MagicMock()
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/music.mp3',
+                'type': 'audio/mpeg3',
+            }, {
+                'url': 'http://foo.bar/video.avi',
+                'type': 'video/avi',
+            }, {
+                'url': 'http://foo.bar/image_1.bmp',
+                'type': 'image/bmp',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, [])
+
+    def test_omits_duplicate_links(self):
+        rss_entry = MagicMock()
+        rss_entry.links = [
+            {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'rel': 'enclosure',
+                'href': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }
+        ]
+        rss_entry.media_content = [
+            {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/png',
+            }, {
+                'url': 'http://foo.bar/image.png',
+                'type': 'image/jpeg',
+            }
+        ]
+
+        links = self.instance._extract_image_links(rss_entry)
+
+        self.assertCountEqual(links, ['http://foo.bar/image.png'])
+
+
 class CreateItemMethodTestCase(RssIngestServiceTest):
     """Tests for the _create_item() method."""
 
@@ -314,3 +546,78 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
         self.assertEqual(item.get('headline'), 'Breaking News!')
         self.assertEqual(item.get('abstract'), 'Something happened...')
         self.assertEqual(item.get('body_html'), 'This is body text.')
+
+
+class CreateImageItemsMethodTestCase(RssIngestServiceTest):
+    """Tests for the _create_image_items() method."""
+
+    def test_creates_image_items_from_given_urls(self):
+        links = [
+            'http://foo.bar/image_1.jpg',
+            'http://baz.ban/image_2.jpg',
+        ]
+        text_item = {
+            'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+            'versioncreated': datetime(2015, 3, 19, 17, 20, 45)
+        }
+
+        result = self.instance._create_image_items(links, text_item)
+
+        expected = [
+            {
+                'guid': 'http://foo.bar/image_1.jpg',
+                'type': 'picture',
+                'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+                'versioncreated': datetime(2015, 3, 19, 17, 20, 45),
+                'renditions': {
+                    'baseImage': {
+                        'href': 'http://foo.bar/image_1.jpg'
+                    }
+                }
+            }, {
+                'guid': 'http://baz.ban/image_2.jpg',
+                'type': 'picture',
+                'firstcreated': datetime(2015, 1, 27, 15, 56, 59),
+                'versioncreated': datetime(2015, 3, 19, 17, 20, 45),
+                'renditions': {
+                    'baseImage': {
+                        'href': 'http://baz.ban/image_2.jpg'
+                    }
+                }
+            }
+        ]
+        self.assertCountEqual(result, expected)
+
+
+class CreatePackageMethodTestCase(RssIngestServiceTest):
+    """Tests for the _create_package() method."""
+
+    def test_creates_package_from_given_text_and_image_items(self):
+        text_item = {'guid': 'main_text'}
+        img_item_1 = {'guid': 'image_1'}
+        img_item_2 = {'guid': 'image_2'}
+
+        package = self.instance._create_package(
+            text_item,
+            [img_item_1, img_item_2]
+        )
+
+        expected = {
+            'type': 'composite',
+            'groups': [
+                {
+                    'id': 'root',
+                    'role': 'grpRole:NEP',
+                    'refs': [{'idRef': 'main'}],
+                }, {
+                    'id': 'main',
+                    'role': 'main',
+                    'refs': [
+                        {'residRef': 'main_text'},
+                        {'residRef': 'image_1'},
+                        {'residRef': 'image_2'},
+                    ],
+                }
+            ]
+        }
+        self.assertEqual(package, expected)
