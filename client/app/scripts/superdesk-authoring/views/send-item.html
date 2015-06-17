@@ -3,7 +3,7 @@
         <header>
             <h3 translate ng-show="mode !== 'archive'">Send</h3>
             <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
-            <div class="close" ng-click="close()"><i class="icon-close-small"></i></div>
+            <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
         </header>
         <div class="content">
             <div class="dropdown desk-select" dropdown>
@@ -50,16 +50,16 @@
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
                 </li>
-                <li ng-show="mode === 'authoring' && canSendAndContinue()">
-                    <button class="send" ng-click="sendAndContinue()"
-                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
-                    translate>send and continue</button>
-                </li>                
                 <li ng-show="mode !== 'authoring'">
                     <button class="send"
                         ng-click="send(true)"
                         ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage) || config"
                         translate>send and open</button>
+                </li>
+                <li ng-show="mode === 'authoring' && canSendAndContinue()">
+                    <button class="send" ng-click="sendAndContinue()"
+                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    translate>send and continue</button>
                 </li>
             </ul>
         </div>

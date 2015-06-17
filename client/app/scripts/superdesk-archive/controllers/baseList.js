@@ -28,6 +28,9 @@ define(['lodash'], function(_) {
                     $scope.selected.fetch = item;
                 });
             }
+            if (!$location.search().fetch) {
+                $scope.selected.fetch = null;
+            }
         });
 
         this.buildQuery = function(params, filterDesk) {
