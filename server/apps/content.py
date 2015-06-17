@@ -18,6 +18,7 @@ PACKAGE_TYPE = 'package_type'
 TAKES_PACKAGE = 'takes'
 ITEM_TYPE = 'type'
 ITEM_TYPE_COMPOSITE = 'composite'
+LAST_TAKE = 'last_take'
 
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
 

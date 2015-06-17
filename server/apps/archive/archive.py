@@ -425,14 +425,6 @@ class ArchiveService(BaseService):
         super().delete_action({config.ID_FIELD: doc_id})
         get_resource_service('archive_versions').delete(lookup={versioned_id_field(): doc_id})
 
-        packages = self.packageService.get_packages(doc_id)
-        if packages.count() > 0:
-            processed_packages = []
-            for package in packages:
-                if str(package[config.ID_FIELD]) not in processed_packages:
-                    processed_packages.extend(
-                        self.packageService.remove_refs_in_package(package, doc_id, processed_packages))
-
     def __is_req_for_save(self, doc):
         """
         Patch of /api/archive is being used in multiple places. This method differentiates from the patch

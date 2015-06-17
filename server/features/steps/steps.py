@@ -38,7 +38,6 @@ from re import findall
 from eve.utils import ParsedRequest
 import shutil
 from apps.dictionaries.resource import DICTIONARY_FILE
-import pprint
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -46,7 +45,6 @@ external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 def test_json(context):
     try:
         response_data = json.loads(context.response.get_data())
-        # pprint.pprint(response_data)
     except Exception:
         fail_and_print_body(context.response, 'response is not valid json')
     context_data = json.loads(apply_placeholders(context, context.text))
@@ -617,11 +615,11 @@ def step_impl_then_get_new(context):
         return test_json(context)
 
 
-@then('we get next take')
-def step_impl_then_get_next_take(context):
+@then('we get next take as "{new_take}"')
+def step_impl_then_get_next_take(context, new_take):
     step_impl_we_get_latest(context)
     data = get_json_data(context.response)
-    set_placeholder(context, 'TAKE', data['_id'])
+    set_placeholder(context, new_take, data['_id'])
     set_placeholder(context, 'TAKE_PACKAGE', data['takes']['_id'])
     test_json(context)
 
@@ -647,8 +645,6 @@ def step_impl_then_get_list(context, total_count):
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
 
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(data)
     test_json(context)
 
 
@@ -1128,6 +1124,7 @@ def get_default_prefs(context):
 
 @when('we spike "{item_id}"')
 def step_impl_when_spike_url(context, item_id):
+    item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
 
@@ -1154,9 +1151,10 @@ def step_impl_when_unspike_url(context, item_id):
                                             data='{}', headers=headers)
 
 
-@then('we get spiked content "{id}"')
-def get_spiked_content(context, id):
-    url = 'archive/{0}'.format(id)
+@then('we get spiked content "{item_id}"')
+def get_spiked_content(context, item_id):
+    item_id = apply_placeholders(context, item_id)
+    url = 'archive/{0}'.format(item_id)
     when_we_get_url(context, url)
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
@@ -1512,6 +1510,7 @@ def logout(context):
 
 @then('we get "{url}" and match')
 def we_get_and_match(context, url):
+    url = apply_placeholders(context, url)
     response_data = get_res(url, context)
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,

@@ -1042,7 +1042,7 @@ Feature: Content Publishing
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE"
         """
         {
             "type": "text",
@@ -1134,7 +1134,7 @@ Feature: Content Publishing
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE"
         """
         {
             "type": "text",
@@ -1243,7 +1243,7 @@ Feature: Content Publishing
         """
         [{}]
         """
-        Then we get next take
+        Then we get next take as "TAKE"
         """
         {
             "type": "text",
