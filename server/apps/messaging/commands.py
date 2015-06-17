@@ -37,19 +37,28 @@ class RemoveExpiredChatSessions(superdesk.Command):
                 chat_session_id = chat_session['_id']
 
                 if len(get_resource_service(CHAT_SESSIONS).resolve_message_recipients(chat_session_id)) == 0:
-                    self.remove_chat_session(chat_session_id)
+                    get_resource_service(CHAT_SESSIONS).delete_action(lookup={'_id': chat_session_id})
                     continue
 
                 is_active = self.is_session_active(chat_session_id, expired_date_time)
                 if not is_active:
-                    self.remove_chat_session(chat_session_id)
+                    get_resource_service(CHAT_SESSIONS).delete_action(lookup={'_id': chat_session_id})
 
     def get_chat_sessions(self, expired_date_time):
+        """
+        Retrieves Chat Sessions created before timestamp specified by expired_date_time.
+        """
+
         req = ParsedRequest()
         req.max_results = 100
         return get_resource_service(CHAT_SESSIONS).get(req=req, lookup={'_created': {'$lte': expired_date_time}})
 
     def is_session_active(self, chat_session_id, expired_date_time):
+        """
+        A Chat Session identified by chat_session_id is active if no messages are exchanged since 3 days.
+        :return: True if active, False otherwise.
+        """
+
         query = {'$and': [{'_created': {'$gte': expired_date_time}}, {'chat_session': chat_session_id}]}
 
         req = ParsedRequest()
@@ -58,10 +67,6 @@ class RemoveExpiredChatSessions(superdesk.Command):
         messages = get_resource_service('chat_messages').get(req=req, lookup=query)
 
         return messages.count() > 0
-
-    def remove_chat_session(self, chat_session_id):
-        get_resource_service('chat_messages').delete_action(lookup={'chat_session': chat_session_id})
-        get_resource_service(CHAT_SESSIONS).delete_action(lookup={'_id': chat_session_id})
 
 
 superdesk.command('messaging:remove_expired', RemoveExpiredChatSessions())
