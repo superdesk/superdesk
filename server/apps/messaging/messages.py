@@ -48,4 +48,4 @@ class MessageService(Service):
     def on_created(self, docs):
         for doc in docs:
             recipients = get_resource_service(CHAT_SESSIONS).resolve_message_recipients(doc['chat_session'])
-            push_notification(self.notification_key, message=doc['message'], recipients=recipients)
+            push_notification(self.notification_key, message=doc['message'], recipients=list(recipients))
