@@ -140,3 +140,28 @@ Feature: Messaging
     And we delete "/chat_sessions/#chat_sessions._id#"
     And we get "chat_messages?chat_session=#chat_sessions._id#"
     Then we get list with 0 items
+
+  @auth
+  @notification
+  Scenario: User receives a notification when added to a Chat Session
+    Given empty "chat_sessions"
+    When we post to "chat_sessions" with success
+    """
+    [{"users": []}]
+    """
+    And we post to "/users" with "foo" and success
+    """
+    {"username": "foo", "email": "foo@foo.com", "is_active": true, "sign_off": "foo"}
+    """
+    And we patch "chat_sessions/#chat_sessions._id#"
+    """
+    {"users": ["#foo#"]}
+    """
+    Then we get notifications
+    """
+    [{"event": "messaging:user:added"}]
+    """
+    And we get existing resource
+    """
+    {"creator": "#CONTEXT_USER_ID#", "users": ["#foo#"]}
+    """

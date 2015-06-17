@@ -13,6 +13,7 @@ from apps.archive.common import get_user
 
 from superdesk import Resource, Service, get_resource_service
 from superdesk.errors import SuperdeskApiError
+from superdesk.notification import push_notification
 
 CHAT_SESSIONS = 'chat_sessions'
 
@@ -42,22 +43,36 @@ class ChatService(Service):
 
     def on_fetched(self, docs):
         for doc in docs:
-            doc['recipients'] = self.resolve_message_recipients(doc[config.ID_FIELD])
+            doc['recipients'] = list(self.resolve_message_recipients(doc[config.ID_FIELD]))
 
     def on_fetched_item(self, doc):
-        doc['recipients'] = self.resolve_message_recipients(doc[config.ID_FIELD])
+        doc['recipients'] = list(self.resolve_message_recipients(doc[config.ID_FIELD]))
+
+    def on_updated(self, updates, original):
+        original_recipients = self.resolve_message_recipients(chat_session=original)
+        updated_recipients = self.resolve_message_recipients(chat_session=updates)
+
+        new_recipients = list(updated_recipients - original_recipients)
+        for recipient in new_recipients:
+            push_notification('messaging:user:added', user_id=recipient, chat_session_id=str(original[config.ID_FIELD]))
 
     def on_delete(self, doc):
         get_resource_service('chat_messages').delete_action(lookup={'chat_session': doc[config.ID_FIELD]})
 
-    def resolve_message_recipients(self, chat_session_id):
+    def resolve_message_recipients(self, chat_session_id=None, chat_session=None):
         """
         De-normalizes the chat session if it's tied to either desk or group or both.
         :return: User ID list
         """
+
+        if chat_session_id is None and chat_session is None:
+            raise SuperdeskApiError.badRequestError(
+                "Invalid Arguments. Either Chat Session or it's identifier is needed to proceed further.")
+
         recipients = set()
 
-        chat_session = get_resource_service(CHAT_SESSIONS).find_one(req=None, _id=chat_session_id)
+        if chat_session is None:
+            chat_session = get_resource_service(CHAT_SESSIONS).find_one(req=None, _id=chat_session_id)
 
         if len(chat_session.get('users', [])):
             recipients.update([str(user) for user in chat_session['users']])
@@ -74,4 +89,4 @@ class ChatService(Service):
 
             recipients.update([str(member['user']) for group in groups for member in group.get('members', [])])
 
-        return list(recipients)
+        return recipients

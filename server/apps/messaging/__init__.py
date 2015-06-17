@@ -25,7 +25,7 @@ def init_app(app):
     service = MessageService(endpoint_name, backend=get_backend())
     MessageResource(endpoint_name, app=app, service=service)
 
-    intrinsic_privilege(CHAT_SESSIONS, method=['POST', 'PATCH'])
+    intrinsic_privilege(CHAT_SESSIONS, method=['POST', 'PATCH', 'DELETE'])
     intrinsic_privilege('chat_messages', method=['POST', 'PATCH', 'DELETE'])
 
 
