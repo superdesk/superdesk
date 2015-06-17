@@ -29,6 +29,7 @@ class MessageResource(Resource):
     }
 
     resource_methods = ['GET', 'POST']
+    item_methods = []
     datasource = {'default_sort': [('_created', -1)]}
 
 

@@ -47,6 +47,9 @@ class ChatService(Service):
     def on_fetched_item(self, doc):
         doc['recipients'] = self.resolve_message_recipients(doc[config.ID_FIELD])
 
+    def on_delete(self, doc):
+        get_resource_service('chat_messages').delete_action(lookup={'chat_session': doc[config.ID_FIELD]})
+
     def resolve_message_recipients(self, chat_session_id):
         """
         De-normalizes the chat session if it's tied to either desk or group or both.
