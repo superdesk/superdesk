@@ -424,7 +424,6 @@ class ArchiveService(BaseService):
         doc_id = str(doc[config.ID_FIELD])
         super().delete_action({config.ID_FIELD: doc_id})
         get_resource_service('archive_versions').delete(lookup={versioned_id_field(): doc_id})
-        self.packageService.remove_spiked_refs_from_package(doc_id)
 
     def __is_req_for_save(self, doc):
         """

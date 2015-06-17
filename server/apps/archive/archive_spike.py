@@ -16,12 +16,13 @@ from flask import current_app as app
 
 
 from superdesk import get_resource_service
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
 from .common import get_user, item_url, is_assigned_to_a_desk
-
+from eve.utils import config
+from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
@@ -69,6 +70,10 @@ class ArchiveSpikeService(BaseService):
             raise SuperdeskApiError.badRequestError(message="Only last take of the package can be spiked.")
 
     def update(self, id, updates, original):
+        original_state = original[config.CONTENT_STATE]
+        if not is_workflow_state_transition_valid('spike', original_state):
+            raise InvalidStateTransitionError()
+
         package_service = PackageService()
         user = get_user(required=True)
 
@@ -111,6 +116,9 @@ class ArchiveUnspikeService(BaseService):
         return updates
 
     def update(self, id, updates, original):
+        original_state = original[config.CONTENT_STATE]
+        if not is_workflow_state_transition_valid('unspike', original_state):
+            raise InvalidStateTransitionError()
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)

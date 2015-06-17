@@ -7,10 +7,10 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from superdesk import get_resource_service
+
 
 from superdesk.tests import TestCase
-from eve.utils import date_to_str, config
+from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent
 from apps.archive import ArchiveService
@@ -152,30 +152,6 @@ class RemoveSpikedContentTestCase(TestCase):
             now = date_to_str(utcnow())
             expiredItems = RemoveExpiredSpikeContent().get_expired_items(now)
             self.assertEquals(2, expiredItems.count())
-
-    def test_spike_expiry_removes_package_refs(self):
-        with self.app.app_context():
-            self.articles[0]['expiry'] = utcnow() + timedelta(minutes=-30)
-            self.articles[0]['state'] = 'spiked'
-
-            self.app.data.insert(ARCHIVE, self.articles)
-            now = date_to_str(utcnow())
-            expiredItems = RemoveExpiredSpikeContent().get_expired_items(now)
-            self.assertEquals(1, expiredItems.count())
-
-            RemoveExpiredSpikeContent().run()
-
-            article = get_resource_service(ARCHIVE).find_one(req=None, _id='1')
-            self.assertIsNone(article)
-
-            package = get_resource_service(ARCHIVE).find_one(req=None, _id='4')
-            self.assertEquals(package[config.VERSION], 4)
-            self.assertEquals(len(package['groups'][1]['refs']), 1)
-
-            package = get_resource_service(ARCHIVE).find_one(req=None, _id='5')
-            self.assertEquals(package[config.VERSION], 4)
-            self.assertEquals(len(package['groups'][0]['refs']), 2)
-            self.assertEquals(len(package['groups'][1]['refs']), 0)
 
 
 class ArchiveTestCase(TestCase):

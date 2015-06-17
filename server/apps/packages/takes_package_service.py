@@ -9,13 +9,14 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from eve.utils import config, ParsedRequest
-from superdesk.errors import SuperdeskApiError
+from eve.utils import config
+from eve.versioning import resolve_document_version
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, \
     ITEM_TYPE_COMPOSITE, PACKAGE, LAST_TAKE
-from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES
+from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES, ITEM_REF, insert_into_versions
 from .package_service import get_item_ref, create_root_group
 
 logger = logging.getLogger(__name__)
@@ -105,6 +106,7 @@ class TakesPackageService():
         # send the package to the desk where the first take was sent
         current_task = target.get('task')
         tasks_service.patch(takes_package_id, {'task': current_task})
+        return takes_package_id
 
     def link_as_next_take(self, target, link):
         """
@@ -123,19 +125,22 @@ class TakesPackageService():
             archive_service.post([link])
 
         if not takes_package_id:
-            self.create_takes_package(takes_package, target, link)
+            takes_package_id = self.create_takes_package(takes_package, target, link)
         else:
             self.__link_items__(takes_package, target, link)
             del takes_package['_id']
+            resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
+
+        insert_into_versions(id_=takes_package_id)
 
         return link
 
     def can_spike_takes_package_item(self, doc):
         """
         checks whether if the item is the last item of the takes package.
-        if the item is not the last item then raise expection
-        :param doc: take of a spike package
+        if the item is not the last item then raise exception
+        :param dict doc: take of a spike package
         """
         if doc and doc.get(LINKED_IN_PACKAGES):
             package_id = self.get_take_package_id(doc)
@@ -148,22 +153,26 @@ class TakesPackageService():
     def process_killed_takes_package(self, doc):
         """
         If the takes packages is killed then spike the unpublished item
+        :param dict doc: killed item
         """
-        takes_package_id = self.get_take_package_id(doc)
-        archive_service = get_resource_service(ARCHIVE)
+        takes_package = self.get_take_package(doc)
 
-        if takes_package_id:
-            request = ParsedRequest()
-            request.max_results = 100
-            request.sort = '[("unique_id", -1)]'
-            query = {
-                '$and': [
-                    {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id},
-                    {config.CONTENT_STATE: {'$nin': ['killed', 'corrected', 'published']}}
-                ]}
-
-            take_items = archive_service.get_from_mongo(req=request, lookup=query)
+        if takes_package:
             spike_service = get_resource_service('archive_spike')
-            for item in take_items:
-                updates = {config.CONTENT_STATE: 'spiked'}
-                spike_service.patch(item['_id'], updates)
+            groups = takes_package.get('groups', [])
+            if groups:
+                refs = next(group.get('refs') for group in groups if group['id'] == 'main')
+                for sequence in range(takes_package.get(SEQUENCE, 0), 0, -1):
+                    try:
+                        ref = next(ref for ref in refs if ref.get(SEQUENCE) == sequence)
+                        updates = {config.CONTENT_STATE: 'spiked'}
+                        spike_service.patch(ref[ITEM_REF], updates)
+                    except InvalidStateTransitionError:
+                        # for published items it will InvalidStateTransitionError
+                        break
+                    except SuperdeskApiError:
+                        # if not the last take
+                        break
+                    except:
+                        logger.exception("Unexpected error while spiking items of takes package")
+                        break

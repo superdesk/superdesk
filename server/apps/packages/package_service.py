@@ -57,7 +57,6 @@ def get_item_ref(item):
 
 
 class PackageService():
-
     def on_create(self, docs):
         create_root_group(docs)
         self.check_root_group(docs)
@@ -189,6 +188,7 @@ class PackageService():
     """
     Add extensibility point for item patch data.
     """
+
     def get_item_update_data(self, __item, links, delete):
         return {LINKED_IN_PACKAGES: links}
 
@@ -260,12 +260,12 @@ class PackageService():
         if package.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             new_sequence = package[SEQUENCE] - 1
             updates[SEQUENCE] = new_sequence
-            last_take_group = [reference for reference in
-                               [new_group.get('refs') for new_group in new_groups if new_group['id'] == 'main'][0]
-                               if reference.get(SEQUENCE) == new_sequence]
+            last_take_group = next(reference for reference in
+                                   next(new_group.get('refs') for new_group in new_groups if new_group['id'] == 'main')
+                                   if reference.get(SEQUENCE) == new_sequence)
 
             if last_take_group:
-                updates[LAST_TAKE] = last_take_group[0].get(ITEM_REF)
+                updates[LAST_TAKE] = last_take_group.get(ITEM_REF)
 
         resolve_document_version(updates, ARCHIVE, 'PATCH', package)
 

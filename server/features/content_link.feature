@@ -77,7 +77,7 @@ Feature: Link content in takes
                     "package_type": "takes",
                     "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
                     "sequence": 2,
-                    "last_take": ""
+                    "_current_version": 1
                 },
                 {
                     "_id": "#TAKE#",
@@ -144,7 +144,8 @@ Feature: Link content in takes
                         }
                     ],
                     "type": "composite",
-                    "package_type": "takes"
+                    "package_type": "takes",
+                    "_current_version": 2
                 },
                 {
                     "_id": "#TAKE#",
@@ -625,6 +626,7 @@ Feature: Link content in takes
         {
             "last_take": "#TAKE2#",
             "sequence": 2,
+            "_current_version": 1,
             "groups":[
                         {"id": "root", "refs": [{"idRef": "main"}]},
                         {
@@ -674,12 +676,12 @@ Feature: Link content in takes
         [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
         """
         Then we get OK response
-        When we get "archive/#TAKE_PACKAGE#"
-        Then we get existing resource
+        And we get "archive/#TAKE_PACKAGE#" and match
         """
         {
             "last_take": "#TAKE3#",
-            "sequence": 3
+            "sequence": 3,
+            "_current_version": 2
         }
         """
         When we publish "123" with "publish" type and "published" state
@@ -700,4 +702,25 @@ Feature: Link content in takes
             "state": "spiked"
         }
         """
-
+        And we get "/archive/#TAKE_PACKAGE#" and match
+        """
+        {
+            "last_take": "123",
+            "sequence": 1,
+            "_current_version": 6,
+            "groups":[
+                        {"id": "root", "refs": [{"idRef": "main"}]},
+                        {
+                            "id": "main",
+                            "refs": [
+                                {
+                                    "headline": "test1",
+                                    "slugline": "comics",
+                                    "residRef": "123",
+                                    "sequence": 1
+                                }
+                            ]
+                        }
+                ]
+        }
+        """
