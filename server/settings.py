@@ -124,6 +124,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.publish.content_purge',
         'schedule': crontab(minute=30)
     },
+    'messaging:remove_expired': {
+        'task': 'apps.messaging.purge_chat_sessions',
+        'schedule': crontab(hour=0, minute=0)
+    }
 }
 
 SENTRY_DSN = env('SENTRY_DSN')
