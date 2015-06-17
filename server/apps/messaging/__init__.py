@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from apps.messaging.commands import RemoveExpiredChatSessions
 
 from .chat_session import ChatResource, ChatService, CHAT_SESSIONS
 from .messages import MessageResource, MessageService
@@ -31,4 +32,4 @@ def init_app(app):
 
 @celery.task
 def purge_chat_sessions():
-    RemoveExpiredPublishContent().run()
+    RemoveExpiredChatSessions().run()
