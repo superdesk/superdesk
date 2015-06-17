@@ -12,7 +12,7 @@ from .chat_session import ChatResource, ChatService, CHAT_SESSIONS
 from .messages import MessageResource, MessageService
 from superdesk import get_backend, intrinsic_privilege
 import logging
-
+from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
 
@@ -27,3 +27,8 @@ def init_app(app):
 
     intrinsic_privilege(CHAT_SESSIONS, method=['POST', 'PATCH'])
     intrinsic_privilege('chat_messages', method=['POST', 'PATCH', 'DELETE'])
+
+
+@celery.task
+def purge_chat_sessions():
+    RemoveExpiredPublishContent().run()
