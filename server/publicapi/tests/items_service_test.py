@@ -666,7 +666,7 @@ class OnFetchedItemMethodTestCase(ItemsServiceTestCase):
     def setUp(self):
         super().setUp()
 
-        self.app = Flask('test_app')
+        self.app = Flask(__name__)
         self.app.config['PUBLICAPI_URL'] = 'http://api.com'
         self.app.config['URLS'] = {'items': 'items_endpoint'}
 
@@ -733,7 +733,7 @@ class OnFetchedMethodTestCase(ItemsServiceTestCase):
     def setUp(self):
         super().setUp()
 
-        self.app = Flask('test_app')
+        self.app = Flask(__name__)
         self.app.config['PUBLICAPI_URL'] = 'http://api.com'
         self.app.config['URLS'] = {'items': 'items_endpoint'}
 

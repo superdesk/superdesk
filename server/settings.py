@@ -64,6 +64,7 @@ X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
+MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 if env('MONGOLAB_URI'):
     MONGO_URI = env('MONGOLAB_URI')
 elif env('MONGODB_PORT'):
@@ -75,6 +76,7 @@ if env('LEGAL_ARCHIVE_URI'):
 elif env('LEGAL_ARCHIVEDB_PORT'):
     LEGAL_ARCHIVE_URI = '{0}/{1}'.format(env('LEGAL_ARCHIVEDB_PORT').replace('tcp:', 'mongodb:'),
                                          LEGAL_ARCHIVE_DBNAME)
+PUBLICAPI_URI = env('PUBLICAPI_URI', MONGO_URI)
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
