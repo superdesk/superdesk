@@ -632,6 +632,7 @@ class ArchivePublishTestCase(TestCase):
 
 def test_can_publish_article(self):
         with self.app.app_context():
+            self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
             self.app.data.insert('filter_condition',
                                  [{'_id': 1,
                                    'field': 'headline',
@@ -660,8 +661,16 @@ def test_can_publish_article(self):
                                  [{'_id': 1,
                                    'publish_filter': [[4, 3], [1, 2]],
                                    'name': 'pf-1'}])
+            can_it = get_resource_service('archive_publish').\
+                can_publish(self.subscribers[0], self.articles[6])
+
+            self.assertFalse(can_it)
+
+            self.subscribers[0]['publish_filter']['filter_type'] = 'permitting'
 
             can_it = get_resource_service('archive_publish').\
                 can_publish(self.subscribers[0], self.articles[6])
 
             self.assertTrue(can_it)
+
+            self.subscribers[0].pop('publish_filter')

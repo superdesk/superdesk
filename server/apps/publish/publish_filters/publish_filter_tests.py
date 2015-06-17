@@ -21,12 +21,14 @@ class PublishFilterTests(TestCase):
         super().setUp()
         self.req = ParsedRequest()
         with self.app.app_context():
-            self.app.data.insert('archive', [{'_id': '1', 'headline': 'story', 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '2', 'headline': 'prtorque', 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '3', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '4', 'urgency': 4, 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '5', 'urgency': 2, 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '6', 'state': 'fetched'}])
+            self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
+                             {'_id': '2', 'headline': 'prtorque', 'state': 'fetched'},
+                             {'_id': '3', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'},
+                             {'_id': '4', 'urgency': 4, 'state': 'fetched'},
+                             {'_id': '5', 'urgency': 2, 'state': 'fetched'},
+                             {'_id': '6', 'state': 'fetched'}]
+            self.app.data.insert('archive', self.articles)
+
             self.app.data.insert('filter_condition',
                                  [{'_id': 1,
                                    'field': 'headline',
@@ -137,3 +139,47 @@ class PublishFilterTests(TestCase):
             doc_ids = [d['_id'] for d in docs]
             self.assertEquals(1, docs.count())
             self.assertTrue('3' in doc_ids)
+
+    def test_does_match_using_like_filter_single_condition(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[1]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(f.does_match(doc, self.articles[0]))
+            self.assertTrue(f.does_match(doc, self.articles[1]))
+            self.assertTrue(f.does_match(doc, self.articles[2]))
+            self.assertFalse(f.does_match(doc, self.articles[3]))
+            self.assertFalse(f.does_match(doc, self.articles[4]))
+            self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_condition(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[1], [2]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(f.does_match(doc, self.articles[0]))
+            self.assertTrue(f.does_match(doc, self.articles[1]))
+            self.assertTrue(f.does_match(doc, self.articles[2]))
+            self.assertFalse(f.does_match(doc, self.articles[3]))
+            self.assertTrue(f.does_match(doc, self.articles[4]))
+            self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_condition2(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[4, 3]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(f.does_match(doc, self.articles[0]))
+            self.assertFalse(f.does_match(doc, self.articles[1]))
+            self.assertTrue(f.does_match(doc, self.articles[2]))
+            self.assertFalse(f.does_match(doc, self.articles[3]))
+            self.assertFalse(f.does_match(doc, self.articles[4]))
+            self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_condition3(self):
+        f = PublishFilterService()
+        doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(f.does_match(doc, self.articles[0]))
+            self.assertFalse(f.does_match(doc, self.articles[1]))
+            self.assertTrue(f.does_match(doc, self.articles[2]))
+            self.assertFalse(f.does_match(doc, self.articles[3]))
+            self.assertFalse(f.does_match(doc, self.articles[4]))
+            self.assertFalse(f.does_match(doc, self.articles[5]))

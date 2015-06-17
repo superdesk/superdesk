@@ -22,12 +22,14 @@ class FilterConditionTests(TestCase):
         super().setUp()
         self.req = ParsedRequest()
         with self.app.app_context():
-            self.app.data.insert('archive', [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '2', 'headline': 'prtorque', 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '3', 'urgency': 3, 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '4', 'urgency': 4, 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '5', 'urgency': 2, 'state': 'fetched'}])
-            self.app.data.insert('archive', [{'_id': '6', 'state': 'fetched'}])
+            self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
+                             {'_id': '2', 'headline': 'prtorque', 'state': 'fetched'},
+                             {'_id': '3', 'urgency': 3, 'state': 'fetched'},
+                             {'_id': '4', 'urgency': 4, 'state': 'fetched'},
+                             {'_id': '5', 'urgency': 2, 'state': 'fetched'},
+                             {'_id': '6', 'state': 'fetched'}]
+
+            self.app.data.insert('archive', self.articles)
 
     def _setup_elastic_args(self, elastic_translation, search_type='filter'):
         if search_type == 'keyword':
@@ -201,3 +203,73 @@ class FilterConditionTests(TestCase):
         self.assertEquals(f._get_mongo_value('notlike', 'test'), re.compile('.*test.*', re.IGNORECASE))
         self.assertEquals(f._get_mongo_value('startswith', 'test'), re.compile('^test', re.IGNORECASE))
         self.assertEquals(f._get_mongo_value('endswith', 'test'), re.compile('.*test', re.IGNORECASE))
+
+    def test_does_match_with_like_full(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'like', 'value': 'story'}
+        self.assertTrue(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_like_partial(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'like', 'value': 'tor'}
+        self.assertTrue(f.does_match(doc, self.articles[0]))
+        self.assertTrue(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_startswith_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'startswith', 'value': 'Sto'}
+        self.assertTrue(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_endswith_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'endswith', 'value': 'Que'}
+        self.assertFalse(f.does_match(doc, self.articles[0]))
+        self.assertTrue(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_notlike_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'headline', 'operator': 'notlike', 'value': 'Que'}
+        self.assertTrue(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertTrue(f.does_match(doc, self.articles[2]))
+        self.assertTrue(f.does_match(doc, self.articles[3]))
+        self.assertTrue(f.does_match(doc, self.articles[4]))
+        self.assertTrue(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_in_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'urgency', 'operator': 'in', 'value': '3,4'}
+        self.assertFalse(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertTrue(f.does_match(doc, self.articles[2]))
+        self.assertTrue(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_nin_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'urgency', 'operator': 'nin', 'value': '2,3,4'}
+        self.assertTrue(f.does_match(doc, self.articles[0]))
+        self.assertTrue(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertTrue(f.does_match(doc, self.articles[5]))

@@ -75,3 +75,14 @@ class PublishFilterService(BaseService):
                 filter_conditions['must'].append(elastic_query)
             expressions['should'].append({'bool': filter_conditions})
         return {'query': {'filtered': {'query': {'bool': expressions}}}}
+
+    def does_match(self, publish_filter, article):
+        filter_condition_service = get_resource_service('filter_condition')
+        expressions = []
+        for expression in publish_filter.get('publish_filter', []):
+            filter_conditions = []
+            for filter_condition_id in expression:
+                filter_condition = filter_condition_service.find_one(req=None, _id=filter_condition_id)
+                filter_conditions.append(filter_condition_service.does_match(filter_condition, article))
+            expressions.append(all(filter_conditions))
+        return any(expressions)

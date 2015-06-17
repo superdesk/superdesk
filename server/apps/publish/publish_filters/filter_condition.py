@@ -125,3 +125,26 @@ class FilterConditionService(BaseService):
             value = '{}:*{}'.format(doc['field'], value)
             doc['field'] = 'query'
         return value
+
+    def does_match(self, filter_condition, article):
+        field = filter_condition['field']
+        operator = filter_condition['operator']
+        filter_value = filter_condition['value']
+
+        if field not in article:
+            if operator in ['nin', 'notlike']:
+                return True
+            else:
+                return False
+
+        article_value = article[field]
+        filter_value = self._get_mongo_value(operator, filter_value)
+
+        if operator == 'in':
+            return article_value in filter_value
+        if operator == 'nin':
+            return article_value not in filter_value
+        if operator == 'like' or operator == 'startswith' or operator == 'endswith':
+            return filter_value.match(article_value)
+        if operator == 'notlike':
+            return not filter_value.match(article_value)
