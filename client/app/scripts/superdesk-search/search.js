@@ -365,10 +365,16 @@
         };
     }
 
-    SearchController.$inject = ['$scope', '$location', 'api', 'search'];
-    function SearchController($scope, $location, api, search) {
-
+    SearchController.$inject = ['$scope', '$location', 'api', 'search', 'notify', 'session'];
+    function SearchController($scope, $location, api, search, notify, session) {
         $scope.context = 'search';
+        $scope.$on('item:deleted:archive:text', itemDelete);
+
+        function itemDelete(e, data) {
+            if (session.identity._id === data.user) {
+                refresh();
+            }
+        }
 
         $scope.repo = {
             ingest: true,
