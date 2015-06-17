@@ -77,7 +77,6 @@ class SubscribersResource(Resource):
                 'filter_id': Resource.rel('publish_filter', nullable=True),
                 'filter_type': {
                     'type': 'string',
-                    'default': 'blocking',
                     'allowed': ['blocking', 'permitting'],
                     'required': True
                 }

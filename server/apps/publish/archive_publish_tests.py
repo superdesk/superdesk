@@ -225,7 +225,8 @@ class ArchivePublishTestCase(TestCase):
                           'state': 'in_progress',
                           'expiry': utcnow() + timedelta(minutes=20),
                           'type': 'text',
-                          'unique_name': '#8'}]
+                          'unique_name': '#8'},
+                         {'_id': '7', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'}]
 
     def setUp(self):
         super().setUp()
