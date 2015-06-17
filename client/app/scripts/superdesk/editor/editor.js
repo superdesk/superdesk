@@ -342,7 +342,7 @@ angular.module('superdesk.editor', [])
                     var editorConfig = angular.extend({}, config, scope.config || {});
                     editor.editor = new window.MediumEditor(editor.elem, editorConfig);
 
-                    editorElem.on('input', function(event) {
+                    editorElem.on('input blur', function(event) {
                         $timeout.cancel(updateTimeout);
                         updateTimeout = $timeout(updateModel, 300, false);
                     });
