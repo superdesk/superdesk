@@ -299,6 +299,9 @@ class RssIngestService(IngestService):
         not the items themselves. In the list of references, the reference to
         the text item preceeds the references to image items.
 
+        Package's `firstcreated` and `versioncreated` fields are set to values
+        of these fields in `text_item`.
+
         :param dict text_item: item representing the text content
         :param list image_items: list of items (dicts) representing the images
             related to the text content
@@ -307,6 +310,9 @@ class RssIngestService(IngestService):
         """
         package = {
             'type': 'composite',
+            'guid': 'package:' + text_item['guid'],
+            'firstcreated': text_item['firstcreated'],
+            'versioncreated': text_item['versioncreated'],
             'groups': [
                 {
                     'id': 'root',

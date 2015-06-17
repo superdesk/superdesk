@@ -593,7 +593,11 @@ class CreatePackageMethodTestCase(RssIngestServiceTest):
     """Tests for the _create_package() method."""
 
     def test_creates_package_from_given_text_and_image_items(self):
-        text_item = {'guid': 'main_text'}
+        text_item = {
+            'guid': 'main_text',
+            'firstcreated': datetime(2015, 1, 27, 16, 0, 0),
+            'versioncreated': datetime(2015, 1, 27, 16, 0, 0),
+        }
         img_item_1 = {'guid': 'image_1'}
         img_item_2 = {'guid': 'image_2'}
 
@@ -604,6 +608,9 @@ class CreatePackageMethodTestCase(RssIngestServiceTest):
 
         expected = {
             'type': 'composite',
+            'guid': 'package:main_text',
+            'firstcreated': datetime(2015, 1, 27, 16, 0, 0),
+            'versioncreated': datetime(2015, 1, 27, 16, 0, 0),
             'groups': [
                 {
                     'id': 'root',
