@@ -182,15 +182,8 @@ class PackageService():
                 data.update({PACKAGE_TYPE: TAKES_PACKAGE})
             two_way_links.append(data)
 
-        updates = self.get_item_update_data(item, two_way_links, delete)
+        updates = {LINKED_IN_PACKAGES: two_way_links}
         get_resource_service(endpoint).system_update(item_id, updates, item)
-
-    """
-    Add extensibility point for item patch data.
-    """
-
-    def get_item_update_data(self, __item, links, delete):
-        return {LINKED_IN_PACKAGES: links}
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()
@@ -230,6 +223,8 @@ class PackageService():
         """
         Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
         Before removing checks if the package has been processed. If processed the package is skipped.
+        In case of takes package, sequence is decremented and last_take field is updated.
+        If sequence is zero then the takes package is deleted.
         :return: package[config.ID_FIELD]
         """
         groups = package['groups']
@@ -261,6 +256,7 @@ class PackageService():
         if package.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             new_sequence = package[SEQUENCE] - 1
             if new_sequence == 0:
+                # remove the takes package.
                 get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: package[config.ID_FIELD]})
                 delete_package = True
             else:
