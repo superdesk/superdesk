@@ -23,7 +23,8 @@ class ChatResource(Resource):
         'creator': Resource.rel('users', required=False),
         'users': {'type': 'list', 'schema': Resource.rel('users', required=True)},
         'desks': {'type': 'list', 'schema': Resource.rel('desks', required=True)},
-        'groups': {'type': 'list', 'schema': Resource.rel('groups', required=True)}
+        'groups': {'type': 'list', 'schema': Resource.rel('groups', required=True)},
+        'recipients': {'type': 'list', 'schema': Resource.rel('users', required=True)}
     }
     resource_methods = ['GET', 'POST']
     datasource = {'default_sort': [('_created', -1)]}
@@ -40,19 +41,28 @@ class ChatService(Service):
                 raise SuperdeskApiError.forbiddenError(message)
             creator = str(user.get('_id'))
             doc['creator'] = creator
+            doc['recipients'] = list(self.resolve_message_recipients(chat_session=doc)) + [creator]
 
-    def on_fetched(self, docs):
+    def on_created(self, docs):
         for doc in docs:
-            doc['recipients'] = list(self.resolve_message_recipients(doc[config.ID_FIELD]))
+            for recipient in doc['recipients']:
+                push_notification('messaging:user:added', user_id=recipient, chat_session_id=str(doc[config.ID_FIELD]))
 
-    def on_fetched_item(self, doc):
-        doc['recipients'] = list(self.resolve_message_recipients(doc[config.ID_FIELD]))
+    def on_update(self, updates, original):
+        if 'users' not in updates and original.get('users'):
+            updates['users'] = original.get('users')
+
+        if 'desks' not in updates and original.get('desks'):
+            updates['desks'] = original.get('desks')
+
+        if 'groups' not in updates and original.get('groups'):
+            updates['groups'] = original.get('groups')
+
+        updates['recipients'] = list(self.resolve_message_recipients(chat_session=updates)) + [original.get('creator')]
 
     def on_updated(self, updates, original):
-        original_recipients = self.resolve_message_recipients(chat_session=original)
-        updated_recipients = self.resolve_message_recipients(chat_session=updates)
+        new_recipients = list(set(updates.get('recipients')) - set(original.get('recipients')))
 
-        new_recipients = list(updated_recipients - original_recipients)
         for recipient in new_recipients:
             push_notification('messaging:user:added', user_id=recipient, chat_session_id=str(original[config.ID_FIELD]))
 
