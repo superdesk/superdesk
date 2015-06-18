@@ -61,7 +61,7 @@ class NewsMLG2Formatter(Formatter):
     def _format_newsitem(self, article, itemSet, nitf):
         newsItem = SubElement(itemSet, 'newsItem', attrib={'standard': 'NewsML-G2', 'standardversion': '2.18',
                                                            'guid': article['guid'],
-                                                           'version': str(article['version']),
+                                                           'version': str(article[superdesk.config.VERSION]),
                                                            'xml:lang': article.get('language', 'en'),
                                                            'conformance': 'power'})
         SubElement(newsItem, 'catalogRef',
