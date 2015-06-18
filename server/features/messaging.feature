@@ -1,6 +1,7 @@
 Feature: Messaging
 
   @auth
+  @notification
   Scenario: Add users to a chat session
     Given empty "chat_sessions"
     When we post to "chat_sessions" with success
@@ -25,6 +26,7 @@ Feature: Messaging
     """
 
   @auth
+  @notification
   Scenario: Add Desk(s) to a chat session
     Given empty "chat_sessions"
     When we post to "users" with "bar" and success
@@ -45,6 +47,7 @@ Feature: Messaging
     """
 
   @auth
+  @notification
   Scenario: Add Group(s) to a chat session
     Given empty "chat_sessions"
     When we post to "users" with "foobar" and success
@@ -65,6 +68,7 @@ Feature: Messaging
     """
 
   @auth
+  @notification
   Scenario: Fetching a Chat Session should give recipients
     Given empty "chat_sessions"
     When we post to "users" with "foobar" and success
@@ -115,6 +119,7 @@ Feature: Messaging
     """
 
   @auth
+  @notification
   Scenario: Deleting a Chat Session should automatically delete Chat Messages
     Given empty "chat_sessions"
     When we post to "chat_sessions" with success
@@ -165,3 +170,28 @@ Feature: Messaging
     """
     {"creator": "#CONTEXT_USER_ID#", "users": ["#foo#"]}
     """
+
+  @auth
+  @notification
+  Scenario: Find the number of chat sessions a user is participating
+    Given empty "chat_sessions"
+    When we post to "/users" with "foo" and success
+    """
+    {"username": "foo", "email": "foo@foo.com", "is_active": true, "sign_off": "foo"}
+    """
+    And we post to "chat_sessions" with success
+    """
+    {"users": ["#foo#"]}
+    """
+    And we login as user "bar" with password "foo"
+    """
+    {"user_type": "user", "email": "foo.bar@foobar.org"}
+    """
+    And we post to "chat_sessions" with success
+    """
+    {"users": ["#foo#"]}
+    """
+    And we get "/chat_sessions"
+    Then we get list with 2 items
+    When we get "/chat_sessions?recipients=#foo#"
+    Then we get list with 2 items
