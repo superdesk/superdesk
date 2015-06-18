@@ -41,25 +41,39 @@
 
     LegalArchiveController.$inject = ['$scope', '$location', 'legal'];
     function LegalArchiveController($scope, $location, legal) {
-        $scope.meta = {};
+        $scope.criteria = {};
         var default_items = Object.freeze({_meta: {max_results: 25, page: 1, total: 1}});
         $scope.items = default_items;
         $scope.loading = false;
+        $scope.selected = {};
 
         $scope.search = function () {
-            console.log($scope.meta);
             $scope.loading = true;
-            legal.query($scope.meta).then(function(items) {
-                console.log(items);
+            legal.query($scope.criteria).then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
             });
         };
 
+        $scope.preview = function(selectedItem) {
+            console.log(selectedItem);
+            $scope.selected.preview = selectedItem;
+        };
+
+        $scope.openLightbox = function () {
+            $scope.selected.view = $scope.selected.preview;
+        };
+
+        $scope.closeLightbox = function () {
+            $scope.selected.view = null;
+        };
+
         $scope.clear = function () {
-            $scope.meta = {};
+            $scope.criteria = {};
             $scope.items = default_items;
         };
+
+        $scope.search();
     }
 
     var app = angular.module('superdesk.legal_archive', [
