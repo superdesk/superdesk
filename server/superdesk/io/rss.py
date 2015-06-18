@@ -12,6 +12,9 @@
 import feedparser
 import requests
 
+from apps.archive.common import GUID_TAG
+from apps.archive.common import generate_guid
+
 from calendar import timegm
 from collections import namedtuple
 from datetime import datetime
@@ -278,7 +281,7 @@ class RssIngestService(IngestService):
 
         for image_url in image_links:
             img_item = {
-                'guid': image_url,
+                'guid': generate_guid(type=GUID_TAG),
                 'type': 'picture',
                 'firstcreated': text_item.get('firstcreated'),
                 'versioncreated': text_item.get('versioncreated'),
@@ -299,6 +302,9 @@ class RssIngestService(IngestService):
         not the items themselves. In the list of references, the reference to
         the text item preceeds the references to image items.
 
+        Package's `firstcreated` and `versioncreated` fields are set to values
+        of these fields in `text_item`.
+
         :param dict text_item: item representing the text content
         :param list image_items: list of items (dicts) representing the images
             related to the text content
@@ -307,6 +313,9 @@ class RssIngestService(IngestService):
         """
         package = {
             'type': 'composite',
+            'guid': generate_guid(type=GUID_TAG),
+            'firstcreated': text_item['firstcreated'],
+            'versioncreated': text_item['versioncreated'],
             'groups': [
                 {
                     'id': 'root',
