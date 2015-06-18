@@ -16,9 +16,10 @@
 
     }
 
-    TemplatesService.$inject = ['api', '$q', 'gettext'];
-    function TemplatesService(api, $q, gettext) {
+    TemplatesService.$inject = ['api', '$q', 'gettext', 'preferencesService'];
+    function TemplatesService(api, $q, gettext, preferencesService) {
         var PAGE_SIZE = 10;
+        var PREFERENCES_KEY = 'templates:recent';
 
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
@@ -53,6 +54,57 @@
             .then(function(result) {
                 return result;
             });
+        };
+
+        this.fetchTemplatesByIds = function(templateIds) {
+            if (!templateIds.length) {
+                return $q.when();
+            }
+
+            var criteria = [];
+            _.each(templateIds, function(id) {
+                criteria.push({_id: id});
+            });
+
+            var params = {
+                max_results: PAGE_SIZE,
+                page: 1,
+                where: JSON.stringify({'$and': criteria})
+            };
+
+            return api.content_templates.query(params)
+            .then(function(result) {
+                return result;
+            });
+        };
+
+        this.addRecentTemplate = function(deskId, templateId) {
+            return preferencesService.get()
+            .then(function(result) {
+                result[PREFERENCES_KEY] = result[PREFERENCES_KEY] || {};
+                result[PREFERENCES_KEY][deskId] = result[PREFERENCES_KEY][deskId] || [];
+                _.remove(result[PREFERENCES_KEY][deskId], function(i) {
+                    return i == templateId;
+                });
+                result[PREFERENCES_KEY][deskId].unshift(templateId);
+                return preferencesService.update(result);
+            });
+        };
+
+        this.getRecentTemplateIds = function(deskId) {
+            return preferencesService.get()
+            .then(function(result) {
+                console.log(result);
+                if (result && result[PREFERENCES_KEY] && result[PREFERENCES_KEY][deskId]) {
+                    return result[PREFERENCES_KEY][deskId];
+                }
+                return [];
+            });
+        };
+
+        this.getRecentTemplates = function(deskId) {
+            return this.getRecentTemplateIds(deskId)
+                .then(this.fetchTemplatesByIds);
         };
     }
 

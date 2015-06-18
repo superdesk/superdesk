@@ -1,8 +1,8 @@
 (function() {
 'use strict';
 
-ContentCtrlFactory.$inject = ['api', 'superdesk'];
-function ContentCtrlFactory(api, superdesk) {
+ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks'];
+function ContentCtrlFactory(api, superdesk, templates, desks) {
     return function ContentCtrl($scope) {
         var templateFields = [
             'abstract',
@@ -43,6 +43,9 @@ function ContentCtrlFactory(api, superdesk) {
             var item = _.pick(template, templateFields);
             api('archive')
             .save(item)
+            .then(function() {
+                return templates.addRecentTemplate(desks.activeDeskId, template._id);
+            })
             .then(function() {
                 superdesk.intent('author', 'article', item);
             });

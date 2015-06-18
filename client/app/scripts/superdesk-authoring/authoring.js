@@ -1518,7 +1518,13 @@
                 scope.$watch(function() {
                     return desks.activeDeskId;
                 }, function() {
+                    /*
                     templates.fetchTemplates(1, NUM_ITEMS, 'create', desks.activeDeskId)
+                    .then(function(result) {
+                        scope.contentTemplates = result;
+                    });
+                    */
+                    templates.getRecentTemplates(desks.activeDeskId)
                     .then(function(result) {
                         scope.contentTemplates = result;
                     });
