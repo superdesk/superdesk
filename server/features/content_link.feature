@@ -532,6 +532,11 @@ Feature: Link content in takes
         When we spike "#TAKE2#"
         Then we get OK response
         And we get spiked content "#TAKE2#"
+        When we spike "123"
+        Then we get OK response
+        And we get spiked content "123"
+        When we get "/archive/#TAKE_PACKAGE#"
+        Then we get response code 404
 
 
     @auth
