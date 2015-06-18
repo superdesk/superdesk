@@ -12,6 +12,9 @@
 import feedparser
 import requests
 
+from apps.archive.common import GUID_TAG
+from apps.archive.common import generate_guid
+
 from calendar import timegm
 from collections import namedtuple
 from datetime import datetime
@@ -278,7 +281,7 @@ class RssIngestService(IngestService):
 
         for image_url in image_links:
             img_item = {
-                'guid': image_url,
+                'guid': generate_guid(type=GUID_TAG),
                 'type': 'picture',
                 'firstcreated': text_item.get('firstcreated'),
                 'versioncreated': text_item.get('versioncreated'),
@@ -310,7 +313,7 @@ class RssIngestService(IngestService):
         """
         package = {
             'type': 'composite',
-            'guid': 'package:' + text_item['guid'],
+            'guid': generate_guid(type=GUID_TAG),
             'firstcreated': text_item['firstcreated'],
             'versioncreated': text_item['versioncreated'],
             'groups': [
