@@ -74,7 +74,7 @@ define([
             superdesk
                 .activity('/reset-password/', {
                     controller: ResetPassworController,
-                    templateUrl: 'scripts/superdesk/auth/reset-password.html',
+                    templateUrl: require.toUrl('./reset-password.html'),
                     auth: false
                 });
         }])
