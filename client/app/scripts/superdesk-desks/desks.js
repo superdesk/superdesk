@@ -410,6 +410,8 @@
                         function(response) {
                             if (angular.isDefined(response.data._message)) {
                                 notify.error(gettext('Error: ' + response.data._message));
+                            } else {
+                                notify.error(gettext('Unknown Error: There was a problem, desk was not deleted.'));
                             }
                         }
                     );
@@ -847,6 +849,8 @@
                                 var origDesk = _.find(scope.desks._items, {_id: scope.desk.edit._id});
                                 _.extend(origDesk, scope.desk.edit);
                             }
+
+                            desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
                             WizardHandler.wizard('desks').next();
                         }, errorMessage);
                     };
@@ -909,10 +913,11 @@
 
                     scope.getstages = function(previous) {
                         if (scope.desk.edit && scope.desk.edit._id) {
-                            scope.message = null;
+                            scope.message = 'loading...';
                             api('stages').query({where: {desk: scope.desk.edit._id}})
                                 .then(function(result) {
                                     scope.stages = result._items;
+                                    scope.message = null;
                                 });
                         } else {
                             WizardHandler.wizard('desks').goTo(previous);
@@ -1147,12 +1152,13 @@
                         if (step === 'people') {
                             scope.search = null;
                             scope.deskMembers = [];
-                            scope.message = null;
+                            scope.message = 'loading...';
 
                             if (scope.desk.edit && scope.desk.edit._id) {
                                 desks.fetchUsers().then(function(result) {
                                     scope.users = desks.users._items;
                                     scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
+                                    scope.message = null;
                                 });
                             } else {
                                 WizardHandler.wizard('desks').goTo(previous);

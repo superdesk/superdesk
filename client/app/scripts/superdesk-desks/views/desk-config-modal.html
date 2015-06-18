@@ -159,7 +159,7 @@
 				</div>
 				<div class="modal-footer">
 				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-				  	<button class="btn btn-primary" ng-click="next()" translate>Next</button>
+				  	<button class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Next</button>
 				</div>
 			</div>
 		</div>
@@ -183,7 +183,7 @@
 				</div>
 				<div class="modal-footer">
 				  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-				  	<button class="btn btn-primary" ng-click="save()" translate>Next</button>
+				  	<button class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Next</button>
 				</div>
 			</div>
 		</div>
