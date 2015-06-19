@@ -115,6 +115,7 @@
 
                 scope.close = function() {
                     scope.q = null;
+                    scope.search();
                     input.focus();
                 };
             }
