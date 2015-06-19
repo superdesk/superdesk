@@ -29,6 +29,7 @@ describe('multi content view', function() {
         multicontent.toggleStage(0, 2);
         multicontent.nextStages();
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item6');
     });
@@ -38,6 +39,7 @@ describe('multi content view', function() {
         multicontent.togglePersonal();
         multicontent.nextStages();
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 1)).toBe('item1');
         expect(multicontent.getTextItem(0, 2)).toBe('item2');
@@ -48,6 +50,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(1);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item3');
     });
@@ -59,6 +62,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(1);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item6');
         expect(multicontent.getTextItem(1, 0)).toBe('item3');
@@ -71,12 +75,14 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(1);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
 
         multicontent.showMulticontentSettings();
         multicontent.toggleStage(0, 2);
         multicontent.nextStages();
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item3');
     });
@@ -90,6 +96,7 @@ describe('multi content view', function() {
         multicontent.toggleSearch(1);
         multicontent.nextSearches();
         multicontent.moveOrderItem(0, 1);
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item1');
         expect(multicontent.getTextItem(1, 0)).toBe('item6');
@@ -101,6 +108,25 @@ describe('multi content view', function() {
         expect(multicontent.getOrderItemText(1)).toBe('Politic Desk : two');
     });
 
+    it('configure a stage, a saved search and personal and then set max items', function() {
+        multicontent.showMulticontentSettings();
+        multicontent.toggleDesk(0);
+        multicontent.toggleStage(0, 2);
+        multicontent.togglePersonal();
+        multicontent.nextStages();
+        multicontent.toggleSearch(0);
+        multicontent.nextSearches();
+        multicontent.moveOrderItem(0, 1);
+        multicontent.nextReorder();
+        multicontent.setMaxItems(0, 1);
+        multicontent.setMaxItems(1, 1);
+        multicontent.setMaxItems(2, 1);
+        multicontent.saveSettings();
+        expect(multicontent.getTextItem(0, 0)).toBe('package1');
+        expect(multicontent.getTextItem(1, 0)).toBe('item6');
+        expect(multicontent.getTextItem(2, 0)).toBe('item1');
+    });
+
     it('can search content', function() {
         multicontent.showMulticontentSettings();
         multicontent.toggleDesk(0);
@@ -108,6 +134,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(0);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
         expect(multicontent.getTextItem(0, 0)).toBe('item6');
         expect(multicontent.getTextItem(1, 0)).toBe('item1');
@@ -125,6 +152,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(0);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
 
         multicontent.previewAction(0, 0);
@@ -138,6 +166,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(0);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
 
         multicontent.openAction(0, 0);
@@ -151,6 +180,7 @@ describe('multi content view', function() {
         multicontent.nextStages();
         multicontent.toggleSearch(0);
         multicontent.nextSearches();
+        multicontent.nextReorder();
         multicontent.saveSettings();
 
         multicontent.editAction(0, 0);

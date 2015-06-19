@@ -14,6 +14,7 @@
     AggregateCtrl.$inject = ['api', 'session', 'desks', 'preferencesService', 'storage'];
     function AggregateCtrl(api, session, desks, preferencesService, storage) {
         var PREFERENCES_KEY = 'agg:view';
+        var defaultMaxItems = 10;
         var self = this;
         this.loading = true;
         this.selected = null;
@@ -65,6 +66,7 @@
                     _id: item._id,
                     selected: true,
                     type: item.type,
+                    max_items: item.max_items || defaultMaxItems,
                     order: index
                 };
                 if (item.type === 'stage') {
@@ -106,6 +108,11 @@
         this.getState = function(key) {
             return (this.state[key] === undefined) ? true : this.state[key];
         };
+
+        this.getMaxHeightStyle = function(maxItems) {
+            var maxHeight = 32 * (maxItems || defaultMaxItems) + 6;
+            return {'max-height':  maxHeight.toString() + 'px'};
+        };
     }
 
     AggregateSettingsDirective.$inject = ['desks', 'preferencesService', 'WizardHandler'];
@@ -128,6 +135,7 @@
             link: function(scope, elem) {
 
                 var PREFERENCES_KEY = 'agg:view';
+                var defaultMaxItems = 10;
 
                 scope.step = {
                     current: 'desks'
@@ -163,6 +171,7 @@
                     if (!item.type) {
                         item._id = _id;
                         item.type = 'stage';
+                        item.max_items = defaultMaxItems;
                         item.order = _.size(scope.editGroups);
                     }
                 };
@@ -172,6 +181,7 @@
                     if (!item.type) {
                         item._id = _id;
                         item.type = 'search';
+                        item.max_items = defaultMaxItems;
                         item.order = _.size(scope.editGroups);
                     }
                 };
@@ -181,6 +191,7 @@
                     if (!item.type) {
                         item._id = 'personal';
                         item.type = 'personal';
+                        item.max_items = defaultMaxItems;
                         item.order = _.size(scope.editGroups);
                     }
                 };
@@ -222,7 +233,11 @@
                     scope.groups.length = 0;
                     _.each(scope.getValues(), function(item, index) {
                         if (item.selected && item.type !== 'desk') {
-                            scope.groups.push({_id: item._id, type: item.type});
+                            scope.groups.push({
+                                _id: item._id,
+                                type: item.type,
+                                max_items: item.max_items
+                            });
                         }
                     });
 

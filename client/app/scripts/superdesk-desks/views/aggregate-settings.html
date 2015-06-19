@@ -61,14 +61,36 @@
                 <div class="group-title" ng-if="item.type === 'search'">
                     {{searchLookup[item._id].name}}
                 </div>
-                <div class="group-title" ng-if="item.type === 'personal'" translate>Personal</div>
+                <div  ng-if="item.type === 'personal'" translate>Personal</div>  
             </li>
             <li class="fake clearfix"><div></div></li>
         </ul>
         <div class="modal-footer">
             <button id="previousReorder" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button class="btn btn-primary" ng-click="save()" translate>Done</button>
+            <button id="nextReorder" class="btn btn-primary" ng-click="next()" translate>Next</button>
+        </div>  
+    </div>
+    
+    <div sd-wizard-step data-title="{{ :: 'Items Count' | translate }}" data-code="maxitems">
+        <div class="legend" translate>Set maximum items per stages and saved searches for view</div>
+        <div class="groups">
+            <div ng-repeat="max in getValues()">
+            <div>
+                <div class="group-title" ng-if="max.type === 'stage'">
+                    {{deskLookup[stageLookup[max._id].desk].name}} : <span>{{stageLookup[max._id].name}}</span>
+                </div>
+                <div class="group-title" ng-if="max.type === 'search'">
+                    {{searchLookup[max._id].name}}
+                </div>
+                <div  ng-if="max.type === 'personal'" translate>Personal</div>
+                <div><input type="number" id="maxItems" ng-model="max.max_items" min="1" max="25" required></div>
+             </div>    
+            </div>
         </div>
+        <div class="modal-footer">
+            <button id="previousMax" class="btn pull-left" ng-click="previous()" translate>Previous</button>
+            <button class="btn btn-primary" ng-click="save()" translate>Done</button>
+        </div>  
     </div>
 
 </div>

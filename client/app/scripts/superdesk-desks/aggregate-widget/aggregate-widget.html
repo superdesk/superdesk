@@ -23,12 +23,13 @@
                             <span class="label pull-right">{{total}}</span>
                         </div>
 
-                        <div class="stage-content" ng-show="open"
+                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
                              sd-stage-items
                              data-stage="group._id"
                              data-total="total"
                              data-allowed="true"
                              data-show-empty="false"
+                             data-max-items="group.max_items"
                              data-action="agg.preview(item)"
                              data-selected="agg.selected"
                              data-filter="agg.query">
@@ -48,12 +49,13 @@
                             <span class="label pull-right">{{total}}</span>
                         </div>
 
-                        <div class="stage-content" ng-show="open"
+                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
                              sd-stage-items
                              data-saved-search="agg.searchLookup[group._id]"
                              data-total="total"
                              data-allowed="true"
                              data-show-empty="false"
+                             data-max-items="group.max_items"
                              data-action="agg.preview(item)"
                              data-selected="agg.selected"
                              data-filter="agg.query">
@@ -73,12 +75,13 @@
                             <span class="label pull-right">{{total}}</span>
                         </div>
 
-                        <div class="stage-content" ng-show="open"
+                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
                              sd-stage-items
                              data-stage="personal"
                              data-total="total"
                              data-allowed="true"
                              data-show-empty="false"
+                             data-max-items="group.max_items"
                              data-action="agg.preview(item)"
                              data-selected="agg.selected"
                              data-filter="agg.query">

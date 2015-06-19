@@ -73,6 +73,7 @@
                 total: '=',
                 allowed: '=',
                 showEmpty: '=?',
+                maxItems: '=?',
                 selected: '=?',
                 action: '&',
                 filter: '='
@@ -207,7 +208,7 @@
                         $timeout(function() {
                             scope.items.unshift.apply(scope.items, scope.cachePreviousItems);
                             if (scope.items.length > 0) {
-                                scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), 10)]._id);
+                                scrollList(scope.items[parseInt(((scope.items.length - 1) / 2), scope.maxItems || 10)]._id);
                             }
                         }, 100);
 
