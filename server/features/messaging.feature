@@ -69,39 +69,13 @@ Feature: Messaging
 
   @auth
   @notification
-  Scenario: Fetching a Chat Session should give recipients
-    Given empty "chat_sessions"
-    When we post to "users" with "foobar" and success
-    """
-    {"username": "foobar", "email": "foobar@foobar.com", "is_active": true, "sign_off": "foobar"}
-    """
-    And we post to "/groups"
-    """
-    {"name": "Sports group", "members": [{"user": "#foobar#"}]}
-    """
-    And we post to "chat_sessions" with success
-    """
-    {"groups": ["#groups._id#"]}
-    """
-    And we get "/chat_sessions/#chat_sessions._id#"
-    Then we get existing resource
-    """
-    {"creator": "#CONTEXT_USER_ID#", "groups": ["#groups._id#"], "recipients": ["#foobar#"]}
-    """
-
-  @auth
-  @notification
   Scenario: Recipients receive message when sender sends message
     Given empty "chat_sessions"
-    When we post to "chat_sessions" with success
-    """
-    [{"users": []}]
-    """
-    And we post to "/users" with "foo" and success
+    When we post to "/users" with "foo" and success
     """
     {"username": "foo", "email": "foo@foo.com", "is_active": true, "sign_off": "foo"}
     """
-    And we patch "chat_sessions/#chat_sessions._id#"
+    And we post to "chat_sessions" with success
     """
     {"users": ["#foo#"]}
     """
@@ -122,15 +96,11 @@ Feature: Messaging
   @notification
   Scenario: Deleting a Chat Session should automatically delete Chat Messages
     Given empty "chat_sessions"
-    When we post to "chat_sessions" with success
-    """
-    [{"users": []}]
-    """
-    And we post to "/users" with "foo" and success
+    When we post to "/users" with "foo" and success
     """
     {"username": "foo", "email": "foo@foo.com", "is_active": true, "sign_off": "foo"}
     """
-    And we patch "chat_sessions/#chat_sessions._id#"
+    And we post to "chat_sessions" with success
     """
     {"users": ["#foo#"]}
     """
@@ -150,15 +120,11 @@ Feature: Messaging
   @notification
   Scenario: User receives a notification when added to a Chat Session
     Given empty "chat_sessions"
-    When we post to "chat_sessions" with success
-    """
-    [{"users": []}]
-    """
-    And we post to "/users" with "foo" and success
+    When we post to "/users" with "foo" and success
     """
     {"username": "foo", "email": "foo@foo.com", "is_active": true, "sign_off": "foo"}
     """
-    And we patch "chat_sessions/#chat_sessions._id#"
+    And we post to "chat_sessions" with success
     """
     {"users": ["#foo#"]}
     """
@@ -195,3 +161,51 @@ Feature: Messaging
     Then we get list with 2 items
     When we get "/chat_sessions?recipients=#foo#"
     Then we get list with 2 items
+
+  @auth
+  @notification
+  Scenario: Removing a Desk(s) to a chat session
+    Given empty "chat_sessions"
+    When we post to "users" with "bar" and success
+    """
+    {"username": "bar", "email": "bar@bar.com", "is_active": true, "sign_off": "bar"}
+    """
+    And we post to "/desks" with success
+    """
+    {"name": "Sports Desk", "members": [{"user": "#bar#"}]}
+    """
+    And we post to "chat_sessions" with success
+    """
+    {"desks": ["#desks._id#"]}
+    """
+    And we delete "/desks/#desks._id#"
+    Then we get notifications
+    """
+    [{"event": "chat_session_end", "extra": {"message": "Chat Session Ends as the Desk(s) is removed"}}]
+    """
+    When we get "/chat_sessions/#chat_sessions._id#"
+    Then we get error 404
+
+  @auth
+  @notification
+  Scenario: Removing a Group(s) to a chat session
+    Given empty "chat_sessions"
+    When we post to "users" with "bar" and success
+    """
+    {"username": "bar", "email": "bar@bar.com", "is_active": true, "sign_off": "bar"}
+    """
+    And we post to "/groups"
+    """
+    {"name": "Sports group", "members": [{"user": "#bar#"}]}
+    """
+    And we post to "chat_sessions" with success
+    """
+    {"groups": ["#groups._id#"]}
+    """
+    And we delete "/groups/#groups._id#"
+    Then we get notifications
+    """
+    [{"event": "chat_session_end", "extra": {"message": "Chat Session Ends as the Group(s) is removed"}}]
+    """
+    When we get "/chat_sessions/#chat_sessions._id#"
+    Then we get error 404

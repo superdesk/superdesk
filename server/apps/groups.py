@@ -8,16 +8,20 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from eve.utils import config
+from flask import current_app as app
+from bson.objectid import ObjectId
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from bson.objectid import ObjectId
 import superdesk
 
 
 def init_app(app):
     endpoint_name = 'groups'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = GroupsService(endpoint_name, backend=superdesk.get_backend())
     GroupsResource(endpoint_name, app=app, service=service)
+
     endpoint_name = 'user_groups'
     service = UserGroupsService(endpoint_name, backend=superdesk.get_backend())
     UserGroupsResource(endpoint_name, app=app, service=service)
@@ -49,6 +53,15 @@ class GroupsResource(Resource):
     }
     datasource = {'default_sort': [('created', -1)]}
     privileges = {'POST': 'groups', 'DELETE': 'groups', 'PATCH': 'groups'}
+
+
+class GroupsService(BaseService):
+    def on_updated(self, updates, original):
+        if 'members' in updates:
+            app.on_group_update_or_delete(original[config.ID_FIELD])
+
+    def on_deleted(self, doc):
+        app.on_group_update_or_delete(doc[config.ID_FIELD], event='delete')
 
 
 class UserGroupsResource(Resource):

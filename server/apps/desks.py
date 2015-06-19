@@ -7,10 +7,13 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from superdesk.errors import SuperdeskApiError
 
-from superdesk.resource import Resource
 from bson.objectid import ObjectId
+from flask import current_app as app
+from eve.utils import config
+
+from superdesk.errors import SuperdeskApiError
+from superdesk.resource import Resource
 from superdesk.services import BaseService
 import superdesk
 from apps.tasks import default_status
@@ -124,9 +127,13 @@ class DesksService(BaseService):
                           deleted=1,
                           user_ids=desk_user_ids,
                           desk_id=str(doc.get('_id')))
+        app.on_desk_update_or_delete(doc[config.ID_FIELD], event='delete')
 
     def on_updated(self, updates, original):
         self.__send_notification(updates, original)
+
+        if 'members' in updates:
+            app.on_desk_update_or_delete(original[config.ID_FIELD])
 
     def __compare_members(self, original, updates):
         original_members = set([member['user'] for member in original])

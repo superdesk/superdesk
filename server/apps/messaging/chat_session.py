@@ -9,8 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from eve.utils import config
-from apps.archive.common import get_user
 
+from apps.archive.common import get_user
 from superdesk import Resource, Service, get_resource_service
 from superdesk.errors import SuperdeskApiError
 from superdesk.notification import push_notification
@@ -49,16 +49,7 @@ class ChatService(Service):
                 push_notification('messaging:user:added', user_id=recipient, chat_session_id=str(doc[config.ID_FIELD]))
 
     def on_update(self, updates, original):
-        if 'users' not in updates and original.get('users'):
-            updates['users'] = original.get('users')
-
-        if 'desks' not in updates and original.get('desks'):
-            updates['desks'] = original.get('desks')
-
-        if 'groups' not in updates and original.get('groups'):
-            updates['groups'] = original.get('groups')
-
-        updates['recipients'] = list(self.resolve_message_recipients(chat_session=updates)) + [original.get('creator')]
+        self._populate_users_desks_groups_recipients(original, updates)
 
     def on_updated(self, updates, original):
         new_recipients = list(set(updates.get('recipients')) - set(original.get('recipients')))
@@ -68,6 +59,38 @@ class ChatService(Service):
 
     def on_delete(self, doc):
         get_resource_service('chat_messages').delete_action(lookup={'chat_session': doc[config.ID_FIELD]})
+
+    def on_desk_update_or_delete(self, desk_id, event='update'):
+        """
+        Invoked when a Desk is updated/deleted. Fetches Chat Session(s) which the desk identified by desk_id
+        is part of. For each Chat Session performs one of the below:
+            (1) updates the recipients if the desk is updated
+            (2) kills the chat sessions if the desk is deleted
+        """
+
+        chat_sessions = self.get(req=None, lookup={'desks': desk_id})
+        for chat_session in chat_sessions:
+            if event == 'update':
+                updates = {'desks': [desk for desk in chat_session['desks'] if str(desk) != str(desk_id)]}
+                self._update_chat_session(chat_session, updates)
+            else:
+                self._kill_chat_session(chat_session, 'Desk(s)')
+
+    def on_group_update_or_delete(self, group_id, event='update'):
+        """
+        Invoked when a Group is updated/deleted. Fetches Chat Session(s) which the group identified by group_id
+        is part of. For each Chat Session performs one of the below:
+            (1) updates the recipients if the group is updated
+            (2) kills the chat sessions if the group is deleted
+        """
+
+        chat_sessions = self.get(req=None, lookup={'groups': group_id})
+        for chat_session in chat_sessions:
+            if event == 'update':
+                updates = {'groups': [group for group in chat_session['groups'] if str(group) != str(group_id)]}
+                self._update_chat_session(chat_session, updates)
+            else:
+                self._kill_chat_session(chat_session, 'Group(s)')
 
     def resolve_message_recipients(self, chat_session_id=None, chat_session=None):
         """
@@ -100,3 +123,28 @@ class ChatService(Service):
             recipients.update([str(member['user']) for group in groups for member in group.get('members', [])])
 
         return recipients
+
+    def _populate_users_desks_groups_recipients(self, source, destination):
+        """
+        Checks if destination has properties - users, desks, groups. If not the properties are copied from source and
+        resolves recipients for the destination.
+        """
+
+        if 'users' not in destination and source.get('users'):
+            destination['users'] = source.get('users')
+        if 'desks' not in destination and source.get('desks'):
+            destination['desks'] = source.get('desks')
+        if 'groups' not in destination and source.get('groups'):
+            destination['groups'] = source.get('groups')
+
+        destination['recipients'] = \
+            list(self.resolve_message_recipients(chat_session=destination)) + [source.get('creator')]
+
+    def _update_chat_session(self, chat_session, updates):
+        self._populate_users_desks_groups_recipients(chat_session, updates)
+        self.update(chat_session[config.ID_FIELD, updates, chat_session])
+
+    def _kill_chat_session(self, chat_session, type_):
+        self.delete_action(lookup={config.ID_FIELD: chat_session[config.ID_FIELD]})
+        push_notification("chat_session_end", message='Chat Session Ends as the %s is removed' % type_,
+                          recipients=chat_session['recipients'])
