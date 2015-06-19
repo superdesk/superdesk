@@ -117,7 +117,7 @@ class NITFParser(Parser):
             # set the default type.
             item['type'] = ITEM_CLASS_TEXT
             item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
-            item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
+            item['urgency'] = int(docdata.find('urgency').get('ed-urg', '5'))
             item['pubstatus'] = (docdata.attrib.get('management-status', 'usable')).lower()
             item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
             item['versioncreated'] = get_norm_datetime(docdata.find('date.issue'))

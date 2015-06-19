@@ -131,7 +131,7 @@ class NewsMLOneParser(Parser):
 
     def parse_news_management(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/NewsManagement'))
-        item['urgency'] = parsed_el['Urgency']['FormalName']
+        item['urgency'] = int(parsed_el['Urgency']['FormalName'])
         item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
         item['firstcreated'] = self.datetime(parsed_el['FirstCreated'])
         item['pubstatus'] = (parsed_el['Status']['FormalName']).lower()

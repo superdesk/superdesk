@@ -66,7 +66,7 @@ class WENNTestCase(unittest.TestCase):
 
     def test_item_defaults(self):
         self.assertEqual(self.items[0].get('pubstatus'), 'usable')
-        self.assertEqual(self.items[0].get('urgency'), '5')
+        self.assertEqual(self.items[0].get('urgency'), 5)
         self.assertEqual(self.items[0].get('type'), 'text')
 
     def test_guid(self):

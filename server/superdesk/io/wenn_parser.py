@@ -46,7 +46,7 @@ class WENNParser(Parser):
 
     def set_item_defaults(self, item):
         item['type'] = 'text'
-        item['urgency'] = '5'
+        item['urgency'] = 5
         item['pubstatus'] = 'usable'
         item['anpa-category'] = {'qcode': 'e'}
         item['subject'] = [{'qcode': '01000000', 'name': 'arts, culture and entertainment'}]
