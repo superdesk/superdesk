@@ -182,15 +182,8 @@ class PackageService():
                 data.update({PACKAGE_TYPE: TAKES_PACKAGE})
             two_way_links.append(data)
 
-        updates = self.get_item_update_data(item, two_way_links, delete)
+        updates = {LINKED_IN_PACKAGES: two_way_links}
         get_resource_service(endpoint).system_update(item_id, updates, item)
-
-    """
-    Add extensibility point for item patch data.
-    """
-
-    def get_item_update_data(self, __item, links, delete):
-        return {LINKED_IN_PACKAGES: links}
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()
@@ -230,6 +223,8 @@ class PackageService():
         """
         Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
         Before removing checks if the package has been processed. If processed the package is skipped.
+        In case of takes package, sequence is decremented and last_take field is updated.
+        If sequence is zero then the takes package is deleted.
         :return: package[config.ID_FIELD]
         """
         groups = package['groups']
@@ -257,20 +252,27 @@ class PackageService():
 
         # if takes package then adjust the reference.
         # safe to do this as take can only be in one takes package.
+        delete_package = False
         if package.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             new_sequence = package[SEQUENCE] - 1
-            updates[SEQUENCE] = new_sequence
-            last_take_group = next(reference for reference in
-                                   next(new_group.get('refs') for new_group in new_groups if new_group['id'] == 'main')
-                                   if reference.get(SEQUENCE) == new_sequence)
+            if new_sequence == 0:
+                # remove the takes package.
+                get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: package[config.ID_FIELD]})
+                delete_package = True
+            else:
+                updates[SEQUENCE] = new_sequence
+                last_take_group = next(reference for reference in
+                                       next(new_group.get('refs') for new_group in new_groups if
+                                            new_group['id'] == 'main')
+                                       if reference.get(SEQUENCE) == new_sequence)
 
-            if last_take_group:
-                updates[LAST_TAKE] = last_take_group.get(ITEM_REF)
+                if last_take_group:
+                    updates[LAST_TAKE] = last_take_group.get(ITEM_REF)
 
-        resolve_document_version(updates, ARCHIVE, 'PATCH', package)
-
-        get_resource_service(ARCHIVE).patch(package[config.ID_FIELD], updates)
-        insert_into_versions(id_=package[config.ID_FIELD])
+        if not delete_package:
+            resolve_document_version(updates, ARCHIVE, 'PATCH', package)
+            get_resource_service(ARCHIVE).patch(package[config.ID_FIELD], updates)
+            insert_into_versions(id_=package[config.ID_FIELD])
 
         sub_package_ids.append(package[config.ID_FIELD])
         return sub_package_ids
