@@ -43,7 +43,7 @@ class TestCase(unittest.TestCase):
 
     def test_coreitemvalues(self):
         self.assertEquals(self.item.get('type'), 'text')
-        self.assertEquals(self.item.get('urgency'), '4')
+        self.assertEquals(self.item.get('urgency'), 4)
         self.assertEquals(self.item.get('version'), '1')
         self.assertEquals(self.item.get('versioncreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))
         self.assertEquals(self.item.get('firstcreated'), datetime.datetime(2014, 8, 29, 13, 49, 51))

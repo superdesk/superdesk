@@ -49,7 +49,7 @@ class AAPTestCase(NITFTestCase):
         self.assertEqual(self.item.get('type'), 'text')
 
     def test_urgency(self):
-        self.assertEqual(self.item.get('urgency'), '5')
+        self.assertEqual(self.item.get('urgency'), 5)
 
     def test_dateline(self):
         self.assertEqual(self.item.get('dateline'), 'Sydney')
