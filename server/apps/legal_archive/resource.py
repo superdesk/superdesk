@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.resource import Resource
+from  apps.content import metadata_schema
 
 
 MONGO_PREFIX = 'LEGAL_ARCHIVE'
@@ -29,6 +30,7 @@ class LegalResource(Resource):
 class LegalArchiveResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_NAME
     resource_title = endpoint_name
+    schema = dict(metadata_schema)
 
 
 class LegalArchiveVersionsResource(LegalResource):

@@ -19,18 +19,30 @@
 
             var where = [];
 
+            function prepareDate(val) {
+                return _.trunc(val, {'length': val.length - 3, 'omission': ''}) + '00';
+            }
+
             _.forEach(search, function(n, key) {
                 var val = _.trim(n);
                 if (val) {
                     var clause = {};
-                    clause[key] = {'$regex': val, '$options': '-i'};
+                    if (key === 'published_after')
+                    {
+                        clause.versioncreated = {'$gte': prepareDate(val)};
+                    } else if (key === 'published_before')
+                    {
+                        clause.versioncreated = {'$lte': prepareDate(val)};
+                    } else {
+                        clause[key] = {'$regex': val, '$options': '-i'};
+                    }
                     where.push(clause);
                 }
             });
 
             if (_.any(where)) {
                 criteria.where = JSON.stringify({
-                    '$or': where
+                    '$and': where
                 });
             }
 
