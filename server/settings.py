@@ -62,7 +62,6 @@ X_DOMAINS = '*'
 X_MAX_AGE = 24 * 3600
 X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
-
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 if env('MONGOLAB_URI'):
@@ -76,7 +75,12 @@ if env('LEGAL_ARCHIVE_URI'):
 elif env('LEGAL_ARCHIVEDB_PORT'):
     LEGAL_ARCHIVE_URI = '{0}/{1}'.format(env('LEGAL_ARCHIVEDB_PORT').replace('tcp:', 'mongodb:'),
                                          LEGAL_ARCHIVE_DBNAME)
-PUBLICAPI_URI = env('PUBLICAPI_URI', MONGO_URI)
+
+if env('PUBLICAPI_URI'):
+    PUBLICAPI_URI = env('PUBLICAPI_URI')
+elif env('PUBLICAPI_PORT'):
+    PUBLICAPI_URI = '{0}/{1}'.format(env('PUBLICAPI_PORT').replace('tcp:', 'mongodb:'),
+                                     PUBLICAPI_DBNAME)
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
@@ -191,7 +195,6 @@ AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')
 AMAZON_ACCESS_KEY_ID = env('AMAZON_ACCESS_KEY_ID', '')
 AMAZON_SECRET_ACCESS_KEY = env('AMAZON_SECRET_ACCESS_KEY', '')
 AMAZON_REGION = env('AMAZON_REGION', 'us-east-1')
-
 
 RENDITIONS = {
     'picture': {
