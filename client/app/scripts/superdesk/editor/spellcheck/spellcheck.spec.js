@@ -5,37 +5,40 @@ describe('spellcheck', function() {
     var DICT = {
             what: 1,
             foo: 1,
-            bar: 1,
             f1: 1,
             '3d': 1,
             is: 1,
             and: 1
         },
-        TEXT = 'wha is foo, f1, 4k and 3d?';
+        USER_DICT = {
+            content: {
+                baz: 1
+            }
+        },
+        TEXT = 'wha is foo, f1, 4k and 3d?',
+        LANG = 'en',
+        errors = [];
 
     beforeEach(module('superdesk.editor.spellcheck'));
-    beforeEach(inject(function(dictionaries, $q) {
-        spyOn(dictionaries, 'fetch').and.returnValue($q.when({_items: [{}]}));
-        spyOn(dictionaries, 'open').and.returnValue($q.when({_id: 'foo', content: DICT}));
+
+    beforeEach(inject(function(dictionaries, spellcheck, $q) {
+        spyOn(dictionaries, 'queryByLanguage').and.returnValue($q.when({_items: [
+            {_id: 'foo', content: DICT},
+            {_id: 'bar', content: {bar: 1}}
+        ]}));
+        spyOn(dictionaries, 'getUserDictionary').and.returnValue($q.when(USER_DICT));
+        spellcheck.setLanguage(LANG);
     }));
 
-    it('can find errors in given text', inject(function(spellcheck, $rootScope) {
-        var errors;
-        spellcheck.errors(TEXT).then(function(_errors) {
-            errors = _errors;
-        });
+    it('can spellcheck using global + user dictionaries', inject(function(spellcheck, dictionaries, $q, $rootScope) {
+        spellcheck.errors('test what if foo bar baz').then(assignErrors);
 
         $rootScope.$digest();
-        expect(errors).toEqual(['wha', '4k']);
-    }));
 
-    function createParagraph(text) {
-        var p = document.createElement('p');
-        p.contentEditable = 'true';
-        p.innerHTML = text;
-        document.body.appendChild(p);
-        return p;
-    }
+        expect(errors).toEqual(['test', 'if']);
+        expect(dictionaries.queryByLanguage).toHaveBeenCalledWith(LANG);
+        expect(dictionaries.getUserDictionary).toHaveBeenCalledWith(LANG);
+    }));
 
     it('can render errors in given node', inject(function(spellcheck, $rootScope) {
         var p = createParagraph(TEXT);
@@ -59,10 +62,43 @@ describe('spellcheck', function() {
             .toBe('what is <span class="sderror">buz</span>');
     }));
 
-    it('can remove errors and keep the marker', inject(function(spellcheck, $rootScope) {
+    it('can remove errors and keep the marker', inject(function(spellcheck) {
         var p = createParagraph('what is <span class="sderror">b<span class="mark"></span>uz</span>');
         expect(spellcheck.clean(p)).toBe('what is b<span class="mark"></span>uz');
     }));
+
+    it('can add words to user dictionary', inject(function(spellcheck, api, $rootScope) {
+        spyOn(api, 'save');
+        spellcheck.errors('test').then(assignErrors);
+        $rootScope.$digest();
+        expect(errors).toEqual(['test']);
+
+        spellcheck.addWordToUserDictionary('test');
+
+        spellcheck.errors('test').then(assignErrors);
+        $rootScope.$digest();
+
+        expect(errors).toEqual([]);
+    }));
+
+    it('can suggest', inject(function(spellcheck, api, $q) {
+        spyOn(api, 'save').and.returnValue($q.when({}));
+        spellcheck.suggest('test');
+        expect(api.save).toHaveBeenCalledWith('spellcheck', {word: 'test', language_id: LANG});
+    }));
+
+    function assignErrors(_errors) {
+        errors.splice(0, errors.length);
+        errors.push.apply(errors, _errors);
+    }
+
+    function createParagraph(text) {
+        var p = document.createElement('p');
+        p.contentEditable = 'true';
+        p.innerHTML = text;
+        document.body.appendChild(p);
+        return p;
+    }
 
     describe('spellcheck menu', function() {
         it('can toggle auto spellcheck', inject(function(editor, $controller, $rootScope) {

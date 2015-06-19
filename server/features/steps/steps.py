@@ -55,6 +55,7 @@ def test_json(context):
 
 def json_match(context_data, response_data):
     if isinstance(context_data, dict):
+        assert isinstance(response_data, dict), 'response data is not dict (%s)' % type(response_data)
         for key in context_data:
             if key not in response_data:
                 print(key, ' not in ', response_data)
@@ -1517,7 +1518,13 @@ def we_get_and_match(context, url):
                  msg=str(context_data) + '\n != \n' + str(response_data))
 
 
+@then('there is no "{key}" in response')
+def there_is_no_key_in_response(context, key):
+    data = get_json_data(context.response)
+    assert key not in data, 'key "%s" is in %s' % (key, data)
+
+
 @then('there is no "{key}" in "{namespace}" preferences')
-def there_is_no_key_in(context, key, namespace):
+def there_is_no_key_in_preferences(context, key, namespace):
     data = get_json_data(context.response)['user_preferences']
     assert key not in data[namespace], 'key "%s" is in %s' % (key, data[namespace])

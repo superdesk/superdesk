@@ -44,6 +44,7 @@
     <div id="title" class="headline"
         sd-text-editor
         data-config="{disableToolbar: true, disableReturn: true}"
+        data-language="item.language"
         ng-model="item.headline"
         ng-change="autosave(item)"
         ng-if="_editable"
@@ -57,6 +58,7 @@
     <div class="abstract"
         sd-text-editor
         data-config="{disableToolbar: true}"
+        data-language="item.language"
         ng-model="item.abstract"
         ng-change="autosave(item)"
         ng-if="_editable"
@@ -95,6 +97,7 @@
         ng-model="item.body_html"
         ng-if="_editable"
         ng-change="autosave(item)"
+        data-language="item.language"
         data-type="item.type"></div>
     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
 </div>

@@ -38,7 +38,7 @@ class SpellcheckResource(superdesk.Resource):
 
     schema = {
         'word': {'type': 'string', 'required': True},
-        'dict': superdesk.Resource.rel('dictionaries', False),
+        'language_id': {'type': 'string', 'required': True},
     }
 
     # you should be able to make edits
@@ -47,13 +47,16 @@ class SpellcheckResource(superdesk.Resource):
 
 class SpellcheckService(superdesk.Service):
 
-    def suggest(self, word, dict_id):
-        dictionary = superdesk.get_resource_service('dictionaries').find_one(req=None, _id=dict_id)
-        if not dictionary:
-            return []
-        return norvig_suggest(word, dictionary['content'])
+    def suggest(self, word, lang):
+        """Suggest corrections for given word and language.
+
+        :param word: word that is probably wrong
+        :param lang: language code
+        """
+        model = superdesk.get_resource_service('dictionaries').get_model_for_lang(lang)
+        return norvig_suggest(word, model)
 
     def create(self, docs, **kwargs):
         for doc in docs:
-            doc['corrections'] = self.suggest(doc['word'], doc.get('dict'))
+            doc['corrections'] = self.suggest(doc['word'], doc['language_id'])
         return [doc['word'] for doc in docs]

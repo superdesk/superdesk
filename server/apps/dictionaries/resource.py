@@ -28,15 +28,15 @@ class DictionariesResource(Resource):
             'required': True
         },
         'content': {
-            'type': 'dict'
+            'type': 'dict',
         },
         'content_list': {
             'type': 'string',
         },
         DICTIONARY_FILE: {
             'type': 'file',
-            'required': True
-        }
+        },
+        'user': Resource.rel('users', nullable=True),
     }
     item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']
