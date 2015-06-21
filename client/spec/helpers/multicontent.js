@@ -70,8 +70,18 @@ function Multicontent() {
         browser.sleep(500);
     };
 
+    this.nextReorder = function() {
+        element(by.id('nextReorder')).click();
+        browser.sleep(500);
+    };
+
     this.previousReorder = function() {
         element(by.id('previousReorder')).click();
+        browser.sleep(500);
+    };
+
+    this.previousMax = function() {
+        element(by.id('previousMax')).click();
         browser.sleep(500);
     };
 
@@ -136,5 +146,15 @@ function Multicontent() {
                     });
                 });
         });
+    };
+
+    this.getMaxItem = function(item) {
+        return element.all(by.repeater('max in getValues()')).get(item);
+    };
+
+    this.setMaxItems = function(item, value) {
+        var maxItemsInput = this.getMaxItem(item).element(by.id('maxItems'));
+        maxItemsInput.clear();
+        maxItemsInput.sendKeys(value);
     };
 }
