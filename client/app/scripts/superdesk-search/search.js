@@ -885,8 +885,6 @@
                     };
 
                     scope.search = function() {
-                        scope.focused = false;
-                        input.blur();
                         $location.search('q', input[0].value || null);
                     };
 
