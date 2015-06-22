@@ -11,7 +11,8 @@ define([
                 type: '@',
                 action: '@',
                 done: '&',
-                single: '='
+                single: '=',
+                preview: '@'
             },
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-list.html'),
             link: function(scope, elem, attrs) {
@@ -48,7 +49,11 @@ define([
                         return workflowService.isActionAllowed(scope.item, activity.action);
                     });
 
-                    scope.limit = scope.activities.length > 6 ? 5 : 6 ;
+                    if (scope.preview) {
+                        scope.limit = scope.activities.length;
+                    } else {
+                        scope.limit = scope.activities.length > 6 ? 5 : 6;
+                    }
 
                     // register key shortcuts for single instance of activity list - in preview sidebar
                     if (scope.single) {
