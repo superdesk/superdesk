@@ -69,7 +69,7 @@
             var params = {
                 max_results: PAGE_SIZE,
                 page: 1,
-                where: JSON.stringify({'$and': criteria})
+                where: JSON.stringify({'$or': criteria})
             };
 
             return api.content_templates.query(params)
@@ -81,10 +81,11 @@
         this.addRecentTemplate = function(deskId, templateId) {
             return preferencesService.get()
             .then(function(result) {
+                result = result || {};
                 result[PREFERENCES_KEY] = result[PREFERENCES_KEY] || {};
                 result[PREFERENCES_KEY][deskId] = result[PREFERENCES_KEY][deskId] || [];
                 _.remove(result[PREFERENCES_KEY][deskId], function(i) {
-                    return i == templateId;
+                    return i === templateId;
                 });
                 result[PREFERENCES_KEY][deskId].unshift(templateId);
                 return preferencesService.update(result);
@@ -94,7 +95,6 @@
         this.getRecentTemplateIds = function(deskId) {
             return preferencesService.get()
             .then(function(result) {
-                console.log(result);
                 if (result && result[PREFERENCES_KEY] && result[PREFERENCES_KEY][deskId]) {
                     return result[PREFERENCES_KEY][deskId];
                 }
@@ -287,7 +287,7 @@
         }
     }
 
-    angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring'])
+    angular.module('superdesk.templates', ['superdesk.activity', 'superdesk.authoring', 'superdesk.preferences'])
         .service('templates', TemplatesService)
         .directive('sdTemplates', TemplatesDirective)
         .controller('CreateTemplateController', CreateTemplateController)

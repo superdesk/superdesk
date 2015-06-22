@@ -53,6 +53,6 @@ function ContentCtrlFactory(api, superdesk, templates, desks) {
     };
 }
 
-angular.module('superdesk.workspace.content', [])
+angular.module('superdesk.workspace.content', ['superdesk.templates'])
     .factory('ContentCtrl', ContentCtrlFactory);
 })();
