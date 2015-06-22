@@ -83,5 +83,38 @@ describe('templates', function() {
                 where: '{"$and":[{"template_type":"create","template_desk":"desk1","template_name":{"$regex":"keyword","$options":"-i"}}]}'
             });
         }));
+        it('can fetch templates by id', inject(function(api, templates) {
+            templates.fetchTemplatesByIds([123, 456]);
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$or":[{"_id":123},{"_id":456}]}'
+            });
+        }));
+        it('can add recent templates', inject(function(api, templates, preferencesService, $q, $rootScope) {
+            spyOn(preferencesService, 'get').and.returnValue($q.when({}));
+            spyOn(preferencesService, 'update').and.returnValue($q.when());
+            templates.addRecentTemplate('desk1', 'template1');
+            $rootScope.$digest();
+            expect(preferencesService.update).toHaveBeenCalledWith({
+                'templates:recent': {
+                    'desk1': ['template1']
+                }
+            });
+        }));
+        it('can get recent templates', inject(function(api, templates, preferencesService, $q, $rootScope) {
+            spyOn(preferencesService, 'get').and.returnValue($q.when({
+                'templates:recent': {
+                    'desk2': ['template2', 'template3']
+                }
+            }));
+            templates.getRecentTemplates('desk2');
+            $rootScope.$digest();
+            expect(api.content_templates.query).toHaveBeenCalledWith({
+                max_results: 10,
+                page: 1,
+                where: '{"$or":[{"_id":"template2"},{"_id":"template3"}]}'
+            });
+        }));
     });
 });
