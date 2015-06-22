@@ -14,12 +14,62 @@ import superdesk
 from datetime import datetime
 from superdesk.utc import utc, utcnow
 from superdesk.errors import SuperdeskApiError, SuperdeskIngestError
+from superdesk.io import register_provider
 
 
 logger = logging.getLogger(__name__)
 
 
-class IngestService():
+class AutoRegisteredMeta(type):
+    """Metaclass for automatically registering the ingest service instances.
+
+    An instance of an ingest class is registered as a provider when the class
+    is instantiated - but only if the class defines a `PROVIDER` attribute
+    containing the name under which to register the class instances.
+
+    Every ingest provider class needs to define an `ERRORS` attribute
+    representing a list of <error_number, error_message> pairs that might be
+    raised by the class instances' methods.
+
+    If another provider class with the same `PROVIDER` name has already been
+    defined, a TypeError is raised.
+    """
+    _providers = {}  # keep track of all PROVIDER names defined in classes
+
+    def __new__(metacls, name, bases, attrs):
+        provider_name = attrs.get('PROVIDER')
+
+        if provider_name is not None:
+            if 'ERRORS' not in attrs:
+                raise AttributeError(
+                    "Provider class {} must define "
+                    "the ERRORS list attribute.".format(name))
+
+            if provider_name in metacls._providers:
+                raise TypeError(
+                    "PROVIDER {} already exists (class {}).".format(
+                        provider_name, metacls._providers[provider_name])
+                )
+
+            metacls._providers[provider_name] = name
+
+        return super().__new__(metacls, name, bases, attrs)
+
+    def __call__(cls, *args, **kwargs):
+        # NOTE: Registration cannot be done in __new__ or __init__, because the
+        # class cannot be instantiated there yet (a RuntimeError occurs), thus
+        # we need to perform the registration here in __call__ (when a new
+        # class instance is going to be created).
+
+        new_instance = super().__call__(*args, **kwargs)
+
+        if hasattr(cls, 'PROVIDER'):
+            register_provider(cls.PROVIDER, new_instance, cls.ERRORS)
+
+        return new_instance
+
+
+class IngestService(metaclass=AutoRegisteredMeta):
     """Base ingest service class."""
 
     def get_items(self, guid):
