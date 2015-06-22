@@ -209,11 +209,15 @@
                         .then(angular.bind(this, function save() {
                             return this.save(orig, diff);
                         }), function() { // ignore saving
-                            return $q.when();
+                            return $q.when('ignore');
                         });
                 }
 
-                promise = promise.then(function unlock() {
+                promise = promise.then(function unlock(cancelType) {
+                    if (cancelType && cancelType === 'ignore') {
+                        autosave.drop(orig);
+                    }
+
                     return lock.unlock(diff);
                 });
             }

@@ -445,9 +445,9 @@ class AutoSaveResource(Resource):
     item_url = item_url
     schema = item_schema({'_id': {'type': 'string'}})
     resource_methods = ['POST']
-    item_methods = ['GET', 'PUT', 'PATCH']
+    item_methods = ['GET', 'PUT', 'PATCH', 'DELETE']
     resource_title = endpoint_name
-    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive'}
+    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive', 'DELETE': 'archive'}
 
 
 class ArchiveSaveService(BaseService):
@@ -459,7 +459,10 @@ class ArchiveSaveService(BaseService):
             get_component(ItemAutosave).autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
         except InvalidEtag:
             raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match')
+        except KeyError:
+            raise SuperdeskApiError.badRequestError("Request for Auto-save must have _id")
         return [docs[0]['_id']]
+
 
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
