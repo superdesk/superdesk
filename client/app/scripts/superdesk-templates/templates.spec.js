@@ -88,7 +88,7 @@ describe('templates', function() {
             expect(api.content_templates.query).toHaveBeenCalledWith({
                 max_results: 10,
                 page: 1,
-                where: '{"$or":[{"_id":123},{"_id":456}]}'
+                where: '{"_id":{"$in":[123,456]}}'
             });
         }));
         it('can add recent templates', inject(function(api, templates, preferencesService, $q, $rootScope) {
@@ -113,7 +113,7 @@ describe('templates', function() {
             expect(api.content_templates.query).toHaveBeenCalledWith({
                 max_results: 10,
                 page: 1,
-                where: '{"$or":[{"_id":"template2"},{"_id":"template3"}]}'
+                where: '{"_id":{"$in":["template2","template3"]}}'
             });
         }));
     });

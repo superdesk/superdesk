@@ -61,15 +61,10 @@
                 return $q.when();
             }
 
-            var criteria = [];
-            _.each(templateIds, function(id) {
-                criteria.push({_id: id});
-            });
-
             var params = {
                 max_results: PAGE_SIZE,
                 page: 1,
-                where: JSON.stringify({'$or': criteria})
+                where: JSON.stringify({_id: {'$in': templateIds}})
             };
 
             return api.content_templates.query(params)
