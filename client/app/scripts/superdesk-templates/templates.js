@@ -69,6 +69,11 @@
 
             return api.content_templates.query(params)
             .then(function(result) {
+                if (result && result._items) {
+                    result._items.sort(function(a, b) {
+                        return templateIds.indexOf(a._id) - templateIds.indexOf(b._id);
+                    });
+                }
                 return result;
             });
         };
