@@ -57,6 +57,7 @@ tests.push('superdesk-desks/aggregate');
 tests.push('superdesk-desks/aggregate-widget/aggregate');
 tests.push('superdesk-groups/groups');
 tests.push('superdesk-search/search');
+tests.push('superdesk-legal-archive/legal_archive');
 
 tests.push('superdesk-ingest/module');
 

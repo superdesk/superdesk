@@ -1,22 +1,77 @@
 (function() {
     'use strict';
 
-    LegalArchiveService.$inject = ['$q', 'api', 'notify'];
-    function LegalArchiveService($q, api, notify) {
-        var DEFAULT_PAGE = 1;
+    LegalArchiveService.$inject = ['$q', 'api', 'notify', '$location', 'gettext'];
+    function LegalArchiveService($q, api, notify, $location, gettext) {
         var DEFAULT_PER_PAGE = 25;
+        this.default_items = Object.freeze({_meta: {max_results: DEFAULT_PER_PAGE, page: 1, total: 1}});
 
-        this.query = function query(search, page, perPage) {
-            console.log(search);
+        var sortOptions = [
+            {field: 'versioncreated', label: gettext('Updated')},
+            {field: 'firstcreated', label: gettext('Created')},
+            {field: 'urgency', label: gettext('News Value')},
+            {field: 'anpa-category.name', label: gettext('Category')},
+            {field: 'slugline', label: gettext('Keyword')},
+            {field: 'priority', label: gettext('Priority')}
+        ];
 
-            page = page || DEFAULT_PAGE;
-            perPage = perPage || DEFAULT_PER_PAGE;
+        function getSort() {
+            var sort = ($location.search().sort || 'versioncreated:desc').split(':');
+            return angular.extend(_.find(sortOptions, {field: sort[0]}), {dir: sort[1]});
+        }
 
-            var criteria = {
-                max_results: perPage,
-                page: page
-            };
+        function sort(field) {
+            var option = _.find(sortOptions, {field: field});
+            setSortSearch(option.field, option.defaultDir || 'desc');
+        }
 
+        function toggleSortDir() {
+            var sort = getSort();
+            var dir = sort.dir === 'asc' ? 'desc' : 'asc';
+            setSortSearch(sort.field, dir);
+        }
+
+        function formatSort(key, dir) {
+            var val = dir === 'asc' ? 1 : -1;
+            return '[("' + encodeURIComponent(key) + '", ' + val + ')]';
+        }
+
+        function setSortSearch(field, dir) {
+            $location.search('sort', field + ':' + dir);
+            $location.search('page', null);
+        }
+
+        sort('versioncreated');
+
+        // sort public api
+        this.setSort = sort;
+        this.getSort = getSort;
+        this.sortOptions = sortOptions;
+        this.toggleSortDir = toggleSortDir;
+
+        this.getCriteria = function() {
+            var params = $location.search(),
+                criteria = {
+                    max_results: Number(params.max_results) || DEFAULT_PER_PAGE
+                };
+
+            if (params.q) {
+                criteria.where = params.q;
+            }
+
+            if (params.page) {
+                criteria.page = parseInt(params.page, 10);
+            }
+
+            if (params.sort) {
+                var sort = params.sort.split(':');
+                criteria.sort = formatSort(sort[0], sort[1]);
+            }
+
+            return criteria;
+        };
+
+        this.updateSearchQuery = function updateSearchQuery(search) {
             var where = [];
 
             function prepareDate(val) {
@@ -40,35 +95,47 @@
                 }
             });
 
-            if (_.any(where)) {
-                criteria.where = JSON.stringify({
+            var where_clause = null;
+
+            if (where.length === 1) {
+                where_clause = JSON.stringify(where[0]);
+            } else if (where.length > 1) {
+                where_clause = JSON.stringify({
                     '$and': where
                 });
             }
+            $location.search('q', where_clause);
+            return where_clause;
+        };
 
-            console.log(criteria);
-            return api.legal_archive.query(criteria);
+        // query public api
+        this.query = function query() {
+            var search_criteria = this.getCriteria();
+            return api.legal_archive.query(search_criteria);
         };
     }
 
     LegalArchiveController.$inject = ['$scope', '$location', 'legal'];
     function LegalArchiveController($scope, $location, legal) {
         $scope.criteria = {};
-        var default_items = Object.freeze({_meta: {max_results: 25, page: 1, total: 1}});
-        $scope.items = default_items;
+        $scope.items = legal.default_items;
         $scope.loading = false;
         $scope.selected = {};
 
         $scope.search = function () {
+            legal.updateSearchQuery($scope.criteria);
+            refresh();
+        };
+
+        function refresh () {
             $scope.loading = true;
-            legal.query($scope.criteria).then(function(items) {
+            legal.query().then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
             });
-        };
+        }
 
         $scope.preview = function(selectedItem) {
-            console.log(selectedItem);
             $scope.selected.preview = selectedItem;
         };
 
@@ -81,9 +148,13 @@
         };
 
         $scope.clear = function () {
-            $scope.criteria = {};
-            $scope.items = default_items;
+            legal.criteria = $scope.criteria = {};
+            $scope.items = legal.default_items;
         };
+
+        $scope.$watch(function getSearchParams() {
+            return _.omit($location.search(), '_id');
+        }, refresh, true);
 
         $scope.search();
     }
@@ -95,6 +166,30 @@
 
     app
         .service('legal', LegalArchiveService)
+        .directive('sdLegalItemSortbar', ['legal', 'asset', function sortBarDirective(legal, asset) {
+            return {
+                scope: {},
+                templateUrl: asset.templateUrl('superdesk-search/views/item-sortbar.html'),
+                link: function(scope) {
+                    scope.sortOptions = legal.sortOptions;
+
+                    function getActive() {
+                        scope.active = legal.getSort();
+                    }
+
+                    scope.sort = function sort(field) {
+                        legal.setSort(field);
+                    };
+
+                    scope.toggleDir = function toggleDir($event) {
+                        legal.toggleSortDir();
+                    };
+
+                    scope.$on('$routeUpdate', getActive);
+                    getActive();
+                }
+            };
+        }])
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('legal_archive', {
                 type: 'http',
