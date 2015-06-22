@@ -273,7 +273,7 @@ class PublishedItemService(BaseService):
         if text_archive_service is None:
             return
 
-        if doc.get('state') == 'published':
+        if doc.get('state') in ['published', 'corrected']:
             # query to check if the item is killed the future versions or not
             query = {
                 'query': {
