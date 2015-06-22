@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.resource import Resource
-from  apps.content import metadata_schema
+from apps.content import metadata_schema
 
 
 MONGO_PREFIX = 'LEGAL_ARCHIVE'
