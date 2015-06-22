@@ -42,7 +42,8 @@
 				<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
 			</span>
 			<label ng-if="!_editable" translate>
-				<span class="state-label not-for-publication" translate>Not for Publication</span>
+				<span class="state-label not-for-publication" ng-show="item.marked_for_not_publication" translate>Not For Publication</span>
+				<span class="state-label for-publication" ng-show="!item.marked_for_not_publication" translate>For Publication</span>
 			</label>
 		</li>
 		<li ng-if="item.firstcreated">
@@ -64,13 +65,13 @@
 		<li>
 			<label translate>Urgency</label>
 			<div class="data visible small" ng-if="metadata.newsvalue">
-				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item.urgency" ng-disabled="!_editable" data-field="value" data-change="autosave(item)"></div>
+				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item" data-field="urgency" data-change="autosave(item)" ng-disabled="!_editable" ></div>
 			</div>
 		</li>
 		<li>
 			<label translate>Priority</label>
 			<div class="data visible small" ng-if="metadata.priority">
-				<div sd-meta-dropdown data-list="metadata.priority" data-item="item.priority" ng-disabled="!_editable" data-field="qcode" data-change="autosave(item)"></div>
+				<div sd-meta-dropdown data-list="metadata.priority" data-item="item" data-field="priority" data-change="autosave(item)" ng-disabled="!_editable" ></div>
 			</div>
 		</li>
 		<li class="terms-box">
@@ -80,7 +81,7 @@
 		<li>
 			<label translate>ANPA category</label>
 			<div class="data visible" ng-if="metadata.categories">
-				<div sd-meta-dropdown data-list="metadata.categories" data-item="item['anpa-category']" ng-disabled="!_editable" data-change="autosave(item)"></div>
+				<div sd-meta-dropdown data-list="metadata.categories" data-item="item" data-field="anpa-category" data-change="autosave(item)" ng-disabled="!_editable"></div>
 			</div>
 		</li>
 		<li class="terms-box">

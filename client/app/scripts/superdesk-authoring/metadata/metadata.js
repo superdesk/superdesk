@@ -73,7 +73,9 @@ function MetadataDropdownDirective() {
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
         link: function(scope) {
             scope.select = function(item) {
-                scope.item = scope.field ? item[scope.field] : item;
+                var o = {};
+                o[scope.field] = (scope.field === 'anpa-category') ? item : item.name;
+                _.extend(scope.item, o);
                 scope.change({item: scope.item});
             };
         }
@@ -144,8 +146,8 @@ function MetadataWordsListEditingDirective() {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-MetadataListEditingDirective.$inject = ['metadata'];
-function MetadataListEditingDirective(metadata) {
+MetadataListEditingDirective.$inject = [];
+function MetadataListEditingDirective() {
     return {
         scope: {
             item: '=',
@@ -158,9 +160,6 @@ function MetadataListEditingDirective(metadata) {
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
-
-            metadata.subjectScope = scope;
-
             scope.$watch('list', function(items) {
                 if (!items || !items[0].hasOwnProperty('parent')) {
                     return;
@@ -228,7 +227,17 @@ function MetadataListEditingDirective(metadata) {
             };
 
             scope.removeTerm = function(term) {
-                metadata.removeSubjectTerm(term);
+                var tempItem = {},
+                    subjectCodesArray = scope.item[scope.field],
+                    filteredArray = _.without(subjectCodesArray, term);
+
+                if (subjectCodesArray && filteredArray.length === subjectCodesArray.length) {
+                    _.remove(filteredArray, {name: term});
+                }
+
+                tempItem[scope.field] = filteredArray;
+                _.extend(scope.item, tempItem);
+                scope.change({item: scope.item});
             };
         }
     };
