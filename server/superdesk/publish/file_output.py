@@ -34,7 +34,7 @@ class FilePublishService(PublishService):
         with open('{}/{}-{}.{}'.format(config['file_path'],
                                        formatted_item['item_id'].replace(':', '-'),
                                        str(formatted_item.get('item_version', '')),
-                                       'txt'), 'wb') as f:
+                                       config.get('file_extension', 'txt')), 'wb') as f:
             f.write(formatted_item['formatted_item'])
 
 register_transmitter('File', FilePublishService(), errors)
