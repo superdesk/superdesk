@@ -62,9 +62,6 @@ class FilterConditionResource(Resource):
 
 
 class FilterConditionService(BaseService):
-    def on_create(self, docs):
-        pass
-
     def get_mongo_query(self, doc):
         field = doc['field']
         operator = self._get_mongo_operator(doc['operator'])

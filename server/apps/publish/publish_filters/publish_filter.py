@@ -41,9 +41,6 @@ class PublishFilterResource(Resource):
 
 
 class PublishFilterService(BaseService):
-    def on_create(self, docs):
-        pass
-
     def build_mongo_query(self, doc):
         filter_condition_service = get_resource_service('filter_condition')
         expressions = []

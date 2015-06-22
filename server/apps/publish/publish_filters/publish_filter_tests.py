@@ -62,7 +62,7 @@ class PublishFilterTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(3, docs.count())
+            self.assertEqual(3, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
@@ -75,7 +75,7 @@ class PublishFilterTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(4, docs.count())
+            self.assertEqual(4, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
             self.assertTrue('5' in doc_ids)
@@ -88,7 +88,7 @@ class PublishFilterTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(1, docs.count())
+            self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_condition3(self):
@@ -99,7 +99,7 @@ class PublishFilterTests(TestCase):
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(1, docs.count())
+            self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
     def test_build_elastic_query_using_like_filter_single_condition(self):
@@ -110,7 +110,7 @@ class PublishFilterTests(TestCase):
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(3, docs.count())
+            self.assertEqual(3, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
@@ -123,7 +123,7 @@ class PublishFilterTests(TestCase):
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(4, docs.count())
+            self.assertEqual(4, docs.count())
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
@@ -137,7 +137,7 @@ class PublishFilterTests(TestCase):
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
-            self.assertEquals(1, docs.count())
+            self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
     def test_does_match_using_like_filter_single_condition(self):
