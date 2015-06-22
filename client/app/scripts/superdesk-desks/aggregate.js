@@ -60,26 +60,29 @@
         };
 
         this.edit = function() {
-            this.editGroups = {};
-            _.each(this.groups, function(item, index) {
-                self.editGroups[item._id] = {
-                    _id: item._id,
-                    selected: true,
-                    type: item.type,
-                    max_items: item.max_items || defaultMaxItems,
-                    order: index
-                };
-                if (item.type === 'stage') {
-                    var stage = self.stageLookup[item._id];
-                    self.editGroups[stage.desk] = {
-                        _id: stage._id,
+            preferencesService.get(PREFERENCES_KEY)
+            .then(angular.bind(this, function(preference) {
+                this.editGroups = {};
+                _.each(this.groups, function(item, index) {
+                    self.editGroups[item._id] = {
+                        _id: item._id,
                         selected: true,
-                        type: 'desk',
-                        order: 0
+                        type: item.type,
+                        max_items: item.max_items || defaultMaxItems,
+                        order: index
                     };
-                }
-            });
-            this.modalActive = true;
+                    if (item.type === 'stage') {
+                        var stage = self.stageLookup[item._id];
+                        self.editGroups[stage.desk] = {
+                            _id: stage._id,
+                            selected: true,
+                            type: 'desk',
+                            order: 0
+                        };
+                    }
+                });
+                this.modalActive = true;
+            }));
         };
 
         this.search = function(query) {
