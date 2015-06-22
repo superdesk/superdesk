@@ -1518,7 +1518,7 @@
                 scope.$watch(function() {
                     return desks.activeDeskId;
                 }, function() {
-                    templates.fetchTemplates(1, NUM_ITEMS, 'create', desks.activeDeskId)
+                    templates.getRecentTemplates(desks.activeDeskId)
                     .then(function(result) {
                         scope.contentTemplates = result;
                     });
@@ -1553,13 +1553,18 @@
                     scope.selectAction(template);
                 };
 
-                scope.$watchCollection('options', function() {
+                var fetchTemplates = function() {
                     templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
                     .then(function(result) {
                         scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
                         scope.templates = result;
                     });
-                });
+                };
+
+                scope.$watchCollection('options', fetchTemplates);
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, fetchTemplates);
             }
         };
     }

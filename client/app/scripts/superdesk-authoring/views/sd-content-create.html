@@ -19,18 +19,21 @@
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Package current item' | translate }}
     </button>
 </li>
+<li class="divider"></li>
 <div ng-show="contentTemplates._items.length">
-    <li class="divider"></li>
     <li translate>From template:</li>
     <li ng-repeat="template in contentTemplates._items">
         <button ng-click="content.createFromTemplate(template)">
             <i class="icon-plus-small icon-round icon-white"></i> {{ :: template.template_name }}
         </button>
     </li>
-    <li ng-show="contentTemplates._meta.total > numItems">
-        <button ng-click="displayTemplateSelect = true;" translate>More templates...</button>
-    </li>
 </div>
+<div ng-hide="contentTemplates._items.length">
+    <li translate>No recent templates.</li>
+</div>
+<li>
+    <button ng-click="displayTemplateSelect = true;" translate>More templates...</button>
+</li>
 <li class="divider" ng-if="openUpload"></li>
 <li ng-if="openUpload">
     <button ng-click="openUpload()">

@@ -1,8 +1,8 @@
 (function() {
 'use strict';
 
-ContentCtrlFactory.$inject = ['api', 'superdesk'];
-function ContentCtrlFactory(api, superdesk) {
+ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks'];
+function ContentCtrlFactory(api, superdesk, templates, desks) {
     return function ContentCtrl($scope) {
         var templateFields = [
             'abstract',
@@ -44,12 +44,15 @@ function ContentCtrlFactory(api, superdesk) {
             api('archive')
             .save(item)
             .then(function() {
+                return templates.addRecentTemplate(desks.activeDeskId, template._id);
+            })
+            .then(function() {
                 superdesk.intent('author', 'article', item);
             });
         };
     };
 }
 
-angular.module('superdesk.workspace.content', [])
+angular.module('superdesk.workspace.content', ['superdesk.templates'])
     .factory('ContentCtrl', ContentCtrlFactory);
 })();
