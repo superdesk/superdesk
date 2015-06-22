@@ -2,7 +2,7 @@
     ng-repeat="activity in activities | limitTo:limit"
     sd-activity-item></li>
 
-<li ng-if="activities.length > 6" class="item-field">
+<li ng-if="activities.length > 6 && !preview" class="item-field">
     <div class="dropdown more-activity-dropdown" sd-dropdown-position dropdown>
         <a class="dropdown-toggle more-activity-toggle" dropdown-toggle>
             <i class="icon-dots-vertical"></i>
