@@ -103,13 +103,13 @@ class DictionaryService(BaseService):
     def get_model_for_lang(self, lang):
         """Get model for given language.
 
-        It will use all dictionaries for given language combined.
+        It will use all active dictionaries for given language combined.
 
         :param lang: language code
         """
-        lookup = {'language_id': lang}
-        dicts = self.get(req=None, lookup=lookup)
         model = {}
+        lookup = {'$and': [{'language_id': lang}, {'is_active': {'$in': [True, None]}}]}
+        dicts = self.get(req=None, lookup=lookup)
         for _dict in dicts:
             if 'content' in _dict:
                 content = decode_dict(_dict['content'])

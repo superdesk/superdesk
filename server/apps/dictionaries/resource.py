@@ -37,6 +37,10 @@ class DictionariesResource(Resource):
             'type': 'file',
         },
         'user': Resource.rel('users', nullable=True),
+        'is_active': {
+            'type': 'boolean',
+            'default': True,
+        },
     }
     item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
     resource_methods = ['GET', 'POST', 'DELETE']

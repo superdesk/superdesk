@@ -10,7 +10,7 @@ Feature: User Resource
         """
         Then we get new resource
         """
-        {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "is_active": false, "needs_activation": true}
+        {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "is_active": true, "needs_activation": true}
         """
         And we get no "password"
         And we get activation email

@@ -53,14 +53,31 @@ def test_json(context):
     return response_data
 
 
+def test_key_is_present(key, context, response):
+    """Test if given key is present in response.
+
+    In case the context value is empty - "", {}, [] - it checks if it's non empty in response.
+
+    If it's set in context to false, it will check that it's falsy/empty in response too.
+
+    :param key
+    :param context
+    :param response
+    """
+    assert not isinstance(context[key], bool) or \
+        not response[key], \
+        '"%s" should be empty or false, but it was "%s" in (%s)' % (key, response[key], response)
+
+
 def json_match(context_data, response_data):
     if isinstance(context_data, dict):
-        assert isinstance(response_data, dict), 'response data is not dict (%s)' % type(response_data)
+        assert isinstance(response_data, dict), 'response data is not dict, but %s' % type(response_data)
         for key in context_data:
             if key not in response_data:
                 print(key, ' not in ', response_data)
                 return False
             if not context_data[key]:
+                test_key_is_present(key, context_data, response_data)
                 continue
             if not json_match(context_data[key], response_data[key]):
                 return False
@@ -1106,6 +1123,11 @@ def we_get_embedded_items(context):
     assert_200(context.response)
     context.response_data = json.loads(context.response.get_data())
     assert len(context.response_data['items']['view_items']) == 2
+
+
+@when('we reset notifications')
+def step_when_we_reset_notifications(context):
+    context.app.notification_client.reset()
 
 
 @then('we get notifications')

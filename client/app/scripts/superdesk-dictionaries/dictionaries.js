@@ -76,7 +76,11 @@
          * @param {string} lang
          */
         function queryByLanguage(lang) {
-            return api.query('dictionaries', {where: {language_id: lang, user: {$exists: false}}});
+            return api.query('dictionaries', {where: {
+                language_id: lang,
+                user: {$exists: false},
+                is_active: {$in: [true, null]}
+            }});
         }
 
         /**
@@ -130,7 +134,7 @@
         };
 
         $scope.createDictionary = function() {
-            $scope.dictionary = {};
+            $scope.dictionary = {is_active: true};
             $scope.origDictionary = {};
         };
 
@@ -139,6 +143,7 @@
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
                 $scope.dictionary.content = _.create(result.content || {});
+                $scope.dictionary.is_active = $scope.dictionary.is_active !== false;
             });
         };
 

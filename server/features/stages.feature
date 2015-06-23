@@ -404,7 +404,7 @@ Feature: Stages
         "is_visible" : true
         }
         """
-        Then we get response code 201
+        When we reset notifications
         When we patch "/stages/#stages._id#"
         """
         {"is_visible" : false}

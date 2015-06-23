@@ -18,7 +18,7 @@ describe('dictionaries', function() {
         expect(api.query).toHaveBeenCalledWith('dictionaries', {projection: {content: 0}, where: {user: {$exists: false}}});
     }));
 
-    it('can get dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {
+    it('can get global dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 1}]}));
 
         var items;
@@ -28,7 +28,11 @@ describe('dictionaries', function() {
 
         $rootScope.$digest();
         expect(items.length).toBe(1);
-        expect(api.query).toHaveBeenCalledWith('dictionaries', {where: {language_id: LANG, user: {$exists: false}}});
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {where: {
+            language_id: LANG,
+            user: {$exists: false},
+            is_active: {$in: [true, null]}
+        }});
     }));
 
     it('can get and update user dictionary', inject(function(api, dictionaries, $q, $rootScope) {

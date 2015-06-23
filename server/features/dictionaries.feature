@@ -1,4 +1,3 @@
-@wip
 Feature: Dictionaries Upload
 
     @auth

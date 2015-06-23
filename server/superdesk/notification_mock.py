@@ -22,6 +22,9 @@ class ClientMock:
         kwargs.setdefault('_created', datetime.utcnow().isoformat())
         self.messages.append(json.dumps(kwargs).encode('utf8'))
 
+    def reset(self):
+        self.messages = []
+
 
 def setup_notification_mock(context):
     clientMock = ClientMock()
