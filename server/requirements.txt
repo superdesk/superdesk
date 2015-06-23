@@ -37,7 +37,7 @@ simplejson==3.6.5
 six==1.9.0
 statsd==3.1
 httmock==1.2.3
-python3-ldap==0.9.7
+python3-ldap==0.9.8.4
 behave==1.2.5
 wooper==0.4.2
 
