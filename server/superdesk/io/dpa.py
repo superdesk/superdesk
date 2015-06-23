@@ -14,18 +14,19 @@ import logging
 from datetime import datetime
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc
-from superdesk.io import register_provider
 from superdesk.utils import get_sorted_files, FileSortAttributes
 from superdesk.errors import ParserError, ProviderError
 from superdesk.io.iptc7901 import Iptc7901FileParser
 
 logger = logging.getLogger(__name__)
-PROVIDER = 'dpa'
-errors = [ParserError.IPTC7901ParserError().get_error_description(),
-          ProviderError.ingestError().get_error_description()]
 
 
 class DPAIngestService(FileIngestService):
+
+    PROVIDER = 'dpa'
+
+    ERRORS = [ParserError.IPTC7901ParserError().get_error_description(),
+              ProviderError.ingestError().get_error_description()]
 
     def __init__(self):
         self.parser = Iptc7901FileParser()
@@ -60,5 +61,3 @@ class DPAIngestService(FileIngestService):
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
                 raise ProviderError.ingestError(ex, provider)
-
-register_provider(PROVIDER, DPAIngestService(), errors)

@@ -15,15 +15,15 @@ from superdesk.tests import TestCase
 import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
-from .reuters import PROVIDER
+from .reuters import ReutersIngestService
 from settings import URL_PREFIX
 
 
 def setup_provider(token, hours):
     return {
-        'name': PROVIDER,
-        'type': PROVIDER,
-        'source': PROVIDER,
+        'name': ReutersIngestService.PROVIDER,
+        'type': ReutersIngestService.PROVIDER,
+        'source': ReutersIngestService.PROVIDER,
         'content_expiry': 2880,
         'token': {
             'token': token,
@@ -60,5 +60,6 @@ class GetTokenTestCase(TestCase):
                 self.assertNotEquals('', token)
                 self.assertEquals(token, provider['token']['token'])
 
-                dbprovider = superdesk.get_resource_service('ingest_providers').find_one(type=PROVIDER, req=None)
+                dbprovider = superdesk.get_resource_service('ingest_providers').find_one(
+                    type=ReutersIngestService.PROVIDER, req=None)
                 self.assertEquals(token, dbprovider['token']['token'])
