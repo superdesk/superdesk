@@ -92,18 +92,20 @@
             });
         };
 
-        this.getRecentTemplateIds = function(deskId) {
+        this.getRecentTemplateIds = function(deskId, limit) {
+            limit = limit || PAGE_SIZE;
             return preferencesService.get()
             .then(function(result) {
                 if (result && result[PREFERENCES_KEY] && result[PREFERENCES_KEY][deskId]) {
-                    return result[PREFERENCES_KEY][deskId];
+                    return _.take(result[PREFERENCES_KEY][deskId], limit);
                 }
                 return [];
             });
         };
 
-        this.getRecentTemplates = function(deskId) {
-            return this.getRecentTemplateIds(deskId)
+        this.getRecentTemplates = function(deskId, limit) {
+            limit = limit || PAGE_SIZE;
+            return this.getRecentTemplateIds(deskId, limit)
                 .then(this.fetchTemplatesByIds);
         };
     }

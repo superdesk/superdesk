@@ -1516,13 +1516,12 @@
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
-                scope.numItems = NUM_ITEMS;
                 scope.contentTemplates = null;
 
                 scope.$watch(function() {
                     return desks.activeDeskId;
                 }, function() {
-                    templates.getRecentTemplates(desks.activeDeskId)
+                    templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
                     .then(function(result) {
                         scope.contentTemplates = result;
                     });
