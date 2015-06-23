@@ -90,14 +90,14 @@
 
                         <div class="field">
                             <label for="ruleset" translate>Ruleset</label>
-                            <select ng-model="provider.rule_set" ng-options="r._id as r.name for r in rulesets">
+                            <select id="ruleset" ng-model="provider.rule_set" ng-options="r._id as r.name for r in rulesets">
                                 <option value=""></option>
                             </select>
                         </div>
 
                         <div class="field">
                             <label for="routing" translate>Routing Scheme</label>
-                            <select ng-model="provider.routing_scheme" ng-options="rs._id as rs.name for rs in routingScheme">
+                            <select id="routing" ng-model="provider.routing_scheme" ng-options="rs._id as rs.name for rs in routingScheme">
                                 <option value=""></option>
                             </select>
                         </div>
@@ -129,7 +129,7 @@
                         </div>
                     </tab>
 
-                     <tab heading="Critical Errors" class="TabContent">
+                     <tab heading="Critical Errors" class="TabContent" ng-show="provider.type" ng-click="fetchSourceErrors()">
                         <div class="content privileges-settings">
                             <div class="horizontal">
                                 <div class="roles-list">
