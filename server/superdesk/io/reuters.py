@@ -20,24 +20,23 @@ from superdesk.io.ingest_service import IngestService
 
 from superdesk.utc import utcnow
 from superdesk.etree import etree, ParseError
-from superdesk.io import register_provider
 from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 from superdesk.errors import IngestApiError
 from flask import current_app as app
 
 
-PROVIDER = 'reuters'
-errors = [IngestApiError.apiTimeoutError().get_error_description(),
-          IngestApiError.apiRedirectError().get_error_description(),
-          IngestApiError.apiRequestError().get_error_description(),
-          IngestApiError.apiUnicodeError().get_error_description(),
-          IngestApiError.apiParseError().get_error_description(),
-          IngestApiError.apiGeneralError().get_error_description()]
-
-
 class ReutersIngestService(IngestService):
     """Reuters ingest service."""
+
+    PROVIDER = 'reuters'
+
+    ERRORS = [IngestApiError.apiTimeoutError().get_error_description(),
+              IngestApiError.apiRedirectError().get_error_description(),
+              IngestApiError.apiRequestError().get_error_description(),
+              IngestApiError.apiUnicodeError().get_error_description(),
+              IngestApiError.apiParseError().get_error_description(),
+              IngestApiError.apiGeneralError().get_error_description()]
 
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
     URL = 'http://rmb.reuters.com/rmd/rest/xml'
@@ -167,6 +166,3 @@ class ReutersIngestService(IngestService):
         (scheme, netloc, path, params, query, fragment) = urlparse(href)
         new_href = urlunparse((scheme, netloc, path, '', '', ''))
         return '%s?auth_token=%s' % (new_href, self.get_token())
-
-
-register_provider(PROVIDER, ReutersIngestService(), errors)
