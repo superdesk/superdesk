@@ -11,13 +11,18 @@
 (function() {
     'use strict';
 
-    DictionaryService.$inject = ['api', 'urls', '$upload'];
-    function DictionaryService(api, urls, $upload) {
+    DictionaryService.$inject = ['api', 'urls', 'session', '$upload'];
+    function DictionaryService(api, urls, session, $upload) {
         this.dictionaries = null;
         this.currDictionary = null;
 
+        this.queryByLanguage = queryByLanguage;
+        this.getUserDictionary = getUserDictionary;
+        this.addWordToUserDictionary = addWordToUserDictionary;
+
         this.fetch = function fetch(success, error) {
-            return api.dictionaries.query({projection: {content: 0}}).then(success, error);
+            return api.query('dictionaries', {projection: {content: 0}, where: {user: {$exists: false}}})
+                .then(success, error);
         };
 
         this.open = function open(dictionary, success, error) {
@@ -64,6 +69,56 @@
         this.remove = function remove(dictionary, success, error) {
             return api.remove(dictionary).then(success, error);
         };
+
+        /**
+         * Get list of dictionaries for given language
+         *
+         * @param {string} lang
+         */
+        function queryByLanguage(lang) {
+            return api.query('dictionaries', {where: {
+                language_id: lang,
+                user: {$exists: false},
+                is_active: {$in: [true, null]}
+            }});
+        }
+
+        /**
+         * Get user dictionary for given language
+         *
+         * @param {string} lang
+         */
+        function getUserDictionary(lang) {
+            return session.getIdentity().then(function(identity) {
+                return api.query('dictionaries', {where: {language_id: lang, user: identity._id}})
+                    .then(function(response) {
+                        return response._items.length ? response._items[0] : {
+                            name: identity._id + ':' + lang,
+                            content: {},
+                            language_id: lang,
+                            user: identity._id
+                        };
+                    });
+            });
+        }
+
+        /**
+         * Add word to user dictionary
+         *
+         * @param {string} word
+         * @param {Object} userDict
+         */
+        function addWordToUserDictionary(word, userDict) {
+            var words = userDict.content || {};
+            if (!words[word]) {
+                words[word] = 1;
+            } else {
+                words[word] += 1;
+            }
+
+            userDict.content = words;
+            return api.save('dictionaries', userDict);
+        }
     }
 
     DictionaryConfigController.$inject = ['$scope', 'dictionaries', 'gettext', 'modal', 'notify'];
@@ -79,7 +134,7 @@
         };
 
         $scope.createDictionary = function() {
-            $scope.dictionary = {};
+            $scope.dictionary = {is_active: true};
             $scope.origDictionary = {};
         };
 
@@ -88,6 +143,7 @@
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
                 $scope.dictionary.content = _.create(result.content || {});
+                $scope.dictionary.is_active = $scope.dictionary.is_active !== false;
             });
         };
 
@@ -236,14 +292,6 @@
                     priority: -800,
                     privileges: {dictionaries: 1}
                 });
-        }])
-        .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('dictionaries', {
-                type: 'http',
-                backend: {
-                    rel: 'dictionaries'
-                }
-            });
         }])
         .service('dictionaries', DictionaryService)
         .controller('DictionaryEdit', DictionaryEditController)

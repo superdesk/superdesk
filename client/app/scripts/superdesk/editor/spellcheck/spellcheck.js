@@ -49,7 +49,6 @@ function replaceSpan(elem) {
     }
 
     parent.removeChild(elem);
-    parent.normalize();
 }
 
 /**
@@ -68,12 +67,28 @@ function removeClass(elem, className) {
 
 SpellcheckService.$inject = ['$q', 'api', 'dictionaries', 'editor'];
 function SpellcheckService($q, api, dictionaries, editor) {
-
-    var dict,
-        dictPromise,
-        dictId,
+    var lang,
+        promise,
+        userDict,
+        dict = {},
+        loaded = false,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
+
+    /**
+     * Set current language
+     *
+     * @param {string} _lang
+     */
+    this.setLanguage = function(_lang) {
+        if (lang !== _lang) {
+            lang = _lang;
+            dict = {};
+            userDict = null;
+            loaded = false;
+            promise = null;
+        }
+    };
 
     /**
      * Test if given elem is an error
@@ -86,25 +101,41 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * Get dictionary for spellchecking
      */
     function getDict() {
-        if (dict) {
-            return $q.when(dict);
+        if (loaded) {
+            return $q.when();
         }
 
-        if (!dictPromise) {
-            dictPromise = dictionaries.fetch().then(function(result) {
-                if (result._items.length) {
-                    return dictionaries.open(result._items[0]);
-                } else {
-                    return $q.reject();
-                }
-            }).then(function(_dict) {
-                dictId = _dict._id;
-                dict = _dict.content;
-                return dict;
-            });
+        if (!promise) {
+            promise = dictionaries.queryByLanguage(lang)
+                .then(mergeDictionaries)
+                .then(fetchUserDictionary)
+                .then(mergeUserDictionary);
         }
 
-        return dictPromise;
+        return promise;
+
+        function mergeDictionaries(result) {
+            angular.forEach(result._items, addDict);
+        }
+
+        function fetchUserDictionary() {
+            return dictionaries.getUserDictionary(lang);
+        }
+
+        function mergeUserDictionary(_userDict) {
+            userDict = _userDict;
+            addDict(userDict);
+            loaded = true;
+        }
+    }
+
+    /**
+     * Add dictionary content to spellcheck
+     *
+     * @param {Object} item
+     */
+    function addDict(item) {
+        angular.extend(dict, item.content || {});
     }
 
     /**
@@ -113,7 +144,6 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * @param {string} text
      */
     this.errors = function check(text) {
-
         return getDict().then(function() {
             var words = text.match(/[0-9a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g),
                 errors = [];
@@ -194,6 +224,8 @@ function SpellcheckService($q, api, dictionaries, editor) {
 
     /**
      * Highlite words in given elem that are not in dict
+     *
+     * @param {Node} elem
      */
     this.render = function render(elem) {
         var node = elem;
@@ -218,14 +250,24 @@ function SpellcheckService($q, api, dictionaries, editor) {
 
     /**
      * Get suggested corrections for given word
+     *
+     * @param {string} word
      */
     this.suggest = function suggest(word) {
         return api.save('spellcheck', {
             word: word,
-            dict: dictId
+            language_id: lang
         }).then(function(result) {
             return result.corrections || [];
         });
+    };
+
+    /**
+     * Add word to user dictionary
+     */
+    this.addWordToUserDictionary = function(word) {
+        dictionaries.addWordToUserDictionary(word, userDict);
+        addDict(userDict);
     };
 }
 

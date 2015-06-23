@@ -40,8 +40,22 @@ function EditorService() {
             vm.selection = null;
         }
 
+        clearRangy(node);
         vm.stopEvents = false;
     };
+
+    /**
+     * Remove all rangy stored selections from given node
+     *
+     * @param {Node} node
+     */
+    function clearRangy(node) {
+        var spans = node.getElementsByClassName('rangySelectionBoundary');
+        while (spans.length) {
+            var span = spans.item(0);
+            span.parentNode.removeChild(span);
+        }
+    }
 
     this.clear = function() {
         this.elem = null;
@@ -319,7 +333,7 @@ angular.module('superdesk.editor', [])
         }
 
         return {
-            scope: {type: '=', config: '='},
+            scope: {type: '=', config: '=', language: '='},
             require: 'ngModel',
             templateUrl: 'scripts/superdesk/editor/views/editor.html',
             link: function(scope, elem, attrs, ngModel) {
@@ -331,6 +345,8 @@ angular.module('superdesk.editor', [])
                 ngModel.$viewChangeListeners.push(changeListener);
 
                 ngModel.$render = function renderEditor() {
+                    spellcheck.setLanguage(scope.language);
+
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
 
                     editorElem.empty();
@@ -349,6 +365,7 @@ angular.module('superdesk.editor', [])
 
                     editorElem.on('contextmenu', function(event) {
                         if (spellcheck.isErrorNode(event.target)) {
+                            event.preventDefault();
                             var menu = elem[0].getElementsByClassName('dropdown-menu')[0],
                                 toggle = elem[0].getElementsByClassName('dropdown-toggle')[0];
                             if (elem.find('.dropdown.open').length) {
@@ -393,9 +410,14 @@ angular.module('superdesk.editor', [])
                     scope.replaceTarget.parentNode.replaceChild(document.createTextNode(text), scope.replaceTarget);
                 };
 
+                scope.addWordToDictionary = function() {
+                    var word = scope.replaceTarget.textContent;
+                    spellcheck.addWordToUserDictionary(word);
+                };
+
                 scope.$on('editor:settings', function() {
                     if (editor.settings.spellcheck) {
-                        spellcheck.render(editorElem[0]);
+                        renderSpellcheck();
                     } else {
                         removeSpellcheck(editorElem[0]);
                     }
@@ -431,14 +453,16 @@ angular.module('superdesk.editor', [])
                 }
 
                 function removeSpellcheck(node) {
+                    var html;
+
                     if (!node) {
                         node = editorElem[0];
                     }
 
                     editor.storeSelection(node);
-                    var html = spellcheck.clean(node);
-
-                    node.innerHTML = html;
+                    html = spellcheck.clean(node);
+                    html = html.replace('\ufeff', ''); // remove rangy marker
+                    node.innerHTML = html; // remove rangy marker
                     editor.resetSelection(node);
                     return html;
                 }

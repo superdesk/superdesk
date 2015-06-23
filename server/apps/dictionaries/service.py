@@ -39,10 +39,20 @@ def words(text):
     return [w for w in re.findall('[^\W_]+', text.lower()) if not w.isdigit()]
 
 
+def add_word(words, word, count):
+    """Add word with count to words model.
+
+    :param words: words model
+    :param word
+    :param count
+    """
+    words.setdefault(word, 0)
+    words[word] += count
+
+
 def add_words(nwords, text, val=1):
     for word in words(text):
-        nwords.setdefault(word, 0)
-        nwords[word] += val
+        add_word(nwords, word, val)
 
 
 def read(stream):
@@ -52,8 +62,7 @@ def read(stream):
 def merge(doc, words):
     doc.setdefault('content', {})
     for word, count in words.items():
-        doc['content'].setdefault(word, 0)
-        doc['content'][word] += count
+        add_word(doc['content'], word, count)
 
 
 def read_from_file(doc):
@@ -77,13 +86,38 @@ class DictionaryService(BaseService):
             doc.pop('content', None)
 
     def on_updated(self, updates, original):
-        updates.pop('content', None)
+        if 'content' in updates:
+            updates['content'] = decode_dict(updates['content'])
 
     def find_one(self, req, **lookup):
         doc = super().find_one(req, **lookup)
-        if doc and 'content':
+        if 'content' in doc:
             doc['content'] = decode_dict(doc['content'])
         return doc
+
+    def on_fetched(self, result):
+        for doc in result['_items']:
+            if 'content' in doc:
+                doc['content'] = decode_dict(doc['content'])
+
+    def get_model_for_lang(self, lang):
+        """Get model for given language.
+
+        It will use all active dictionaries for given language combined.
+
+        :param lang: language code
+        """
+        model = {}
+        lookup = {'$and': [{'language_id': lang}, {'is_active': {'$in': [True, None]}}]}
+        dicts = self.get(req=None, lookup=lookup)
+        for _dict in dicts:
+            if 'content' in _dict:
+                content = decode_dict(_dict['content'])
+            else:
+                content = {}
+            for word, count in content.items():
+                add_word(model, word, count)
+        return model
 
     def on_update(self, updates, original):
         # parse json list

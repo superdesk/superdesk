@@ -15,5 +15,7 @@
     <ul class="dropdown-menu">
         <li ng-repeat="word in suggestions"><button ng-click="replace(word)">{{ :: word }}</button></li>
         <li ng-show="suggestions.length === 0"><button translate>SORRY, NO SUGGESTIONS.</button></li>
+        <li class="divider"></li>
+        <li><button ng-click="addWordToDictionary()" translate>Add to dictionary</button></li>
     </ul>
 </div>

@@ -14,6 +14,12 @@
 		<ng-form name="dictionaryForm">
 			<fieldset>
 				<div class="field">
+                    <label class="right">
+                        {{ :: 'Active' | translate }}
+                        <span sd-switch ng-model="dictionary.is_active"></span>
+                    </label>
+                </div>	
+				<div class="field">
 					<label for="dict-name" translate>Dictionary name</label>
 					<input id="dict-name" type="text" ng-model="dictionary.name" required>
 				</div>
