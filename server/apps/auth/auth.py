@@ -91,11 +91,14 @@ class SuperdeskTokenAuth(TokenAuth):
         """
 
         # Step 1:
-        if method == 'GET' or not user:
+        if not user:
             return True
 
         # Step 2: Get User's Privileges
         get_resource_service('users').set_privileges(user, flask.g.role)
+
+        if method == 'GET':
+            return True
 
         # Step 3: Intrinsic Privileges
         intrinsic_privileges = get_intrinsic_privileges()

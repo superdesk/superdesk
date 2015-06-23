@@ -27,7 +27,7 @@ class LegalService(Service):
         if not hasattr(g, 'user'):
             return
 
-        privileges = g.user.get('privileges', {})
+        privileges = g.user.get('active_privileges', {})
         resource_privileges = get_resource_privileges(self.datasource).get('GET', None)
         if privileges.get(resource_privileges, 0) == 0:
             raise SuperdeskApiError.forbiddenError()
