@@ -3,11 +3,12 @@ var files = [
     {
         dest: '<%= distDir %>/styles/css/bootstrap.css',
         src: '<%= appDir %>/styles/less/bootstrap.less'
-    }, {
+    },
+    {
         expand: true,
         dest: '<%= tmpDir %>/',
         cwd: '<%= appDir %>/scripts/',
-        src: ['superdesk/**/*.less', 'superdesk-*/**/*.less'],
+        src: ['superdesk*/**/*.less'],
         ext: '.css'
     }, {
         expand: true,

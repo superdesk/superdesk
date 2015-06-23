@@ -1,6 +1,12 @@
 'use strict';
 
 exports.config = {
+    framework: 'jasmine2',
+    jasmineNodeOpts: {
+        showColors: true,
+        defaultTimeoutInterval: 120000
+    },
+
     allScriptsTimeout: 30000,
     baseUrl: 'http://localhost:9090',
     params: {
@@ -16,30 +22,14 @@ exports.config = {
         }
     },
     directConnect: true,
-    framework: 'jasmine',
-    jasmineNodeOpts: {
-        showColors: true,
-        isVerbose: true,
-        includeStackTrace: true,
-        defaultTimeoutInterval: 120000
-    },
-    /* global jasmine */
     onPrepare: function() {
-        /*
-        var ScreenShotReporter = require('protractor-screenshot-reporter');
-        jasmine.getEnv().addReporter(new ScreenShotReporter({
-            baseDirectory: './screenshots',
-            pathBuilder:
-                function pathBuilder(spec, descriptions, results, capabilities) {
-                    return results.passed() + '_' + descriptions.reverse().join('-');
-                },
-            takeScreenShotsOnlyForFailedSpecs: true
-        }));
-        */
+        var reporters = require('jasmine-reporters');
         require('./spec/helpers/setup')({fixture_profile: 'app_prepopulate_data'});
-        require('jasmine-reporters');
         jasmine.getEnv().addReporter(
-            new jasmine.JUnitXmlReporter('e2e-test-results', true, true)
+            new reporters.JUnitXmlReporter({
+                savePath: 'e2e-test-results',
+                consolidateAll: true
+            })
         );
     }
 };
