@@ -9,11 +9,12 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from apps.legal_archive.service import LegalArchiveVersionsService
-from superdesk import Service, get_backend, privilege
+from superdesk import get_backend, privilege
 from .resource import LegalArchiveResource, LegalArchiveVersionsResource, LegalFormattedItemResource, \
     LegalPublishQueueResource, LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
     LEGAL_FORMATTED_ITEM_NAME
+from .service import LegalArchiveService, LegalArchiveVersionsService, LegalPublishQueueService, \
+    LegalFormattedItemService
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def init_app(app):
     endpoint_name = LEGAL_ARCHIVE_NAME
-    service = Service(endpoint_name, backend=get_backend())
+    service = LegalArchiveService(endpoint_name, backend=get_backend())
     LegalArchiveResource(endpoint_name, app=app, service=service)
 
     endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
@@ -29,11 +30,11 @@ def init_app(app):
     LegalArchiveVersionsResource(endpoint_name, app=app, service=service)
 
     endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
-    service = Service(endpoint_name, backend=get_backend())
+    service = LegalPublishQueueService(endpoint_name, backend=get_backend())
     LegalPublishQueueResource(endpoint_name, app=app, service=service)
 
     endpoint_name = LEGAL_FORMATTED_ITEM_NAME
-    service = Service(endpoint_name, backend=get_backend())
+    service = LegalFormattedItemService(endpoint_name, backend=get_backend())
     LegalFormattedItemResource(endpoint_name, app=app, service=service)
 
     privilege(name=LEGAL_ARCHIVE_NAME, label='Legal Archive', description='Read from legal archive')

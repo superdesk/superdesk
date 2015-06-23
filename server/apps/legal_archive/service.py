@@ -8,10 +8,44 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.services import BaseService
+import logging
+from superdesk import Service, get_resource_privileges
+from flask import g
+from superdesk.errors import SuperdeskApiError
 
 
-class LegalArchiveVersionsService(BaseService):
+logger = logging.getLogger(__name__)
+
+
+class LegalService(Service):
+
+    def get(self, req, lookup):
+        self.check_get_access_privilege()
+        return super().get(req, lookup)
+
+    def check_get_access_privilege(self):
+        if not hasattr(g, 'user'):
+            return
+
+        privileges = g.user.get('privileges', {})
+        resource_privileges = get_resource_privileges(self.datasource).get('GET', None)
+        if privileges.get(resource_privileges, 0) == 0:
+            raise SuperdeskApiError.forbiddenError()
+
+
+class LegalArchiveService(LegalService):
+    pass
+
+
+class LegalPublishQueueService(LegalService):
+    pass
+
+
+class LegalFormattedItemService(LegalService):
+    pass
+
+
+class LegalArchiveVersionsService(LegalService):
     def create(self, docs, **kwargs):
         ids = []
         for doc in docs:
