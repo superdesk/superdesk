@@ -13,15 +13,21 @@ Feature: Publish Filter
     Given empty "publish_filter"
     When we post to "/publish_filter" with success
     """
-    [{"publish_filter": [["#filter_condition._id#"]], "name": "soccer-only"}]
+    [{"publish_filter": [[{"fc": "#filter_condition._id#"}]], "name": "soccer-only"}]
+    """
+    Then we get latest
+    When we post to "/publish_filter" with success
+    """
+    [{"publish_filter": [[{"fc": "#filter_condition._id#"}], [{"pf":"#publish_filter._id#"}]], "name": "complex"}]
     """
     And we get "/publish_filter"
-    Then we get list with 1 items
+    Then we get list with 2 items
     """
     {
       "_items":
         [
-          {"name": "soccer-only"}
+          {"name": "soccer-only"},
+          {"name": "complex"}
         ]
     }
     """

@@ -21,6 +21,8 @@ class PublishFilterTests(TestCase):
         super().setUp()
         self.req = ParsedRequest()
         with self.app.app_context():
+            self.f = PublishFilterService(datasource='publish_filter', backend=superdesk.get_backend())
+
             self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
                              {'_id': '2', 'headline': 'prtorque', 'state': 'fetched'},
                              {'_id': '3', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'},
@@ -53,12 +55,37 @@ class PublishFilterTests(TestCase):
                                    'operator': 'in',
                                    'value': '2,3,4',
                                    'name': 'test-4'}])
+            self.app.data.insert('filter_condition',
+                                 [{'_id': 5,
+                                   'field': 'headline',
+                                   'operator': 'startswith',
+                                   'value': 'sto',
+                                   'name': 'test-5'}])
 
-    def test_build_mongo_query_using_like_filter_single_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1]], 'name': 'pf-1'}
+            self.app.data.insert('publish_filter',
+                                 [{"_id": 1,
+                                   "publish_filter": [[{"fc": 1}]],
+                                   "name": "soccer-only"}])
+
+            self.app.data.insert('publish_filter',
+                                 [{"_id": 2,
+                                   "publish_filter": [[{"fc": 4}, {"fc": 3}]],
+                                   "name": "soccer-only2"}])
+
+            self.app.data.insert('publish_filter',
+                                 [{"_id": 3,
+                                   "publish_filter": [[{"pf": 1}, {"fc": 2}]],
+                                   "name": "soccer-only2"}])
+
+            self.app.data.insert('publish_filter',
+                                 [{"_id": 4,
+                                   "publish_filter": [[{"fc": 3}], [{"fc": 5}]],
+                                   "name": "soccer-only2"}])
+
+    def test_build_mongo_query_using_like_filter_single_fc(self):
+        doc = {'publish_filter': [[{"fc": 1}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_mongo_query(doc)
+            query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
@@ -67,11 +94,22 @@ class PublishFilterTests(TestCase):
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1], [2]], 'name': 'pf-1'}
+    def test_build_mongo_query_using_like_filter_single_pf(self):
+        doc = {'publish_filter': [[{"pf": 1}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_mongo_query(doc)
+            query = self.f.build_mongo_query(doc)
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(3, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_mongo_query_using_like_filter_multi_filter_condition(self):
+        doc = {'publish_filter': [[{"fc": 1}], [{"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
@@ -80,11 +118,32 @@ class PublishFilterTests(TestCase):
             self.assertTrue('2' in doc_ids)
             self.assertTrue('5' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_condition2(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[4, 3]], 'name': 'pf-1'}
+    def test_build_mongo_query_using_like_filter_multi_pf(self):
+        doc = {'publish_filter': [[{"pf": 1}], [{"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_mongo_query(doc)
+            query = self.f.build_mongo_query(doc)
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(4, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('5' in doc_ids)
+
+    def test_build_mongo_query_using_like_filter_multi_filter_condition2(self):
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = self.f.build_mongo_query(doc)
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_mongo_query_using_like_filter_multi_pf2(self):
+        doc = {'publish_filter': [[{"pf": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
@@ -92,21 +151,29 @@ class PublishFilterTests(TestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_condition3(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"fc": 1}, {"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_mongo_query(doc)
+            query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
             doc_ids = [d['_id'] for d in docs]
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_single_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1]], 'name': 'pf-1'}
+    def test_build_mongo_query_using_like_filter_multi_pf3(self):
+        doc = {'publish_filter': [[{"pf": 2}], [{"pf": 1}, {"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_elastic_query(doc)
+            query = self.f.build_mongo_query(doc)
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_elastic_query_using_like_filter_single_filter_condition(self):
+        doc = {'publish_filter': [[{"fc": 1}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
@@ -115,11 +182,22 @@ class PublishFilterTests(TestCase):
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1], [2]], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_single_publish_filter(self):
+        doc = {'publish_filter': [[{"pf": 1}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_elastic_query(doc)
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(3, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
+
+    def test_build_mongo_query_using_like_filter_multi_filter_condition(self):
+        doc = {'publish_filter': [[{"fc": 1}], [{"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
@@ -129,57 +207,145 @@ class PublishFilterTests(TestCase):
             self.assertTrue('3' in doc_ids)
             self.assertTrue('5' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_condition2(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
+    def test_build_mongo_query_using_like_filter_multi_publish_filter(self):
+        doc = {'publish_filter': [[{"pf": 1}], [{"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            query = f.build_elastic_query(doc)
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(4, docs.count())
+            self.assertTrue('1' in doc_ids)
+            self.assertTrue('2' in doc_ids)
+            self.assertTrue('3' in doc_ids)
+            self.assertTrue('5' in doc_ids)
+
+    def test_build_elastic_query_using_like_filter_multi_filter_condition2(self):
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"fc": 1}, {"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
             doc_ids = [d['_id'] for d in docs]
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_does_match_using_like_filter_single_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1]], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_publish_filter2(self):
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"pf": 1}, {"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            self.assertTrue(f.does_match(doc, self.articles[0]))
-            self.assertTrue(f.does_match(doc, self.articles[1]))
-            self.assertTrue(f.does_match(doc, self.articles[2]))
-            self.assertFalse(f.does_match(doc, self.articles[3]))
-            self.assertFalse(f.does_match(doc, self.articles[4]))
-            self.assertFalse(f.does_match(doc, self.articles[5]))
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
 
-    def test_does_match_using_like_filter_multi_condition(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[1], [2]], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_publish_filter3(self):
+        doc = {'publish_filter': [[{"pf": 2}], [{"pf": 1}, {"fc": 2}]], 'name': 'pf-1'}
         with self.app.app_context():
-            self.assertTrue(f.does_match(doc, self.articles[0]))
-            self.assertTrue(f.does_match(doc, self.articles[1]))
-            self.assertTrue(f.does_match(doc, self.articles[2]))
-            self.assertFalse(f.does_match(doc, self.articles[3]))
-            self.assertTrue(f.does_match(doc, self.articles[4]))
-            self.assertFalse(f.does_match(doc, self.articles[5]))
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
 
-    def test_does_match_using_like_filter_multi_condition2(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[4, 3]], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_publish_filter4(self):
+        doc = {'publish_filter': [[{"pf": 2}], [{"pf": 3}]], 'name': 'pf-1'}
         with self.app.app_context():
-            self.assertFalse(f.does_match(doc, self.articles[0]))
-            self.assertFalse(f.does_match(doc, self.articles[1]))
-            self.assertTrue(f.does_match(doc, self.articles[2]))
-            self.assertFalse(f.does_match(doc, self.articles[3]))
-            self.assertFalse(f.does_match(doc, self.articles[4]))
-            self.assertFalse(f.does_match(doc, self.articles[5]))
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
 
-    def test_does_match_using_like_filter_multi_condition3(self):
-        f = PublishFilterService()
-        doc = {'publish_filter': [[4, 3], [1, 2]], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_publish_filter4(self):
+        doc = {'publish_filter': [[{"pf": 4}, {"fc": 4}]], 'name': 'pf-1'}
         with self.app.app_context():
-            self.assertFalse(f.does_match(doc, self.articles[0]))
-            self.assertFalse(f.does_match(doc, self.articles[1]))
-            self.assertTrue(f.does_match(doc, self.articles[2]))
-            self.assertFalse(f.does_match(doc, self.articles[3]))
-            self.assertFalse(f.does_match(doc, self.articles[4]))
-            self.assertFalse(f.does_match(doc, self.articles[5]))
+            query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
+            self.req.args = {'source': json.dumps(query)}
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('3' in doc_ids)
+
+    def test_does_match_using_like_filter_single_fc(self):
+        doc = {'publish_filter': [[{"fc": 1}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(self.f.does_match(doc, self.articles[0]))
+            self.assertTrue(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_single_pf(self):
+        doc = {'publish_filter': [[{"pf": 1}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(self.f.does_match(doc, self.articles[0]))
+            self.assertTrue(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_fc(self):
+        doc = {'publish_filter': [[{"fc": 1}], [{"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(self.f.does_match(doc, self.articles[0]))
+            self.assertTrue(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertTrue(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_pf(self):
+        doc = {'publish_filter': [[{"pf": 1}], [{"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertTrue(self.f.does_match(doc, self.articles[0]))
+            self.assertTrue(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertTrue(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_fc2(self):
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(self.f.does_match(doc, self.articles[0]))
+            self.assertFalse(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_pf2(self):
+        doc = {'publish_filter': [[{"pf": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(self.f.does_match(doc, self.articles[0]))
+            self.assertFalse(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_fc3(self):
+        doc = {'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"fc": 1}, {"fc": 2}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(self.f.does_match(doc, self.articles[0]))
+            self.assertFalse(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_does_match_using_like_filter_multi_pf3(self):
+        doc = {'publish_filter': [[{"pf": 4}, {"fc": 4}]], 'name': 'pf-1'}
+        with self.app.app_context():
+            self.assertFalse(self.f.does_match(doc, self.articles[0]))
+            self.assertFalse(self.f.does_match(doc, self.articles[1]))
+            self.assertTrue(self.f.does_match(doc, self.articles[2]))
+            self.assertFalse(self.f.does_match(doc, self.articles[3]))
+            self.assertFalse(self.f.does_match(doc, self.articles[4]))
+            self.assertFalse(self.f.does_match(doc, self.articles[5]))

@@ -660,7 +660,7 @@ def test_can_publish_article(self):
                                    'name': 'test-4'}])
             self.app.data.insert('publish_filter',
                                  [{'_id': 1,
-                                   'publish_filter': [[4, 3], [1, 2]],
+                                   'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"fc": 1}, {"fc": 2}]],
                                    'name': 'pf-1'}])
             can_it = get_resource_service('archive_publish').\
                 can_publish(self.subscribers[0], self.articles[6])
