@@ -49,7 +49,8 @@ class CreatingNewClassTestCase(AutoRegisteredMetaTest):
         self.assertTrue(hasattr(new_class, 'baz'))
         self.assertEqual(new_class.baz, 42)
 
-    def test_registers_new_provider_instances(self, fake_register):
+    @mock.patch('superdesk.io.ingest_service.providers', {})
+    def test_registers_new_provider_classes(self, fake_register):
         metacls = self._get_target_metacls()
 
         new_class_errors = [(1234, 'Error 1234')]
@@ -60,27 +61,25 @@ class CreatingNewClassTestCase(AutoRegisteredMetaTest):
             dict(ERRORS=new_class_errors, PROVIDER='provider_name')
         )
 
-        new_class()  # create an instance to see if it gets registered
-
         self.assertTrue(fake_register.called)
         args, _ = fake_register.call_args
         self.assertEqual(len(args), 3)
 
         self.assertEqual(args[0], 'provider_name')
-        self.assertIsInstance(args[1], new_class)
+        self.assertIs(args[1], new_class)
         self.assertEqual(args[2], new_class_errors)
 
-    def test_does_not_register_instances_of_non_provider_classes(
-        self, fake_register
-    ):
+    def test_does_not_register_non_provider_classes(self, fake_register):
         metacls = self._get_target_metacls()
-        new_class = metacls('NewClass', (), {})  # NOTE: no PROVIDER attribute
-        new_class()
+        metacls('NewClass', (), {})  # NOTE: no PROVIDER attribute
         self.assertFalse(fake_register.called)
 
+    @mock.patch(
+        'superdesk.io.ingest_service.providers',
+        {'provider_x': 'ClassX'}
+    )
     def test_raises_error_on_duplicate_provider_name(self, fake_register):
         metacls = self._get_target_metacls()
-        metacls._providers = {'provider_x': 'ClassX'}
 
         try:
             with self.assertRaises(TypeError) as exc_context:
@@ -91,7 +90,7 @@ class CreatingNewClassTestCase(AutoRegisteredMetaTest):
         ex = exc_context.exception
         self.assertEqual(
             str(ex),
-            "PROVIDER provider_x already exists (class ClassX).")
+            "PROVIDER provider_x already exists (ClassX).")
 
     def test_raises_error_if_provider_class_lacks_errors_attribute(
         self, fake_register
@@ -99,7 +98,7 @@ class CreatingNewClassTestCase(AutoRegisteredMetaTest):
         metacls = self._get_target_metacls()
         try:
             with self.assertRaises(AttributeError) as exc_context:
-                # NOTE: no ERRROS attribute
+                # NOTE: no ERRORS attribute
                 metacls('NewClass', (), {'PROVIDER': 'foo'})
         except:
             self.fail("Expected exception type was not raised.")
