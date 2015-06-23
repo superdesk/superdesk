@@ -357,14 +357,6 @@ define([
                         });
                 }
 
-                function fetchSourceErrors(source_type) {
-                    return api('ingest_errors').query({'source_type': source_type})
-                        .then(function(result) {
-                            $scope.provider.source_errors = result._items[0].source_errors;
-                            $scope.provider.all_errors = result._items[0].all_errors;
-                        });
-                }
-
                 function openProviderModal() {
                     var provider_id = $location.search()._id;
                     var provider;
@@ -398,6 +390,16 @@ define([
                 api('routing_schemes').query().then(function(result) {
                     $scope.routingScheme = result._items;
                 });
+
+                $scope.fetchSourceErrors = function() {
+                    if ($scope.provider && $scope.provider.type) {
+                        return api('io_errors').query({'source_type': $scope.provider.type})
+                            .then(function (result) {
+                                $scope.provider.source_errors = result._items[0].source_errors;
+                                $scope.provider.all_errors = result._items[0].all_errors;
+                            });
+                    }
+                };
 
                 $scope.remove = function(provider) {
                     modal.confirm(gettext('Are you sure you want to delete Ingest Source?')).then(
@@ -449,10 +451,6 @@ define([
                             return !(fieldName in aliasObj);
                         }
                     );
-
-                    if (provider && provider.type) {
-                        fetchSourceErrors(provider.type);
-                    }
                 };
 
                 $scope.cancel = function() {
