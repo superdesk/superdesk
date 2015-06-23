@@ -1,0 +1,149 @@
+<section class="search main-section search-page-container sidebar-open">
+
+  <div class="archive-sidebar"> <!-- Search widget -->
+    <div class="header">
+      <div class="icon">
+        <i class="icon-filter-large"></i>
+      </div>
+      <ul>
+        <li translate>Search</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <div data-context="context" >
+        <form>
+          <fieldset>
+            <div class="field">
+              <label for="search-story-id">
+                {{:: 'Story Id' | translate}}
+              </label>
+              <div class="control">
+                <input type="text" id="search-story-id" ng-model="criteria._id" tabindex="1">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="search-headline">
+                {{:: 'Headline' | translate}}
+              </label>
+              <div class="control">
+                <input type="text" id="search-headline" ng-model="criteria.headline" tabindex="2">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="search-slugline">
+                {{:: 'Keyword' | translate}}
+              </label>
+              <div class="control">
+                <input type="text" id="search-slugline" ng-model="criteria.slugline" tabindex="3">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="search-storytext">
+                {{:: 'Story Text' | translate}}
+              </label>
+              <input type="text" id="search-storytext" ng-model="criteria.body_html" tabindex="5">
+            </div>
+
+            <div class="field" sd-date-param data-location="criteria.published_before">
+              <label for="published_before" translate>Published before</label>
+              <div sd-datepicker ng-model="criteria.published_before"></div>
+            </div>
+            <div class="field" sd-date-param data-location="criteria.published_after">
+              <label for="published_after" translate>Published after</label>
+              <div sd-datepicker ng-model="criteria.published_after"></div>
+            </div>
+          </fieldset>
+        </form>
+        <div class="actions">
+          <button class="btn btn-info pull-right" ng-click="search()" tabindex="7" translate>Go</button>
+          <button class="btn btn-info pull-right" ng-click="clear()" tabindex="8" translate>Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="archive-content">
+
+    <div class="preview-layout" ng-class="{closed: !selected.preview}" >
+      <div class="list-pane list-view">
+        <header class="search-page-header">
+          <div sd-legal-item-sortbar></div>
+          <!-- <div sd-item-searchbar data-context="context" class="searchbar-flex-handler"></div> -->
+          <div sd-pagination data-items="items"></div>
+        </header>
+
+
+        <div class="content" sd-updown data-items="items._items" data-select="preview(item)">
+          <div class="loading-indicator" ng-show="loading" translate>loading</div>
+          <div sd-shadow>
+            <ul class="compact-view list-view">
+              <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}">
+
+                <div id="{{item._id}}" class="media-box media-{{item.type}}" ng-click="preview(item)">
+                  <span class="state-border"></span>
+                  <div class="list-field type-icon">
+                    <i class="filetype-icon-{{item.type}}"></i>
+                  </div>
+
+                  <div class="list-field urgency">
+                    <i class="urgency-icon-{{item.urgency}}"></i>
+                    <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
+                  </div>
+
+                  <div class="list-field word-count-box">
+                    <span class="word-count">{{ item.word_count }}</span>
+                    <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
+                  </div>
+                  <div class="item-info">
+                    <div class="line">
+                      <div class="state-label state-{{item.state}}">{{item.state}}</div>
+                      <div class="headline">
+                        <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | limitTo: 40}}</span>
+                        <span title="{{ item.headline }}">{{ item.headline | limitTo: 90 || item.type }}</span>
+                        <span sd-item-container data-item="item" title="{{ item.container }}" class="container"></span>
+                      </div>
+                      <time sd-datetime data-date="item.versioncreated"></time>
+                    </div>
+                    <div class="line">
+                      <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
+                      <div class="category" ng-if="item['anpa-category'].name">{{ item['anpa-category'].name }}</div>
+                      <div class="provider" sd-meta-ingest data-item="item"></div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-pane content-item-preview" ng-show="selected.preview" ng-init="tab = 'content'">
+        <header>
+          <ul class="nav nav-tabs">
+            <li ng-class="{active: tab === 'content'}">
+              <button ng-click="tab = 'content'"><span translate>Content</span></button>
+            </li>
+            <li ng-class="{active: tab === 'metadata'}">
+              <button ng-click="tab = 'metadata'"><span translate>Metadata</span></button>
+            </li>
+          </ul>
+          <button ng-click="preview(null)" class="close-preview">
+            <i class="icon-close-small"></i>
+          </button>
+        </header>
+        <div class="content" ng-if="selected.preview">
+          <div ng-if="tab === 'content'" sd-media-preview></div>
+          <div ng-if="tab === 'metadata'" sd-media-metadata data-item="selected.preview"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>

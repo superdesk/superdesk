@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.resource import Resource
+from apps.content import metadata_schema
 
 
 MONGO_PREFIX = 'LEGAL_ARCHIVE'
@@ -18,41 +19,30 @@ LEGAL_FORMATTED_ITEM_NAME = 'legal_formatted_item'
 LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
 
 
-class LegalArchiveResource(Resource):
+class LegalResource(Resource):
+    schema = {}
+    resource_methods = ['GET']
+    item_methods = ['GET']
+    privileges = {'GET': LEGAL_ARCHIVE_NAME}
+    mongo_prefix = MONGO_PREFIX
+
+
+class LegalArchiveResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_NAME
-    schema = {}
-    resource_methods = ['GET']
-    item_methods = ['GET']
     resource_title = endpoint_name
-    internal_resource = True
-    mongo_prefix = MONGO_PREFIX
+    schema = dict(metadata_schema)
 
 
-class LegalArchiveVersionsResource(Resource):
+class LegalArchiveVersionsResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
-    schema = {}
-    resource_methods = ['GET']
-    item_methods = ['GET']
     resource_title = endpoint_name
-    internal_resource = True
-    mongo_prefix = MONGO_PREFIX
 
 
-class LegalFormattedItemResource(Resource):
+class LegalFormattedItemResource(LegalResource):
     endpoint_name = LEGAL_FORMATTED_ITEM_NAME
-    schema = {}
-    resource_methods = ['GET']
-    item_methods = ['GET']
     resource_title = endpoint_name
-    internal_resource = True
-    mongo_prefix = MONGO_PREFIX
 
 
-class LegalPublishQueueResource(Resource):
+class LegalPublishQueueResource(LegalResource):
     endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
-    schema = {}
-    resource_methods = ['GET']
-    item_methods = ['GET']
     resource_title = endpoint_name
-    internal_resource = True
-    mongo_prefix = MONGO_PREFIX

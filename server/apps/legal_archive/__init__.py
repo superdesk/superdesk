@@ -10,7 +10,7 @@
 
 import logging
 from apps.legal_archive.service import LegalArchiveVersionsService
-from superdesk import Service, get_backend
+from superdesk import Service, get_backend, privilege
 from .resource import LegalArchiveResource, LegalArchiveVersionsResource, LegalFormattedItemResource, \
     LegalPublishQueueResource, LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME, \
     LEGAL_FORMATTED_ITEM_NAME
@@ -35,3 +35,5 @@ def init_app(app):
     endpoint_name = LEGAL_FORMATTED_ITEM_NAME
     service = Service(endpoint_name, backend=get_backend())
     LegalFormattedItemResource(endpoint_name, app=app, service=service)
+
+    privilege(name=LEGAL_ARCHIVE_NAME, label='Legal Archive', description='Read from legal archive')
