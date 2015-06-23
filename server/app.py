@@ -26,6 +26,7 @@ from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
 from superdesk.errors import SuperdeskError, SuperdeskApiError
+from superdesk.io import providers
 from logging.handlers import SysLogHandler
 from settings import LOG_SERVER_ADDRESS, LOG_SERVER_PORT
 
@@ -117,6 +118,11 @@ def get_app(config=None):
 
     app.sentry = sentry
     sentry.init_app(app)
+
+    # instantiate registered provider classes (leave non-classes intact)
+    for key, provider in providers.items():
+        providers[key] = provider() if isinstance(provider, type) else provider
+
     return app
 
 if __name__ == '__main__':
