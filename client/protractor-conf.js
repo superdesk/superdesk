@@ -1,5 +1,13 @@
 'use strict';
 
+var chromeOptions = {
+    args: ['no-sandbox']
+};
+
+if (process.env.CHROME_BIN) {
+    chromeOptions.binary = process.env.CHROME_BIN;
+}
+
 exports.config = {
     framework: 'jasmine2',
     jasmineNodeOpts: {
@@ -17,9 +25,7 @@ exports.config = {
     specs: ['spec/**/*[Ss]pec.js'],
     capabilities: {
         browserName: 'chrome',
-        chromeOptions: {
-            args: ['--no-sandbox']
-        }
+        chromeOptions: chromeOptions
     },
     directConnect: true,
     onPrepare: function() {

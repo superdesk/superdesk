@@ -21,15 +21,22 @@ services:
     - elasticsearch
     - redis-server
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.npm
+    - $HOME/.cache/bower
+
 before_install:
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         npm install -g grunt-cli bower ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        chromium-browser --version ;
-        export CHROME_BIN=chromium-browser &&
         export DISPLAY=:99.0 &&
-        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x16 ;
+        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
+        wget -N --no-verbose https://storage.googleapis.com/chromium-browser-continuous/Linux_x64/335875/chrome-linux.zip && unzip chrome-linux.zip &&
+        export CHROME_BIN=`pwd`/chrome-linux/chrome &&
+        $CHROME_BIN --version ;
       fi
 
 install:
@@ -43,9 +50,6 @@ install:
       fi
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && bower install && cd .. ;
-      fi
-    - if [ "${TARGET}" = "e2e_chrome" ]; then
-        (cd client && npm install "actionless/protractor#1.6.1-old" && cd .. );
       fi
     - if [ "${TARGET}" = "unit" ]; then
         cd server && pip install coveralls==1.0a2 && cd .. ;
