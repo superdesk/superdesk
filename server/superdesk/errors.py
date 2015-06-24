@@ -186,7 +186,8 @@ class ProviderError(SuperdeskIngestError):
         2004: 'Ingest error',
         2005: 'Anpa category error',
         2006: 'Expired content could not be filtered',
-        2007: 'IPTC processing error'
+        2007: 'IPTC processing error',
+        2008: 'External source no suitable resolution found'
     }
 
     @classmethod
@@ -216,6 +217,10 @@ class ProviderError(SuperdeskIngestError):
     @classmethod
     def iptcError(cls, exception=None, provider=None):
         return ProviderError(2007, exception, provider)
+
+    @classmethod
+    def externalProviderError(cls, exception=None, provider=None):
+        return ProviderError(2008, exception, provider)
 
 
 class ParserError(SuperdeskIngestError):
