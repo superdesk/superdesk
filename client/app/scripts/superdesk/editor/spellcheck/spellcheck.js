@@ -72,6 +72,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
         userDict,
         dict = {},
         loaded = false,
+        numberOfErrors,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
 
@@ -156,6 +157,8 @@ function SpellcheckService($q, api, dictionaries, editor) {
                 }
             });
 
+            numberOfErrors = _.uniq(errors).length;
+
             return _.uniq(errors);
         });
     };
@@ -239,6 +242,13 @@ function SpellcheckService($q, api, dictionaries, editor) {
             setErrorClass(node);
             editor.resetSelection(node);
         });
+    };
+
+    /**
+     * Return number of spelling errors
+     */
+    this.countErrors = function() {
+        return numberOfErrors;
     };
 
     /**
