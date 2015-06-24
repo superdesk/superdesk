@@ -5,7 +5,7 @@
 angular.module('superdesk.aggregate.widgets', ['superdesk.aggregate.sidebar', 'superdesk.dashboard.widgets'])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('aggregate', {
-                label: 'Aggregate',
+                label: 'Monitoring',
                 multiple: true,
                 icon: 'archive',
                 max_sizex: 2,
@@ -15,7 +15,7 @@ angular.module('superdesk.aggregate.widgets', ['superdesk.aggregate.sidebar', 's
                 thumbnail: 'scripts/superdesk-desks/aggregate-widget/thumbnail.png',
                 template: 'scripts/superdesk-desks/aggregate-widget/aggregate-widget.html',
                 configurationTemplate: 'scripts/superdesk-desks/aggregate-widget/configuration.html',
-                description: 'Displaying the aggregate content view.',
+                description: 'Displaying the monitoring content view.',
                 custom: true
             });
         }]);

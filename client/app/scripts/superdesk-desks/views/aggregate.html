@@ -77,7 +77,7 @@
                         <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
                             <i class="icon-chevron-down"></i>
                         </button>
-                        <div class="stage-name pull-left" translate>Personal{{group.max_items}}</div>
+                        <div class="stage-name pull-left" translate>Personal</div>
                         <span class="label pull-right">{{total}}</span>
                     </div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
