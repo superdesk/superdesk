@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 class AAPMMDatalayer(DataLayer):
-
     def __set_auth_cookie(self, app):
         if self._username is not None and self._password is not None:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/login'
@@ -31,7 +30,7 @@ class AAPMMDatalayer(DataLayer):
         self._headers = {'cookie': r.getheader('set-cookie')}
 
     def set_credentials(self, user, password):
-        if user != self._username  and user != '' and password != self._password and password != '':
+        if user != self._username and user != '' and password != self._password and password != '':
             self._username = user
             self._password = password
             self.__set_auth_cookie(self._app)
@@ -148,7 +147,7 @@ class AAPMMDatalayer(DataLayer):
                     url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Ipod/download'.format(_id)
                     mime_type = doc.get('renditions').get('original').get('mimetype')
                 else:
-                    raise NotImplementedError
+                    raise FileNotFoundError
             else:
                 raise NotImplementedError
         else:
