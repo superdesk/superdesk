@@ -28,7 +28,7 @@ class FormatterRegistry(type):
 class Formatter(metaclass=FormatterRegistry):
     """Base Formatter class for all types of Formatters like News ML 1.2, News ML G2, NITF, etc."""
 
-    def format(self, article, provider, selector_codes=None):
+    def format(self, article, subscriber):
         """Formats the article and returns the transformed string"""
         raise NotImplementedError()
 

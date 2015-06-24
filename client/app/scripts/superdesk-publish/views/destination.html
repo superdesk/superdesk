@@ -4,13 +4,28 @@
             <label for="destination-name" translate>Name</label>
             <input type="text" id="destination-name" ng-model="destination.name">
         </div>
+
+        <div class="field">
+            <label for="destination-format" translate>Format</label>
+            <select id="destination-format" class="input" required ng-model="destination.format">
+                <option value="nitf" translate>NITF</option>
+                <option value="newsml12" translate>AAP NewsML 1.2</option>
+                <option value="AAP IPNEWS" translate>AAP IPNEWS</option>
+                <option value="AAP ANPA" translate>AAP ANPA</option>
+                <option value="ninjs" translate>NINJS</option>
+                <option value="newsmlg2" translate>NewsML G2</option>
+            </select>
+        </div>
+
         <div class="field">
             <label for="destination-delivery-type" translate>Delivery type</label>
-            <select id="provider-type" required ng-model="destination.delivery_type" ng-options="key as val.label for (key, val) in types"></select>
+            <select id="destination-delivery-type" required ng-model="destination.delivery_type" ng-options="key as val.label for (key, val) in types"></select>
         </div>
+
         <div class="field credentials">
             <div ng-include="types[destination.delivery_type].templateUrl"></div>
         </div>
+
         <div class="field" ng-if="actions">
             <button type="button" class="btn btn-info" ng-repeat="action in actions" ng-click="action.fn(destination)">
                 <span translate>{{:: action.label}}</span>

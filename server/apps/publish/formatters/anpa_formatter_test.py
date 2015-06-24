@@ -16,12 +16,13 @@ import io
 
 
 class ANPAFormatterTest(TestCase):
-    output_channel = [{'_id': '1',
-                       'name': 'OC1',
-                       'description': 'Testing...',
-                       'channel_type': 'metadata',
-                       'is_active': True,
-                       'format': 'ANPA'}]
+    subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
+                    "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
+                    "destinations": [{"name": "ANPA", "delivery_type": "email", "format": "ANPA",
+                                      "config": {"recipients": "test@sourcefabric.org"}
+                                      }]
+                    }]
+
     article = {
         'source': 'AAP',
         '_updated': datetime.strptime('2015-05-29 05:46', '%Y-%m-%d %H:%M'),
@@ -38,33 +39,38 @@ class ANPAFormatterTest(TestCase):
         'word_count': '1',
         'priority': '1'
     }
-    sel_codes = {'1': ['aaa', 'bbb']}
 
     def setUp(self):
         super().setUp()
         with self.app.app_context():
-            self.app.data.insert('output_channels', self.output_channel)
+            self.app.data.insert('subscribers', self.subscribers)
             init_app(self.app)
 
     def TestANPAFormatter(self):
         with self.app.app_context():
-            output_channel = self.app.data.find('output_channels', None, None)[0]
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+
             f = AAPAnpaFormatter()
-            seq, item = f.format(self.article, output_channel, self.sel_codes)
+            seq, item = f.format(self.article, subscriber)
+
             self.assertGreater(int(seq), 0)
 
             lines = io.StringIO(item.decode())
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'aaa bbb')
+
             line = lines.readline()
             self.assertEqual(line[:3], '')  # Skip the sequence
+
             line = lines.readline()
             self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+
             line = lines.readline()
             self.assertEqual(line.strip(), 'This is a test headline')
+
             line = lines.readline()
             self.assertEqual(line.strip(), 'slugline take_key')
+
             line = lines.readline()
             self.assertEqual(line.strip(), 'The story body')
+
             line = lines.readline()
             self.assertEqual(line.strip(), 'AAP')

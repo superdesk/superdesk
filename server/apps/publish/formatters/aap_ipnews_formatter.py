@@ -9,35 +9,31 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from apps.publish.formatters import Formatter
-import superdesk
-from superdesk.errors import FormatterError
-from bs4 import BeautifulSoup
-from superdesk.io.iptc import subject_codes
 import textwrap
 from io import StringIO
 
+from bs4 import BeautifulSoup
+
+from apps.publish.formatters import Formatter
+import superdesk
+from superdesk.errors import FormatterError
+from superdesk.io.iptc import subject_codes
+
 
 class AAPIpNewsFormatter(Formatter):
-    def format(self, article, output_channel, selector_codes):
-        """ Constructs a dictionary that represents the parameters passed to the IPNews InsertNews stored procedure
-
-        :param article:
-        :param output_channel:
-        :param selector_codes:
-        :return: returns the sequence number of the output channel and the constructed parameter dictionary
+    def format(self, article, subscriber):
+        """
+        Constructs a dictionary that represents the parameters passed to the IPNews InsertNews stored procedure
+        :return: returns the sequence number of the subscriber and the constructed parameter dictionary
         """
         try:
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(output_channel)
-
-            odbc_item = {}
-            odbc_item['originator'] = article.get('source', None)
-            odbc_item['sequence'] = pub_seq_num
-            odbc_item['category'] = article.get('anpa-category', {}).get('qcode')  # @category
-            odbc_item['headline'] = article.get('headline', '').replace('\'', '\'\'')  # @headline
-            odbc_item['author'] = article.get('byline', '').replace('\'', '\'\'')  # @author
-            odbc_item['keyword'] = article.get('slugline', None).replace('\'', '\'\'')
+            odbc_item = {'originator': article.get('source', None), 'sequence': pub_seq_num,
+                         'category': article.get('anpa-category', {}).get('qcode'),
+                         'headline': article.get('headline', '').replace('\'', '\'\''),
+                         'author': article.get('byline', '').replace('\'', '\'\''),
+                         'keyword': article.get('slugline', None).replace('\'', '\'\'')}
 
             if article['subject'][0] and 'qcode' in article['subject'][0]:
                 odbc_item['subject_reference'] = article['subject'][0].get('qcode', '        ')
@@ -87,15 +83,12 @@ class AAPIpNewsFormatter(Formatter):
             odbc_item['priority'] = article.get('priority', 'r')  # @priority
             odbc_item['service_level'] = 'a'  # @service_level
 
-            sel_codes = selector_codes[output_channel['_id']]
-            odbc_item['selector_codes'] = ' '.join(sel_codes)
-
             odbc_item['fullStory'] = 1
             odbc_item['ident'] = '0'  # @ident
 
             return pub_seq_num, odbc_item
         except Exception as ex:
-            raise FormatterError.AAPIpNewsFormatterError(ex, output_channel)
+            raise FormatterError.AAPIpNewsFormatterError(ex, subscriber)
 
     def can_format(self, format_type, article_type):
         return format_type == 'AAP IPNEWS' and article_type in ['text', 'preformatted']

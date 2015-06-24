@@ -22,6 +22,10 @@
 								<label translate>Desk description</label>
 								<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 							</div>
+							<div class="field">
+								<label translate>Source for User Created Articles</label>
+								<input type="text" class="fullwidth-input" ng-model="desk.edit.source" ng-keyup="handleEdit($event);" required>
+							</div>
 							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry" data-header="Spike Expiry"></div>
 							<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="published_item_expiry" data-header="Published Item Expiry"></div>
 						</fieldset>

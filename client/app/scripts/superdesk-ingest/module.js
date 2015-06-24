@@ -970,10 +970,6 @@ define([
 
                 scope.addFetch = function() {
                     if (scope.newFetch.desk && scope.newFetch.stage) {
-                        if (scope.newFetch.destination_groups) {
-                            var destinationGroups = _.pluck(scope.newFetch.destination_groups, '_id');
-                            scope.newFetch.destination_groups = destinationGroups;
-                        }
                         scope.rule.actions.fetch.push(scope.newFetch);
                         scope.newFetch = {};
                     }
@@ -987,10 +983,6 @@ define([
 
                 scope.addPublish = function() {
                     if (scope.newPublish.desk && scope.newPublish.stage) {
-                        if (scope.newPublish.destination_groups) {
-                            var destinationGroups = _.pluck(scope.newPublish.destination_groups, '_id');
-                            scope.newPublish.destination_groups = destinationGroups;
-                        }
                         scope.rule.actions.publish.push(scope.newPublish);
                         scope.newPublish = {};
                     }
@@ -1473,7 +1465,7 @@ define([
         /**
          * Send all given item using config once it's resolved
          *
-         * At first it only creates a deffered config which is
+         * At first it only creates a deferred config which is
          * picked by SendItem directive, once used sets the destination
          * it gets resolved and items are sent.
          *

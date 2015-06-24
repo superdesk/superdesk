@@ -40,8 +40,6 @@
     function AdminPublishSettingsController($scope, privileges) {
         var user_privileges = privileges.privileges;
 
-        $scope.showOutputChannels   = Boolean(user_privileges.output_channels);
-        $scope.showDestinationGroups  = Boolean(user_privileges.destination_groups);
         $scope.showSubscribers  = Boolean(user_privileges.subscribers);
     }
 
@@ -73,64 +71,6 @@
                     parts.push({_id: id});
                 });
                 return this.fetchSubscribers({
-                    where: JSON.stringify({'$or': parts})
-                });
-            },
-
-            fetchOutputChannels: function(criteria) {
-                criteria = criteria || {};
-                criteria.max_results = 200;
-                return _fetch('output_channels', criteria);
-            },
-
-            fetchOutputChannelsByKeyword: function(keyword) {
-                return this.fetchOutputChannels({
-                    where: JSON.stringify({
-                        '$or': [
-                            {name: {'$regex': keyword, '$options': '-i'}}
-                        ]
-                    })
-                });
-            },
-
-            fetchOutputChannelsByIds: function(ids) {
-                var parts = [];
-                _.each(ids, function(id) {
-                    parts.push({_id: id});
-                });
-                return this.fetchOutputChannels({
-                    where: JSON.stringify({'$or': parts})
-                });
-            },
-
-            fetchFormattedItems: function(criteria) {
-                criteria = criteria || {};
-                criteria.max_results = 200;
-                return _fetch('formatted_item', criteria);
-            },
-
-            fetchDestinationGroups: function(criteria) {
-                criteria = criteria || {};
-                criteria.max_results = 200;
-                return _fetch('destination_groups', criteria);
-            },
-
-            fetchDestinationGroupsByKeyword: function(keyword) {
-                return this.fetchDestinationGroups({
-                    where: JSON.stringify({
-                        '$or': [
-                            {name: {'$regex': keyword, '$options': '-i'}}
-                        ]
-                    })
-                });
-            },
-
-            fetchDestinationGroupsByIds: function(ids) {
-                var parts = [];
-                _.each(ids, function(id) {
-                    parts.push({_id: id});
-                });
-                return this.fetchDestinationGroups({
                     where: JSON.stringify({'$or': parts})
                 });
             },
@@ -182,10 +122,7 @@
     function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
-        $scope.outputChannels = null;
-        $scope.outputChannelLookup = {};
         $scope.publish_queue = [];
-        $scope.selectedFilterChannel = null;
         $scope.selectedFilterSubscriber = null;
         $scope.multiSelectCount = 0;
         $scope.selectedQueueItems = [];
@@ -201,28 +138,12 @@
             });
         }));
 
-        promises.push(adminPublishSettingsService.fetchOutputChannels().then(function(items) {
-            $scope.outputChannels = items._items;
-            _.each(items._items, function(item) {
-                $scope.outputChannelLookup[item._id] = item;
-            });
-        }));
-
         function fetchPublishQueue () {
             var criteria = criteria || {};
             criteria.max_results = 200;
             criteria.sort = '[(\'published_seq_num\',-1)]';
 
-            if ($scope.selectedFilterSubscriber !== null && $scope.selectedFilterChannel !== null) {
-                criteria.where = JSON.stringify({
-                        '$and': [
-                            {'output_channel_id': $scope.selectedFilterChannel._id},
-                            {'subscriber_id': $scope.selectedFilterSubscriber._id}
-                        ]
-                    });
-            } else if ($scope.selectedFilterChannel !== null) {
-                criteria.where = {'output_channel_id': $scope.selectedFilterChannel._id};
-            } else if ($scope.selectedFilterSubscriber !== null) {
+            if ($scope.selectedFilterSubscriber !== null) {
                 criteria.where = {'subscriber_id': $scope.selectedFilterSubscriber._id};
             }
 
@@ -247,9 +168,8 @@
         };
 
         $scope.buildNewSchedule = function (item) {
-            var pick_fields = ['item_id', 'publishing_action', 'selector_codes',
-                'formatted_item_id', 'headline', 'content_type',
-                'subscriber_id', 'output_channel_id', 'unique_name', 'destination'];
+            var pick_fields = ['item_id', 'item_version', 'publishing_action', 'formatted_item', 'headline',
+                'content_type', 'subscriber_id', 'unique_name', 'destination'];
 
             var newItem = _.pick(item, pick_fields);
             return newItem;
@@ -284,9 +204,7 @@
         };
 
         $scope.filterSchedule = function(item, type) {
-            if (type === 'channel') {
-                $scope.selectedFilterChannel = item;
-            } else if (type === 'subscriber') {
+            if (type === 'subscriber') {
                 $scope.selectedFilterSubscriber = item;
             }
 
@@ -339,7 +257,6 @@
         };
 
         $scope.cancelSelection = function() {
-            $scope.selectedFilterChannel = null;
             $scope.selectedFilterSubscriber = null;
             $scope.selectedQueueItems = [];
             $scope.multiSelectCount = 0;
@@ -463,257 +380,9 @@
         };
     }
 
-    OutputChannelsDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal', 'privileges'];
-    function OutputChannelsDirective(gettext, notify, api, adminPublishSettingsService, modal, privileges) {
-        return {
-            templateUrl: 'scripts/superdesk-publish/views/output-channels.html',
-            link: function ($scope) {
-                $scope.outputChannel = null;
-                $scope.origOutputChannel = null;
-                $scope.outputChannels = null;
-                $scope.subscribers = null;
-                $scope.subscriberLookup = {};
-                $scope.newSubscriber = {_id: null};
-                $scope.can_update_seq_num_settings = Boolean(privileges.privileges.output_channel_seq_num_settings);
-
-                function fetchOutputChannels() {
-                    adminPublishSettingsService.fetchOutputChannels().then(
-                        function(result) {
-                            $scope.outputChannels = result;
-                        }
-                    );
-                }
-
-                function fetchSubscribers() {
-                    adminPublishSettingsService.fetchSubscribers().then(
-                        function(result) {
-                            $scope.subscribers = result;
-                            _.each(result._items, function(item) {
-                                $scope.subscriberLookup[item._id] = item;
-                            });
-                        }
-                    );
-                }
-
-                function fetchPublishErrors() {
-                    adminPublishSettingsService.fetchPublishErrors().then(function(result) {
-                        $scope.all_errors = result._items[0].all_errors;
-                    });
-                }
-
-                $scope.isIncluded = function(subscriber) {
-                    return $scope.outputChannel.destinations && $scope.outputChannel.destinations.indexOf(subscriber._id) !== -1;
-                };
-
-                $scope.addNewSubscriber = function() {
-                    $scope.newSubscriber._id = true;
-                };
-
-                $scope.saveNewSubscriber = function() {
-                    $scope.outputChannel.destinations = $scope.outputChannel.destinations || [];
-                    $scope.outputChannel.destinations.push($scope.newSubscriber._id);
-                    $scope.newSubscriber._id = null;
-                };
-
-                $scope.cancelNewSubscriber = function() {
-                    $scope.newSubscriber._id = null;
-                };
-
-                $scope.removeSubscriber = function(subscriberId) {
-                    $scope.outputChannel.destinations = _.without($scope.outputChannel.destinations, subscriberId);
-                };
-
-                $scope.save = function() {
-                    api.output_channels.save($scope.origOutputChannel, $scope.outputChannel)
-                        .then(
-                            function() {
-                                notify.success(gettext('Output Channel saved.'));
-                                $scope.cancel();
-                            },
-                            function(response) {
-                                if (angular.isDefined(response.data._issues)) {
-                                    if (angular.isDefined(response.data._message)) {
-                                        notify.error(gettext('Error: ' + response.data._message));
-                                    } else if (angular.isDefined(response.data._issues['validator exception'])) {
-                                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                                    }
-                                } else {
-                                    notify.error(gettext('Error: Failed to save Output Channel.'));
-                                }
-                            }
-                        ).then(fetchOutputChannels);
-                };
-
-                $scope.edit = function(outputChannel) {
-                    $scope.origOutputChannel = outputChannel || {};
-
-                    $scope.outputChannel = _.create($scope.origOutputChannel);
-                    $scope.outputChannel.sequence_num_settings = $scope.origOutputChannel.sequence_num_settings || {};
-                    $scope.outputChannel.critical_errors = $scope.origOutputChannel.critical_errors;
-
-                    if (outputChannel) {
-                        fetchPublishErrors();
-                    }
-                };
-
-                $scope.remove = function(outputChannel) {
-                    modal.confirm(gettext('Are you sure you want to delete output channel?'))
-                    .then(function() {
-                        return api.output_channels.remove(outputChannel);
-                    })
-                    .then(function(result) {
-                        _.remove($scope.outputChannels, outputChannel);
-                    }, function(response) {
-                        if (angular.isDefined(response.data._message)) {
-                            notify.error(gettext('Error: ' + response.data._message));
-                        } else {
-                            notify.error(gettext('There is an error. Output Channel cannot be deleted.'));
-                        }
-                    })
-                    .then(fetchOutputChannels);
-                };
-
-                $scope.cancel = function() {
-                    $scope.origOutputChannel = null;
-                    $scope.outputChannel = null;
-                };
-
-                fetchOutputChannels();
-                fetchSubscribers();
-            }
-        };
-    }
-
-    DestinationGroupsDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
-    function DestinationGroupsDirective(gettext, notify, api, adminPublishSettingsService, modal) {
-        return {
-            templateUrl: 'scripts/superdesk-publish/views/destination-groups.html',
-            link: function ($scope) {
-                $scope.destinationGroups = null;
-                $scope.origDestinationGroup = null;
-                $scope.destinationGroup = null;
-                $scope.selectedDestinationGroups = null;
-                $scope.selectedOutputChannels = null;
-
-                $scope.selectorData = {
-                    add: function(channel, code) {
-                        if (code) {
-                            this.codes[channel] = this.codes[channel] || [];
-                            this.codes[channel].push(code);
-                        }
-                    },
-                    remove: function(channel, code) {
-                        _.remove(this.codes[channel], function(c) {
-                            return c === code;
-                        });
-                    },
-                    codes: null
-                };
-
-                $scope.edit = function(destinationGroup) {
-                    $scope.origDestinationGroup = destinationGroup || {};
-                    $scope.destinationGroup = _.create($scope.origDestinationGroup);
-                    $scope.selectedDestinationGroups = [];
-                    $scope.selectedOutputChannels = [];
-                    $scope.selectorData.codes = {};
-                    var destinationGroupIds = [];
-                    _.each($scope.destinationGroup.destination_groups, function(item) {
-                        destinationGroupIds.push(item);
-                    });
-                    if (destinationGroupIds.length) {
-                        adminPublishSettingsService.fetchDestinationGroupsByIds(destinationGroupIds)
-                        .then(function(result) {
-                            $scope.selectedDestinationGroups = result._items;
-                        });
-                    }
-                    var outputChannelIds = [];
-                    _.each($scope.destinationGroup.output_channels, function(item) {
-                        outputChannelIds.push(item.channel);
-                        $scope.selectorData.codes[item.channel] = item.selector_codes;
-                    });
-                    if (outputChannelIds.length) {
-                        adminPublishSettingsService.fetchOutputChannelsByIds(outputChannelIds)
-                        .then(function(result) {
-                            $scope.selectedOutputChannels = result._items;
-                        });
-                    }
-                };
-
-                $scope.cancel = function() {
-                    $scope.origDestinationGroup = null;
-                    $scope.destinationGroup = null;
-                    $scope.selectedDestinationGroups = null;
-                    $scope.selectedOutputChannels = null;
-                    $scope.selectorData.codes = null;
-                };
-
-                $scope.save = function() {
-                    $scope.destinationGroup.destination_groups = [];
-                    _.each($scope.selectedDestinationGroups, function(group) {
-                        $scope.destinationGroup.destination_groups.push(group._id);
-                    });
-                    $scope.destinationGroup.output_channels = [];
-                    _.each($scope.selectedOutputChannels, function(channel) {
-                        var outputChannel = {
-                            channel: channel._id
-                        };
-                        if ($scope.selectorData.codes[channel._id]) {
-                            outputChannel.selector_codes = $scope.selectorData.codes[channel._id];
-                        }
-                        $scope.destinationGroup.output_channels.push(outputChannel);
-                    });
-                    api.destination_groups.save($scope.origDestinationGroup, $scope.destinationGroup)
-                    .then(function() {
-                        notify.success(gettext('Destination Group saved.'));
-                        $scope.cancel();
-                    }, function(response) {
-                        if (angular.isDefined(response.data._issues) &&
-                                angular.isDefined(response.data._issues['validator exception'])) {
-                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                        } else {
-                            notify.error(gettext('Error: Failed to save Destination Group.'));
-                        }
-                    })
-                    ['finally'](function() {
-                        fetchDestinationGroups();
-                    });
-                };
-
-                $scope.remove = function(destinationGroup) {
-                    modal.confirm(gettext('Are you sure you want to delete destination group?'))
-                    .then(function() {
-                        return api.destination_groups.remove(destinationGroup);
-                    })
-                    .then(function(result) {
-                        _.remove($scope.destinationGroups._items, destinationGroup);
-                    }, function(response) {
-                        if (angular.isDefined(response.data._message)) {
-                            notify.error(gettext('Error: ' + response.data._message));
-                        } else {
-                            notify.error(gettext('There is an error. Destination Group cannot be deleted.'));
-                        }
-                    })
-                    .then(fetchDestinationGroups);
-                };
-
-                function fetchDestinationGroups() {
-                    return adminPublishSettingsService.fetchDestinationGroups()
-                    .then(function(result) {
-                        $scope.destinationGroups = result;
-                        return result;
-                    });
-                }
-
-                fetchDestinationGroups();
-            }
-        };
-    }
-
     app
         .service('adminPublishSettingsService', AdminPublishSettingsService)
         .directive('sdAdminPubSubscribers', SubscribersDirective)
-        .directive('sdAdminPubOutputChannels', OutputChannelsDirective)
-        .directive('sdAdminPubDestinationGroups', DestinationGroupsDirective)
         .directive('sdDestination', DestinationDirective)
         .controller('publishQueueCtrl', PublishQueueController);
 
@@ -725,7 +394,7 @@
                     templateUrl: 'scripts/superdesk-publish/views/settings.html',
                     controller: AdminPublishSettingsController,
                     category: superdesk.MENU_SETTINGS,
-                    privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
+                    privileges: {subscribers: 1},
                     priority: 2000,
                     beta: true
                 })
@@ -741,24 +410,12 @@
                     templateUrl: 'scripts/superdesk-publish/views/data-consistency.html',
                     controller: DataConsistencyController,
                     category: superdesk.MENU_SETTINGS,
-                    privileges: {output_channels: 1, destination_groups: 1, subscribers: 1},
+                    privileges: {subscribers: 1},
                     priority: 2000,
                     beta: true
                 });
         }])
         .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('output_channels', {
-                type: 'http',
-                backend: {
-                    rel: 'output_channels'
-                }
-            });
-            apiProvider.api('destination_groups', {
-                type: 'http',
-                backend: {
-                    rel: 'destination_groups'
-                }
-            });
             apiProvider.api('subscribers', {
                 type: 'http',
                 backend: {

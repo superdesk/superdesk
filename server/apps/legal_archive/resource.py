@@ -15,7 +15,6 @@ from apps.content import metadata_schema
 MONGO_PREFIX = 'LEGAL_ARCHIVE'
 LEGAL_ARCHIVE_NAME = 'legal_archive'
 LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
-LEGAL_FORMATTED_ITEM_NAME = 'legal_formatted_item'
 LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
 
 
@@ -35,11 +34,6 @@ class LegalArchiveResource(LegalResource):
 
 class LegalArchiveVersionsResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
-    resource_title = endpoint_name
-
-
-class LegalFormattedItemResource(LegalResource):
-    endpoint_name = LEGAL_FORMATTED_ITEM_NAME
     resource_title = endpoint_name
 
 

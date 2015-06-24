@@ -29,10 +29,6 @@
             "required" : true,
             "allowed": ["usable"]
         },
-        "destination_groups" : {
-            "type" : "list",
-            "required" : true
-        },
         "slugline" : {
             "type" : "string",
             "required" : true,

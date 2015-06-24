@@ -10,6 +10,7 @@
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
+
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
@@ -25,10 +26,9 @@ class NewsML12Formatter(Formatter):
     now = utcnow()
     string_now = now.strftime('%Y%m%dT%H%M%S+0000')
 
-    def format(self, article, destination, selector_codes=None):
+    def format(self, article, subscriber):
         try:
-
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
             newsml = etree.Element("NewsML")
             SubElement(newsml, "Catalog", {'Href': 'http://www.aap.com.au/xml-res/aap-master-catalog.xml'})
@@ -42,7 +42,7 @@ class NewsML12Formatter(Formatter):
 
             return pub_seq_num, self.XML_ROOT + etree.tostring(newsml).decode('utf-8')
         except Exception as ex:
-            raise FormatterError.newml12FormatterError(ex, destination)
+            raise FormatterError.newml12FormatterError(ex, subscriber)
 
     def _format_news_envelope(self, article, news_envelope, pub_seq_num):
         SubElement(news_envelope, 'TransmissionId').text = str(pub_seq_num)

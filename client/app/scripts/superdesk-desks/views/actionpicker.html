@@ -1,30 +1,20 @@
 <div class="multiple">
 	<div class="field">
 		<label for="desk">Desk</label>
-		<select ng-model="desk" name="desk">
+		<select id="desk" ng-model="desk" name="desk">
 		    <option ng-repeat="d in desks" value="{{d._id}}" ng-selected="d._id === desk">{{d.name}}</option>
 		</select>
 	</div>
 	<div class="field">
 		<label for="stage">Stage</label>
-		<select ng-model="stage" name="stage">
+		<select id="stage" ng-model="stage" name="stage">
 		    <option ng-repeat="s in deskStages[desk]" value="{{s._id}}" ng-selected="s._id === stage">{{s.name}}</option>
 		</select>
 	</div>
 	<div class="field">
 		<label for="macro">Macro</label>
-		<select ng-model="macro" name="macro">
+		<select id="macro" ng-model="macro" name="macro">
 		    <option ng-repeat="m in deskMacros" value="{{m.name}}" ng-selected="m.name === macro">{{m.label}}</option>
 		</select>
-	</div>
-</div>
-<div class="field">
-	<label translate>Destination groups</label>
-    <div sd-search-list
-		data-endpoint="destination_groups"
-		data-label-key="name"
-		data-search-key="name"
-		data-page-size="5"
-		data-selected-items="destinationGroups">
 	</div>
 </div>

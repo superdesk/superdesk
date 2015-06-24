@@ -41,8 +41,10 @@ class FTPPublishTestCase(unittest.TestCase):
             return
 
         config = service.config_from_url(os.environ['FTP_URL'])
+        self.item['destination'] = {'config': config}
+
         self.assertEqual('test', config['path'])
         self.assertEqual('localhost', config['host'])
 
-        service._transmit(self.item, {}, destination={'config': config})
+        service._transmit(self.item, destination={'config': config})
         self.assertTrue(self.is_item_loaded(config, 'abc.ntf'))

@@ -7,14 +7,17 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-import superdesk
+
 import logging
+from datetime import datetime
+
+import superdesk
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
-from datetime import datetime
 import superdesk.publish
 from superdesk.errors import PublishQueueError
 from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
+from superdesk import get_resource_service
 
 logger = logging.getLogger(__name__)
 
@@ -25,76 +28,45 @@ class PublishContent(superdesk.Command):
     """Runs deliveries"""
 
     def run(self, provider_type=None):
-        output_channels = superdesk.get_resource_service('output_channels').get(req=None, lookup={})
-        output_channels = {str(output_channel['_id']): output_channel for output_channel in output_channels}
-
-        for subscriber in superdesk.get_resource_service('subscribers').get(req=None, lookup={}):
-            if subscriber['is_active']:
-                for destination in subscriber.get('destinations', []):
-                    kwargs = {
-                        'subscriber': subscriber,
-                        'destination': destination,
-                        'output_channels': output_channels
-                    }
-
-                    publish.apply_async(
-                        expires=10,
-                        kwargs=kwargs)
+        publish.apply_async(expires=10)
 
 
 @celery.task(soft_time_limit=1800)
-def publish(subscriber, destination, output_channels):
+def publish():
     """
     Fetches items from publish queue as per the configuration,
     calls the transmit function.
     """
 
-    if is_task_running(destination['name'],
-                       subscriber[superdesk.config.ID_FIELD],
-                       UPDATE_SCHEDULE_DEFAULT):
+    if is_task_running("Transmit", "Articles", UPDATE_SCHEDULE_DEFAULT):
         return
 
     try:
-        lookup = {'subscriber_id': subscriber.get('_id'),
-                  'destination.name': destination.get('name'),
-                  'state': 'pending'}
+        lookup = {'state': 'pending'}
+        items = get_resource_service('publish_queue').get(req=None, lookup=lookup)
 
-        items = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
         if items.count() > 0:
-            transmit_items(items, subscriber, destination, output_channels)
+            transmit_items(items)
     finally:
-        mark_task_as_not_running(destination['name'],
-                                 subscriber[superdesk.config.ID_FIELD])
+        mark_task_as_not_running("Transmit", "Articles")
 
 
-def transmit_items(queue_items, subscriber, destination, output_channels):
+def transmit_items(queue_items):
     failed_items = []
 
     for queue_item in queue_items:
-        # Check if output channel is active
-        output_channel = output_channels.get(str(queue_item['output_channel_id']))
-
-        if not output_channel:
-            raise PublishQueueError.output_channel_not_found_error(
-                Exception('Output Channel: {}'.format(queue_item['output_channel_id'])))
-
-        if not output_channel.get('is_active', False):
-            continue
-
         try:
-            if not is_on_time(queue_item, destination):
+            if not is_on_time(queue_item):
                 continue
 
             # update the status of the item to in-progress
             queue_update = {'state': 'in-progress', 'transmit_started_at': utcnow()}
-            superdesk.get_resource_service('publish_queue').patch(queue_item.get('_id'), queue_update)
+            get_resource_service('publish_queue').patch(queue_item.get('_id'), queue_update)
 
-            # get the formatted item
-            formatted_item = superdesk.get_resource_service('formatted_item').\
-                find_one(req=None, _id=queue_item['formatted_item_id'])
+            destination = queue_item['destination']
 
             transmitter = superdesk.publish.transmitters[destination.get('delivery_type')]
-            transmitter.transmit(queue_item, formatted_item, subscriber, destination, output_channel)
+            transmitter.transmit(queue_item)
             update_content_state(queue_item)
         except:
             failed_items.append(queue_item)
@@ -103,39 +75,38 @@ def transmit_items(queue_items, subscriber, destination, output_channels):
         logger.error('Failed to publish the following items: %s', str(failed_items))
 
 
-def is_on_time(queue_item, destination):
+def is_on_time(queue_item):
     """
     Checks if the item is ready to be processed
+
     :param queue_item: item to be checked
     :return: True if the item is ready
     """
+
     try:
         if queue_item.get('publish_schedule'):
             publish_schedule = queue_item['publish_schedule']
             if type(publish_schedule) is not datetime:
-                raise PublishQueueError.bad_schedule_error(Exception("Schedule is not datetime"),
-                                                           destination)
+                raise PublishQueueError.bad_schedule_error(Exception("Schedule is not datetime"), queue_item['_id'])
             return utcnow() >= publish_schedule
+
         return True
     except PublishQueueError:
         raise
     except Exception as ex:
-        raise PublishQueueError.bad_schedule_error(ex, destination)
+        raise PublishQueueError.bad_schedule_error(ex, queue_item['destination'])
 
 
 def update_content_state(queue_item):
     """
-    Updates the state of the content item to published
-    In archive and published repos
-    :param queue_item:
-    :return:
+    Updates the state of the content item to published, in archive and published collections.
     """
+
     if queue_item.get('publish_schedule'):
         try:
             item_update = {'state': 'published'}
-            superdesk.get_resource_service('archive').patch(queue_item['item_id'], item_update)
-            superdesk.get_resource_service('published').\
-                update_published_items(queue_item['item_id'], 'state', 'published')
+            get_resource_service('archive').patch(queue_item['item_id'], item_update)
+            get_resource_service('published').update_published_items(queue_item['item_id'], 'state', 'published')
         except Exception as ex:
             raise PublishQueueError.content_update_error(ex)
 

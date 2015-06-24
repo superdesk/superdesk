@@ -1212,8 +1212,7 @@
                 scope: {
                     desk: '=',
                     stage: '=',
-                    macro: '=',
-                    destinationGroups: '='
+                    macro: '='
                 },
                 templateUrl: 'scripts/superdesk-desks/views/actionpicker.html',
                 link: function(scope, elem, attrs) {

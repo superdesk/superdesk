@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'adminPublishSettingsService', 'datetimeHelper'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges, adminPublishSettingsService, datetimeHelper) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'datetimeHelper'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelper) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;

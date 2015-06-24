@@ -30,10 +30,6 @@ class ContentTemplatesResource(Resource):
             'default': 'create',
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', True)
-        },
     }
 
     schema.update(metadata_schema)

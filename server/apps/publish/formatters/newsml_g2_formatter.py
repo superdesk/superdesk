@@ -10,6 +10,7 @@
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
+
 from apps.publish.formatters import Formatter
 from superdesk.utc import utcnow
 import superdesk
@@ -29,12 +30,12 @@ class NewsMLG2Formatter(Formatter):
     _debug_message_extra = {'xsi:schemaLocation': 'http://iptc.org/std/nar/2006-10-01/ \
     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd'}
 
-    def format(self, article, destination, selector_codes=None):
+    def format(self, article, subscriber):
         try:
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
             nitfFormater = NITFFormatter()
-            nitf = nitfFormater.get_nitf(article, destination, pub_seq_num)
+            nitf = nitfFormater.get_nitf(article, subscriber, pub_seq_num)
 
             self._message_attrib.update(self._debug_message_extra)
             newsMessage = etree.Element('newsMessage', attrib=self._message_attrib)
@@ -45,7 +46,7 @@ class NewsMLG2Formatter(Formatter):
 
             return pub_seq_num, self.XML_ROOT + etree.tostring(newsMessage).decode('utf-8')
         except Exception as ex:
-            raise FormatterError.newmsmlG2FormatterError(ex, destination)
+            raise FormatterError.newmsmlG2FormatterError(ex, subscriber)
 
     def _format_header(self, article, newsMessage, pub_seq_num):
         header = SubElement(newsMessage, 'header')

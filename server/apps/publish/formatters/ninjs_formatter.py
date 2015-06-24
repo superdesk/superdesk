@@ -10,10 +10,11 @@
 
 import json
 
+from bson import json_util
+
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
-from bson import json_util
 
 
 class NINJSFormatter(Formatter):
@@ -24,14 +25,11 @@ class NINJSFormatter(Formatter):
                               'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located',
                               '_created', '_updated']
 
-    def format(self, article, destination, selector_codes=None):
+    def format(self, article, subscriber):
         try:
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            ninjs = {}
-            ninjs['_id'] = article['_id']
-            ninjs['version'] = str(article['version'])
-            ninjs['type'] = self._get_type(article)
+            ninjs = {'_id': article['_id'], 'version': str(article['version']), 'type': self._get_type(article)}
             try:
                 ninjs['byline'] = self._get_byline(article)
             except:
@@ -44,7 +42,7 @@ class NINJSFormatter(Formatter):
 
             return pub_seq_num, json.dumps(ninjs, default=json_util.default)
         except Exception as ex:
-            raise FormatterError.ninjsFormatterError(ex, destination)
+            raise FormatterError.ninjsFormatterError(ex, subscriber)
 
     def can_format(self, format_type, article_type):
         return format_type == 'ninjs'

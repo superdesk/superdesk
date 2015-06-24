@@ -178,7 +178,7 @@
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['userList', 'adminPublishSettingsService', function(userList, adminPublishSettingsService) {
+        .directive('sdMediaMetadata', ['userList', function(userList) {
             return {
                 scope: {
                     item: '='
@@ -191,7 +191,6 @@
                     function reloadData() {
                         scope.originalCreator = null;
                         scope.versionCreator = null;
-                        scope.destinationGroups = null;
 
                         if (scope.item.original_creator) {
                             userList.getUser(scope.item.original_creator)
@@ -203,12 +202,6 @@
                             userList.getUser(scope.item.version_creator)
                             .then(function(user) {
                                 scope.versionCreator = user.display_name;
-                            });
-                        }
-                        if (scope.item.destination_groups) {
-                            adminPublishSettingsService.fetchDestinationGroupsByIds(scope.item.destination_groups)
-                            .then(function(result) {
-                                scope.destinationGroups = result._items;
                             });
                         }
                     }

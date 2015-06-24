@@ -9,14 +9,13 @@
         </label>
         <ul class="pills-list clearfix">
             <li class="pull-left" ng-repeat="fetchAction in rule.actions.fetch">
-                <div>{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}} / {{macroLookup[fetchAction.macro].label}} / {{fetchAction.destination_groups.length}} {{'destination groups'|translate}}</div>
+                <div>{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}} / {{macroLookup[fetchAction.macro].label}} </div>
                 <div class="actions">
                     <button ng-click="removeFetch(fetchAction)" title="{{:: 'Remove fetch action' | translate }}"><i class="icon-trash"></i></button>
                 </div>
             </li>
         </ul>
-        <div ng-show="showNewFetch" sd-action-picker data-desk="newFetch.desk" data-stage="newFetch.stage" data-macro="newFetch.macro" data-destination-groups="newFetch.destination_groups"
-        class="split"></div>
+        <div ng-show="showNewFetch" sd-action-picker data-desk="newFetch.desk" data-stage="newFetch.stage" data-macro="newFetch.macro" class="split"></div>
         <button ng-show="showNewFetch" class="btn" ng-click="addFetch();showNewFetch = false" ng-disabled="!newFetch.desk || !newFetch.stage" translate>Add</button>
         <button ng-show="showNewFetch" class="btn" ng-click="showNewFetch = false" translate>Cancel</button>
     </div>
@@ -30,14 +29,14 @@
         </label>
         <ul class="pills-list clearfix">
             <li class="pill-small pull-left" ng-repeat="publishAction in rule.actions.publish">
-                <div>{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}} / {{macroLookup[publishAction.macro].label}} / {{publishAction.destination_groups.length}} {{'destination groups'|translate}}</div>
+                <div>{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}} / {{macroLookup[publishAction.macro].label}} </div>
                 <div class="actions">
                     <button ng-click="removePublish(publishAction)" title="{{:: 'Remove publish action' | translate }}"><i class="icon-trash"></i></button>
                 </div>
             </li>
         </ul>
-        <div ng-show="showNewPublish" sd-action-picker data-desk="newPublish.desk" data-stage="newPublish.stage" data-macro="newPublish.macro" data-destination-groups="newPublish.destination_groups" class="split"></div>
-        <button ng-show="showNewPublish" class="btn" ng-click="addPublish();showNewPublish = false" ng-disabled="!newPublish.desk || !newPublish.stage || !newPublish.destination_groups" translate>Add</button>
+        <div ng-show="showNewPublish" sd-action-picker data-desk="newPublish.desk" data-stage="newPublish.stage" data-macro="newPublish.macro" class="split"></div>
+        <button ng-show="showNewPublish" class="btn" ng-click="addPublish();showNewPublish = false" ng-disabled="!newPublish.desk || !newPublish.stage" translate>Add</button>
         <button ng-show="showNewPublish" class="btn" ng-click="showNewPublish = false" translate>Cancel</button>
     </div>
 

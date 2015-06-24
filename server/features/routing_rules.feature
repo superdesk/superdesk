@@ -13,14 +13,6 @@ Feature: Routing Scheme and Routing Rules
       """
       {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
       """
-      And we post to "/destination_groups" with "dest_groups1" and success
-      """
-      {"name": "destination1", "description": "description 1"}
-      """
-      And we post to "/destination_groups" with "dest_groups2" and success
-      """
-      {"name": "destination2", "description": "description 2"}
-      """
       And we post to "/routing_schemes"
       """
       [
@@ -36,11 +28,7 @@ Feature: Routing Scheme and Routing Rules
                 "fetch": [
                             {"desk": "#desks._id#",
                               "stage": "#desks.incoming_stage#",
-                              "macro": "transform",
-                              "destination_groups":[
-                                "#dest_groups1#",
-                                "#dest_groups2#"
-                              ]}]
+                              "macro": "transform"}]
               }
             }
           ]

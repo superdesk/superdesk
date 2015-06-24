@@ -21,14 +21,12 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import SERVER_DOMAIN
 from superdesk import get_resource_service
-from superdesk.resource import Resource
 from apps.content import metadata_schema
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
-
 
 GUID_TAG = 'tag'
 GUID_FIELD = 'guid'
@@ -334,10 +332,6 @@ def item_schema(extra=None):
             'type': 'number',
         },
         'task': {'type': 'dict'},
-        'destination_groups': {
-            'type': 'list',
-            'schema': Resource.rel('destination_groups', embeddable=True, nullable=True)
-        },
         'publish_schedule': {
             'type': 'datetime',
             'nullable': True

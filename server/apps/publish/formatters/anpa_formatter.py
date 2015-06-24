@@ -16,25 +16,19 @@ import datetime
 
 
 class AAPAnpaFormatter(Formatter):
-    def format(self, article, output_channel, selector_codes=None):
+    def format(self, article, subscriber):
         try:
-
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(output_channel)
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
             anpa = []
-
-            # Selector code specific optional
-            if selector_codes and len(selector_codes) > 0:
-                anpa.append(b'\x05')
-                sel_codes = selector_codes[output_channel['_id']]
-                anpa.append(' '.join(sel_codes).lower().encode('ascii'))
-                anpa.append(b'\x0D\x0A')
 
             # start of message header (syn syn soh)
             anpa.append(b'\x16\x16\x01')
             anpa.append(article.get('service_level', 'a').lower().encode('ascii'))
+
             # story number
             anpa.append(str(pub_seq_num).zfill(4).encode('ascii'))
+
             # field seperator
             anpa.append(b'\x0A')  # -LF
             anpa.append(article.get('priority', 'r').encode('ascii'))
@@ -113,7 +107,7 @@ class AAPAnpaFormatter(Formatter):
 
             return pub_seq_num, b''.join(anpa)
         except Exception as ex:
-            raise FormatterError.AnpaFormatterError(ex, output_channel)
+            raise FormatterError.AnpaFormatterError(ex, subscriber)
 
     def can_format(self, format_type, article_type):
         return format_type == 'AAP ANPA' and article_type in ['text', 'preformatted']

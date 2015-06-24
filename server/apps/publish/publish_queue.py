@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+
 from superdesk import get_resource_service
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
@@ -20,36 +21,21 @@ logger = logging.getLogger(__name__)
 class PublishQueueResource(Resource):
     schema = {
         'item_id': Resource.rel('archive', type='string'),
-        'formatted_item_id': Resource.rel('formatted_item'),
-        'transmit_started_at': {
-            'type': 'datetime'
-        },
-        'completed_at': {
-            'type': 'datetime'
-        },
-        'state': {
-            'type': 'string',
-            'allowed': ['pending', 'in-progress', 'success', 'canceled', 'error'],
-            'nullable': False
-        },
-        'output_channel_id': Resource.rel('output_channels'),
+        'item_version': {'type': 'string', 'nullable': False},
+
+        'formatted_item': {'type': 'string', 'nullable': False},
         'subscriber_id': Resource.rel('subscribers'),
         'destination': {
             'type': 'dict',
             'schema': {
-                'name': {'type': 'string'},
-                'delivery_type': {'type': 'string'},
+                'name': {'type': 'string', 'required': True, 'empty': False},
+                'format': {'type': 'string', 'required': True},
+                'delivery_type': {'type': 'string', 'required': True},
                 'config': {'type': 'dict'}
             }
         },
         'published_seq_num': {
             'type': 'integer'
-        },
-        'selector_codes': {
-            'type': 'list'
-        },
-        'error_message': {
-            'type': 'string'
         },
         'publish_schedule': {
             'type': 'datetime'
@@ -64,6 +50,21 @@ class PublishQueueResource(Resource):
             'type': 'string'
         },
         'headline': {
+            'type': 'string'
+        },
+
+        'transmit_started_at': {
+            'type': 'datetime'
+        },
+        'completed_at': {
+            'type': 'datetime'
+        },
+        'state': {
+            'type': 'string',
+            'allowed': ['pending', 'in-progress', 'success', 'canceled', 'error'],
+            'nullable': False
+        },
+        'error_message': {
             'type': 'string'
         }
     }
@@ -80,14 +81,14 @@ class PublishQueueResource(Resource):
 class PublishQueueService(BaseService):
 
     def on_create(self, docs):
-        output_channel_service = get_resource_service('output_channels')
+        subscriber_service = get_resource_service('subscribers')
 
         for doc in docs:
             doc['state'] = 'pending'
 
             if 'published_seq_num' not in doc:
-                output_channel = output_channel_service.find_one(req=None, _id=doc['output_channel_id'])
-                doc['published_seq_num'] = output_channel_service.generate_sequence_number(output_channel)
+                subscriber = subscriber_service.find_one(req=None, _id=doc['subscriber_id'])
+                doc['published_seq_num'] = subscriber_service.generate_sequence_number(subscriber)
 
     def on_updated(self, updates, original):
         if updates.get('state', '') != original.get('state', ''):

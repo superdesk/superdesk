@@ -10,8 +10,6 @@
 
 from superdesk.publish import register_transmitter
 from superdesk.publish.publish_service import PublishService
-from superdesk.errors import PublishODBCError
-from superdesk import get_resource_service
 from superdesk.utc import utc
 from superdesk.errors import PublishODBCError
 import superdesk
@@ -31,33 +29,29 @@ class ODBCPublishService(PublishService):
     ODBCPublishService
     """
 
-    def _transmit(self, formatted_item, subscriber, output_channel):
-        """ Transmit the given formatted item to the configured ODBC output, configuration consists of the connection
-         string and the name of a stored procedure
-        :param formatted_item:
-        :param subscriber:
-        :param output_channel:
-        :return:
+    def _transmit(self, queue_item, subscriber):
         """
+        Transmit the given formatted item to the configured ODBC output. Configuration must have connection string
+        and the name of a stored procedure.
+        """
+
         if not superdesk.app.config['ODBC_PUBLISH'] or not pyodbc_available:
             raise PublishODBCError()
 
-        config = output_channel.get('config', {})
+        config = queue_item.get('destination', {}).get('config', {})
 
         try:
             with pyodbc.connect(config['connection_string']) as conn:
-                item = formatted_item['formatted_item']
+                item = queue_item['formatted_item']
 
-                q_item = get_resource_service('publish_queue').find_one(req=None,
-                                                                        formatted_item_id=formatted_item['_id'])
-                item['publish_date'] = q_item['_created'].replace(tzinfo=utc).astimezone(tz=None).strftime(
+                item['publish_date'] = queue_item['_created'].replace(tzinfo=utc).astimezone(tz=None).strftime(
                     '%Y-%m-%d %H:%M:%S.%f')[:-3]
 
                 ret = self._CallStoredProc(conn, procName=config['stored_procedure'], paramDict=item)
                 conn.commit()
             return ret
         except Exception as ex:
-            raise PublishODBCError.odbcError(ex, output_channel)
+            raise PublishODBCError.odbcError(ex, config)
 
     def _CallStoredProc(self, conn, procName, paramDict):
         params = ''

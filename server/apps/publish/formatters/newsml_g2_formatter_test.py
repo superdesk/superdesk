@@ -70,7 +70,7 @@ class NewsMLG2FormatterTest(TestCase):
 
     def testFomatter(self):
         with self.app.app_context():
-            seq, doc = self.formatter.format(self.article, {'name': 'OC1'}, None)
+            seq, doc = self.formatter.format(self.article, {'name': 'Test Subscriber'})
             xml = etree.fromstring(doc)
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}sender').text,
@@ -100,7 +100,7 @@ class NewsMLG2FormatterTest(TestCase):
         with self.app.app_context():
             article = dict(self.article)
             article['type'] = 'preformatted'
-            seq, doc = self.formatter.format(article, {'name': 'OC1'}, None)
+            seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})
             xml = etree.fromstring(doc)
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
@@ -111,7 +111,7 @@ class NewsMLG2FormatterTest(TestCase):
         with self.app.app_context():
             article = dict(self.article)
             article['source'] = 'BOGUS'
-            seq, doc = self.formatter.format(article, {'name': 'OC1'}, None)
+            seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})
             xml = etree.fromstring(doc)
             self.assertEquals(xml.find(
                 '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +

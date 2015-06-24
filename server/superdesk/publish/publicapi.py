@@ -10,7 +10,7 @@
 
 import json
 
-from apps.content import ITEM_TYPE_COMPOSITE
+from apps.content import ITEM_TYPE, ITEM_TYPE_COMPOSITE
 from superdesk import get_resource_service
 from superdesk.errors import PublishPublicAPIError
 from superdesk.publish import register_transmitter
@@ -24,21 +24,26 @@ errors = [PublishPublicAPIError.publicAPIError().get_error_description()]
 class PublicAPIPublishService(PublishService):
     """Public API Publish Service."""
 
-    def _transmit(self, formatted_item, subscriber, destination):
-        item = json.loads(formatted_item['formatted_item'])
+    def _transmit(self, queue_item, subscriber):
+        config = queue_item.get('destination', {}).get('config', {})
+
+        item = json.loads(queue_item['formatted_item'])
         self._fix_dates(item)
-        if item['type'] == ITEM_TYPE_COMPOSITE:
-            publicapiService = get_resource_service('publish_packages')
+
+        if item[ITEM_TYPE] == ITEM_TYPE_COMPOSITE:
+            public_api_service = get_resource_service('publish_packages')
         else:
-            publicapiService = get_resource_service('publish_items')
+            public_api_service = get_resource_service('publish_items')
+
         try:
-            public_item = publicapiService.find_one(req=None, _id=item['_id'])
+            public_item = public_api_service.find_one(req=None, _id=item['_id'])
+
             if public_item:
-                publicapiService.patch(item['_id'], item)
+                public_api_service.patch(item['_id'], item)
             else:
-                publicapiService.post([item])
+                public_api_service.post([item])
         except Exception as ex:
-            raise PublishPublicAPIError.publicAPIError(ex, destination)
+            raise PublishPublicAPIError.publicAPIError(ex, config)
 
     def _fix_dates(self, item):
         for field, value in item.items():

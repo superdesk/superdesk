@@ -3,57 +3,23 @@ Feature: Publish Queue
   @auth
   Scenario: Add a new transmission entry to the queue
     Given empty "archive"
-    Given empty "formatted_item"
-    Given empty "output_channels"
-    Given empty "subscribers"
+    And empty "subscribers"
     When we post to "/archive"
     """
     [{"headline": "test"}]
     """
-    And we post to "/formatted_item"
+    And we post to "/subscribers" with success
     """
     {
-      "item_id":"#archive._id#","item_version":"2","formatted_item":"This is the formatted item","format":"nitf"
+      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+      "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """
-    Then we get latest
+    And we post to "/publish_queue" with success
     """
     {
-      "format":"nitf"
-    }
-    """
-    When we post to "/subscribers"
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    Then we get latest
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    When we post to "/output_channels"
-    """
-    [
-      {
-        "name":"Output Channel", "description": "new stuff",
-        "destinations": ["#subscribers._id#"]
-      }
-    ]
-    """
-    Then we get latest
-    """
-    {
-      "name":"Output Channel"
-    }
-    """
-
-    When we post to "/publish_queue" with success
-    """
-    {
-       "item_id":"#archive._id#","publish_schedule": "2016-05-30T10:00:00+00:00", "formatted_item_id":"#formatted_item._id#","output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2","delivery_type":"Email","config":{"password":"abc"}}
+       "item_id":"#archive._id#","publish_schedule": "2016-05-30T10:00:00+00:00", "subscriber_id":"#subscribers._id#",
+       "destination":{"name":"Test","format": "nitf","delivery_type":"email","config":{"recipients":"test@test.com"}}
     }
     """
     And we get "/publish_queue"
@@ -62,7 +28,7 @@ Feature: Publish Queue
     {
       "_items":
         [
-          {"destination":{"name":"destination2"}}
+          {"destination":{"name":"Test"}}
         ]
     }
     """
@@ -70,57 +36,23 @@ Feature: Publish Queue
   @auth
   Scenario: Patch a transmission entry
     Given empty "archive"
-    Given empty "formatted_item"
-    Given empty "output_channels"
-    Given empty "subscribers"
+    And empty "subscribers"
     When we post to "/archive"
     """
     [{"headline": "test"}]
     """
-    And we post to "/formatted_item"
+    And we post to "/subscribers" with success
     """
     {
-      "item_id":"#archive._id#","item_version":"2","formatted_item":"This is the formatted item","format":"nitf"
+      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+      "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """
-    Then we get latest
+    And we post to "/publish_queue" with success
     """
     {
-      "format":"nitf"
-    }
-    """
-    When we post to "/subscribers"
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    Then we get latest
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    When we post to "/output_channels"
-    """
-    [
-      {
-        "name":"Output Channel", "description": "new stuff",
-        "destinations": ["#subscribers._id#"]
-      }
-    ]
-    """
-    Then we get latest
-    """
-    {
-      "name":"Output Channel"
-    }
-    """
-
-    When we post to "/publish_queue" with success
-    """
-    {
-      "item_id":"#archive._id#","formatted_item_id":"#formatted_item._id#","output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2","delivery_type":"Email","config":{"password":"abc"}}
+      "item_id":"#archive._id#","subscriber_id":"#subscribers._id#",
+      "destination":{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
     }
     """
     And we get "/publish_queue"
@@ -156,31 +88,20 @@ Feature: Publish Queue
       """
       [{"_id": "publish", "schema":{}}]
       """
-      Given "desks"
+      And "desks"
       """
       [{"name": "Sports"}]
       """
       When we post to "/subscribers" with success
       """
-      [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
-        "name" : "Email Subscriber", "is_active" : true
-      }]
-      """
-      And we post to "/output_channels" with "channel1" and success
-      """
-      [{"name":"Group 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
-      """
-      And we post to "/destination_groups" with "destgroup1" and success
-      """
-      [{
-        "name":"Group 1", "description": "new stuff",
-        "destination_groups": [],
-        "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}]
-      }]
+      {
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
       """
       And we post to "/archive" with success
       """
-      [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched", "destination_groups":["#destgroup1#"],
+      [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       And we post to "/stages" with success
@@ -200,59 +121,23 @@ Feature: Publish Queue
   @auth @notification
   Scenario: Creating a new publish queue entry should add published sequence number
     Given empty "archive"
-    Given empty "formatted_item"
-    Given empty "output_channels"
-    Given empty "subscribers"
+    And empty "subscribers"
     When we post to "/archive"
     """
     [{"headline": "test"}]
     """
-    And we post to "/formatted_item"
+    When we post to "/subscribers" with success
     """
     {
-      "item_id":"#archive._id#","item_version":"2","formatted_item":"This is the formatted item","format":"nitf"
+      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+      "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """
-    Then we get latest
+    And we post to "/publish_queue"
     """
     {
-      "format":"nitf"
-    }
-    """
-    When we post to "/subscribers"
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    Then we get latest
-    """
-    {
-      "name":"Channel 3"
-    }
-    """
-    When we post to "/output_channels"
-    """
-    [
-      {
-        "name":"Output Channel", "description": "new stuff",
-        "destinations": ["#subscribers._id#"]
-      }
-    ]
-    """
-    Then we get latest
-    """
-    {
-      "name":"Output Channel"
-    }
-    """
-
-    When we post to "/publish_queue"
-    """
-    {
-       "item_id":"#archive._id#","publish_schedule": "2016-05-30T10:00:00+00:00", "formatted_item_id":"#formatted_item._id#",
-       "output_channel_id":"#output_channels._id#","subscriber_id":"#subscribers._id#","destination":{"name":"destination2",
-       "delivery_type":"Email","config":{"password":"abc"}}
+       "item_id":"#archive._id#","publish_schedule": "2016-05-30T10:00:00+00:00", "subscriber_id":"#subscribers._id#",
+       "destination":{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
     }
     """
     Then we get "published_seq_num" in "/publish_queue/#archive._id#"

@@ -446,10 +446,8 @@ class PublishQueueError(SuperdeskPublishError):
     _codes = {
         9001: 'Item could not be updated in the queue',
         9002: 'Item format could not be recognized',
-        9003: 'Destination group cannot be found',
         9004: 'Schedule information could not be processed',
         9005: 'State of the content item could not be updated',
-        9006: 'Output channel cannot be found',
         9007: 'Previous take is either not published or killed',
         9008: 'A post-publish action has happened on item',
         9009: 'Item could not be queued'
@@ -464,20 +462,12 @@ class PublishQueueError(SuperdeskPublishError):
         return PublishQueueError(9002, exception, destination)
 
     @classmethod
-    def destination_group_not_found_error(cls, exception=None, destination=None):
-        return PublishQueueError(9003, exception, destination)
-
-    @classmethod
     def bad_schedule_error(cls, exception=None, destination=None):
         return PublishQueueError(9004, exception, destination)
 
     @classmethod
     def content_update_error(cls, exception=None, destination=None):
         return PublishQueueError(9005, exception, destination)
-
-    @classmethod
-    def output_channel_not_found_error(cls, exception=None, destination=None):
-        return PublishQueueError(9006, exception, destination)
 
     @classmethod
     def previous_take_not_published_error(cls, exception=None, destination=None):
@@ -490,6 +480,10 @@ class PublishQueueError(SuperdeskPublishError):
     @classmethod
     def item_not_queued_error(cls, exception=None, destination=None):
         return PublishQueueError(9009, exception, destination)
+
+    @classmethod
+    def article_not_found_error(cls, exception=None, destination=None):
+        return PublishQueueError(9010, exception, destination)
 
 
 class PublishFtpError(SuperdeskPublishError):

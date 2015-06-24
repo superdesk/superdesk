@@ -10,7 +10,6 @@ function ContentCtrlFactory(api, superdesk, templates, desks) {
             'body_html',
             'byline',
             'dateline',
-            'destination_groups',
             'headline',
             'language',
             'more_coming',

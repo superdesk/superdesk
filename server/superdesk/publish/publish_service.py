@@ -7,9 +7,11 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
 import logging
 import superdesk
 
+from superdesk import get_resource_service, config
 from superdesk.utc import utcnow
 from superdesk.errors import SubscriberError, SuperdeskPublishError, PublishQueueError
 
@@ -20,42 +22,40 @@ logger = logging.getLogger(__name__)
 class PublishService():
     """Base publish service class."""
 
-    def _transmit(self, formatted_item, subscriber, destination):
+    def _transmit(self, queue_item, subscriber):
         raise NotImplementedError()
 
-    def transmit(self, queue_item, formatted_item, subscriber, destination, output_channel):
+    def transmit(self, queue_item):
+        subscriber = get_resource_service('subscribers').find_one(req=None, _id=queue_item['subscriber_id'])
+
         if not subscriber.get('is_active'):
             raise SubscriberError.subscriber_inactive_error(Exception('Subscriber inactive'), subscriber)
         else:
             try:
-                self._transmit(formatted_item, subscriber, destination) or []
+                self._transmit(queue_item, subscriber) or []
                 update_item_status(queue_item, 'success')
             except SuperdeskPublishError as error:
                 update_item_status(queue_item, 'error', error)
-                self.close_transmitter(output_channel, 'output_channels', error)
-                self.close_transmitter(subscriber, 'subscribers', error)
+                self.close_transmitter(subscriber, error)
                 raise error
 
-    def close_transmitter(self, transmitter, transmitter_type, error):
+    def close_transmitter(self, subscriber, error):
         """
-        Checks if the transmitter has the error code set in the list of
-        critical errors then closes the transmitter
-        :param transmitter: Either an output channel or a subscriber
-        :param transmitter_type: Name of the resource 'output_channels or subscribers
+        Checks if the transmitter has the error code set in the list of critical errors then closes the transmitter.
+
         :param error: The error thrown during transmission
-        :return: None
         """
-        if transmitter.get('critical_errors', {}).get(str(error.code)):
+
+        if subscriber.get('critical_errors', {}).get(str(error.code)):
             update = {
                 'is_active': False,
                 'last_closed': {
                     'closed_at': utcnow(),
-                    'message': '{} closed due to critical error: {}'.format(transmitter_type, error)
+                    'message': 'Subscriber made inactive due to critical error: {}'.format(error)
                 }
             }
 
-            transmitter_service = superdesk.get_resource_service(transmitter_type)
-            transmitter_service.system_update(transmitter[superdesk.config.ID_FIELD], update, transmitter)
+            get_resource_service('subscribers').system_update(subscriber[config.ID_FIELD], update, subscriber)
 
 
 def update_item_status(queue_item, status, error=None):
@@ -73,9 +73,9 @@ def update_item_status(queue_item, status, error=None):
         raise PublishQueueError.item_update_error(ex)
 
 
-def get_file_extension(formatted_item):
+def get_file_extension(queue_item):
     try:
-        format = formatted_item['format'].upper()
+        format = queue_item['destination']['format'].upper()
         if format == 'NITF':
             return 'ntf'
         if format == 'XML':

@@ -9,10 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from superdesk import Service, get_resource_privileges
-from flask import g
-from superdesk.errors import SuperdeskApiError
 
+from flask import g
+
+from superdesk import Service, get_resource_privileges
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +39,6 @@ class LegalArchiveService(LegalService):
 
 
 class LegalPublishQueueService(LegalService):
-    pass
-
-
-class LegalFormattedItemService(LegalService):
     pass
 
 

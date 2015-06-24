@@ -179,34 +179,19 @@ Feature: Link content in takes
         """
         [{"_id": "publish", "schema":{}}]
         """
-    	Given empty "ingest"
+    	And empty "ingest"
     	And "desks"
         """
         [{"name": "Sports"}]
         """
         When we post to "/subscribers" with success
         """
-        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
-          "name" : "Email Subscriber", "is_active" : true
-        }]
+        {
+          "name":"News1","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+          "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+        }
         """
-        And we post to "/output_channels" with "channel1" and success
-        """
-        [{"name":"Channel 1", "is_digital": true, "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
-        """
-        And we post to "/output_channels" with "channel2" and success
-        """
-        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
-        """
-        And we post to "/destination_groups" with "destgroup1" and success
-        """
-        [{
-          "name":"Group 1", "description": "new stuff",
-          "destination_groups": [],
-          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
-        }]
-        """
-    	When we post to "archive" with success
+    	And we post to "archive" with success
         """
         [{
             "guid": "123",
@@ -221,7 +206,6 @@ Feature: Link content in takes
             "slugline": "Take-1 slugline",
             "urgency": "4",
             "pubstatus": "usable",
-            "destination_groups":["#destgroup1#"],
             "subject":[{"qcode": "17004000", "name": "Statistics"}],
             "anpa-category": {"qcode": "A", "name": "Sport"},
             "anpa_take_key": "Take"
@@ -545,34 +529,19 @@ Feature: Link content in takes
         """
         [{"_id": "publish", "schema":{}}, {"_id": "kill", "schema":{}}]
         """
-    	Given empty "ingest"
+    	And empty "ingest"
     	And "desks"
         """
         [{"name": "Sports"}]
         """
         When we post to "/subscribers" with success
         """
-        [{"destinations" : [{"delivery_type" : "email", "name" : "Self_EMail", "config" : {"recipients" : "test@test.org"}}],
-          "name" : "Email Subscriber", "is_active" : true
-        }]
+        {
+          "name":"News1","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+          "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+        }
         """
-        And we post to "/output_channels" with "channel1" and success
-        """
-        [{"name":"Channel 1", "is_digital": true, "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"]}]
-        """
-        And we post to "/output_channels" with "channel2" and success
-        """
-        [{"name":"Channel 2", "description": "new stuff", "format": "nitf", "destinations": ["#subscribers._id#"], "is_active": false}]
-        """
-        And we post to "/destination_groups" with "destgroup1" and success
-        """
-        [{
-          "name":"Group 1", "description": "new stuff",
-          "destination_groups": [],
-          "output_channels": [{"channel":"#channel1#", "selector_codes": ["PXX", "XYZ"]}, {"channel":"#channel2#", "selector_codes": []}]
-        }]
-        """
-    	When we post to "archive" with success
+    	And we post to "archive" with success
         """
         [{
             "guid": "123",
@@ -587,7 +556,6 @@ Feature: Link content in takes
             "slugline": "comics",
             "urgency": "4",
             "pubstatus": "usable",
-            "destination_groups":["#destgroup1#"],
             "subject":[{"qcode": "17004000", "name": "Statistics"}],
             "anpa-category": {"qcode": "A", "name": "Sport"},
             "anpa_take_key": "Take"

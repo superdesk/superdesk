@@ -19,7 +19,6 @@ from apps.publish import init_app
 
 class PublishContentTests(TestCase):
     queue_items = [{"_id": 1,
-                    "output_channel_id": 1,
                     "destination": {
                         "delivery_type": "ftp",
                         "config": {},
@@ -34,7 +33,6 @@ class PublishContentTests(TestCase):
                     },
                    {
                        "_id": 2,
-                       "output_channel_id": 1,
                        "destination": {
                            "delivery_type": "ftp",
                            "config": {},
@@ -49,7 +47,6 @@ class PublishContentTests(TestCase):
                        "publish_schedule": utcnow() + timedelta(minutes=10)},
                    {
                        "_id": 3,
-                       "output_channel_id": 1,
                        "destination": {
                            "delivery_type": "ftp",
                            "config": {},
@@ -69,7 +66,6 @@ class PublishContentTests(TestCase):
                  'last_version': 3,
                  '_etag': '821739912837',
                  'body_html': 'Test body of the second article',
-                 'destination_groups': [4],
                  'urgency': 4,
                  'headline': 'Another two students missing',
                  'pubstatus': 'usable',
@@ -94,7 +90,6 @@ class PublishContentTests(TestCase):
                   '_etag': 821739912837,
                   'last_version': 3,
                   'body_html': 'Test body of the second article',
-                  'destination_groups': [4],
                   'urgency': 4,
                   'headline': 'Another two students missing',
                   'pubstatus': 'usable',
@@ -119,11 +114,11 @@ class PublishContentTests(TestCase):
             init_app(self.app)
 
     def test_scheduled_items(self):
-        self.assertTrue(is_on_time(self.queue_items[0], None))
-        self.assertFalse(is_on_time(self.queue_items[1], None))
+        self.assertTrue(is_on_time(self.queue_items[0]))
+        self.assertFalse(is_on_time(self.queue_items[1]))
         with self.app.app_context():
             with assert_raises(PublishQueueError):
-                self.assertTrue(is_on_time(self.queue_items[2], None))
+                self.assertTrue(is_on_time(self.queue_items[2]))
 
     def test_update_content_state(self):
         with self.app.app_context():
