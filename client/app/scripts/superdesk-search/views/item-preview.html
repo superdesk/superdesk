@@ -1,0 +1,23 @@
+<div class="preview-pane content-item-preview" ng-if="item">
+    <header>
+        <ul class="nav nav-tabs">
+            <li ng-class="{active: tab === 'content'}">
+                <button ng-click="tab = 'content'"><span translate>Content</span></button>
+            </li>
+            <li ng-class="{active: tab === 'metadata'}">
+                <button ng-click="tab = 'metadata'"><span translate>Metadata</span></button>
+            </li>
+            <li ng-class="{active: tab === 'related'}">
+                <button ng-click="tab = 'related'"><span translate>Related Items</span></button>
+            </li>
+        </ul>
+        <button ng-click="close()" class="close-preview">
+            <i class="icon-close-small"></i>
+        </button>
+    </header>
+    <div class="content">
+        <div ng-if="tab === 'content'" sd-media-preview data-item="item"></div>
+        <div ng-if="tab === 'metadata'" sd-media-metadata data-item="item"></div>
+        <div ng-if="tab === 'related'" sd-media-related data-item="item"></div>
+    </div>
+</div>

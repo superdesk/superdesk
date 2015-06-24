@@ -52,8 +52,25 @@
                 .then(angular.bind(this, function(preference) {
                     this.groups = preference != null && preference.groups ? preference.groups : [];
                     this.loading = false;
+                    this.cards = this.getCards();
                 }));
         }));
+
+        this.getCards = function() {
+            var cards = this.getGroups(),
+                vm = this;
+            angular.forEach(cards, setupCard);
+            return cards;
+
+            function setupCard(card) {
+                if (card.type === 'stage') {
+                    var stage = vm.stageLookup[card._id],
+                        desk = vm.deskLookup[stage.desk];
+                    card.header = desk.name;
+                    card.subheader = stage.name;
+                }
+            }
+        };
 
         this.preview = function(item) {
             this.selected = item;
@@ -298,7 +315,7 @@
         };
     }
 
-    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets', 'superdesk.desks'])
+    angular.module('superdesk.aggregate', ['superdesk.authoring.widgets', 'superdesk.desks'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
         .widget('aggregate', {

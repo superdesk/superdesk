@@ -76,6 +76,7 @@ tests.push('superdesk-dictionaries/dictionaries');
 tests.push('superdesk-publish/publish');
 tests.push('superdesk/editor/spellcheck/spellcheck');
 tests.push('superdesk-templates/templates');
+tests.push('superdesk-monitoring/monitoring');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');

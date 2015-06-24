@@ -1,7 +1,7 @@
 describe('templates', function() {
     'use strict';
 
-    beforeEach(module('superdesk.aggregate.sidebar'));
+    beforeEach(module('superdesk.aggregate'));
 
     describe('aggregate widget controller', function() {
         var scope, ctrl;

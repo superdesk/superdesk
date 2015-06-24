@@ -425,7 +425,7 @@
         'superdesk.users',
         'superdesk.authoring.widgets',
         'superdesk.aggregate.widgets',
-        'superdesk.aggregate.sidebar'
+        'superdesk.aggregate'
     ]);
 
     var limits = {
