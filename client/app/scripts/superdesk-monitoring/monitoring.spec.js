@@ -29,7 +29,7 @@ describe('monitoring', function() {
                 term: {'task.stage': card._id}
             });
 
-            var criteria = cards.criteria(card, 'foo');
+            criteria = cards.criteria(card, 'foo');
             expect(criteria.source.query.filtered.filter.and).toContain({
                 query_string: {query: 'foo', lenient: false}
             });

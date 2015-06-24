@@ -22,18 +22,8 @@
 
         <div class="content-list">
             <div class="desk" ng-repeat="group in agg.cards">
-            
-                <div class="stage" ng-if="group.type === 'stage'" ng-show="total">
-                    <div class="stage-header clearfix">
-                        <div class="line"></div>
-                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
-                            <i class="icon-chevron-down"></i>
-                        </button>
-                        <div  class="stage-name pull-left">
-                        {{agg.deskLookup[agg.stageLookup[group._id].desk].name}} : <span>{{agg.stageLookup[group._id].name}} {{group.type}}</span>
-                        </div>
-                        <span class="label pull-right">{{total}}</span>
-                    </div>
+                <div class="stage" ng-show="total">
+                    <div sd-stage-header></div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
                         sd-stage-items
                         data-stage="group"
@@ -46,53 +36,6 @@
                         data-filter="agg.query">
                     </div>
                 </div>
-            
-                <div class="stage" ng-if="group.type === 'search'" ng-show="total">
-                    <div class="stage-header clearfix">
-                        <div class="line"></div>
-                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
-                            <i class="icon-chevron-down"></i>
-                        </button>
-                        <div class="stage-name pull-left">
-                        {{agg.searchLookup[group._id].name}}
-                        </div>
-                        <span class="label pull-right">{{total}}</span>
-                    </div>
-                    <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
-                        sd-stage-items
-                        data-stage="group"
-                        data-total="total"
-                        data-allowed="true"
-                        data-show-empty="false"
-                        data-max-items="group.max_items"
-                        data-action="agg.preview(item)"
-                        data-selected="agg.selected"
-                        data-filter="agg.query">
-                    </div>
-                </div>
-                
-                <div class="stage" ng-if="group.type === 'personal'" ng-show="total">
-                    <div class="stage-header clearfix">
-                        <div class="line"></div>
-                        <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
-                            <i class="icon-chevron-down"></i>
-                        </button>
-                        <div class="stage-name pull-left" translate>Personal</div>
-                        <span class="label pull-right">{{total}}</span>
-                    </div>
-                    <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
-                        sd-stage-items
-                        data-stage="group"
-                        data-total="total"
-                        data-allowed="true"
-                        data-show-empty="false"
-                        data-max-items="group.max_items"
-                        data-action="agg.preview(item)"
-                        data-selected="agg.selected"
-                        data-filter="agg.query">
-                    </div>
-                </div>
-                
         </div>
     </div>
 

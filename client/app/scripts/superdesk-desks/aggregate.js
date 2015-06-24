@@ -350,5 +350,7 @@
     }])
     .controller('AggregateCtrl', AggregateCtrl)
     .directive('sdAggregateSettings', AggregateSettingsDirective)
-    .directive('sdSortGroups', SortGroupsDirective);
+    .directive('sdSortGroups', SortGroupsDirective)
+    ;
+
 })();

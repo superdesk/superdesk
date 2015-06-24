@@ -1,0 +1,10 @@
+<div class="stage-header clearfix">
+    <div class="line"></div>
+    <button class="toggle pull-left" ng-class="{closed: !agg.getState(group._id)}" ng-click="agg.switchState(group._id)">
+        <i class="icon-chevron-down"></i>
+    </button>
+    <div class="stage-name pull-left">
+        {{ :: group.header }} <span ng-if="group.subheader"> / {{ :: group.subheader }} {{ :: group.type }}</span>
+    </div>
+    <span class="label pull-right">{{ total }}</span>
+</div>
