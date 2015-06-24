@@ -20,21 +20,13 @@ from collections import namedtuple
 from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
-from superdesk.io import register_provider
 from superdesk.io.ingest_service import IngestService
 from superdesk.utils import merge_dicts
 
 from urllib.parse import quote as urlquote, urlsplit, urlunsplit
 
 
-PROVIDER = 'rss'
-
 utcfromtimestamp = datetime.utcfromtimestamp
-
-errors = [IngestApiError.apiAuthError().get_error_description(),
-          IngestApiError.apiNotFoundError().get_error_description(),
-          IngestApiError.apiGeneralError().get_error_description(),
-          ParserError.parseMessageError().get_error_description()]
 
 
 class RssIngestService(IngestService):
@@ -43,6 +35,13 @@ class RssIngestService(IngestService):
     (NOTE: it should also work with other syndicated feeds formats, too, since
     the underlying parser supports them, but for our needs RSS 2.0 is assumed)
     """
+
+    PROVIDER = 'rss'
+
+    ERRORS = [IngestApiError.apiAuthError().get_error_description(),
+              IngestApiError.apiNotFoundError().get_error_description(),
+              IngestApiError.apiGeneralError().get_error_description(),
+              ParserError.parseMessageError().get_error_description()]
 
     ItemField = namedtuple('ItemField', ['name', 'name_in_data', 'type'])
 
@@ -336,6 +335,3 @@ class RssIngestService(IngestService):
             item_references.append({'residRef': image['guid']})
 
         return package
-
-
-register_provider(PROVIDER, RssIngestService(), errors)

@@ -14,19 +14,20 @@ import logging
 from datetime import datetime
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc
-from superdesk.io import register_provider
 from superdesk.utils import get_sorted_files, FileSortAttributes
 from superdesk.errors import ParserError, ProviderError
 from superdesk.io.zczc import ZCZCParser
 
 logger = logging.getLogger(__name__)
-PROVIDER = 'teletype'
-errors = [ParserError.ZCZCParserError().get_error_description(),
-          ProviderError.ingestError().get_error_description(),
-          ParserError.parseFileError().get_error_description()]
 
 
 class TeletypeIngestService(FileIngestService):
+
+    PROVIDER = 'teletype'
+
+    ERRORS = [ParserError.ZCZCParserError().get_error_description(),
+              ProviderError.ingestError().get_error_description(),
+              ParserError.parseFileError().get_error_description()]
 
     def __init__(self):
         self.parser = ZCZCParser()
@@ -88,6 +89,3 @@ class TeletypeIngestService(FileIngestService):
             return [item]
         except Exception as ex:
             raise ParserError.parseFileError('Teletype', filename, ex, provider)
-
-
-register_provider(PROVIDER, TeletypeIngestService(), errors)

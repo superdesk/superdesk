@@ -10,18 +10,18 @@
 
 import imaplib
 from .ingest_service import IngestService
-from superdesk.io import register_provider
 from superdesk.upload import url_for_media
 from superdesk.errors import IngestEmailError
 
 from superdesk.io.rfc822 import rfc822Parser
 
-PROVIDER = 'email'
-errors = [IngestEmailError.emailError().get_error_description(),
-          IngestEmailError.emailLoginError().get_error_description()]
-
 
 class EmailReaderService(IngestService):
+
+    PROVIDER = 'email'
+
+    ERRORS = [IngestEmailError.emailError().get_error_description(),
+              IngestEmailError.emailLoginError().get_error_description()]
 
     def __init__(self):
         self.parser = rfc822Parser()
@@ -60,5 +60,3 @@ class EmailReaderService(IngestService):
 
     def prepare_href(self, href):
         return url_for_media(href)
-
-register_provider(PROVIDER, EmailReaderService(), errors)

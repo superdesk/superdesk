@@ -15,11 +15,9 @@ import tempfile
 from datetime import datetime
 from superdesk.utc import utc
 from superdesk.etree import etree
-from superdesk.io import get_xml_parser, register_provider
+from superdesk.io import get_xml_parser
 from .ingest_service import IngestService
 from superdesk.errors import IngestFtpError
-errors = [IngestFtpError.ftpUnknownParserError().get_error_description(),
-          IngestFtpError.ftpError().get_error_description()]
 
 try:
     from urllib.parse import urlparse
@@ -32,6 +30,11 @@ class FTPService(IngestService):
 
     DATE_FORMAT = '%Y%m%d%H%M%S'
     FILE_SUFFIX = '.xml'
+
+    PROVIDER = 'ftp'
+
+    ERRORS = [IngestFtpError.ftpUnknownParserError().get_error_description(),
+              IngestFtpError.ftpError().get_error_description()]
 
     def config_from_url(self, url):
         """Parse given url into ftp config.
@@ -96,5 +99,3 @@ class FTPService(IngestService):
             raise
         except Exception as ex:
             raise IngestFtpError.ftpError(ex, provider)
-
-register_provider('ftp', FTPService(), errors)

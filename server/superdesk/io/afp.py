@@ -19,18 +19,19 @@ from superdesk.utils import get_sorted_files, FileSortAttributes
 from ..utc import utc
 from ..etree import etree, ParseError as etreeParserError
 from superdesk.notification import push_notification
-from superdesk.io import register_provider
 from superdesk.errors import ParserError, ProviderError
 
 
 logger = logging.getLogger(__name__)
-PROVIDER = 'afp'
-errors = [ParserError.newsmlOneParserError().get_error_description(),
-          ProviderError.ingestError().get_error_description()]
 
 
 class AFPIngestService(FileIngestService):
     """AFP Ingest Service"""
+
+    PROVIDER = 'afp'
+
+    ERRORS = [ParserError.newsmlOneParserError().get_error_description(),
+              ProviderError.ingestError().get_error_description()]
 
     def __init__(self):
         self.parser = NewsMLOneParser()
@@ -67,6 +68,3 @@ class AFPIngestService(FileIngestService):
                 raise ProviderError.ingestError(ex, provider)
 
         push_notification('ingest:update')
-
-
-register_provider(PROVIDER, AFPIngestService(), errors)

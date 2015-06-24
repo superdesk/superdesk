@@ -14,12 +14,50 @@ import superdesk
 from datetime import datetime
 from superdesk.utc import utc, utcnow
 from superdesk.errors import SuperdeskApiError, SuperdeskIngestError
+from superdesk.io import providers, register_provider
 
 
 logger = logging.getLogger(__name__)
 
 
-class IngestService():
+class AutoRegisteredMeta(type):
+    """Metaclass for automatically registering the ingest service classes.
+
+    An ingest class is registered as a provider if it defines a `PROVIDER`
+    attribute containing the name under which to register the class.
+
+    Every ingest provider class needs to define an `ERRORS` attribute
+    representing a list of <error_number, error_message> pairs that might be
+    raised by the class instances' methods.
+
+    If another provider class with the same `PROVIDER` name has already been
+    registered, a TypeError is raised.
+    """
+
+    def __new__(metacls, name, bases, attrs):
+        provider_name = attrs.get('PROVIDER')
+
+        if provider_name is not None:
+            if 'ERRORS' not in attrs:
+                raise AttributeError(
+                    "Provider class {} must define "
+                    "the ERRORS list attribute.".format(name))
+
+            if provider_name in providers:
+                raise TypeError(
+                    "PROVIDER {} already exists ({}).".format(
+                        provider_name, providers[provider_name])
+                )
+
+        new_cls = super().__new__(metacls, name, bases, attrs)
+
+        if provider_name is not None:
+            register_provider(provider_name, new_cls, new_cls.ERRORS)
+
+        return new_cls
+
+
+class IngestService(metaclass=AutoRegisteredMeta):
     """Base ingest service class."""
 
     def get_items(self, guid):
