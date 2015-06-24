@@ -40,7 +40,7 @@ httmock==1.2.3
 python3-ldap==0.9.8.4
 behave==1.2.5
 wooper==0.4.2
+boto3==1.0.0
 
-git+git://github.com/superdesk/eve@sync-develop-10-june#egg=Eve==0.6.0-dev
-git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
+git+git://github.com/superdesk/eve@sync-develop-24-june#egg=Eve==0.6.0-dev
 -e hg+http://bitbucket.org/haypo/hachoir3/#egg=hachoir3

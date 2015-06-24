@@ -123,7 +123,8 @@ class UploadService(BaseService):
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
-            file_id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            file_id = app.media.put(out, filename=file_name, content_type=content_type,
+                                    resource=self.datasource, metadata=metadata)
             doc['media'] = file_id
             doc['mime_type'] = content_type
             doc['filemeta'] = decode_metadata(metadata)
