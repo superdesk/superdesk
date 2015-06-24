@@ -13,7 +13,7 @@ import superdesk
 import logging
 from eve.utils import config
 from flask import json
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, ProviderError
 from apps.archive.common import generate_guid, generate_unique_id_and_name, GUID_TAG, FAMILY_ID, INGEST_ID
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
@@ -36,8 +36,10 @@ class AapMMService(superdesk.Service):
             if not doc.get('desk'):
                 # if no desk is selected then it is bad request
                 raise SuperdeskApiError.badRequestError("Destination desk cannot be empty.")
-
-            archived_doc = self.backend.find_one_raw(doc['guid'], doc['guid'])
+            try:
+                archived_doc = self.backend.find_one_raw(doc['guid'], doc['guid'])
+            except FileNotFoundError as ex:
+                raise ProviderError.externalProviderError(ex, provider)
 
             dest_doc = dict(archived_doc)
             new_id = generate_guid(type=GUID_TAG)
