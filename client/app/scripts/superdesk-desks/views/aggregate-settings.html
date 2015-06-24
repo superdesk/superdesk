@@ -55,7 +55,7 @@
     <div sd-wizard-step data-title="{{ :: 'Reorder Sections' | translate }}" data-code="reorder">
         <div class="content">
             <div class="legend" translate>Reorder stages and saved searches for view</div>
-            <ul class="groups pills-list" sd-sort-groups>
+            <ul class="groups draggable-list" sd-sort-groups>
                 <li class="sort-item clearfix" ng-repeat="item in getValues()">
                     <div class="group-title" ng-if="item.type === 'stage'">
                         {{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span>
