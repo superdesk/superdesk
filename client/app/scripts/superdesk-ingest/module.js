@@ -57,7 +57,8 @@ define([
             templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
         },
         search: {
-            label: 'Search provider'
+            label: 'Search provider',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/searchConfig.html'
         }
     });
 
