@@ -1613,6 +1613,22 @@ header .sortbar {
 	}
 }
 
+// DRAG & DROP
+// ---------------------------------------------
+.draggable-list {
+    > li {
+        background: #fff url(../../images/draggable-bg.png) repeat-y left 3px top 3px;
+        padding: 12px 14px 12px 25px;
+        margin-bottom: 10px;
+        cursor: move;
+        .box-shadow (0 1px 4px 0 rgba(0,0,0,0.2));
+        &.placeholder {
+            background: none;
+            .box-shadow(none);
+            border: 2px dashed #ebebeb;
+        }
+    }
+}
 
 
 
