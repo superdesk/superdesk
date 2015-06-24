@@ -21,7 +21,7 @@
         </div>
 
         <div class="content-list">
-            <div class="desk" ng-repeat="group in agg.getGroups()">
+            <div class="desk" ng-repeat="group in agg.cards">
             
                 <div class="stage" ng-if="group.type === 'stage'" ng-show="total">
                     <div class="stage-header clearfix">
@@ -36,7 +36,7 @@
                     </div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
                         sd-stage-items
-                        data-stage="group._id"
+                        data-stage="group"
                         data-total="total"
                         data-allowed="true"
                         data-show-empty="false"
@@ -60,7 +60,7 @@
                     </div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
                         sd-stage-items
-                        data-saved-search="agg.searchLookup[group._id]"
+                        data-stage="group"
                         data-total="total"
                         data-allowed="true"
                         data-show-empty="false"
@@ -82,7 +82,7 @@
                     </div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
                         sd-stage-items
-                        data-stage="'personal'"
+                        data-stage="group"
                         data-total="total"
                         data-allowed="true"
                         data-show-empty="false"
@@ -107,7 +107,8 @@
          data-stage-lookup="agg.stageLookup"
          data-search-lookup="agg.searchLookup"
          data-groups="agg.groups"
-         data-edit-groups="agg.editGroups">
+         data-edit-groups="agg.editGroups"
+         data-onclose="agg.refresh()">
     </div>
 
 </div>

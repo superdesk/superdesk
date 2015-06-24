@@ -63,13 +63,12 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$rootScope', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, $rootScope, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', 'cards', '$timeout', '$q', '$location', '$anchorScroll'];
+    function StageItemListDirective(search, api, superdesk, desks, cards, $timeout, $q, $location, $anchorScroll) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
-                stage: '=?',
-                savedSearch: '=?',
+                stage: '=',
                 total: '=',
                 allowed: '=',
                 showEmpty: '=?',
@@ -80,12 +79,12 @@
             },
             link: function(scope, elem) {
 
+                var criteria;
+
                 scope.page = 1;
                 scope.fetching = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
-                var query = search.query(scope.savedSearch ? scope.savedSearch.filter.query : {});
-                var criteria = {source: query.getCriteria()};
 
                 scope.preview = function(item) {
                     desks.setWorkspace(item.task.desk, item.task.stage);
@@ -98,26 +97,7 @@
                 };
 
                 function queryItems(queryString) {
-                    query = search.query(scope.savedSearch ? scope.savedSearch.filter.query : {});
-                    if (scope.stage) {
-                        if (scope.stage === 'personal') {
-                            query.filter({and: [
-                                {term: {'original_creator': $rootScope.currentUser._id}},
-                                {not: {exists: {field: 'task.desk'}}}
-                            ]});
-                        } else {
-                            query.filter({term: {'task.stage': scope.stage}});
-                        }
-                    }
-                    query.size(25);
-
-                    if (queryString) {
-                        query.filter({query: {query_string: {
-                            query: queryString,
-                            lenient: false
-                        }}});
-                    }
-                    criteria = {source: query.getCriteria()};
+                    criteria = cards.criteria(scope.stage, queryString);
                     scope.loading = true;
                     scope.items = scope.total = null;
                     api('archive').query(criteria).then(function(items) {
@@ -129,7 +109,6 @@
                     })['finally'](function() {
                         scope.loading = false;
                     });
-
                 }
 
                 scope.$watch('filter', queryItems);

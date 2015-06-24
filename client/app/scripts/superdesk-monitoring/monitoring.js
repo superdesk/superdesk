@@ -2,7 +2,8 @@
 
     'use strict';
 
-    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate'])
+    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search'])
+        .service('cards', CardsService)
         .controller('Monitoring', MonitoringController)
         .directive('sdMonitoringView', MonitoringViewDirective)
         .directive('sdMonitoringGroup', MonitoringGroupDirective)
@@ -20,8 +21,49 @@
             });
     }
 
+    CardsService.$inject = ['api', 'search', 'session'];
+    function CardsService(api, search, session) {
+        this.criteria = getCriteria;
+
+        /**
+         * Get items criteria for given card
+         *
+         * Card can be stage/personal/saved search.
+         * There can be also extra string search query
+         *
+         * @param {Object} card
+         * @param {string} queryString
+         */
+        function getCriteria(card, queryString) {
+            var query = search.query(card.type === 'search' ? card.search.filter.query : {});
+
+            switch (card.type) {
+                case 'stage':
+                    query.filter({term: {'task.stage': card._id}});
+                    break;
+
+                case 'personal':
+                    query.filter({bool: {
+                        must: {term: {original_creator: session.identity._id}},
+                        must_not: {exists: {field: 'task.desk'}}
+                    }});
+                    break;
+            }
+
+            if (queryString) {
+                query.filter({query_string: {query: queryString, lenient: false}});
+            }
+
+            var criteria = {source: query.getCriteria()};
+            criteria.source.from = 0;
+            criteria.source.size = 25;
+            return criteria;
+        }
+    }
+
     function MonitoringController() {
         this.preview = preview;
+        this.closePreview = closePreview;
         this.previewItem = null;
 
         this.state = {};
@@ -31,6 +73,10 @@
         function preview(item) {
             vm.previewItem = item;
             vm.state['with-preview'] = !!item;
+        }
+
+        function closePreview() {
+            preview(null);
         }
     }
 
@@ -53,8 +99,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['search', 'api', 'superdesk', 'desks', '$timeout'];
-    function MonitoringGroupDirective(search, api, superdesk, desks, $timeout) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout'];
+    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -69,6 +115,9 @@
         return {
             templateUrl: 'scripts/superdesk-monitoring/views/monitoring-group.html',
             require: '^sdMonitoringView',
+            scope: {
+                group: '='
+            },
             link: function(scope, elem, attrs, monitoring) {
 
                 scope.view = 'compact';
@@ -115,19 +164,8 @@
                 }
 
                 function queryItems() {
-                    var query = search.query({});
-                    query.filter({term: {'task.stage': scope.group._id}});
-                    query.size(0); // we just need to get total number of items
-
-                    if (scope.queryString) {
-                        query.filter({query: {query_string: {
-                            query: scope.queryString,
-                            lenient: false
-                        }}});
-                    }
-
-                    criteria = {source: query.getCriteria()};
-
+                    criteria = cards.criteria(scope.group);
+                    criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;
                     return apiquery().then(function(items) {
