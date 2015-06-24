@@ -155,7 +155,11 @@
          */
         this.drop = function dropAutosave(item) {
             this.stop(item);
-            api(RESOURCE).remove(item._autosave);
+
+            if (angular.isDefined(item._autosave) && item._autosave !== null) {
+                api(RESOURCE).remove(item._autosave);
+            }
+
             item._autosave = null;
         };
     }
