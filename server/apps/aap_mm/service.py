@@ -30,6 +30,8 @@ class AapMMService(superdesk.Service):
     def create(self, docs, **kwargs):
         new_guids = []
         provider = get_resource_service('ingest_providers').find_one(source='aapmm', req=None)
+        if provider and 'config' in provider and 'username' in provider['config']:
+                self.backend.set_credentials(provider['config']['username'], provider['config']['password'])
         for doc in docs:
             if not doc.get('desk'):
                 # if no desk is selected then it is bad request
@@ -60,13 +62,15 @@ class AapMMService(superdesk.Service):
         return new_guids
 
     def get(self, req, lookup):
-        query = self._get_query(req)
-        results = self.backend.find('what', query, None)
         provider = get_resource_service('ingest_providers').find_one(source='aapmm', req=None)
         if provider:
+            if 'config' in provider and 'username' in provider['config']:
+                self.backend.set_credentials(provider['config']['username'], provider['config']['password'])
+            query = self._get_query(req)
+            results = self.backend.find('aapmm', query, None)
             for doc in results.docs:
                 doc['ingest_provider'] = str(provider[superdesk.config.ID_FIELD])
-        return results
+            return results
 
     def _get_query(self, req):
         args = getattr(req, 'args', {})

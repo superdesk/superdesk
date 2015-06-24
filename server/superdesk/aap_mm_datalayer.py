@@ -20,9 +20,9 @@ logger = logging.getLogger(__name__)
 class AAPMMDatalayer(DataLayer):
 
     def __set_auth_cookie(self, app):
-        if 'AAP_MM_USER' in app.config and 'AAP_MM_PASSWORD' in app.config and app.config['AAP_MM_USER'] is not None:
+        if self._username is not None and self._password is not None:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/login'
-            values = {'username': app.config['AAP_MM_USER'], 'password': app.config['AAP_MM_PASSWORD']}
+            values = {'username': self._username, 'password': self._password}
             r = self._http.urlopen('POST', url, headers={'Content-Type': 'application/json'}, body=json.dumps(values))
         else:
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/AnonymousToken'
@@ -30,10 +30,19 @@ class AAPMMDatalayer(DataLayer):
 
         self._headers = {'cookie': r.getheader('set-cookie')}
 
+    def set_credentials(self, user, password):
+        if user != self._username  and user != '' and password != self._password and password != '':
+            self._username = user
+            self._password = password
+            self.__set_auth_cookie(self._app)
+
     def init_app(self, app):
         app.config.setdefault('AAP_MM_SEARCH_URL', 'https://one-api.aap.com.au/api/v3')
+        app.config.setdefault('AAP_MM_CDN_URL', 'http://one-cdn.aap.com.au/Preview.mp4')
         self._app = app
         self._headers = None
+        self._username = None
+        self._password = None
         self._http = urllib3.PoolManager()
 
     def find(self, resource, req, lookup):
@@ -57,25 +66,31 @@ class AAPMMDatalayer(DataLayer):
         new_doc['headline'] = doc['Title']
         new_doc['description'] = doc['Description']
         new_doc['source'] = doc['Credit']
-        new_doc['original_source'] = doc['Credit'] + '/' + doc['Source']
+        if 'Source' in doc:
+            new_doc['original_source'] = doc['Credit'] + '/' + str(doc.get('Source', ''))
+        else:
+            new_doc['original_source'] = doc['Credit']
         new_doc['versioncreated'] = self._datetime(doc['ModifiedDate'])
         new_doc['firstcreated'] = self._datetime(doc['CreationDate'])
-        new_doc['type'] = 'picture'
         new_doc['pubstatus'] = 'usable'
         # This must match the action
         new_doc['_type'] = 'externalsource'
         # entry that the client can use to identify the fetch endpoint
         new_doc['fetch_endpoint'] = 'aapmm'
-        new_doc['renditions'] = {
-            'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
-            'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
-            'original': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
-            'baseImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
-        }
         if doc['AssetType'] == 'VIDEO':
             new_doc['type'] = 'video'
+            purl = '{}?assetType=VIDEO&'.format(self._app.config['AAP_MM_CDN_URL'])
+            purl += 'path=/rest/aap/archives/imagearc/dossiers/{}'.format(doc['AssetId'])
+            purl += '/files/ipod&assetId={}&mimeType=video/mp4&dummy.mp4'.format(doc['AssetId'])
+            new_doc['renditions'] = {'original': {'href': purl, 'mimetype': 'video/mp4'}}
         else:
             new_doc['type'] = 'picture'
+            new_doc['renditions'] = {
+                'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
+                'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
+                'original': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
+                'baseImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
+            }
 
         new_doc['slugline'] = doc['Title']
         new_doc['byline'] = doc['Byline']
@@ -97,6 +112,14 @@ class AAPMMDatalayer(DataLayer):
             dt = utcnow()
         return dt
 
+    def _get_resolutions(self, id):
+        url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/Resolutions'
+        values = [id]
+        headers = dict(self._headers)
+        headers['Content-Type'] = 'application/json'
+        r = self._http.urlopen('POST', url, headers=headers, body=json.dumps(values))
+        return json.loads(r.data.decode('UTF-8'))
+
     def find_all(self, resource, max_results=1000):
         raise NotImplementedError
 
@@ -115,15 +138,29 @@ class AAPMMDatalayer(DataLayer):
             del doc['fetch_endpoint']
 
         # Only if we have credentials can we download the original if the account has that privilege
-        if 'AAP_MM_USER' in self._app.config and 'AAP_MM_PASSWORD' in self._app.config \
-                and self._app.config['AAP_MM_USER'] is not None:
-            url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Original/download'.format(_id)
+        if self._username is not None and self._password is not None:
+            if doc['type'] == 'picture':
+                url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Original/download'.format(_id)
+                mime_type = 'image/jpeg'
+            elif doc['type'] == 'video':
+                resolutions = self._get_resolutions(_id)
+                if any(v['Name'] == 'Ipod' for v in resolutions['Video']):
+                    url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Ipod/download'.format(_id)
+                    mime_type = doc.get('renditions').get('original').get('mimetype')
+                else:
+                    raise NotImplementedError
+            else:
+                raise NotImplementedError
         else:
+            if doc['type'] == 'video':
+                mime_type = doc.get('renditions').get('original').get('mimetype')
+            else:
+                mime_type = 'image/jpeg'
             url = doc['renditions']['original']['href']
-        r = self._http.request('GET', url, headers=self._headers)
 
+        r = self._http.request('GET', url, headers=self._headers)
         out = BytesIO(r.data)
-        file_name, content_type, metadata = process_file_from_stream(out, 'image/jpeg')
+        file_name, content_type, metadata = process_file_from_stream(out, mime_type)
 
         try:
             logger.debug('Going to save media file with %s ' % file_name)
