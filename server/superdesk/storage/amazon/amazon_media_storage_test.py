@@ -12,10 +12,11 @@ class AmazonMediaStorageTestCase(unittest.TestCase):
         media_id = '123'
         # set s3 settings and test the output
         app.config['AMAZON_CONTAINER_NAME'] = 'AMAZON_CONTAINER_NAME'
-        app.config['S3_USE_HTTPS'] = True
+        app.config['AMAZON_S3_USE_HTTPS'] = True
+        app.config['AMAZON_SERVE_DIRECT_LINKS'] = True
         self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
                           'https://AMAZON_CONTAINER_NAME.s3-us-east-1.amazonaws.com/%s' % (media_id))
-        app.config['S3_USE_HTTPS'] = False
+        app.config['AMAZON_S3_USE_HTTPS'] = False
         self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
                           'http://AMAZON_CONTAINER_NAME.s3-us-east-1.amazonaws.com/%s' % (media_id))
         app.config['AMAZON_REGION'] = 'eu-west-1'
