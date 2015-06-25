@@ -260,7 +260,7 @@ CONTENT_EXPIRY_MINUTES = 43200
 
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
-INGEST_EXPIRY_MINUTES = 2880
+INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', '2880'))
 
 # The number of minutes before published items purged
 # 4320 = 3 days in minutes

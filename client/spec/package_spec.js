@@ -61,7 +61,16 @@ describe('Content', function() {
         // preview package via preview
         element.all(by.repeater('child in item')).first().click();
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
-        expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
+
+        browser.wait(function() {
+            return previewItems().count();
+        }, 200);
+
+        expect(previewItems().count()).toBe(3);
+
+        function previewItems() {
+            return element(by.css('.condensed-preview')).all(by.repeater('child in item'));
+        }
     });
 
     it('create package from multiple items', function() {

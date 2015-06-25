@@ -5,6 +5,7 @@ exports.open = openUrl;
 exports.changeUrl = changeUrl;
 exports.printLogs = printLogs;
 exports.waitForSuperdesk = waitForSuperdesk;
+exports.nav = nav;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -46,29 +47,9 @@ function changeUrl(url) {
 
 // open url and authenticate
 function openUrl(url) {
-    return browser.driver.get(browser.baseUrl)
-        .then(waitForSuperdesk)
-        .then(
-            function() {
-                return webdriver.promise.fulfilled();
-            },
-            function(err) {
-                console.log('WARNING: catched error from waitForSuperdesk ' +
-                    'in openUrl before login.');
-                return webdriver.promise.rejected(err);
-            }
-        ).then(login)
-        .then(waitForSuperdesk)
-        .then(
-            function() {
-                return changeUrl(url);
-            },
-            function(err) {
-                console.log('WARNING: catched error from waitForSuperdesk ' +
-                    'in openUrl after login.');
-                return webdriver.promise.rejected(err);
-            }
-        );
+    return browser.get(url)
+        .then(login)
+        .then(waitForSuperdesk);
 }
 
 function printLogs(prefix) {
@@ -142,4 +123,17 @@ function waitForSuperdesk() {
             return webdriver.promise.rejected(err);
         }
     );
+}
+
+/**
+ * Navigate to given location.
+ *
+ * Unlinke openUrl it doesn't reload the page, only changes #hash in url
+ *
+ * @param {string} location
+ */
+function nav(location) {
+    return login().then(function() {
+        browser.setLocation(location);
+    });
 }
