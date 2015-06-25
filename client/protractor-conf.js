@@ -29,8 +29,8 @@ exports.config = {
     },
     directConnect: true,
     onPrepare: function() {
-        var reporters = require('jasmine-reporters');
         require('./spec/helpers/setup')({fixture_profile: 'app_prepopulate_data'});
+        var reporters = require('jasmine-reporters');
         jasmine.getEnv().addReporter(
             new reporters.JUnitXmlReporter({
                 savePath: 'e2e-test-results',

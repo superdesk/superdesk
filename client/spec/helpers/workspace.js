@@ -38,6 +38,10 @@ function Workspace() {
                     return getDesk(desk).click();
                 }
             }
+        }).then(function() {
+            return browser.wait(function() {
+                return element(by.css('.list-view')).isPresent();
+            });
         });
     };
 

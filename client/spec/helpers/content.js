@@ -53,6 +53,10 @@ function Content() {
     };
 
     this.getCount = function () {
+        browser.wait(function() {
+            // make sure list is there before counting
+            return element(by.css('.list-view')).isPresent();
+        });
         return element.all(by.repeater('items._items')).count();
     };
 

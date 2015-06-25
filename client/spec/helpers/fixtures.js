@@ -21,10 +21,6 @@ function resetApp(fixture_profile, callback) {
 }
 
 function post(params, callback) {
-    if (!pp.token) {
-        getToken(function() { post(params, callback); });
-        return;
-    }
     params.method = 'POST';
     backendRequestAuth(params, callback);
 }
