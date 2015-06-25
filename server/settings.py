@@ -142,7 +142,6 @@ INSTALLED_APPS = [
     'superdesk.notification',
     'superdesk.activity',
     'superdesk.comments',
-    'superdesk.storage.amazon.import_from_amazon',
 
     'superdesk.io',
     'superdesk.io.subjectcodes',

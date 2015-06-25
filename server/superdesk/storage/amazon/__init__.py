@@ -9,3 +9,5 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 '''Module for Amazon integration'''
+
+from .amazon_media_storage import AmazonMediaStorage  # NOQA

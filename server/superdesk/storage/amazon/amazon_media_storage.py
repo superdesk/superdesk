@@ -10,11 +10,9 @@
 
 ''' Amazon media storage module'''
 from eve.io.media import MediaStorage
-from superdesk.errors import SuperdeskApiError
 import logging
 import json
 from io import BytesIO
-import unittest
 import boto3
 
 logger = logging.getLogger(__name__)
@@ -45,23 +43,24 @@ class AmazonMediaStorage(MediaStorage):
 
     def __init__(self, app=None):
         super().__init__(app)
-        username, api_key, region = self.read_from_config()
+        username, api_key = self.read_from_config()
         self.client = boto3.client('s3',
                                    aws_access_key_id=username,
                                    aws_secret_access_key=api_key,
-                                   region_name=region)
+                                   region_name=self.region)
         self.user_metadata_header = 'x-amz-meta-'
 
     def url_for_media(self, media_id):
         protocol = 'https' if self.app.config.get('S3_USE_HTTPS', False) else 'http'
-        return '%s://%s.%s/%s' % (protocol, self.container_name, self.endpoint, media_id)
+        endpoint = 's3-%s.amazonaws.com' % self.region
+        return '%s://%s.%s/%s' % (protocol, self.container_name, endpoint, media_id)
 
     def read_from_config(self):
-        region = self.app.config.get('AMAZON_REGION', 'us-east-1') or 'us-east-1'
+        self.region = self.app.config.get('AMAZON_REGION', 'us-east-1') or 'us-east-1'
         username = self.app.config['AMAZON_ACCESS_KEY_ID']
         api_key = self.app.config['AMAZON_SECRET_ACCESS_KEY']
         self.container_name = self.app.config['AMAZON_CONTAINER_NAME']
-        return username, api_key, region
+        return username, api_key
 
     def get(self, id_or_filename, resource=None):
         """ Opens the file given by name or unique id. Note that although the
@@ -69,10 +68,13 @@ class AmazonMediaStorage(MediaStorage):
         some subclass. Returns None if no file was found.
         """
         id_or_filename = str(id_or_filename)
-        obj = self.client.get_object(Key=id_or_filename, Bucket=self.container_name)
-        if obj:
-            metadata = self.extract_metadata_from_headers(obj['Metadata'])
-            return AmazonObjectWrapper(obj, id_or_filename, metadata)
+        try:
+            obj = self.client.get_object(Key=id_or_filename, Bucket=self.container_name)
+            if obj:
+                metadata = self.extract_metadata_from_headers(obj['Metadata'])
+                return AmazonObjectWrapper(obj, id_or_filename, metadata)
+        except:
+            return None
         return None
 
     def extract_metadata_from_headers(self, request_headers):
@@ -111,8 +113,8 @@ class AmazonMediaStorage(MediaStorage):
 
         try:
             file_metadata = self.transform_metadata_to_amazon_format(metadata)
-            res = self.client.put_object(Key=filename, Body=content, Bucket=self.container_name,
-                                         ContentType=content_type, Metadata=file_metadata)
+            self.client.put_object(Key=filename, Body=content, Bucket=self.container_name,
+                                   ContentType=content_type, Metadata=file_metadata)
             return filename
         except Exception as ex:
             logger.exception(ex)
@@ -134,30 +136,8 @@ class AmazonMediaStorage(MediaStorage):
 
     def _check_exists(self, id_or_filename):
         try:
-            obj = self.client.head_object(Key=id_or_filename, Bucket=self.container_name)
+            self.client.head_object(Key=id_or_filename, Bucket=self.container_name)
             return True
-        except Exception as ex:
-            logger.exception(ex)
+        except Exception:
             # File not found
             return False
-
-
-class AmazonMediaStorageTestCase(unittest.TestCase):
-
-    def test_url_for_media(self):
-        import settings
-        # create a dummy app containing only the settings
-        app = type('MyObject', (object,), {})
-        setattr(app, 'config', settings.__dict__)
-        media_id = '123'
-        # set s3 settings and test the output
-        app.config['AMAZON_CONTAINER_NAME'] = 'AMAZON_CONTAINER_NAME'
-        app.config['S3_USE_HTTPS'] = True
-        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
-                          'https://AMAZON_CONTAINER_NAME.s3.amazonaws.com/%s' % (media_id))
-        app.config['S3_USE_HTTPS'] = False
-        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
-                          'http://AMAZON_CONTAINER_NAME.s3.amazonaws.com/%s' % (media_id))
-        app.config['AMAZON_REGION'] = 'AMAZON_REGION'
-        self.assertEquals(AmazonMediaStorage(app).url_for_media(media_id),
-                          'http://AMAZON_CONTAINER_NAME.AMAZON_REGION.amazonaws.com/%s' % (media_id))
