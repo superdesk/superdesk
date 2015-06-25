@@ -38,8 +38,7 @@
             var query = search.query(card.type === 'search' ? card.search.filter.query : {});
 
             switch (card.type) {
-                case 'stage':
-                    query.filter({term: {'task.stage': card._id}});
+                case 'search':
                     break;
 
                 case 'personal':
@@ -48,10 +47,14 @@
                         must_not: {exists: {field: 'task.desk'}}
                     }});
                     break;
+
+                default:
+                    query.filter({term: {'task.stage': card._id}});
+                    break;
             }
 
             if (queryString) {
-                query.filter({query_string: {query: queryString, lenient: false}});
+                query.filter({query: {query_string: {query: queryString, lenient: false}}});
             }
 
             var criteria = {source: query.getCriteria()};

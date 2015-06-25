@@ -3,7 +3,7 @@ var openUrl = require('./helpers/utils').open,
     content = require('./helpers/pages').content,
     authoring = require('./helpers/pages').authoring;
 
-describe('Content', function() {
+describe('Package', function() {
     'use strict';
 
     beforeEach(function(done) {

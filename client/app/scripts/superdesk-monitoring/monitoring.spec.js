@@ -23,7 +23,7 @@ describe('monitoring', function() {
 
     describe('cards service', function() {
         it('can get criteria for stage', inject(function(cards) {
-            var card = {type: 'stage', _id: '123'};
+            var card = {_id: '123'};
             var criteria = cards.criteria(card);
             expect(criteria.source.query.filtered.filter.and).toContain({
                 term: {'task.stage': card._id}
@@ -31,7 +31,7 @@ describe('monitoring', function() {
 
             criteria = cards.criteria(card, 'foo');
             expect(criteria.source.query.filtered.filter.and).toContain({
-                query_string: {query: 'foo', lenient: false}
+                query: {query_string: {query: 'foo', lenient: false}}
             });
         }));
 

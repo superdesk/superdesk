@@ -771,7 +771,9 @@
                 templateUrl: asset.templateUrl('superdesk-search/views/item-preview.html'),
                 scope: {
                     item: '=',
-                    close: '&'
+                    close: '&',
+                    openLightbox: '=',
+                    openSingleItem: '='
                 },
                 link: function(scope) {
                     scope.tab = 'content';

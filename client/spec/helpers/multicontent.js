@@ -7,7 +7,7 @@ function Multicontent() {
     this.widget = element(by.css('.sd-widget.aggregate'));
 
     this.getGroup = function(group) {
-        return element.all(by.repeater('group in agg.getGroups()')).get(group);
+        return element.all(by.repeater('group in agg.cards')).get(group);
     };
 
     this.getItem = function(group, item) {
