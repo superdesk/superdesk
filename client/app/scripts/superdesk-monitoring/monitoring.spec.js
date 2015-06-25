@@ -21,6 +21,18 @@ describe('monitoring', function() {
         expect(ctrl.state['with-preview']).toBeFalsy();
     }));
 
+    it('can edit item', inject(function($controller, $rootScope) {
+        var scope = $rootScope.$new(),
+            ctrl = $controller('Monitoring', {$scope: scope}),
+            item = {};
+
+        expect(ctrl.state['with-authoring']).toBeFalsy();
+
+        ctrl.edit(item);
+        expect(ctrl.editItem).toBe(item);
+        expect(ctrl.state['with-authoring']).toBeTruthy();
+    }));
+
     describe('cards service', function() {
         it('can get criteria for stage', inject(function(cards) {
             var card = {_id: '123'};

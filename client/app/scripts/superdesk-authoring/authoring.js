@@ -186,6 +186,7 @@
          * Open an item for editing
          *
          * @param {string} _id Item _id.
+         * @param {boolean} read_only
          */
         this.open = function openAuthoring(_id, read_only) {
             return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
@@ -659,16 +660,14 @@
         };
     }
 
-    AuthoringController.$inject = ['$scope', 'item', 'action'];
-    function AuthoringController($scope, item, action) {
+    AuthoringController.$inject = ['$scope', 'item', 'action', 'superdesk'];
+    function AuthoringController($scope, item, action, superdesk) {
         $scope.origItem = item;
+        $scope.widget_target = 'authoring';
         $scope.action = action || 'edit';
 
-        $scope.widget_target = 'authoring';
-
-        $scope.intentFilter = {
-            action: 'author',
-            type: 'article'
+        $scope.lock = function() {
+            superdesk.intent('author', 'article', item);
         };
     }
 
@@ -703,13 +702,16 @@
                 $scope.dirty = false;
                 $scope.views = {send: false};
                 $scope.stage = null;
-                $scope._editable = $scope.origItem._editable;
+                $scope._editable = !!$scope.origItem._editable;
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope._editable ? 'edit' : 'view');
                 $scope.itemActions = authoring.itemActions($scope.origItem);
 
                 $scope.$watch('origItem', function(new_value, old_value) {
-                    $scope.itemActions = authoring.itemActions(new_value);
+                    $scope.itemActions = null;
+                    if (new_value) {
+                        $scope.itemActions = authoring.itemActions(new_value);
+                    }
                 }, true);
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
@@ -975,7 +977,7 @@
                 $scope.closePreview = function() {
                     $scope.item = _.create($scope.origItem);
                     extendItem($scope.item, $scope.item._autosave || {});
-                    $scope._editable = authoring.isEditable($scope.origItem);
+                    $scope._editable = $scope.action !== 'view' && authoring.isEditable($scope.origItem);
                 };
 
                 /**
@@ -994,10 +996,6 @@
                     lock.unlock($scope.item).then(function(unlocked_item) {
                         $location.path('/authoring/' + $scope.item._id);
                     });
-                };
-
-                $scope.lock = function() {
-                    superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
                 };
 
                 $scope.openAction = function(action) {
@@ -1586,7 +1584,7 @@
         };
     }
 
-    return angular.module('superdesk.authoring', [
+    angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.activity',
             'superdesk.authoring.widgets',
@@ -1617,6 +1615,8 @@
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
+        .directive('sdAuthoringContainer', AuthoringContainerDirective)
+        .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -1748,4 +1748,51 @@
                 }
             });
         }]);
+
+    function AuthoringContainerDirective() {
+        function AuthoringContainerController() {
+            this.state = {};
+
+            this.edit = function(item) {
+                this.item = item || null;
+                this.state.opened = !!this.item;
+            };
+        }
+
+        return {
+            controller: AuthoringContainerController,
+            controllerAs: 'authoring',
+            templateUrl: 'scripts/superdesk-authoring/views/authoring-container.html',
+            transclude: true
+        };
+    }
+
+    AuthoringEmbeddedDirective.$inject = ['authoring'];
+    function AuthoringEmbeddedDirective(authoring) {
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+            require: '^sdAuthoringContainer',
+            scope: {
+                listItem: '=item'
+            },
+            link: function(scope, elem, attrs, authoringCtrl) {
+                scope.$watch('listItem', function(item) {
+                    scope.origItem = null;
+                    scope.$applyAsync(function() {
+                        scope.origItem = item;
+                        scope.action = 'view';
+                    });
+                });
+
+                scope.lock = function() {
+                    scope.origItem = null;
+                    authoring.open(scope.listItem._id).then(function(item) {
+                        scope.origItem = item;
+                        scope.action = 'edit';
+                    });
+                };
+            }
+        };
+    }
+
 })();

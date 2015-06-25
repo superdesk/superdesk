@@ -145,15 +145,14 @@
     PackagingController.$inject = ['$scope', 'item', 'packages', 'api', 'modal', 'notify', 'gettext', 'superdesk'];
     function PackagingController($scope, item, packages, api, modal, notify, gettext, superdesk) {
         $scope.origItem = item;
-
         $scope.widget_target = 'packages';
+        $scope.action = 'edit';
 
-        $scope.intentFilter = {
-            action: 'author',
-            type: 'package'
+        $scope.lock = function() {
+            superdesk.intent('author', 'package', item);
         };
 
-        //Highlights related functionality
+        // Highlights related functionality
 
         $scope.highlight = !!item.highlight;
 

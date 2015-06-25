@@ -18,6 +18,40 @@
 	}
 }
 
+.authoring-embedded {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+
+	.embedded-list-view {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.embedded-auth-view {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: 0;
+	}
+
+	&.opened {
+		.embedded-list-view {
+			right: 41%;
+		}
+
+		.embedded-auth-view {
+			width: 41%;
+		}
+	}
+}
+
 .subnav {
 	.button-stack > .btn {
 		padding: 8px 25px;
