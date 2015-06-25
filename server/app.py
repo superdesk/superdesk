@@ -57,9 +57,7 @@ def get_app(config=None):
 
     if config['AMAZON_CONTAINER_NAME']:
         from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
-        from superdesk.storage.amazon.import_from_amazon import ImportFromAmazonCommand
         media_storage = AmazonMediaStorage
-        superdesk.command('import:amazon', ImportFromAmazonCommand())
 
     config['DOMAIN'] = {}
 
