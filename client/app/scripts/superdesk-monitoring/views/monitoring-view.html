@@ -1,0 +1,22 @@
+<div class="monitoring">
+    <div class="subnav">
+        <h3 class="page-nav-title" translate>Monitoring</h3>
+    </div>
+
+    <section
+        class="main-section search-page-container"
+        ng-class="monitoring.state"
+        ng-controller="AggregateCtrl as aggregate">
+
+        <div class="preview-layout">
+            <div class="content-list" ng-if="!aggregate.loading">
+                <div ng-repeat="group in aggregate.getGroups() track by group._id"
+                    sd-monitoring-group data-group="group"></div>
+            </div>
+
+            <div sd-item-preview
+                data-item="monitoring.previewItem"
+                data-close="monitoring.closePreview()"></div>
+        </div>
+    </section>
+</div>

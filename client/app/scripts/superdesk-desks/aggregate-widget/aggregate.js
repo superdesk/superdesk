@@ -2,7 +2,7 @@
 
 'use strict';
 
-angular.module('superdesk.aggregate.widgets', ['superdesk.aggregate.sidebar', 'superdesk.dashboard.widgets'])
+angular.module('superdesk.aggregate.widgets', ['superdesk.aggregate', 'superdesk.dashboard.widgets'])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('aggregate', {
                 label: 'Monitoring',

@@ -7,12 +7,16 @@ var openUrl = require('./helpers/utils').open,
 describe('Master Desk', function() {
     beforeEach(function(done) {openUrl('/#/desks/').then(done);});
 
+    function itemHeadline(x, y, z) {
+        return masterDesks.getItem(x, y, z).element(by.css('.headline')).getText();
+    }
+
     it('show content view', function() {
         masterDesks.switchToTab('content');
-        expect(masterDesks.getItem(0, 1, 0).element(by.tagName('span')).getText()).toContain('ITEM3 SLUGLINE');
-        expect(masterDesks.getItem(0, 3, 0).element(by.tagName('span')).getText()).toContain('ITEM4 SLUGLINE');
-        expect(masterDesks.getItem(1, 1, 0).element(by.tagName('span')).getText()).toContain('ITEM5 SLUGLINE');
-        expect(masterDesks.getItem(1, 2, 0).element(by.tagName('span')).getText()).toContain('ITEM6 SLUGLINE');
+        expect(itemHeadline(0, 1, 0)).toBe('item3');
+        expect(itemHeadline(0, 3, 0)).toBe('item4');
+        expect(itemHeadline(1, 1, 0)).toBe('item5');
+        expect(itemHeadline(1, 2, 0)).toBe('item6');
     });
 
     it('show content view - preview item', function() {

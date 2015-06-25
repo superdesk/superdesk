@@ -11,11 +11,12 @@
  (function() {
     'use strict';
 
-    AggregateCtrl.$inject = ['api', 'session', 'desks', 'preferencesService', 'storage'];
-    function AggregateCtrl(api, session, desks, preferencesService, storage) {
+    AggregateCtrl.$inject = ['$scope', 'api', 'session', 'desks', 'preferencesService', 'storage', 'gettext'];
+    function AggregateCtrl($scope, api, session, desks, preferencesService, storage, gettext) {
         var PREFERENCES_KEY = 'agg:view';
         var defaultMaxItems = 10;
-        var self = this;
+        var self = this,
+            vm = this;
         this.loading = true;
         this.selected = null;
         this.groups = [];
@@ -52,8 +53,43 @@
                 .then(angular.bind(this, function(preference) {
                     this.groups = preference != null && preference.groups ? preference.groups : [];
                     this.loading = false;
+                    setupCards();
                 }));
         }));
+
+        /**
+         * Refresh view after setup
+         */
+        this.refresh = function() {
+            setupCards();
+        };
+
+        function setupCards() {
+            var cards = vm.getGroups();
+            angular.forEach(cards, setupCard);
+            vm.cards = cards;
+
+            /**
+             * Add card metadata into group
+             */
+            function setupCard(card) {
+                if (card.type === 'stage') {
+                    var stage = vm.stageLookup[card._id],
+                        desk = vm.deskLookup[stage.desk];
+                    card.header = desk.name;
+                    card.subheader = stage.name;
+                }
+
+                if (card.type === 'search') {
+                    card.search = vm.searchLookup[card._id];
+                    card.header = card.search.name;
+                }
+
+                if (card.type === 'personal') {
+                    card.header = gettext('Personal');
+                }
+            }
+        }
 
         this.preview = function(item) {
             this.selected = item;
@@ -129,7 +165,7 @@
                 searchLookup: '=',
                 groups: '=',
                 editGroups: '=',
-                close: '&',
+                onclose: '&',
                 widget: '@'
             },
             link: function(scope, elem) {
@@ -144,7 +180,7 @@
                 scope.closeModal = function() {
                     scope.step.current = 'desks';
                     scope.modalActive = false;
-                    scope.close();
+                    scope.onclose();
                 };
 
                 scope.previous = function() {
@@ -247,6 +283,8 @@
                         .then(angular.bind(this, function() {
                             WizardHandler.wizard('aggregatesettings').finish();
                         }));
+
+                    scope.onclose();
                 };
             }
         };
@@ -298,7 +336,7 @@
         };
     }
 
-    angular.module('superdesk.aggregate.sidebar', ['superdesk.authoring.widgets', 'superdesk.desks'])
+    angular.module('superdesk.aggregate', ['superdesk.authoring.widgets', 'superdesk.desks'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
         .widget('aggregate', {
@@ -312,5 +350,7 @@
     }])
     .controller('AggregateCtrl', AggregateCtrl)
     .directive('sdAggregateSettings', AggregateSettingsDirective)
-    .directive('sdSortGroups', SortGroupsDirective);
+    .directive('sdSortGroups', SortGroupsDirective)
+    ;
+
 })();

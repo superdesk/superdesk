@@ -1,0 +1,14 @@
+<div class="stage" ng-show="total">
+    <div sd-monitoring-group-header></div>
+    <div class="stage-content group" tabindex="0">
+        <ul class="inline-content-items compact-view list-view">
+            <li ng-repeat="item in items track by uuid(item)"
+                class="list-item-view"
+                tabindex="0">
+                <div sd-media-box
+                    ng-class="{active: item === selected, archived: item.archived || item.created, locked: lock.isLocked}"
+                    ng-click="select(item)"></div>
+            </li>
+        </ul>
+    </div>
+</div>

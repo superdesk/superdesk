@@ -1,6 +1,9 @@
 <div sd-desk-dropdown class="navbtn dropdown"></div>
 
 <ul class="top-links">
+    <li ng-class="{selected: currentRoute.href == '/workspace/monitoring'}">
+        <a href="#/workspace/monitoring" translate>MONITORING</a>
+    </li>
     <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks" ng-show="selected.name">
         <a href="#/workspace/tasks" translate>TASKS</a>
     </li>

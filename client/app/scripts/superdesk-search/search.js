@@ -766,6 +766,24 @@
             };
         }])
 
+        .directive('sdItemPreview', ['asset', function(asset) {
+            return {
+                templateUrl: asset.templateUrl('superdesk-search/views/item-preview.html'),
+                scope: {
+                    item: '=',
+                    close: '&',
+                    openLightbox: '=',
+                    openSingleItem: '='
+                },
+                link: function(scope) {
+                    scope.tab = 'content';
+                    scope.$watch('item', function(item) {
+                        scope.selected = {preview: item || null};
+                    });
+                }
+            };
+        }])
+
         /**
          * Open Item dialog
          */

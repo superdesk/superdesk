@@ -16,7 +16,9 @@
 			<div class="stage-name pull-left">{{stage.name}}</div>
 			<span class="label pull-right">{{total}}</span>
 		</div>
-		<div class="stage-content" sd-stage-items data-stage="stage._id" 
+		<div class="stage-content"
+			sd-stage-items
+			data-stage="stage"
 			data-total="total"
 			data-allowed="isMemberOf(desk)"
 			data-show-empty="true"
