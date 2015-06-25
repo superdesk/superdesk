@@ -142,7 +142,6 @@ INSTALLED_APPS = [
     'superdesk.notification',
     'superdesk.activity',
     'superdesk.comments',
-    'superdesk.storage.amazon.import_from_amazon',
 
     'superdesk.io',
     'superdesk.io.subjectcodes',
@@ -195,6 +194,8 @@ AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')
 AMAZON_ACCESS_KEY_ID = env('AMAZON_ACCESS_KEY_ID', '')
 AMAZON_SECRET_ACCESS_KEY = env('AMAZON_SECRET_ACCESS_KEY', '')
 AMAZON_REGION = env('AMAZON_REGION', 'us-east-1')
+AMAZON_SERVE_DIRECT_LINKS = env('AMAZON_SERVE_DIRECT_LINKS', False)
+AMAZON_S3_USE_HTTPS = env('AMAZON_S3_USE_HTTPS', False)
 
 RENDITIONS = {
     'picture': {

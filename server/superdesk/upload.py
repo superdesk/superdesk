@@ -50,7 +50,10 @@ def get_upload_as_data_uri(media_id):
 
 def url_for_media(media_id):
     try:
-        return app.media.url_for_media(media_id)
+        url = app.media.url_for_media(media_id)
+        if url is None:
+            return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
+                           _external=True, _schema=superdesk.config.URL_PROTOCOL)
     except AttributeError:
         return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
                        _external=True, _schema=superdesk.config.URL_PROTOCOL)
@@ -123,7 +126,8 @@ class UploadService(BaseService):
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
-            file_id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            file_id = app.media.put(out, filename=file_name, content_type=content_type,
+                                    resource=self.datasource, metadata=metadata)
             doc['media'] = file_id
             doc['mime_type'] = content_type
             doc['filemeta'] = decode_metadata(metadata)
