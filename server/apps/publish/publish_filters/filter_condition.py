@@ -12,6 +12,9 @@ import logging
 import re
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.utils import ListCursor
+from superdesk import get_resource_service
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -58,10 +61,38 @@ class FilterConditionResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
-    privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
+    privileges = {'POST': 'publish_filters',
+                  'PATCH': 'publish_filters',
+                  'DELETE': 'publish_filters'}
 
 
 class FilterConditionService(BaseService):
+    def on_create(self, docs):
+        self._check_equals(docs)
+
+    def on_update(self, updates, original):
+        doc = dict(original)
+        doc.update(updates)
+        self._check_equals([doc])
+
+    def _check_equals(self, docs):
+        for doc in docs:
+            existing_docs = self.get(None, {'field': doc['field'], 'operator': doc['operator']})
+            for existing_doc in existing_docs:
+                if '_id' in doc and doc['_id'] == existing_doc['_id']:
+                    continue
+                if self._are_equal(doc, existing_doc):
+                    raise SuperdeskApiError.badRequestError(
+                        'Filter condition:{} has identical settings'.format(existing_doc['name']))
+
+    def _are_equal(self, fc1, fc2):
+        def get_comparer(fc):
+            return ''.join(sorted(fc['value'].upper()))
+
+        return all([fc1['field'] == fc2['field'],
+                    fc1['operator'] == fc2['operator'],
+                    get_comparer(fc1) == get_comparer(fc2)])
+
     def get_mongo_query(self, doc):
         field = doc['field']
         operator = self._get_mongo_operator(doc['operator'])
@@ -145,3 +176,32 @@ class FilterConditionService(BaseService):
             return filter_value.match(article_value)
         if operator == 'notlike':
             return not filter_value.match(article_value)
+
+
+class FilterConditionParametersResource(Resource):
+    url = "filter_conditions/parameters"
+    resource_methods = ['GET']
+    item_methods = []
+
+
+class FilterConditionParametersService(BaseService):
+    def get(self, req, lookup):
+        values = self._get_field_values()
+        return ListCursor([{'field': 'anpa-category',
+                            'operators': ['in', 'nin'],
+                            'values': values['anpa_category']
+                            },
+                           {'field': 'urgency',
+                            'operators': ['in', 'nin'],
+                            'values': values['urgency']
+                            },
+                           {'field': 'keywords',
+                            'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
+                            }])
+
+    def _get_field_values(self):
+        values = {}
+        values['anpa_category'] = get_resource_service('vocabularies').find_one(req=None, _id='categories')['items']
+        values['genre'] = get_resource_service('vocabularies').find_one(req=None, _id='genre')['items']
+        values['urgency'] = get_resource_service('vocabularies').find_one(req=None, _id='newsvalue')['items']
+        return values

@@ -273,3 +273,27 @@ class FilterConditionTests(TestCase):
         self.assertFalse(f.does_match(doc, self.articles[3]))
         self.assertFalse(f.does_match(doc, self.articles[4]))
         self.assertTrue(f.does_match(doc, self.articles[5]))
+
+    def test_are_equal1(self):
+        f = FilterConditionService()
+        new_doc = {'name': 'A', 'field': 'urgency', 'operator': 'nin', 'value': '2,3,4'}
+        doc = {'_id': 1, 'name': 'B', 'field': 'urgency', 'operator': 'nin', 'value': '2,3,4'}
+        self.assertTrue(f._are_equal(new_doc, doc))
+
+    def test_are_equal2(self):
+        f = FilterConditionService()
+        new_doc = {'name': 'A', 'field': 'urgency', 'operator': 'nin', 'value': '4,2,3'}
+        doc = {'_id': 1, 'name': 'B', 'field': 'urgency', 'operator': 'nin', 'value': '2,3,4'}
+        self.assertTrue(f._are_equal(new_doc, doc))
+
+    def test_are_equal3(self):
+        f = FilterConditionService()
+        new_doc = {'name': 'A', 'field': 'urgency', 'operator': 'nin', 'value': 'jump,track'}
+        doc = {'_id': 1, 'name': 'B', 'field': 'urgency', 'operator': 'nin', 'value': 'tump,jrack'}
+        self.assertTrue(f._are_equal(new_doc, doc))
+
+    def test_are_equal4(self):
+        f = FilterConditionService()
+        new_doc = {'name': 'A', 'field': 'urgency', 'operator': 'nin', 'value': '4,2,3'}
+        doc = {'_id': 1, 'name': 'B', 'field': 'urgency', 'operator': 'nin', 'value': '2,3'}
+        self.assertFalse(f._are_equal(new_doc, doc))

@@ -43,7 +43,7 @@ class PublishFilterResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
-    privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
+    privileges = {'POST': 'publish_filters', 'PATCH': 'publish_filters'}
 
 
 class PublishFilterService(BaseService):

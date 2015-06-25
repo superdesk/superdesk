@@ -11,7 +11,7 @@
 (function() {
     'use strict';
 
-    var app = angular.module('superdesk.publish', ['superdesk.users']);
+    var app = angular.module('superdesk.publish', ['superdesk.users', 'superdesk.publish.filters']);
 
     app.value('transmissionTypes', {
         ftp: {
@@ -41,6 +41,7 @@
         var user_privileges = privileges.privileges;
 
         $scope.showSubscribers  = Boolean(user_privileges.subscribers);
+        $scope.showFilterConditions  = Boolean(user_privileges.publish_filters);
     }
 
     AdminPublishSettingsService.$inject = ['api', '$q'];
