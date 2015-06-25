@@ -14,7 +14,7 @@
 </div>
 
 <section class="main-section publish-queue">
-    <div class="preview-layout closed">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="list-pane">
             <header>
                 <div class="sortbar pull-left">
@@ -77,7 +77,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state| queueStatus}}">
+                            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state| queueStatus}}" ng-click="preview(queue_item);">
                                 <td>
                                     <span sd-check ng-show="queue_item.state !== 'canceled'" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected"></span>
                                 </td>
@@ -104,6 +104,29 @@
                 </div>
             </div> 
        </div>
+    </div>
+    <div class="preview-pane content-item-preview" ng-init="tab = 'content'">
+        <header>
+            <ul class="nav nav-tabs">
+                <li ng-class="{active: tab === 'content'}">
+                    <button ng-click="tab = 'content'"><span translate>Content</span></button>
+                </li>
+                <li ng-class="{active: tab === 'metadata'}">
+                    <button ng-click="tab = 'metadata'"><span translate>Metadata</span></button>
+                </li>
+                <li ng-class="{active: tab === 'related'}">
+                    <button ng-click="tab = 'related'"><span translate>Related Items</span></button>
+                </li>
+            </ul>
+            <button ng-click="preview(null)" class="close-preview">
+                <i class="icon-close-small"></i>
+            </button>
+        </header>
+        <div class="content" ng-if="selected.preview">
+            <div ng-if="tab === 'content'" sd-media-preview></div>
+            <div ng-if="tab === 'metadata'" sd-media-metadata data-item="selected.preview"></div>
+            <div ng-if="tab === 'related'" sd-media-related data-item="selected.preview"></div>
+        </div>
     </div>
 </section>
 
