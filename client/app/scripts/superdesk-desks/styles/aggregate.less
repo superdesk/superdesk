@@ -364,19 +364,38 @@
 
 .aggregate-widget-config {
     .modal-body {
-        padding-top: 0;
+        overflow: visible;
+        padding: 0;
+        border-radius: 0 0 4px 4px;
+    }
+    .modal-screen {
+        position: relative;
+        padding: 0;
+        top: 48px;
+        .content {
+            padding: 20px;
+            max-height: 450px;
+            overflow: auto;
+            background-color: #fcfcfc;
+        }
+        .modal-footer {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
     }
     .legend {
         color: @grayLight;
         text-transform: uppercase;
         font-size: 12px;
         .text-semibold();
-        margin-top: 20px;
+        margin-bottom: 20px;
     }
     .desk-title {
-        font-size: 16px;
+        font-size: 15px;
         .text-semibold();
-        padding: 15px 0;
+        padding: 5px 0 15px 0;
     }
     .stages {
         li {
