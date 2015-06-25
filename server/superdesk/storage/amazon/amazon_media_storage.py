@@ -51,7 +51,9 @@ class AmazonMediaStorage(MediaStorage):
         self.user_metadata_header = 'x-amz-meta-'
 
     def url_for_media(self, media_id):
-        protocol = 'https' if self.app.config.get('S3_USE_HTTPS', False) else 'http'
+        if not self.app.config.get('AMAZON_SERVE_DIRECT_LINKS', False):
+            return None
+        protocol = 'https' if self.app.config.get('AMAZON_S3_USE_HTTPS', False) else 'http'
         endpoint = 's3-%s.amazonaws.com' % self.region
         return '%s://%s.%s/%s' % (protocol, self.container_name, endpoint, media_id)
 
