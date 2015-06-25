@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class PublishQueueResource(Resource):
     schema = {
         'item_id': Resource.rel('archive', type='string'),
-        'formatted_item_id': Resource.rel('formatted_item', type='string'),
+        'formatted_item_id': Resource.rel('formatted_item'),
         'transmit_started_at': {
             'type': 'datetime'
         },
