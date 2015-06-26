@@ -126,4 +126,8 @@ function Authoring() {
         expect(element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
         expect(element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe')).toContain(highlight);
     };
+    
+    this.writeText = function(text) {
+        element(by.model('item.body_html')).all(by.className('editor-type-html')).sendKeys(text);
+    };
 }
