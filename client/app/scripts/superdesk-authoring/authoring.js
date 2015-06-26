@@ -632,6 +632,13 @@
             );
         };
 
+        this.confirmSpellcheck = function confirmSpellcheck(msg) {
+            return modal.confirm(
+                $interpolate(gettext('You have {{ message }} spelling mistakes. Are you sure you want to continue?'))
+                ({message: msg})
+            );
+        };
+
         /**
          * Make user aware that an item was unlocked
          *
@@ -1250,8 +1257,8 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring', 'send'];
-    function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope, authoring, send) {
+    SendItem.$inject = ['$q', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
+    function SendItem($q, api, desks, notify, $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
         return {
             scope: {
                 item: '=',
@@ -1330,7 +1337,21 @@
                     }
                 };
 
-                scope.send = function(open) {
+                scope.send = function (open) {
+                    var spellcheckErrors = spellcheck.countErrors();
+                    if (spellcheckErrors > 0) {
+                        confirm.confirmSpellcheck(spellcheckErrors)
+                                .then(angular.bind(this, function send() {
+                                    return runSend(open);
+                                }), function (err) { // cancel
+                                    return false;
+                                });
+                    } else {
+                        return runSend(open);
+                    }
+                };
+
+                function runSend(open) {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
 
@@ -1349,13 +1370,27 @@
                             return sendIngest(deskId, stageId, scope.selectedMacro, open);
                         }
                     }
-                };
+                }
 
                 scope.canSendAndContinue = function() {
                     return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
                 };
 
-                scope.sendAndContinue = function() {
+                scope.sendAndContinue = function () {
+                    var spellcheckErrors = spellcheck.countErrors();
+                    if (spellcheckErrors > 0) {
+                        confirm.confirmSpellcheck(spellcheckErrors)
+                                .then(angular.bind(this, function send() {
+                                    return runSendAndContinue();
+                                }), function (err) { // cancel
+                                    return false;
+                                });
+                    } else {
+                        return runSendAndContinue();
+                    }
+                };
+
+                function runSendAndContinue() {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
                     var activeDeskId = desks.getCurrentDeskId();
@@ -1370,7 +1405,7 @@
                         }, function(err) {
                             notify.error('Failed to send and continue.');
                         });
-                };
+                }
 
                 function runMacro(item, macro) {
                     if (macro) {
