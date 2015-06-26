@@ -56,6 +56,10 @@ body:not(:-moz-handler-blocked) .modal{
 	&.in {
 		display: flex !important;
 	}
+	&.fade{
+		transition: none;
+		-webkit-transition: none;
+	}
 	.modal-dialog {
 		width: @modal-base-width + 20px;
 		display: flex;

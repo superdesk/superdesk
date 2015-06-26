@@ -1297,6 +1297,15 @@
                     scope.selectUser = function(user) {
                         return '@' + user.username;
                     };
+
+                    scope.$watchCollection(
+                        function() { return $('.users-list-embed>li.active');},
+                        function (newValue) {
+                            if (newValue.hasClass('active')){
+                                $('.mentio-menu').scrollTop(newValue.position().top);
+                            }
+                        }
+                    );
                 }
             };
         }])
