@@ -236,9 +236,9 @@ class ArchivePublishTestCase(TestCase):
             self.app.data.insert('archive', self.articles)
 
             self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "validators.json")
-            self.json_data = [{"_id": "publish", "schema": {"headline": {"type": "string"}}},
-                              {"_id": "kill", "schema": {"headline": {"type": "string"}}}]
-
+            self.json_data = [
+                {"_id": "kill_text", "act": "kill", "type": "text", "schema": {"headline": {"type": "string"}}},
+                {"_id": "publish_text", "act": "publish", "type": "text", "schema": {}}]
             self.article_versions = self.__init_article_versions()
 
             with open(self.filename, "w+") as file:

@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 class ValidateResource(superdesk.Resource):
     schema = {
         'act': {'type': 'string', 'required': True},
+        'type': {'type': 'string', 'required': True},
         'validate': {
             'type': 'dict',
             'required': True
@@ -37,8 +38,9 @@ class ValidateService(superdesk.Service):
         return [doc['errors'] for doc in docs]
 
     def _validate(self, doc):
-        validator = superdesk.get_resource_service('validators').find_one(req=None, _id=doc['act'])
-        if validator:
+        lookup = {'act': doc['act'], 'type': doc['type']}
+        validators = superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
+        for validator in validators:
             v = Validator()
             v.allow_unknown = True
             v.validate(doc['validate'], validator['schema'])

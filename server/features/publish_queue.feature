@@ -86,7 +86,7 @@ Feature: Publish Queue
   Scenario: Published Item should have published sequence number when published and placed in queue
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """

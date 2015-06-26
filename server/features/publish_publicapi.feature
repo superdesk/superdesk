@@ -36,7 +36,7 @@ Feature: Publish content to the public API
         """
 		And the "validators"
 		"""
-		[{"_id": "publish", "schema":{}}]
+		[{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
 		"""
 		When we post to "/subscribers" with success
 		"""

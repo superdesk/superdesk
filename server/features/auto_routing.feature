@@ -140,7 +140,7 @@ Feature: Auto Routing
     Scenario: Content is fetched and published to different stages 1
         Given the "validators"
         """
-          [{"_id": "publish", "schema":{}}]
+          [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
         """
         Given empty "desks"
         When we post to "/desks"

@@ -78,7 +78,7 @@ class BasePublishService(BaseService):
         if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
             raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
 
-        validate_item = {'act': self.publish_type, 'validate': updates}
+        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updates}
         validation_errors = get_resource_service('validate').post([validate_item])
 
         if validation_errors[0]:
