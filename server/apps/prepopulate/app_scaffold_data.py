@@ -28,6 +28,7 @@ class AppScaffoldDataCommand(superdesk.Command):
         for i, desk in enumerate(desks):
             self.logger.info('Adding items for desk:' + str(desk['_id']))
             self.ingest_items_for(desk, no_of_stories, i + 1)
+        return 0
 
     def ingest_items_for(self, desk, no_of_stories, skip_index):
         desk_id = desk['_id']
