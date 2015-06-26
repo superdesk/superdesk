@@ -9,73 +9,12 @@
 
         <div class="content-list content-list-holder" ng-if="!agg.loading">
             <div sd-shadow>
-                <div class="desk" ng-repeat="group in agg.getGroups()">
-                    <div class="stage" ng-if="group.type === 'stage'" ng-show="total" ng-init="open = true">
-
-                        <div class="stage-header clearfix">
-                            <div class="line"></div>
-                            <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
-                                <i class="icon-chevron-down"></i>
-                            </button>
-                            <div  class="stage-name pull-left">
-                                {{agg.deskLookup[agg.stageLookup[group._id].desk].name}} : <span>{{agg.stageLookup[group._id].name}} {{group.type}}</span>
-                            </div>
-                            <span class="label pull-right">{{total}}</span>
-                        </div>
-
-                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
+                <div class="desk" ng-repeat="group in agg.cards">
+                    <div class="stage" ng-show="total">
+                        <div sd-stage-header></div>
+                        <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
                              sd-stage-items
-                             data-stage="group._id"
-                             data-total="total"
-                             data-allowed="true"
-                             data-show-empty="false"
-                             data-max-items="group.max_items"
-                             data-action="agg.preview(item)"
-                             data-selected="agg.selected"
-                             data-filter="agg.query">
-                        </div>
-                    </div>
-
-                    <div class="stage" ng-if="group.type === 'search'" ng-show="total" ng-init="open = true">
-
-                        <div class="stage-header clearfix">
-                            <div class="line"></div>
-                            <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
-                                <i class="icon-chevron-down"></i>
-                            </button>
-                            <div class="stage-name pull-left">
-                                {{agg.searchLookup[group._id].name}}
-                            </div>
-                            <span class="label pull-right">{{total}}</span>
-                        </div>
-
-                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
-                             sd-stage-items
-                             data-saved-search="agg.searchLookup[group._id]"
-                             data-total="total"
-                             data-allowed="true"
-                             data-show-empty="false"
-                             data-max-items="group.max_items"
-                             data-action="agg.preview(item)"
-                             data-selected="agg.selected"
-                             data-filter="agg.query">
-                        </div>
-                    </div>
-                    
-                    <div class="stage" ng-if="group.type === 'personal'" ng-show="total" ng-init="open = true">
-
-                        <div class="stage-header clearfix">
-                            <div class="line"></div>
-                            <button class="toggle pull-left" ng-class="{closed: !open}" ng-click="open = !open">
-                                <i class="icon-chevron-down"></i>
-                            </button>
-                            <div class="stage-name pull-left" translate>Personal</div>
-                            <span class="label pull-right">{{total}}</span>
-                        </div>
-
-                        <div class="stage-content" ng-show="open" ng-style="agg.getMaxHeightStyle(group.max_items)"
-                             sd-stage-items
-                             data-stage="personal"
+                             data-stage="group"
                              data-total="total"
                              data-allowed="true"
                              data-show-empty="false"
@@ -88,7 +27,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="preview preview-widget" ng-init="contenttab = true" ng-class="{wrap: !agg.selected}">
         <div class="nav">
