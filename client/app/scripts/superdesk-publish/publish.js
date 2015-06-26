@@ -360,7 +360,7 @@
         }
 
         $scope.preview = function(queueItem) {
-            $location.search('_id', queueItem._id);
+            $location.search('_id', queueItem ? queueItem._id : queueItem);
         };
 
         function previewItem() {
