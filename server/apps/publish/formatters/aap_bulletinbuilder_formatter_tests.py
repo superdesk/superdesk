@@ -42,7 +42,6 @@ class AapBulletinBuilderFormatterTest(TestCase):
         'versioncreated': utcnow(),
         'lock_user': ObjectId()
     }
-    sel_codes = {'1': ['aaa', 'bbb']}
 
     def setUp(self):
         super().setUp()
