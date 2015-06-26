@@ -11,8 +11,11 @@
 import os
 import bcrypt
 from uuid import uuid4
+from datetime import datetime
+from bson import ObjectId
 from enum import Enum
 from importlib import import_module
+from eve.utils import config
 
 
 class FileSortAttributes(Enum):
@@ -105,3 +108,14 @@ class ListCursor(object):
 
     def extra(self, response):
         pass
+
+
+def json_serialize_datetime_objectId(obj):
+    """
+    serialize so that objectid and date are converted to appropriate format.
+    """
+    if isinstance(obj, datetime):
+        return str(datetime.strftime(obj, config.DATE_FORMAT))
+
+    if isinstance(obj, ObjectId):
+        return str(obj)

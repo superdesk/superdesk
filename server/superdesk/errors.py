@@ -431,6 +431,10 @@ class FormatterError(SuperdeskPublishError):
     def newmsmlG2FormatterError(cls, exception=None, destination=None):
         return FormatterError(7006, exception, destination)
 
+    @classmethod
+    def bulletinBuilderFormatterError(cls, exception=None, destination=None):
+        return FormatterError(7007, exception, destination)
+
 
 class SubscriberError(SuperdeskPublishError):
     _codes = {
