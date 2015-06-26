@@ -983,6 +983,7 @@
 
                 // call the function to unlock and lock the story for editing.
                 $scope.unlock = function() {
+                    $scope.unlockClicked = true;
                     lock.unlock($scope.item).then(function(unlocked_item) {
                         $location.path('/authoring/' + $scope.item._id);
                     });
