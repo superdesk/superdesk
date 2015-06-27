@@ -634,33 +634,33 @@ class ArchivePublishTestCase(TestCase):
 def test_can_publish_article(self):
         with self.app.app_context():
             self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
-            self.app.data.insert('filter_condition',
+            self.app.data.insert('filter_conditions',
                                  [{'_id': 1,
                                    'field': 'headline',
                                    'operator': 'like',
                                    'value': 'tor',
                                    'name': 'test-1'}])
-            self.app.data.insert('filter_condition',
+            self.app.data.insert('filter_conditions',
                                  [{'_id': 2,
                                    'field': 'urgency',
                                    'operator': 'in',
                                    'value': 2,
                                    'name': 'test-2'}])
-            self.app.data.insert('filter_condition',
+            self.app.data.insert('filter_conditions',
                                  [{'_id': 3,
                                    'field': 'headline',
                                    'operator': 'endswith',
                                    'value': 'tor',
                                    'name': 'test-3'}])
-            self.app.data.insert('filter_condition',
+            self.app.data.insert('filter_conditions',
                                  [{'_id': 4,
                                    'field': 'urgency',
                                    'operator': 'in',
                                    'value': '2,3,4',
                                    'name': 'test-4'}])
-            self.app.data.insert('publish_filter',
+            self.app.data.insert('publish_filters',
                                  [{'_id': 1,
-                                   'publish_filter': [[{"fc": 4}, {"fc": 3}], [{"fc": 1}, {"fc": 2}]],
+                                   'publish_filter': [[{"fc": [4, 3]}], [{"fc": [1, 2]}]],
                                    'name': 'pf-1'}])
             can_it = get_resource_service('archive_publish').\
                 can_publish(self.subscribers[0], self.articles[6])

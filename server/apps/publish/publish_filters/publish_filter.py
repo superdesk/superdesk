@@ -21,12 +21,20 @@ class PublishFilterResource(Resource):
         'publish_filter': {
             'type': 'list',
             'schema': {
-                'type': 'list',
+                'type': 'dict',
                 'schema': {
-                    'type': 'dict',
-                    'schema': {
-                        'fc': Resource.rel('filter_condition', True),
-                        'pf': Resource.rel('publish_filter', True)
+                    'expression': {
+                        'type': 'dict',
+                        'schema': {
+                            'fc': {
+                                'type': 'list',
+                                'schema': Resource.rel('filter_conditions', True)
+                            },
+                            'pf': {
+                                'type': 'list',
+                                'schema': Resource.rel('publish_filters', True)
+                            }
+                        }
                     }
                 }
             }
@@ -43,23 +51,27 @@ class PublishFilterResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
-    privileges = {'POST': 'publish_filters', 'PATCH': 'publish_filters'}
+    privileges = {'POST': 'publish_filters',
+                  'PATCH': 'publish_filters',
+                  'DELETE': 'publish_filters'}
 
 
 class PublishFilterService(BaseService):
     def build_mongo_query(self, doc):
-        filter_condition_service = get_resource_service('filter_condition')
+        filter_condition_service = get_resource_service('filter_conditions')
         expressions = []
         for expression in doc.get('publish_filter', []):
             filter_conditions = []
-            for filter_dict in expression:
-                if 'fc' in filter_dict:
-                    current_filter = filter_condition_service.find_one(req=None, _id=filter_dict['fc'])
+            if 'fc' in expression.get('expression', {}):
+                for f in expression['expression']['fc']:
+                    current_filter = filter_condition_service.find_one(req=None, _id=f)
                     mongo_query = filter_condition_service.get_mongo_query(current_filter)
-                else:
-                    current_filter = super().find_one(req=None, _id=filter_dict['pf'])
+                    filter_conditions.append(mongo_query)
+            if 'pf' in expression.get('expression', {}):
+                for f in expression['expression']['pf']:
+                    current_filter = super().find_one(req=None, _id=f)
                     mongo_query = self.build_mongo_query(current_filter)
-                filter_conditions.append(mongo_query)
+                    filter_conditions.append(mongo_query)
 
             if len(filter_conditions) > 1:
                 expressions.append({'$and': filter_conditions})
@@ -76,31 +88,36 @@ class PublishFilterService(BaseService):
 
     def _get_elastic_query(self, doc):
         expressions = {'should': []}
-        filter_condition_service = get_resource_service('filter_condition')
+        filter_condition_service = get_resource_service('filter_conditions')
         for expression in doc.get('publish_filter', []):
             filter_conditions = {'must': []}
-            for filter_dict in expression:
-                if 'fc' in filter_dict:
-                    current_filter = filter_condition_service.find_one(req=None, _id=filter_dict['fc'])
+            if 'fc' in expression.get('expression', {}):
+                for f in expression['expression']['fc']:
+                    current_filter = filter_condition_service.find_one(req=None, _id=f)
                     elastic_query = filter_condition_service.get_elastic_query(current_filter)
-                else:
-                    current_filter = super().find_one(req=None, _id=filter_dict['pf'])
+                    filter_conditions['must'].append(elastic_query)
+            if 'pf' in expression.get('expression', {}):
+                for f in expression['expression']['pf']:
+                    current_filter = super().find_one(req=None, _id=f)
                     elastic_query = self._get_elastic_query(current_filter)
-                filter_conditions['must'].append(elastic_query)
+                    filter_conditions['must'].append(elastic_query)
+
             expressions['should'].append({'bool': filter_conditions})
         return {'bool': expressions}
 
     def does_match(self, publish_filter, article):
-        filter_condition_service = get_resource_service('filter_condition')
+        filter_condition_service = get_resource_service('filter_conditions')
         expressions = []
         for expression in publish_filter.get('publish_filter', []):
             filter_conditions = []
-            for filter_dict in expression:
-                if 'fc' in filter_dict:
-                    filter_condition = filter_condition_service.find_one(req=None, _id=filter_dict['fc'])
+            if 'fc' in expression.get('expression', {}):
+                for f in expression['expression']['fc']:
+                    filter_condition = filter_condition_service.find_one(req=None, _id=f)
                     filter_conditions.append(filter_condition_service.does_match(filter_condition, article))
-                else:
-                    current_filter = super().find_one(req=None, _id=filter_dict['pf'])
+            if 'pf' in expression.get('expression', {}):
+                for f in expression['expression']['pf']:
+                    current_filter = super().find_one(req=None, _id=f)
                     filter_conditions.append(self.does_match(current_filter, article))
+
             expressions.append(all(filter_conditions))
         return any(expressions)

@@ -74,7 +74,7 @@ class SubscribersResource(Resource):
         'publish_filter': {
             'type': 'dict',
             'schema': {
-                'filter_id': Resource.rel('publish_filter', nullable=True),
+                'filter_id': Resource.rel('publish_filters', nullable=True),
                 'filter_type': {
                     'type': 'string',
                     'allowed': ['blocking', 'permitting'],
