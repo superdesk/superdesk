@@ -1,7 +1,6 @@
 'use strict';
 
 var backendRequestAuth = require('./backend').backendRequestAuth;
-var getToken = require('./auth').getToken;
 var pp = browser.params;
 
 exports.resetApp = resetApp;
@@ -21,10 +20,6 @@ function resetApp(fixture_profile, callback) {
 }
 
 function post(params, callback) {
-    if (!pp.token) {
-        getToken(function() { post(params, callback); });
-        return;
-    }
     params.method = 'POST';
     backendRequestAuth(params, callback);
 }

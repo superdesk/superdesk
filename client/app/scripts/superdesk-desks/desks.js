@@ -16,6 +16,16 @@
 
         var userDesks;
 
+        function sorted(result) {
+            var items = result._items || [];
+            items.sort(compareNames);
+            return items;
+
+            function compareNames(a, b) {
+                return a.name.localeCompare(b.name);
+            }
+        }
+
         desks.initialize()
         .then(function() {
             $scope.desks = desks.desks;
@@ -30,7 +40,7 @@
         $scope.online_users = false;
 
         api('roles').query().then(function(result) {
-            $scope.roles = result._items;
+            $scope.roles = sorted(result);
         });
 
         $scope.privileges = privileges.privileges;

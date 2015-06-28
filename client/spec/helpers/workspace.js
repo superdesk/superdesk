@@ -4,17 +4,17 @@
 module.exports = new Workspace();
 
 var content = require('./content'),
-    openUrl = require('./utils').open;
+    nav = require('./utils').nav;
 
 function Workspace() {
     this.open = function() {
-        return openUrl('/#/workspace/content');
+        return nav('workspace/content');
     };
 
     this.openContent = this.open;
 
     this.openIngest = function() {
-        return openUrl('/#/workspace/ingest');
+        return nav('workspace/ingest');
     };
 
     this.getDesk = function(name) {
@@ -38,6 +38,10 @@ function Workspace() {
                     return getDesk(desk).click();
                 }
             }
+        }).then(function() {
+            return browser.wait(function() {
+                return element(by.css('.list-view')).isPresent();
+            });
         });
     };
 

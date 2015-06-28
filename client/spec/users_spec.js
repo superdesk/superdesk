@@ -32,12 +32,12 @@ describe('Users', function() {
     });
 
     describe('users list:', function() {
-        beforeEach(function(done) {
-            openUrl('/#/users').then(done);
+        beforeEach(function() {
+            openUrl('/#/users');
         });
 
         it('can list users', function() {
-            expect(element.all(by.repeater('user in users')).count()).toBe(7);
+            expect(element.all(by.repeater('user in users')).count()).toBe(6);
             expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
         });
 

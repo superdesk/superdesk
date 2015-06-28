@@ -21,25 +21,6 @@ describe('Package', function() {
         expect(element.all(by.css('[ng-click="openVersion(version)"]')).count()).toBe(2);
     });
 
-    xit('edit title and description', function() {
-        workspace.switchToDesk('Personal');
-        content.setListView();
-        content.actionOnItem('Edit package', 0);
-        // Edit title and description
-        element(by.id('keyword')).clear();
-        element(by.id('keyword')).sendKeys('new keyword');
-        element(by.id('title')).clear();
-        element(by.id('title')).sendKeys('new title');
-        authoring.save();
-        authoring.close();
-        //Check saved values
-        browser.get('/#/workspace/content');
-        workspace.switchToDesk('Personal');
-        content.setListView();
-        expect(content.getItem(0).element(by.css('[title="new keyword"]')).isPresent()).toBe(true);
-        expect(content.getItem(0).element(by.css('[title="new title"]')).isPresent()).toBe(true);
-    });
-
     it('reorder item on package', function() {
         workspace.switchToDesk('Personal').then(
             content.setListView
@@ -80,7 +61,16 @@ describe('Package', function() {
         // preview package via preview
         element.all(by.repeater('child in item')).first().click();
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
-        expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
+
+        browser.wait(function() {
+            return previewItems().count();
+        }, 200);
+
+        expect(previewItems().count()).toBe(3);
+
+        function previewItems() {
+            return element(by.css('.condensed-preview')).all(by.repeater('child in item'));
+        }
     });
 
     it('create package from multiple items', function() {

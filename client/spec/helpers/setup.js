@@ -10,6 +10,10 @@ function clearStorage() {
     return browser.driver.executeScript('sessionStorage.clear();localStorage.clear();');
 }
 
+function openBaseUrl() {
+    return browser.driver.get(browser.baseUrl);
+}
+
 module.exports = function(params) {
     // runs before every spec
     beforeEach(function(done) {
@@ -17,8 +21,9 @@ module.exports = function(params) {
         browser.driver.manage().window().setSize(1280, 800);
         getToken(function() {
             resetApp(params.fixture_profile, function() {
-                browser.driver.get(browser.baseUrl)
+                openBaseUrl()
                     .then(clearStorage)
+                    .then(openBaseUrl)
                     .then(waitForSuperdesk)
                     .then(done);
             });

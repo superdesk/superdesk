@@ -47,12 +47,11 @@ function backendRequest(params, callback) {
 function backendRequestAuth (params, callback) {
     callback = callback || function() {};
     var token = browser.params.token;
-    if (!token) {
-        throw new Error('No auth token');
+    if (token) {
+        if (!params.headers) {
+            params.headers = {};
+        }
+        params.headers.authorization = 'Basic ' + bt(token + ':');
     }
-    if (!params.headers) {
-        params.headers = {};
-    }
-    params.headers.authorization = 'Basic ' + bt(token + ':');
     exports.backendRequest(params, callback);
 }

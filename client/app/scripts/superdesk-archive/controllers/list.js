@@ -5,10 +5,10 @@ define([
     'use strict';
 
     ArchiveListController.$inject = [
-        '$scope', '$injector', '$location', '$q', 'superdesk',
+        '$scope', '$injector', '$location', '$q', '$timeout', 'superdesk',
         'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', 'notify', 'multi'
     ];
-    function ArchiveListController($scope, $injector, $location, $q, superdesk, session, api, desks, ContentCtrl,
+    function ArchiveListController($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, ContentCtrl,
         StagesCtrl, notify, multi) {
 
         var resource,
@@ -88,7 +88,12 @@ define([
             return resource.getById(id);
         };
 
-        var refreshItems = _.debounce(_refresh, 100);
+        var refreshPromise,
+            refreshItems = function() {
+                $timeout.cancel(refreshPromise);
+                refreshPromise = $timeout(_refresh, 100, false);
+            };
+
         function _refresh() {
             if (desks.getCurrentDeskId() !== 'personal') {
                 if ($scope.published) {

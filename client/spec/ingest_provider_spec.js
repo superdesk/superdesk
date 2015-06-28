@@ -11,7 +11,7 @@ describe('Ingest Provider Dashboard Maintenance', function() {
     function addProvider() {
         ingestDashboard.openDropDown();
         var providerButton = ingestDashboard.getProviderButton(ingestDashboard.getProvider(0));
-        expect(providerButton.getAttribute('class')).toNotContain('checked');
+        expect(providerButton.getAttribute('class')).not.toContain('checked');
         providerButton.click();
         expect(providerButton.getAttribute('class')).toContain('checked');
 
@@ -33,7 +33,7 @@ describe('Ingest Provider Dashboard Maintenance', function() {
         var providerButton = ingestDashboard.getProviderButton(ingestDashboard.getProvider(0));
         expect(providerButton.getAttribute('class')).toContain('checked');
         providerButton.click();
-        expect(providerButton.getAttribute('class')).toNotContain('checked');
+        expect(providerButton.getAttribute('class')).not.toContain('checked');
         expect(ingestDashboard.getDashboardList().count()).toEqual(0);
     });
 
