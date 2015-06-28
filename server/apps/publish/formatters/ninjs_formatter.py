@@ -21,7 +21,7 @@ class NINJSFormatter(Formatter):
     """
     direct_copy_properties = ['versioncreated', 'usageterms', 'subject', 'language', 'headline',
                               'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located',
-                              '_created', '_updated']
+                              '_created', '_updated', 'body_text']
 
     def format(self, article, subscriber):
         try:
@@ -35,8 +35,14 @@ class NINJSFormatter(Formatter):
             for copy_property in self.direct_copy_properties:
                 if copy_property in article:
                     ninjs[copy_property] = article[copy_property]
+
+            if 'body_html' in article:
+                ninjs['body_xhtml'] = article['body_html']
+            if 'description' in article:
+                ninjs['description_text'] = article['description']
+
             if article['type'] == 'composite':
-                article['associations'] = self._get_associations(article)
+                ninjs['associations'] = self._get_associations(article)
 
             return pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId)
         except Exception as ex:
