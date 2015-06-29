@@ -31,6 +31,11 @@ Feature: Duplication of Content within Desk
       {"desk": "#desks._id#"}
       """
       Then we get "_id"
+      When we get "/archive/#_id#"
+      Then we get existing resource
+      """
+      {"operation": "duplicate"}
+      """
       When we get "/archive/#_id#?version=all"
       Then we get list with 4 items
       When we get "/archive?q=#desks._id#"

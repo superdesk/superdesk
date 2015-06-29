@@ -47,9 +47,9 @@ Feature: News Items Archive
         """
 
         Then we get updated response
-            """
-            {"word_count": 2}
-            """
+        """
+        {"word_count": 2, "operation": "update"}
+        """
         And we get version 3
         And we get etag matching "/archive/xyz"
 
@@ -88,8 +88,12 @@ Feature: News Items Archive
         {"headline": "TEST 2", "urgency": 2}
         """
 		And we restore version 1
-        Then we get version 3
-        Then we get global content expiry
+        Then we get updated response
+        """
+        {"operation": "restore"}
+        """
+        And we get version 3
+        And we get global content expiry
         And the field "headline" value is "test"
 
 
@@ -200,7 +204,7 @@ Feature: News Items Archive
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text", "original_creator": "", "word_count": 1}
+        {"_id": "", "guid": "", "type": "text", "original_creator": "", "word_count": 1, "operation": "create"}
         """
 
 	@auth
