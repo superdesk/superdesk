@@ -5,11 +5,11 @@ Feature: Validate
   Scenario: Validate type
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"type": "string"}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"headline": {"type": "string"}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"headline": true}}
+      {"act": "publish", "type": "text", "validate": {"headline": true}}
       """
     Then we get existing resource
     """
@@ -20,11 +20,11 @@ Feature: Validate
   Scenario: Validate pass
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"type": "string"}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"headline": {"type": "string"}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"headline": "budget cigs and beer up"}}
+      {"act": "publish", "type": "text", "validate": {"headline": "budget cigs and beer up"}}
       """
     Then we get existing resource
     """
@@ -35,11 +35,11 @@ Feature: Validate
   Scenario: Validate required field
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"type": "string", "required": true}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"headline": {"type": "string", "required": true}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"not headline": "budget cigs and beer up"}}
+      {"act": "publish", "type": "text", "validate": {"not headline": "budget cigs and beer up"}}
       """
     Then we get existing resource
     """
@@ -49,11 +49,11 @@ Feature: Validate
   Scenario: Validate field length short
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"type": "string", "minlength": 2, "maxlength": 55}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"headline": {"type": "string", "minlength": 2, "maxlength": 55}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"headline": "1"}}
+      {"act": "publish", "type": "text", "validate": {"headline": "1"}}
       """
     Then we get existing resource
     """
@@ -64,11 +64,11 @@ Feature: Validate
   Scenario: Validate field length long
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"type": "string", "minlength": 2, "maxlength": 3}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"headline": {"type": "string", "minlength": 2, "maxlength": 3}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"headline": "1234"}}
+      {"act": "publish", "type": "text", "validate": {"headline": "1234"}}
       """
     Then we get existing resource
     """
@@ -79,11 +79,11 @@ Feature: Validate
   Scenario: Validate allowed values
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{"type": {"type": "string", "allowed": ["X","T"]}}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{"type": {"type": "string", "allowed": ["X","T"]}}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"type": "B"}}
+      {"act": "publish", "type": "text", "validate": {"type": "B"}}
       """
     Then we get existing resource
     """
@@ -93,11 +93,11 @@ Feature: Validate
   Scenario: Validate allow unknown fields
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{}}]
       """
     When we post to "/validate"
       """
-      {"act": "publish", "validate": {"unknown": "B"}}
+      {"act": "publish", "type": "text", "validate": {"unknown": "B"}}
       """
     Then we get existing resource
     """
@@ -107,11 +107,11 @@ Feature: Validate
   Scenario: Missing validator
     Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish", "act": "publish", "type": "text", "schema":{}}]
       """
     When we post to "/validate"
       """
-      {"act": "missing", "validate": {"unknown": "B"}}
+      {"act": "missing", "type": "text", "validate": {"unknown": "B"}}
       """
     Then we get existing resource
     """

@@ -1,61 +1,140 @@
-[{
-    "_id" : "publish",
-    "schema" : {
-        "headline" : {
-            "type" : "string",
-            "required" : true,
-            "minlength" : 1,
-            "maxlength" : 55
-        },
-        "abstract" : {
-            "type" : "string",
-            "required" : false,
-            "maxlength" : 160
-        },
-        "type" : {
-            "type" : "string",
-            "required" : "true",
-            "allowed" : [ 
-                "X", 
-                "T"
-            ]
-        },
-        "anpa-category" : {
-            "type" : "dict",
-            "required" : true
-        },
-        "pubstatus" : {
-            "type": "string",
-            "required" : true,
-            "allowed": ["usable"]
-        },
-        "slugline" : {
-            "type" : "string",
-            "required" : true,
-            "maxlength" : 24,
-            "minlength" : 1
-        },
-        "body_html" : {
-            "type" : "string",
-            "required" : true
-        },
-        "subject" : {
-            "type" : "list",
-            "required" : true,
-            "minlength" : 1
-        },
-        "urgency" : {
-            "type" : "integer",
-            "required": true,
-            "allowed": [1, 2, 3, 4, 5]
-        }
-    }
-},
-    {"_id": "kill",
-    "schema" : {}
-},
+[
     {
-     "_id": "correct",
-     "schema": {}
-}
+        "_id": "publish_text",
+        "act": "publish",
+        "type": "text",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "minlength": 1,
+                "maxlength": 55
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": [
+                    "X"
+                ]
+            },
+            "anpa-category": {
+                "type": "dict",
+                "required": true
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["usable"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "maxlength": 24,
+                "minlength": 1
+            },
+            "body_html": {
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5]
+            }
+        }
+    },
+    {
+        "_id": "publish_preformatted",
+        "act": "publish",
+        "type": "preformatted",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "minlength": 1,
+                "maxlength": 55
+            },
+            "abstract": {
+                "type": "string",
+                "required": false,
+                "maxlength": 160
+            },
+            "type": {
+                "type": "string",
+                "required": "true",
+                "allowed": [
+                    "T"
+                ]
+            },
+            "anpa-category": {
+                "type": "dict",
+                "required": true
+            },
+            "pubstatus": {
+                "type": "string",
+                "required": true,
+                "allowed": ["usable"]
+            },
+            "slugline": {
+                "type": "string",
+                "required": true,
+                "maxlength": 24,
+                "minlength": 1
+            },
+            "body_html": {
+                "type": "string",
+                "required": true
+            },
+            "subject": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
+            },
+            "urgency": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5]
+            }
+        }
+    },
+    {
+        "_id": "publish_picture",
+        "act": "publish",
+        "type": "picture",
+        "schema": {}
+    },
+    {
+        "_id": "kill_text",
+        "act": "kill",
+        "type": "text",
+        "schema": {}
+    },
+    {
+        "_id": "publish_correct",
+        "act": "correct",
+        "type": "text",
+        "schema": {}
+    },
+    {
+        "_id": "publish_video",
+        "act": "publish",
+        "type": "video",
+        "schema": {}
+    },
+    {
+        "_id": "publish_composite",
+        "act": "publish",
+        "type": "composite",
+        "schema": {}
+    }
 ]

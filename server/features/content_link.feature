@@ -177,7 +177,7 @@ Feature: Link content in takes
     Scenario: Metadata is copied from published takes
         Given the "validators"
         """
-        [{"_id": "publish", "schema":{}}]
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
         """
     	And empty "ingest"
     	And "desks"
@@ -527,7 +527,8 @@ Feature: Link content in takes
     Scenario: Killing a takes packages spikes all unpublished takes.
         Given the "validators"
         """
-        [{"_id": "publish", "schema":{}}, {"_id": "kill", "schema":{}}]
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+        {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
         """
     	And empty "ingest"
     	And "desks"

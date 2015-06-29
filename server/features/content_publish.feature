@@ -4,7 +4,7 @@ Feature: Content Publishing
     Scenario: Publish a user content
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -40,7 +40,7 @@ Feature: Content Publishing
     Scenario: Publish user content that fails validation
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{"headline": {"required": true}}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{"headline": {"required": true}}}]
       """
       And "desks"
       """
@@ -62,7 +62,7 @@ Feature: Content Publishing
     Scenario: Publish a user content fails if content format is not compatible
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -96,7 +96,7 @@ Feature: Content Publishing
       """
       And the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "archive"
       """
@@ -139,7 +139,7 @@ Feature: Content Publishing
       """
       And the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "archive"
       """
@@ -226,7 +226,7 @@ Feature: Content Publishing
       """
       And the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "archive"
       """
@@ -252,7 +252,7 @@ Feature: Content Publishing
     Scenario: Clean autosave on publishing item
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -289,8 +289,8 @@ Feature: Content Publishing
     Scenario: We can lock a published content and then kill it
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}},
-      {"_id": "kill", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+      {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -332,7 +332,8 @@ Feature: Content Publishing
     Scenario: We can lock a published content and then correct it
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+      {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -374,7 +375,8 @@ Feature: Content Publishing
     Scenario: Correcting an already corrected published story fails
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+      {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -413,7 +415,8 @@ Feature: Content Publishing
     Scenario: We can correct a corrected story
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}, {"_id": "correct", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+      {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -503,7 +506,7 @@ Feature: Content Publishing
     Scenario: User can't update a published item
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """
@@ -535,7 +538,7 @@ Feature: Content Publishing
     Scenario: Publish a package
         Given the "validators"
         """
-          [{"_id": "publish", "schema":{}}]
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}}]
         """
     	And empty "ingest"
     	And "desks"
@@ -602,7 +605,7 @@ Feature: Content Publishing
     Scenario: Publish the second take before the first fails
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And empty "ingest"
       And "desks"
@@ -666,7 +669,7 @@ Feature: Content Publishing
     Scenario: Publish the very first take before the second
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And empty "ingest"
       And "desks"
@@ -757,7 +760,7 @@ Feature: Content Publishing
     Scenario: Publish the second take after the first
       Given the "validators"
       """
-        [{"_id": "publish", "schema":{}}]
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And empty "ingest"
       And "desks"
@@ -873,7 +876,7 @@ Feature: Content Publishing
     Scenario: Assign a default Source to user created content Items and is overwritten by Source at desk level when published
       Given the "validators"
       """
-      [{"_id": "publish", "schema":{}}]
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
       And "desks"
       """
