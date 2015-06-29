@@ -9,8 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from apps.users.services import current_user_has_privilege
-from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
-
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
 
 SOURCE = 'archive'
 
@@ -35,7 +34,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from superdesk.etree import get_word_count
 from superdesk.notification import push_notification
-from copy import copy
+from copy import copy, deepcopy
 import superdesk
 import logging
 from apps.common.models.utils import get_model
@@ -44,6 +43,9 @@ from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
+from apps.archive.common import ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE,\
+    ITEM_UPDATE, ITEM_DESCHEDULE
+
 
 logger = logging.getLogger(__name__)
 
@@ -179,6 +181,7 @@ class ArchiveService(BaseService):
             push_notification('item:created', item=str(doc['_id']), user=str(user.get('_id')))
 
     def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_UPDATE
         is_update_allowed(original)
         user = get_user()
 
@@ -246,6 +249,7 @@ class ArchiveService(BaseService):
         push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
     def on_replace(self, document, original):
+        document[ITEM_OPERATION] = ITEM_UPDATE
         remove_unwanted(document)
         user = get_user()
         lock_user = original.get('lock_user', None)
@@ -321,6 +325,7 @@ class ArchiveService(BaseService):
         old['_updated'] = old['versioncreated'] = utcnow()
         set_item_expiry(old, doc)
         del old['_id_document']
+        old[ITEM_OPERATION] = ITEM_RESTORE
 
         resolve_document_version(old, 'archive', 'PATCH', curr)
 
@@ -339,7 +344,7 @@ class ArchiveService(BaseService):
                     associations = groups.get('refs', [])
                     for assoc in associations:
                         if assoc.get('residRef'):
-                            item, item_id, endpoint = self.packageService.get_associated_item(assoc)
+                            item, _item_id, _endpoint = self.packageService.get_associated_item(assoc)
                             assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
 
         return self.duplicate_item(original_doc)
@@ -349,8 +354,10 @@ class ArchiveService(BaseService):
         del new_doc['_id']
         del new_doc['guid']
         generate_unique_id_and_name(new_doc)
+        new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
         item_model = get_model(ItemModel)
         on_duplicate_item(new_doc)
+        resolve_document_version(new_doc, 'archive', 'PATCH', new_doc)
         item_model.create([new_doc])
         self.duplicate_versions(original_doc['guid'], new_doc)
         if new_doc.get('state') != 'submitted':
@@ -369,13 +376,20 @@ class ArchiveService(BaseService):
             old_version['unique_name'] = new_doc['unique_name']
             old_version['unique_id'] = new_doc['unique_id']
             old_version['versioncreated'] = utcnow()
+            if old_version[VERSION] == new_doc[VERSION]:
+                old_version[ITEM_OPERATION] = new_doc[ITEM_OPERATION]
             new_versions.append(old_version)
+        last_version = deepcopy(new_doc)
+        last_version['_id_document'] = new_doc['_id']
+        del last_version['_id']
+        new_versions.append(last_version)
         if new_versions:
             get_resource_service('archive_versions').post(new_versions)
 
     def deschedule_item(self, updates, doc):
         updates['state'] = 'in_progress'
         updates['publish_schedule'] = None
+        updates[ITEM_OPERATION] = ITEM_DESCHEDULE
         # delete entries from publish queue
         get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
         # delete entry from published repo

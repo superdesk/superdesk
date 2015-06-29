@@ -28,13 +28,18 @@ from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
-    set_sign_off, PUBLISH_STATES, SEQUENCE, GUID_FIELD
+    set_sign_off, PUBLISH_STATES, SEQUENCE, GUID_FIELD, \
+    item_operations, ITEM_OPERATION
 from apps.packages import TakesPackageService
 
 logger = logging.getLogger(__name__)
 
 DIGITAL = 'digital'
 WIRE = 'wire'
+ITEM_PUBLISH = 'publish'
+ITEM_CORRECT = 'correct'
+ITEM_KILL = 'kill'
+item_operations.append(ITEM_PUBLISH)
 
 
 class BasePublishResource(ArchiveResource):
@@ -398,6 +403,7 @@ class ArchivePublishService(BasePublishService):
     published_state = 'published'
 
     def set_state(self, original, updates):
+        updates[ITEM_OPERATION] = ITEM_PUBLISH
         if (original.get('publish_schedule') or updates.get('publish_schedule')) \
                 and original[config.CONTENT_STATE] not in PUBLISH_STATES:
             updates[config.CONTENT_STATE] = 'scheduled'
@@ -418,6 +424,7 @@ class KillPublishService(BasePublishService):
         super().__init__(datasource=datasource, backend=backend)
 
     def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
         TakesPackageService().process_killed_takes_package(original)
 
@@ -430,6 +437,10 @@ class CorrectPublishResource(BasePublishResource):
 class CorrectPublishService(BasePublishService):
     publish_type = 'correct'
     published_state = 'corrected'
+
+    def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_CORRECT
+        super().on_update(updates, original)
 
 
 superdesk.workflow_state('published')

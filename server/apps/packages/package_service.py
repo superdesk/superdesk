@@ -24,7 +24,7 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
 
 logger = logging.getLogger(__name__)
-package_create_signal = superdesk.signals.signal('package.create')
+package_create_signal = superdesk.signals.signal('package.create')  # @UndefinedVariable
 
 
 def create_root_group(docs):
