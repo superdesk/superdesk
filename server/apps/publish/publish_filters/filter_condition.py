@@ -119,7 +119,7 @@ class FilterConditionService(BaseService):
                 if value.split(',')[0].strip().isdigit():
                     return [int(x) for x in value.split(',') if x.strip().isdigit()]
                 else:
-                    value.split(',')
+                    return value.split(',')
             else:
                 return [value]
 
@@ -154,6 +154,12 @@ class FilterConditionService(BaseService):
             doc['field'] = 'query'
         return value
 
+    def _get_field_value(self, field, article):
+        if field == 'anpa-category':
+            return article[field]['value']
+        elif field == 'genre':
+            return [g.name for g in article[field]]
+
     def does_match(self, filter_condition, article):
         field = filter_condition['field']
         operator = filter_condition['operator']
@@ -165,7 +171,7 @@ class FilterConditionService(BaseService):
             else:
                 return False
 
-        article_value = article[field]
+        article_value = self._get_field_value(field, article)
         filter_value = self._get_mongo_value(operator, filter_value)
 
         if operator == 'in':

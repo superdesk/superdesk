@@ -146,7 +146,8 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
     $scope.edit = function(pf) {
         $scope.origPublishFilter = pf || {};
         $scope.publishFilter = _.create($scope.origPublishFilter);
-        $scope.publishFilter.publish_filter = _.cloneDeep($scope.origPublishFilter.publish_filter)
+        $scope.publishFilter.name =  $scope.origPublishFilter.name;
+        $scope.publishFilter.publish_filter = _.cloneDeep($scope.origPublishFilter.publish_filter);
         initPublishFilter();
         $scope.previewPublishFilter();
         console.log('Edit $scope.publishFilter:', $scope.publishFilter);
@@ -159,7 +160,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
     };
 
     $scope.save = function() {
-        var stringJSON = JSON.stringify($scope.publishFilter.publish_filter);
+        delete $scope.publishFilter.article_id;
         api.save('publish_filters', $scope.origPublishFilter, $scope.publishFilter)
             .then(
                 function() {
@@ -171,8 +172,10 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
                         notify.error(gettext('Error: ' + response.data._issues));
                     } else if (angular.isDefined(response.data._message)) {
                         notify.error(gettext('Error: ' + response.data._message));
+                    } else if (angular.isDefined(response.status === 500)) {
+                        notify.error(gettext('Error 500: in Filter testing'));
                     } else {
-                        notify.error(gettext('Error: Failed to save publish filter.'));
+                        notify.error(gettext('Error: Failed to test publish filter.'));
                     }
                 }
             ).then(fetchPublishFilters);
@@ -196,11 +199,11 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
 
     $scope.addStatement = function() {
         $scope.publishFilter.publish_filter.push({'expression': {}});
-    }
+    };
 
     $scope.removeStatement = function(index) {
         $scope.publishFilter.publish_filter.splice(index, 1);
-    }
+    };
 
     $scope.addFilter = function(filterRow, filterType) {
         if (!(filterType in filterRow.expression)) {
@@ -219,60 +222,78 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
         $scope.previewPublishFilter();
     };
 
+    $scope.test = function() {
+        if (!$scope.publishFilter.article_id) {
+            notify.error(gettext('Please provide an article id'));
+            return;
+        }
+
+        if (!$scope.publishFilter.name) {
+            notify.error(gettext('Please provide a name to continue'));
+            return;
+        }
+
+        var article_id = $scope.publishFilter.article_id;
+        delete $scope.publishFilter.article_id;
+        api.save('publish_filters', {}, $scope.publishFilter, {}, {'article_id': article_id})
+            .then(
+                function(result) {
+                    $scope.test_result = result.matches ? 'Does Match' : 'Doesn\'t Match';
+                },
+                function(response) {
+                    if (angular.isDefined(response.data._issues)) {
+                        notify.error(gettext('Error: ' + response.data._issues));
+                    } else if (angular.isDefined(response.data._message)) {
+                        notify.error(gettext('Error: ' + response.data._message));
+                    } else {
+                        notify.error(gettext('Error: Failed to save publish filter.'));
+                    }
+                }
+            );
+    };
 
     $scope.previewPublishFilter = function() {
-         $scope.preview = '';
-         var previews = [];
-        _.each($scope.publishFilter.publish_filter, function(filterRow) {
+        $scope.preview = parsePublishFilter($scope.publishFilter.publish_filter);
+        console.log('Preview $scope.publishFilter:', $scope.publishFilter);
+    };
+
+    var parsePublishFilter = function(publishFilter) {
+        var previews = [];
+        _.each(publishFilter, function(filterRow) {
             var statementPreviews = [];
+
+            if ('pf' in filterRow.expression) {
+                _.each(filterRow.expression.pf, function(filterId) {
+                    var f = $scope.publishFiltersLookup[filterId];
+                    statementPreviews.push(parsePublishFilter(f.publish_filter));
+                });
+            }
+
             if ('fc' in filterRow.expression) {
                 _.each(filterRow.expression.fc, function(filterId) {
                     var f = $scope.filterConditionLookup[filterId];
                     statementPreviews.push('(' + f.field + ' ' + f.operator + ' "' + f.value + '")');
                 });
-            } else {
-                $scope.preview += ' TIM-TAM';
             }
-            
+
             if (statementPreviews.length > 0) {
                 previews.push('[' + statementPreviews.join(' AND ') + ']');
             }
         });
 
         if (previews.length > 0) {
-            $scope.preview = previews.join(' OR ');
+            return previews.join(' OR ');
         }
 
-        console.log('Preview $scope.publishFilter:', $scope.publishFilter);
-    }
+        return '';
+    };
 
     var initPublishFilter = function() {
-        if (!$scope.publishFilter.publish_filter || $scope.publishFilter.publish_filter.length == 0)
+        if (!$scope.publishFilter.publish_filter || $scope.publishFilter.publish_filter.length === 0)
         {
-            // _.each($scope.publishFilter.publish_filter, function(filterExpression) {
-            //     _.each(filterExpression, function(filterRow, i) {
-            //         if ('fc' in filterRow) {
-            //             var fc = [];
-            //             _.each(filterRow.fc, function(filter) {
-            //                 fc.push({'name': $scope.filterConditionLookup[filter]});
-            //             });
-            //             row.expression = {'fc': fc};
-            //         } else {
-            //             var pf = [];
-            //             _.each(filterRow.pf, function(filter) {
-            //                 pf.push({'name': $scope.publishFiltersLookup[filter]});
-            //             });
-            //             row.expression = {'pf': pf};
-            //         }
-            //     });
-                
-            //     filters.push(row);
-            //     var row = {'expression': {}};
-            // });
             $scope.publishFilter.publish_filter = [{'expression': {}}];
         }
     };
-
 
     var fetchFilterConditions = function() {
         filterConditions.get().then(function(filters) {
@@ -286,7 +307,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
     var fetchPublishFilters = function() {
         api.query('publish_filters').then(function(filters) {
             $scope.publishFilters = filters._items;
-            _.each(filters, function(filter) {
+            _.each($scope.publishFilters, function(filter) {
                 $scope.publishFiltersLookup[filter._id] = filter;
             });
         });

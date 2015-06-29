@@ -11,7 +11,7 @@
         <ul class="pills-list provider-list">
             <li ng-repeat="filter in publishFilters" class="clearfix">
                 <div class="header">
-	                <h6>{{ filter.name }}</h6>
+	                <h6>{{:: filter.name }}</h6>
                     <div class="actions">
                         <button ng-click="edit(filter)" title="{{:: 'Edit Output Channel' | translate }}"><i class="icon-pencil"></i></button>
                         <button ng-click="remove(filter)" title="{{:: 'Remove Output Channel' | translate }}"><i class="icon-trash"></i></button>
@@ -24,7 +24,7 @@
 
 <div sd-modal data-model="publishFilter" class="publish-filter-modal modal-large">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="publishFilter._id" translate>Edit Publish Filter "{{ origPublishFilter.name }}"</h3>
+        <h3 translate ng-show="publishFilter._id" translate>Edit Publish Filter "{{:: origPublishFilter.name }}"</h3>
         <h3 translate ng-hide="publishFilter._id" translate>Add New Publish Filter</h3>
     </div>
     <div class="modal-body">
@@ -83,6 +83,12 @@
         <div class="row">
             <label for="publishFilter-preview" translate>Filter Preview</label>
             <textarea id="publishFilter-preview" readonly ng-model="preview"></textarea>
+        </div>
+        <div class="test-row">
+            <label for="publishFilter-test" translate>Filter Test</label>
+            <input type="text" id="publishFilter-test" required ng-model="publishFilter.article_id">
+            <button type="button" class="btn btn-default" ng-click="test()" translate>Test</button>
+            <span>{{test_result}}</span>
         </div>
     </div>
 

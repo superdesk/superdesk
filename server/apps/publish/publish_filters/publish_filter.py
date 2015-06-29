@@ -9,9 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from flask import request
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +44,7 @@ class PublishFilterResource(Resource):
         'name': {
             'type': 'string',
             'nullable': False,
+            'required': True
         }
     }
 
@@ -57,6 +60,17 @@ class PublishFilterResource(Resource):
 
 
 class PublishFilterService(BaseService):
+    def create(self, docs, **kwargs):
+        if request.args.get('article_id', None):
+            for doc in docs:
+                article_id = request.args.get('article_id')
+                article = get_resource_service('archive').find_one(req=None, _id=article_id)
+                if not article:
+                    raise SuperdeskApiError.badRequestError('Article not found!')
+                doc['matches'] = self.does_match(doc, article)
+            return [doc['matches'] for doc in docs]
+        return super().create(docs, **kwargs)
+
     def build_mongo_query(self, doc):
         filter_condition_service = get_resource_service('filter_conditions')
         expressions = []

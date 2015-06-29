@@ -207,8 +207,8 @@ define([
             /**
              * @alias api(resource).save(dest, diff)
              */
-            api.save = function apiSave(resource, dest, diff, parent) {
-                return api(resource, parent).save(dest, diff);
+            api.save = function apiSave(resource, dest, diff, parent, params) {
+                return api(resource, parent).save(dest, diff, params);
             };
 
             /**
