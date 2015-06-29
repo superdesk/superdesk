@@ -154,8 +154,8 @@ class AAPMMDatalayer(DataLayer):
                     raise FileNotFoundError
                 if any(v['Name'] == 'Video' for v in resolutions['Video']):
                     source_ref = {
-                    'href': self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Video/download'.format(_id),
-                    'mimetype': 'video/quicktime'}
+                        'href': self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Video/download'.format(_id),
+                        'mimetype': 'video/quicktime'}
                 else:
                     raise FileNotFoundError
             else:
