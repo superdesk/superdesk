@@ -27,7 +27,14 @@ class FilterConditionTests(TestCase):
                              {'_id': '3', 'urgency': 3, 'state': 'fetched'},
                              {'_id': '4', 'urgency': 4, 'state': 'fetched'},
                              {'_id': '5', 'urgency': 2, 'state': 'fetched'},
-                             {'_id': '6', 'state': 'fetched'}]
+                             {'_id': '6', 'state': 'fetched'},
+                             {'_id': '7', 'genre': [{'name': 'Sidebar'}], 'state': 'fetched'},
+                             {'_id': '8', 'subject': [{'name': 'adult education',
+                                                       'qcode': '05001000',
+                                                       'parent': '05000000'},
+                                                      {'name': 'high schools',
+                                                       'qcode': '05005003',
+                                                       'parent': '05005000'}], 'state': 'fetched'}]
 
             self.app.data.insert('archive', self.articles)
 
@@ -42,6 +49,26 @@ class FilterConditionTests(TestCase):
                                                        'filter': {
                                                            'bool': {
                                                                'should': [elastic_translation]}}}}})}
+
+    def test_mongo_using_genre_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'genre', 'operator': 'in', 'value': 'Sidebar'}
+        query = f.get_mongo_query(doc)
+        with self.app.app_context():
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            self.assertEqual(1, docs.count())
+            self.assertEqual('7', docs[0]['_id'])
+
+    def test_mongo_using_subject_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'subject', 'operator': 'in', 'value': '05005003'}
+        query = f.get_mongo_query(doc)
+        with self.app.app_context():
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            self.assertEqual(1, docs.count())
+            self.assertEqual('8', docs[0]['_id'])
 
     def test_mongo_using_like_filter_complete_string(self):
         f = FilterConditionService()
@@ -118,6 +145,28 @@ class FilterConditionTests(TestCase):
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
+
+    def test_elastic_using_genre_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'genre', 'operator': 'in', 'value': 'Sidebar'}
+        query = f.get_elastic_query(doc)
+        with self.app.app_context():
+            self._setup_elastic_args(query)
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('7' in doc_ids)
+
+    def test_elastic_using_subject_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'subject', 'operator': 'in', 'value': '05005003'}
+        query = f.get_elastic_query(doc)
+        with self.app.app_context():
+            self._setup_elastic_args(query)
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('8' in doc_ids)
 
     def test_elastic_using_in_filter(self):
         f = FilterConditionService()
@@ -253,6 +302,30 @@ class FilterConditionTests(TestCase):
         self.assertTrue(f.does_match(doc, self.articles[3]))
         self.assertTrue(f.does_match(doc, self.articles[4]))
         self.assertTrue(f.does_match(doc, self.articles[5]))
+
+    def test_does_match_with_genre_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'genre', 'operator': 'in', 'value': 'Sidebar'}
+        self.assertFalse(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+        self.assertTrue(f.does_match(doc, self.articles[6]))
+        self.assertFalse(f.does_match(doc, self.articles[7]))
+
+    def test_does_match_with_subject_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'subject', 'operator': 'in', 'value': '05005003'}
+        self.assertFalse(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+        self.assertFalse(f.does_match(doc, self.articles[6]))
+        self.assertTrue(f.does_match(doc, self.articles[7]))
 
     def test_does_match_with_in_filter(self):
         f = FilterConditionService()

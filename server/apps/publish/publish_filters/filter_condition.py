@@ -37,7 +37,8 @@ class FilterConditionResource(Resource):
                         'source',
                         'headline',
                         'body_html',
-                        'genre'],
+                        'genre',
+                        'subject'],
         },
         'operator': {
             'type': 'string',
@@ -94,7 +95,7 @@ class FilterConditionService(BaseService):
                     get_comparer(fc1) == get_comparer(fc2)])
 
     def get_mongo_query(self, doc):
-        field = doc['field']
+        field = self._get_field(doc['field'])
         operator = self._get_mongo_operator(doc['operator'])
         value = self._get_mongo_value(doc['operator'], doc['value'])
         return {field: {operator: value}}
@@ -124,9 +125,10 @@ class FilterConditionService(BaseService):
                 return [value]
 
     def get_elastic_query(self, doc):
+        field = self._get_field(doc['field'])
         operator = self._get_elastic_operator(doc['operator'])
         value = self._get_elastic_value(doc, doc['operator'], doc['value'])
-        return {operator: {doc['field']: value}}
+        return {operator: {field: value}}
 
     def _get_elastic_operator(self, operator):
         if operator in ['in', 'nin']:
@@ -154,11 +156,15 @@ class FilterConditionService(BaseService):
             doc['field'] = 'query'
         return value
 
-    def _get_field_value(self, field, article):
+    def _get_field(self, field):
         if field == 'anpa-category':
-            return article[field]['value']
+            return 'anpa-category.value'
         elif field == 'genre':
-            return [g.name for g in article[field]]
+            return 'genre.name'
+        elif field == 'subject':
+            return 'subject.qcode'
+        else:
+            return field
 
     def does_match(self, filter_condition, article):
         field = filter_condition['field']
@@ -173,11 +179,30 @@ class FilterConditionService(BaseService):
 
         article_value = self._get_field_value(field, article)
         filter_value = self._get_mongo_value(operator, filter_value)
+        return self._run_filter(article_value, operator, filter_value)
 
+    def _get_field_value(self, field, article):
+        if field == 'anpa-category':
+            return article[field]['value']
+        elif field == 'genre':
+            return [g['name'] for g in article[field]]
+        elif field == 'subject':
+            return [s['qcode'] for s in article[field]]
+        else:
+            return article[field]
+
+
+    def _run_filter(self, article_value, operator, filter_value):
         if operator == 'in':
-            return article_value in filter_value
+            if isinstance(article_value, list):
+                return any([v in filter_value for v in article_value])
+            else:
+                return article_value in filter_value
         if operator == 'nin':
-            return article_value not in filter_value
+            if isinstance(article_value, list):
+                return all([v not in filter_value for v in article_value])
+            else:
+                return article_value not in filter_value
         if operator == 'like' or operator == 'startswith' or operator == 'endswith':
             return filter_value.match(article_value)
         if operator == 'notlike':
