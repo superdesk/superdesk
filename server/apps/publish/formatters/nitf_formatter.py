@@ -22,16 +22,14 @@ class NITFFormatter(Formatter):
     """
     XML_ROOT = '<?xml version="1.0"?><!DOCTYPE nitf SYSTEM "../dtd/nitf-3-2.dtd">'
 
-    def format(self, article, destination, selector_codes=None):
+    def format(self, article, subscriber):
         try:
+            pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            pub_seq_num = superdesk.get_resource_service('output_channels').generate_sequence_number(destination)
-
-            nitf = self.get_nitf(article, destination, pub_seq_num)
-
+            nitf = self.get_nitf(article, subscriber, pub_seq_num)
             return pub_seq_num, self.XML_ROOT + etree.tostring(nitf).decode('utf-8')
         except Exception as ex:
-            raise FormatterError.nitfFormatterError(ex, destination)
+            raise FormatterError.nitfFormatterError(ex, subscriber)
 
     def get_nitf(self, article, destination, pub_seq_num):
         nitf = etree.Element("nitf")

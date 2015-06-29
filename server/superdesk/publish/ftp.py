@@ -37,8 +37,8 @@ class FTPPublishService(PublishService):
             'path': url_parts.path.lstrip('/'),
         }
 
-    def _transmit(self, formatted_item, subscriber, destination):
-        config = destination.get('config', {})
+    def _transmit(self, queue_item, subscriber):
+        config = queue_item.get('destination', {}).get('config', {})
 
         try:
             with ftplib.FTP(config.get('host')) as ftp:
@@ -46,14 +46,13 @@ class FTPPublishService(PublishService):
                 ftp.cwd(config.get('path', '').lstrip('/'))
                 ftp.set_pasv(config.get('passive', False))
 
-                filename = '{}.{}'.format(formatted_item['item_id'].replace(':', '-'),
-                                          get_file_extension(formatted_item))
-                b = BytesIO(bytes(formatted_item['formatted_item'], 'UTF-8'))
-                ftp.storbinary("STOR " + filename, b)
+                filename = '{}.{}'.format(queue_item['item_id'].replace(':', '-'), get_file_extension(queue_item))
+                b = BytesIO(bytes(queue_item['formatted_item'], 'UTF-8'))
 
+                ftp.storbinary("STOR " + filename, b)
         except PublishFtpError:
             raise
         except Exception as ex:
-            raise PublishFtpError.ftpError(ex, destination)
+            raise PublishFtpError.ftpError(ex, config)
 
 register_transmitter('ftp', FTPPublishService(), errors)

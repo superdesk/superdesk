@@ -54,11 +54,7 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'},
-                                        'destination_groups': {
-                                            'type': 'list',
-                                            'schema': Resource.rel('destination_groups', True)
-                                        }
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
@@ -69,11 +65,7 @@ class RoutingRuleSchemeResource(Resource):
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
                                         'stage': Resource.rel('stages', True),
-                                        'macro': {'type': 'string'},
-                                        'destination_groups': {
-                                            'type': 'list',
-                                            'schema': Resource.rel('destination_groups', True)
-                                        }
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
@@ -282,8 +274,7 @@ class RoutingRuleSchemeService(BaseService):
                              'desk': str(destination.get('desk')),
                              'stage': str(destination.get('stage')),
                              'state': STATE_ROUTED,
-                             'macro': destination.get('macro', None),
-                             'destination_groups': destination.get('destination_groups', [])}])[0]
+                             'macro': destination.get('macro', None)}])[0]
 
                 archive_items.append(item_id)
             except:

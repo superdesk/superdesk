@@ -279,8 +279,7 @@ define([
                     controller: ['data', '$location', 'api', 'notify', 'session', 'desks', 'superdesk',
                         function(data, $location, api, notify, session, desks, superdesk) {
                             var pick_fields = ['family_id', 'abstract', 'anpa-category',
-                                                'pubstatus', 'destination_groups',
-                                                'slugline', 'urgency', 'subject', 'dateline',
+                                                'pubstatus', 'slugline', 'urgency', 'subject', 'dateline',
                                                 'priority', 'byline', 'dateline', 'headline'];
                             var update_item = {};
                             update_item =  _.pick(angular.extend(update_item, data.item), pick_fields);

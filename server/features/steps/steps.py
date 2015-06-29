@@ -1449,12 +1449,6 @@ def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
 
-                if destination.get('destination_groups'):
-                    context_data = [str(g) for g in destination.get('destination_groups', [])]
-                    response_data = item[0]['destination_groups']
-                    assert_equal(json_match(context_data, response_data), True,
-                                 msg=str(context_data) + '\n != \n' + str(response_data))
-
                 if is_transformed:
                     assert item[0]['abstract'] == 'Abstract has been updated'
 

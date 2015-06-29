@@ -72,7 +72,7 @@ class Newsml12FormatterTest(TestCase):
         with self.app.app_context():
             with assert_raises(FormatterError):
                 self.article.pop('anpa-category', None)
-                self.formatter.format(self.article, {'name': 'OC1'}, None)
+                self.formatter.format(self.article, {'name': 'Test Subscriber'})
 
     def test_format_news_envelope(self):
         self.formatter._format_news_envelope(self.article, self.newsml, 7)

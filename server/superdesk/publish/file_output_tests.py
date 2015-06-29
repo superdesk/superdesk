@@ -10,6 +10,7 @@
 
 
 import os
+
 from superdesk.tests import TestCase
 from superdesk.publish.file_output import FilePublishService
 from superdesk.errors import PublishFileError
@@ -19,16 +20,22 @@ class FileOutputTest(TestCase):
     def setUp(self):
         super().setUp()
         self.fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-        self.output_channel = {'config': {'file_path': self.fixtures}}
+        self.subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
+                             "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
+                             "destinations": [{"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                                               "config": {"file_path": self.fixtures}
+                                               }]}]
 
     def test_file_write_binary(self):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
-                'formatted_item': b'I was here'
+                'formatted_item': b'I was here',
+                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                                "config": {"file_path": self.fixtures}}
                 }
         service = FilePublishService()
         try:
-            service._transmit(item, {}, self.output_channel)
+            service._transmit(item, self.subscribers)
             self.assertTrue(True)
         finally:
             path = os.path.join(self.fixtures, 'test_file_name-1.txt')
@@ -38,11 +45,13 @@ class FileOutputTest(TestCase):
     def test_file_write_string(self):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
-                'formatted_item': 'I was here'
+                'formatted_item': 'I was here',
+                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                                "config": {"file_path": self.fixtures}}
                 }
         service = FilePublishService()
         try:
-            service._transmit(item, {}, self.output_channel)
+            service._transmit(item, self.subscribers)
             self.assertTrue(True)
         finally:
             path = os.path.join(self.fixtures, 'test_file_name-1.txt')
@@ -53,12 +62,15 @@ class FileOutputTest(TestCase):
         self.fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__) + '/xyz'))
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
-                'formatted_item': 'I was here'
+                'formatted_item': 'I was here',
+                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                                "config": {"file_path": self.fixtures}}
                 }
 
-        service = FilePublishService()
-        try:
-            service._transmit(item, {}, self.output_channel)
-        except PublishFileError as ex:
-            self.assertEqual(ex.message, 'File publish error')
-            self.assertEqual(ex.code, 13000)
+        with self.app.app_context():
+            service = FilePublishService()
+            try:
+                service._transmit(item, self.subscribers)
+            except PublishFileError as ex:
+                self.assertEqual(ex.message, 'File publish error')
+                self.assertEqual(ex.code, 13000)

@@ -66,7 +66,7 @@ class PublicAPITest(TestCase):
             publicapiService = get_resource_service('publish_items')
             try:
                 service = PublicAPIPublishService()
-                service._transmit(formatted_item, {}, {})
+                service._transmit(formatted_item, {})
                 item = publicapiService.find_one(req=None, _id='item1')
                 del item['_etag']
                 del item['_created']

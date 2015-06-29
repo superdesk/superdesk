@@ -10,15 +10,12 @@
 
 
 import logging
-import superdesk
 
+import superdesk
 from apps.publish.archive_publish import ArchivePublishResource, ArchivePublishService, \
     KillPublishResource, KillPublishService, CorrectPublishResource, CorrectPublishService
-from apps.publish.destination_groups import DestinationGroupsResource, DestinationGroupsService
-from apps.publish.output_channels import OutputChannelsResource, OutputChannelsService
 from apps.publish.subscribers import SubscribersResource, SubscribersService
 from apps.publish.publish_queue import PublishQueueResource, PublishQueueService
-from apps.publish.formatted_item import FormattedItemResource, FormattedItemService
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
 from apps.publish.commands import RemoveExpiredPublishContent  # noqa
 from superdesk.celery_app import celery
@@ -49,33 +46,13 @@ def init_app(app):
     service = PublishQueueService(endpoint_name, backend=get_backend())
     PublishQueueResource(endpoint_name, app=app, service=service)
 
-    endpoint_name = 'formatted_item'
-    service = FormattedItemService(endpoint_name, backend=get_backend())
-    FormattedItemResource(endpoint_name, app=app, service=service)
-
     endpoint_name = 'published'
     service = PublishedItemService(endpoint_name, backend=get_backend())
     PublishedItemResource(endpoint_name, app=app, service=service)
 
-    endpoint_name = 'output_channels'
-    service = OutputChannelsService(endpoint_name, backend=get_backend())
-    OutputChannelsResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'destination_groups'
-    service = DestinationGroupsService(endpoint_name, backend=get_backend())
-    DestinationGroupsResource(endpoint_name, app=app, service=service)
-
+    superdesk.privilege(name='subscribers', label='Subscribers', description='User can manage subscribers')
     superdesk.privilege(name='publish', label='Publish', description='Publish a content')
-    superdesk.privilege(name='destination_groups', label='Destination Groups',
-                        description='User can manage destination groups')
-    superdesk.privilege(name='output_channels', label='Output Channels',
-                        description='User can manage output channels')
-    superdesk.privilege(name='subscribers', label='Subscribers',
-                        description='User can manage subscribers')
-    superdesk.privilege(name='publish_queue', label='Publish Queue',
-                        description='User can update publish queue')
-    superdesk.privilege(name='output_channel_seq_num_settings', label='Update Output Channel Sequence Number Settings',
-                        description='User can update Update Output Channel Sequence Number Settings.')
+    superdesk.privilege(name='publish_queue', label='Publish Queue', description='User can update publish queue')
 
 
 @celery.task

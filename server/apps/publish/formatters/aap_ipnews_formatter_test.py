@@ -14,12 +14,13 @@ from apps.publish.formatters.aap_ipnews_formatter import AAPIpNewsFormatter
 
 
 class AapIpNewsFormatterTest(TestCase):
-    output_channel = [{'_id': '1',
-                       'name': 'OC1',
-                       'description': 'Testing...',
-                       'channel_type': 'metadata',
-                       'is_active': True,
-                       'format': 'AAP IPNEWS'}]
+    subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
+                    "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
+                    "destinations": [{"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                                      "config": {"recipients": "test@sourcefabric.org"}
+                                      }]
+                    }]
+
     article = {
         'source': 'AAP',
         'anpa-category': {'qcode': 'a'},
@@ -34,27 +35,27 @@ class AapIpNewsFormatterTest(TestCase):
         'word_count': '1',
         'priority': '1'
     }
-    sel_codes = {'1': ['aaa', 'bbb']}
 
     def setUp(self):
         super().setUp()
         with self.app.app_context():
-            self.app.data.insert('output_channels', self.output_channel)
+            self.app.data.insert('subscribers', self.subscribers)
             init_app(self.app)
 
     def TestIPNewsFormatter(self):
         with self.app.app_context():
-            output_channel = self.app.data.find('output_channels', None, None)[0]
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+
             f = AAPIpNewsFormatter()
-            seq, item = f.format(self.article, output_channel, self.sel_codes)
+            seq, item = f.format(self.article, subscriber)
+
             self.assertGreater(int(seq), 0)
             self.assertEquals(seq, item['sequence'])
             item.pop('sequence')
             self.assertDictEqual(item,
                                  {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
-                                  'headline': 'This is a test headline', 'selector_codes': 'aaa bbb',
-                                  'service_level': 'a', 'originator': 'AAP', 'take_key': 'take_key',
-                                  'article_text': 'The story body', 'priority': '1', 'usn': '1',
+                                  'headline': 'This is a test headline', 'service_level': 'a', 'originator': 'AAP',
+                                  'take_key': 'take_key', 'article_text': 'The story body', 'priority': '1', 'usn': '1',
                                   'subject_matter': 'international law', 'news_item_type': 'News',
                                   'subject_reference': '02011001', 'subject': 'crime, law and justice',
                                   'wordcount': '1', 'subject_detail': 'international court or tribunal',
@@ -78,9 +79,11 @@ class AapIpNewsFormatterTest(TestCase):
         }
 
         with self.app.app_context():
-            output_channel = self.app.data.find('output_channels', None, None)[0]
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+
             f = AAPIpNewsFormatter()
-            seq, item = f.format(article, output_channel, self.sel_codes)
+            seq, item = f.format(article, subscriber)
+
             expected = '\r\nThe story body line 1 \r\nLine 2 \r\n\r\nabcdefghi abcdefghi abcdefghi abcdefghi ' \
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
             self.assertEquals(item['article_text'], expected)

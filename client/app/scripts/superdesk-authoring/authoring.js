@@ -23,7 +23,6 @@
         unique_name: '',
         keywords: [],
         description: null,
-        destination_groups: [],
         sign_off: null,
         publish_schedule: null,
         marked_for_not_publication: false,
@@ -683,7 +682,6 @@
         'superdesk',
         'notify',
         'gettext',
-        'adminPublishSettingsService',
         'desks',
         'authoring',
         'api',
@@ -698,8 +696,7 @@
         '$q',
         '$window'
     ];
-    function AuthoringDirective(superdesk, notify, gettext, adminPublishSettingsService,
-                                desks, authoring, api, session, lock, privileges,
+    function AuthoringDirective(superdesk, notify, gettext, desks, authoring, api, session, lock, privileges,
                                 ContentCtrl, $location, referrer, macros, $timeout, $q, $window) {
         return {
             link: function($scope) {
@@ -721,22 +718,6 @@
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
-                $scope.origItem.destination_groups = $scope.origItem.destination_groups || [];
-
-                function resolveDestinations() {
-                    if ($scope.origItem.destination_groups && $scope.origItem.destination_groups.length) {
-                        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origItem.destination_groups)
-                            .then(function(result) {
-                                var destinationGroups = [];
-                                _.each(result._items, function(item) {
-                                    destinationGroups.push(item);
-                                });
-                                $scope.vars = {destinationGroups: destinationGroups};
-                            });
-                    } else {
-                        $scope.vars = {destinationGroups: []};
-                    }
-                }
 
                 if ($scope.action === 'kill') {
                     api('content_templates').getById('kill').then(function(template) {
@@ -756,32 +737,14 @@
                         _.each(template, function(value, key) {
                             if (!_.isEmpty(value)) {
                                 if (key !== 'body_html') {
-                                    if (key === 'destination_groups') {
-                                        $scope.origItem.destination_groups = _.union($scope.origItem.destination_groups, value);
-                                    } else {
-                                        $scope.origItem[key] = value;
-                                    }
+                                    $scope.origItem[key] = value;
                                 }
                             }
                         });
-                        resolveDestinations();
                     });
                 } else if ($scope.action === 'kill') {
                     $scope.origItem.pubstatus = 'Corrected';
-                    resolveDestinations();
-                } else {
-                    resolveDestinations();
                 }
-
-                $scope.$watch('vars', function() {
-                    if ($scope.vars && $scope.vars.destinationGroups) {
-                        var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
-                        if (!_.isEqual(destinationGroups, $scope.item.destination_groups)) {
-                            $scope.item.destination_groups = destinationGroups;
-                            $scope.autosave($scope.item);
-                        }
-                    }
-                }, true);
 
                 $scope.$watch('item.marked_for_not_publication', function(newValue, oldValue) {
                     if (newValue !== oldValue) {
@@ -825,19 +788,6 @@
                         }
                     });
                 };
-
-                function validateDestinationGroups(item) {
-                    if (!item.destination_groups || !item.destination_groups.length) {
-                        return $q.reject('Error. Destination groups invalid.');
-                    }
-                    return adminPublishSettingsService.fetchDestinationGroupsByIds(item.destination_groups)
-                    .then(function(result) {
-                        if (result._items.length !== item.destination_groups.length) {
-                            return $q.reject('Error. Destination groups invalid.');
-                        }
-                        return true;
-                    });
-                }
 
                 function validatePublishSchedule(item) {
                     if (_.contains(['published', 'killed', 'corrected'], item.state)) {
@@ -915,24 +865,19 @@
 
                 $scope.publish = function() {
                     if (validatePublishSchedule($scope.item)) {
-                        validateDestinationGroups($scope.item)
-                        .then(function() {
-                            if ($scope.dirty) { // save dialog & then publish if confirm
-                                var message = $scope.action === 'kill' ? $scope.action : 'publish';
-                                authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
-                                .then(function(res) {
-                                    if (res) {
-                                        publishItem($scope.origItem, $scope.item);
-                                    }
-                                }, function(response) {
-                                    notify.error(gettext('Error. Item not published.'));
-                                });
-                            } else { // Publish
-                                publishItem($scope.origItem, $scope.item);
-                            }
-                        }, function(res) {
-                            notify.error(gettext(res));
-                        });
+                        if ($scope.dirty) { // save dialog & then publish if confirm
+                            var message = $scope.action === 'kill' ? $scope.action : 'publish';
+                            authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
+                            .then(function(res) {
+                                if (res) {
+                                    publishItem($scope.origItem, $scope.item);
+                                }
+                            }, function(response) {
+                                notify.error(gettext('Error. Item not published.'));
+                            });
+                        } else { // Publish
+                            publishItem($scope.origItem, $scope.item);
+                        }
                     }
                 };
 
@@ -1079,18 +1024,10 @@
                     superdesk.intent('view', 'content');
                 };
 
-                $scope.$on('item:publish:closed:channels', function(_e, data) {
-                    if (data.item === $scope.item._id) {
-                        notify.error(gettext('Item published to closed Output Channel(s).'));
-                    }
-                });
-
                 $scope.$on('item:publish:wrong:format', function(_e, data) {
                     if (data.item === $scope.item._id) {
-                        notify.error(gettext('Item having story name ' +
-                            data.unique_name +
-                            ' has wrong formatted Output Channel(s):' +
-                            data.output_channels.join(',')));
+                        notify.error(gettext('No formatters found for ') + data.formats.join(',') +
+                            ' while publishing item having story name ' + data.unique_name);
                     }
                 });
 

@@ -3,33 +3,11 @@ Feature: Publish content to the public API
     @auth
     @notification
     Scenario: Publish a text item
-	    Given empty "formatted_item"
-        Given empty "stages"
 		Given "desks"
 		"""
 		[{"name": "test_desk1"}]
 		"""
-	    Given "subscribers"
-	    """
-	    [{"name": "My subscriber", "destinations": [{"delivery_type": "PublicArchive", "name": "Publish"}]}]
-	    """
-	    Given "output_channels"
-	    """
-	    [{"name": "channel 1", "format": "ninjs", "channel_type": "metadata", "is_active": true, "destinations": ["#subscribers._id#"]}]
-	    """
-	    Given "destination_groups"
-	    """
-	    [{
-	        "name":"Group 1", "description": "new stuff",
-	        "destination_groups": [],
-	        "output_channels": [{"channel":"#output_channels._id#", "selector_codes": ["PXX", "XYZ"]}]
-	    }]
-	    """
-		Given the "validators"
-		"""
-		[{"_id": "publish", "schema":{}}]
-		"""
-        Given "archive"
+        And "archive"
         """
         [{
         	"guid": "item1",
@@ -46,7 +24,6 @@ Feature: Publish content to the public API
         		"status": "todo",
         		"user": "#CONTEXT_USER_ID#"
         	},
-        	"destination_groups": ["#destination_groups._id#"],
         	"state": "submitted",
         	"pubstatus": "usable",
         	"urgency": 1,
@@ -57,7 +34,18 @@ Feature: Publish content to the public API
         	"body_html": "item content"
         }]
         """
- 		When we publish "item1" with "publish" type and "published" state
+		And the "validators"
+		"""
+		[{"_id": "publish", "schema":{}}]
+		"""
+		When we post to "/subscribers" with success
+		"""
+		{
+		  "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+		  "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+		}
+		"""
+ 		And we publish "item1" with "publish" type and "published" state
 		Then we get OK response
         And we get notifications
 	    """
@@ -76,14 +64,4 @@ Feature: Publish content to the public API
         Then we get existing resource
         """
         {"_items" : [{"guid": "item1", "_current_version": 2, "state": "published"}]}
-        """
-        When we get "/formatted_item"
-        Then we get list with 1 items
-        """
-        {
-          "_items":
-            [
-              {"format": "ninjs"}
-            ]
-        }
         """

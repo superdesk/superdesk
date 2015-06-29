@@ -9,14 +9,6 @@ Feature: Auto Routing
             "name": "Sports Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
           }
         """
-        And we post to "/destination_groups" with "dest_groups1" and success
-        """
-        {"name": "destination1", "description": "description 1"}
-        """
-        And we post to "/destination_groups" with "dest_groups2" and success
-        """
-        {"name": "destination2", "description": "description 2"}
-        """
         Then we get response code 201
         When we post to "/routing_schemes"
         """
@@ -33,8 +25,7 @@ Feature: Auto Routing
                   "fetch": [
                     {
                       "desk": "#desks._id#",
-                      "stage": "#desks.incoming_stage#",
-                      "destination_groups": ["#dest_groups1#","#dest_groups2#"]
+                      "stage": "#desks.incoming_stage#"
                     }],
                   "exit": false
                 }
@@ -179,7 +170,7 @@ Feature: Auto Routing
           }
         ]
         """
-        Then we get response code 201
+        Then we get OK response
         When we post to "/stages"
         """
         [
@@ -203,59 +194,7 @@ Feature: Auto Routing
           }
         ]
         """
-        When we post to "/subscribers"
-        """
-        {
-          "name":"Channel 3", "destinations": [{"name": "Test", "delivery_type": "email", "config": {}}]
-        }
-        """
-        Then we get latest
-        """
-        {
-          "name":"Channel 3"
-        }
-        """
-        When we post to "/output_channels"
-        """
-        [
-          {
-            "name":"Output Channel",
-            "description": "new stuff",
-            "destinations": ["#subscribers._id#"],
-            "format": "nitf"
-          }
-        ]
-        """
-        Then we get latest
-        """
-        {
-          "name":"Output Channel"
-        }
-        """
-        When we post to "/destination_groups" with "destgroup1" and success
-        """
-        [
-          {
-            "name":"Group 1", "description": "new stuff",
-            "destination_groups": [], "output_channels": [{"channel": "#output_channels._id#"}]
-          }
-        ]
-        """
-        When we patch routing scheme "/routing_schemes/#routing_schemes._id#"
-        """
-           {
-              "name": "Finance Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}, {"qcode": "04019000"}]
-              },
-              "actions": {
-                "fetch": [{"desk": "#desks._id#", "stage": "#_id#"}],
-                "publish": [{"desk": "#desks._id#", "stage": "#stages._id#", "destination_groups": ["#destgroup1#"]}],
-                "exit": false
-              }
-           }
-        """
-        Then we get response code 200
+        Then we get OK response
         When we fetch from "AAP" ingest "aap-finance.xml" using routing_scheme
         """
         #routing_schemes._id#

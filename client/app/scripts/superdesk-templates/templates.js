@@ -110,8 +110,8 @@
         };
     }
 
-    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'adminPublishSettingsService', 'desks'];
-    function TemplatesDirective(gettext, notify, api, templates, modal, adminPublishSettingsService, desks) {
+    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'desks'];
+    function TemplatesDirective(gettext, notify, api, templates, modal, desks) {
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
@@ -159,21 +159,6 @@
 
                     $scope.item = $scope.template;
                     $scope._editable = true;
-
-                    $scope.origTemplate.destination_groups = $scope.origTemplate.destination_groups || [];
-
-                    if ($scope.origTemplate.destination_groups && $scope.origTemplate.destination_groups.length) {
-                        adminPublishSettingsService.fetchDestinationGroupsByIds($scope.origTemplate.destination_groups)
-                            .then(function(result) {
-                                var destinationGroups = [];
-                                _.each(result._items, function(item) {
-                                    destinationGroups.push(item);
-                                });
-                                $scope.vars = {destinationGroups: destinationGroups};
-                            });
-                    } else {
-                        $scope.vars = {destinationGroups: []};
-                    }
                 };
 
                 $scope.remove = function(template) {
@@ -198,15 +183,6 @@
                     $scope.template = null;
                     $scope.vars = null;
                 };
-
-                $scope.$watch('vars', function() {
-                    if ($scope.vars && $scope.vars.destinationGroups) {
-                        var destinationGroups = _.pluck($scope.vars.destinationGroups, '_id').sort();
-                        if (!_.isEqual(destinationGroups, $scope.template.destination_groups)) {
-                            $scope.template.destination_groups = destinationGroups;
-                        }
-                    }
-                }, true);
 
                 fetchTemplates();
             }

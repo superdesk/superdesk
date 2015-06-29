@@ -10,7 +10,7 @@ define([
          *
          * Usage:
          * <div sd-search-list
-         * data-endpoint="destination_groups"
+         * data-endpoint="subscribers"
          * data-page-size="5"
          * data-label-key="name"
          * data-search-key="name"
@@ -126,7 +126,7 @@ define([
          *
          * Usage:
          * <div sd-search-list
-         * data-endpoint="destination_groups"
+         * data-endpoint="subscribers"
          * data-page-size="5"
          * data-label-key="name"
          * data-search-key="name"

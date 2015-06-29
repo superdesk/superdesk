@@ -144,14 +144,6 @@
         <dd>{{ item.located }}</dd>
     </dl>
 
-    <!-- publish data -->
-    <dl ng-if="destinationGroups">
-        <dt translate>Destination Groups</dt>
-        <dd ng-repeat="destinationGroup in destinationGroups">
-            {{destinationGroup.name}}
-        </dd>
-    </dl>
-
     <!-- publish schedule data -->
     <dl ng-if="item.publish_schedule">
         <dt translate>Publish Schedule</dt>

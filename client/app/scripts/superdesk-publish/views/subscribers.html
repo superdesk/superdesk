@@ -13,7 +13,6 @@
                     <h6>{{:: subscriber.name }}</h6>
                     <div class="actions">
                         <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
-                        <button ng-click="remove(subscriber)" title="{{:: 'Remove Subscriber' | translate }}"><i class="icon-trash"></i></button>
                     </div>
                 </div>
             </li>
@@ -21,7 +20,7 @@
     </div>
 </div>
 
-<div sd-modal data-model="subscriber" class="output-channel-modal">
+<div sd-modal data-model="subscriber" class="subscriber-modal modal-big">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
         <h3 translate ng-show="subscriber._id" translate>Edit Subscriber "{{ origSubscriber.name }}"</h3>
         <h3 translate ng-hide="subscriber._id" translate>Add New Subscriber</h3>
@@ -39,27 +38,47 @@
                                 </span>
                             </label>
                         </div>
+
                         <div class="field">
                             <label for="subscriber-name" translate>Name</label>
                             <input type="text" id="subscriber-name" required ng-model="subscriber.name">
                         </div>
+
                         <div class="field">
-                            <label for="subscriber-type" translate>Type</label>
-                            <select id="subscriber-type" class="input" ng-model="subscriber.subscriber_type">
+                            <label for="media-type" translate>Media Type</label>
+                            <select id="media-type" class="input" ng-model="subscriber.media_type">
                                 <option value="media" translate>Media</option>
                                 <option value="nonmedia" translate>Non-media</option>
                                 <option value="" translate>Both</option>
                             </select>
                         </div>
+
                         <div class="field">
-                            <label translate>Distributions</label>
-                            <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination" data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
+                          <label class="right">
+                            {{:: 'Can Send Takes Package(s)' | translate }}
+                            <span tooltip="{{ subscriber.can_send_takes_packages ? 'Can\'t Send Takes Package(s)' : 'Can Send Takes Package(s)'  | translate }}" tooltip-placement="right">
+                              <span class="pull-right" id="subscriber-can_send_takes_packages" sd-switch ng-model="subscriber.can_send_takes_packages"></span>
+                            </span>
+                          </label>
+                        </div>
+
+                        <div class="field">
+                            <label translate>Sequence Number Settings</label>
+                            <span translate>Minimum</span>
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min">
+                            <span translate>Maximum</span>
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max">
+                        </div>
+
+                        <div class="field">
+                            <label translate>Destinations</label>
+                            <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination"
+                                 data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
                             <div sd-destination ng-if="newDestination"
                                 data-destination="newDestination"
-                                data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"
-                            ></div>
+                                data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"></div>
                             <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
-                                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Distribution</span>
+                                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Destination</span>
                             </button>
                         </div>
                     </tab>
