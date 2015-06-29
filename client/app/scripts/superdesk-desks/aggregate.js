@@ -15,8 +15,7 @@
     function AggregateCtrl($scope, api, session, desks, preferencesService, storage, gettext) {
         var PREFERENCES_KEY = 'agg:view';
         var defaultMaxItems = 10;
-        var self = this,
-            vm = this;
+        var self = this;
         this.loading = true;
         this.selected = null;
         this.groups = [];
@@ -65,23 +64,23 @@
         };
 
         function setupCards() {
-            var cards = vm.getGroups();
+            var cards = self.getGroups();
             angular.forEach(cards, setupCard);
-            vm.cards = cards;
+            self.cards = cards;
 
             /**
              * Add card metadata into group
              */
             function setupCard(card) {
                 if (card.type === 'stage') {
-                    var stage = vm.stageLookup[card._id],
-                        desk = vm.deskLookup[stage.desk];
+                    var stage = self.stageLookup[card._id],
+                        desk = self.deskLookup[stage.desk];
                     card.header = desk.name;
                     card.subheader = stage.name;
                 }
 
                 if (card.type === 'search') {
-                    card.search = vm.searchLookup[card._id];
+                    card.search = self.searchLookup[card._id];
                     card.header = card.search.name;
                 }
 

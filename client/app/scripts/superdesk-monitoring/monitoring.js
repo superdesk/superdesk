@@ -65,11 +65,14 @@
     }
 
     function MonitoringController() {
+        this.state = {};
+
         this.preview = preview;
         this.closePreview = closePreview;
         this.previewItem = null;
 
-        this.state = {};
+        this.edit = edit;
+        this.editItem = null;
 
         var vm = this;
 
@@ -80,6 +83,11 @@
 
         function closePreview() {
             preview(null);
+        }
+
+        function edit(item) {
+            vm.editItem = item;
+            vm.state['with-authoring'] = !!item;
         }
     }
 
@@ -117,11 +125,14 @@
 
         return {
             templateUrl: 'scripts/superdesk-monitoring/views/monitoring-group.html',
-            require: '^sdMonitoringView',
+            require: ['^sdMonitoringView', '^sdAuthoringContainer'],
             scope: {
                 group: '='
             },
-            link: function(scope, elem, attrs, monitoring) {
+            link: function(scope, elem, attrs, ctrls) {
+
+                var monitoring = ctrls[0],
+                    authoring = ctrls[1];
 
                 scope.view = 'compact';
                 scope.page = 1;
@@ -130,6 +141,7 @@
                 scope.cachePreviousItems = [];
 
                 scope.uuid = uuid;
+                scope.edit = edit;
                 scope.select = select;
                 scope.preview = preview;
                 scope.renderNew = renderNew;
@@ -157,13 +169,17 @@
                     }
                 }
 
+                function edit(item) {
+                    authoring.edit(item);
+                }
+
                 function select(item) {
                     scope.selected = item;
+                    monitoring.preview(item);
                 }
 
                 function preview(item) {
                     select(item);
-                    monitoring.preview(item);
                 }
 
                 function queryItems() {
@@ -264,7 +280,7 @@
                         handleScroll(); // make sure we scroll after moving
                     } else if (code === ENTER_KEY) {
                         scope.$applyAsync(function() {
-                            preview(scope.selected);
+                            edit(scope.selected);
                         });
                     }
                 }
