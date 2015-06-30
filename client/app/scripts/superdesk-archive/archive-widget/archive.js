@@ -30,6 +30,7 @@ define([
                 label: gettext('Content'),
                 icon: 'archive',
                 template: require.toUrl('./widget-archive.html'),
+                order: 3,
                 side: 'left',
                 display: {authoring: true, packages: false}
             });

@@ -342,6 +342,7 @@
             icon: 'view',
             label: gettext('Aggregate'),
             template: 'scripts/superdesk-desks/views/aggregate.html',
+            order: 1,
             side: 'left',
             extended: true,
             display: {authoring: true, packages: false}
