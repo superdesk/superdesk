@@ -32,6 +32,7 @@
             icon: 'package',
             label: gettext('Packages'),
             template: 'scripts/superdesk-authoring/packages/views/packages-widget.html',
+            order: 5,
             side: 'right',
             display: {authoring: true, packages: true}
         });

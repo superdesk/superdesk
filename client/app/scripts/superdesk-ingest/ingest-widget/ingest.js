@@ -30,6 +30,7 @@ define([
                 label: gettext('Ingest'),
                 icon: 'ingest',
                 template: require.toUrl('./widget-ingest.html'),
+                order: 2,
                 side: 'left',
                 display: {authoring: true, packages: false}
             });

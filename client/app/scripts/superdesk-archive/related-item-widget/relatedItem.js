@@ -15,6 +15,7 @@ define([
                 label: gettext('Related Item'),
                 icon: 'related',
                 template: require.toUrl('./widget-relatedItem.html'),
+                order: 7,
                 side: 'right',
                 display: {authoring: true, packages: false}
             });

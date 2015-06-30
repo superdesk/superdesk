@@ -726,6 +726,7 @@
                 icon: 'view',
                 label: gettext('Search'),
                 template: 'scripts/superdesk-packaging/views/search.html',
+                order: 4,
                 side: 'left',
                 extended: true,
                 display: {authoring: false, packages: true}
