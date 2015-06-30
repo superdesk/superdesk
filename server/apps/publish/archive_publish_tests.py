@@ -670,14 +670,14 @@ class ArchivePublishTestCase(TestCase):
                        'name': 'pf-1'}])
 
             can_it = get_resource_service('archive_publish').\
-                can_publish(self.subscribers[0], self.articles[8])
+                conforms_publish_filter(self.subscribers[0], self.articles[8])
 
             self.assertFalse(can_it)
 
             self.subscribers[0]['publish_filter']['filter_type'] = 'permitting'
 
             can_it = get_resource_service('archive_publish').\
-                can_publish(self.subscribers[0], self.articles[8])
+                conforms_publish_filter(self.subscribers[0], self.articles[8])
 
             self.assertTrue(can_it)
 

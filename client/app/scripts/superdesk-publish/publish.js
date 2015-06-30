@@ -308,6 +308,7 @@
                 $scope.origSubscriber = null;
                 $scope.subscribers = null;
                 $scope.newDestination = null;
+                $scope.publishFilters = null;
 
                 function fetchSubscribers() {
                     adminPublishSettingsService.fetchSubscribers().then(
@@ -316,6 +317,12 @@
                         }
                     );
                 }
+
+                var fetchPublishFilters = function() {
+                    api.query('publish_filters').then(function(filters) {
+                        $scope.publishFilters = filters._items;
+                    });
+                };
 
                 function fetchPublishErrors() {
                     adminPublishSettingsService.fetchPublishErrors().then(function(result) {
@@ -342,7 +349,11 @@
                 };
 
                 $scope.save = function() {
-                    $scope.subscriber.destinations = $scope.subscriber.destinations;
+
+                    if ($scope.subscriber.publish_filter && $scope.subscriber.publish_filter.filter_id === '') {
+                        $scope.subscriber.publish_filter.filter_id = null;
+                    }
+
                     api.subscribers.save($scope.origSubscriber, $scope.subscriber)
                         .then(
                             function() {
@@ -369,9 +380,11 @@
                     $scope.origSubscriber = subscriber || {};
                     $scope.subscriber = _.create($scope.origSubscriber);
                     $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
-                    if (subscriber) {
-                        fetchPublishErrors();
-                    }
+                    $scope.subscriber.publish_filter = $scope.origSubscriber.publish_filter || {};
+
+                    $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
+                    fetchPublishErrors();
+                    fetchPublishFilters();
                 };
 
                 $scope.remove = function(subscriber) {

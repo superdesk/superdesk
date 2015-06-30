@@ -63,6 +63,20 @@
                         </div>
 
                         <div class="field">
+                            <label class="right">Publish Filter</label>
+                            <select class="input" ng-model="subscriber.publish_filter.filter_id">
+                                <option value=""></option>
+                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.publish_filter.filter_id" ng-repeat="filter in publishFilters">{{:: filter.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="field" ng-if="subscriber.publish_filter.filter_id">
+                            <label translate>Publish Filter Type</label>
+                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="permitting"> Permitting
+                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="blocking"> Blocking
+                        </div>
+
+                        <div class="field">
                             <label translate>Sequence Number Settings</label>
                             <span translate>Minimum</span>
                             <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min">
