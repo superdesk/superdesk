@@ -83,6 +83,7 @@ class AAPIpNewsFormatter(Formatter):
             odbc_item['priority'] = article.get('priority', 'r')  # @priority
             odbc_item['service_level'] = 'a'  # @service_level
 
+            odbc_item['selector_codes'] = '3**'
             odbc_item['fullStory'] = 1
             odbc_item['ident'] = '0'  # @ident
 

@@ -59,7 +59,8 @@ class AapIpNewsFormatterTest(TestCase):
                                   'subject_matter': 'international law', 'news_item_type': 'News',
                                   'subject_reference': '02011001', 'subject': 'crime, law and justice',
                                   'wordcount': '1', 'subject_detail': 'international court or tribunal',
-                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
+                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe',
+                                  'selector_codes': '3**'})
 
     def TestIPNewsHtmlToText(self):
         article = {
