@@ -34,8 +34,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
 
         return media_file
 
-    def put(self, content, filename=None, content_type=None, metadata=None, resource=None):
-        _id = self.fs(resource).put(content, content_type=content_type, filename=filename, metadata=metadata)
+    def put(self, content, filename=None, content_type=None, metadata=None, resource=None, **kwargs):
+        _id = self.fs(resource).put(content, content_type=content_type, filename=filename, metadata=metadata, **kwargs)
         return _id
 
     def fs(self, resource):

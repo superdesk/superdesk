@@ -27,6 +27,7 @@ from publicapi import settings
 from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
+from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.errors import SuperdeskError, SuperdeskApiError
 
 
@@ -82,9 +83,16 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
+    media_storage = SuperdeskGridFSMediaStorage
+
+    if config['AMAZON_CONTAINER_NAME']:
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        media_storage = AmazonMediaStorage
+
     app = Eve(
         settings=config,
         data=SuperdeskDataLayer,
+        media=media_storage,
         json_encoder=MongoJSONEncoder,
     )
 
@@ -101,5 +109,9 @@ def get_app(config=None):
 
     for resource in config['DOMAIN']:
         app.register_resource(resource, config['DOMAIN'][resource])
+
+    for blueprint in superdesk.BLUEPRINTS:
+        prefix = app.api_prefix or None
+        app.register_blueprint(blueprint, url_prefix=prefix)
 
     return app

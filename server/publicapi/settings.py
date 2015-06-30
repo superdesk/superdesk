@@ -38,7 +38,8 @@ MONGO_DBNAME = 'publicapi'
 INSTALLED_APPS = [
     'publicapi.items',
     'publicapi.packages',
-    'publicapi.prepopulate'
+    'publicapi.prepopulate',
+    'publicapi.assets'
 ]
 
 DOMAIN = {}
@@ -49,3 +50,12 @@ SUPERDESK_PUBLICAPI_TESTING = False
 PUBLICAPI_URL = env('PUBLICAPI_URL', 'http://localhost:5050')
 server_url = urlparse(PUBLICAPI_URL)
 SERVER_NAME = server_url.netloc or None
+URL_PROTOCOL = server_url.scheme or None
+
+# Amazon S3 assets management
+AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')
+AMAZON_ACCESS_KEY_ID = env('AMAZON_ACCESS_KEY_ID', '')
+AMAZON_SECRET_ACCESS_KEY = env('AMAZON_SECRET_ACCESS_KEY', '')
+AMAZON_REGION = env('AMAZON_REGION', 'us-east-1')
+AMAZON_SERVE_DIRECT_LINKS = env('AMAZON_SERVE_DIRECT_LINKS', False)
+AMAZON_S3_USE_HTTPS = env('AMAZON_S3_USE_HTTPS', False)

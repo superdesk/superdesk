@@ -136,6 +136,10 @@ class BasePublishService(BaseService):
             self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')), user=str(user.get('_id', '')))
+
+            from superdesk.publish.publish_content import publish
+            import pdb; pdb.set_trace()
+            publish()
         except SuperdeskApiError as e:
             raise e
         except KeyError as e:
