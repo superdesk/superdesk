@@ -118,8 +118,8 @@
         $scope.reload ();
     }
 
-    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify'];
-    function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify) {
+    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify', '$location'];
+    function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify, $location) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
         $scope.publish_queue = [];
@@ -128,6 +128,7 @@
         $scope.selectedQueueItems = [];
         $scope.showResendBtn = false;
         $scope.showCancelBtn = false;
+        $scope.selected = {};
 
         var promises = [];
 
@@ -163,6 +164,8 @@
                     $scope.lastRefreshedAt = new Date();
                     $scope.showResendBtn = false;
                     $scope.showCacnelBtn = false;
+
+                    previewItem();
                 });
             });
         };
@@ -272,6 +275,24 @@
                 $scope.$apply();
             }
         }
+
+        $scope.preview = function(queueItem) {
+            $location.search('_id', queueItem ? queueItem._id : queueItem);
+        };
+
+        function previewItem() {
+            var queueItem = _.find($scope.publish_queue, {_id: $location.search()._id}) || null;
+            if (queueItem) {
+                api.archive.getById(queueItem.item_id)
+                .then(function(item) {
+                    $scope.selected.preview = item;
+                });
+            } else {
+                $scope.selected.preview = null;
+            }
+        }
+
+        $scope.$on('$routeUpdate', previewItem);
 
         $scope.$on('publish_queue:update', function(evt, data) { refreshQueueState(data); });
         $scope.reload();

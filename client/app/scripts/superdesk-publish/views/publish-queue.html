@@ -14,7 +14,7 @@
 </div>
 
 <section class="main-section publish-queue">
-    <div class="preview-layout closed">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="list-pane">
             <header>
                 <div class="sortbar pull-left">
@@ -60,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state| queueStatus}}">
+                            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state| queueStatus}}" ng-click="preview(queue_item);">
                                 <td>
                                     <span sd-check ng-show="queue_item.state !== 'canceled'" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected"></span>
                                 </td>
@@ -84,7 +84,8 @@
                     </table>
                 </div>
             </div> 
-       </div>
+        </div>
+        <div sd-item-preview data-item="selected.preview" data-close="preview(null)"></div>
     </div>
 </section>
 
