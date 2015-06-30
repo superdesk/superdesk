@@ -27,7 +27,8 @@
         publish_schedule: null,
         marked_for_not_publication: false,
         pubstatus: null,
-        more_coming: false
+        more_coming: false,
+        restrictions: ''
     });
 
     var DEFAULT_ACTIONS = Object.freeze({

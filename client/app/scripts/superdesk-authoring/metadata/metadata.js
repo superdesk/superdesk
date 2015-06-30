@@ -74,7 +74,13 @@ function MetadataDropdownDirective() {
         link: function(scope) {
             scope.select = function(item) {
                 var o = {};
-                o[scope.field] = (scope.field === 'anpa-category') ? item : item.name;
+
+                if (angular.isDefined(item)) {
+                    o[scope.field] = (scope.field === 'anpa-category') ? item : item.name;
+                } else {
+                    o[scope.field] = null;
+                }
+
                 _.extend(scope.item, o);
                 scope.change({item: scope.item});
             };

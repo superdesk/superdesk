@@ -1,0 +1,7 @@
+Article with headline {{headline}} and ANPA Category {{anpa_category}} has been killed.
+
+Please remove it from your archives.
+
+
+Regards,
+The {{app_name}} Team

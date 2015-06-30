@@ -89,6 +89,12 @@
 			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
 		</li>
 		<li>
+			<label translate>Restrictions</label>
+			<div class="data visible" ng-if="metadata.geographical_restrictions">
+				<div sd-meta-dropdown data-list="metadata.geographical_restrictions" data-item="item" data-field="restrictions" data-change="autosave(item)" ng-disabled="!_editable"></div>
+			</div>
+		</li>
+		<li>
 			<label translate>Usageterms</label>
 			<div class="data">
 				<input type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">

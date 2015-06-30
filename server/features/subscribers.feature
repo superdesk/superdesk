@@ -8,7 +8,7 @@ Feature: Subscribers
     When we post to "/subscribers" with success
     """
     {
-      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10},
+      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
     }
     """
@@ -24,7 +24,7 @@ Feature: Subscribers
     When we post to "/subscribers"
     """
     {
-      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10},
+      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
     }
     """
@@ -77,7 +77,7 @@ Feature: Subscribers
     When we post to "/subscribers"
     """
     {
-      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10},
+      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
     }
     """
@@ -109,7 +109,7 @@ Feature: Subscribers
     When we post to "/subscribers"
     """
     {
-      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 0, "max" : 10},
+      "name":"News1","media_type":"media", "sequence_num_settings":{"min" : 0, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
     }
     """

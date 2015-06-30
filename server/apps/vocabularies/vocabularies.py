@@ -9,13 +9,14 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+import logging
+
+from flask import current_app as app
+from eve.utils import config
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
-from flask import current_app as app
-import logging
-from eve.utils import config
-
 
 logger = logging.getLogger(__name__)
 
@@ -50,23 +51,19 @@ class VocabulariesService(BaseService):
         """
 
         for item in doc[config.ITEMS]:
-            self.__filter_inactive_vocabularies(item)
+            self._filter_inactive_vocabularies(item)
 
     def on_fetched_item(self, doc):
         """
         Overriding to filter out inactive vocabularies and pops out 'is_active' property from the response.
         """
 
-        self.__filter_inactive_vocabularies(doc)
+        self._filter_inactive_vocabularies(doc)
 
-    def __filter_inactive_vocabularies(self, item):
-        active_vocabularies = []
+    def _filter_inactive_vocabularies(self, item):
+        active_vocabularies = [{k: voc[k] for k in voc.keys() if k != 'is_active' and voc.get('is_active', True)}
+                               for voc in item['items']]
 
-        for vocabulary in item['items']:
-            if 'is_active' not in vocabulary:
-                active_vocabularies = item['items']
-                break
-            else:
-                active_vocabularies.append({k: vocabulary[k] for k in vocabulary.keys() if k != 'is_active'})
+        active_vocabularies = [voc for voc in active_vocabularies if len(voc) > 0]
 
         item['items'] = active_vocabularies

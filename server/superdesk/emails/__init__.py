@@ -81,3 +81,17 @@ def send_activity_emails(activity, recipients):
     subject = render_template("notification_subject.txt", notification=notification)
     send_email.delay(subject=subject, sender=admins[0], recipients=recipients,
                      text_body=text_body, html_body=html_body)
+
+
+def send_article_killed_email(article, recipients):
+    admins = app.config['ADMINS']
+    app_name = app.config['APPLICATION_NAME']
+
+    headline = article.get('headline', '')
+    text_body = render_template("article_killed.txt", headline=headline,
+                                anpa_category=article.get('anpa-category', {}).get('name', ''), app_name=app_name)
+    html_body = render_template("article_killed.html", headline=article.get('headline', ''),
+                                anpa_category=article.get('anpa-category', {}).get('name', ''), app_name=app_name)
+
+    send_email.delay(subject='Canceled: Article %s is killed' % headline, sender=admins[0], recipients=recipients,
+                     text_body=text_body, html_body=html_body)

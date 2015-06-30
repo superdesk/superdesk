@@ -29,6 +29,14 @@ class SubscribersResource(Resource):
         'media_type': {
             'type': 'string'
         },
+        'geo_restrictions': {
+            'type': 'string',
+            'nullable': True
+        },
+        'subscriber_type': {
+            'type': 'string',
+            'nullable': True
+        },
         'sequence_num_settings': {
             'type': 'dict',
             'schema': {
@@ -40,6 +48,11 @@ class SubscribersResource(Resource):
         'can_send_takes_packages': {
             'type': 'boolean',
             'default': False
+        },
+        'email': {
+            'type': 'email',
+            'empty': False,
+            'required': True
         },
         'is_active': {
             'type': 'boolean',
