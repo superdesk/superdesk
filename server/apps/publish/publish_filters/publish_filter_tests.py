@@ -79,7 +79,7 @@ class PublishFilterTests(TestCase):
 
             self.app.data.insert('publish_filters',
                                  [{"_id": 4,
-                                   "publish_filter": [{"expression": {"fc": [3]}}, {"expression":{"fc": [5]}}],
+                                   "publish_filter": [{"expression": {"fc": [3]}}, {"expression": {"fc": [5]}}],
                                    "name": "soccer-only2"}])
 
     def test_build_mongo_query_using_like_filter_single_fc(self):
@@ -231,7 +231,8 @@ class PublishFilterTests(TestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_elastic_query_using_like_filter_multi_publish_filter2(self):
-        doc = {'publish_filter': [{"expression": {"fc": [4, 3]}}, {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
+        doc = {'publish_filter': [{"expression": {"fc": [4, 3]}},
+                                  {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}

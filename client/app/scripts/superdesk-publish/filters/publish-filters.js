@@ -37,17 +37,19 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     $scope.filterConditionParameters = null;
     $scope.operatorLookup = {};
     $scope.valueLookup = {};
+    $scope.valueFieldLookup = {};
 
     $scope.edit = function(fc) {
         $scope.origFilterCondition = fc || {};
         $scope.filterCondition = _.create($scope.origFilterCondition);
-        $scope.filterCondition.values = {};
+        $scope.filterCondition.values = [];
 
         filterConditions.getFilterConditionParameters().then(function(params) {
             $scope.filterConditionParameters = params;
             _.each(params, function(param) {
                 $scope.operatorLookup[param.field] = param.operators;
                 $scope.valueLookup[param.field] = param.values;
+                $scope.valueFieldLookup[param.field] = param.value_field;
             });
         });
 
@@ -103,10 +105,8 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     var getFilterValue = function() {
         if ($scope.isListValue()) {
             var values = [];
-            _.each($scope.filterCondition.values, function(value, key) {
-                if (value.selected) {
-                    values.push(key);
-                }
+            _.each($scope.filterCondition.values, function(value) {
+                values.push(value[$scope.valueFieldLookup[$scope.filterCondition.field]]);
             });
             return values.join();
         } else {
@@ -117,8 +117,15 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     var setFilterValues = function() {
         if ($scope.isListValue()) {
             var values = $scope.filterCondition.value.split(',');
+            var all_values = $scope.valueLookup[$scope.filterCondition.field];
+            var value_field = $scope.valueFieldLookup[$scope.filterCondition.field];
+
             _.each(values, function(value) {
-                $scope.filterCondition.values[value] = {'selected': true};
+                var v = _.find(all_values, function(val) {
+                    return val[value_field] === value;
+                });
+
+                $scope.filterCondition.values.push(v);
             });
         }
     };

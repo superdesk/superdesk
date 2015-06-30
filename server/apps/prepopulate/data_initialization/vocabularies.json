@@ -98,6 +98,29 @@
         ]
     },
     {
+        "_id": "priority",
+        "items": [
+            {"is_active": true, "name": "B", "qcode": "B"},
+            {"is_active": true, "name": "D", "qcode": "D"},
+            {"is_active": true, "name": "F", "qcode": "F"},
+            {"is_active": true, "name": "R", "qcode": "R"},
+            {"is_active": true, "name": "U", "qcode": "U"},
+            {"is_active": true, "name": "Z", "qcode": "Z"}
+        ]
+    },
+    {
+        "_id": "type",
+        "items": [
+            {"is_active": true, "name": "text", "value": "text"},
+            {"is_active": true, "name": "preformatted", "value": "preformatted"},
+            {"is_active": true, "name": "audio", "value": "audio"},
+            {"is_active": true, "name": "video", "value": "video"},
+            {"is_active": true, "name": "picture", "value": "picture"},
+            {"is_active": true, "name": "graphic", "value": "graphic"},
+            {"is_active": true, "name": "composite", "value": "composite"}
+        ]
+    },
+    {
         "_id": "signal",
         "items": [
             {"is_active": true, "name": "Correction", "value": "Correction"},

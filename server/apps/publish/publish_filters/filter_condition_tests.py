@@ -119,7 +119,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            self.assertEqual(5, docs.count())
+            self.assertEqual(7, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 
@@ -141,7 +141,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            self.assertEqual(3, docs.count())
+            self.assertEqual(5, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
@@ -187,7 +187,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
-            self.assertEqual(4, docs.count())
+            self.assertEqual(6, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('6' in doc_ids)
             self.assertTrue('5' in doc_ids)

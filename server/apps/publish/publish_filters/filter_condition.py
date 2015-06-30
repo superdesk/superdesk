@@ -15,6 +15,7 @@ from superdesk.services import BaseService
 from superdesk.utils import ListCursor
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
+from superdesk.io.subjectcodes import get_subjectcodeitems
 
 logger = logging.getLogger(__name__)
 
@@ -191,7 +192,6 @@ class FilterConditionService(BaseService):
         else:
             return article[field]
 
-
     def _run_filter(self, article_value, operator, filter_value):
         if operator == 'in':
             if isinstance(article_value, list):
@@ -220,13 +220,47 @@ class FilterConditionParametersService(BaseService):
         values = self._get_field_values()
         return ListCursor([{'field': 'anpa-category',
                             'operators': ['in', 'nin'],
-                            'values': values['anpa_category']
+                            'values': values['anpa_category'],
+                            'value_field': 'qcode'
                             },
                            {'field': 'urgency',
                             'operators': ['in', 'nin'],
-                            'values': values['urgency']
+                            'values': values['urgency'],
+                            'value_field': 'value'
+                            },
+                           {'field': 'genre',
+                            'operators': ['in', 'nin'],
+                            'values': values['genre'],
+                            'value_field': 'value'
+                            },
+                           {'field': 'subject',
+                            'operators': ['in', 'nin'],
+                            'values': values['subject'],
+                            'value_field': 'qcode'
+                            },
+                           {'field': 'priority',
+                            'operators': ['in', 'nin'],
+                            'values': values['priority'],
+                            'value_field': 'qcode'
                             },
                            {'field': 'keywords',
+                            'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
+                            },
+                           {'field': 'slugline',
+                            'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
+                            },
+                           {'field': 'type',
+                            'operators': ['in', 'nin'],
+                            'values': values['type'],
+                            'value_field': 'value'
+                            },
+                           {'field': 'source',
+                            'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
+                            },
+                           {'field': 'headline',
+                            'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
+                            },
+                           {'field': 'body_html',
                             'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']
                             }])
 
@@ -235,4 +269,7 @@ class FilterConditionParametersService(BaseService):
         values['anpa_category'] = get_resource_service('vocabularies').find_one(req=None, _id='categories')['items']
         values['genre'] = get_resource_service('vocabularies').find_one(req=None, _id='genre')['items']
         values['urgency'] = get_resource_service('vocabularies').find_one(req=None, _id='newsvalue')['items']
+        values['priority'] = get_resource_service('vocabularies').find_one(req=None, _id='priority')['items']
+        values['type'] = get_resource_service('vocabularies').find_one(req=None, _id='type')['items']
+        values['subject'] = get_subjectcodeitems()
         return values
