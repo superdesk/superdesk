@@ -211,7 +211,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
-            self.assertEqual(5, docs.count())
+            self.assertEqual(7, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 

@@ -13,6 +13,7 @@ from apps.publish.publish_filters.publish_filter import PublishFilterService
 from eve.utils import ParsedRequest
 import json
 import superdesk
+from settings import URL_PREFIX
 
 
 class PublishFilterTests(TestCase):
@@ -20,7 +21,7 @@ class PublishFilterTests(TestCase):
     def setUp(self):
         super().setUp()
         self.req = ParsedRequest()
-        with self.app.app_context():
+        with self.app.test_request_context(URL_PREFIX):
             self.f = PublishFilterService(datasource='publish_filters', backend=superdesk.get_backend())
 
             self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
@@ -107,7 +108,7 @@ class PublishFilterTests(TestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_filter_condition(self):
-        doc = {'publish_filter': [{"expression": {"fc": 1}}, {"expression": {"fc": 2}}], 'name': 'pf-1'}
+        doc = {'publish_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -194,7 +195,7 @@ class PublishFilterTests(TestCase):
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_filter_condition(self):
+    def test_build_elastic_query_using_like_filter_multi_filter_condition(self):
         doc = {'publish_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}

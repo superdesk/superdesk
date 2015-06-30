@@ -78,7 +78,7 @@ class SubscribersResource(Resource):
                 'filter_type': {
                     'type': 'string',
                     'allowed': ['blocking', 'permitting'],
-                    'required': True
+                    'default': 'blocking'
                 }
             }
         }

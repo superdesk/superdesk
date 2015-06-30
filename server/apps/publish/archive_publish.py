@@ -14,6 +14,7 @@ import logging
 from eve.versioning import resolve_document_version
 from eve.utils import config
 from eve.validation import ValidationError
+from eve.utils import ParsedRequest
 
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
@@ -368,6 +369,24 @@ class BasePublishService(BaseService):
         get_resource_service('published').update_published_items(published_item_id, 'last_publish_action',
                                                                  self.published_state)
         get_resource_service('published').post([copy(published_item)])
+
+    def can_publish(self, subscriber, doc):
+        publish_filter = subscriber.get('publish_filter')
+
+        if not publish_filter:
+            return True
+
+        service = get_resource_service('publish_filters')
+        filter = service.find_one(req=None, _id=publish_filter['filter_id'])
+        mongo_query = service.build_mongo_query(filter)
+        mongo_query['_id'] = doc['_id']
+        req = ParsedRequest()
+        docs = superdesk.get_resource_service('archive').get_from_mongo(req=req, lookup=mongo_query)
+
+        if docs and docs.count() == 1 and docs[0]['_id'] == doc['_id']:
+            return publish_filter['filter_type'] == 'permitting'
+        else:
+            return publish_filter['filter_type'] == 'blocking'
 
 
 class ArchivePublishResource(BasePublishResource):

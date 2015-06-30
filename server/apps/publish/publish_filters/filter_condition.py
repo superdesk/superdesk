@@ -126,9 +126,9 @@ class FilterConditionService(BaseService):
                 return [value]
 
     def get_elastic_query(self, doc):
-        field = self._get_field(doc['field'])
         operator = self._get_elastic_operator(doc['operator'])
         value = self._get_elastic_value(doc, doc['operator'], doc['value'])
+        field = self._get_field(doc['field'])
         return {operator: {field: value}}
 
     def _get_elastic_operator(self, operator):
