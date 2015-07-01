@@ -208,7 +208,7 @@
                 }
             };
         }])
-        .directive('sdMediaRelated', ['familyService', function(familyService) {
+        .directive('sdMediaRelated', ['familyService', 'superdesk', function(familyService, superdesk) {
             return {
                 scope: {
                     item: '='
@@ -221,6 +221,9 @@
                             scope.relatedItems = items;
                         });
                     });
+                    scope.open = function(item) {
+                        superdesk.intent('read_only', 'content_article', item);
+                    };
                 }
             };
         }])
