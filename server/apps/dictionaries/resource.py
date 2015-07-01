@@ -38,8 +38,8 @@ class DictionariesResource(Resource):
         },
         'user': Resource.rel('users', nullable=True),
         'is_active': {
-            'type': 'boolean',
-            'default': True,
+            'type': 'string',
+            'default': 'true',
         },
     }
     item_methods = ['GET', 'PATCH', 'PUT', 'DELETE']
