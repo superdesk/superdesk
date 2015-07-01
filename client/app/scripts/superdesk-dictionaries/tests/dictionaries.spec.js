@@ -31,7 +31,7 @@ describe('dictionaries', function() {
         expect(api.query).toHaveBeenCalledWith('dictionaries', {where: {
             language_id: LANG,
             user: {$exists: false},
-            is_active: {$in: [true, null]}
+            is_active: {$in: ['true', null]}
         }});
     }));
 

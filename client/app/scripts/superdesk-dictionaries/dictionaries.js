@@ -38,7 +38,7 @@
             // pick own properties
             angular.forEach(data, function(val, key) {
                 if (key !== 'content') {
-                    sendData[key] = val;
+                    sendData[key] = val === null? val: val.toString();
                 }
             });
 
@@ -63,7 +63,15 @@
         };
 
         this.update = function update(dictionary, data, success, error) {
-            return api.save('dictionaries', dictionary, data).then(success, error);
+            var sendData = {};
+            angular.forEach(data, function(val, key) {
+                if (key !== 'content') {
+                    sendData[key] = val === null? val: val.toString();
+                } else {
+                    sendData[key] = val;
+                }
+            });
+            return api.save('dictionaries', dictionary, sendData).then(success, error);
         };
 
         this.remove = function remove(dictionary, success, error) {
@@ -79,7 +87,7 @@
             return api.query('dictionaries', {where: {
                 language_id: lang,
                 user: {$exists: false},
-                is_active: {$in: [true, null]}
+                is_active: {$in: ['true', null]}
             }});
         }
 
@@ -143,7 +151,7 @@
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
                 $scope.dictionary.content = _.create(result.content || {});
-                $scope.dictionary.is_active = $scope.dictionary.is_active !== false;
+                $scope.dictionary.is_active = $scope.dictionary.is_active !== 'false';
             });
         };
 

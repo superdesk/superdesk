@@ -108,7 +108,7 @@ class DictionaryService(BaseService):
         :param lang: language code
         """
         model = {}
-        lookup = {'$and': [{'language_id': lang}, {'is_active': {'$in': [True, None]}}]}
+        lookup = {'$and': [{'language_id': lang}, {'is_active': {'$in': ['true', None]}}]}
         dicts = self.get(req=None, lookup=lookup)
         for _dict in dicts:
             if 'content' in _dict:
