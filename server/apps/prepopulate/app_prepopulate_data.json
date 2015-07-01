@@ -257,28 +257,6 @@
     },
     
     {
-    	"data": {
-    		"name" : "Public content",
-    		"is_active": true,
-    		"format" : "ninjs",
-    		"channel_type" : "metadata",
-    		"destinations" : [ "-id subscriber Public API-" ]
-    	},
-    	"resource": "output_channels",
-    	"id_name": "-id output channel Public content-"
-    },
-    
-    {
-    	"data": {
-    		"name" : "Public",
-    		"output_channels" : [ { "channel" : "-id output channel Public content-" } ],
-    		"destination_groups" : [ ]
-    	},
-    	"resource": "destination_groups",
-    	"id_name": "-id destination group Public-"
-    },
-
-    {
     	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight one-"
