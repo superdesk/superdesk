@@ -375,7 +375,7 @@ class BasePublishService(BaseService):
     def conforms_publish_filter(self, subscriber, doc):
         publish_filter = subscriber.get('publish_filter')
 
-        if not publish_filter or not publish_filter['filter_id']:
+        if not publish_filter or 'filter_id' not in publish_filter:
             return True
 
         service = get_resource_service('publish_filters')
