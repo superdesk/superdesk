@@ -2,35 +2,55 @@
 
 'use strict';
 
-FilterConditionsService.$inject = ['api'];
-function FilterConditionsService(api) {
-    this.get = function() {
-        return api.query('filter_conditions')
-            .then(angular.bind(this, function(filter_conditions) {
-                this.filter_conditions = filter_conditions._items;
-                return this.filter_conditions;
-            }));
-    };
+FiltersService.$inject = ['api'];
+function FiltersService(api) {
 
     this.getFilterConditionParameters = function() {
         return api.query('filter_conditions/parameters')
             .then(angular.bind(this, function(params) {
-                this.filter_condition_parameters = params._items;
-                return this.filter_condition_parameters;
+                return params._items;
             }));
     };
 
-    this.save = function(orig, diff) {
+    this.saveFilterCondition = function(orig, diff) {
         return api.save('filter_conditions', orig, diff);
     };
 
     this.remove = function(item) {
         return api.remove(item);
     };
+
+    this.getAllFilterConditions = function(page, items) {
+        return _getAll('filter_conditions', page, items);
+    };
+
+    this.getAllPublishFilters = function(page, items) {
+        return _getAll('publish_filters', page, items);
+    };
+
+    this.savePublishFilter = function(orig, diff, parent, params) {
+        return api.save('publish_filters', orig, diff, parent, params);
+    };
+
+    var _getAll = function(endPoint, page, items) {
+        page = page || 1;
+        items = items || [];
+
+        return api(endPoint)
+        .query({max_results: 200, page: page})
+        .then(function(result) {
+            items = items.concat(result._items);
+            if (result._links.next) {
+                page++;
+                return _getAll(page, items);
+            }
+            return items;
+        });
+    };
 }
 
-FilterConditionsController.$inject = ['$scope', 'filterConditions', 'notify', 'modal'];
-function FilterConditionsController($scope, filterConditions, notify, modal) {
+FilterConditionsController.$inject = ['$scope', 'filters', 'notify', 'modal'];
+function FilterConditionsController($scope, filters, notify, modal) {
     $scope.filterConditions = null;
     $scope.filterCondition = null;
     $scope.origFilterCondition = null;
@@ -44,7 +64,7 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
         $scope.filterCondition = _.create($scope.origFilterCondition);
         $scope.filterCondition.values = [];
 
-        filterConditions.getFilterConditionParameters().then(function(params) {
+        filters.getFilterConditionParameters().then(function(params) {
             $scope.filterConditionParameters = params;
             _.each(params, function(param) {
                 $scope.operatorLookup[param.field] = param.operators;
@@ -68,7 +88,7 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     $scope.save = function() {
         $scope.filterCondition.value = getFilterValue();
         delete $scope.filterCondition.values;
-        filterConditions.save($scope.origFilterCondition, $scope.filterCondition)
+        filters.saveFilterCondition($scope.origFilterCondition, $scope.filterCondition)
             .then(
                 function() {
                     notify.success(gettext('Filter condition saved.'));
@@ -89,7 +109,7 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     $scope.remove = function(filterCondition) {
         modal.confirm(gettext('Are you sure you want to delete filter condition?'))
         .then(function() {
-            return filterConditions.remove(filterCondition);
+            return filters.remove(filterCondition);
         })
         .then(function(result) {
             _.remove($scope.filterConditions, filterCondition);
@@ -131,8 +151,8 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
     };
 
     var fetchFilterConditions = function() {
-        filterConditions.get().then(function(filters) {
-            $scope.filterConditions = filters;
+        filters.getAllFilterConditions().then(function(f) {
+            $scope.filterConditions = f;
         });
     };
 
@@ -140,8 +160,8 @@ function FilterConditionsController($scope, filterConditions, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filterConditions', 'api', 'notify', 'modal'];
-function PublishFiltersController($scope, filterConditions, api, notify, modal) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal'];
+function PublishFiltersController($scope, filters, notify, modal) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
@@ -167,7 +187,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
 
     $scope.save = function() {
         delete $scope.publishFilter.article_id;
-        api.save('publish_filters', $scope.origPublishFilter, $scope.publishFilter)
+        filters.savePublishFilter($scope.origPublishFilter, $scope.publishFilter)
             .then(
                 function() {
                     notify.success(gettext('Publish filter saved.'));
@@ -190,7 +210,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
     $scope.remove = function(pf) {
         modal.confirm(gettext('Are you sure you want to delete publish filter?'))
         .then(function() {
-            return api.remove(pf);
+            return filters.remove(pf);
         })
         .then(function(result) {
             _.remove($scope.publishFilters, pf);
@@ -241,7 +261,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
 
         var article_id = $scope.publishFilter.article_id;
         delete $scope.publishFilter.article_id;
-        api.save('publish_filters', {}, $scope.publishFilter, {}, {'article_id': article_id})
+        filters.savePublishFilter({}, $scope.publishFilter, {}, {'article_id': article_id})
             .then(
                 function(result) {
                     $scope.test_result = result.matches ? 'Does Match' : 'Doesn\'t Match';
@@ -301,17 +321,17 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
     };
 
     var fetchFilterConditions = function() {
-        filterConditions.get().then(function(filters) {
-            $scope.filterConditions = filters;
-            _.each(filters, function(filter) {
+        filters.getAllFilterConditions().then(function(_filters) {
+            $scope.filterConditions = _filters;
+            _.each(_filters, function(filter) {
                 $scope.filterConditionLookup[filter._id] = filter;
             });
         });
     };
 
     var fetchPublishFilters = function() {
-        api.query('publish_filters').then(function(filters) {
-            $scope.publishFilters = filters._items;
+        filters.getAllPublishFilters().then(function(_filters) {
+            $scope.publishFilters = _filters;
             _.each($scope.publishFilters, function(filter) {
                 $scope.publishFiltersLookup[filter._id] = filter;
             });
@@ -323,8 +343,7 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
 }
 
 angular.module('superdesk.publish.filters', [])
-    .service('filterConditions', FilterConditionsService)
+    .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
     .controller('PublishFiltersController', PublishFiltersController);
-
 })();
