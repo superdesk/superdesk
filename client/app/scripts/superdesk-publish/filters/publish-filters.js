@@ -157,7 +157,6 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
         $scope.publishFilter.publish_filter = _.cloneDeep($scope.origPublishFilter.publish_filter);
         initPublishFilter();
         $scope.previewPublishFilter();
-        console.log('Edit $scope.publishFilter:', $scope.publishFilter);
     };
 
     $scope.cancel = function() {
@@ -261,7 +260,6 @@ function PublishFiltersController($scope, filterConditions, api, notify, modal) 
 
     $scope.previewPublishFilter = function() {
         $scope.preview = parsePublishFilter($scope.publishFilter.publish_filter);
-        console.log('Preview $scope.publishFilter:', $scope.publishFilter);
     };
 
     var parsePublishFilter = function(publishFilter) {
