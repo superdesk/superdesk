@@ -44,7 +44,8 @@ class PublishFilterResource(Resource):
         'name': {
             'type': 'string',
             'nullable': False,
-            'required': True
+            'required': True,
+            'iunique': True
         }
     }
 

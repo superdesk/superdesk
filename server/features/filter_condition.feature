@@ -22,6 +22,33 @@ Feature: Filter Condition
 
   @auth
   @vocabulary
+  Scenario: Add second filter condition with same name fails
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+    And we get "/filter_conditions"
+    Then we get list with 1 items
+    """
+    {
+      "_items":
+        [
+          {"name": "sport"}
+        ]
+    }
+    """
+    When we post to "/filter_conditions"
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "5"}]
+    """
+    Then we get error 400
+    """
+    {"_status": "ERR", "_issues": {"name": {"unique": 1}}}
+    """
+
+  @auth
+  @vocabulary
   Scenario: Add a new filter condition with identical values fails
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success

@@ -25,6 +25,7 @@ class FilterConditionResource(Resource):
         'name': {
             'type': 'string',
             'nullable': False,
+            'iunique': True
         },
         'field': {
             'type': 'string',
