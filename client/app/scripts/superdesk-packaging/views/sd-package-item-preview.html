@@ -17,7 +17,7 @@
             <div ng-hide=":: item.headline || item.slugline || item.description" translate>Blank headline received</div>
         </div>
 
-        <a ng-href="#/{{ :: type !== 'composite' ? 'authoring' : 'packaging'}}/{{ :: item.guid }}/view?_id={{ :: item.guid }}" 
+        <a ng-href="#/{{ :: type !== 'composite' ? 'authoring' : 'packaging'}}/{{ :: type !== 'video' || 'picture' ? item.residRef : item.guid}}/view?_id={{ :: item.guid }}" 
         	title="{{ :: 'Open item' | translate }}" ng-if="item.guid && !error" ng-click="$event.stopPropagation();" class="open-item">
             <i class="icon-external"></i>
         </a>
