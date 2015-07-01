@@ -9,7 +9,7 @@
 
     <div class="content">
         <ul class="pills-list provider-list">
-            <li ng-repeat="filter in publishFilters" class="clearfix">
+            <li ng-repeat="filter in publishFilters track by filter._id" class="clearfix">
                 <div class="header">
 	                <h6>{{:: filter.name }}</h6>
                     <div class="actions">
@@ -24,8 +24,8 @@
 
 <div sd-modal data-model="publishFilter" class="publish-filter-modal modal-large">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="publishFilter._id" translate>Edit Publish Filter "{{:: origPublishFilter.name }}"</h3>
-        <h3 translate ng-hide="publishFilter._id" translate>Add New Publish Filter</h3>
+        <h3 translate ng-show="publishFilter._id">Edit Publish Filter <span>"{{:: origPublishFilter.name }}"</span></h3>
+        <h3 translate ng-hide="publishFilter._id">Add New Publish Filter</h3>
     </div>
     <div class="modal-body">
         <form name="editForm" ng-submit="save()">
@@ -37,7 +37,7 @@
 
                 <div class="filter-tags" ng-repeat="filterRow in publishFilter.publish_filter">
                     <div class="header">
-                        <label translate>Filter Statement - {{$index+1}}</label>
+                        <label translate>Filter Statement <span>{{$index+1}}</span></label>
                         <a href="" class="close" ng-click="removeStatement($index)"><i class="icon-close-small"></i></a>
                     </div>
 

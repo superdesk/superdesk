@@ -37,6 +37,7 @@ Feature: Content Publishing
       """
 
     @auth
+    @vocabulary
     Scenario: Publish a user content passes the filter
       Given the "validators"
       """
@@ -91,6 +92,7 @@ Feature: Content Publishing
 
 
     @auth
+    @vocabulary
     Scenario: Publish a user content blocked by the filter
       Given the "validators"
       """

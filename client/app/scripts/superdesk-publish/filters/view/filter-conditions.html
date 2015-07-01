@@ -9,7 +9,7 @@
 
     <div class="content">
         <ul class="pills-list provider-list">
-            <li ng-repeat="filterCondition in filterConditions" class="clearfix">
+            <li ng-repeat="filterCondition in filterConditions track by filterCondition._id" class="clearfix">
                 <div class="header">
                 	<div>
 	                    <h6>{{ filterCondition.name }}</h6>

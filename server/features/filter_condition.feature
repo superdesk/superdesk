@@ -2,6 +2,7 @@
 Feature: Filter Condition
 
   @auth
+  @vocabulary
   Scenario: Add a new filter condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
@@ -20,6 +21,7 @@ Feature: Filter Condition
     """
 
   @auth
+  @vocabulary
   Scenario: Add a new filter condition with identical values fails
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
@@ -46,6 +48,22 @@ Feature: Filter Condition
     """
 
   @auth
+  @vocabulary
+  Scenario: Add a new filter condition with invalid field fails
+
+    Given empty "filter_conditions"
+
+    When we post to "/filter_conditions"
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "like", "value": "4"}]
+    """
+    Then we get error 400
+    """
+    {"_status": "ERR", "_message": "Filter condition:sport has unidentified operator: like"}
+    """
+
+  @auth
+  @vocabulary
   Scenario: Edit filter condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success

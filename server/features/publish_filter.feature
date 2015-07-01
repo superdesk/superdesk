@@ -2,6 +2,7 @@
 Feature: Publish Filter
 
   @auth
+  @vocabulary
   Scenario: Add a new publish filter
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success

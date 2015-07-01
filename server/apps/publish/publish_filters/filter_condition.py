@@ -71,11 +71,26 @@ class FilterConditionResource(Resource):
 class FilterConditionService(BaseService):
     def on_create(self, docs):
         self._check_equals(docs)
+        self._check_parameters(docs)
 
     def on_update(self, updates, original):
         doc = dict(original)
         doc.update(updates)
         self._check_equals([doc])
+        self._check_parameters([doc])
+
+    def _check_parameters(self, docs):
+        parameters = get_resource_service('filter_condition_parameters').get(req=None, lookup=None)
+        for doc in docs:
+            parameter = [p for p in parameters if p['field'] == doc['field']]
+            if not parameter or len(parameter) == 0:
+                raise SuperdeskApiError.badRequestError(
+                    'Filter condition:{} has unidentified field: {}'
+                    .format(doc['name'], doc['field']))
+            if doc['operator'] not in parameter[0]['operators']:
+                raise SuperdeskApiError.badRequestError(
+                    'Filter condition:{} has unidentified operator: {}'
+                    .format(doc['name'], doc['operator']))
 
     def _check_equals(self, docs):
         for doc in docs:

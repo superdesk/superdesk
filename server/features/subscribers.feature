@@ -38,6 +38,7 @@ Feature: Subscribers
     """
 
   @auth
+  @vocabulary
   Scenario: Update a subscriber with publish filter
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
