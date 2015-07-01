@@ -1,9 +1,7 @@
 
 describe('text editor', function() {
     'use strict';
-
     beforeEach(module('superdesk.editor'));
-
     it('can prevent input events on elem', inject(function(editor) {
         var p = document.createElement('p'),
             handler = jasmine.createSpy('test');
