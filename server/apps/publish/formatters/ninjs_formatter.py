@@ -42,7 +42,7 @@ class NINJSFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.ninjsFormatterError(ex, subscriber)
 
-    def can_format(self, format_type, article_type):
+    def can_format(self, format_type, article):
         return format_type == 'ninjs'
 
     def _get_byline(self, article):

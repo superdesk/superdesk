@@ -151,5 +151,5 @@ class NewsML12Formatter(Formatter):
         SubElement(content_item, 'Format', {'FormalName': 'Text'})
         SubElement(content_item, 'DataContent').text = article.get('body_html', '')
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'newsml12' and article_type in ['text', 'preformatted', 'composite']
+    def can_format(self, format_type, article):
+        return format_type == 'newsml12' and article['type'] in ['text', 'preformatted', 'composite']

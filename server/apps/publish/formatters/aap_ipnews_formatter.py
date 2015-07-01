@@ -91,5 +91,5 @@ class AAPIpNewsFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.AAPIpNewsFormatterError(ex, subscriber)
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'AAP IPNEWS' and article_type in ['text', 'preformatted']
+    def can_format(self, format_type, article):
+        return format_type == 'AAP IPNEWS' and article['type'] in ['text', 'preformatted']

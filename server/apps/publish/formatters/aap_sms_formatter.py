@@ -38,5 +38,10 @@ class AAPSMSFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.AAPSMSFormatterError(ex, subscriber)
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'AAP SMS' and article_type in ['text', 'preformatted']
+    def can_format(self, format_type, article):
+        # need to check that a story with the same headline has not been published to SMS before
+        lookup = {'destination.format': format_type, 'headline': article['headline']}
+        published = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
+        if published and published.count():
+            return False
+        return format_type == 'AAP SMS' and article['type'] in ['text', 'preformatted']
