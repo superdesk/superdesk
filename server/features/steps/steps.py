@@ -1177,6 +1177,7 @@ def get_spiked_content(context, item_id):
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['state'], 'spiked')
+    assert_equal(response_data['operation'], 'spike')
 
 
 @then('we get unspiked content "{id}"')
@@ -1186,6 +1187,7 @@ def get_unspiked_content(context, id):
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['state'], 'draft')
+    assert_equal(response_data['operation'], 'unspike')
     # Tolga Akin (05/11/14)
     # Expiry value doesn't get set to None properly in Elastic.
     # Discussed with Petr so we'll look into this later

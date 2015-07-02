@@ -26,12 +26,16 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
+from apps.archive.common import item_operations, ITEM_OPERATION
 
 
 logger = logging.getLogger(__name__)
 
 EXPIRY = 'expiry'
 REVERT_STATE = 'revert_state'
+ITEM_SPIKE = 'spike'
+ITEM_UNSPIKE = 'unspike'
+item_operations.extend([ITEM_SPIKE, ITEM_UNSPIKE])
 
 
 class ArchiveSpikeResource(ArchiveResource):
@@ -65,6 +69,7 @@ class ArchiveUnspikeResource(ArchiveResource):
 class ArchiveSpikeService(BaseService):
 
     def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_SPIKE
         takes_service = TakesPackageService()
         if not takes_service.can_spike_takes_package_item(original):
             raise SuperdeskApiError.badRequestError(message="Only last take of the package can be spiked.")
@@ -101,7 +106,8 @@ class ArchiveUnspikeService(BaseService):
 
         :param doc: document to unspike
         """
-        updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get(REVERT_STATE)}
+        updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get(REVERT_STATE),
+                   ITEM_OPERATION: ITEM_UNSPIKE}
 
         desk_id = doc.get('task', {}).get('desk')
         if desk_id:
@@ -114,6 +120,9 @@ class ArchiveUnspikeService(BaseService):
 
         updates['expiry'] = get_expiry(desk_id=desk_id)
         return updates
+
+    def on_update(self, updates, original):
+        updates[ITEM_OPERATION] = ITEM_UNSPIKE
 
     def update(self, id, updates, original):
         original_state = original[config.CONTENT_STATE]

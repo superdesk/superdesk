@@ -201,7 +201,61 @@
         "username": "admin",
         "id_name": "-id stage three Politic Desks-"
     },
-
+    
+    {
+    	"data": {
+		    "_id" : "publish",
+		    "schema" : {
+		        "headline" : {
+		            "type" : "string",
+		            "required" : true,
+		            "minlength" : 1,
+		            "maxlength" : 55
+		        },
+		        "type" : {
+		            "type" : "string",
+		            "required" : "true",
+		            "allowed" : [ 
+		                "X", 
+		                "T"
+		            ]
+		        },
+		        "pubstatus" : {
+		            "type": "string",
+		            "required" : true,
+		            "allowed": ["usable"]
+		        },
+		        "destination_groups" : {
+		            "type" : "list",
+		            "required" : true
+		        },
+		        "subject" : {
+		            "type" : "list",
+		            "required" : true,
+		            "minlength" : 1
+		        },
+		        "urgency" : {
+		            "type" : "integer",
+		            "required": true,
+		            "allowed": [1, 2, 3, 4, 5]
+		        }
+		    }
+		},
+		"resource": "validators",
+		"id_name": "-id validator publish-"
+	},
+    
+    {
+    	"data": {
+    		"name" : "Public API",
+    		"is_active" : true,
+    		"destinations" : [ { "delivery_type" : "PublicArchive", "name" : "Public" } ]
+    	},
+    	"resource": "subscribers",
+    	"username": "admin",
+    	"id_name": "-id subscriber Public API-"
+    },
+    
     {
     	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
@@ -288,7 +342,7 @@
         }
     },
 
-        {
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
@@ -296,18 +350,24 @@
             "slugline": "item5 slugline",
             "type": "text",
             "guid": "item5",
+            "version": "1",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin1-",
 		        "status": "todo",
 		        "stage": "-id stage one Politic Desks-"
-		    }
+		    },
+		    "destination_groups": [ "-id destination group Public-" ]
         }
     },
 
-        {
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
@@ -315,14 +375,20 @@
             "slugline": "item6 slugline",
             "type": "text",
             "guid": "item6",
+            "version": "1",
             "versioncreated": "2015-01-01T10:10:10+0000",
             "original_creator": "-id user admin-",
+            "state": "in_progress",
+            "pubstatus": "usable",
+            "urgency": 1,
+            "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
 		        "user" : "-id user admin2-",
 		        "status": "in_progress",
 		        "stage": "-id stage two Politic Desks-"
-		    }
+		    },
+		    "destination_groups": [ "-id destination group Public-" ]
         }
     },
     {
