@@ -41,6 +41,35 @@ Feature: Dictionaries Upload
         Then we get ok response
 
     @auth
+    Scenario: Create duplicate dictionary for different languages
+        When we upload a new dictionary with success
+        """
+        {"name": "dict", "language_id": "en"}
+        """
+
+        When we upload a new dictionary with success
+        """
+        {"name": "dict", "language_id": "ro"}
+        """
+      
+        
+     @auth
+    Scenario: Create duplicate dictionary for the same language
+        When we upload a new dictionary with success
+        """
+        {"name": "dict", "language_id": "en"}
+        """
+
+        When we post to "/dictionaries"
+        """
+        {"name": "dict", "language_id": "en"}
+        """   
+        Then we get error 400
+        """
+        {"_issues": {"name": "duplicate"}}
+        """ 
+        
+    @auth
     Scenario: User dictionary
         When we post to "/users"
             """
@@ -48,7 +77,7 @@ Feature: Dictionaries Upload
             """
         And we post to "/dictionaries"
             """
-            {"name": "#users._id#", "language_id": "en", "user": "#users._id#"}
+            {"name": "#users._id#:en", "language_id": "en", "user": "#users._id#"}
             """
         Then we get new resource
 
@@ -66,3 +95,44 @@ Feature: Dictionaries Upload
             """
             {"_items": [{"content": {"foo": 1}}]}
             """
+
+     @auth
+    Scenario: Create personal duplicate dictionary for different languages
+        When we post to "/users"
+            """
+            {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
+            """
+        And we post to "/dictionaries"
+            """
+            {"name": "#users._id#:en", "language_id": "en", "user": "#users._id#"}
+            """
+        Then we get new resource
+
+        When we post to "/dictionaries"
+            """
+            {"name": "#users._id#:en", "language_id": "ro", "user": "#users._id#"}
+            """
+        Then we get new resource
+    
+        
+     @auth
+    Scenario: Create personal duplicate dictionary for the same language
+        When we post to "/users"
+            """
+            {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
+            """
+        And we post to "/dictionaries"
+            """
+            {"name": "#users._id#:en", "language_id": "en", "user": "#users._id#"}
+            """
+        Then we get new resource
+
+        When we post to "/dictionaries"
+            """
+            {"name": "#users._id#:en", "language_id": "en", "user": "#users._id#"}
+            """
+                Then we get error 400
+        """
+        {"_issues": {"name": "duplicate"}}
+        """            
+   

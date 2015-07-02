@@ -12,10 +12,15 @@ describe('dictionaries', function() {
         spyOn(session, 'getIdentity').and.returnValue($q.when({_id: USER_ID}));
     }));
 
-    it('can fetch global dictionaries', inject(function(api, dictionaries, $q) {
+    it('can fetch global dictionaries', inject(function(api, dictionaries, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when());
         dictionaries.fetch();
-        expect(api.query).toHaveBeenCalledWith('dictionaries', {projection: {content: 0}, where: {user: {$exists: false}}});
+        $rootScope.$digest();
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {projection: {content: 0},  where: {
+            $or: [
+                  {user: {$exists: false}},
+                  {user: 'foo'}
+              ]}});
     }));
 
     it('can get global dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {

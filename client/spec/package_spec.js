@@ -59,7 +59,9 @@ describe('Package', function() {
         element.all(by.repeater('item in items')).first().click();
 
         // preview package via preview
+        browser.sleep(300);
         element.all(by.repeater('child in item')).first().click();
+        browser.sleep(300);
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
 
         browser.wait(function() {

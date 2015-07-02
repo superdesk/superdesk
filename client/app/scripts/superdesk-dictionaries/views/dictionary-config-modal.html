@@ -21,7 +21,8 @@
                 </div>	
 				<div class="field">
 					<label for="dict-name" translate>Dictionary name</label>
-					<input id="dict-name" type="text" ng-model="dictionary.name" required>
+                    <input id="dict-name" type="text" ng-if="!dictionary.user" ng-model="dictionary.name" required>
+					<div ng-if="dictionary.user">{{ :: 'Personal' | translate }}</div>
 				</div>
 				<div class="field">
 					<label for="dict-lang-code" translate>Language code</label>
@@ -40,7 +41,8 @@
 				</div>
 			</fieldset>
 			<p ng-if="message">{{ message }}</p>
-			<span ng-show="_errorUniqueness" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
+			<span ng-show="_errorUniqueness && !dictionary.user" translate>Dictionary with name "{{ dictionary.name }}" already exists.</span>
+			<span ng-show="_errorUniqueness && dictionary.user" translate>Personal dictionary for language "{{ dictionary.language_id }}" already exists.</span>
 			<p ng-show="_errorLimits" translate>Character limit exceeded, dictionary can not be created/updated.</p>
 			<span ng-show="_error" translate>There was a problem, dictionary not created/updated.</span>
 		</ng-form>
