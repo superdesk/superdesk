@@ -8,9 +8,11 @@ module.exports = new Dictionaries();
 function Dictionaries() {
     this.list = element.all(by.repeater('dictionary in dictionaries._items'));
     this.name = element(by.model('dictionary.name'));
+    this.languageId = element(by.model('dictionary.language_id'));
 
     this.get = function() {
         openUrl('/#/settings/dictionaries');
+        browser.sleep(500);
     };
 
     this.getRow = function(name) {
@@ -19,6 +21,10 @@ function Dictionaries() {
                 return text.toUpperCase() === name.toUpperCase();
             });
         });
+    };
+
+    this.getPersonalRow = function(languageId) {
+        return element(by.id(languageId));
     };
 
     this.getCount = function(index) {
@@ -49,6 +55,21 @@ function Dictionaries() {
     this.setName = function(name) {
         this.name.clear();
         this.name.sendKeys(name);
+    };
+
+    this.setLanguageId = function(languageId) {
+        this.languageId.clear();
+        this.languageId.sendKeys(languageId);
+    };
+
+    this.addDictionary = function() {
+        element(by.id('createDictionary')).click();
+        browser.sleep(100);
+    };
+
+    this.addPersonalDictionary = function() {
+        element(by.id('createPersonalDictionary')).click();
+        browser.sleep(100);
     };
 
     this.search = function(word) {

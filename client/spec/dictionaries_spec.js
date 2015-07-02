@@ -5,6 +5,27 @@ var openUrl = require('./helpers/utils').open,
 describe('DICTIONARIES', function() {
     'use strict';
 
+    describe('add dictionary', function() {
+        beforeEach(function() {
+            openUrl('/#/settings/dictionaries');
+        });
+
+        it('add dictionary', function() {
+            dictionaries.addDictionary();
+            dictionaries.setName('Test');
+            dictionaries.setLanguageId('en');
+            dictionaries.save();
+            expect(dictionaries.getRow('Test').count()).toBe(1);
+        });
+
+        it('add dictionary', function() {
+            dictionaries.addPersonalDictionary();
+            dictionaries.setLanguageId('en');
+            dictionaries.save();
+            expect(dictionaries.getPersonalRow('en').isPresent()).toBe(true);
+        });
+    });
+
     describe('edit dictionary', function() {
         beforeEach(function() {
             openUrl('/#/settings/dictionaries');

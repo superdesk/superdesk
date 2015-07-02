@@ -20,16 +20,31 @@
         this.getUserDictionary = getUserDictionary;
         this.addWordToUserDictionary = addWordToUserDictionary;
 
-        this.fetch = function fetch(success, error) {
-            return api.query('dictionaries', {projection: {content: 0}, where: {user: {$exists: false}}})
+        function setPersonalName (data) {
+            if (data.user) {
+                data.name = data.user + ':' + data.language_id;
+            }
+        }
+
+        this.fetch = function (success, error) {
+            return session.getIdentity().then(function(identity) {
+                return api.query('dictionaries', {
+                    projection: {content: 0},
+                    where: {
+                        $or: [
+                            {user: {$exists: false}},
+                            {user: identity._id}
+                        ]}
+                })
                 .then(success, error);
+            });
         };
 
-        this.open = function open(dictionary, success, error) {
+        this.open = function (dictionary, success, error) {
             return api.find('dictionaries', dictionary._id).then(success, error);
         };
 
-        this.upload = function create(dictionary, data, file, success, error, progress) {
+        this.upload = function (dictionary, data, file, success, error, progress) {
             var hasId = _.has(dictionary, '_id') && dictionary._id !== null;
             var method = hasId ? 'PATCH' : 'POST';
             var headers = hasId ? {'If-Match': dictionary._etag} : {};
@@ -41,6 +56,7 @@
                     sendData[key] = val === null? val: val.toString();
                 }
             });
+            setPersonalName(sendData);
 
             // send content as content_list which will accept string and will json.parse it later
             // (we send it as form data so each field is not parsed and it would fail list validation)
@@ -62,19 +78,16 @@
             }, error);
         };
 
-        this.update = function update(dictionary, data, success, error) {
+        this.update = function (dictionary, data, success, error) {
             var sendData = {};
             angular.forEach(data, function(val, key) {
-                if (key !== 'content') {
-                    sendData[key] = val === null? val: val.toString();
-                } else {
-                    sendData[key] = val;
-                }
+                sendData[key] = (key !== 'content' && val !== null) ? val.toString() : val;
             });
+            setPersonalName(sendData);
             return api.save('dictionaries', dictionary, sendData).then(success, error);
         };
 
-        this.remove = function remove(dictionary, success, error) {
+        this.remove = function (dictionary, success, error) {
             return api.remove(dictionary).then(success, error);
         };
 
@@ -129,8 +142,8 @@
         }
     }
 
-    DictionaryConfigController.$inject = ['$scope', 'dictionaries', 'gettext', 'modal', 'notify'];
-    function DictionaryConfigController ($scope, dictionaries, gettext, modal, notify) {
+    DictionaryConfigController.$inject = ['$scope', 'dictionaries', 'gettext', 'session', 'modal', 'notify'];
+    function DictionaryConfigController ($scope, dictionaries, gettext, session, modal, notify) {
         $scope.dictionaries = null;
         $scope.origDictionary = null;
         $scope.dictionary = null;
@@ -144,6 +157,17 @@
         $scope.createDictionary = function() {
             $scope.dictionary = {is_active: true};
             $scope.origDictionary = {};
+        };
+
+        $scope.createPersonalDictionary = function() {
+            return session.getIdentity().then(function(identity) {
+                $scope.dictionary = {
+                    is_active: true,
+                    user: identity._id,
+                    name: identity._id
+                };
+                $scope.origDictionary = {};
+            });
         };
 
         $scope.openDictionary = function(dictionary) {
@@ -188,10 +212,10 @@
             if (angular.isDefined(response.data._issues)) {
                 if (angular.isDefined(response.data._issues['validator exception'])) {
                     notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                } else if (angular.isDefined(response.data._issues.file)) {
-                    notify.error(gettext('Error: Dictionary File is required.'));
+                } else if (angular.isDefined(response.data._issues.name)) {
+                    notify.error(gettext('Error: The dictionary already exists.'));
+                    $scope._errorUniqueness = true;
                 }
-
             } else {
                 notify.error(gettext('Error. Dictionary not saved.'));
             }
@@ -206,6 +230,7 @@
         });
 
         $scope.save = function() {
+            $scope._errorUniqueness = false;
             $scope.progress = {width: 1};
             if ($scope.file) {
                 dictionaries.upload($scope.origDictionary, $scope.dictionary, $scope.file, onSuccess, onError, function(update) {
@@ -217,6 +242,7 @@
         };
 
         $scope.cancel = function() {
+            $scope._errorUniqueness = false;
             $scope.closeDictionary();
         };
 

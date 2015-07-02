@@ -378,7 +378,7 @@
         "data": {
 			"name": "Test 1",
 			"language_id": "en",
-			"content": ["alpha", "beta", "gama"]
+			"content": {"alpha": 1, "beta": 1, "gama": 1}
         }
     },
     {

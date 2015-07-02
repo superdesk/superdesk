@@ -75,6 +75,9 @@ def read_from_file(doc):
 class DictionaryService(BaseService):
     def on_create(self, docs):
         for doc in docs:
+            if self.find_one(req=None, name=doc['name'], language_id=doc['language_id']):
+                raise SuperdeskApiError.badRequestError(message='The dictionary already exists',
+                                                        payload={'name': 'duplicate'})
             if doc.get(DICTIONARY_FILE):
                 words = read_from_file(doc)
                 merge(doc, words)
@@ -91,7 +94,7 @@ class DictionaryService(BaseService):
 
     def find_one(self, req, **lookup):
         doc = super().find_one(req, **lookup)
-        if 'content' in doc:
+        if doc and 'content' in doc:
             doc['content'] = decode_dict(doc['content'])
         return doc
 
