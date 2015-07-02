@@ -21,15 +21,20 @@ function EditorService() {
     this.addEventListeners = addEventListeners;
     this.removeEventListeners = removeEventListeners;
 
-    var vm = this;
-
+    // Undo Redo related variables
     this.historyBodyHtml = [];
     this.historyHeadline = [];
     this.historyAbstract = [];
-
     this.index = -1;
     this.indexHeadline = -1;
     this.indexAbstract = -1;
+
+    this.KEY_CODES = Object.freeze({
+        Y: 89,
+        X: 90
+    });
+
+    var vm = this;
 
     /**
      * Store current anchor position within given node
@@ -393,9 +398,9 @@ angular.module('superdesk.editor', [])
                     });
                     editorElem.on('keyup', function(event) {
                         if (event.ctrlKey) {
-                            if (event.keyCode === 90) {
+                            if (event.keyCode === editor.KEY_CODES.X) {
                                 doUndo();
-                            } else if (event.keyCode === 89) {
+                            } else if (event.keyCode === editor.KEY_CODES.Y) {
                                 doRedo();
                             }
                         }
