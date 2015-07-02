@@ -46,7 +46,7 @@
                             <label translate>Filter Conditions</label>
                             <select class="input" ng-model="filterRow.selected" >
                                 <option value=""></option>
-                                <option value="{{filter._id}}" ng-repeat="filter in filterConditions">{{:: filter.name}}</option>
+                                <option value="{{filter._id}}" ng-repeat="filter in filterConditions track by filter._id">{{:: filter.name}}</option>
                             </select>
                             <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'fc')"  translate>Add</button>
                         </div>
@@ -54,7 +54,7 @@
                             <label translate>Publish Filters</label>
                             <select class="input" ng-model="filterRow.selected">
                                 <option value=""></option>
-                                <option value="{{filter._id}}" ng-repeat="filter in publishFilters">{{:: filter.name}}</option>
+                                <option value="{{filter._id}}" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
                             </select>
                             <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'pf')" translate>Add</button>
                         </div>

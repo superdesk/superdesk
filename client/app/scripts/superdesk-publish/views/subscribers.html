@@ -8,7 +8,7 @@
     
     <div class="content">
         <ul class="pills-list provider-list">
-            <li ng-repeat="subscriber in subscribers._items" class="clearfix">
+            <li ng-repeat="subscriber in subscribers._items track by subscriber._id" class="clearfix">
                 <div class="header">
                     <h6>{{:: subscriber.name }}</h6>
                     <div class="actions">
@@ -66,7 +66,7 @@
                             <label translate class="right">Publish Filter</label>
                             <select class="input" ng-model="subscriber.publish_filter.filter_id">
                                 <option value=""></option>
-                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.publish_filter.filter_id" ng-repeat="filter in publishFilters">{{:: filter.name}}</option>
+                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.publish_filter.filter_id" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
                             </select>
                         </div>
 
@@ -79,9 +79,9 @@
                         <div class="field">
                             <label translate>Sequence Number Settings</label>
                             <span translate>Minimum</span>
-                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min">
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min" required>
                             <span translate>Maximum</span>
-                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max">
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max" required>
                         </div>
 
                         <div class="field">
