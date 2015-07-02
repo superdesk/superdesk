@@ -11,7 +11,7 @@
 """Assets module"""
 import logging
 import superdesk
-from superdesk.errors import SuperdeskApiError
+from publicapi.errors import FileNotFoundError
 from werkzeug.wsgi import wrap_file
 from flask import url_for, request, current_app as app
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 cache_for = 3600 * 24 * 1  # 1d cache
 
 
-@bp.route('/asset/<path:media_id>/raw', methods=['GET'])
+@bp.route('/assets/<path:media_id>/raw', methods=['GET'])
 def get_media_streamed(media_id):
     media_file = app.media.get(media_id, 'items')
     if media_file:
@@ -39,15 +39,13 @@ def get_media_streamed(media_id):
         response.cache_control.public = True
         response.make_conditional(request)
         return response
-    raise SuperdeskApiError.notFoundError('File not found on media storage.')
+    raise FileNotFoundError('File not found on media storage.')
 
 
 def url_for_media(media_id):
     try:
         url = app.media.url_for_media(media_id)
         if url is None:
-            return url_for('assets.get_media_streamed', media_id=media_id,
-                           _external=False, _schema=app.config.URL_PROTOCOL)
+            return url_for('assets.get_media_streamed', media_id=media_id, _external=True)
     except AttributeError:
-        return url_for('assets.get_media_streamed', media_id=media_id,
-                       _external=False, _schema=app.config.URL_PROTOCOL)
+        return url_for('assets.get_media_streamed', media_id=media_id, _external=True)

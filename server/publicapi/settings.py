@@ -51,6 +51,7 @@ PUBLICAPI_URL = env('PUBLICAPI_URL', 'http://localhost:5050')
 server_url = urlparse(PUBLICAPI_URL)
 SERVER_NAME = server_url.netloc or None
 URL_PROTOCOL = server_url.scheme or None
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
 # Amazon S3 assets management
 AMAZON_CONTAINER_NAME = env('AMAZON_CONTAINER_NAME', '')

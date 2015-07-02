@@ -28,5 +28,5 @@ if __name__ == '__main__':
         host='0.0.0.0',
         port=5050,   # XXX: have PUBAPI_PORT in config... and other things
         debug=True,  # TODO: remove before pushing to production (+ have in cfg)
-        use_reloader=False
+        use_reloader=True
     )

@@ -85,7 +85,7 @@ def get_app(config=None):
 
     media_storage = SuperdeskGridFSMediaStorage
 
-    if config['AMAZON_CONTAINER_NAME']:
+    if config.get('AMAZON_CONTAINER_NAME', None) is not None:
         from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
 

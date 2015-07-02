@@ -27,7 +27,11 @@ class NINJSFormatter(Formatter):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            ninjs = {'_id': article['_id'], 'version': str(article['version']), 'type': self._get_type(article)}
+            ninjs = {
+                '_id': article['_id'],
+                'version': str(article['_current_version']),
+                'type': self._get_type(article)
+            }
             try:
                 ninjs['byline'] = self._get_byline(article)
             except:

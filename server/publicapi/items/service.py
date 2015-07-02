@@ -22,6 +22,8 @@ from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from urllib.parse import urljoin, urlparse, quote
 from werkzeug.datastructures import MultiDict
+from publicapi.assets import url_for_media
+from publicapi.settings import DATE_FORMAT
 
 
 logger = logging.getLogger(__name__)
@@ -109,6 +111,10 @@ class ItemsService(BaseService):
 
         for field_name in ('_id', '_etag', '_created', '_updated'):
             document.pop(field_name, None)
+        if 'renditions' in document:
+            for k, v in document['renditions'].items():
+                if 'media' in v:
+                    v['href'] = url_for_media(v['media'])
 
     def on_fetched(self, result):
         """Event handler when a collection of items is retrieved from database.
@@ -122,10 +128,7 @@ class ItemsService(BaseService):
             (the fetched items) and some metadata, e.g. pagination info
         """
         for document in result['_items']:
-            document['uri'] = self._get_uri(document)
-
-            for field_name in ('_id', '_etag', '_created', '_updated'):
-                document.pop(field_name, None)
+            self.on_fetched_item(document)
 
         if '_links' in result:  # might not be present if HATEOAS disabled
             url_parts = urlparse(request.url)
@@ -257,7 +260,7 @@ class ItemsService(BaseService):
             end_date = today
 
         if start_date is None:
-            start_date = end_date
+            start_date = end_date - timedelta(days=1)
 
         return start_date, end_date
 
@@ -281,13 +284,12 @@ class ItemsService(BaseService):
         date_filter = {'versioncreated': {}}
 
         if start_date is not None:
-            date_filter['versioncreated']['$gte'] = start_date.isoformat()
+            date_filter['versioncreated']['$gte'] = self._format_date(start_date)
 
         if end_date is not None:
             # need to set it to strictly less than end_date + 1 day,
             # because internally dates are stored as datetimes
-            date_filter['versioncreated']['$lt'] = \
-                (end_date + timedelta(1)).isoformat()
+            date_filter['versioncreated']['$lte'] = self._format_date(end_date)
 
         return date_filter
 
@@ -430,3 +432,7 @@ class ItemsService(BaseService):
             return None
         else:
             return datetime.strptime(date_str, '%Y-%m-%d').date()
+
+    @staticmethod
+    def _format_date(date):
+        return str(datetime.strftime(date, DATE_FORMAT))
