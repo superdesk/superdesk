@@ -252,7 +252,7 @@ describe('HIGHLIGHTS', function() {
 
             workspace.switchToDesk('PERSONAL');
             content.setListView();
-            expect(content.getCount()).toBe(5);
+            expect(content.getCount()).toBe(4);
         });
     });
 

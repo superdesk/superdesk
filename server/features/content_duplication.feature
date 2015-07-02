@@ -37,7 +37,7 @@ Feature: Duplication of Content within Desk
       {"operation": "duplicate"}
       """
       When we get "/archive/#_id#?version=all"
-      Then we get list with 4 items
+      Then we get list with 6 items
       When we get "/archive?q=#desks._id#"
       Then we get list with 2 items
 

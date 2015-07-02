@@ -901,11 +901,6 @@
                 $scope.beforeSend = function() {
                     $scope.sending = true;
                     return lock.unlock($scope.origItem);
-                    // return $scope.save()
-                    // .then(function() {
-                    //     var p = lock.unlock($scope.origItem);
-                    //     return p;
-                    // });
                 };
 
                 /**
