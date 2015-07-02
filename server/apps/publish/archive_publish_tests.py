@@ -25,6 +25,7 @@ from superdesk.utc import utcnow
 from superdesk import get_resource_service
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
+from settings import URL_PREFIX
 
 
 class ArchivePublishTestCase(TestCase):
@@ -225,7 +226,8 @@ class ArchivePublishTestCase(TestCase):
                           'state': 'in_progress',
                           'expiry': utcnow() + timedelta(minutes=20),
                           'type': 'text',
-                          'unique_name': '#8'}]
+                          'unique_name': '#8'},
+                         {'_id': '9', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'}]
 
     def setUp(self):
         super().setUp()
@@ -629,3 +631,54 @@ class ArchivePublishTestCase(TestCase):
             self.assertIsNotNone(updated_package)
             self.assertEqual(updated_package['body_html'], 'Take-2 body<br>Take-1 body<br>')
             self.assertEqual(updated_package['headline'], 'Take-1 headline')
+
+    def test_can_publish_article(self):
+        with self.app.test_request_context(URL_PREFIX):
+            self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 1,
+                                   'field': 'headline',
+                                   'operator': 'like',
+                                   'value': 'tor',
+                                   'name': 'test-1'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 2,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': 2,
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 3,
+                                   'field': 'headline',
+                                   'operator': 'endswith',
+                                   'value': 'tor',
+                                   'name': 'test-3'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 4,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2,3,4',
+                                   'name': 'test-4'}])
+            # self.app.data.insert('publish_filters',
+            #                      [{'_id': 1,
+            #                        'publish_filter': [[{"fc": [4, 3]}], [{"fc": [1, 2]}]],
+            #                        'name': 'pf-1'}])
+
+            get_resource_service('publish_filters').\
+                post([{'_id': 1,
+                       'publish_filter': [{"expression": {"fc": [4, 3]}}, {"expression": {"fc": [1, 2]}}],
+                       'name': 'pf-1'}])
+
+            can_it = get_resource_service('archive_publish').\
+                conforms_publish_filter(self.subscribers[0], self.articles[8])
+
+            self.assertFalse(can_it)
+
+            self.subscribers[0]['publish_filter']['filter_type'] = 'permitting'
+
+            can_it = get_resource_service('archive_publish').\
+                conforms_publish_filter(self.subscribers[0], self.articles[8])
+
+            self.assertTrue(can_it)
+
+            self.subscribers[0].pop('publish_filter')

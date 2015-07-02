@@ -172,6 +172,7 @@ INSTALLED_APPS = [
     'apps.rules',
     'apps.highlights',
     'apps.publish',
+    'apps.publish.publish_filters',
     'apps.macros',
     'apps.dictionaries',
     'apps.duplication',

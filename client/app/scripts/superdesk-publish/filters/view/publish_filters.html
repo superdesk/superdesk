@@ -1,0 +1,102 @@
+<div ng-controller="PublishFiltersController">
+	<div class="split-content" >
+    <div class="header">
+        <h2 translate>Publish Filters</h2>
+        <button class="btn btn-info pull-right" ng-click="edit()">
+            <i class="icon-plus-sign icon-white"></i> <span translate>Add New Publish Filter</span>
+        </button>
+    </div>
+
+    <div class="content">
+        <ul class="pills-list provider-list">
+            <li ng-repeat="filter in publishFilters track by filter._id" class="clearfix">
+                <div class="header">
+	                <h6>{{:: filter.name }}</h6>
+                    <div class="actions">
+                        <button ng-click="edit(filter)" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(filter)" title="{{:: 'Remove Publish Filter' | translate }}"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div sd-modal data-model="publishFilter" class="publish-filter-modal modal-large">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="publishFilter._id">Edit Publish Filter <span>"{{:: origPublishFilter.name }}"</span></h3>
+        <h3 translate ng-hide="publishFilter._id">Add New Publish Filter</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editForm" ng-submit="save()">
+            <fieldset>
+                <div class="field">
+                    <label for="publishFilter-name" translate>Name</label>
+                    <input type="text" id="publishFilter-name" required ng-model="publishFilter.name">
+                </div>
+
+                <div class="filter-tags" ng-repeat="filterRow in publishFilter.publish_filter">
+                    <div class="header">
+                        <label translate>Filter Statement <span>{{$index+1}}</span></label>
+                        <a href="" class="close" ng-click="removeStatement($index)"><i class="icon-close-small"></i></a>
+                    </div>
+
+                    <div class="row">
+                        <div class="row-50">
+                            <label translate>Filter Conditions</label>
+                            <select class="input" ng-model="filterRow.selected" >
+                                <option value=""></option>
+                                <option value="{{filter._id}}" ng-repeat="filter in filterConditions track by filter._id">{{:: filter.name}}</option>
+                            </select>
+                            <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'fc')"  translate>Add</button>
+                        </div>
+                        <div class="row-50">
+                            <label translate>Publish Filters</label>
+                            <select class="input" ng-model="filterRow.selected">
+                                <option value=""></option>
+                                <option value="{{filter._id}}" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
+                            </select>
+                            <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'pf')" translate>Add</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="search-tags">
+                            <ul>
+                                <li ng-repeat="filter in filterRow.expression.fc">
+                                    <div>
+                                        <span>FC:</span>{{filterConditionLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'fc')"><i class="icon-close-small icon-white"></i></button>
+                                    </div>
+                                </li>
+                                <li ng-repeat="filter in filterRow.expression.pf">
+                                    <div>
+                                        <span>PF:</span>{{publishFiltersLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'pf')"><i class="icon-close-small icon-white"></i></button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+        <div class="row">
+            <label for="publishFilter-preview" translate>Filter Preview</label>
+            <textarea id="publishFilter-preview" readonly ng-model="preview"></textarea>
+        </div>
+        <div class="test-row">
+            <label for="publishFilter-test" translate>Filter Test</label>
+            <input type="text" id="publishFilter-test" required ng-model="publishFilter.article_id">
+            <button type="button" class="btn btn-default" ng-click="test()" translate>Test</button>
+            <span>{{test_result}}</span>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" ng-click="addStatement()" translate>Add Filter Statement</button>
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
+    </div>
+</div>
+</div>
+

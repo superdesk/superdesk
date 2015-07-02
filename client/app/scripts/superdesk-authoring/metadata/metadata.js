@@ -243,8 +243,8 @@ function MetadataListEditingDirective() {
     };
 }
 
-MetadataService.$inject = ['api', '$q', 'staticMetadata'];
-function MetadataService(api, $q, staticMetadata) {
+MetadataService.$inject = ['api', '$q'];
+function MetadataService(api, $q) {
 
     var service = {
         values: {},
@@ -258,14 +258,6 @@ function MetadataService(api, $q, staticMetadata) {
                     self.values[vocabulary._id] = vocabulary.items;
                 });
             });
-        },
-        fetchStaticMetadata: function() {
-            var self = this;
-
-            _.each(staticMetadata, function(source) {
-                self.values[source._id] = source.items;
-            });
-            return $q.when();
         },
         fetchSubjectcodes: function(code) {
             var self = this;
@@ -299,7 +291,6 @@ function MetadataService(api, $q, staticMetadata) {
         initialize: function() {
             if (!this.loaded) {
                 this.loaded = this.fetchMetadataValues()
-                    .then(angular.bind(this, this.fetchStaticMetadata))
                     .then(angular.bind(this, this.fetchSubjectcodes));
             }
             return this.loaded;
@@ -309,38 +300,6 @@ function MetadataService(api, $q, staticMetadata) {
     return service;
 }
 
-//hardcoded metadata values
-var staticMetadata = [
-    {
-        _id: 'priority',
-        items: [
-            {
-                name: 'B',
-                qcode: 'B'
-            },
-            {
-                name: 'D',
-                qcode: 'D'
-            },
-            {
-                name: 'F',
-                qcode: 'F'
-            },
-            {
-                name: 'R',
-                qcode: 'R'
-            },
-            {
-                name: 'U',
-                qcode: 'U'
-            },
-            {
-                name: 'Z',
-                qcode: 'Z'
-            }
-        ]
-    }
-];
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
@@ -358,6 +317,5 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .service('metadata', MetadataService)
     .directive('sdMetaTerms', MetadataListEditingDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
-    .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
-    .value('staticMetadata', staticMetadata);
+    .directive('sdMetaWordsList', MetadataWordsListEditingDirective);
 })();

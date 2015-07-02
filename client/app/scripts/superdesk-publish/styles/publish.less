@@ -5,6 +5,72 @@
 @import 'mixins.less';
 @import 'variables.less';
 
+.pull-right-20 {
+    float: right;
+    margin-right: 65px;
+}
+
+.publish-filter-modal {
+    position: absolute;
+    .content {
+        .field {
+            margin-bottom: 10px;
+            textarea {
+                height: 22px;
+            }
+        }
+    }
+    .destination-box {
+        margin: 8px;
+        padding: 8px;
+        background-color: #f0f0f0;
+    }
+    .modal-body {
+        .filter-tags {
+            float: left;
+            width: 100%;
+            background-color: #f0f0f0;
+            padding-left: 5px;
+            margin-bottom: 5px;
+            .header {
+                margin: 5px;
+                label {
+                    float: left;
+                }
+            }
+            .row {
+                width: 100%;
+                float: left;
+                padding-left: 5px;
+                li {
+                    float: left;
+                }
+                .row-50 {
+                    width: 50%;
+                    float: left;
+                    select {
+                        width: 70%;
+                    }
+                }
+                .meta-row {
+                    min-height: 200px;
+                }
+            }
+            
+        }
+        .test-row {
+            width: 100%;
+            float: left;
+            input {
+                width: 70%;
+            }
+        }
+    }
+    .preview {
+        float: left;
+        wifth: 100%;
+    }
+}
 
 .subscriber-modal {
     position: absolute;

@@ -26,7 +26,7 @@ Feature: News Items Archive
         [{"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
         """
 
-        When we get "/archive/tag:example.com,0000:newsml_BRE9A605"
+        When we get "/archive"
         Then we get list with 0 items
 
     @auth

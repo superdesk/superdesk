@@ -37,6 +37,108 @@ Feature: Content Publishing
       """
 
     @auth
+    @vocabulary
+    Scenario: Publish a user content passes the filter
+      Given the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      Given empty "filter_conditions"
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "headline", "operator": "like", "value": "est"}]
+      """
+      Then we get latest
+      Given empty "publish_filters"
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media",
+        "can_send_takes_packages": true,
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      Then we get latest
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      """
+      When we get "/publish_queue"
+      Then we get list with 1 items
+
+
+    @auth
+    @vocabulary
+    Scenario: Publish a user content blocked by the filter
+      Given the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+
+      Given empty "filter_conditions"
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "headline", "operator": "like", "value": "est"}]
+      """
+
+      Then we get latest
+      Given empty "publish_filters"
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media",
+        "can_send_takes_packages": true,
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+
+      Then we get latest
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get response code 400
+      When we get "/publish_queue"
+      Then we get list with 0 items
+
+    @auth
     Scenario: Publish user content that fails validation
       Given the "validators"
       """
@@ -756,7 +858,7 @@ Feature: Content Publishing
       }
       """
 
-   @auth
+    @auth
     Scenario: Publish the second take after the first
       Given the "validators"
       """

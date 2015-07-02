@@ -321,6 +321,9 @@ class BasePublishService(BaseService):
                         and not can_send_takes_packages:
                     continue
 
+                if not self.conforms_publish_filter(subscriber, doc):
+                    continue
+
                 # Step 2
                 for destination in subscriber['destinations']:
                     # Step 2(a)
@@ -368,6 +371,21 @@ class BasePublishService(BaseService):
         get_resource_service('published').update_published_items(published_item_id, 'last_publish_action',
                                                                  self.published_state)
         get_resource_service('published').post([copy(published_item)])
+
+    def conforms_publish_filter(self, subscriber, doc):
+        publish_filter = subscriber.get('publish_filter')
+
+        if not publish_filter or 'filter_id' not in publish_filter:
+            return True
+
+        service = get_resource_service('publish_filters')
+        filter = service.find_one(req=None, _id=publish_filter['filter_id'])
+        does_match = service.does_match(filter, doc)
+
+        if does_match:
+            return publish_filter['filter_type'] == 'permitting'
+        else:
+            return publish_filter['filter_type'] == 'blocking'
 
 
 class ArchivePublishResource(BasePublishResource):

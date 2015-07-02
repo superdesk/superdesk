@@ -105,6 +105,7 @@ describe('publish queue', function() {
 
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.users'));
+    beforeEach(module('superdesk.publish.filters'));
     beforeEach(module('superdesk.publish'));
     beforeEach(module('superdesk.mocks'));
 
