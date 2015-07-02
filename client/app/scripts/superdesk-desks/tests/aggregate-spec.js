@@ -10,29 +10,37 @@ describe('templates', function() {
             scope = $rootScope.$new();
             ctrl = $controller('AggregateCtrl', {$scope: scope});
         }));
-        it('can fetch the saved state on init', inject(function(storage) {
+        it('can fetch the saved expanded state on init', inject(function(storage) {
             storage.clear();
-            expect(ctrl.state).toEqual({});
+            expect(ctrl.state.expanded).toEqual({});
         }));
-        it('can assume unset state is true', inject(function(storage) {
+        it('can assume unset expanded state is true', inject(function(storage) {
             storage.clear();
-            expect(ctrl.getState('test')).toBe(true);
+            expect(ctrl.getExpandedState('test')).toBe(true);
         }));
-        it('can switch state', inject(function(storage) {
+        it('can switch expanded state', inject(function(storage) {
             storage.clear();
-            ctrl.switchState('test');
-            expect(ctrl.getState('test')).toBe(false);
-            ctrl.switchState('test');
-            expect(ctrl.getState('test')).toBe(true);
+            ctrl.switchExpandedState('test');
+            expect(ctrl.getExpandedState('test')).toBe(false);
+            ctrl.switchExpandedState('test');
+            expect(ctrl.getExpandedState('test')).toBe(true);
         }));
-        it('can remember state', inject(function($rootScope, $controller) {
-            ctrl.switchState('test');
-            expect(ctrl.getState('test')).toBe(false);
+        it('can remember expanded state', inject(function($rootScope, $controller) {
+            ctrl.switchExpandedState('test');
+            expect(ctrl.getExpandedState('test')).toBe(false);
 
             scope = $rootScope.$new();
             ctrl = $controller('AggregateCtrl', {$scope: scope});
 
-            expect(ctrl.getState('test')).toBe(false);
+            expect(ctrl.getExpandedState('test')).toBe(false);
+        }));
+        it('can set solo group', inject(function(storage) {
+            storage.clear();
+            ctrl.setSoloGroup({_id: 'test'});
+            expect(ctrl.state.solo._id).toBe('test');
+        }));
+        it('can remember solo group', inject(function() {
+            expect(ctrl.state.solo._id).toBe('test');
         }));
     });
 });
