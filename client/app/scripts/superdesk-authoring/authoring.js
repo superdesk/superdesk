@@ -894,7 +894,12 @@
                 $scope.close = function() {
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
-                        $location.url($scope.referrerUrl);
+                        if (sessionStorage.getItem('previewUrl')) {
+                            $location.url(sessionStorage.getItem('previewUrl'));
+                            sessionStorage.removeItem('previewUrl');
+                        } else {
+                            $location.url($scope.referrerUrl);
+                        }
                     });
                 };
 
