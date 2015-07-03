@@ -21,20 +21,63 @@ function EditorService() {
     this.addEventListeners = addEventListeners;
     this.removeEventListeners = removeEventListeners;
 
-    // Undo Redo related variables
-    this.historyBodyHtml = [];
-    this.historyHeadline = [];
-    this.historyAbstract = [];
-    this.index = -1;
-    this.indexHeadline = -1;
-    this.indexAbstract = -1;
-
     this.KEY_CODES = Object.freeze({
         Y: 89,
         X: 90
     });
 
     var vm = this;
+
+    this.fieldStack = {};
+
+    this.setInitialValue = function (key, initialValue) {
+        vm.fieldStack[key] = {
+            'stack': [],
+            'index':0
+        };
+        vm.fieldStack[key].stack.push(initialValue);
+    };
+
+    this.savetoHistory = function(key, html) {
+        vm.fieldStack[key].stack.push(html);
+        vm.fieldStack[key].index = vm.fieldStack[key].stack.length - 1;
+    };
+
+    this.getInitialValue = function (key) {
+        return vm.fieldStack[key].stack[0];
+    };
+
+    this.resetStack = function() {
+        vm.fieldStack = {};
+    };
+
+    this.getUndoViewValue = function(key) {
+        var _undoValue;
+        if (vm.fieldStack[key] !== null) {
+            if (vm.fieldStack[key].stack.length === 1) {
+                _undoValue = vm.getInitialValue(key);
+            } else {
+                if (vm.fieldStack[key].stack[vm.fieldStack[key].index - 1] != null) {
+                    if (vm.fieldStack[key].index === 1) {
+                        _undoValue = vm.getInitialValue(key);
+                    } else {
+                        _undoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index - 1];
+                    }
+                    vm.fieldStack[key].index -= 1;
+                }
+            }
+        }
+        return _undoValue;
+    };
+
+    this.getRedoViewValue = function(key) {
+        var _redoValue;
+        if (vm.fieldStack[key].stack.length !== 0 && vm.fieldStack[key].stack[vm.fieldStack[key].index + 1] != null) {
+            _redoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index + 1];
+            vm.fieldStack[key].index += 1;
+        }
+        return _redoValue;
+    };
 
     /**
      * Store current anchor position within given node
@@ -249,8 +292,7 @@ function FindReplaceCommand(rootNode, _editor) {
                 if (replacements[matches] != null) {
                     document.execCommand('insertText', false, replacements[matches]);
                     html = angular.element(rootNode).html();
-                    _editor.historyBodyHtml.push(html);
-                    _editor.index = _editor.historyBodyHtml.length - 1;
+                    _editor.savetoHistory('bodyhtml', html);
                     _editor.triggerModelUpdate();
                 } else if (!stopHighlight) {
                     var oldLength = node.wholeText.length;
@@ -359,12 +401,7 @@ angular.module('superdesk.editor', [])
                     updateTimeout,
                     renderTimeout;
 
-                editor.historyHeadline = [];
-                editor.historyAbstract = [];
-                editor.historyBodyHtml = [];
-                var initialModelValue,
-                    initialHeadlineModelValue,
-                    initialAbstractModelValue;
+                editor.resetStack();
 
                 ngModel.$viewChangeListeners.push(changeListener);
                 scope.viewvalue = ngModel.$viewValue;
@@ -376,15 +413,8 @@ angular.module('superdesk.editor', [])
 
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
-                    if (elem[0].id === 'bodyhtml') {
-                        initialModelValue = ngModel.$viewValue;
-                    }
-                    if (elem[0].id === 'title') {
-                        initialHeadlineModelValue = ngModel.$viewValue;
-                    }
-                    if (elem[0].id === 'abstract') {
-                        initialAbstractModelValue = ngModel.$viewValue;
-                    }
+
+                    editor.setInitialValue(elem[0].id, ngModel.$viewValue);
 
                     editor.elem = editorElem[0];
                     editor.addEventListeners(editorElem[0]);
@@ -470,82 +500,20 @@ angular.module('superdesk.editor', [])
 
                 function doUndo() {
                     scope.$applyAsync(function() {
-                        if (elem[0].id === 'bodyhtml') {
-                            if (editor.historyBodyHtml.length !== 0) {
-                                if (editor.historyBodyHtml.length === 1) {
-                                    ngModel.$setViewValue(initialModelValue);
-                                } else {
-                                    if (editor.historyBodyHtml[editor.index - 1] != null) {
-                                        if (editor.index === 1) {
-                                            ngModel.$setViewValue(initialModelValue);
-                                        } else {
-                                            ngModel.$setViewValue(editor.historyBodyHtml[editor.index - 1]);
-                                        }
-                                        editor.index -= 1;
-                                    }
-                                }
-                                editorElem.html(ngModel.$modelValue);
-                            }
-                        }
-                        if (elem[0].id === 'title') {
-                            if (editor.historyHeadline.length !== 0) {
-                                if (editor.historyHeadline.length === 1) {
-                                    ngModel.$setViewValue(initialHeadlineModelValue);
-                                } else {
-                                    if (editor.historyHeadline[editor.indexHeadline - 1] != null) {
-                                        if (editor.indexHeadline === 1) {
-                                            ngModel.$setViewValue(initialHeadlineModelValue);
-                                        } else {
-                                            ngModel.$setViewValue(editor.historyHeadline[editor.indexHeadline - 1]);
-                                        }
-                                        editor.indexHeadline -= 1;
-                                    }
-                                }
-                                editorElem.html(ngModel.$modelValue);
-                            }
-                        }
-                        if (elem[0].id === 'abstract') {
-                            if (editor.historyAbstract.length !== 0) {
-                                if (editor.historyAbstract.length === 1) {
-                                    ngModel.$setViewValue(initialAbstractModelValue);
-                                } else {
-                                    if (editor.historyAbstract[editor.indexAbstract - 1] != null) {
-                                        if (editor.indexAbstract === 1) {
-                                            ngModel.$setViewValue(initialAbstractModelValue);
-                                        } else {
-                                            ngModel.$setViewValue(editor.historyAbstract[editor.indexAbstract - 1]);
-                                        }
-                                        editor.indexAbstract -= 1;
-                                    }
-                                }
-                                editorElem.html(ngModel.$modelValue);
-                            }
+                        var viewValue = editor.getUndoViewValue(elem[0].id);
+                        if (!_.isEmpty(viewValue)) {
+                            ngModel.$setViewValue(viewValue);
+                            editorElem.html(ngModel.$modelValue);
                         }
                     });
                 }
 
                 function doRedo() {
                     scope.$applyAsync(function() {
-                        if (elem[0].id === 'bodyhtml') {
-                            if (editor.historyBodyHtml.length !== 0 && editor.historyBodyHtml[editor.index + 1] != null) {
-                                ngModel.$setViewValue(editor.historyBodyHtml[editor.index + 1]);
-                                editor.index += 1;
-                                editorElem.html(ngModel.$modelValue);
-                            }
-                        }
-                        if (elem[0].id === 'title') {
-                            if (editor.historyHeadline.length !== 0 && editor.historyHeadline[editor.indexHeadline + 1] != null) {
-                                ngModel.$setViewValue(editor.historyHeadline[editor.indexHeadline + 1]);
-                                editor.indexHeadline += 1;
-                                editorElem.html(ngModel.$modelValue);
-                            }
-                        }
-                        if (elem[0].id === 'abstract') {
-                            if (editor.historyAbstract.length !== 0 && editor.historyAbstract[editor.indexAbstract + 1] != null) {
-                                ngModel.$setViewValue(editor.historyAbstract[editor.indexAbstract + 1]);
-                                editor.indexAbstract += 1;
-                                editorElem.html(ngModel.$modelValue);
-                            }
+                        var viewValue = editor.getRedoViewValue(elem[0].id);
+                        if (!_.isEmpty(viewValue)) {
+                            ngModel.$setViewValue(viewValue);
+                            editorElem.html(ngModel.$modelValue);
                         }
                     });
                 }
@@ -556,30 +524,20 @@ angular.module('superdesk.editor', [])
                     }
 
                     var html = removeSpellcheck(editorElem[0]);
-                    //
+                    var key = elem[0].id;
+                    // get model value in text
                     var div = document.createElement('div');
                     div.innerHTML = ngModel.$viewValue;
                     var modelTextValue = div.textContent || div.innerText || '';
                     // Compare model changes and apply
                     if (event.type === 'input' && !_.isEqual(event.target.innerText.trim(), '')) {
-                        if (!_.isEqual(event.target.innerHTML, editor.historyBodyHtml[editor.historyBodyHtml.length - 1])) {
+                        if (!_.isEqual(event.target.innerHTML, editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
                             if (!_.isEqual(event.target.innerText.trim(), modelTextValue.trim())) {
-                                if (elem[0].id === 'bodyhtml') {
-                                    // Invalidate items higher on the stack, if we are here after having undo called.
-                                    editor.historyBodyHtml.splice(editor.index + 1, editor.historyBodyHtml.length - editor.index);
-                                    editor.historyBodyHtml.push(html);
-                                    editor.index = editor.historyBodyHtml.length - 1;
-                                } else if (elem[0].id === 'title') {
-                                    editor.historyHeadline.splice(editor.indexHeadline + 1,
-                                        editor.historyHeadline.length - editor.indexHeadline);
-                                    editor.historyHeadline.push(html);
-                                    editor.indexHeadline = editor.historyHeadline.length - 1;
-                                } else if (elem[0].id === 'abstract') {
-                                    editor.historyAbstract.splice(editor.indexAbstract + 1,
-                                        editor.historyAbstract.length - editor.indexAbstract);
-                                    editor.historyAbstract.push(html);
-                                    editor.indexAbstract = editor.historyAbstract.length - 1;
-                                }
+                                // Invalidate items higher on the stack, if we are here after having undo called.
+                                editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
+                                    editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
+                                editor.fieldStack[key].stack.push(html);
+                                editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
                                 scope.$applyAsync(function() {
                                     ngModel.$setViewValue(html);
                                 });
