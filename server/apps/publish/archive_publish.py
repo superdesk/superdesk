@@ -12,8 +12,9 @@ from copy import copy
 import logging
 
 from eve.versioning import resolve_document_version
-from eve.utils import config
+from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
+from apps.content import PUB_STATUS
 
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
@@ -302,19 +303,23 @@ class BasePublishService(BaseService):
                 updates['source'] = desk['source'] if desk and desk.get('source', '') \
                     else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
-            updates['pubstatus'] = 'canceled' if self.publish_type == 'killed' else 'usable'
+            updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'killed' else PUB_STATUS.USABLE
             updated.update(updates)
 
         # Step 2(a)
         if self.published_state == 'killed':
+            req = ParsedRequest()
+            req.sort = '[("completed_at", 1)]'
             queued_items = get_resource_service('publish_queue').get(
-                req=None, lookup={'item_id': updated[config.ID_FIELD]})
+                req=req, lookup={'item_id': updated[config.ID_FIELD]})
 
             if queued_items.count():
+                queued_items = list(queued_items)
+
                 # Step 2(a)(i)
-                subscribers = self._find_subscribers(queued_items)
+                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
                 recipients = [s['email'] for s in subscribers]
-                send_article_killed_email(doc, recipients)
+                send_article_killed_email(doc, recipients, queued_items[0].get('completed_at'))
 
                 # Step 2(a)(ii)
                 no_formatters, queued = self.queue_transmission(updated, subscribers, None)
@@ -324,24 +329,19 @@ class BasePublishService(BaseService):
 
             if queued_items.count():
                 # Step 2(b)(i)
-                subscribers = self._find_subscribers(queued_items)
+                queued_items = list(queued_items)
+                subscriber_ids = {queued_item['subscriber_id'] for queued_item in queued_items}
+
+                query = {'$and': [{config.ID_FIELD: {'$in': list(subscriber_ids)}}]}
+                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
                 no_formatters, queued = self.queue_transmission(updated, subscribers)
 
                 # Step 2(b)(ii)
                 active_subscribers = list(get_resource_service('subscribers').get(req=None, lookup={'is_active': True}))
-                subscribers_yet_to_receive = []
+                subscribers_yet_to_receive = [a for a in active_subscribers
+                                              if not any(a[config.ID_FIELD] == s[config.ID_FIELD] for s in subscribers)]
 
-                for subscriber in active_subscribers:
-                    found = False
-                    for s in subscribers:
-                        if s[config.ID_FIELD] == subscriber[config.ID_FIELD]:
-                            found = True
-                            break
-
-                    if not found:
-                        subscribers_yet_to_receive.append(subscriber)
-
-                if len(subscribers_yet_to_receive):
+                if len(subscribers_yet_to_receive) > 0:
                     formatters_not_found, queued_new_subscribers = \
                         self.queue_transmission(updated, subscribers_yet_to_receive, target_media_type)
                     no_formatters.extend(formatters_not_found)
@@ -352,7 +352,7 @@ class BasePublishService(BaseService):
 
         # Step 3
         user = get_user()
-        if no_formatters and len(no_formatters) > 0:
+        if len(no_formatters) > 0:
             push_notification('item:publish:wrong:format',
                               item=str(doc[config.ID_FIELD]), unique_name=doc['unique_name'],
                               desk=str(doc.get('task', {}).get('desk', '')),
@@ -424,20 +424,6 @@ class BasePublishService(BaseService):
             return no_formatters, queued
         except:
             raise
-
-    def _find_subscribers(self, queued_items):
-        """
-        From queued items subscriber_id is extracted and for the subscriber_id the subscriber object is fetched from
-        the subscribers collection.
-
-        :param: queued_items - documents in publish_queue collection.
-        """
-
-        queued_items = list(queued_items)
-        subscriber_ids = {queued_item['subscriber_id'] for queued_item in queued_items}
-
-        query = {'$and': [{config.ID_FIELD: {'$in': list(subscriber_ids)}}]}
-        return list(get_resource_service('subscribers').get(req=None, lookup=query))
 
     def update_published_collection(self, published_item_id):
         """

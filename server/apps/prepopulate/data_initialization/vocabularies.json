@@ -157,6 +157,8 @@
             {"is_active": true, "name": "Queensland", "value": "Queensland"},
             {"is_active": true, "name": "Tasmania", "value": "Tasmania"},
             {"is_active": true, "name": "South Australia", "value": "South Australia"},
+            {"is_active": true, "name": "Western Australia", "value": "Western Australia"},
+            {"is_active": true, "name": "Northern Territory", "value": "Northern Territory"},
             {"is_active": true, "name": "New Zealand", "value": "New Zealand"}
         ]
     },

@@ -61,9 +61,8 @@ class VocabulariesService(BaseService):
         self._filter_inactive_vocabularies(doc)
 
     def _filter_inactive_vocabularies(self, item):
-        active_vocabularies = [{k: voc[k] for k in voc.keys() if k != 'is_active' and voc.get('is_active', True)}
-                               for voc in item['items']]
+        vocs = item['items']
+        active_vocs = ({k: voc[k] for k in voc.keys() if k != 'is_active'}
+                       for voc in vocs if voc.get('is_active', True))
 
-        active_vocabularies = [voc for voc in active_vocabularies if len(voc) > 0]
-
-        item['items'] = active_vocabularies
+        item['items'] = list(active_vocs)

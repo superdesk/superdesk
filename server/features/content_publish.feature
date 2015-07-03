@@ -68,7 +68,7 @@ Feature: Content Publishing
       """
       {
         "name":"Channel 3","media_type":"media",
-        "can_send_takes_packages": true,
+        "can_send_takes_packages": true,  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
         "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
@@ -125,7 +125,7 @@ Feature: Content Publishing
       """
       {
         "name":"Channel 3","media_type":"media",
-        "can_send_takes_packages": true,
+        "can_send_takes_packages": true,  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
         "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
