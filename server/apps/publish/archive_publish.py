@@ -337,7 +337,7 @@ class BasePublishService(BaseService):
                 no_formatters, queued = self.queue_transmission(updated, subscribers)
 
                 # Step 2(b)(ii)
-                active_subscribers = list(get_resource_service('subscribers').get(req=None, lookup={'is_active': True}))
+                active_subscribers = get_resource_service('subscribers').get(req=None, lookup={'is_active': True})
                 subscribers_yet_to_receive = [a for a in active_subscribers
                                               if not any(a[config.ID_FIELD] == s[config.ID_FIELD] for s in subscribers)]
 

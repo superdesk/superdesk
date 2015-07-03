@@ -24,7 +24,7 @@ LAST_TAKE = 'last_take'
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
 
 pub_status = ['usable', 'withhold', 'canceled']
-PUB_STATUS = namedtuple('PUBSTATUS', ['USABLE', 'HOLD', 'CANCELED'])._make(pub_status)
+PUB_STATUS = namedtuple('PUBSTATUS', ['USABLE', 'HOLD', 'CANCELED'])(*pub_status)
 
 metadata_schema = {
     # Identifiers
