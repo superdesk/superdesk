@@ -656,7 +656,7 @@ class ArchivePublishTestCase(TestCase):
                                  [{'_id': 2,
                                    'field': 'urgency',
                                    'operator': 'in',
-                                   'value': 2,
+                                   'value': '2',
                                    'name': 'test-2'}])
             self.app.data.insert('filter_conditions',
                                  [{'_id': 3,

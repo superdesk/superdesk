@@ -42,7 +42,7 @@ class PublishFilterTests(TestCase):
                                  [{'_id': 2,
                                    'field': 'urgency',
                                    'operator': 'in',
-                                   'value': 2,
+                                   'value': '2',
                                    'name': 'test-2'}])
             self.app.data.insert('filter_conditions',
                                  [{'_id': 3,
@@ -76,12 +76,12 @@ class PublishFilterTests(TestCase):
             self.app.data.insert('publish_filters',
                                  [{"_id": 3,
                                    "publish_filter": [{"expression": {"pf": [1], "fc": [2]}}],
-                                   "name": "soccer-only2"}])
+                                   "name": "soccer-only3"}])
 
             self.app.data.insert('publish_filters',
                                  [{"_id": 4,
                                    "publish_filter": [{"expression": {"fc": [3]}}, {"expression": {"fc": [5]}}],
-                                   "name": "soccer-only2"}])
+                                   "name": "soccer-only4"}])
 
     def test_build_mongo_query_using_like_filter_single_fc(self):
         doc = {'publish_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
@@ -351,3 +351,8 @@ class PublishFilterTests(TestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[3]))
             self.assertFalse(self.f.does_match(doc, self.articles[4]))
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
+
+    def test_if_pf_is_used(self):
+        with self.app.app_context():
+            self.assertTrue(self.f._get_referenced_publish_filters(1).count() == 1)
+            self.assertTrue(self.f._get_referenced_publish_filters(4).count() == 0)

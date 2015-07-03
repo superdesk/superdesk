@@ -103,3 +103,24 @@ Feature: Filter Condition
     {"name": "politics"}
     """
     Then we get error 200
+
+  @auth
+  @vocabulary
+  Scenario: Delete a referenced filter condition fails
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filters"
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
+    """
+    When we delete "/filter_conditions/#filter_conditions._id#"
+    Then we get error 400
+    """
+    {"_status": "ERR", "_message": "Filter condition has been referenced in pf:soccer"}
+    """
