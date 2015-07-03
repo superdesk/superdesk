@@ -24,7 +24,7 @@ Feature: Copy Content in Personal Workspace
       """
       Then we get "_id"
       When we get "/archive/#_id#?version=all"
-      Then we get list with 3 items
+      Then we get list with 5 items
       When we get "/archive/"
       Then we get list with 2 items
 
