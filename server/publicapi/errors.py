@@ -25,7 +25,8 @@ class PublicApiError(SuperdeskApiError):
     """A mapping of error codes to error messages."""
 
     def __init__(self, error_code=10000, desc=None):
-        super().__init__(status_code=error_code, message=desc)
+        message = self._codes.get(error_code, 'Unknown error')
+        super().__init__(status_code=error_code, message=message, payload=desc)
 
 
 class UnexpectedParameterError(PublicApiError):
@@ -47,9 +48,9 @@ class BadParameterValueError(PublicApiError):
 
 
 class FileNotFoundError(PublicApiError):
-    """Used when trying to fetch an missing file."""
+    """Used when trying to fetch a missing file."""
 
     PublicApiError._codes[10003] = "File not found."
 
     def __init__(self, desc=None):
-        super().__init__(10002, desc=desc)
+        super().__init__(10003, desc=desc)

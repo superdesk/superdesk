@@ -21,7 +21,7 @@ class NINJSFormatter(Formatter):
     """
     direct_copy_properties = ['versioncreated', 'usageterms', 'subject', 'language', 'headline',
                               'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located',
-                              '_created', '_updated', 'body_text']
+                              '_created', '_updated', 'body_text', 'body_html']
 
     def format(self, article, subscriber):
         try:
@@ -40,8 +40,6 @@ class NINJSFormatter(Formatter):
                 if copy_property in article:
                     ninjs[copy_property] = article[copy_property]
 
-            if 'body_html' in article:
-                ninjs['body_xhtml'] = article['body_html']
             if 'description' in article:
                 ninjs['description_text'] = article['description']
 

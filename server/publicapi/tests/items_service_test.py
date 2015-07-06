@@ -63,7 +63,7 @@ class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
             instance._check_for_unknown_params(request, ('foo', 'bar'))
 
         ex = context.exception
-        self.assertEqual(ex.desc, 'Unexpected parameter (param_x)')
+        self.assertEqual(ex.payload, 'Unexpected parameter (param_x)')
 
     def test_raises_descriptive_error_on_filtering_disabled(self):
         request = MagicMock()
@@ -78,7 +78,7 @@ class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             'Filtering is not supported when retrieving a single object '
             '(the "q" parameter)'
         )
@@ -96,7 +96,7 @@ class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             'Filtering by date range is not supported when retrieving a '
             'single object (the "start_date" parameter)'
         )
@@ -114,7 +114,7 @@ class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             'Filtering by date range is not supported when retrieving a '
             'single object (the "end_date" parameter)'
         )
@@ -131,7 +131,7 @@ class CheckForUnknownParamsMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc, "Multiple values received for parameter (foo)")
+            ex.payload, "Multiple values received for parameter (foo)")
 
 
 fake_super_get = MagicMock(name='fake super().get')
@@ -245,7 +245,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             ("start_date parameter must be a valid ISO 8601 date (YYYY-MM-DD) "
              "without the time part"))
 
@@ -262,7 +262,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             ("end_date parameter must be a valid ISO 8601 date (YYYY-MM-DD) "
              "without the time part"))
 
@@ -282,7 +282,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc, "Start date must not be greater than end date")
+            ex.payload, "Start date must not be greater than end date")
 
     def test_allows_start_and_end_dates_to_be_equal(self):
         request = MagicMock()
@@ -315,8 +315,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21',
-            '$lt': '2012-08-27'  # end_date + 1 day
+            '$gte': '2012-08-21T00:00:00+0000',
+            '$lte': '2012-08-26T00:00:00+0000'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -337,8 +337,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21',
-            '$lt': '2014-07-16'  # today + 1 day
+            '$gte': '2012-08-21T00:00:00+0000',
+            '$lte': '2014-07-15T00:00:00+0000'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -356,8 +356,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21',
-            '$lt': '2012-08-22'  # end_date + 1 day
+            '$gte': '2012-08-20T00:00:00+0000',
+            '$lte': '2012-08-21T00:00:00+0000'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -380,8 +380,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2014-07-15',
-            '$lt': '2014-07-16'  # today + 1 day
+            '$gte': '2014-07-14T00:00:00+0000',
+            '$lte': '2014-07-15T00:00:00+0000'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -402,8 +402,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2010-09-17',
-            '$lt': '2010-09-18'
+            '$gte': '2010-09-17T00:00:00+0000',
+            '$lte': '2010-09-17T00:00:00+0000'
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -423,7 +423,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             "Start date (2007-10-31) must not be set in the future "
             "(current server date (UTC): 2007-10-30)"
         )
@@ -444,7 +444,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             "End date (2007-10-31) must not be set in the future "
             "(current server date (UTC): 2007-10-30)"
         )
@@ -485,7 +485,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             'Cannot exclude a content field required by the NINJS format '
             '(uri).'
         )
@@ -506,7 +506,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
 
         ex = context.exception
         self.assertEqual(
-            ex.desc,
+            ex.payload,
             'Cannot both include and exclude content fields at the same time.'
         )
 
@@ -527,7 +527,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
 
             ex = context.exception
             self.assertEqual(
-                ex.desc, 'Unknown content field to include (field_x).')
+                ex.payload, 'Unknown content field to include (field_x).')
 
     def test_raises_error_if_blacklisting_unknown_content_field(self):
         request = MagicMock()
@@ -546,7 +546,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
 
             ex = context.exception
             self.assertEqual(
-                ex.desc, 'Unknown content field to exclude (field_x).')
+                ex.payload, 'Unknown content field to exclude (field_x).')
 
     def test_filters_out_blacklisted_fields_if_requested(self):
         request = MagicMock()

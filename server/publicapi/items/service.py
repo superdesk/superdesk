@@ -435,4 +435,4 @@ class ItemsService(BaseService):
 
     @staticmethod
     def _format_date(date):
-        return str(datetime.strftime(date, DATE_FORMAT))
+        return datetime.strftime(date, DATE_FORMAT)
