@@ -83,6 +83,7 @@ class AAPIpNewsFormatter(Formatter):
             odbc_item['priority'] = article.get('priority', 'r')  # @priority
             odbc_item['service_level'] = 'a'  # @service_level
 
+            odbc_item['selector_codes'] = '3**'
             odbc_item['fullStory'] = 1
             odbc_item['ident'] = '0'  # @ident
 
@@ -90,5 +91,5 @@ class AAPIpNewsFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.AAPIpNewsFormatterError(ex, subscriber)
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'AAP IPNEWS' and article_type in ['text', 'preformatted']
+    def can_format(self, format_type, article):
+        return format_type == 'AAP IPNEWS' and article['type'] in ['text', 'preformatted']

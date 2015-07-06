@@ -109,5 +109,5 @@ class AAPAnpaFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.AnpaFormatterError(ex, subscriber)
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'AAP ANPA' and article_type in ['text', 'preformatted']
+    def can_format(self, format_type, article):
+        return format_type == 'AAP ANPA' and article['type'] in ['text', 'preformatted']

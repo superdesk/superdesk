@@ -167,5 +167,5 @@ class NewsMLG2Formatter(Formatter):
     def _format_headline(self, article, contentMeta):
         SubElement(contentMeta, 'headline').text = article.get('headline', '')
 
-    def can_format(self, format_type, article_type):
-        return format_type == 'newsmlg2' and article_type in ['text', 'preformatted', 'composite']
+    def can_format(self, format_type, article):
+        return format_type == 'newsmlg2' and article['type'] in ['text', 'preformatted', 'composite']

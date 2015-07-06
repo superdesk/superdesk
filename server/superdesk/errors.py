@@ -404,7 +404,8 @@ class FormatterError(SuperdeskPublishError):
         7003: 'Article couldn"t be converted to ANPA',
         7004: 'Article couldn"t be converted to NinJS',
         7005: 'Article couldn"t be converted to NewsML 1.2 format',
-        7006: 'Article couldn"t be converted to NewsML G2 format'
+        7006: 'Article couldn"t be converted to NewsML G2 format',
+        7008: 'Article couldn"t be converted to AAP SMS format'
     }
 
     @classmethod
@@ -434,6 +435,10 @@ class FormatterError(SuperdeskPublishError):
     @classmethod
     def bulletinBuilderFormatterError(cls, exception=None, destination=None):
         return FormatterError(7007, exception, destination)
+
+    @classmethod
+    def AAPSMSFormatterError(cls, exception=None, destination=None):
+        return FormatterError(7008, exception, destination)
 
 
 class SubscriberError(SuperdeskPublishError):

@@ -391,7 +391,8 @@ class BasePublishService(BaseService):
                     continue
 
                 for destination in subscriber['destinations']:
-                    formatter = get_formatter(destination['format'], doc['type'])
+                    # Step 2(a)
+                    formatter = get_formatter(destination['format'], doc)
 
                     if not formatter:  # if formatter not found then record it
                         no_formatters.append(destination['format'])
