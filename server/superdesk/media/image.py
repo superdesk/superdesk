@@ -15,6 +15,7 @@ Utilities for extractid metadata from image files.
 from PIL import Image, ExifTags
 from flask import json
 
+
 def get_meta(file_stream):
     '''
     Returns the image metadata in a dictionary of tag:value pairs.
@@ -37,10 +38,10 @@ def get_meta(file_stream):
         try:
             json.dumps(v)
             key = ExifTags.TAGS[k].strip()
-            
+
             if key == 'GPSInfo':
                 # lookup GPSInfo description key names
-                value = {ExifTags.GPSTAGS[vk].strip():vv for vk, vv in v.items()}
+                value = {ExifTags.GPSTAGS[vk].strip(): vv for vk, vv in v.items()}
                 exif_meta[key] = value
             else:
                 value = v.decode('UTF-8') if isinstance(v, bytes) else v
@@ -49,7 +50,6 @@ def get_meta(file_stream):
             # ignore fields we can't store in db
             pass
     # Remove this as it's too long to send in headers
-    if exif_meta.get('UserComment'):
-        del exif_meta['UserComment']
+    exif_meta.pop('UserComment', None)
 
     return exif_meta
