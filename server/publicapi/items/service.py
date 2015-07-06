@@ -260,9 +260,9 @@ class ItemsService(BaseService):
             end_date = today
 
         if start_date is None:
-            start_date = end_date - timedelta(days=1)
+            start_date = end_date
 
-        return start_date, end_date
+        return start_date, end_date + timedelta(days=1)
 
     def _create_date_range_filter(self, start_date, end_date):
         """Create a MongoDB date range query filter from the given dates.
@@ -289,7 +289,7 @@ class ItemsService(BaseService):
         if end_date is not None:
             # need to set it to strictly less than end_date + 1 day,
             # because internally dates are stored as datetimes
-            date_filter['versioncreated']['$lte'] = self._format_date(end_date)
+            date_filter['versioncreated']['$lt'] = self._format_date(end_date)
 
         return date_filter
 

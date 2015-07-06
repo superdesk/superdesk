@@ -316,7 +316,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2012-08-21T00:00:00+0000',
-            '$lte': '2012-08-26T00:00:00+0000'  # end_date + 1 day
+            '$lt': '2012-08-27T00:00:00+0000'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -338,7 +338,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2012-08-21T00:00:00+0000',
-            '$lte': '2014-07-15T00:00:00+0000'  # today + 1 day
+            '$lt': '2014-07-16T00:00:00+0000'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -356,8 +356,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-20T00:00:00+0000',
-            '$lte': '2012-08-21T00:00:00+0000'  # end_date + 1 day
+            '$gte': '2012-08-21T00:00:00+0000',
+            '$lt': '2012-08-22T00:00:00+0000'  # end_date + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -380,8 +380,8 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2014-07-14T00:00:00+0000',
-            '$lte': '2014-07-15T00:00:00+0000'  # today + 1 day
+            '$gte': '2014-07-15T00:00:00+0000',
+            '$lt': '2014-07-16T00:00:00+0000'  # today + 1 day
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -403,7 +403,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         date_filter = json.loads(args[0].where).get('versioncreated', {})
         expected_filter = {
             '$gte': '2010-09-17T00:00:00+0000',
-            '$lte': '2010-09-17T00:00:00+0000'
+            '$lt': '2010-09-18T00:00:00+0000'
         }
         self.assertEqual(date_filter, expected_filter)
 

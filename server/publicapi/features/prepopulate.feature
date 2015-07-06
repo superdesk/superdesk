@@ -7,7 +7,7 @@ Feature: Prepopulate public content
     	"""
         Then we get response code 201
 
-        When we get "/items?start_date=1970-01-01"
+        When we get "/items?start_date=2014-03-16"
         Then we get list with 1 items
         """
         {
@@ -19,7 +19,6 @@ Feature: Prepopulate public content
         	]
         }
         """
-
         When we get "/packages?start_date=1970-01-01"
         Then we get list with 1 items
         """

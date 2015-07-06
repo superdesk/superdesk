@@ -14,6 +14,8 @@ from apps.archive import init_app
 from superdesk import get_resource_service
 from superdesk.publish.publicapi import PublicAPIPublishService
 from superdesk.tests import TestCase
+from eve.utils import config
+from datetime import datetime
 
 
 class PublicAPITest(TestCase):
@@ -71,6 +73,7 @@ class PublicAPITest(TestCase):
                 del item['_etag']
                 del item['_created']
                 del item['_updated']
+                item['versioncreated'] = datetime.strftime(item['versioncreated'], self.app.config['DATE_FORMAT'])
                 self.assertDictEqual(item, published_item, 'Invalid published item')
             finally:
                 publicapiService.delete({'_id': 'item1'})
