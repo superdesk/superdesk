@@ -32,11 +32,11 @@ class PublicApiErrorTestCase(ApiTestCase):
 
     def test_uses_given_error_code(self):
         error = self._make_one(12345)
-        self.assertEqual(error.code, 12345)
+        self.assertEqual(error.status_code, 12345)
 
     def test_uses_default_error_code_if_error_code_not_given(self):
         error = self._make_one()
-        self.assertEqual(error.code, 10000)
+        self.assertEqual(error.status_code, 10000)
 
     def test_uses_default_error_message_if_error_code_not_given(self):
         error = self._make_one()
@@ -44,7 +44,7 @@ class PublicApiErrorTestCase(ApiTestCase):
 
     def test_uses_error_description_if_given(self):
         error = self._make_one(desc='Detailed description')
-        self.assertEqual(error.desc, "Detailed description")
+        self.assertEqual(error.payload, "Detailed description")
 
 
 class UnknownParameterErrorTestCase(ApiTestCase):
@@ -68,7 +68,7 @@ class UnknownParameterErrorTestCase(ApiTestCase):
 
     def test_error_code(self):
         error = self._make_one()
-        self.assertEqual(error.code, 10001)
+        self.assertEqual(error.status_code, 10001)
 
     def test_error_message(self):
         error = self._make_one()
@@ -76,7 +76,7 @@ class UnknownParameterErrorTestCase(ApiTestCase):
 
     def test_uses_error_description_if_given(self):
         error = self._make_one(desc='More detailed description')
-        self.assertEqual(error.desc, 'More detailed description')
+        self.assertEqual(error.payload, 'More detailed description')
 
 
 class BadParameterValueTestCase(ApiTestCase):
@@ -100,7 +100,7 @@ class BadParameterValueTestCase(ApiTestCase):
 
     def test_error_code(self):
         error = self._make_one()
-        self.assertEqual(error.code, 10002)
+        self.assertEqual(error.status_code, 10002)
 
     def test_error_message(self):
         error = self._make_one()
@@ -108,4 +108,4 @@ class BadParameterValueTestCase(ApiTestCase):
 
     def test_uses_error_description_if_given(self):
         error = self._make_one(desc='Integer expected for max results')
-        self.assertEqual(error.desc, 'Integer expected for max results')
+        self.assertEqual(error.payload, 'Integer expected for max results')

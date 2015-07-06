@@ -24,9 +24,9 @@ import logging
 import os
 
 from publicapi import settings
-from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
+from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.errors import SuperdeskError, SuperdeskApiError
 
 
@@ -42,13 +42,6 @@ def _set_error_handlers(app):
 
     :param app: an instance of `Eve <http://python-eve.org/>`_ application
     """
-    @app.errorhandler(UnexpectedParameterError)
-    def unknown_parameter_handler(error):
-        return str(error), 422
-
-    @app.errorhandler(BadParameterValueError)
-    def unknown_parameter_handler(error):
-        return str(error), 422
 
     # TODO: contains the same bug as the client_error_handler of the main
     # superdesk app, fix it when the latter gets resolved (or, perhaps,
@@ -82,9 +75,16 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
+    media_storage = SuperdeskGridFSMediaStorage
+
+    if config.get('AMAZON_CONTAINER_NAME', None) is not None:
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        media_storage = AmazonMediaStorage
+
     app = Eve(
         settings=config,
         data=SuperdeskDataLayer,
+        media=media_storage,
         json_encoder=MongoJSONEncoder,
     )
 
@@ -101,5 +101,9 @@ def get_app(config=None):
 
     for resource in config['DOMAIN']:
         app.register_resource(resource, config['DOMAIN'][resource])
+
+    for blueprint in superdesk.BLUEPRINTS:
+        prefix = app.api_prefix or None
+        app.register_blueprint(blueprint, url_prefix=prefix)
 
     return app

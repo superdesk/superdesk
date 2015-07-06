@@ -19,7 +19,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -68,7 +68,7 @@ Feature: Content Publishing
       """
       {
         "name":"Channel 3","media_type":"media",
-        "can_send_takes_packages": true,
+        "can_send_takes_packages": true,  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
         "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
@@ -125,7 +125,7 @@ Feature: Content Publishing
       """
       {
         "name":"Channel 3","media_type":"media",
-        "can_send_takes_packages": true,
+        "can_send_takes_packages": true,  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
         "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
@@ -179,7 +179,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -210,7 +210,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -253,7 +253,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -310,7 +310,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -339,7 +339,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -369,7 +369,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -407,7 +407,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -450,7 +450,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -493,7 +493,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -533,7 +533,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -623,7 +623,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -781,7 +781,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -872,7 +872,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -992,7 +992,7 @@ Feature: Content Publishing
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -1005,4 +1005,40 @@ Feature: Content Publishing
       And we get existing resource
       """
       {"_current_version": 2, "source": "Superdesk Sports", "state": "published", "task":{"desk": "#desks._id#"}}
+      """
+
+    @auth
+    Scenario: Publish can't publish the same headline to SMS twice
+      Given the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{"guid": "122", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"},
+        {"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10},
+        "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "AAP SMS", "delivery_type":"ODBC","config":{}}]
+      }
+      """
+
+      And we publish "122" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "123" with "publish" type and "published" state
+      Then we get response code 400
+      """
+      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
       """

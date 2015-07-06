@@ -27,7 +27,8 @@
         publish_schedule: null,
         marked_for_not_publication: false,
         pubstatus: null,
-        more_coming: false
+        more_coming: false,
+        restrictions: ''
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -892,9 +893,16 @@
                  * Close an item - unlock
                  */
                 $scope.close = function() {
+                    var referrerUrl;
                     _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
-                        $location.url($scope.referrerUrl);
+                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function () {
+                        if (sessionStorage.getItem('previewUrl')) {
+                            referrerUrl = sessionStorage.getItem('previewUrl');
+                            sessionStorage.removeItem('previewUrl');
+                        } else {
+                            referrerUrl = $scope.referrerUrl;
+                        }
+                        $location.url(referrerUrl);
                     });
                 };
 

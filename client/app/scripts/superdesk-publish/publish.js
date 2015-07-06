@@ -299,8 +299,8 @@
         $scope.reload();
     }
 
-    SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal'];
-    function SubscribersDirective(gettext, notify, api, adminPublishSettingsService, modal) {
+    SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal', 'metadata'];
+    function SubscribersDirective(gettext, notify, api, adminPublishSettingsService, modal, metadata) {
         return {
             templateUrl: 'scripts/superdesk-publish/views/subscribers.html',
             link: function ($scope) {
@@ -309,6 +309,18 @@
                 $scope.subscribers = null;
                 $scope.newDestination = null;
                 $scope.publishFilters = null;
+                $scope.geoRestrictions = null;
+                $scope.subTypes = null;
+
+                if (angular.isDefined(metadata.values.geographical_restrictions)) {
+                    $scope.geoRestrictions = metadata.values.geographical_restrictions;
+                    $scope.subTypes = metadata.values.subscriber_types;
+                } else {
+                    metadata.fetchMetadataValues().then(function() {
+                        $scope.geoRestrictions = metadata.values.geographical_restrictions;
+                        $scope.subTypes = metadata.values.subscriber_types;
+                    });
+                }
 
                 function fetchSubscribers() {
                     adminPublishSettingsService.fetchSubscribers().then(

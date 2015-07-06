@@ -30,6 +30,7 @@ class ODBCTests(TestCase):
                                     },
                     "formatted_item": {
                         "ident": "0",
+                        "selector_codes": '3**',
                         "wordcount": 313,
                         "texttab": "x",
                         "originator": "AAP",

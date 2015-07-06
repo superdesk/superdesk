@@ -659,6 +659,8 @@ def step_impl_then_get_list(context, total_count):
         assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
+    if context.text:
+        test_json(context)
 
 
 @then('we get no "{field}"')
@@ -1389,6 +1391,15 @@ def when_we_get_invisible_stages_for_user(context, no_of_stages):
 def then_field_is_populated(context, field_name):
     resp = parse_json_response(context.response)
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
+
+
+@when('we delete publish filter "{name}"')
+def step_delete_publish_filter(context, name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        filter = get_resource_service('publish_filters').find_one(req=None, name=name)
+        url = '/publish_filters/{}'.format(filter['_id'])
+        headers = if_match(context, filter.get('_etag'))
+        context.response = context.client.delete(get_prefixed_url(context.app, url), headers=headers)
 
 
 @when('we publish "{item_id}" with "{pub_type}" type and "{state}" state')

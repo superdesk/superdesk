@@ -414,11 +414,13 @@ define([
                     if (currentRoute.$$route.originalPath === '/') {
                         this.setReferrerUrl('/workspace');
                         localStorage.setItem('referrerUrl', '/workspace');
+                        sessionStorage.removeItem('previewUrl');
                     } else {
                         if (currentRoute.$$route.authoring && (!previousRoute.$$route.authoring ||
                             previousRoute.$$route._id === 'packaging')) {
                             this.setReferrerUrl(prepareUrl(previousRoute));
                             localStorage.setItem('referrerUrl', this.getReferrerUrl());
+                            sessionStorage.removeItem('previewUrl');
                         }
                     }
                 }

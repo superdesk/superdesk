@@ -32,3 +32,53 @@ Feature: Publish Filter
         ]
     }
     """
+
+  @auth
+  @vocabulary
+  Scenario: Add a new publish filter with the same name fails
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filters"
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
+    """
+    Then we get latest
+    When we post to "/publish_filters"
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"], "pf": ["#publish_filters._id#"]}}], "name": "soccer"}]
+    """
+    Then we get error 400
+    """
+    {"_status": "ERR", "_message": "Publish filter soccer already exists"}
+    """
+
+  @auth
+  @vocabulary
+  Scenario: Delete a referenced publish filter fails
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filters"
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
+    """
+    Then we get latest
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"], "pf": ["#publish_filters._id#"]}}], "name": "tennis"}]
+    """
+    When we delete publish filter "soccer"
+    Then we get error 400
+    When we delete publish filter "tennis"
+    Then we get error 204

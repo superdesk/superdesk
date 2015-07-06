@@ -80,6 +80,18 @@ class FilterConditionService(BaseService):
         self._check_equals([doc])
         self._check_parameters([doc])
 
+    def delete(self, lookup):
+        referenced_filters = self._get_referenced_filter_conditions(lookup.get('_id'))
+        if referenced_filters.count() > 0:
+            references = ','.join([pf['name'] for pf in referenced_filters])
+            raise SuperdeskApiError.badRequestError('Filter condition has been referenced in pf:{}'.format(references))
+        return super().delete(lookup)
+
+    def _get_referenced_filter_conditions(self, id):
+        lookup = {'publish_filter.expression.fc': [id]}
+        publish_filters = get_resource_service('publish_filters').get(req=None, lookup=lookup)
+        return publish_filters
+
     def _check_parameters(self, docs):
         parameters = get_resource_service('filter_condition_parameters').get(req=None, lookup=None)
         for doc in docs:
@@ -114,7 +126,7 @@ class FilterConditionService(BaseService):
     def get_mongo_query(self, doc):
         field = self._get_field(doc['field'])
         operator = self._get_mongo_operator(doc['operator'])
-        value = self._get_mongo_value(doc['operator'], doc['value'])
+        value = self._get_mongo_value(doc['operator'], doc['value'], doc['field'])
         return {field: {operator: value}}
 
     def _get_mongo_operator(self, operator):
@@ -125,7 +137,19 @@ class FilterConditionService(BaseService):
         else:
             return '${}'.format(operator)
 
-    def _get_mongo_value(self, operator, value):
+    def _get_value(self, value, field):
+        t = self._get_type(field)
+        if value.find(',') > 0:
+            return [t(x) for x in value.strip().split(',')]
+        return [t(value)]
+
+    def _get_type(self, field):
+        if field == 'urgency':
+            return int
+        else:
+            return str
+
+    def _get_mongo_value(self, operator, value, field):
         if operator == 'startswith':
             return re.compile('^{}'.format(value), re.IGNORECASE)
         elif operator == 'like' or operator == 'notlike':
@@ -133,17 +157,11 @@ class FilterConditionService(BaseService):
         elif operator == 'endswith':
             return re.compile('.*{}'.format(value), re.IGNORECASE)
         else:
-            if isinstance(value, str) and value.find(',') > 0:
-                if value.split(',')[0].strip().isdigit():
-                    return [int(x) for x in value.split(',') if x.strip().isdigit()]
-                else:
-                    return value.split(',')
-            else:
-                return [value]
+            return self._get_value(value, field)
 
     def get_elastic_query(self, doc):
         operator = self._get_elastic_operator(doc['operator'])
-        value = self._get_elastic_value(doc, doc['operator'], doc['value'])
+        value = self._get_elastic_value(doc, doc['operator'], doc['value'], doc['field'])
         field = self._get_field(doc['field'])
         return {operator: {field: value}}
 
@@ -153,23 +171,17 @@ class FilterConditionService(BaseService):
         else:
             return 'query_string'
 
-    def _get_elastic_value(self, doc, operator, value):
+    def _get_elastic_value(self, doc, operator, value, field):
         if operator in ['in', 'nin']:
-            if isinstance(value, str) and value.find(',') > 0:
-                if value.split(',')[0].strip().isdigit():
-                    return [int(x) for x in value.split(',') if x.strip().isdigit()]
-                else:
-                    value.split(',')
-            else:
-                return [value]
+            value = self._get_value(value, field)
         elif operator in ['like', 'notlike']:
-            value = '{}:*{}*'.format(doc['field'], value)
+            value = '{}:*{}*'.format(field, value)
             doc['field'] = 'query'
         elif operator == 'startswith':
-            value = '{}:{}*'.format(doc['field'], value)
+            value = '{}:{}*'.format(field, value)
             doc['field'] = 'query'
         elif operator == 'endswith':
-            value = '{}:*{}'.format(doc['field'], value)
+            value = '{}:*{}'.format(field, value)
             doc['field'] = 'query'
         return value
 
@@ -195,7 +207,7 @@ class FilterConditionService(BaseService):
                 return False
 
         article_value = self._get_field_value(field, article)
-        filter_value = self._get_mongo_value(operator, filter_value)
+        filter_value = self._get_mongo_value(operator, filter_value, field)
         return self._run_filter(article_value, operator, filter_value)
 
     def _get_field_value(self, field, article):

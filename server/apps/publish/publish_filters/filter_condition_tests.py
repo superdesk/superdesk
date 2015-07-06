@@ -14,6 +14,7 @@ from eve.utils import ParsedRequest
 import json
 import superdesk
 import re
+from settings import URL_PREFIX
 
 
 class FilterConditionTests(TestCase):
@@ -21,7 +22,7 @@ class FilterConditionTests(TestCase):
     def setUp(self):
         super().setUp()
         self.req = ParsedRequest()
-        with self.app.app_context():
+        with self.app.test_request_context(URL_PREFIX):
             self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
                              {'_id': '2', 'headline': 'prtorque', 'state': 'fetched'},
                              {'_id': '3', 'urgency': 3, 'state': 'fetched'},
@@ -37,6 +38,23 @@ class FilterConditionTests(TestCase):
                                                        'parent': '05005000'}], 'state': 'fetched'}]
 
             self.app.data.insert('archive', self.articles)
+
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 1,
+                                   'field': 'headline',
+                                   'operator': 'like',
+                                   'value': 'tor',
+                                   'name': 'test-1'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 2,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2',
+                                   'name': 'test-2'}])
+            self.app.data.insert('publish_filters',
+                                 [{"_id": 1,
+                                   "publish_filter": [{"expression": {"fc": [1]}}],
+                                   "name": "soccer-only"}])
 
     def _setup_elastic_args(self, elastic_translation, search_type='filter'):
         if search_type == 'keyword':
@@ -246,12 +264,12 @@ class FilterConditionTests(TestCase):
 
     def test_get_mongo_value(self):
         f = FilterConditionService()
-        self.assertEqual(f._get_mongo_value('in', '1,2'), [1, 2])
-        self.assertEqual(f._get_mongo_value('nin', '3'), ['3'])
-        self.assertEqual(f._get_mongo_value('like', 'test'), re.compile('.*test.*', re.IGNORECASE))
-        self.assertEqual(f._get_mongo_value('notlike', 'test'), re.compile('.*test.*', re.IGNORECASE))
-        self.assertEqual(f._get_mongo_value('startswith', 'test'), re.compile('^test', re.IGNORECASE))
-        self.assertEqual(f._get_mongo_value('endswith', 'test'), re.compile('.*test', re.IGNORECASE))
+        self.assertEqual(f._get_mongo_value('in', '1,2', 'urgency'), [1, 2])
+        self.assertEqual(f._get_mongo_value('nin', '3', 'priority'), ['3'])
+        self.assertEqual(f._get_mongo_value('like', 'test', 'headline'), re.compile('.*test.*', re.IGNORECASE))
+        self.assertEqual(f._get_mongo_value('notlike', 'test', 'headline'), re.compile('.*test.*', re.IGNORECASE))
+        self.assertEqual(f._get_mongo_value('startswith', 'test', 'headline'), re.compile('^test', re.IGNORECASE))
+        self.assertEqual(f._get_mongo_value('endswith', 'test', 'headline'), re.compile('.*test', re.IGNORECASE))
 
     def test_does_match_with_like_full(self):
         f = FilterConditionService()
@@ -370,3 +388,9 @@ class FilterConditionTests(TestCase):
         new_doc = {'name': 'A', 'field': 'urgency', 'operator': 'nin', 'value': '4,2,3'}
         doc = {'_id': 1, 'name': 'B', 'field': 'urgency', 'operator': 'nin', 'value': '2,3'}
         self.assertFalse(f._are_equal(new_doc, doc))
+
+    def test_if_fc_is_used(self):
+        f = FilterConditionService()
+        with self.app.app_context():
+            self.assertTrue(f._get_referenced_filter_conditions(1).count() == 1)
+            self.assertTrue(f._get_referenced_filter_conditions(2).count() == 0)

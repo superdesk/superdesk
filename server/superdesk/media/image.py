@@ -37,12 +37,19 @@ def get_meta(file_stream):
     for k, v in exif.items():
         try:
             json.dumps(v)
-            value = v.decode('UTF-8') if isinstance(v, bytes) else v
-            exif_meta[ExifTags.TAGS[k].strip()] = value
+            key = ExifTags.TAGS[k].strip()
+
+            if key == 'GPSInfo':
+                # lookup GPSInfo description key names
+                value = {ExifTags.GPSTAGS[vk].strip(): vv for vk, vv in v.items()}
+                exif_meta[key] = value
+            else:
+                value = v.decode('UTF-8') if isinstance(v, bytes) else v
+                exif_meta[key] = value
         except:
             # ignore fields we can't store in db
             pass
     # Remove this as it's too long to send in headers
-    if exif_meta.get('UserComment'):
-        del exif_meta['UserComment']
+    exif_meta.pop('UserComment', None)
+
     return exif_meta

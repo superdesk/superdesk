@@ -59,6 +59,9 @@ define([
                 open: {
                     title: 'Open',
                     method: function(item) {
+                        if (!sessionStorage.getItem('previewUrl')) {
+                            sessionStorage.setItem('previewUrl', $location.url());
+                        }
                         $location.path('/authoring/' + item._id + '/view');
                     },
                     'class': 'open',

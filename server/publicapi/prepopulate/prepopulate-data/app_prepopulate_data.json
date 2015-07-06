@@ -4,7 +4,7 @@
 		"data": {
 			"_id": "tag:example.com,0000:newsml_BRE9A605",
 			"type": "picture",
-			"versioncreated": "2014-03-16T08:12:00Z"
+			"versioncreated": "2014-03-16T06:49:47+0000"
 		}
 	},
 	{
@@ -13,7 +13,7 @@
 			"_id": "tag:example.com,0001:newsml_BRE9A606",
 			"type": "composite",
 			"headline": "foo bar",
-			"versioncreated": "2015-02-10T16:20:08Z"
+			"versioncreated": "2015-02-10T06:49:47+0000"
 		}
 	}
 ]

@@ -10,7 +10,6 @@
 
 from superdesk.publish import register_transmitter
 from superdesk.publish.publish_service import PublishService
-from superdesk.utc import utc
 from superdesk.errors import PublishODBCError
 import superdesk
 
@@ -44,9 +43,6 @@ class ODBCPublishService(PublishService):
             with pyodbc.connect(config['connection_string']) as conn:
                 item = queue_item['formatted_item']
 
-                item['publish_date'] = queue_item['_created'].replace(tzinfo=utc).astimezone(tz=None).strftime(
-                    '%Y-%m-%d %H:%M:%S.%f')[:-3]
-
                 ret = self._CallStoredProc(conn, procName=config['stored_procedure'], paramDict=item)
                 conn.commit()
             return ret
@@ -63,8 +59,11 @@ class ODBCPublishService(PublishService):
              DECLARE @ret int
              EXEC @ret = %s %s
              SELECT @ret""" % (procName, params)
-        return int(conn.execute(sql).fetchone()[0])
-
+        resp = conn.execute(sql).fetchone()
+        if resp is not None:
+            return resp[0]
+        else:
+            return 1
 
 if pyodbc_available:
     register_transmitter('ODBC', ODBCPublishService(), errors)

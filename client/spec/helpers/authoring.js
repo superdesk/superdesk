@@ -130,4 +130,11 @@ function Authoring() {
     this.writeText = function (text) {
         element(by.model('item.body_html')).all(by.className('editor-type-html')).sendKeys(text);
     };
+    this.writeTextToHeadline = function (text) {
+        element(by.model('item.headline')).all(by.className('editor-type-html')).sendKeys(text);
+    };
+    this.writeTextToAbstract = function (text) {
+        element(by.model('item.abstract')).all(by.className('editor-type-html')).sendKeys(text);
+    };
+
 }

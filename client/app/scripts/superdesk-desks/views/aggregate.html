@@ -20,11 +20,11 @@
             </div>
         </div>
 
-        <div class="content-list">
+        <div class="content-list" ng-if="!agg.state.solo">
             <div class="desk" ng-repeat="group in agg.cards">
                 <div class="stage" ng-show="total">
                     <div sd-stage-header></div>
-                    <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getState(group._id)"
+                    <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getExpandedState(group._id)"
                         sd-stage-items
                         data-stage="group"
                         data-total="total"
@@ -36,6 +36,26 @@
                         data-filter="agg.query">
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="content-list" ng-if="agg.state.solo">
+            <div class="desk" ng-init="group = agg.state.solo">
+                <div class="stage" ng-show="total">
+                    <div sd-stage-header></div>
+                    <div class="stage-content" ng-show="agg.getExpandedState(group._id)"
+                        sd-stage-items
+                        data-stage="group"
+                        data-total="total"
+                        data-allowed="true"
+                        data-show-empty="false"
+                        data-max-items="100"
+                        data-action="agg.preview(item)"
+                        data-selected="agg.selected"
+                        data-filter="agg.query">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
