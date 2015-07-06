@@ -47,13 +47,13 @@ function EditorService() {
         return vm.fieldStack[key].stack[0];
     };
 
-    this.resetStack = function() {
-        vm.fieldStack = {};
+    this.resetStack = function(key) {
+        vm.fieldStack[key] = {};
     };
 
     this.getUndoViewValue = function(key) {
         var _undoValue;
-        if (vm.fieldStack[key] !== null) {
+        if (vm.fieldStack[key] != null) {
             if (vm.fieldStack[key].stack.length === 1) {
                 _undoValue = vm.getInitialValue(key);
             } else {
@@ -72,9 +72,11 @@ function EditorService() {
 
     this.getRedoViewValue = function(key) {
         var _redoValue;
-        if (vm.fieldStack[key].stack.length !== 0 && vm.fieldStack[key].stack[vm.fieldStack[key].index + 1] != null) {
-            _redoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index + 1];
-            vm.fieldStack[key].index += 1;
+        if (vm.fieldStack[key] != null) {
+            if (vm.fieldStack[key].stack.length !== 0 && vm.fieldStack[key].stack[vm.fieldStack[key].index + 1] != null) {
+                _redoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index + 1];
+                vm.fieldStack[key].index += 1;
+            }
         }
         return _redoValue;
     };
@@ -401,7 +403,7 @@ angular.module('superdesk.editor', [])
                     updateTimeout,
                     renderTimeout;
 
-                editor.resetStack();
+                editor.resetStack(elem[0].id);
 
                 ngModel.$viewChangeListeners.push(changeListener);
                 scope.viewvalue = ngModel.$viewValue;
@@ -424,7 +426,7 @@ angular.module('superdesk.editor', [])
 
                     editorElem.on('input blur', function(event) {
                         $timeout.cancel(updateTimeout);
-                        updateTimeout = $timeout(function() { updateModel(event); }, 300, false);
+                        updateTimeout = $timeout(function() { updateModel(event); }, 500, false);
                     });
                     editorElem.on('keyup', function(event) {
                         if (event.ctrlKey) {
@@ -531,16 +533,18 @@ angular.module('superdesk.editor', [])
                     var modelTextValue = div.textContent || div.innerText || '';
                     // Compare model changes and apply
                     if (event.type === 'input' && !_.isEqual(event.target.innerText.trim(), '')) {
-                        if (!_.isEqual(event.target.innerHTML, editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
-                            if (!_.isEqual(event.target.innerText.trim(), modelTextValue.trim())) {
-                                // Invalidate items higher on the stack, if we are here after having undo called.
-                                editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
-                                    editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
-                                editor.fieldStack[key].stack.push(html);
-                                editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
-                                scope.$applyAsync(function() {
-                                    ngModel.$setViewValue(html);
-                                });
+                        if (editor.fieldStack[key] != null) {
+                            if (!_.isEqual(event.target.innerHTML, editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
+                                if (!_.isEqual(event.target.innerText.trim(), modelTextValue.trim())) {
+                                    // Invalidate items higher on the stack, if we are here after having undo called.
+                                    editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
+                                        editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
+                                    editor.fieldStack[key].stack.push(html);
+                                    editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
+                                    scope.$applyAsync(function() {
+                                        ngModel.$setViewValue(html);
+                                    });
+                                }
                             }
                         }
                     }

@@ -22,6 +22,14 @@ describe('authoring', function() {
 
         var focused = browser.driver.switchTo().activeElement().getText();
         expect(focused).toEqual('Two');
+        // headline editor
+        authoring.writeTextToHeadline('headline');
+
+        browser.actions().sendKeys(Key.chord(Key.CONTROL, 'z')).perform();
+
+        focused = browser.driver.switchTo().activeElement().getText();
+        expect(focused).toEqual('item1');
+
     });
     it('Can Redo content', function () {
         workspace.open();
@@ -39,5 +47,19 @@ describe('authoring', function() {
 
         focused = browser.driver.switchTo().activeElement().getText();
         expect(focused).toEqual('UndoRedo');
+        // abstract editor
+        authoring.writeTextToAbstract('Redo');
+        browser.sleep(200);
+
+        browser.actions().sendKeys(Key.chord(Key.CONTROL, 'z')).perform();
+
+        focused = browser.driver.switchTo().activeElement().getText();
+        expect(focused).toEqual('R');
+
+        browser.actions().sendKeys(Key.chord(Key.CONTROL, 'y')).perform();
+
+        focused = browser.driver.switchTo().activeElement().getText();
+        expect(focused).toEqual('Redo');
+
     });
 });
