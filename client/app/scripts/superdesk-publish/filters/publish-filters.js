@@ -192,6 +192,9 @@ function PublishFiltersController($scope, filters, notify, modal) {
         initPublishFilter();
         $scope.previewPublishFilter();
     };
+    $scope.testfilter = function(ft) {
+        $scope.filter_test = true;
+    };
 
     $scope.cancel = function() {
         $scope.previewPublishFilter();

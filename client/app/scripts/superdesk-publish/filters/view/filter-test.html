@@ -1,0 +1,91 @@
+<div class="subnav" ng-class="{active: multiSelectCount > 0}">
+    <h3 class="page-nav-title" ng-hide="multiSelectCount > 0" translate>Publish Queue</h3>
+
+    <div class="multi-action-bar">
+        <button class="btn" ng-click="cancelSelection()" ng-show="multiSelectCount > 0">{{ :: 'Cancel' | translate}}</button>
+        <span id="multi-select-count"
+              ng-show="multiSelectCount > 0"
+              translate
+              translate-n="multiSelectCount"
+              translate-plural="{{ multiSelectCount }} Items selected">{{ multiSelectCount}} Item selected
+        </span>
+        <button class="btn btn-info pull-right" ng-click="scheduleToSend()" ng-show="multiSelectCount > 0 && showResendBtn">{{ :: 'Resend' | translate}}</button>
+    </div>
+</div>
+
+<section class="main-section publish-queue">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
+        <div class="list-pane">
+            <header>
+                <div class="sortbar pull-left">
+                    <span class="lab pull-left" translate>Subscriber:</span>
+                    <div class="dropdown pull-left" dropdown>
+                        <button class="dropdown-toggle" dropdown-toggle> {{ selectedFilterSubscriber.name }} <b class="caret"></b>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="" ng-click="filterSchedule(null, 'subscriber')">{{ :: 'None' | translate}}</a>
+                            </li>
+                            <li ng-repeat="subscriber in subscribers track by subscriber._id">
+                                <a href="" ng-click="filterSchedule(subscriber, 'subscriber')">{{ subscriber.name }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="refresh-box">
+                    <button ng-click="reload()" class="pull-right" tooltip="{{:: 'Refresh' | translate}}" tooltip-placement="left"><i class="icon-refresh"></i></button>
+                    <span class="pull-right" translate>Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</span>
+                </div>
+            </header>
+            <div class="content">
+                <div sd-shadow>
+                    <table class="table styled-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th translate>Sequence No</th>
+                                <th translate>Unique Name</th>
+                                <th translate>Headline</th>
+                                <th class="align-right" translate>Content Type</th>
+                                <th class="align-right" translate>Publishing Action</th>
+                                <th class="align-right" translate>Subscriber</th>
+                                <th class="align-right" translate>Destination</th>
+                                <th class="align-right" translate>Queued at</th>
+                                <th class="align-right" translate>Scheduled at</th>
+                                <th class="align-right" translate>Transmitted at</th>
+                                <th class="align-right" translate>Status</th>
+                                <th class="align-right" translate>Message</th>
+                                <th class="align-right" translate>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="queue_item in publish_queue track by queue_item._id" class="{{queue_item.state| queueStatus}}" ng-click="preview(queue_item);">
+                                <td>
+                                    <span sd-check ng-show="queue_item.state !== 'canceled'" ng-model="queue_item.selected" ng-change="selectQueuedItem(queue_item)" ng-checked="queue_item.selected"></span>
+                                </td>
+                                <td>{{ queue_item.published_seq_num}}</td>
+                                <td>{{ queue_item.unique_name}}</td>
+                                <td>{{ queue_item.headline}}</td>
+                                <td class="align-right">{{ queue_item.content_type}}</td>
+                                <td class="align-right">{{ queue_item.publishing_action}}</td>
+                                <td class="align-right">{{subscriberLookup[queue_item.subscriber_id].name}}</td>
+                                <td class="align-right">{{queue_item.destination.name}}</td>
+                                <td class="align-right">{{queue_item._created| dateTimeStringWithSecs}}</td>
+                                <td class="align-right">{{queue_item.publish_schedule| dateTimeStringWithSecs}}</td>
+                                <td class="align-right">{{queue_item.completed_at| dateTimeStringWithSecs}}</td>
+                                <td class="align-right">{{queue_item.state}}</td>
+                                <td class="align-right">{{queue_item.error_message}}</td>
+                                <td class="align-right">
+                                    <button class="btn btn-small" ng-if="queue_item.state === 'success' || queue_item.state === 'error'" ng-click="scheduleToSend(queue_item)">{{ :: 'Resend' | translate}}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+        <div sd-item-preview data-item="selected.preview" data-close="preview(null)"></div>
+    </div>
+</section>
+

@@ -14,6 +14,7 @@
 	                <h6>{{:: filter.name }}</h6>
                     <i>{{:: filter.is_global?'[Global]':'' }}</i>
                     <div class="actions">
+                        <button ng-click="testfilter(filter)" title="{{:: 'Test Publish Filter' | translate }}"><i class="svg-icon-ok inverse"></i></button>
                         <button ng-click="edit(filter)" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
                         <button ng-click="remove(filter)" title="{{:: 'Remove Publish Filter' | translate }}"><i class="icon-trash"></i></button>
                     </div>
@@ -108,5 +109,6 @@
         <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
     </div>
 </div>
-</div>
+
+<div ng-if="filter_test" ng-include="'scripts/superdesk-publish/filters/view/filter-test.html'"></div>
 
