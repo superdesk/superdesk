@@ -187,4 +187,20 @@ describe('multi content view', function() {
         expect(authoring.publish.isDisplayed()).toBe(true);
     });
 
+    it('on close returns to initial item', function() {
+        var initialUrl = browser.getCurrentUrl();
+        multicontent.showMulticontentSettings();
+        multicontent.toggleDesk(0);
+        multicontent.toggleStage(0, 2);
+        multicontent.nextStages();
+        multicontent.toggleSearch(0);
+        multicontent.nextSearches();
+        multicontent.nextReorder();
+        multicontent.saveSettings();
+
+        multicontent.openAction(0, 0);
+        authoring.close();
+        expect(browser.getCurrentUrl()).toMatch(initialUrl);
+    });
+
 });
