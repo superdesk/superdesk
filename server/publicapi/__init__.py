@@ -24,7 +24,6 @@ import logging
 import os
 
 from publicapi import settings
-from publicapi.errors import BadParameterValueError, UnexpectedParameterError
 import superdesk
 from superdesk.datalayer import SuperdeskDataLayer
 from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage

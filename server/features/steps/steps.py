@@ -662,6 +662,7 @@ def step_impl_then_get_list(context, total_count):
     if context.text:
         test_json(context)
 
+
 @then('we get no "{field}"')
 def step_impl_then_get_nofield(context, field):
     assert_200(context.response)

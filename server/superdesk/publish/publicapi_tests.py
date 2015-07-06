@@ -14,7 +14,6 @@ from apps.archive import init_app
 from superdesk import get_resource_service
 from superdesk.publish.publicapi import PublicAPIPublishService
 from superdesk.tests import TestCase
-from eve.utils import config
 from datetime import datetime
 
 

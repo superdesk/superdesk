@@ -98,3 +98,45 @@ Feature: Public content
         """
         {"_issues": "Start date must not be greater than end date", "_status": "ERR", "_message": "Bad parameter value."}
         """
+
+    Scenario: Error on missing rendition
+        Given "items"
+        """
+        [
+            {
+                "_id": "tag:example.com,0000:newsml_BRE9A605",
+                "headline": "Breaking news in Timbuktu 123",
+                "type": "picture",
+                "versioncreated": "2014-03-16T06:49:47+0000",
+                "renditions": {
+                    "original": {
+                        "width": "1496",
+                        "height": "805",
+                        "media": "6590c3cd46e6da7ea5e70b90"
+                    }
+                }
+            }
+        ]
+        """
+        When we get "/items/tag%3Aexample.com%2C0000%3Anewsml_BRE9A605"
+        Then we get existing resource
+        """
+        {
+            "headline": "Breaking news in Timbuktu 123",
+            "type": "picture",
+            "versioncreated": "2014-03-16T06:49:47+0000",
+            "renditions": {
+                "original": {
+                    "width": "1496",
+                    "height": "805",
+                    "media": "6590c3cd46e6da7ea5e70b90",
+                    "href": "http://localhost:5050/assets/6590c3cd46e6da7ea5e70b90/raw"
+                }
+            }
+        }
+        """
+        When we get "/assets/6590c3cd46e6da7ea5e70b90/raw"
+        Then we get error 10003
+        """
+        {"_issues": "File not found on media storage.", "_status": "ERR", "_message": "File not found."}
+        """
