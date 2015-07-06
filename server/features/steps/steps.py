@@ -659,6 +659,8 @@ def step_impl_then_get_list(context, total_count):
         assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
+    if context.text:
+        test_json(context)
 
 
 @then('we get no "{field}"')

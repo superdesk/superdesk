@@ -21,13 +21,17 @@ class NINJSFormatter(Formatter):
     """
     direct_copy_properties = ['versioncreated', 'usageterms', 'subject', 'language', 'headline',
                               'urgency', 'pubstatus', 'mimetype', 'renditions', 'place', 'located',
-                              '_created', '_updated']
+                              '_created', '_updated', 'body_text', 'body_html']
 
     def format(self, article, subscriber):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            ninjs = {'_id': article['_id'], 'version': str(article['version']), 'type': self._get_type(article)}
+            ninjs = {
+                '_id': article['_id'],
+                'version': str(article['_current_version']),
+                'type': self._get_type(article)
+            }
             try:
                 ninjs['byline'] = self._get_byline(article)
             except:
@@ -35,8 +39,12 @@ class NINJSFormatter(Formatter):
             for copy_property in self.direct_copy_properties:
                 if copy_property in article:
                     ninjs[copy_property] = article[copy_property]
+
+            if 'description' in article:
+                ninjs['description_text'] = article['description']
+
             if article['type'] == 'composite':
-                article['associations'] = self._get_associations(article)
+                ninjs['associations'] = self._get_associations(article)
 
             return pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId)
         except Exception as ex:
