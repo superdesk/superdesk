@@ -43,13 +43,6 @@ def _set_error_handlers(app):
 
     :param app: an instance of `Eve <http://python-eve.org/>`_ application
     """
-    @app.errorhandler(UnexpectedParameterError)
-    def unknown_parameter_handler(error):
-        return str(error), 422
-
-    @app.errorhandler(BadParameterValueError)
-    def unknown_parameter_handler(error):
-        return str(error), 422
 
     # TODO: contains the same bug as the client_error_handler of the main
     # superdesk app, fix it when the latter gets resolved (or, perhaps,

@@ -93,3 +93,8 @@ Feature: Public content
         """
         When we get "/items"
         Then we get list with 0 items
+        When we get "/items?start_date=2015-02-01&end_date=2014-03-5"
+        Then we get error 10002
+        """
+        {"_issues": "Start date must not be greater than end date", "_status": "ERR", "_message": "Bad parameter value."}
+        """
