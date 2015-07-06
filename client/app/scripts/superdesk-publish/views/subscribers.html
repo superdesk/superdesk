@@ -45,11 +45,30 @@
                         </div>
 
                         <div class="field">
+                            <label for="subscriber-email" translate>E-Mail to broadcast Kill Events</label>
+                            <input type="email" id="subscriber-email" ng-model="subscriber.email" required>
+                        </div>
+
+                        <div class="field">
                             <label for="media-type" translate>Media Type</label>
                             <select id="media-type" class="input" ng-model="subscriber.media_type">
                                 <option value="media" translate>Media</option>
                                 <option value="nonmedia" translate>Non-media</option>
                                 <option value="" translate>Both</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="geoRestrictions" translate>Geographical Restrictions</label>
+                            <select id="geoRestrictions" ng-model="subscriber.geo_restrictions" ng-options="g.value as g.name for g in geoRestrictions">
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="subType" translate>Type</label>
+                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes">
+                                <option value=""></option>
                             </select>
                         </div>
 

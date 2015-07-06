@@ -339,6 +339,10 @@ def item_schema(extra=None):
         'marked_for_not_publication': {
             'type': 'boolean',
             'default': False
+        },
+        'restrictions': {
+            'type': 'string',
+            'nullable': True
         }
     }
     schema.update(metadata_schema)

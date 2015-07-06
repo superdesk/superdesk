@@ -1,0 +1,20 @@
+{{headline}} **KILL/TAKEDOWN NOTICE**  **KILL/TAKEDOWN NOTICE**
+
+    EDS: Please KILL story slugged {{slugline}}, headlined "{{headline}}" exSydney transmitted at {{trasmitted_at}}.
+
+    Pursuant to your Information Supply Agreement with {{OrganizationName}} {{OrganizationNameAbbreviation}},
+    {{OrganizationNameAbbreviation}} requests that you remove the above story and associated {{OrganizationNameAbbreviation}}
+    media such as images, video and factboxes from any media you publish, and access to the story be immediately disabled including but not limited to those
+    websites in either your direct or indirect possession, custody, or control.
+
+    {{OrganizationNameAbbreviation}} has become aware that the story may potentially expose {{OrganizationNameAbbreviation}} and those who publish the story to the risk of:
+    * a contempt prosecution arising out of breach of an order of the Supreme Court.
+
+    This kill/Takedown is mandatory, and no further use can be made of the  story. A replacement story will be issued shortly be issued.
+
+    {{OrganizationNameAbbreviation}} will not be liable for any losses, costs and expenses, damages and other
+    costs (including without limitation reasonable legal costs), indirect, consequential special or punitive loss or damage, arising out of the story and
+    this Notice suffered or incurred by you after receipt of this Notice.
+
+Regards,
+The {{app_name}} Team

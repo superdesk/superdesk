@@ -148,5 +148,24 @@
                 "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
             }
         ]
+    },
+    {
+        "_id": "geographical_restrictions",
+        "items": [
+            {"is_active": true, "name": "New South Wales", "value": "New South Wales"},
+            {"is_active": true, "name": "Victoria", "value": "Victoria"},
+            {"is_active": true, "name": "Queensland", "value": "Queensland"},
+            {"is_active": true, "name": "Tasmania", "value": "Tasmania"},
+            {"is_active": true, "name": "South Australia", "value": "South Australia"},
+            {"is_active": true, "name": "Western Australia", "value": "Western Australia"},
+            {"is_active": true, "name": "Northern Territory", "value": "Northern Territory"},
+            {"is_active": true, "name": "New Zealand", "value": "New Zealand"}
+        ]
+    },
+    {
+        "_id": "subscriber_types",
+        "items": [
+            {"is_active": true, "name": "Internet", "value": "Internet"}
+        ]
     }
 ]

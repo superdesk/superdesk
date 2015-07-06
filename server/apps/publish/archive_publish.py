@@ -12,11 +12,13 @@ from copy import copy
 import logging
 
 from eve.versioning import resolve_document_version
-from eve.utils import config
+from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
+from apps.content import PUB_STATUS
 
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
+from superdesk.emails import send_article_killed_email
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
@@ -28,7 +30,7 @@ from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
-    set_sign_off, PUBLISH_STATES, SEQUENCE, GUID_FIELD
+    set_sign_off, SEQUENCE, GUID_FIELD
 from apps.packages import TakesPackageService
 
 logger = logging.getLogger(__name__)
@@ -74,7 +76,6 @@ class BasePublishService(BaseService):
         if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
 
-        # TODO: Does this hit any time??? If not whats the use of this???
         if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
             raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
 
@@ -95,12 +96,14 @@ class BasePublishService(BaseService):
         """
 
         try:
+            user = get_user()
             last_updated = updates.get(config.LAST_UPDATED, utcnow())
 
             if original['type'] == 'composite':
                 self._publish_package_items(original, last_updated)
 
             set_sign_off(updates, original)
+            queued_digital = False
 
             if original['type'] != 'composite':
                 # check if item is in a digital package
@@ -117,23 +120,20 @@ class BasePublishService(BaseService):
                     package.update(package_updates)
 
                     # send it to the digital channels
-                    queued_digital = self.publish(doc=package, updates=None, target_output_channels=DIGITAL)
+                    queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
 
                     self.update_published_collection(published_item_id=package[config.ID_FIELD])
-                else:
-                    queued_digital = False
 
                 # queue only text items
                 queued_wire = \
-                    self.publish(doc=original, updates=updates, target_output_channels=WIRE if package_id else None)
+                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package_id else None)
 
                 queued = queued_digital or queued_wire
                 if not queued:
                     raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
-            user = get_user()
             self._set_version_last_modified_and_state(original, updates, last_updated)
-            self._update_archive(original=original, updates=updates)
+            self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')), user=str(user.get('_id', '')))
         except SuperdeskApiError as e:
@@ -182,21 +182,24 @@ class BasePublishService(BaseService):
         self.set_state(original, updates)
         updates[config.LAST_UPDATED] = last_updated
 
-        resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)
+        if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
+            resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)
 
-    def _update_archive(self, original, updates, versioned_doc=None):
+    def _update_archive(self, original, updates, versioned_doc=None, should_insert_into_versions=True):
         """
         Updates the articles into archive collection and inserts the latest into archive_versions.
         Also clears autosaved versions if any.
-        :param versioned_doc: doc which can be inserted into archive_versions
+        :param: versioned_doc: doc which can be inserted into archive_versions
+        :param: should_insert_into_versions if True inserts the latest document into versions collection
         """
 
         self.backend.update(self.datasource, original[config.ID_FIELD], updates, original)
 
-        if versioned_doc is None:
-            insert_into_versions(id_=original[config.ID_FIELD])
-        else:
-            insert_into_versions(doc=versioned_doc)
+        if should_insert_into_versions:
+            if versioned_doc is None:
+                insert_into_versions(id_=original[config.ID_FIELD])
+            else:
+                insert_into_versions(doc=versioned_doc)
 
         get_component(ItemAutosave).clear(original[config.ID_FIELD])
 
@@ -263,15 +266,33 @@ class BasePublishService(BaseService):
 
         return package, package_updates
 
-    def publish(self, doc, updates, target_output_channels=None):
+    def publish(self, doc, updates, target_media_type=None):
         """
-        Queues the article, sets the final Source and sends notification if no formatter has found for any
-        of the formats configured in Subscriber.
+        1. Sets the Metadata Properties - source and pubstatus
+        2. Formats and queues the article to subscribers based on the state of the article:
+            a. If the state of the article is killed then:
+                i.  An email should be sent to all Subscribers irrespective of their status.
+                ii. The article should be formatted as per the type of the format and then queue article to the
+                    Subscribers who received the article previously.
+            b. If the state of the article is corrected then:
+                i.  The article should be formatted as per the type of the format and then queue article to the
+                    Subscribers who received the article previously.
+                ii. For all active subscribers, check if the article matches against the restrictions if available in
+                    the article, publish filters and global filters if configured for the subscriber. If matches then
+                    the article should be formatted as per the type of the format and then queue article to the
+                    subscribers.
+            c. If the state of the article is published then:
+                i. For all active subscribers, check if the article matches against the restrictions if available in
+                   the article, publish filters and global filters if configured for the subscriber. If matches then
+                   the article should be formatted as per the type of the format and then queue article.
+        3. Sends notification if no formatter has found for any of the formats configured in Subscriber.
         """
 
-        no_formatters, queued = \
-            self.queue_transmission(doc=doc, target_output_channels=target_output_channels)
+        queued = True
+        no_formatters = []
+        updated = doc.copy()
 
+        # Step 1
         if updates:
             desk = None
 
@@ -282,51 +303,94 @@ class BasePublishService(BaseService):
                 updates['source'] = desk['source'] if desk and desk.get('source', '') \
                     else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
-        user = get_user()
+            updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'killed' else PUB_STATUS.USABLE
+            updated.update(updates)
 
-        if no_formatters and len(no_formatters) > 0:
+        # Step 2(a)
+        if self.published_state == 'killed':
+            req = ParsedRequest()
+            req.sort = '[("completed_at", 1)]'
+            queued_items = get_resource_service('publish_queue').get(
+                req=req, lookup={'item_id': updated[config.ID_FIELD]})
+
+            if queued_items.count():
+                queued_items = list(queued_items)
+
+                # Step 2(a)(i)
+                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
+                recipients = [s['email'] for s in subscribers]
+                send_article_killed_email(doc, recipients, queued_items[0].get('completed_at'))
+
+                # Step 2(a)(ii)
+                no_formatters, queued = self.queue_transmission(updated, subscribers, None)
+        elif self.published_state == 'corrected':  # Step 2(b)
+            query = {'$and': [{'item_id': updated[config.ID_FIELD]}, {'publishing_action': 'published'}]}
+            queued_items = get_resource_service('publish_queue').get(req=None, lookup=query)
+
+            if queued_items.count():
+                # Step 2(b)(i)
+                queued_items = list(queued_items)
+                subscriber_ids = {queued_item['subscriber_id'] for queued_item in queued_items}
+
+                query = {'$and': [{config.ID_FIELD: {'$in': list(subscriber_ids)}}]}
+                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
+                no_formatters, queued = self.queue_transmission(updated, subscribers)
+
+                # Step 2(b)(ii)
+                active_subscribers = get_resource_service('subscribers').get(req=None, lookup={'is_active': True})
+                subscribers_yet_to_receive = [a for a in active_subscribers
+                                              if not any(a[config.ID_FIELD] == s[config.ID_FIELD] for s in subscribers)]
+
+                if len(subscribers_yet_to_receive) > 0:
+                    formatters_not_found, queued_new_subscribers = \
+                        self.queue_transmission(updated, subscribers_yet_to_receive, target_media_type)
+                    no_formatters.extend(formatters_not_found)
+        elif self.published_state == 'published':  # Step 2(c)
+            # Step 2(c)(i)
+            subscribers = list(get_resource_service('subscribers').get(req=None, lookup={'is_active': True}))
+            no_formatters, queued = self.queue_transmission(updated, subscribers, target_media_type)
+
+        # Step 3
+        user = get_user()
+        if len(no_formatters) > 0:
             push_notification('item:publish:wrong:format',
-                              item=str(doc['_id']), unique_name=doc['unique_name'],
+                              item=str(doc[config.ID_FIELD]), unique_name=doc['unique_name'],
                               desk=str(doc.get('task', {}).get('desk', '')),
-                              user=str(user.get('_id', '')),
+                              user=str(user.get(config.ID_FIELD, '')),
                               formats=no_formatters)
 
-        if not target_output_channels and not queued:
+        if not target_media_type and not queued:
             raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
         return queued
 
-    def queue_transmission(self, doc, target_output_channels=None):
+    def queue_transmission(self, doc, subscribers, target_media_type=None):
         """
-        Formats and queues the article to all active subscribers. Workflow:
-            1. Fetch Active Subscribers
-            2. For each Destination of a Subscriber,
-                a. format the article as per the format defined in the destination.
-                b. queue the formatted article
-        :return:
-            1. format list for which formatters are not found,
-            2. True if the article queued for transmissions False otherwise.
+        Method formats and then queues the article for transmission to the passed subscribers.
+        ::Important Note:: Format Type across Subscribers can repeat. But we can't have formatted item generated once
+        based on the format_types configured across for all the subscribers as the formatted item must have a published
+        sequence number generated by Subscriber.
+
+        :param: target_media_type - dictate if the doc being queued is a Takes Package or an Individual Article.
+                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
+                then the doc being queues is an Individual Article.
         """
 
         try:
             queued = False
             no_formatters = []
 
-            # Step 1
-            subscribers = get_resource_service('subscribers').get(req=None, lookup={'is_active': True})
-
             for subscriber in subscribers:
-                can_send_takes_packages = subscriber.get('can_send_takes_packages', False)
-                if target_output_channels == WIRE and can_send_takes_packages or target_output_channels == DIGITAL \
-                        and not can_send_takes_packages:
-                    continue
+                if target_media_type:
+                    can_send_takes_packages = subscriber.get('can_send_takes_packages', False)
+                    if target_media_type == WIRE and can_send_takes_packages or target_media_type == DIGITAL \
+                            and not can_send_takes_packages:
+                        continue
 
                 if not self.conforms_publish_filter(subscriber, doc):
                     continue
 
-                # Step 2
                 for destination in subscriber['destinations']:
-                    # Step 2(a)
                     formatter = get_formatter(destination['format'], doc['type'])
 
                     if not formatter:  # if formatter not found then record it
@@ -335,7 +399,6 @@ class BasePublishService(BaseService):
 
                     pub_seq_num, formatted_doc = formatter.format(doc, subscriber)
 
-                    # Step 2(b)
                     publish_queue_item = dict()
                     publish_queue_item['item_id'] = doc['_id']
                     publish_queue_item['item_version'] = doc[config.VERSION] + 1
@@ -398,8 +461,7 @@ class ArchivePublishService(BasePublishService):
     published_state = 'published'
 
     def set_state(self, original, updates):
-        if (original.get('publish_schedule') or updates.get('publish_schedule')) \
-                and original[config.CONTENT_STATE] not in PUBLISH_STATES:
+        if original.get('publish_schedule') or updates.get('publish_schedule'):
             updates[config.CONTENT_STATE] = 'scheduled'
         else:
             super().set_state(original, updates)
