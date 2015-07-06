@@ -340,9 +340,16 @@ def item_schema(extra=None):
             'type': 'boolean',
             'default': False
         },
-        'restrictions': {
-            'type': 'string',
-            'nullable': True
+        'targeted_for': {
+            'type': 'list',
+            'nullable': True,
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string'},
+                    'allow': {'type': 'boolean'}
+                }
+            }
         }
     }
     schema.update(metadata_schema)

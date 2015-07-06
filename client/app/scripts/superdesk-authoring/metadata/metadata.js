@@ -35,6 +35,27 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
         setPublishScheduleDate(newValue, oldValue);
     });
 
+    $scope.addTargeted = function() {
+        if (angular.isUndefined($scope.item.targeted_for)) {
+            $scope.item.targeted_for = [];
+        }
+
+        var targeted_for = {'name': $scope.item.targeted_for_value};
+
+        if (angular.isUndefined(_.find($scope.item.targeted_for, targeted_for))) {
+            targeted_for.allow = angular.isUndefined($scope.item.negation) ? false : $scope.item.negation;
+            $scope.item.targeted_for.push(targeted_for);
+            $scope.autosave($scope.item);
+        }
+    };
+
+    $scope.removeTargeted = function(to_remove) {
+        if (angular.isDefined(_.find($scope.item.targeted_for, to_remove))) {
+            $scope.item.targeted_for = _.without($scope.item.targeted_for, to_remove);
+            $scope.autosave($scope.item);
+        }
+    };
+
     function setPublishScheduleDate(newValue, oldValue) {
         if (newValue !== oldValue) {
             if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
@@ -263,6 +284,8 @@ function MetadataService(api, $q) {
                 _.each(result._items, function(vocabulary) {
                     self.values[vocabulary._id] = vocabulary.items;
                 });
+
+                self.values.targeted_for = _.union(self.values.geographical_restrictions, self.values.subscriber_types);
             });
         },
         fetchSubjectcodes: function(code) {

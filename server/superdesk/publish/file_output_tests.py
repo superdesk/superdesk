@@ -10,6 +10,7 @@
 
 
 import os
+from apps.publish.subscribers import SUBSCRIBER_TYPES
 
 from superdesk.tests import TestCase
 from superdesk.publish.file_output import FilePublishService
@@ -20,8 +21,9 @@ class FileOutputTest(TestCase):
     def setUp(self):
         super().setUp()
         self.fixtures = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-        self.subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
-                             "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
+        self.subscribers = [{"_id": "1", "name": "Test", "media_type": "media",
+                             "subscriber_type": SUBSCRIBER_TYPES.WIRE, "is_active": True,
+                             "sequence_num_settings": {"max": 10, "min": 1},
                              "destinations": [{"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
                                                "config": {"file_path": self.fixtures}
                                                }]}]

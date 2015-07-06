@@ -165,7 +165,9 @@
     {
         "_id": "subscriber_types",
         "items": [
-            {"is_active": true, "name": "Internet", "value": "Internet"}
+            {"is_active": true, "name": "Digital/Internet", "value": "digital"},
+            {"is_active": true, "name": "Wire/Paper", "value": "wire"},
+            {"is_active": true, "name": "Broadcast", "value": "broadcast"}
         ]
     }
 ]

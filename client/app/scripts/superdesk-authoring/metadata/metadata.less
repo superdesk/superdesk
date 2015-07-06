@@ -142,9 +142,9 @@
 					width: auto;
 					height: auto;
 				}
-                                .datepicker-input {
-                                    margin-bottom: 10px;
-                                }
+				.datepicker-input {
+					margin-bottom: 10px;
+				}
 			}
 		}
 	}
@@ -169,7 +169,7 @@
 			padding-top: 10px;
 			.clearfix();
 			li {
-                                position: relative;
+			  	position: relative;
 				background: #e8e8e8;
 				line-height: 26px;
 				height: 26px;
@@ -177,36 +177,44 @@
 				.border-radius(3px);
 				margin: 0 5px 5px 0;
 				float: left;
-                                .transition(all .5s);
+              	.transition(all .5s);
 				i {
-                                        position: absolute;
-                                        display: none;
-                                        right: 5px;
-                                        top: 6px;
+					position: absolute;
+					display: none;
+					right: 5px;
+					top: 6px;
 					.opacity(0);
-                                        .transition(all .5s);
+                    .transition(all .5s);
 				}
 				&:hover {
 					cursor: pointer;
-                                        padding-right: 20px;
+                    padding-right: 20px;
 					background: #e0e0e0;
 					i {
-                                            .opacity(70);
+                    	.opacity(70);
 					}
 				}
-                                &:hover {
-                                    > i {
-                                        display: inline-block;
-                                    }
-                                }
+				&:hover {
+					> i {
+						display: inline-block;
+					}
+				}
 			}
 		}
                 
-                .dropdown-nested {
-                    position: absolute;
-                    right: 0px;
-                    margin-top: 0px;
-                }
+		.dropdown-nested {
+			position: absolute;
+			right: 0px;
+			margin-top: 0px;
+		}
+
+	  	select {
+		  width: 120px;
+		}
+
+	  	.sd-checkbox {
+		  vertical-align: middle;
+		}
                 
 	}
 	

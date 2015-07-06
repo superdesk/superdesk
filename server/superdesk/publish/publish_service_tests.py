@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from apps.publish.subscribers import SUBSCRIBER_TYPES
+
 from superdesk.tests import TestCase
 from nose.tools import assert_raises
 from superdesk.errors import PublishQueueError
@@ -23,7 +25,7 @@ class PublishServiceTests(TestCase):
                     "item_id": 1
                     }]
 
-    subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
+    subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "critical_errors": {"9004": True},
                     "destinations": [{"name": "NITF", "delivery_type": "ftp", "format": "nitf", "config": {}}]

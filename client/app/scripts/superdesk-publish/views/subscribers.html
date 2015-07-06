@@ -50,6 +50,13 @@
                         </div>
 
                         <div class="field">
+                            <label for="subType" translate>Subscriber Type</label>
+                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes" required>
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
                             <label for="media-type" translate>Media Type</label>
                             <select id="media-type" class="input" ng-model="subscriber.media_type">
                                 <option value="media" translate>Media</option>
@@ -63,22 +70,6 @@
                             <select id="geoRestrictions" ng-model="subscriber.geo_restrictions" ng-options="g.value as g.name for g in geoRestrictions">
                                 <option value=""></option>
                             </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="subType" translate>Type</label>
-                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes">
-                                <option value=""></option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                          <label class="right">
-                            {{:: 'Can Send Takes Package(s)' | translate }}
-                            <span tooltip="{{ subscriber.can_send_takes_packages ? 'Can\'t Send Takes Package(s)' : 'Can Send Takes Package(s)'  | translate }}" tooltip-placement="right">
-                              <span class="pull-right" id="subscriber-can_send_takes_packages" sd-switch ng-model="subscriber.can_send_takes_packages"></span>
-                            </span>
-                          </label>
                         </div>
 
                         <div class="field">

@@ -11,7 +11,7 @@ Feature: Publish Queue
     And we post to "/subscribers" with success
     """
     {
-      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """
@@ -44,7 +44,7 @@ Feature: Publish Queue
     And we post to "/subscribers" with success
     """
     {
-      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """
@@ -95,7 +95,7 @@ Feature: Publish Queue
       When we post to "/subscribers" with success
       """
       {
-        "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -129,7 +129,7 @@ Feature: Publish Queue
     When we post to "/subscribers" with success
     """
     {
-      "name":"Channel 3","media_type":"media", "can_send_takes_packages": true, "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
       "destinations":[{"name":"destination2","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
     }
     """

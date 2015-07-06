@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from collections import namedtuple
+
 import logging
 from settings import MAX_VALUE_OF_PUBLISH_SEQUENCE
 from superdesk.celery_app import update_key, set_key
@@ -17,6 +19,9 @@ from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
+
+subscriber_types = ['broadcast', 'digital', 'wire']
+SUBSCRIBER_TYPES = namedtuple('SUBSCRIBER_TYPES', ['BROADCAST', 'DIGITAL', 'WIRE'])(*subscriber_types)
 
 
 class SubscribersResource(Resource):
@@ -35,7 +40,8 @@ class SubscribersResource(Resource):
         },
         'subscriber_type': {
             'type': 'string',
-            'nullable': True
+            'allowed': subscriber_types,
+            'required': True
         },
         'sequence_num_settings': {
             'type': 'dict',
@@ -44,10 +50,6 @@ class SubscribersResource(Resource):
                 'max': {'type': 'integer'}
             },
             'required': True
-        },
-        'can_send_takes_packages': {
-            'type': 'boolean',
-            'default': False
         },
         'email': {
             'type': 'email',
