@@ -134,14 +134,20 @@
         };
 
         this.state = storage.getItem('agg:state') || {};
+        this.state.expanded = this.state.expanded || {};
 
-        this.switchState = function(key) {
-            this.state[key] = !this.getState(key);
+        this.switchExpandedState = function(key) {
+            this.state.expanded[key] = !this.getExpandedState(key);
             storage.setItem('agg:state', this.state);
         };
 
-        this.getState = function(key) {
-            return (this.state[key] === undefined) ? true : this.state[key];
+        this.getExpandedState = function(key) {
+            return (this.state.expanded[key] === undefined) ? true : this.state.expanded[key];
+        };
+
+        this.setSoloGroup = function(group) {
+            this.state.solo = group;
+            storage.setItem('agg:state', this.state);
         };
 
         this.getMaxHeightStyle = function(maxItems) {
