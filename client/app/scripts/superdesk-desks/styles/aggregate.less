@@ -62,26 +62,33 @@
 
         .search-box {
             position: absolute;
+            display: flex;
+            box-sizing: border-box;
             left: 0; right: 0; top: 0;
-            height: @nav-height+1;
+            height: @nav-height;
             border-bottom: 1px solid #dcdcdc;
             background: #fff url(../../images/search-icon.png) no-repeat 15px 16px;
             input {
-                position: absolute;
-                width: calc(~"100% - 80px");
-                height: @nav-height;
+                position: static;
+                flex: 1;
+                width: auto;
+                height: 100%;
+                padding-left: 46px;
+                box-sizing: border-box;
                 border: 0 !important;
-                left: 50px;
-                right: 30px;
-                top:0px;
+                background: transparent;
                 &:focus {
                     .box-shadow(none) !important;
                 }
             }
             .more-actions {
-                position: absolute;
+                position: relative;
+                margin: auto;
+                height: 22px;
+                width: 28px;
                 right: 0px;
-                top: 14px;
+                top: 0;
+
             }
         }
         .filter-list {
@@ -99,7 +106,7 @@
             bottom: @bottom-view-padding - 20px;
             left: 0;
             right: 0;
-            padding: 10px;
+            padding: 0 10px 10px;
             overflow: auto;
 
             &::-webkit-scrollbar {
@@ -274,45 +281,58 @@
     .stage {
         margin: 10px 0 15px;
         .stage-header {
-            position: relative;
+            display: flex;
+            height: 20px;
+            margin-bottom: 8px;
             .line {
-                position: absolute;
-                left: 20px; right: 0; top: 7px;
                 height: 1px;
+                margin: auto 4px auto 0;
                 background: #dcdcdc;
+                flex: 1;
             }
             .toggle {
                 border: 0;
-                background: @tabpane-background;
-                margin: -5px 0 0 -5px;
+                padding: 0;
+                margin: 0 5px 0;
+                display: flex;
+                background: transparent;
+                i {
+                    -webkit-transition: all 0.2s ease;
+                    -o-transition: all 0.2s ease;
+                    transition: all 0.2s ease;
+                }
                 &.closed {
                     i {
-                        .rotate(-90deg);
+                      .rotate(-90deg);
+                      margin: auto;
                     }
                 }
             }
             .stage-name {
-                text-transform: uppercase;
-                background: @tabpane-background;
-                position: relative;
-                padding: 0 15px 0 5px;
-                margin: -2px;
+                padding: 0 8px 0 0;
+                margin: auto 0;
                 font-size: 11px;
+                line-height: 100%;
                 .text-semibold();
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
                 span {
                     color: @gray;
+                    .text-normal();
                 }
             }
             .label {
-                position: relative;
-                background: #4aa8eb;
+                box-sizing: border-box;
+                height: 16px;
+                margin: auto 0;
+                padding: 3px 6px 0;
+                .border-radius(8px);
                 color: @white;
-                border: 3px solid @tabpane-background;
-                .border-radius(10px);
-                .text-semibold();
-                margin-top: -3px;
-                margin-right: -3px;
-                font-size: 11px;
+                background:#bbb;
+                font-size: 10px;
+                line-height: 100%;
+                letter-spacing: 0.06em;
+                .text-normal();
             }
         }
         .stage-content {
@@ -329,14 +349,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    .stage {
-        .stage-header {
-            margin-left: 10px;
-            .toggle, .stage-name {
-                background-color: @white;
-            }
-        }
-    }
+
     .desk {
         width: 99%;
     }
