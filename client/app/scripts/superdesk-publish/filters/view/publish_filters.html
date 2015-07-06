@@ -14,7 +14,7 @@
 	                <h6>{{:: filter.name }}</h6>
                     <i>{{:: filter.is_global?'[Global]':'' }}</i>
                     <div class="actions">
-                        <button ng-click="testfilter(filter)" title="{{:: 'Test Publish Filter' | translate }}"><i class="svg-icon-ok inverse"></i></button>
+                        <button ng-click="testfilter(filter)" title="{{:: 'Test Publish Filter' | translate }}"><i class="svg-icon-ok"></i></button>
                         <button ng-click="edit(filter)" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
                         <button ng-click="remove(filter)" title="{{:: 'Remove Publish Filter' | translate }}"><i class="icon-trash"></i></button>
                     </div>
@@ -110,5 +110,16 @@
     </div>
 </div>
 
-<div ng-if="filter_test" ng-include="'scripts/superdesk-publish/filters/view/filter-test.html'"></div>
+<div sd-modal data-model="testFilter" class="publish-filter-modal modal-large">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-hide="publishFilter._id">Filter Test</h3>
+    </div>
+    <div class="modal-body">
+        <div ng-if="filter_test" ng-include="'scripts/superdesk-publish/filters/view/filter-test.html'"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+    </div>
+</div>
 

@@ -27,6 +27,12 @@ function FiltersService(api) {
     this.getAllPublishFilters = function(page, items) {
         return _getAll('publish_filters', page, items);
     };
+    this.getFilterTestResult = function(_matching) {
+        return api.query('filter_conditions/test?matching=' + _matching)
+            .then(angular.bind(this, function(result) {
+                return result._items;
+            }));
+    };
 
     this.savePublishFilter = function(orig, diff) {
         return api.save('publish_filters', orig, diff);
@@ -93,6 +99,7 @@ function FilterConditionsController($scope, filters, notify, modal) {
     $scope.cancel = function() {
         $scope.origFilterCondition = null;
         $scope.filterCondition = null;
+        $scope.testFilter = null;
     };
 
     $scope.save = function() {
@@ -194,6 +201,8 @@ function PublishFiltersController($scope, filters, notify, modal) {
     };
     $scope.testfilter = function(ft) {
         $scope.filter_test = true;
+        $scope.testFilter = null;
+        fetchFilterTestResult(ft);
     };
 
     $scope.cancel = function() {
@@ -357,9 +366,18 @@ function PublishFiltersController($scope, filters, notify, modal) {
             });
         });
     };
+    var fetchFilterTestResult = function(filter) {
+        var tempMock = {'keyword': 'test'};
+        /*filters.getFilterTestResult(filter.id).then(function(_testResult) {
+            $scope.testFilter = _testResult;
+        });*/
+        $scope.testFilter = tempMock;
+    };
 
     fetchFilterConditions();
     fetchPublishFilters();
+    //
+    //fetchFilterTestResult();
 }
 
 angular.module('superdesk.publish.filters', [])
