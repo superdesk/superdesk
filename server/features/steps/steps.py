@@ -1391,6 +1391,15 @@ def then_field_is_populated(context, field_name):
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
 
 
+@when('we delete publish filter "{name}"')
+def step_delete_publish_filter(context, name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        filter = get_resource_service('publish_filters').find_one(req=None, name=name)
+        url = '/publish_filters/{}'.format(filter['_id'])
+        headers = if_match(context, filter.get('_etag'))
+        context.response = context.client.delete(get_prefixed_url(context.app, url), headers=headers)
+
+
 @when('we publish "{item_id}" with "{pub_type}" type and "{state}" state')
 def step_impl_when_publish_url(context, item_id, pub_type, state):
     item_id = apply_placeholders(context, item_id)

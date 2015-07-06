@@ -183,6 +183,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.previewPublishFilter();
         $scope.origPublishFilter = null;
         $scope.publishFilter = null;
+        $scope.test.test_result = null;
     };
 
     $scope.save = function() {
@@ -194,7 +195,9 @@ function PublishFiltersController($scope, filters, notify, modal) {
                     $scope.cancel();
                 },
                 function(response) {
-                    if (angular.isDefined(response.data._issues)) {
+                    if (angular.isDefined(response.data._issues['validator exception'])) {
+                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                    } else if (angular.isDefined(response.data._issues)) {
                         notify.error(gettext('Error: ' + response.data._issues));
                     } else if (angular.isDefined(response.data._message)) {
                         notify.error(gettext('Error: ' + response.data._message));
@@ -249,22 +252,15 @@ function PublishFiltersController($scope, filters, notify, modal) {
     };
 
     $scope.test = function() {
-        if (!$scope.publishFilter.article_id) {
+        if (!$scope.test.article_id) {
             notify.error(gettext('Please provide an article id'));
             return;
         }
 
-        if (!$scope.publishFilter.name) {
-            notify.error(gettext('Please provide a name to continue'));
-            return;
-        }
-
-        var article_id = $scope.publishFilter.article_id;
-        delete $scope.publishFilter.article_id;
-        filters.savePublishFilter({}, $scope.publishFilter, {}, {'article_id': article_id})
+        filters.savePublishFilter({}, $scope.publishFilter, {}, {'article_id': $scope.test.article_id})
             .then(
                 function(result) {
-                    $scope.test_result = result.matches ? 'Does Match' : 'Doesn\'t Match';
+                    $scope.test.test_result = result.matches ? 'Does Match' : 'Doesn\'t Match';
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues)) {

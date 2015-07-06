@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+import re
 from flask import request
 from superdesk import get_resource_service
 from superdesk.resource import Resource
@@ -43,9 +44,7 @@ class PublishFilterResource(Resource):
         },
         'name': {
             'type': 'string',
-            'nullable': False,
-            'required': True,
-            'iunique': True
+            'nullable': False
         }
     }
 
@@ -70,7 +69,45 @@ class PublishFilterService(BaseService):
                     raise SuperdeskApiError.badRequestError('Article not found!')
                 doc['matches'] = self.does_match(doc, article)
             return [doc['matches'] for doc in docs]
+        self._validate_publish_filters(docs)
         return super().create(docs, **kwargs)
+
+    def update(self, id, updates, original):
+        publish_filter = dict(original)
+        publish_filter.update(updates)
+        self._validate_no_circular_reference(publish_filter, publish_filter['_id'])
+        super().update(id, updates, original)
+
+    def delete(self, lookup):
+        referenced_filters = self._get_referenced_publish_filters(lookup.get('_id'))
+        if referenced_filters.count() > 0:
+            references = ','.join([pf['name'] for pf in referenced_filters])
+            raise SuperdeskApiError.badRequestError('Publish filter has been referenced in {}'.format(references))
+        return super().delete(lookup)
+
+    def _validate_publish_filters(self, docs):
+        for doc in docs:
+            if not doc.get('name', None):
+                raise SuperdeskApiError.badRequestError('Name cannot be empty')
+            publish_filters = get_resource_service('publish_filters').\
+                get(req=None, lookup={'name': {'$regex': re.compile('^{}$'.format(doc['name']), re.IGNORECASE)}})
+            if publish_filters and publish_filters.count() > 0:
+                raise SuperdeskApiError.badRequestError('Publish filter {} already exists'.format(doc['name']))
+
+    def _get_referenced_publish_filters(self, id):
+        lookup = {'publish_filter.expression.pf': [id]}
+        publish_filters = get_resource_service('publish_filters').get(req=None, lookup=lookup)
+        return publish_filters
+
+    def _validate_no_circular_reference(self, publish_filter, filter_id):
+        for expression in publish_filter.get('publish_filter', []):
+            if 'pf' in expression.get('expression', {}):
+                for f in expression['expression']['pf']:
+                    current_filter = super().find_one(req=None, _id=f)
+                    if f == filter_id:
+                        raise SuperdeskApiError.badRequestError('Circular dependency error in publish filters:{}'
+                                                                .format(current_filter['name']))
+                    self._validate_no_circular_reference(current_filter, filter_id)
 
     def build_mongo_query(self, doc):
         filter_condition_service = get_resource_service('filter_conditions')
