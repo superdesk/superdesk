@@ -55,7 +55,7 @@ Feature: Publish Filter
     """
     Then we get error 400
     """
-    {"_status": "ERR", "_message": "Publish filter soccer already exists"}
+    {"_status": "ERR", "_issues": {"name": {"unique": 1}}}
     """
 
   @auth

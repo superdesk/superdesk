@@ -9,8 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-import re
-from flask import request
+import json
+from eve.utils import ParsedRequest
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -44,7 +44,8 @@ class PublishFilterResource(Resource):
         },
         'name': {
             'type': 'string',
-            'nullable': False
+            'nullable': False,
+            'iunique': True
         }
     }
 
@@ -60,18 +61,6 @@ class PublishFilterResource(Resource):
 
 
 class PublishFilterService(BaseService):
-    def create(self, docs, **kwargs):
-        if request.args.get('article_id', None):
-            for doc in docs:
-                article_id = request.args.get('article_id')
-                article = get_resource_service('archive').find_one(req=None, _id=article_id)
-                if not article:
-                    raise SuperdeskApiError.badRequestError('Article not found!')
-                doc['matches'] = self.does_match(doc, article)
-            return [doc['matches'] for doc in docs]
-        self._validate_publish_filters(docs)
-        return super().create(docs, **kwargs)
-
     def update(self, id, updates, original):
         publish_filter = dict(original)
         publish_filter.update(updates)
@@ -84,15 +73,6 @@ class PublishFilterService(BaseService):
             references = ','.join([pf['name'] for pf in referenced_filters])
             raise SuperdeskApiError.badRequestError('Publish filter has been referenced in {}'.format(references))
         return super().delete(lookup)
-
-    def _validate_publish_filters(self, docs):
-        for doc in docs:
-            if not doc.get('name', None):
-                raise SuperdeskApiError.badRequestError('Name cannot be empty')
-            publish_filters = get_resource_service('publish_filters').\
-                get(req=None, lookup={'name': {'$regex': re.compile('^{}$'.format(doc['name']), re.IGNORECASE)}})
-            if publish_filters and publish_filters.count() > 0:
-                raise SuperdeskApiError.badRequestError('Publish filter {} already exists'.format(doc['name']))
 
     def _get_referenced_publish_filters(self, id):
         lookup = {'publish_filter.expression.pf': [id]}
@@ -136,7 +116,10 @@ class PublishFilterService(BaseService):
             return expressions[0]
 
     def build_elastic_query(self, doc):
-        return {'query': {'filtered': {'query': {'bool': self._get_elastic_query(doc)}}}}
+        return {'query': {'filtered': {'query': self._get_elastic_query(doc)}}}
+
+    def build_elastic_not_filter(self, doc):
+        return {'query': {'filtered': {'filter': {'not': {'filter': self._get_elastic_query(doc)}}}}}
 
     def _get_elastic_query(self, doc):
         expressions = {'should': []}
@@ -173,3 +156,58 @@ class PublishFilterService(BaseService):
 
             expressions.append(all(filter_conditions))
         return any(expressions)
+
+
+class PublishFilterTestResource(Resource):
+    item_url = 'regex("[\w,.:_-]+")'
+    endpoint_name = 'publish_filter_tests'
+    schema = {
+        'filter_id': {'type': 'string'},
+        'article_id': {'type': 'string'},
+        'return_matching': {'type': 'boolean'},
+        'filter': {'type': 'dict'}
+    }
+    url = 'publish_filters/test'.format(item_url)
+    resource_methods = ['POST']
+    resource_title = endpoint_name
+    privileges = {'POST': 'publish_filters'}
+
+
+class PublishFilterTestService(BaseService):
+
+    def create(self, docs, **kwargs):
+        service = get_resource_service('publish_filters')
+        for doc in docs:
+            filter_id = doc.get('filter_id')
+            if filter_id:
+                publish_filter = service.find_one(req=None, _id=filter_id)
+            else:
+                publish_filter = doc.get('filter')
+
+            if not publish_filter:
+                    raise SuperdeskApiError.badRequestError('Publish filter not found')
+
+            if 'article_id' in doc:
+                article_id = doc.get('article_id')
+                article = get_resource_service('archive').find_one(req=None, _id=article_id)
+                if not article:
+                    raise SuperdeskApiError.badRequestError('Article not found!')
+                try:
+                    doc['match_results'] = service.does_match(publish_filter, article)
+                except Exception as ex:
+                    raise SuperdeskApiError.\
+                        badRequestError('Error in testing article: {}'.format(str(ex)))
+            else:
+                try:
+                    if doc.get('return_matching', True):
+                        query = service.build_elastic_query(publish_filter)
+                    else:
+                        query = service.build_elastic_not_filter(publish_filter)
+                    req = ParsedRequest()
+                    req.args = {'source': json.dumps(query)}
+                    doc['match_results'] = list(get_resource_service('archive').get(req=req, lookup=None))
+                except Exception as ex:
+                    raise SuperdeskApiError.\
+                        badRequestError('Error in testing archive: {}'.format(str(ex)))
+
+        return [doc['match_results'] for doc in docs]

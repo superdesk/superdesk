@@ -28,8 +28,12 @@ function FiltersService(api) {
         return _getAll('publish_filters', page, items);
     };
 
-    this.savePublishFilter = function(orig, diff, parent, params) {
-        return api.save('publish_filters', orig, diff, parent, params);
+    this.savePublishFilter = function(orig, diff) {
+        return api.save('publish_filters', orig, diff);
+    };
+
+    this.testPublishFilter = function(diff) {
+        return api.save('publish_filter_tests', {}, diff);
     };
 
     var _getAll = function(endPoint, page, items) {
@@ -96,7 +100,11 @@ function FilterConditionsController($scope, filters, notify, modal) {
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues)) {
-                        notify.error(gettext('Error: ' + response.data._issues));
+                        if (response.data._issues.name && response.data._issues.name.unique) {
+                            notify.error(gettext('Error: ' + gettext('Name needs to be unique')));
+                        } else {
+                            notify.error(gettext('Error: ' + JSON.stringify(response.data._issues)));
+                        }
                     } else if (angular.isDefined(response.data._message)) {
                         notify.error(gettext('Error: ' + response.data._message));
                     } else {
@@ -184,6 +192,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.origPublishFilter = null;
         $scope.publishFilter = null;
         $scope.test.test_result = null;
+        $scope.test.article_id = null;
     };
 
     $scope.save = function() {
@@ -198,7 +207,11 @@ function PublishFiltersController($scope, filters, notify, modal) {
                     if (angular.isDefined(response.data._issues['validator exception'])) {
                         notify.error(gettext('Error: ' + response.data._issues['validator exception']));
                     } else if (angular.isDefined(response.data._issues)) {
-                        notify.error(gettext('Error: ' + response.data._issues));
+                        if (response.data._issues.name && response.data._issues.name.unique) {
+                            notify.error(gettext('Error: ' + gettext('Name needs to be unique')));
+                        } else {
+                            notify.error(gettext('Error: ' + JSON.stringify(response.data._issues)));
+                        }
                     } else if (angular.isDefined(response.data._message)) {
                         notify.error(gettext('Error: ' + response.data._message));
                     } else if (angular.isDefined(response.status === 500)) {
@@ -232,6 +245,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
 
     $scope.removeStatement = function(index) {
         $scope.publishFilter.publish_filter.splice(index, 1);
+        $scope.previewPublishFilter();
     };
 
     $scope.addFilter = function(filterRow, filterType) {
@@ -257,10 +271,10 @@ function PublishFiltersController($scope, filters, notify, modal) {
             return;
         }
 
-        filters.savePublishFilter({}, $scope.publishFilter, {}, {'article_id': $scope.test.article_id})
+        filters.testPublishFilter({'filter': $scope.publishFilter, 'article_id': $scope.test.article_id})
             .then(
                 function(result) {
-                    $scope.test.test_result = result.matches ? 'Does Match' : 'Doesn\'t Match';
+                    $scope.test.test_result = result.match_results ? 'Does Match' : 'Doesn\'t Match';
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues)) {
