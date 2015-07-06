@@ -892,14 +892,16 @@
                  * Close an item - unlock
                  */
                 $scope.close = function() {
+                    var referrerUrl;
                     _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
+                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function () {
                         if (sessionStorage.getItem('previewUrl')) {
-                            $location.url(sessionStorage.getItem('previewUrl'));
+                            referrerUrl = sessionStorage.getItem('previewUrl');
                             sessionStorage.removeItem('previewUrl');
                         } else {
-                            $location.url($scope.referrerUrl);
+                            referrerUrl = $scope.referrerUrl;
                         }
+                        $location.url(referrerUrl);
                     });
                 };
 
