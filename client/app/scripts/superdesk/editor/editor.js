@@ -21,7 +21,63 @@ function EditorService() {
     this.addEventListeners = addEventListeners;
     this.removeEventListeners = removeEventListeners;
 
+    this.KEY_CODES = Object.freeze({
+        Y: 89,
+        X: 90
+    });
+
     var vm = this;
+
+    this.fieldStack = {};
+
+    this.setInitialValue = function (key, initialValue) {
+        vm.fieldStack[key] = {
+            'stack': [],
+            'index':0
+        };
+        vm.fieldStack[key].stack.push(initialValue);
+    };
+
+    this.savetoHistory = function(key, html) {
+        vm.fieldStack[key].stack.push(html);
+        vm.fieldStack[key].index = vm.fieldStack[key].stack.length - 1;
+    };
+
+    this.getInitialValue = function (key) {
+        return vm.fieldStack[key].stack[0];
+    };
+
+    this.resetStack = function() {
+        vm.fieldStack = {};
+    };
+
+    this.getUndoViewValue = function(key) {
+        var _undoValue;
+        if (vm.fieldStack[key] !== null) {
+            if (vm.fieldStack[key].stack.length === 1) {
+                _undoValue = vm.getInitialValue(key);
+            } else {
+                if (vm.fieldStack[key].stack[vm.fieldStack[key].index - 1] != null) {
+                    if (vm.fieldStack[key].index === 1) {
+                        _undoValue = vm.getInitialValue(key);
+                    } else {
+                        _undoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index - 1];
+                    }
+                    vm.fieldStack[key].index -= 1;
+                }
+            }
+        }
+        return _undoValue;
+    };
+
+    this.getRedoViewValue = function(key) {
+        var _redoValue;
+        if (vm.fieldStack[key].stack.length !== 0 && vm.fieldStack[key].stack[vm.fieldStack[key].index + 1] != null) {
+            _redoValue = vm.fieldStack[key].stack[vm.fieldStack[key].index + 1];
+            vm.fieldStack[key].index += 1;
+        }
+        return _redoValue;
+    };
 
     /**
      * Store current anchor position within given node
@@ -85,7 +141,7 @@ function EditorService() {
      */
     this.startCommand = function() {
         this.readOnly = true;
-        this.command = new FindReplaceCommand(this.elem);
+        this.command = new FindReplaceCommand(this.elem, vm);
         angular.element(this.elem).on('keydown', preventEditing);
         this.disableEditorToolbar();
     };
@@ -134,7 +190,7 @@ function EditorService() {
     }
 }
 
-function FindReplaceCommand(rootNode) {
+function FindReplaceCommand(rootNode, _editor) {
     var matches = 0, current, needle, replacements, html = angular.element(rootNode).html();
 
     /**
@@ -235,6 +291,9 @@ function FindReplaceCommand(rootNode) {
 
                 if (replacements[matches] != null) {
                     document.execCommand('insertText', false, replacements[matches]);
+                    html = angular.element(rootNode).html();
+                    _editor.savetoHistory('bodyhtml', html);
+                    _editor.triggerModelUpdate();
                 } else if (!stopHighlight) {
                     var oldLength = node.wholeText.length;
                     document.execCommand('hiliteColor', false, color);
@@ -342,7 +401,10 @@ angular.module('superdesk.editor', [])
                     updateTimeout,
                     renderTimeout;
 
+                editor.resetStack();
+
                 ngModel.$viewChangeListeners.push(changeListener);
+                scope.viewvalue = ngModel.$viewValue;
 
                 ngModel.$render = function renderEditor() {
                     spellcheck.setLanguage(scope.language);
@@ -352,6 +414,8 @@ angular.module('superdesk.editor', [])
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
+                    editor.setInitialValue(elem[0].id, ngModel.$viewValue);
+
                     editor.elem = editorElem[0];
                     editor.addEventListeners(editorElem[0]);
 
@@ -360,9 +424,17 @@ angular.module('superdesk.editor', [])
 
                     editorElem.on('input blur', function(event) {
                         $timeout.cancel(updateTimeout);
-                        updateTimeout = $timeout(updateModel, 300, false);
+                        updateTimeout = $timeout(function() { updateModel(event); }, 300, false);
                     });
-
+                    editorElem.on('keyup', function(event) {
+                        if (event.ctrlKey) {
+                            if (event.keyCode === editor.KEY_CODES.X) {
+                                doUndo();
+                            } else if (event.keyCode === editor.KEY_CODES.Y) {
+                                doRedo();
+                            }
+                        }
+                    });
                     editorElem.on('contextmenu', function(event) {
                         if (spellcheck.isErrorNode(event.target)) {
                             event.preventDefault();
@@ -426,15 +498,52 @@ angular.module('superdesk.editor', [])
                 scope.$on('spellcheck:run', renderSpellcheck);
                 scope.$on('key:ctrl:shift:s', renderSpellcheck);
 
-                function updateModel() {
+                function doUndo() {
+                    scope.$applyAsync(function() {
+                        var viewValue = editor.getUndoViewValue(elem[0].id);
+                        if (!_.isEmpty(viewValue)) {
+                            ngModel.$setViewValue(viewValue);
+                            editorElem.html(ngModel.$modelValue);
+                        }
+                    });
+                }
+
+                function doRedo() {
+                    scope.$applyAsync(function() {
+                        var viewValue = editor.getRedoViewValue(elem[0].id);
+                        if (!_.isEmpty(viewValue)) {
+                            ngModel.$setViewValue(viewValue);
+                            editorElem.html(ngModel.$modelValue);
+                        }
+                    });
+                }
+
+                function updateModel(event) {
                     if (editor.readOnly) {
                         return;
                     }
 
                     var html = removeSpellcheck(editorElem[0]);
-                    scope.$applyAsync(function() {
-                        ngModel.$setViewValue(html);
-                    });
+                    var key = elem[0].id;
+                    // get model value in text
+                    var div = document.createElement('div');
+                    div.innerHTML = ngModel.$viewValue;
+                    var modelTextValue = div.textContent || div.innerText || '';
+                    // Compare model changes and apply
+                    if (event.type === 'input' && !_.isEqual(event.target.innerText.trim(), '')) {
+                        if (!_.isEqual(event.target.innerHTML, editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
+                            if (!_.isEqual(event.target.innerText.trim(), modelTextValue.trim())) {
+                                // Invalidate items higher on the stack, if we are here after having undo called.
+                                editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
+                                    editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
+                                editor.fieldStack[key].stack.push(html);
+                                editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
+                                scope.$applyAsync(function() {
+                                    ngModel.$setViewValue(html);
+                                });
+                            }
+                        }
+                    }
                 }
 
                 function changeListener() {

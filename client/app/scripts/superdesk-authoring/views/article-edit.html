@@ -40,7 +40,7 @@
 <div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
 	<label translate>Abstract</label>
     <span sd-character-count data-item="item.abstract" data-html="true" data-limit="limits.abstract"></span>
-    <div class="abstract"
+    <div id="abstract" class="abstract"
         sd-text-editor
         data-config="{disableToolbar: true}"
         data-language="item.language"
@@ -78,7 +78,7 @@
 <div class="field body" ng-if="!isMediaType">
 	<label translate>Body</label>
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
-    <div sd-text-editor
+    <div id="bodyhtml" sd-text-editor
         ng-model="item.body_html"
         ng-if="_editable"
         ng-change="autosave(item)"
