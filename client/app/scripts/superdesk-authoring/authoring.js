@@ -206,7 +206,7 @@
          * @param {Object} orig
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function closeAuthoring(diff, orig, isDirty) {
+        this.close = function closeAuthoring(diff, orig, isDirty, closeItem) {
             var promise = $q.when();
             if (this.isEditable(diff)) {
                 if (isDirty) {
@@ -223,7 +223,9 @@
                         autosave.drop(orig);
                     }
 
-                    return lock.unlock(diff);
+                    if (!closeItem){
+                        return lock.unlock(diff);
+                    }
                 });
             }
 
@@ -707,7 +709,6 @@
                 var _closing;
 
                 $scope.privileges = privileges.privileges;
-                $scope.content = new ContentCtrl($scope);
                 $scope.dirty = false;
                 $scope.views = {send: false};
                 $scope.stage = null;
@@ -899,7 +900,8 @@
                 $scope.close = function() {
                     var referrerUrl;
                     _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function () {
+
+                    authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
                         if (sessionStorage.getItem('previewUrl')) {
                             referrerUrl = sessionStorage.getItem('previewUrl');
                             sessionStorage.removeItem('previewUrl');
@@ -907,6 +909,13 @@
                             referrerUrl = $scope.referrerUrl;
                         }
                         $location.url(referrerUrl);
+                    });
+                };
+
+                $scope.closeOpenNew = function(createFunction, paramValue) {
+                    _closing = true;
+                    authoring.close($scope.item, $scope.origItem, $scope.dirty, true).then(function() {
+                        createFunction(paramValue);
                     });
                 };
 
@@ -983,6 +992,7 @@
                 }
 
                 // init
+                $scope.content = new ContentCtrl($scope);
                 $scope.closePreview();
                 $scope.$on('savework', function(e, msg) {
                     var changeMsg = msg;

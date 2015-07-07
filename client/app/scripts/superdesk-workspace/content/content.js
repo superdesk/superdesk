@@ -18,38 +18,58 @@
                 'type'
             ];
 
-            /**
-             * Create an item and start editing it
-             */
-            this.create = function(type) {
-                var item = {type: type || 'text', version: 0};
-                archiveService.addTaskToArticle(item);
+        var scope = $scope;
 
-                api('archive').save(item).then(
-                    function() {
-                        superdesk.intent('author', 'article', item);
-                    });
-            };
+        /**
+         * Create an item and start editing it
+         */
+        this.create = function(type) {
+            if (scope.dirty){
+                scope.closeOpenNew(createItem, type);
+            } else {
+                createItem(type);
+            }
+        };
 
-            this.createPackage = function createPackage(currentItem) {
-                if (currentItem) {
-                    superdesk.intent('create', 'package', {items: [currentItem]});
-                } else {
-                    superdesk.intent('create', 'package');
-                }
-            };
+        var createItem = function (type) {
+            var item = {type: type || 'text', version: 0};
+            api('archive').save(item).then(function() {
+                superdesk.intent('author', 'article', item);
+            });
+        };
 
-            this.createFromTemplate = function(template) {
-                var item = _.pick(template, templateFields);
-                api('archive')
-                .save(item)
-                .then(function() {
-                    return templates.addRecentTemplate(desks.activeDeskId, template._id);
-                })
-                .then(function() {
-                    superdesk.intent('author', 'article', item);
-                });
-            };
+        this.createPackage = function createPackage(current_item) {
+            if (scope.dirty){
+                scope.closeOpenNew(createPackageItem, current_item);
+            } else {
+                createPackageItem(current_item);
+            }
+        };
+
+        var createPackageItem = function (current_item) {
+            if (current_item) {
+                superdesk.intent('create', 'package', {items: [current_item]});
+            } else {
+                superdesk.intent('create', 'package');
+            }
+        };
+
+        this.createFromTemplate = function(template) {
+            if (scope.dirty){
+                scope.closeOpenNew(createFromTemplateItem, template);
+            } else {
+                createFromTemplateItem(template);
+            }
+        };
+
+        var createFromTemplateItem = function (template) {
+            var item = _.pick(template, templateFields);
+            api('archive').save(item).then(function() {
+                return templates.addRecentTemplate(desks.activeDeskId, template._id);
+            })
+            .then(function() {
+                superdesk.intent('author', 'article', item);
+            });
         };
     }
 
