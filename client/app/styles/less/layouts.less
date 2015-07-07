@@ -242,30 +242,29 @@ a:hover {
 		.box-shadow(inset 8px 0 7px -6px #888);
 	}
 	.navigation-tabs {
-		margin: -1px 0 0;
+		margin: 0;
 		border: 0;
 		list-style-type: none;
 		> li {
 			position:relative;
 			float:none;
-			margin-bottom:-1px;
 			.btn {
 				display:block;
+				box-sizing: border-box;
 				width: @tablist-width;
-				height: @tablist-width - 2;
-				//line-height: @tablist-width - 2;
+				height: @tablist-width;
 				text-align: center;
 				padding: 0;
 				margin:0;
 				.border-radius(0px);
 				border: 1px solid #898989;
-				border-width: 1px 0 !important;
+				border-width: 0 0 1px 0 !important;
 				background: none;
 				.box-shadow(none);
 				&:hover {
 					background: #b7b7b7;
-					border: 1px solid #999999;
-					border-width: 1px 0 !important;
+					border: 1px solid #898989;
+					border-width: 0 0 1px 0 !important;
 				}
 			}
 			&.active {
