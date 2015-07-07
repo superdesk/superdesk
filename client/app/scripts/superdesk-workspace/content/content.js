@@ -24,7 +24,7 @@
          * Create an item and start editing it
          */
         this.create = function(type) {
-            if (scope.dirty){
+            if (scope && scope.dirty){
                 scope.closeOpenNew(createItem, type);
             } else {
                 createItem(type);
@@ -39,7 +39,7 @@
         };
 
         this.createPackage = function createPackage(current_item) {
-            if (scope.dirty){
+            if (scope && scope.dirty){
                 scope.closeOpenNew(createPackageItem, current_item);
             } else {
                 createPackageItem(current_item);
@@ -55,7 +55,7 @@
         };
 
         this.createFromTemplate = function(template) {
-            if (scope.dirty){
+            if (scope && scope.dirty){
                 scope.closeOpenNew(createFromTemplateItem, template);
             } else {
                 createFromTemplateItem(template);
