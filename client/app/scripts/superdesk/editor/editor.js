@@ -416,7 +416,8 @@ angular.module('superdesk.editor', [])
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
-                    editor.setInitialValue(elem[0].id, ngModel.$viewValue);
+                    var initialValue = ngModel.$viewValue != null ? ngModel.$viewValue : '';
+                    editor.setInitialValue(elem[0].id, initialValue);
 
                     editor.elem = editorElem[0];
                     editor.addEventListeners(editorElem[0]);
@@ -503,20 +504,16 @@ angular.module('superdesk.editor', [])
                 function doUndo() {
                     scope.$applyAsync(function() {
                         var viewValue = editor.getUndoViewValue(elem[0].id);
-                        if (!_.isEmpty(viewValue)) {
-                            ngModel.$setViewValue(viewValue);
-                            editorElem.html(ngModel.$modelValue);
-                        }
+                        ngModel.$setViewValue(viewValue);
+                        editorElem.html(ngModel.$modelValue);
                     });
                 }
 
                 function doRedo() {
                     scope.$applyAsync(function() {
                         var viewValue = editor.getRedoViewValue(elem[0].id);
-                        if (!_.isEmpty(viewValue)) {
-                            ngModel.$setViewValue(viewValue);
-                            editorElem.html(ngModel.$modelValue);
-                        }
+                        ngModel.$setViewValue(viewValue);
+                        editorElem.html(ngModel.$modelValue);
                     });
                 }
 
@@ -529,7 +526,7 @@ angular.module('superdesk.editor', [])
                     var key = elem[0].id;
                     // get model value in text
                     var div = document.createElement('div');
-                    div.innerHTML = ngModel.$viewValue;
+                    div.innerHTML = ngModel.$viewValue != null ? ngModel.$viewValue : '';
                     var modelTextValue = div.textContent || div.innerText || '';
                     // Compare model changes and apply
                     if (event.type === 'input' && !_.isEqual(event.target.innerText.trim(), '')) {
