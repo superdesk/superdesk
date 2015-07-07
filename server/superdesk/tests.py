@@ -42,16 +42,24 @@ test_user = {
 }
 
 
+def get_mongo_uri(key, dbname):
+    """Read mongo uri from env variable and replace dbname.
+
+    :param key: env variable name
+    :param dbname: mongo db name to use
+    """
+    env_uri = os.environ.get(key, 'mongodb://localhost/test')
+    env_host = env_uri.rsplit('/', 1)[0]
+    return '/'.join([env_host, dbname])
+
+
 def get_test_settings():
     test_settings = {}
     test_settings['ELASTICSEARCH_URL'] = ELASTICSEARCH_URL
     test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
-    test_settings['MONGO_DBNAME'] = 'sptests'
-    test_settings['MONGO_URI'] = 'mongodb://localhost/sptests'
-    test_settings['LEGAL_ARCHIVE_DBNAME'] = 'sptests_legal'
-    test_settings['LEGAL_ARCHIVE_URI'] = 'mongodb://localhost/sptests_legal'
-    test_settings['PUBLICAPI_DBNAME'] = 'sptests_publicapi'
-    test_settings['PUBLICAPI_URI'] = 'mongodb://localhost/sptests_publicapi'
+    test_settings['MONGO_URI'] = get_mongo_uri('MONGO_URI', 'sptests')
+    test_settings['PUBLICAPI_URI'] = get_mongo_uri('PUBLICAPI_URI', 'sptests_publicapi')
+    test_settings['LEGAL_ARCHIVE_URI'] = get_mongo_uri('LEGAL_ARCHIVE_URI', 'sptests_legal')
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
     test_settings['SUPERDESK_TESTING'] = True
