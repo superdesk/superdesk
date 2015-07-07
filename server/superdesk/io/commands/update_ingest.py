@@ -217,7 +217,7 @@ def process_anpa_category(item, provider):
         if anpa_categories:
             for anpa_category in anpa_categories['items']:
                 if anpa_category['is_active'] is True \
-                        and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
+                        and item['anpa-category']['qcode'].lower() == anpa_category['qcode'].lower():
                     item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
                     break
     except Exception as ex:
