@@ -1361,7 +1361,7 @@ define([
                 key: 'f',
                 additionalCondition: ['desks', function (desks) {
                     // fetching to 'personal' desk is not allowed
-                    return (desks.getCurrentDeskId() !== 'personal');
+                    return desks.getCurrentDeskId() != null;
                 }]
             })
             .activity('externalsource', {

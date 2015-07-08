@@ -30,7 +30,7 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
         var filters = [];
         var self = this;
 
-        if (desks.getCurrentDeskId() !== 'personal') {
+        if (desks.getCurrentDeskId()) {
             //desk filter
             filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
         } else {

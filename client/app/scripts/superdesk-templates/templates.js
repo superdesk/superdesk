@@ -35,7 +35,6 @@
                 criteria.template_type = type;
             }
             if (desk !== undefined) {
-                desk = (desk === 'personal') ? null : desk;
                 criteria.template_desk = desk;
             }
             if (keyword) {

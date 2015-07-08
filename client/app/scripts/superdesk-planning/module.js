@@ -21,7 +21,7 @@ define([
 
         function getDeskFilter() {
             var currentDesk = desks.getCurrentDeskId();
-            if (currentDesk !== 'personal') {
+            if (currentDesk) {
                 return [{term: {desk: currentDesk}}];
             } else {
                 return null;

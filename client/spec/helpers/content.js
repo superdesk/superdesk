@@ -1,6 +1,8 @@
 
 'use strict';
 
+var nav = require('./utils').nav;
+
 module.exports = new Content();
 
 function Content() {
@@ -8,12 +10,15 @@ function Content() {
     this.send = send;
 
     this.setListView = function() {
-        var list = element(by.css('[tooltip="switch to list view"]'));
-        return list.isDisplayed().then(function(isVisible) {
-            if (isVisible) {
-                list.click();
-            }
-        });
+        nav('workspace/content');
+
+        var list = element(by.css('i.icon-th-list'));
+        return list.isDisplayed()
+            .then(function(isVisible) {
+                if (isVisible) {
+                    list.click();
+                }
+            });
     };
 
     this.setGridView = function() {
@@ -30,20 +35,25 @@ function Content() {
     };
 
     this.getItem = function(item) {
-        return element.all(by.repeater('items._items')).get(item);
+        return this.getItems().filter(testHeadline).first();
+
+        function testHeadline(elem, index) {
+            if (typeof item === 'number') {
+                // BC: get item by its index
+                return index === item;
+            } else {
+                return elem.element(by.className('headline')).getText()
+                    .then(function(text) {
+                        return text.toLowerCase().indexOf(item) >= 0;
+                    });
+            }
+        }
     };
 
     this.actionOnItem = function(action, item) {
-        var crtItem;
-        return this.getItem(item)
-            .waitReady().then(function(elem) {
-                crtItem = elem;
-                return browser.actions().mouseMove(crtItem).perform();
-            }).then(function() {
-                return crtItem
-                    .element(by.css('[title="' + action + '"]'))
-                    .click();
-            });
+        var crtItem = this.getItem(item);
+        browser.actions().mouseMove(crtItem).perform();
+        return crtItem.element(by.css('[title="' + action + '"]')).click();
     };
 
     this.checkMarkedForHighlight = function(highlight, item) {
@@ -66,18 +76,9 @@ function Content() {
     this.count = this.getCount;
 
     this.selectItem = function(item) {
-        var crtItem;
-        return this.getItem(item)
-            .waitReady().then(function(elem) {
-                crtItem = elem;
-                return browser.actions()
-                       .mouseMove(crtItem.element(by.className('filetype-icon-text')))
-                       .perform();
-            }).then(function() {
-                return crtItem
-                    .element(by.css('[ng-change="toggleSelected(item)"]'))
-                    .click();
-            });
+        var crtItem = this.getItem(item);
+        browser.actions().mouseMove(crtItem.element(by.className('filetype-icon-text'))).perform();
+        return crtItem.element(by.css('[ng-change="toggleSelected(item)"]')).click();
     };
 
     this.spikeItems = function() {

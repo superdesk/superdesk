@@ -1,8 +1,6 @@
 define([
     'angular',
     'require',
-    './workspace-controller',
-    './workspace-service',
     './sd-widget-directive',
     './widgets-provider',
     './grid/grid',
@@ -10,39 +8,24 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session'];
-    function DashboardController($scope, desks, widgets, api, session) {
+    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces'];
+    function DashboardController($scope, desks, widgets, api, session, workspaces) {
         var vm = this;
 
-        desks.initialize().then(function() {
-            $scope.$watch(getActiveDesk, setupWorkspace);
-        });
+        $scope.workspaces = workspaces;
+        $scope.$watch('workspaces.active', setupWorkspace);
+        workspaces.getActive();
 
-        function getActiveDesk() {
-            return desks.active.desk;
-        }
-
-        function setupWorkspace(desk) {
-            var criteria = {};
-            if (desk && !desks.isPersonal(desk)) {
-                criteria.desk = desk;
-            } else {
-                criteria.user = session.identity._id;
-            }
-
+        function setupWorkspace(workspace) {
             vm.current = null;
-            api.query('workspaces', {where: criteria})
-                .then(function(workspaces) {
-                    if (workspaces._items.length) {
-                        startEdit(workspaces._items[0]);
-                    } else {
-                        // BC: use existing user workspace if present in user profile
-                        startEdit({widgets: criteria.user && session.identity.workspace ? session.identity.workspace.widgets : []});
-                        angular.extend(vm.current, criteria);
-                    }
-
+            if (workspace) {
+                // do this async so that it can clean up previous grid
+                $scope.$applyAsync(function() {
+                    vm.current = workspace;
+                    vm.widgets = extendWidgets(workspace.widgets || []);
                     vm.availableWidgets = getAvailableWidgets(vm.widgets);
                 });
+            }
         }
 
         function getAvailableWidgets(userWidgets) {
@@ -61,11 +44,6 @@ define([
         this.selectWidget = function(widget) {
             this.selectedWidget = widget || null;
         };
-
-        function startEdit(workspace) {
-            vm.current = workspace;
-            vm.widgets = extendWidgets(workspace.widgets || []);
-        }
 
         function extendWidgets(currentWidgets) {
             return _.map(currentWidgets, function(widget) {
@@ -100,7 +78,8 @@ define([
         'superdesk.workspace.content',
         'superdesk.workspace.tasks',
         'superdesk.itemList',
-        'superdesk.legal_archive'
+        'superdesk.legal_archive',
+        'superdesk.workspace'
     ])
 
     .directive('sdWidget', require('./sd-widget-directive'))

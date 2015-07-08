@@ -35,7 +35,7 @@
                 return promise[key];
             } else {
                 var criteria = {};
-                if (desk !== 'personal') {
+                if (desk) {
                     criteria = {where: {'$or': [
                                                 {'desks': desk},
                                                 {'desks': {'$size': 0}}

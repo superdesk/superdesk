@@ -7,19 +7,19 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Content', function() {
 
+    var body = element(by.tagName('body'));
+
     function selectedHeadline() {
         return element(by.binding('selected.preview.headline')).getText();
     }
 
-    beforeEach(function(done) {
-        openUrl('/#/workspace/content').then(function() {
-            workspace.switchToDesk('PERSONAL');
-        }).then(done);
+    beforeEach(function() {
+        openUrl('/#/workspace');
+        workspace.switchToDesk('PERSONAL');
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
     it('can navigate with keyboard', function() {
-        var body = $('body');
         body.sendKeys(protractor.Key.UP);
         expect(selectedHeadline()).toBe('package1');
 
@@ -37,14 +37,12 @@ describe('Content', function() {
     });
 
     it('can open search with s', function() {
-        var body = $('body');
         body.sendKeys('s');
         expect(element(by.id('search-input')).isDisplayed()).toBe(true);
     });
 
     it('can toggle view with v', function() {
-        var body = $('body'),
-            gridBtn = element.all(by.css('.view-select button')).first();
+        var gridBtn = element.all(by.css('.view-select button')).first();
 
         // reset to grid view first
         gridBtn.isDisplayed().then(function(isList) {

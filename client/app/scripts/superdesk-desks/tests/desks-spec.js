@@ -30,7 +30,7 @@ describe('desks service', function() {
             spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: []}));
             desks.userDesks = desks.fetchCurrentUserDesks();
             $rootScope.$digest();
-            expect(desks.getCurrentDeskId()).toBe('personal');
+            expect(desks.getCurrentDeskId()).toBe(null);
             expect(preferencesService.update).not.toHaveBeenCalled();
         })
     );
@@ -42,7 +42,7 @@ describe('desks service', function() {
             spyOn(desks, 'fetchUserDesks').and.returnValue($q.when({_items: []}));
             desks.userDesks = desks.fetchCurrentUserDesks();
             $rootScope.$digest();
-            expect(desks.getCurrentDeskId()).toBe('personal');
+            expect(desks.getCurrentDeskId()).toBe(null);
             expect(preferencesService.update).not.toHaveBeenCalled();
         })
     );

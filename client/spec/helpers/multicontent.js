@@ -4,6 +4,8 @@
 module.exports = new Multicontent();
 
 function Multicontent() {
+
+    var config = element(by.className('aggregate-settings'));
     this.widget = element(by.css('.sd-widget.aggregate'));
 
     this.getGroup = function(group) {
@@ -94,7 +96,7 @@ function Multicontent() {
     };
 
     this.getDesk = function(desk) {
-        return element.all(by.repeater('desk in desks')).get(desk);
+        return config.all(by.repeater('desk in desks')).get(desk);
     };
 
     this.getStage = function(desk, stage) {
@@ -102,11 +104,11 @@ function Multicontent() {
     };
 
     this.getSearch = function(search) {
-        return element.all(by.repeater('search in searches')).get(search);
+        return config.all(by.repeater('search in searches')).get(search);
     };
 
     this.toggleDesk = function(desk) {
-        this.getDesk(desk).element(by.css('[ng-click="setDeskInfo(desk._id)"]')).click();
+        this.getDesk(desk).element(by.model('editGroups[desk._id].selected')).click();
     };
 
     this.toggleStage = function(desk, stage) {
