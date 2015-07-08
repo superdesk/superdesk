@@ -27,12 +27,6 @@ function FiltersService(api) {
     this.getAllPublishFilters = function(page, items) {
         return _getAll('publish_filters', page, items);
     };
-    this.getFilterTestResult = function(_matching) {
-        return api.query('filter_conditions/test?matching=' + _matching)
-            .then(angular.bind(this, function(result) {
-                return result._items;
-            }));
-    };
 
     this.savePublishFilter = function(orig, diff) {
         return api.save('publish_filters', orig, diff);
@@ -99,7 +93,6 @@ function FilterConditionsController($scope, filters, notify, modal) {
     $scope.cancel = function() {
         $scope.origFilterCondition = null;
         $scope.filterCondition = null;
-        $scope.testFilter = null;
     };
 
     $scope.save = function() {
@@ -181,8 +174,8 @@ function FilterConditionsController($scope, filters, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal'];
-function PublishFiltersController($scope, filters, notify, modal) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location'];
+function PublishFiltersController($scope, filters, notify, modal, $location) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
@@ -190,6 +183,8 @@ function PublishFiltersController($scope, filters, notify, modal) {
     $scope.preview = null;
     $scope.filterConditionLookup = {};
     $scope.publishFiltersLookup = {};
+    $scope.selected = {};
+    $scope.result_type = true;
 
     $scope.edit = function(pf) {
         $scope.origPublishFilter = pf || {};
@@ -199,11 +194,6 @@ function PublishFiltersController($scope, filters, notify, modal) {
         initPublishFilter();
         $scope.previewPublishFilter();
     };
-    $scope.testfilter = function(ft) {
-        $scope.filter_test = true;
-        $scope.testFilter = null;
-        fetchFilterTestResult(ft);
-    };
 
     $scope.cancel = function() {
         $scope.previewPublishFilter();
@@ -211,6 +201,11 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.publishFilter = null;
         $scope.test.test_result = null;
         $scope.test.article_id = null;
+    };
+
+    $scope.close = function() {
+        $scope.filter_test = null;
+        $scope.testResult = null;
     };
 
     $scope.save = function() {
@@ -281,6 +276,28 @@ function PublishFiltersController($scope, filters, notify, modal) {
     $scope.removeFilter = function(filterRow, filterId, filterType) {
         filterRow.expression[filterType] = _.without(filterRow.expression[filterType], filterId);
         $scope.previewPublishFilter();
+    };
+
+    $scope.testfilter = function(ft) {
+        $scope.filter_test = true;
+        $scope.testResult = null;
+        fetchFilterTestResult(ft);
+    };
+    function previewItem() {
+        var selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
+        if (selectedItem) {
+            $scope.selected.preview = selectedItem;
+        } else {
+            $scope.selected.preview = null;
+        }
+    }
+    $scope.preview = function(Item) {
+        $location.search('_id', Item ? Item._id : Item);
+    };
+    $scope.$on('$routeUpdate', previewItem);
+
+    $scope.fetchResults = function(selectedFilter) {
+        fetchFilterTestResult(selectedFilter);
     };
 
     $scope.test = function() {
@@ -367,17 +384,27 @@ function PublishFiltersController($scope, filters, notify, modal) {
         });
     };
     var fetchFilterTestResult = function(filter) {
-        var tempMock = {'keyword': 'test'};
-        /*filters.getFilterTestResult(filter.id).then(function(_testResult) {
-            $scope.testFilter = _testResult;
-        });*/
-        $scope.testFilter = tempMock;
+        $scope.selectedfilter = filter;
+        filters.testPublishFilter({'filter_id': filter._id, 'return_matching': $scope.result_type})
+            .then(
+                function(result) {
+                    $scope.testResult = result.match_results;
+                },
+                function(response) {
+                    if (angular.isDefined(response.data._issues)) {
+                        notify.error(gettext('Error: ' + response.data._issues));
+                    } else if (angular.isDefined(response.data._message)) {
+                        notify.error(gettext('Error: ' + response.data._message));
+                    } else {
+                        notify.error(gettext('Error: Failed to save publish filter.'));
+                    }
+                }
+            );
+
     };
 
     fetchFilterConditions();
     fetchPublishFilters();
-    //
-    //fetchFilterTestResult();
 }
 
 angular.module('superdesk.publish.filters', [])

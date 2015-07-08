@@ -1,24 +1,12 @@
-<div class="subnav" ng-class="{active: multiSelectCount > 0}">
-    <h3 class="page-nav-title" ng-hide="multiSelectCount > 0" translate>{{ selectedFilterTest }} Results</h3>
-
-    <div class="multi-action-bar">
-        <button class="btn" ng-click="cancelSelection()" ng-show="multiSelectCount > 0">{{ :: 'Cancel' | translate}}</button>
-        <span id="multi-select-count"
-              ng-show="multiSelectCount > 0"
-              translate
-              translate-n="multiSelectCount"
-              translate-plural="{{ multiSelectCount }} Items selected">{{ multiSelectCount}} Item selected
-        </span>
-    </div>
-</div>
-
-<section class="main-section publish-queue">
+<section class="main-section">
     <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="list-pane">
             <header>
                 <div class="sortbar pull-left">
                     <span class="lab pull-left" translate>Criteria:</span>
-                    <div class="dropdown pull-left" dropdown>
+                    <input type="radio" ng-click="fetchResults(selectedfilter)" ng-model="result_type" ng-value="true"><span translate>Matching</span>
+                    <input type="radio" ng-click="fetchResults(selectedfilter)" ng-model="result_type" ng-value ="false"><span translate>Non-Matching</span>
+                    <!-- <div class="dropdown pull-left" dropdown>
                         <button class="dropdown-toggle" dropdown-toggle> {{ selectedFilterTest }} <b class="caret"></b>
                         </button>
                         <ul class="dropdown-menu">
@@ -29,7 +17,7 @@
                                 <a href="" ng-click="filterResult(false)">{{ :: 'Non-Matching' | translate}}</a>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 
             </header>
@@ -49,7 +37,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="result_item in filter_test track by result_item._id" ng-click="preview(result_item);">
+                            <tr ng-repeat="result_item in testResult track by result_item._id" ng-click="preview(result_item);">
                                 <td>{{ result_item.id}}</td>
                                 <td>{{ result_item.headline}}</td>
                                 <td class="align-right">{{ result_item.source}}</td>
