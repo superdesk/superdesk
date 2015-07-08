@@ -32,7 +32,10 @@ function Authoring() {
     };
 
     this.save = function() {
-        return element(by.css('[ng-click="save(item)"]')).click();
+        element(by.css('[ng-click="save(item)"]')).click();
+        return browser.wait(function() {
+            return element(by.buttonText('SAVE')).getAttribute('disabled');
+        });
     };
 
     this.showSearch = function() {

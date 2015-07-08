@@ -48,25 +48,25 @@ describe('Package', function() {
         addItemsToPackage();
 
         // package existing package
-        openUrl('/#/workspace/content');
+        workspace.openContent('/#/workspace/content');
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Package item', 0);
 
         // select package
-        openUrl('/#/workspace/content');
+        workspace.openContent('/#/workspace/content');
         workspace.switchToDesk('Personal');
         element.all(by.repeater('item in items')).first().click();
 
         // preview package via preview
-        browser.sleep(300);
+        browser.sleep(100);
         element.all(by.repeater('child in item')).first().click();
-        browser.sleep(300);
+        browser.sleep(100);
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
 
         browser.wait(function() {
-            return previewItems().count();
-        }, 200);
+            return previewItems().first().isDisplayed();
+        });
 
         expect(previewItems().count()).toBe(3);
 
