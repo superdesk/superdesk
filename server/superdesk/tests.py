@@ -10,8 +10,10 @@
 
 
 import os
+import pymongo
 import unittest
 import elasticsearch
+
 from app import get_app
 from base64 import b64encode
 from flask import json
@@ -38,7 +40,6 @@ test_user = {
             'category': 'notifications',
             'enabled': True}
     }
-
 }
 
 
@@ -67,7 +68,6 @@ def get_test_settings():
     test_settings['CELERY_ALWAYS_EAGER'] = 'True'
     test_settings['CONTENT_EXPIRY_MINUTES'] = 99
     test_settings['VERSION'] = '_current_version'
-
     return test_settings
 
 
@@ -85,6 +85,9 @@ def drop_mongo(app):
         try:
             app.data.mongo.pymongo(prefix='MONGO').cx.drop_database(app.config['MONGO_DBNAME'])
             app.data.mongo.pymongo(prefix='LEGAL_ARCHIVE').cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
+        except pymongo.errors.ConnectionFailure:
+            raise ValueError('Invalid mongo config or server is down (uri=%s db=%s)' %
+                             (app.config['MONGO_URI'], app.config['MONGO_DBNAME']))
         except AttributeError:
             pass
 
