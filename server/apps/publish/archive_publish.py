@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from copy import copy
+from functools import partial
 import logging
 
 from eve.versioning import resolve_document_version
@@ -68,6 +69,8 @@ class BasePublishService(BaseService):
 
     publish_type = 'publish'
     published_state = 'published'
+
+    non_digital = partial(filter, lambda s: s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL)
 
     def on_update(self, updates, original):
         if original.get('marked_for_not_publication', False):
@@ -350,8 +353,7 @@ class BasePublishService(BaseService):
                 if len(subscribers_yet_to_receive) > 0:
                     # Step 2(b)(iii)
                     if updated.get('targeted_for'):
-                        subscribers_yet_to_receive = [s for s in subscribers_yet_to_receive
-                                                      if s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL]
+                        subscribers_yet_to_receive = list(self.non_digital(subscribers_yet_to_receive))
 
                     # Step 2(b)(iv)
                     formatters_not_found, queued_new_subscribers = \
@@ -363,7 +365,7 @@ class BasePublishService(BaseService):
 
             # Step 2(c)(ii)
             if updated.get('targeted_for'):
-                subscribers = [s for s in subscribers if s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL]
+                subscribers = list(self.non_digital(subscribers))
 
             # Step 2(c)(iii)
             no_formatters, queued = self.queue_transmission(updated, subscribers, target_media_type)

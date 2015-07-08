@@ -111,7 +111,7 @@ define([
             return function(array) {
                 var merged = [];
                 _.forEach(array, function(item) {
-                    merged.push(item.allow === false ? item.name : 'Not ' + item.name);
+                    merged.push(item.allow === false ? 'Not ' + item.name : item.name);
                 });
 
                 return merged.join(', ');
