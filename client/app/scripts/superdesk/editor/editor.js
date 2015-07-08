@@ -529,10 +529,11 @@ angular.module('superdesk.editor', [])
                     div.innerHTML = ngModel.$viewValue != null ? ngModel.$viewValue : '';
                     var modelTextValue = div.textContent || div.innerText || '';
                     // Compare model changes and apply
-                    if (event.type === 'input' && !_.isEqual(event.target.innerText.trim(), '')) {
+                    if (event.type === 'input' && !_.isEqual(event.currentTarget.textContent.trim(), '')) {
                         if (editor.fieldStack[key] != null) {
-                            if (!_.isEqual(event.target.innerHTML, editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
-                                if (!_.isEqual(event.target.innerText.trim(), modelTextValue.trim())) {
+                            if (!_.isEqual(event.currentTarget.innerHTML,
+                                editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
+                                if (!_.isEqual(event.currentTarget.textContent.trim(), modelTextValue.trim())) {
                                     // Invalidate items higher on the stack, if we are here after having undo called.
                                     editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
                                         editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
