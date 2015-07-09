@@ -32,9 +32,10 @@ before_install:
         npm install -g grunt-cli bower ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
+        pip install requests &&
         export DISPLAY=:99.0 &&
         /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x24 ;
-        wget -N --no-verbose https://storage.googleapis.com/chromium-browser-continuous/Linux_x64/335875/chrome-linux.zip && unzip chrome-linux.zip &&
+        ./scripts/get-chrome-url | wget -N --no-verbose -i - && unzip chrome-linux.zip &&
         export CHROME_BIN=`pwd`/chrome-linux/chrome &&
         $CHROME_BIN --version ;
       fi

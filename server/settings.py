@@ -21,7 +21,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from publicapi.settings import MONGO_DBNAME as PUBLICAPI_DBNAME  # noqa @UnusedImport
+from publicapi.settings import PUBLICAPI_MONGO_DBNAME  # noqa @UnusedImport
 
 
 def env(variable, fallback_value=None):
@@ -66,7 +66,7 @@ MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 LEGAL_ARCHIVE_DBNAME = env('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
 LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI')
-PUBLICAPI_URI = env('PUBLICAPI_URI')
+PUBLICAPI_MONGO_URI = env('PUBLICAPI_MONGO_URI')
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
