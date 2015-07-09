@@ -59,7 +59,7 @@ def get_test_settings():
     test_settings['ELASTICSEARCH_URL'] = ELASTICSEARCH_URL
     test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
     test_settings['MONGO_URI'] = get_mongo_uri('MONGO_URI', 'sptests')
-    test_settings['PUBLICAPI_URI'] = get_mongo_uri('PUBLICAPI_URI', 'sptests_publicapi')
+    test_settings['PUBLICAPI_MONGO_URI'] = get_mongo_uri('PUBLICAPI_MONGO_URI', 'sptests')
     test_settings['LEGAL_ARCHIVE_URI'] = get_mongo_uri('LEGAL_ARCHIVE_URI', 'sptests_legal')
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True

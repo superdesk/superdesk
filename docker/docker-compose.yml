@@ -46,6 +46,7 @@ backend:
    - postfix
   environment:
    - MONGO_URI=mongodb://mongodb/test
+   - PUBLICAPI_MONGO_URI=mongodb://mongodb/test
    - LEGAL_ARCHIVE_URI=mongodb://mongodb/test
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX
