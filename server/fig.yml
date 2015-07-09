@@ -19,7 +19,7 @@ web:
   environment:
    - SUPERDESK_URL
    - SUPERDESK_CLIENT_URL
-   - MONGOLAB_URI=mongodb://db:27017/test
+   - MONGO_URI=mongodb://db:27017/test
    - LEGAL_ARCHIVEDB_PORT=mongodb://db:27017
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX

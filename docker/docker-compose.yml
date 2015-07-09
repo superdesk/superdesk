@@ -45,7 +45,7 @@ backend:
    - logstash
    - postfix
   environment:
-   - MONGOLAB_URI=mongodb://mongodb/test
+   - MONGO_URI=mongodb://mongodb/test
    - LEGAL_ARCHIVE_URI=mongodb://mongodb/test
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX
