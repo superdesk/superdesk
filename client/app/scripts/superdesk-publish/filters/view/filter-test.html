@@ -1,23 +1,11 @@
-<section class="main-section">
+<section class="main-section">hhhhh
     <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="list-pane">
             <header>
                 <div class="sortbar pull-left">
-                    <span class="lab pull-left" translate>Criteria:</span>
-                    <input type="radio" ng-click="fetchResults(selectedfilter)" ng-model="result_type" ng-value="true"><span translate>Matching</span>
-                    <input type="radio" ng-click="fetchResults(selectedfilter)" ng-model="result_type" ng-value ="false"><span translate>Non-Matching</span>
-                    <!-- <div class="dropdown pull-left" dropdown>
-                        <button class="dropdown-toggle" dropdown-toggle> {{ selectedFilterTest }} <b class="caret"></b>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="" ng-click="filterResult(true)">{{ :: 'Matching' | translate}}</a>
-                            </li>
-                            <li>
-                                <a href="" ng-click="filterResult(false)">{{ :: 'Non-Matching' | translate}}</a>
-                            </li>
-                        </ul>
-                    </div> -->
+                    <span ng-repeat="type in resultType">
+                        <input type="radio" ng-click="fetchResults()" name="type" value="{{type.value}}" data-ng-model="model.selectedType"> {{type.id}}
+                    </span>
                 </div>
 
             </header>
@@ -27,23 +15,32 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <!-- Id, Headline, Source and Keyword, Desk -->
-                                <th translate>Id</th>
+                                <th translate>State</th>
+                                <th translate>Unique Name</th>
                                 <th translate>Headline</th>
-                                <th class="align-right" translate>Source</th>
-                                <th class="align-right" translate>Keyword</th>
-                                <th class="align-right" translate>Destination</th>
-                                <th class="align-right" translate>Desk</th>
+                                <th translate>Keywords</th>
+                                <th translate>Source</th>
+                                <!-- <th translate>Subject</th> -->
+                                <th translate>ANPA Category</th>
+                                <th translate>View</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="result_item in testResult track by result_item._id" ng-click="preview(result_item);">
-                                <td>{{ result_item.id}}</td>
-                                <td>{{ result_item.headline}}</td>
-                                <td class="align-right">{{ result_item.source}}</td>
-                                <td class="align-right">{{ result_item.keyword}}</td>
-                                <td class="align-right">{{queue_item.destination}}</td>
-                                <td class="align-right">{{queue_item.location}}</td>
+                            <tr id="resultRow" tabindex="1" ng-keyup="handleKeyEvent($event)" ng-repeat="result_item in testResult track by result_item._id" ng-click="preview(result_item);">
+                                <td><i class="filetype-icon-{{result_item.type}}" ng-hide="hover || item.selected"></i></td>
+                                <td><div class="state-label state-{{result_item.state}}">{{ result_item.state}}</div></td>
+                                <td>{{ result_item.unique_name}}</td>
+                                <td>{{ result_item.headline | limitTo: 60}}
+                                    <span sd-item-container data-item="result_item" title="{{ result_item.container }}" 
+                                    class="container"></span>
+                                </td>
+                                <td>{{ result_item.slugline | limitTo: 40}}</td>
+                                <td>{{ result_item.source}}</td>
+                                <!-- <td>{{ result_item.subject | mergeWords:'name'}}</td> -->
+                                <td>{{ result_item['anpa-category'].name }}</td>
+                                <td>
+                                    <i ng-click="openViewTab(result_item.guid)" class="icon-fullscreen true" title="Open in new tab"></i>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

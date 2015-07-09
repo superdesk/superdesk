@@ -174,8 +174,8 @@ function FilterConditionsController($scope, filters, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location'];
-function PublishFiltersController($scope, filters, notify, modal, $location) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window', '$rootScope'];
+function PublishFiltersController($scope, filters, notify, modal, $location, $window, $rootScope) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
@@ -185,6 +185,22 @@ function PublishFiltersController($scope, filters, notify, modal, $location) {
     $scope.publishFiltersLookup = {};
     $scope.selected = {};
     $scope.result_type = true;
+    $scope.selectedItem = {};
+
+    var UP = -1,
+    DOWN = 1,
+    //ENTER_KEY = 13,
+    MOVES = {
+        38: UP,
+        40: DOWN
+    };
+
+    $scope.resultType = [
+        {id: 'Matching', value: 'true'},
+        {id: 'Non-Matching', value: 'false'}
+    ];
+
+    $scope.model = {selectedType:'true'};
 
     $scope.edit = function(pf) {
         $scope.origPublishFilter = pf || {};
@@ -281,12 +297,13 @@ function PublishFiltersController($scope, filters, notify, modal, $location) {
     $scope.testfilter = function(ft) {
         $scope.filter_test = true;
         $scope.testResult = null;
-        fetchFilterTestResult(ft);
+        $scope.selectedfilter = ft._id;
+        fetchFilterTestResult();
     };
     function previewItem() {
-        var selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
-        if (selectedItem) {
-            $scope.selected.preview = selectedItem;
+        $scope.selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
+        if ($scope.selectedItem) {
+            $scope.selected.preview = $scope.selectedItem;
         } else {
             $scope.selected.preview = null;
         }
@@ -295,9 +312,64 @@ function PublishFiltersController($scope, filters, notify, modal, $location) {
         $location.search('_id', Item ? Item._id : Item);
     };
     $scope.$on('$routeUpdate', previewItem);
+    //$('#resultRow').on('keypress', alert('x'));
+    //$scope.$on('keydown', handleKey);
+    /*$rootScope.$on('keypress', function (e, a, key) {
+        console.log('keypress');
+        $scope.$apply(function () {
+            $scope.key = key;
+        });
+    });*/
+    $scope.handleKeyEvent = function(event) {
+        var code = event.keyCode || event.which;
+        if (MOVES[code]) {
+            event.preventDefault();
+            event.stopPropagation();
+            move(MOVES[code], event);
+        }
+        /*else if (code === ENTER_KEY) {
+            scope.$applyAsync(function() {
+                edit(scope.selected);
+            });
+        }*/
+    };
 
-    $scope.fetchResults = function(selectedFilter) {
-        fetchFilterTestResult(selectedFilter);
+    function move(diff, event) {
+        var index = _.findIndex($scope.testResult, $scope.selectedItem),
+            nextItem,
+            nextIndex;
+
+        if (index === -1) {
+            nextItem = $scope.testResult[0];
+        } else {
+            nextIndex = Math.max(0, Math.min($scope.testResult.length - 1, index + diff));
+            nextItem = $scope.testResult[nextIndex];
+        }
+        //$scope.$apply(function() {
+        clickItem($scope.testResult[nextIndex], event);
+        //});
+    }
+
+    function clickItem(item, event) {
+        //$scope.select(item);
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
+    }
+    //$scope.selectedItem
+    /*function select(item) {
+        $scope.selectedItem = item;
+        //monitoring.preview(item);
+    }*/
+    $scope.fetchResults = function() {
+        fetchFilterTestResult();
+    };
+
+    $scope.openViewTab = function(guid) {
+        var _url = '#/authoring/' + guid + '/view';
+        $window.open(_url, '_blank');
     };
 
     $scope.test = function() {
@@ -383,9 +455,8 @@ function PublishFiltersController($scope, filters, notify, modal, $location) {
             });
         });
     };
-    var fetchFilterTestResult = function(filter) {
-        $scope.selectedfilter = filter;
-        filters.testPublishFilter({'filter_id': filter._id, 'return_matching': $scope.result_type})
+    var fetchFilterTestResult = function() {
+        filters.testPublishFilter({'filter_id': $scope.selectedfilter, 'return_matching': $scope.$eval($scope.model.selectedType)})
             .then(
                 function(result) {
                     $scope.testResult = result.match_results;
