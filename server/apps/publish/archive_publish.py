@@ -318,7 +318,7 @@ class BasePublishService(BaseService):
 
                 # Step 2(a)(i)
                 subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
-                recipients = [s['email'] for s in subscribers]
+                recipients = [s.get('email') for s in subscribers if s.get('email')]
                 send_article_killed_email(doc, recipients, queued_items[0].get('completed_at'))
 
                 # Step 2(a)(ii)
