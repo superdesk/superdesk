@@ -1,6 +1,6 @@
 <div class="stage" ng-show="total">
     <div sd-monitoring-group-header></div>
-    <div class="stage-content group" tabindex="0">
+    <div class="stage-content group" ng-class="{limited: limited}" tabindex="0">
         <ul class="inline-content-items compact-view list-view">
             <li ng-repeat="item in items track by uuid(item)"
                 class="list-item-view"

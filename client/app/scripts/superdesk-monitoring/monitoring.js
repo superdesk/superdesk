@@ -71,6 +71,9 @@
         this.closePreview = closePreview;
         this.previewItem = null;
 
+        this.singleGroup = null;
+        this.viewSingleGroup = viewSingleGroup;
+
         this.edit = edit;
         this.editItem = null;
 
@@ -88,6 +91,10 @@
         function edit(item) {
             vm.editItem = item;
             vm.state['with-authoring'] = !!item;
+        }
+
+        function viewSingleGroup(group) {
+            vm.singleGroup = group;
         }
     }
 
@@ -127,7 +134,8 @@
             templateUrl: 'scripts/superdesk-monitoring/views/monitoring-group.html',
             require: ['^sdMonitoringView', '^sdAuthoringContainer'],
             scope: {
-                group: '='
+                group: '=',
+                numItems: '='
             },
             link: function(scope, elem, attrs, ctrls) {
 
@@ -139,12 +147,14 @@
                 scope.fetching = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
+                scope.limited = monitoring.singleGroup ? false : true;
 
                 scope.uuid = uuid;
                 scope.edit = edit;
                 scope.select = select;
                 scope.preview = preview;
                 scope.renderNew = renderNew;
+                scope.viewSingleGroup = viewSingleGroup;
 
                 scope.$watch('group', queryItems);
                 scope.$on('task:stage', handleStage);
@@ -199,7 +209,8 @@
                     var top = scrollElem[0].scrollTop,
                         start = Math.floor(top / ITEM_HEIGHT),
                         from = Math.max(0, start - BUFFER),
-                        to = Math.min(scope.total, start + ITEMS_COUNT + BUFFER);
+                        itemsCount = scope.numItems || ITEMS_COUNT,
+                        to = Math.min(scope.total, start + itemsCount + BUFFER);
 
                     if (parseInt(list.style.height, 10) !== scope.total * ITEM_HEIGHT) {
                         list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
@@ -228,6 +239,10 @@
                     scope.total += scope.newItemsCount;
                     scope.newItemsCount = 0;
                     render();
+                }
+
+                function viewSingleGroup(group) {
+                    monitoring.viewSingleGroup(group);
                 }
 
                 function merge(newItems) {
@@ -296,6 +311,7 @@
 
                 function move(diff, event) {
                     var index = _.findIndex(scope.items, scope.selected),
+                        itemsCount = scope.numItems || ITEMS_COUNT,
                         nextItem,
                         nextIndex;
 
@@ -314,7 +330,7 @@
                             if (nextItemIndex < topItemIndex) {
                                 scrollElem[0].scrollTop = Math.max(0, nextItemIndex * ITEM_HEIGHT);
                             } else if (nextItemIndex >= bottomItemIndex) {
-                                scrollElem[0].scrollTop = (nextItemIndex - ITEMS_COUNT + 1) * ITEM_HEIGHT;
+                                scrollElem[0].scrollTop = (nextItemIndex - itemsCount + 1) * ITEM_HEIGHT;
                             }
                         }, 50, false);
                     }
