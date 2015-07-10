@@ -9,13 +9,15 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from copy import copy
+from functools import partial
 import logging
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
-from apps.content import PUB_STATUS
 
+from apps.content import PUB_STATUS
+from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
 from superdesk.emails import send_article_killed_email
@@ -67,6 +69,8 @@ class BasePublishService(BaseService):
 
     publish_type = 'publish'
     published_state = 'published'
+
+    non_digital = partial(filter, lambda s: s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL)
 
     def on_update(self, updates, original):
         if original.get('marked_for_not_publication', False):
@@ -275,16 +279,21 @@ class BasePublishService(BaseService):
                 ii. The article should be formatted as per the type of the format and then queue article to the
                     Subscribers who received the article previously.
             b. If the state of the article is corrected then:
-                i.  The article should be formatted as per the type of the format and then queue article to the
-                    Subscribers who received the article previously.
-                ii. For all active subscribers, check if the article matches against the restrictions if available in
-                    the article, publish filters and global filters if configured for the subscriber. If matches then
-                    the article should be formatted as per the type of the format and then queue article to the
-                    subscribers.
+                i.      The article should be formatted as per the type of the format and then queue article to the
+                        Subscribers who received the article previously.
+                ii.     Fetch Active Subscribers and exclude those who received the article previously.
+                iii.    If article has 'targeted_for' property then exclude subscribers of type Internet from
+                        Subscribers list.
+                iv.     For each subscriber in the list, check if the article matches against publish filters and
+                        global filters if configured for the subscriber. If matches then the article should be formatted
+                        as per the type of the format and then queue article to the subscribers.
             c. If the state of the article is published then:
-                i. For all active subscribers, check if the article matches against the restrictions if available in
-                   the article, publish filters and global filters if configured for the subscriber. If matches then
-                   the article should be formatted as per the type of the format and then queue article.
+                i.     Fetch Active Subscribers.
+                ii.    If article has 'targeted_for' property then exclude subscribers of type Internet from
+                       Subscribers list.
+                iii.    For each subscriber in the list, check if the article matches against publish filters and global
+                        filters if configured for the subscriber. If matches then the article should be formatted
+                        as per the type of the format and then queue article.
         3. Sends notification if no formatter has found for any of the formats configured in Subscriber.
         """
 
@@ -342,12 +351,23 @@ class BasePublishService(BaseService):
                                               if not any(a[config.ID_FIELD] == s[config.ID_FIELD] for s in subscribers)]
 
                 if len(subscribers_yet_to_receive) > 0:
+                    # Step 2(b)(iii)
+                    if updated.get('targeted_for'):
+                        subscribers_yet_to_receive = list(self.non_digital(subscribers_yet_to_receive))
+
+                    # Step 2(b)(iv)
                     formatters_not_found, queued_new_subscribers = \
                         self.queue_transmission(updated, subscribers_yet_to_receive, target_media_type)
                     no_formatters.extend(formatters_not_found)
         elif self.published_state == 'published':  # Step 2(c)
             # Step 2(c)(i)
             subscribers = list(get_resource_service('subscribers').get(req=None, lookup={'is_active': True}))
+
+            # Step 2(c)(ii)
+            if updated.get('targeted_for'):
+                subscribers = list(self.non_digital(subscribers))
+
+            # Step 2(c)(iii)
             no_formatters, queued = self.queue_transmission(updated, subscribers, target_media_type)
 
         # Step 3
@@ -382,9 +402,17 @@ class BasePublishService(BaseService):
 
             for subscriber in subscribers:
                 if target_media_type:
-                    can_send_takes_packages = subscriber.get('can_send_takes_packages', False)
+                    can_send_takes_packages = subscriber['subscriber_type'] == SUBSCRIBER_TYPES.DIGITAL
                     if target_media_type == WIRE and can_send_takes_packages or target_media_type == DIGITAL \
                             and not can_send_takes_packages:
+                        continue
+
+                if doc.get('targeted_for'):
+                    matching_target = [t for t in doc.get('targeted_for')
+                                       if t['name'] == subscriber.get('subscriber_type', '') or
+                                       t['name'] == subscriber.get('geo_restrictions', '')]
+
+                    if len(matching_target) > 0 and matching_target[0]['allow'] is False:
                         continue
 
                 if not self.conforms_publish_filter(subscriber, doc):

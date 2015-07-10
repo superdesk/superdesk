@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from apps.publish.subscribers import SUBSCRIBER_TYPES
+
 from superdesk.tests import TestCase
 from apps.publish import init_app
 from apps.publish.formatters.anpa_formatter import AAPAnpaFormatter
@@ -16,7 +18,7 @@ import io
 
 
 class ANPAFormatterTest(TestCase):
-    subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
+    subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "ANPA", "delivery_type": "email", "format": "ANPA",
                                       "config": {"recipients": "test@sourcefabric.org"}

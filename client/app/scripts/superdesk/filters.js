@@ -106,5 +106,15 @@ define([
                     return 'danger';
                 }
             };
-        }]);
+        }])
+        .filter('mergeTargets', function() {
+            return function(array) {
+                var merged = [];
+                _.forEach(array, function(item) {
+                    merged.push(item.allow === false ? 'Not ' + item.name : item.name);
+                });
+
+                return merged.join(', ');
+            };
+        });
 });

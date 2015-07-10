@@ -96,11 +96,15 @@
         <dt translate>Dateline</dt>
         <dd>{{ item.dateline }}</dd>
     </dl>
-        <dl ng-if="item.located">
+    <dl ng-if="item.located">
         <dt translate>Located</dt>
         <dd>{{ item.located }}</dd>
     </dl>
 
+    <dl ng-if="item.targeted_for">
+        <dt translate>Targeted For</dt>
+        <dd>{{item.targeted_for | mergeTargets}}</dd>
+    </dl>
 
     <!-- Story details -->
     <dl ng-if="item.language">

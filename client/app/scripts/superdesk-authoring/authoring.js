@@ -28,7 +28,7 @@
         marked_for_not_publication: false,
         pubstatus: null,
         more_coming: false,
-        restrictions: ''
+        targeted_for: []
     });
 
     var DEFAULT_ACTIONS = Object.freeze({

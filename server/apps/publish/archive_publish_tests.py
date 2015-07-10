@@ -17,6 +17,7 @@ from eve.utils import config
 from eve.versioning import versioned_id_field
 from apps.archive.common import insert_into_versions
 from apps.publish.archive_publish import ArchivePublishService
+from apps.publish.subscribers import SUBSCRIBER_TYPES
 
 from apps.validators import ValidatorsPopulateCommand
 from superdesk.tests import TestCase
@@ -31,7 +32,7 @@ from settings import URL_PREFIX
 
 class ArchivePublishTestCase(TestCase):
     def init_data(self):
-        self.subscribers = [{"_id": "1", "name": "sub1", "is_active": True, "can_send_takes_packages": False,
+        self.subscribers = [{"_id": "1", "name": "sub1", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.WIRE,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "email": "test@test.com",
                              "destinations": [{"name": "dest1", "format": "nitf",
@@ -39,7 +40,7 @@ class ArchivePublishTestCase(TestCase):
                                                "config": {"address": "127.0.0.1", "username": "test"}
                                                }]
                              },
-                            {"_id": "2", "name": "sub2", "is_active": True, "can_send_takes_packages": False,
+                            {"_id": "2", "name": "sub2", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.WIRE,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "email": "test@test.com",
                              "destinations": [{"name": "dest2", "format": "AAP ANPA", "delivery_type": "filecopy",
@@ -49,9 +50,17 @@ class ArchivePublishTestCase(TestCase):
                                                "config": {"recipients": "test@sourcefabric.org"}
                                                }]
                              },
-                            {"_id": "3", "name": "sub3", "is_active": True, "can_send_takes_packages": True,
+                            {"_id": "3", "name": "sub3", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.DIGITAL,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "email": "test@test.com",
+                             "destinations": [{"name": "dest1", "format": "nitf",
+                                               "delivery_type": "ftp",
+                                               "config": {"address": "127.0.0.1", "username": "test"}
+                                               }]
+                             },
+                            {"_id": "4", "name": "sub4", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.WIRE,
+                             "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
+                             "geo_restrictions": "New South Wales", "email": "test@test.com",
                              "destinations": [{"name": "dest1", "format": "nitf",
                                                "delivery_type": "ftp",
                                                "config": {"address": "127.0.0.1", "username": "test"}
@@ -231,7 +240,27 @@ class ArchivePublishTestCase(TestCase):
                           'expiry': utcnow() + timedelta(minutes=20),
                           'type': 'text',
                           'unique_name': '#8'},
-                         {'_id': '9', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'}]
+                         {'_id': '9', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'},
+                         {'guid': 'tag:localhost:2015:69b961ab-a7b402fed4fb',
+                          '_id': '10',
+                          'last_version': 3,
+                          config.VERSION: 4,
+                          'body_html': 'Student Crime. Police Missing.',
+                          'urgency': 4,
+                          'headline': 'Police Missing',
+                          'abstract': 'Police Missing',
+                          'anpa-category': {'qcode': 'A', 'name': 'Australian General News'},
+                          'pubstatus': 'usable',
+                          'firstcreated': utcnow(),
+                          'byline': 'By Alan Karben',
+                          'dateline': 'Sydney',
+                          'slugline': 'Police Missing',
+                          'keywords': ['Student', 'Crime', 'Police', 'Missing'],
+                          'subject': [{'qcode': '17004000', 'name': 'Statistics'},
+                                      {'qcode': '04001002', 'name': 'Weather'}],
+                          'state': 'in_progress',
+                          'type': 'text',
+                          'unique_name': '#10'}]
 
     def setUp(self):
         super().setUp()
@@ -357,7 +386,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[0])
             get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(4, queue_items.count())
+            self.assertEqual(5, queue_items.count())
 
     def test_queue_transmission_wrong_article_type_fails(self):
         with self.app.app_context():
@@ -370,7 +399,7 @@ class ArchivePublishTestCase(TestCase):
 
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-            self.assertEqual(4, len(no_formatters))
+            self.assertEqual(5, len(no_formatters))
             self.assertFalse(queued)
 
     def test_queue_transmission_for_scheduled_publish(self):
@@ -382,11 +411,12 @@ class ArchivePublishTestCase(TestCase):
             get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
 
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(4, queue_items.count())
+            self.assertEqual(5, queue_items.count())
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
+            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
 
     def test_queue_transmission_for_digital_channels(self):
         with self.app.app_context():
@@ -407,7 +437,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             get_resource_service('archive_publish').queue_transmission(doc, self.subscribers, 'wire')
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(3, queue_items.count())
+            self.assertEqual(4, queue_items.count())
             expected_subscribers = ['1', '2']
             self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
             self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
@@ -421,7 +451,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(4, queue_items.count())
+            self.assertEqual(5, queue_items.count())
 
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(doc['_id'])
             queue_items = self.app.data.find('publish_queue', None, None)
@@ -670,10 +700,6 @@ class ArchivePublishTestCase(TestCase):
                                    'operator': 'in',
                                    'value': '2,3,4',
                                    'name': 'test-4'}])
-            # self.app.data.insert('publish_filters',
-            #                      [{'_id': 1,
-            #                        'publish_filter': [[{"fc": [4, 3]}], [{"fc": [1, 2]}]],
-            #                        'name': 'pf-1'}])
 
             get_resource_service('publish_filters').\
                 post([{'_id': 1,
@@ -693,3 +719,30 @@ class ArchivePublishTestCase(TestCase):
             self.assertTrue(can_it)
 
             self.subscribers[0].pop('publish_filter')
+
+    def test_targeted_for_excludes_digital_subscribers(self):
+        with self.app.app_context():
+            ValidatorsPopulateCommand().run(self.filename)
+            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
+            get_resource_service('archive').patch(id=self.articles[9][config.ID_FIELD], updates=updates)
+
+            doc = get_resource_service('archive').find_one(req=None, _id=self.articles[9][config.ID_FIELD])
+            get_resource_service('archive_publish').patch(id=doc['_id'], updates={'state': 'published'})
+
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEqual(4, queue_items.count())
+
+    def test_targeted_for(self):
+        with self.app.test_request_context(URL_PREFIX):
+            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': False}]}
+            get_resource_service('archive').patch(id=self.articles[9][config.ID_FIELD], updates=updates)
+
+            doc = get_resource_service('archive').find_one(req=None, _id=self.articles[9][config.ID_FIELD])
+            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers, 'wire')
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEqual(3, queue_items.count())
+
+            expected_subscribers = ['1', '2']
+            self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
+            self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
+            self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
