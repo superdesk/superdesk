@@ -1,6 +1,8 @@
 <div class="stage-header clearfix">
     <span class="stage-name pull-left">
-        {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} {{ :: group.type}}</span>
+        <a href="" ng-click="viewSingleGroup(group)">
+            {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} {{ :: group.type}}</span>
+        </a>
     </span>
     <span class="label label-total">{{ total }}</span>
 </div>

@@ -33,12 +33,15 @@
             }
 
             .stage-content {
-                max-height: 285px;
                 overflow-y: scroll;
+                &.limited {
+                    max-height: 285px;
+                }
             }
 
             .inline-content-items {
                 .border-box();
+                max-height: calc(~"100vh - 180px") !important;
             }
         }
 
