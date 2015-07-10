@@ -351,7 +351,6 @@
                 };
 
                 $scope.saveNewDestination = function() {
-                    $scope.subscriber.destinations = $scope.subscriber.destinations || [];
                     $scope.subscriber.destinations.push($scope.newDestination);
                     $scope.newDestination = null;
                 };
@@ -393,6 +392,7 @@
                     $scope.subscriber = _.create($scope.origSubscriber);
                     $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
                     $scope.subscriber.publish_filter = $scope.origSubscriber.publish_filter || {};
+                    $scope.subscriber.destinations = $scope.subscriber.destinations || [];
 
                     $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
                     fetchPublishErrors();
