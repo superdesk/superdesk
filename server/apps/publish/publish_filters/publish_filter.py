@@ -46,6 +46,10 @@ class PublishFilterResource(Resource):
             'type': 'string',
             'nullable': False,
             'iunique': True
+        },
+        'is_global': {
+            'type': 'boolean',
+            'default': False
         }
     }
 
@@ -61,6 +65,13 @@ class PublishFilterResource(Resource):
 
 
 class PublishFilterService(BaseService):
+    def get(self, req, lookup):
+        if req is None:
+            req = ParsedRequest()
+        if req.args and req.args.get('is_global'):
+            lookup = {'is_global': True}
+        return self.backend.get(self.datasource, req=req, lookup=lookup)
+
     def update(self, id, updates, original):
         publish_filter = dict(original)
         publish_filter.update(updates)

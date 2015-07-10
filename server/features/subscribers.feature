@@ -168,3 +168,58 @@ Feature: Subscribers
     """
     {"_issues": {"sequence_num_settings.min": 1}, "_message": "Value of Minimum in Sequence Number Settings should be greater than 0"}
     """
+
+  @auth
+  @notification
+  Scenario: Update critical errors for subscriber
+    Given empty "subscribers"
+    When we post to "/subscribers" with success
+    """
+    {
+      "name":"News1","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+    }
+    """
+    When we patch "/subscribers/#subscribers._id#"
+    """
+    {"critical_errors":{"6000":true, "6001":true}}
+    """
+    Then we get updated response
+    """
+    {"critical_errors":{"6000":true, "6001":true}}
+    """
+
+  @auth
+  @vocabulary
+  @notification
+  Scenario: Update critical errors for subscriber
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filters"
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    """
+
+    Then we get latest
+    Given empty "subscribers"
+    When we post to "/subscribers" with success
+    """
+    {
+      "name":"News1","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+    }
+    """
+    When we patch "/subscribers/#subscribers._id#"
+    """
+    {"global_filters":{"#publish_filters._id#":true}}
+    """
+    Then we get updated response
+    """
+    {"global_filters":{"#publish_filters._id#":true}}
+    """

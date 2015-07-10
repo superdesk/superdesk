@@ -36,6 +36,13 @@ function FiltersService(api) {
         return api.save('publish_filter_tests', {}, diff);
     };
 
+    this.getGlobalPublishFilters = function() {
+        return api.query('publish_filters', {'is_global': true})
+            .then(angular.bind(this, function(params) {
+                return params._items;
+            }));
+    };
+
     var _getAll = function(endPoint, page, items) {
         page = page || 1;
         items = items || [];
@@ -64,10 +71,6 @@ function FilterConditionsController($scope, filters, notify, modal) {
     $scope.valueFieldLookup = {};
 
     $scope.edit = function(fc) {
-        $scope.origFilterCondition = fc || {};
-        $scope.filterCondition = _.create($scope.origFilterCondition);
-        $scope.filterCondition.values = [];
-
         filters.getFilterConditionParameters().then(function(params) {
             $scope.filterConditionParameters = params;
             _.each(params, function(param) {
@@ -75,9 +78,12 @@ function FilterConditionsController($scope, filters, notify, modal) {
                 $scope.valueLookup[param.field] = param.values;
                 $scope.valueFieldLookup[param.field] = param.value_field;
             });
-        });
 
-        setFilterValues();
+            $scope.origFilterCondition = fc || {};
+            $scope.filterCondition = _.create($scope.origFilterCondition);
+            $scope.filterCondition.values = [];
+            setFilterValues();
+        });
     };
 
     $scope.isListValue = function() {
@@ -266,6 +272,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
     };
 
     $scope.test = function() {
+
         if (!$scope.test.article_id) {
             notify.error(gettext('Please provide an article id'));
             return;

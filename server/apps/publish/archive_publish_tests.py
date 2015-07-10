@@ -13,7 +13,7 @@ from datetime import timedelta
 import os
 import json
 
-from eve.utils import config
+from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
 from apps.archive.common import insert_into_versions
 from apps.publish.archive_publish import ArchivePublishService
@@ -715,6 +715,59 @@ class ArchivePublishTestCase(TestCase):
 
             can_it = get_resource_service('archive_publish').\
                 conforms_publish_filter(self.subscribers[0], self.articles[8])
+
+            self.assertTrue(can_it)
+
+            self.subscribers[0].pop('publish_filter')
+
+    def test_can_publish_article_with_global_filters(self):
+        with self.app.test_request_context(URL_PREFIX):
+            self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 1,
+                                   'field': 'headline',
+                                   'operator': 'like',
+                                   'value': 'tor',
+                                   'name': 'test-1'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 2,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2',
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 3,
+                                   'field': 'headline',
+                                   'operator': 'endswith',
+                                   'value': 'tor',
+                                   'name': 'test-3'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 4,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2,3,4',
+                                   'name': 'test-4'}])
+
+            get_resource_service('publish_filters').\
+                post([{'_id': 1,
+                       'publish_filter': [{"expression": {"fc": [4, 3]}}, {"expression": {"fc": [1, 2]}}],
+                       'name': 'pf-1',
+                       'is_global': True}])
+
+            service = get_resource_service('publish_filters')
+            req = ParsedRequest()
+            req.args = {'is_global': True}
+            global_filters = service.get(req=req, lookup=None)
+
+            can_it = get_resource_service('archive_publish').\
+                conforms_global_filter(self.subscribers[0], global_filters, self.articles[8])
+
+            self.assertFalse(can_it)
+
+            self.subscribers[0]['global_filters'] = {'1': False}
+
+            can_it = get_resource_service('archive_publish').\
+                conforms_global_filter(self.subscribers[0], global_filters, self.articles[8])
 
             self.assertTrue(can_it)
 

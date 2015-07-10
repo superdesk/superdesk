@@ -399,6 +399,10 @@ class BasePublishService(BaseService):
         try:
             queued = False
             no_formatters = []
+            service = get_resource_service('publish_filters')
+            req = ParsedRequest()
+            req.args = {'is_global': True}
+            global_filters = service.get(req=req, lookup=None)
 
             for subscriber in subscribers:
                 if target_media_type:
@@ -414,6 +418,9 @@ class BasePublishService(BaseService):
 
                     if len(matching_target) > 0 and matching_target[0]['allow'] is False:
                         continue
+
+                if not self.conforms_global_filter(subscriber, global_filters, doc):
+                    continue
 
                 if not self.conforms_publish_filter(subscriber, doc):
                     continue
@@ -478,6 +485,17 @@ class BasePublishService(BaseService):
             return publish_filter['filter_type'] == 'permitting'
         else:
             return publish_filter['filter_type'] == 'blocking'
+
+    def conforms_global_filter(self, subscriber, global_filters, doc):
+        service = get_resource_service('publish_filters')
+        gfs = subscriber.get('global_filters', {})
+        for global_filter in global_filters:
+            if gfs.get(str(global_filter['_id']), True):
+                # Global filter applies to this subscriber
+                if service.does_match(global_filter, doc):
+                    # All global filters behaves like blocking filters
+                    return False
+        return True
 
 
 class ArchivePublishResource(BasePublishResource):
