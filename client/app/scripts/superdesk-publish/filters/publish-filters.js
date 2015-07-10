@@ -189,7 +189,6 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
 
     var UP = -1,
     DOWN = 1,
-    //ENTER_KEY = 13,
     MOVES = {
         38: UP,
         40: DOWN
@@ -300,6 +299,12 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
         $scope.selectedfilter = ft._id;
         fetchFilterTestResult();
     };
+    $scope.preview = function(Item) {
+        $location.search('_id', Item ? Item._id : Item);
+    };
+
+    $scope.$on('$routeUpdate', previewItem);
+
     function previewItem() {
         $scope.selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
         if ($scope.selectedItem) {
@@ -308,18 +313,6 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
             $scope.selected.preview = null;
         }
     }
-    $scope.preview = function(Item) {
-        $location.search('_id', Item ? Item._id : Item);
-    };
-    $scope.$on('$routeUpdate', previewItem);
-    //$('#resultRow').on('keypress', alert('x'));
-    //$scope.$on('keydown', handleKey);
-    /*$rootScope.$on('keypress', function (e, a, key) {
-        console.log('keypress');
-        $scope.$apply(function () {
-            $scope.key = key;
-        });
-    });*/
     $scope.handleKeyEvent = function(event) {
         var code = event.keyCode || event.which;
         if (MOVES[code]) {
@@ -327,11 +320,6 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
             event.stopPropagation();
             move(MOVES[code], event);
         }
-        /*else if (code === ENTER_KEY) {
-            scope.$applyAsync(function() {
-                edit(scope.selected);
-            });
-        }*/
     };
 
     function move(diff, event) {
@@ -345,24 +333,21 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
             nextIndex = Math.max(0, Math.min($scope.testResult.length - 1, index + diff));
             nextItem = $scope.testResult[nextIndex];
         }
-        //$scope.$apply(function() {
         clickItem($scope.testResult[nextIndex], event);
-        //});
+    }
+    function select(item) {
+        $scope.selectedItem = item;
+        $location.search('_id', item ? item._id : item);
     }
 
     function clickItem(item, event) {
-        //$scope.select(item);
+        select(item);
         if (event) {
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
         }
     }
-    //$scope.selectedItem
-    /*function select(item) {
-        $scope.selectedItem = item;
-        //monitoring.preview(item);
-    }*/
     $scope.fetchResults = function() {
         fetchFilterTestResult();
     };
