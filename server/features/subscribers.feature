@@ -85,6 +85,57 @@ Feature: Subscribers
     Then we get error 405
 
   @auth
+  Scenario: Creating a Subscriber should fail if there are no destinations
+    Given empty "subscribers"
+    When we post to "/subscribers"
+    """
+    {
+      "name":"News1", "subscriber_type": "digital","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10}
+    }
+    """
+    Then we get error 400
+    """
+    {"_issues": {"destinations": {"required": 1}}, "_status": "ERR"}
+    """
+    When we post to "/subscribers"
+    """
+    {
+      "name":"News1", "subscriber_type": "digital","media_type":"media", "sequence_num_settings":{"min" : 1, "max" : 10},
+      "destinations": []
+    }
+    """
+    Then we get error 400
+    """
+    {"_issues": {"destinations": {"minlength": 1}}, "_status": "ERR"}
+    """
+
+  @auth
+  Scenario: Updating a Subscriber with no destinations should fail
+    Given empty "subscribers"
+    When we get "/subscribers"
+    Then we get list with 0 items
+    When we post to "/subscribers" with success
+    """
+    {
+      "name":"News1","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+      "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}]
+    }
+    """
+    And we get "/subscribers"
+    Then we get list with 1 items
+    """
+    {"_items":[{"name":"News1"}]}
+    """
+    When we patch "/subscribers/#subscribers._id#"
+    """
+    {"destinations":[]}
+    """
+    Then we get error 400
+    """
+    {"_issues": {"destinations": {"minlength": 1}}, "_status": "ERR"}
+    """
+
+  @auth
   Scenario: Creating a Subscriber should fail when Mandatory properties are not passed for destinations
     Given empty "subscribers"
     When we post to "/subscribers"

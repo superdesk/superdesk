@@ -76,6 +76,8 @@ class SubscribersResource(Resource):
         },
         'destinations': {
             'type': 'list',
+            'required': True,
+            "minlength": 1,
             'schema': {
                 'type': 'dict',
                 'schema': {
