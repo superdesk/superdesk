@@ -57,14 +57,11 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     :param desk: id of desk where item should be sent
     :param stage: optional stage within the desk
     """
-    task = doc.get('task', {})
-    current_stage = get_resource_service('stages').find_one(req=None, _id=task.get('stage'))
-    destination_stage = None
-    task.setdefault('desk', desk_id)
-    task.setdefault('stage', stage_id)
-    task.setdefault('user', user_id)
 
-    calculate_expiry_from = None
+    original_task = doc.setdefault('task', {})
+    current_stage = get_resource_service('stages').find_one(req=None, _id=original_task.get('stage'))
+    destination_stage = calculate_expiry_from = None
+    task = {'desk': desk_id, 'stage': stage_id, 'user': original_task.get('user') if user_id is None else user_id}
 
     if current_stage:
         apply_stage_rule(doc, update, current_stage, is_incoming=False)
@@ -94,10 +91,11 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
             task['status'] = destination_stage['task_status']
 
     if update:
-        update['task'] = task
+        update.setdefault('task', {})
+        update['task'].update(task)
         update['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
     else:
-        doc['task'] = task
+        doc['task'].update(task)
         doc['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
 
 

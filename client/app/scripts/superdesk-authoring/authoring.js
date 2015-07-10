@@ -319,11 +319,16 @@
 
             stripHtml(diff);
             autosave.stop(item);
-            return api.save('archive', item, diff).then(function(_item) {
-                item._autosave = null;
-                item._locked = lock.isLocked(item);
-                return item;
-            });
+
+            if (_.size(diff) > 0) {
+                return api.save('archive', item, diff).then(function(_item) {
+                    item._autosave = null;
+                    item._locked = lock.isLocked(item);
+                    return item;
+                });
+            } else {
+                return $q.when(origItem);
+            }
         };
 
         /**
