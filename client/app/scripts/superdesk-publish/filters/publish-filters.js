@@ -174,8 +174,8 @@ function FilterConditionsController($scope, filters, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window', '$rootScope'];
-function PublishFiltersController($scope, filters, notify, modal, $location, $window, $rootScope) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window'];
+function PublishFiltersController($scope, filters, notify, modal, $location, $window) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
