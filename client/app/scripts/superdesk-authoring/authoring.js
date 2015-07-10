@@ -327,10 +327,7 @@
                     return item;
                 });
             } else {
-                var d = $q.defer();
-                d.resolve(origItem);
-
-                return d.promise;
+                return $q.when(origItem);
             }
         };
 
