@@ -91,11 +91,10 @@ class AapIpNewsFormatterTest(TestCase):
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
             self.assertEquals(item['article_text'], expected)
 
-
     def TestMultipleCategories(self):
         article = {
             'source': 'AAP',
-            'anpa-category': [{'qcode': 'a'},{'qcode': 'b'}],
+            'anpa-category': [{'qcode': 'a'}, {'qcode': 'b'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',
