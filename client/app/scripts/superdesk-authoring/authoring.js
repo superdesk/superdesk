@@ -11,7 +11,7 @@
         urgency: null,
         priority: null,
         subject: [],
-        'anpa-category': [],
+        'anpa_category': [],
         genre: [],
         groups: [],
         usageterms: null,

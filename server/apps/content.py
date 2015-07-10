@@ -96,7 +96,7 @@ metadata_schema = {
     },
 
     # Category Details
-    'anpa-category': {
+    'anpa_category': {
         'type': 'list',
         'nullable': True,
         'mapping': {

@@ -142,7 +142,7 @@ aggregations = {
     'type': {'terms': {'field': 'type'}},
     'desk': {'terms': {'field': 'task.desk'}},
     'stage': {'terms': {'field': 'task.stage'}},
-    'category': {'terms': {'field': 'anpa-category.name'}},
+    'category': {'terms': {'field': 'anpa_category.name'}},
     'source': {'terms': {'field': 'source'}},
     'state': {'terms': {'field': 'state'}},
     'urgency': {'terms': {'field': 'urgency'}},

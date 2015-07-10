@@ -25,7 +25,7 @@ class AapIpNewsFormatterTest(TestCase):
 
     article = {
         'source': 'AAP',
-        'anpa-category': [{'qcode': 'a'}],
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
@@ -67,7 +67,7 @@ class AapIpNewsFormatterTest(TestCase):
     def TestIPNewsHtmlToText(self):
         article = {
             'source': 'AAP',
-            'anpa-category': [{'qcode': 'a'}],
+            'anpa_category': [{'qcode': 'a'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',
@@ -94,7 +94,7 @@ class AapIpNewsFormatterTest(TestCase):
     def TestMultipleCategories(self):
         article = {
             'source': 'AAP',
-            'anpa-category': [{'qcode': 'a'}, {'qcode': 'b'}],
+            'anpa_category': [{'qcode': 'a'}, {'qcode': 'b'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',

@@ -7,7 +7,7 @@
             {field: 'versioncreated', label: gettext('Updated')},
             {field: 'firstcreated', label: gettext('Created')},
             {field: 'urgency', label: gettext('News Value')},
-            {field: 'anpa-category.name', label: gettext('Category')},
+            {field: 'anpa_category.name', label: gettext('Category')},
             {field: 'slugline', label: gettext('Keyword')},
             {field: 'priority', label: gettext('Priority')}
         ];
@@ -142,7 +142,7 @@
                 }
 
                 if (params.category) {
-                    query.post_filter({terms: {'anpa-category.name': JSON.parse(params.category)}});
+                    query.post_filter({terms: {'anpa_category.name': JSON.parse(params.category)}});
                 }
 
                 if (params.desk) {

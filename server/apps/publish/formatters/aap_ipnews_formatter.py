@@ -28,7 +28,7 @@ class AAPIpNewsFormatter(Formatter):
         """
         try:
             docs = []
-            for category in article.get('anpa-category'):
+            for category in article.get('anpa_category'):
                 pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
                 odbc_item = {'originator': article.get('source', None), 'sequence': pub_seq_num,

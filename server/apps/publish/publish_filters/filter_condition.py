@@ -30,7 +30,7 @@ class FilterConditionResource(Resource):
         'field': {
             'type': 'string',
             'nullable': False,
-            'allowed': ['anpa-category',
+            'allowed': ['anpa_category',
                         'urgency',
                         'keywords',
                         'priority',
@@ -186,8 +186,8 @@ class FilterConditionService(BaseService):
         return value
 
     def _get_field(self, field):
-        if field == 'anpa-category':
-            return 'anpa-category.value'
+        if field == 'anpa_category':
+            return 'anpa_category.value'
         elif field == 'genre':
             return 'genre.name'
         elif field == 'subject':
@@ -211,7 +211,7 @@ class FilterConditionService(BaseService):
         return self._run_filter(article_value, operator, filter_value)
 
     def _get_field_value(self, field, article):
-        if field == 'anpa-category':
+        if field == 'anpa_category':
             return article[field]['value']
         elif field == 'genre':
             return [g['name'] for g in article[field]]
@@ -246,7 +246,7 @@ class FilterConditionParametersResource(Resource):
 class FilterConditionParametersService(BaseService):
     def get(self, req, lookup):
         values = self._get_field_values()
-        return ListCursor([{'field': 'anpa-category',
+        return ListCursor([{'field': 'anpa_category',
                             'operators': ['in', 'nin'],
                             'values': values['anpa_category'],
                             'value_field': 'qcode'

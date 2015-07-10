@@ -176,7 +176,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     if anpacategory['qcode'].lower() == anpa_category['qcode'].lower():
                         anpacategory = {'qcode': anpacategory['qcode'], 'name': anpa_category['name']}
                         break
-                item['anpa-category'] = [anpacategory]
+                item['anpa_category'] = [anpacategory]
 
             self._addkeywords('CompanyCodes', doc, item)
 

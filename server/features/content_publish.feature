@@ -905,7 +905,7 @@ Feature: Content Publishing
           "urgency": "4",
           "pubstatus": "usable",
           "subject":[{"qcode": "17004000", "name": "Statistics"}],
-          "anpa-category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
           "anpa_take_key": "Take"
       }]
       """
@@ -996,7 +996,7 @@ Feature: Content Publishing
           "urgency": "4",
           "pubstatus": "usable",
           "subject":[{"qcode": "17004000", "name": "Statistics"}],
-          "anpa-category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
           "anpa_take_key": "Take"
       }]
       """

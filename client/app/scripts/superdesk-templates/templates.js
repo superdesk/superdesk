@@ -203,7 +203,7 @@
                 'genre',
                 'type',
                 'language',
-                'anpa-category',
+                'anpa_category',
                 'anpa_take_key',
                 'keywords',
                 'priority',

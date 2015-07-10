@@ -7,7 +7,7 @@ Feature: Publish Filter
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest
@@ -39,7 +39,7 @@ Feature: Publish Filter
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest
@@ -65,7 +65,7 @@ Feature: Publish Filter
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest

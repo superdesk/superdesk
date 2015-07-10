@@ -19,7 +19,7 @@ class NewsMLG2FormatterTest(TestCase):
     article = {
         'guid': 'tag:aap.com.au:20150613:12345',
         '_current_version': 1,
-        'anpa-category': [{'qcode': 'a'}],
+        'anpa_category': [{'qcode': 'a'}],
         'source': 'AAP',
         'headline': 'This is a test headline',
         'byline': 'joe',

@@ -127,8 +127,8 @@ class NewsML12Formatter(Formatter):
         for subject in article.get('subject', []):
             SubElement(subject_code, 'Subject', {'FormalName': subject.get('qcode', '')})
 
-        if 'anpa-category' in article:
-            for category in article.get('anpa-category', []):
+        if 'anpa_category' in article:
+            for category in article.get('anpa_category', []):
                 SubElement(descriptive_metadata, 'Property',
                            {'FormalName': 'Category', 'Value': category['qcode']})
         else:

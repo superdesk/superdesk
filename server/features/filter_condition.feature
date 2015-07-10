@@ -7,7 +7,7 @@ Feature: Filter Condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     And we get "/filter_conditions"
     Then we get list with 1 items
@@ -26,7 +26,7 @@ Feature: Filter Condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     And we get "/filter_conditions"
     Then we get list with 1 items
@@ -40,7 +40,7 @@ Feature: Filter Condition
     """
     When we post to "/filter_conditions"
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "5"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "5"}]
     """
     Then we get error 400
     """
@@ -53,7 +53,7 @@ Feature: Filter Condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     And we get "/filter_conditions"
     Then we get list with 1 items
@@ -67,7 +67,7 @@ Feature: Filter Condition
     """
     When we post to "/filter_conditions"
     """
-    [{"name": "sport2", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport2", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     Then we get error 400
     """
@@ -82,7 +82,7 @@ Feature: Filter Condition
 
     When we post to "/filter_conditions"
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "like", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "like", "value": "4"}]
     """
     Then we get error 400
     """
@@ -95,7 +95,7 @@ Feature: Filter Condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     And we get "/filter_conditions"
     When we patch "/filter_conditions/#filter_conditions._id#"
@@ -110,7 +110,7 @@ Feature: Filter Condition
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest

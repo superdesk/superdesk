@@ -23,7 +23,7 @@ class AAPSMSFormatter(Formatter):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa-category', [{}])[0].get('qcode'),
+            odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa_category', [{}])[0].get('qcode'),
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': article.get('priority', 'r')}
             if article['type'] == 'preformatted':

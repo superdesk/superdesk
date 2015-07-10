@@ -22,7 +22,7 @@
                     "X"
                 ]
             },
-            "anpa-category": {
+            "anpa_category": {
                 "type": "list",
                 "required": true,
                 "minlength": 1
@@ -77,7 +77,7 @@
                     "T"
                 ]
             },
-            "anpa-category": {
+            "anpa_category": {
                 "type": "list",
                 "required": true,
                 "minlength": 1

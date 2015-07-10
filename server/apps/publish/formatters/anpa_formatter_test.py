@@ -28,7 +28,7 @@ class ANPAFormatterTest(TestCase):
     article = {
         'source': 'AAP',
         '_updated': datetime.strptime('2015-05-29 05:46', '%Y-%m-%d %H:%M'),
-        'anpa-category': [{'qcode': 'a'}],
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
@@ -81,8 +81,8 @@ class ANPAFormatterTest(TestCase):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
             multi_article = dict(self.article)
-            multi_article.pop('anpa-category')
-            multi_article['anpa-category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
+            multi_article.pop('anpa_category')
+            multi_article['anpa_category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
             f = AAPAnpaFormatter()
             docs = f.format(multi_article, subscriber)
             self.assertEqual(len(docs), 2)

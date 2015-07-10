@@ -27,6 +27,27 @@ class AapBulletinBuilderFormatterTest(TestCase):
                                       }]
                     }]
 
+<<<<<<< HEAD
+=======
+    article = {
+        'source': 'AAP',
+        'anpa_category': [{'qcode': 'a'}],
+        'headline': 'This is a test headline',
+        'byline': 'joe',
+        'slugline': 'slugline',
+        'subject': [{'qcode': '02011001'}],
+        'anpa_take_key': 'take_key',
+        'unique_id': '1',
+        'type': 'preformatted',
+        'body_html': 'The story body',
+        'word_count': '1',
+        'priority': '1',
+        'firstcreated': utcnow(),
+        'versioncreated': utcnow(),
+        'lock_user': ObjectId()
+    }
+
+>>>>>>> rename anpa-category to anpa_category
     def setUp(self):
         super().setUp()
         with self.app.app_context():

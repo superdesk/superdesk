@@ -23,7 +23,7 @@ class AapSMSFormatterTest(TestCase):
 
     article = {
         'priority': '1',
-        'anpa-category': [{'qcode': 'a'}],
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'type': 'preformatted',
         'body_html': 'The story body',
