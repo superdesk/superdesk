@@ -34,7 +34,7 @@ class AAPBulletinBuilderFormatter(Formatter):
 
             article['body_text'] = soup.get_text()
 
-            return pub_seq_num, superdesk.json.dumps(article, default=json_serialize_datetime_objectId)
+            return [(pub_seq_num, superdesk.json.dumps(article, default=json_serialize_datetime_objectId))]
         except Exception as ex:
             raise FormatterError.bulletinBuilderFormatterError(ex, subscriber)
 

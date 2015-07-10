@@ -23,8 +23,9 @@
                 ]
             },
             "anpa-category": {
-                "type": "dict",
-                "required": true
+                "type": "list",
+                "required": true,
+                "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
@@ -77,8 +78,9 @@
                 ]
             },
             "anpa-category": {
-                "type": "dict",
-                "required": true
+                "type": "list",
+                "required": true,
+                "minlength": 1
             },
             "pubstatus": {
                 "type": "string",

@@ -55,7 +55,7 @@ class AapBulletinBuilderFormatterTest(TestCase):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
             f = AAPBulletinBuilderFormatter()
-            seq, item = f.format(article, subscriber)
+            seq, item = f.format(article, subscriber)[0]
             self.assertGreater(int(seq), 0)
             self.assertEqual(json.dumps(article, default=json_serialize_datetime_objectId), item)
 
@@ -77,7 +77,7 @@ class AapBulletinBuilderFormatterTest(TestCase):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
             f = AAPBulletinBuilderFormatter()
-            seq, item = f.format(article, subscriber)
+            seq, item = f.format(article, subscriber)[0]
             self.assertGreater(int(seq), 0)
             test_article = json.loads(item)
             self.assertEqual(test_article['body_text'], body_text)

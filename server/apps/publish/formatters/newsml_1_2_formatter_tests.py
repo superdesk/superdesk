@@ -21,7 +21,7 @@ class Newsml12FormatterTest(TestCase):
 
     article = {
         'source': 'AAP',
-        'anpa-category': {'qcode': 'a'},
+        'anpa-category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',

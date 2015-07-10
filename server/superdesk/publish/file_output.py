@@ -31,10 +31,12 @@ class FilePublishService(PublishService):
             raise PublishFileError.fileSaveError(ex, config)
 
     def copy_file(self, config, queue_item):
-        with open('{}/{}-{}.{}'.format(config['file_path'],
-                                       queue_item['item_id'].replace(':', '-'),
-                                       str(queue_item.get('item_version', '')),
-                                       config.get('file_extension', 'txt')), 'wb') as f:
+        with open('{}/{}-{}-{}.{}'.format(config['file_path'],
+                                          queue_item['item_id'].replace(':', '-'),
+                                          str(queue_item.get('item_version', '')),
+                                          str(queue_item.get('published_seq_num', '')),
+                                          config.get('file_extension', 'txt')), 'wb') as f:
             f.write(queue_item['formatted_item'])
+
 
 register_transmitter('File', FilePublishService(), errors)

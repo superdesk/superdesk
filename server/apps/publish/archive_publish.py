@@ -433,29 +433,30 @@ class BasePublishService(BaseService):
                         no_formatters.append(destination['format'])
                         continue
 
-                    pub_seq_num, formatted_doc = formatter.format(doc, subscriber)
+                    formatted_docs = formatter.format(doc, subscriber)
 
-                    publish_queue_item = dict()
-                    publish_queue_item['item_id'] = doc['_id']
-                    publish_queue_item['item_version'] = doc[config.VERSION] + 1
-                    publish_queue_item['formatted_item'] = formatted_doc
-                    publish_queue_item['subscriber_id'] = subscriber['_id']
-                    publish_queue_item['destination'] = destination
-                    publish_queue_item['published_seq_num'] = pub_seq_num
-                    publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
-                    publish_queue_item['unique_name'] = doc.get('unique_name', None)
-                    publish_queue_item['content_type'] = doc.get('type', None)
-                    publish_queue_item['headline'] = doc.get('headline', None)
+                    for pub_seq_num, formatted_doc in formatted_docs:
+                        publish_queue_item = dict()
+                        publish_queue_item['item_id'] = doc['_id']
+                        publish_queue_item['item_version'] = doc[config.VERSION] + 1
+                        publish_queue_item['formatted_item'] = formatted_doc
+                        publish_queue_item['subscriber_id'] = subscriber['_id']
+                        publish_queue_item['destination'] = destination
+                        publish_queue_item['published_seq_num'] = pub_seq_num
+                        publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
+                        publish_queue_item['unique_name'] = doc.get('unique_name', None)
+                        publish_queue_item['content_type'] = doc.get('type', None)
+                        publish_queue_item['headline'] = doc.get('headline', None)
 
-                    self.set_state(doc, publish_queue_item)
-                    if publish_queue_item.get(config.CONTENT_STATE):
-                        publish_queue_item['publishing_action'] = publish_queue_item.get(config.CONTENT_STATE)
-                        del publish_queue_item[config.CONTENT_STATE]
-                    else:
-                        publish_queue_item['publishing_action'] = self.published_state
+                        self.set_state(doc, publish_queue_item)
+                        if publish_queue_item.get(config.CONTENT_STATE):
+                            publish_queue_item['publishing_action'] = publish_queue_item.get(config.CONTENT_STATE)
+                            del publish_queue_item[config.CONTENT_STATE]
+                        else:
+                            publish_queue_item['publishing_action'] = self.published_state
 
-                    get_resource_service('publish_queue').post([publish_queue_item])
-                    queued = True
+                        get_resource_service('publish_queue').post([publish_queue_item])
+                        queued = True
 
             return no_formatters, queued
         except:

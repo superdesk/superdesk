@@ -97,7 +97,7 @@ metadata_schema = {
 
     # Category Details
     'anpa-category': {
-        'type': 'dict',
+        'type': 'list',
         'nullable': True,
         'mapping': {
             'type': 'object',

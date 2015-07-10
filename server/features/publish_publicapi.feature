@@ -17,7 +17,7 @@ Feature: Publish content to the public API
         	"original_creator": "#CONTEXT_USER_ID#",
         	"versioncreated": "2015-06-01T22:19:08+0000",
         	"subject": [{"name": "medical research", "parent": "07000000", "qcode": "07005000"}],
-        	"anpa-category": {"qcode": "a"},
+        	"anpa-category": [{"qcode": "a"}],
         	"task": {
         		"desk": "#desks._id#",
         		"stage": "#desks.incoming_stage#",

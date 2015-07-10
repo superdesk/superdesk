@@ -28,7 +28,7 @@ class ANPAFormatterTest(TestCase):
     article = {
         'source': 'AAP',
         '_updated': datetime.strptime('2015-05-29 05:46', '%Y-%m-%d %H:%M'),
-        'anpa-category': {'qcode': 'a'},
+        'anpa-category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
@@ -53,7 +53,7 @@ class ANPAFormatterTest(TestCase):
             subscriber = self.app.data.find('subscribers', None, None)[0]
 
             f = AAPAnpaFormatter()
-            seq, item = f.format(self.article, subscriber)
+            seq, item = f.format(self.article, subscriber)[0]
 
             self.assertGreater(int(seq), 0)
 
@@ -76,3 +76,20 @@ class ANPAFormatterTest(TestCase):
 
             line = lines.readline()
             self.assertEqual(line.strip(), 'AAP')
+
+    def TestMultipleCategoryFormatter(self):
+        with self.app.app_context():
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+            multi_article = dict(self.article)
+            multi_article.pop('anpa-category')
+            multi_article['anpa-category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
+            f = AAPAnpaFormatter()
+            docs = f.format(multi_article, subscriber)
+            self.assertEqual(len(docs), 2)
+            cat = 'a'
+            for seq, doc in docs:
+                lines = io.StringIO(doc.decode())
+                line = lines.readline()
+                line = lines.readline()
+                self.assertEqual(line[2:3], cat)  # skip the date
+                cat = 'b'
