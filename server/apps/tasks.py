@@ -92,10 +92,10 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
 
     if update:
         update.setdefault('task', {})
-        update.get('task').update(task)
+        update['task'].update(task)
         update['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
     else:
-        doc.get('task', {}).update(task)
+        doc['task'].update(task)
         doc['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
 
 
