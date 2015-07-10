@@ -5,6 +5,10 @@
 FiltersService.$inject = ['api'];
 function FiltersService(api) {
 
+    this.productionTestFilter = function(filter) {
+        return filter;
+    };
+
     this.getFilterConditionParameters = function() {
         return api.query('filter_conditions/parameters')
             .then(angular.bind(this, function(params) {
@@ -174,8 +178,8 @@ function FilterConditionsController($scope, filters, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window'];
-function PublishFiltersController($scope, filters, notify, modal, $location, $window) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$rootScope'];
+function PublishFiltersController($scope, filters, notify, modal, $rootScope) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
@@ -183,23 +187,6 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
     $scope.preview = null;
     $scope.filterConditionLookup = {};
     $scope.publishFiltersLookup = {};
-    $scope.selected = {};
-    $scope.result_type = true;
-    $scope.selectedItem = {};
-
-    var UP = -1,
-    DOWN = 1,
-    MOVES = {
-        38: UP,
-        40: DOWN
-    };
-
-    $scope.resultType = [
-        {id: 'Matching', value: 'true'},
-        {id: 'Non-Matching', value: 'false'}
-    ];
-
-    $scope.model = {selectedType:'true'};
 
     $scope.edit = function(pf) {
         $scope.origPublishFilter = pf || {};
@@ -216,11 +203,6 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
         $scope.publishFilter = null;
         $scope.test.test_result = null;
         $scope.test.article_id = null;
-    };
-
-    $scope.close = function() {
-        $scope.filter_test = null;
-        $scope.testResult = null;
     };
 
     $scope.save = function() {
@@ -293,68 +275,8 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
         $scope.previewPublishFilter();
     };
 
-    $scope.testfilter = function(ft) {
-        $scope.filter_test = true;
-        $scope.testResult = null;
-        $scope.selectedfilter = ft._id;
-        fetchFilterTestResult();
-    };
-    $scope.preview = function(Item) {
-        $location.search('_id', Item ? Item._id : Item);
-    };
-
-    $scope.$on('$routeUpdate', previewItem);
-
-    function previewItem() {
-        $scope.selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
-        if ($scope.selectedItem) {
-            $scope.selected.preview = $scope.selectedItem;
-        } else {
-            $scope.selected.preview = null;
-        }
-    }
-    $scope.handleKeyEvent = function(event) {
-        var code = event.keyCode || event.which;
-        if (MOVES[code]) {
-            event.preventDefault();
-            event.stopPropagation();
-            move(MOVES[code], event);
-        }
-    };
-
-    function move(diff, event) {
-        var index = _.findIndex($scope.testResult, $scope.selectedItem),
-            nextItem,
-            nextIndex;
-
-        if (index === -1) {
-            nextItem = $scope.testResult[0];
-        } else {
-            nextIndex = Math.max(0, Math.min($scope.testResult.length - 1, index + diff));
-            nextItem = $scope.testResult[nextIndex];
-        }
-        clickItem($scope.testResult[nextIndex], event);
-    }
-    function select(item) {
-        $scope.selectedItem = item;
-        $location.search('_id', item ? item._id : item);
-    }
-
-    function clickItem(item, event) {
-        select(item);
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-        }
-    }
-    $scope.fetchResults = function() {
-        fetchFilterTestResult();
-    };
-
-    $scope.openViewTab = function(guid) {
-        var _url = '#/authoring/' + guid + '/view';
-        $window.open(_url, '_blank');
+    $scope.productionTest = function (filter) {
+        $scope.$broadcast('triggerTest', filter);
     };
 
     $scope.test = function() {
@@ -440,7 +362,99 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
             });
         });
     };
-    var fetchFilterTestResult = function() {
+
+    fetchFilterConditions();
+    fetchPublishFilters();
+}
+
+ProductionTestController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window', '$rootScope'];
+function ProductionTestController($scope, filters, notify, modal, $location, $window, $rootScope) {
+    $scope.preview = null;
+    $scope.selected = {};
+    $scope.selectedItem = {};
+    var UP = -1,
+    DOWN = 1,
+    MOVES = {
+        38: UP,
+        40: DOWN
+    };
+
+    $scope.resultType = [
+        {id: 'Matching', value: 'true'},
+        {id: 'Non-Matching', value: 'false'}
+    ];
+
+    $scope.model = {selectedType:'true'};
+
+    $scope.close = function() {
+        $scope.filter_test = null;
+        $scope.testResult = null;
+    };
+    $scope.preview = function(Item) {
+        $location.search('_id', Item ? Item._id : Item);
+    };
+
+    $scope.$on('$routeUpdate', previewItem);
+
+    function previewItem() {
+        $scope.selectedItem = _.find($scope.testResult, {_id: $location.search()._id}) || null;
+        if ($scope.selectedItem) {
+            $scope.selected.preview = $scope.selectedItem;
+        } else {
+            $scope.selected.preview = null;
+        }
+    }
+    $scope.handleKeyEvent = function(event) {
+        var code = event.keyCode || event.which;
+        if (MOVES[code]) {
+            event.preventDefault();
+            event.stopPropagation();
+            move(MOVES[code], event);
+        }
+    };
+
+    function move(diff, event) {
+        var index = _.findIndex($scope.testResult, $scope.selectedItem),
+            nextItem,
+            nextIndex;
+
+        if (index === -1) {
+            nextItem = $scope.testResult[0];
+        } else {
+            nextIndex = Math.max(0, Math.min($scope.testResult.length - 1, index + diff));
+            nextItem = $scope.testResult[nextIndex];
+        }
+        clickItem($scope.testResult[nextIndex], event);
+    }
+    function select(item) {
+        $scope.selectedItem = item;
+        $location.search('_id', item ? item._id : item);
+    }
+
+    function clickItem(item, event) {
+        select(item);
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
+    }
+    $scope.fetchResults = function() {
+        fetchProductionTestResult();
+    };
+
+    $scope.openViewTab = function(guid) {
+        var _url = '#/authoring/' + guid + '/view';
+        $window.open(_url, '_blank');
+    };
+
+    $scope.$on('triggerTest', function (event, filter) {
+        $scope.productionTest = true;
+        $scope.testResult = null;
+        $scope.selectedfilter = filter._id;
+        fetchProductionTestResult();
+    });
+    var fetchProductionTestResult = function() {
         filters.testPublishFilter({'filter_id': $scope.selectedfilter, 'return_matching': $scope.$eval($scope.model.selectedType)})
             .then(
                 function(result) {
@@ -452,19 +466,17 @@ function PublishFiltersController($scope, filters, notify, modal, $location, $wi
                     } else if (angular.isDefined(response.data._message)) {
                         notify.error(gettext('Error: ' + response.data._message));
                     } else {
-                        notify.error(gettext('Error: Failed to save publish filter.'));
+                        notify.error(gettext('Error: Failed to fetch production test results.'));
                     }
                 }
             );
 
     };
-
-    fetchFilterConditions();
-    fetchPublishFilters();
 }
 
 angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
-    .controller('PublishFiltersController', PublishFiltersController);
+    .controller('PublishFiltersController', PublishFiltersController)
+    .controller('ProductionTestController', ProductionTestController);
 })();
