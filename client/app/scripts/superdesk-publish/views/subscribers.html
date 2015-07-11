@@ -10,7 +10,7 @@
         <ul class="pills-list provider-list">
             <li ng-repeat="subscriber in subscribers._items track by subscriber._id" class="clearfix">
                 <div class="header">
-                    <h6>{{:: subscriber.name }}</h6>
+                    <h6>{{:: subscriber.name }} <span class="label offProvider" ng-if="!subscriber.is_active" translate>Not Active</span></h6>
                     <div class="actions">
                         <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
                     </div>

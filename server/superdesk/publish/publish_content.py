@@ -42,13 +42,17 @@ def publish():
         return
 
     try:
-        lookup = {'state': 'pending'}
-        items = get_resource_service('publish_queue').get(req=None, lookup=lookup)
+        items = get_queue_items()
 
         if items.count() > 0:
             transmit_items(items)
     finally:
         mark_task_as_not_running("Transmit", "Articles")
+
+
+def get_queue_items():
+    lookup = {'state': 'pending', 'destination.delivery_type': {'$ne': 'pull'}}
+    return get_resource_service('publish_queue').get(req=None, lookup=lookup)
 
 
 def transmit_items(queue_items):
