@@ -54,7 +54,7 @@ define([
 
                         $scope.origItem = $scope.options.item;
                         $scope.options.item.subject = item.subject;
-                        $scope.options.item['anpa_category'] = item['anpa_category'];
+                        $scope.options.item.anpa_category = item.anpa_category;
                         $scope.options.item.related_to = item._id;
                         api.save('archive', $scope.origItem, $scope.options.item).then(function(_item) {
                             notify.success(gettext('item updated.'));
