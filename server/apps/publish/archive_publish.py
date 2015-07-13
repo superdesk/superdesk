@@ -262,13 +262,9 @@ class BasePublishService(BaseService):
                         package_updates['body_html'] = \
                             previous_take['body_html'] + '<br>' + package_updates['body_html']
 
-<<<<<<< HEAD
-                metadata_tobe_copied = ['headline', 'abstract', 'anpa-category', 'pubstatus', 'slugline', 'urgency',
-                                        'subject', 'byline', 'dateline']
-=======
                 metadata_tobe_copied = ['headline', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency',
-                                        'subject']
->>>>>>> rename anpa-category to anpa_category
+                                        'subject', 'byline', 'dateline']
+
                 for metadata in metadata_tobe_copied:
                     package_updates[metadata] = \
                         updates_of_take_to_be_published.get(metadata, original_of_take_to_be_published.get(metadata))
