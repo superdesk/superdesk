@@ -10,10 +10,13 @@
 
 from superdesk.tests import TestCase
 from apps.publish.publish_filters.publish_filter import PublishFilterService
+from apps.publish import SubscribersService
 from eve.utils import ParsedRequest
 import json
+import os
 import superdesk
 from settings import URL_PREFIX
+from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
 class PublishFilterTests(TestCase):
@@ -23,6 +26,7 @@ class PublishFilterTests(TestCase):
         self.req = ParsedRequest()
         with self.app.test_request_context(URL_PREFIX):
             self.f = PublishFilterService(datasource='publish_filters', backend=superdesk.get_backend())
+            self.s = SubscribersService(datasource='subscribers', backend=superdesk.get_backend())
 
             self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
                              {'_id': '2', 'headline': 'prtorque', 'state': 'fetched'},
@@ -82,6 +86,15 @@ class PublishFilterTests(TestCase):
                                  [{"_id": 4,
                                    "publish_filter": [{"expression": {"fc": [3]}}, {"expression": {"fc": [5]}}],
                                    "name": "soccer-only4"}])
+
+            self.app.data.insert('subscribers',
+                                 [{"_id": 1,
+                                   "publish_filter": {"filter_id": 3, "filter_type": "blocking"},
+                                   "name": "sub1"}])
+            self.app.data.insert('subscribers',
+                                 [{"_id": 2,
+                                   "publish_filter": {"filter_id": 1, "filter_type": "blocking"},
+                                   "name": "sub1"}])
 
     def test_build_mongo_query_using_like_filter_single_fc(self):
         doc = {'publish_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
@@ -354,5 +367,27 @@ class PublishFilterTests(TestCase):
 
     def test_if_pf_is_used(self):
         with self.app.app_context():
-            self.assertTrue(self.f._get_referenced_publish_filters(1).count() == 1)
-            self.assertTrue(self.f._get_referenced_publish_filters(4).count() == 0)
+            self.assertTrue(self.f._get_publish_filters_by_publish_filter(1).count() == 1)
+            self.assertTrue(self.f._get_publish_filters_by_publish_filter(4).count() == 0)
+
+    def test_if_fc_is_used(self):
+        with self.app.app_context():
+            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(1)) == 2)
+            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(3)) == 2)
+            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(2)) == 1)
+
+    def test_get_subscribers_by_filter_condition(self):
+        filter_condition1 = {'field': 'urgency', 'operator': 'in', 'value': '2'}
+        filter_condition2 = {'field': 'urgency', 'operator': 'in', 'value': '1'}
+        filter_condition3 = {'field': 'headline', 'operator': 'like', 'value': 'tor'}
+        filter_condition4 = {'field': 'urgency', 'operator': 'nin', 'value': '3'}
+
+        with self.app.app_context():
+            cmd = VocabulariesPopulateCommand()
+            filename = os.path.join(os.path.abspath(
+                os.path.dirname("apps/prepopulate/data_initialization/vocabularies.json")), "vocabularies.json")
+            cmd.run(filename)
+            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition1)) == 1)
+            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition2)) == 0)
+            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition3)) == 2)
+            self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition4)) == 1)
