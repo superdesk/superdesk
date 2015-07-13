@@ -18,7 +18,7 @@ import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
-from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
+from .common import on_create_item, on_duplicate_item, insert_into_versions
 from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -333,6 +333,12 @@ class ArchiveService(BaseService):
         return item_id
 
     def duplicate_content(self, original_doc):
+        """
+        Duplicates the 'original_doc' including it's version history. Copy and Duplicate actions use this method.
+
+        :return: guid of the duplicated article
+        """
+
         if original_doc.get('type', '') == 'composite':
             for groups in original_doc.get('groups'):
                 if groups.get('id') != 'root':
@@ -342,34 +348,57 @@ class ArchiveService(BaseService):
                             item, item_id, endpoint = self.packageService.get_associated_item(assoc)
                             assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
 
-        return self.duplicate_item(original_doc)
+        return self._duplicate_item(original_doc)
 
-    def duplicate_item(self, original_doc):
+    def _duplicate_item(self, original_doc):
+        """
+        Duplicates the 'original_doc' including it's version history. If the article being duplicated is contained
+        in a desk then the article state is changed to Submitted.
+
+        :return: guid of the duplicated article
+        """
+
         new_doc = original_doc.copy()
-        del new_doc['_id']
+        del new_doc[config.ID_FIELD]
         del new_doc['guid']
-        generate_unique_id_and_name(new_doc)
+
         item_model = get_model(ItemModel)
+
         on_duplicate_item(new_doc)
         item_model.create([new_doc])
-        self.duplicate_versions(original_doc['guid'], new_doc)
-        if new_doc.get('state') != 'submitted':
-            get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
+        self._duplicate_versions(original_doc['guid'], new_doc)
+
+        if original_doc.get('task', {}).get('desk') is not None and new_doc.get('state') != 'submitted':
+            new_doc[config.CONTENT_STATE] = 'submitted'
+            resolve_document_version(new_doc, SOURCE, 'PATCH', new_doc)
+            item_model.update({config.ID_FIELD: new_doc[config.ID_FIELD]}, new_doc)
+            insert_into_versions(id_=new_doc[config.ID_FIELD])
+
         return new_doc['guid']
 
-    def duplicate_versions(self, old_id, new_doc):
-        lookup = {'guid': old_id}
-        old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
+    def _duplicate_versions(self, old_id, new_doc):
+        """
+        Duplicates the version history of the article identified by old_id. Each version identifiers are changed
+        to have the identifiers of new_doc.
+
+        :param old_id: identifier to fetch version history
+        :param new_doc: identifiers from this doc will be used to create version history for the duplicated item.
+        """
+
+        old_versions = get_resource_service('archive_versions').get(req=None, lookup={'guid': old_id})
 
         new_versions = []
         for old_version in old_versions:
-            old_version['_id_document'] = new_doc['_id']
-            del old_version['_id']
+            old_version[versioned_id_field()] = new_doc[config.ID_FIELD]
+            del old_version[config.ID_FIELD]
+
             old_version['guid'] = new_doc['guid']
             old_version['unique_name'] = new_doc['unique_name']
             old_version['unique_id'] = new_doc['unique_id']
             old_version['versioncreated'] = utcnow()
+
             new_versions.append(old_version)
+
         if new_versions:
             get_resource_service('archive_versions').post(new_versions)
 

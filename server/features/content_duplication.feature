@@ -21,7 +21,7 @@ Feature: Duplication of Content within Desk
       """
       Then we get updated response
       """
-      {"headline": "test3", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"headline": "test3", "state": "in_progress", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       And we get version 3
       When we get "/archive/123?version=all"
@@ -30,9 +30,38 @@ Feature: Duplication of Content within Desk
       """
       {"desk": "#desks._id#"}
       """
-      Then we get "_id"
-      When we get "/archive/#_id#?version=all"
+      When we get "/archive/#duplicate._id#"
+      Then we get existing resource
+      """
+      {"state": "submitted", "_current_version": 4, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      """
+      When we get "/archive/#duplicate._id#?version=all"
       Then we get list with 4 items
+      When we get "/archive?q=#desks._id#"
+      Then we get list with 2 items
+
+    @auth
+    Scenario: Duplicate a content with history doesn't change the state if it's submitted
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "archive"
+      """
+      [{  "type":"text", "headline": "test1", "guid": "123", "original_creator": "#CONTEXT_USER_ID#", "state": "submitted",
+          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      And we post to "/archive/123/duplicate"
+      """
+      {"desk": "#desks._id#"}
+      """
+      When we get "/archive/#duplicate._id#"
+      Then we get existing resource
+      """
+      {"state": "submitted", "_current_version": 1, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      """
+      When we get "/archive/#duplicate._id#?version=all"
+      Then we get list with 1 items
       When we get "/archive?q=#desks._id#"
       Then we get list with 2 items
 
