@@ -56,4 +56,47 @@ describe('ingest', function() {
             expect(api.save.calls.count()).toBe(2);
         }));
     });
+
+    describe('registering activities in superdesk.ingest module', function () {
+
+        beforeEach(module('superdesk.ingest'));
+
+        describe('the "archive" activity', function () {
+            var activity;
+
+            beforeEach(inject(function (superdesk) {
+                activity = superdesk.activities.archive;
+                if (angular.isUndefined(activity)) {
+                    fail('Activity "archive" is not registered.');
+                }
+            }));
+
+            it('is allowed if the current desk is not "personal"', function () {
+                var extra_condition = activity.additionalCondition,
+                    fakeDesks;
+
+                // get the function that checks the additional conditions
+                extra_condition = extra_condition[extra_condition.length - 1];
+                fakeDesks = {
+                    getCurrentDeskId: function () { return '1234'; }
+                };
+
+                expect(extra_condition(fakeDesks)).toBe(true);
+            });
+
+            it('is not allowed if the current desk is "personal"', function () {
+                var extra_condition = activity.additionalCondition,
+                    fakeDesks;
+
+                // get the function that checks the additional conditions
+                extra_condition = extra_condition[extra_condition.length - 1];
+                fakeDesks = {
+                    getCurrentDeskId: function () { return 'personal'; }
+                };
+
+                expect(extra_condition(fakeDesks)).toBe(false);
+            });
+        });
+    });
+
 });

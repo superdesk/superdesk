@@ -30,6 +30,7 @@
     "afterEach": false,
     "inject": false,
     "expect": false,
+    "fail": false,
     "describe": false,
     "xdescribe": false,
     "requirejs": false,

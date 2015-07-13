@@ -1358,7 +1358,11 @@ define([
                     {action: 'list', type: 'ingest'}
                 ],
                 privileges: {fetch: 1},
-                key: 'f'
+                key: 'f',
+                additionalCondition: ['desks', function (desks) {
+                    // fetching to 'personal' desk is not allowed
+                    return (desks.getCurrentDeskId() !== 'personal');
+                }]
             })
             .activity('externalsource', {
                 label: gettext('Get from external source'),
