@@ -178,8 +178,8 @@ function FilterConditionsController($scope, filters, notify, modal) {
 
 }
 
-PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal', '$rootScope'];
-function PublishFiltersController($scope, filters, notify, modal, $rootScope) {
+PublishFiltersController.$inject = ['$scope', 'filters', 'notify', 'modal'];
+function PublishFiltersController($scope, filters, notify, modal) {
     $scope.filterConditions = null;
     $scope.publishFilters = null;
     $scope.publishFilter = null;
@@ -367,8 +367,8 @@ function PublishFiltersController($scope, filters, notify, modal, $rootScope) {
     fetchPublishFilters();
 }
 
-ProductionTestController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window', '$rootScope'];
-function ProductionTestController($scope, filters, notify, modal, $location, $window, $rootScope) {
+ProductionTestController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window'];
+function ProductionTestController($scope, filters, notify, modal, $location, $window) {
     $scope.preview = null;
     $scope.selected = {};
     $scope.selectedItem = {};
@@ -444,8 +444,8 @@ function ProductionTestController($scope, filters, notify, modal, $location, $wi
     };
 
     $scope.openViewTab = function(guid) {
-        var _url = '#/authoring/' + guid + '/view';
-        $window.open(_url, '_blank');
+        var url = '#/authoring/' + guid + '/view';
+        $window.open(url, '_blank');
     };
 
     $scope.$on('triggerTest', function (event, filter) {
