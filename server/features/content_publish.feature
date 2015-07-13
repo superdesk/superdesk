@@ -322,7 +322,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 2, "state": "scheduled"}
+      {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
 
       When we get "/publish_queue"
@@ -526,7 +526,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 3, "state": "killed", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 4, "state": "killed", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
@@ -569,7 +569,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 4, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
@@ -612,7 +612,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 4, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we publish "#archive._id#" with "publish" type and "published" state
       Then we get response code 400
@@ -655,7 +655,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 3, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 4, "state": "corrected", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we publish "#archive._id#" with "correct" type and "corrected" state
       """
@@ -674,12 +674,12 @@ Feature: Content Publishing
               },
               {
                   "headline": "test-1",
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "corrected"
               },
               {
                   "headline": "test-2",
-                  "_current_version": 4,
+                  "_current_version": 5,
                   "state": "corrected"
               }
           ]

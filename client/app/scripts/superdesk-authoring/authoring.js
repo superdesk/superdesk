@@ -913,11 +913,7 @@
 
                 $scope.beforeSend = function() {
                     $scope.sending = true;
-                    return $scope.save()
-                    .then(function() {
-                        var p = lock.unlock($scope.origItem);
-                        return p;
-                    });
+                    return lock.unlock($scope.origItem);
                 };
 
                 /**

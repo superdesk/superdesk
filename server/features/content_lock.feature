@@ -22,7 +22,7 @@ Feature: Content Locking
         Then we get OK response
 
     @auth
-    Scenario: Unlocking version 0 draft item deletes the item
+    Scenario: Unlocking version 1 draft item deletes the item
         Given "archive"
         """
         [{"_id": "item-1", "guid": "item-1", "headline": "test", "_current_version": 0, "state": "draft"}]

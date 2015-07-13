@@ -10,13 +10,14 @@
 
 
 from eve.utils import ParsedRequest
-from eve.versioning import resolve_document_version
-from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry
+from eve.versioning import resolve_document_version, insert_versioning_documents
+from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry,\
+    item_operations, ITEM_OPERATION
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import on_create_item, item_url, update_version
+from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 import superdesk
@@ -30,6 +31,8 @@ from superdesk import get_resource_service
 
 task_statuses = ['todo', 'in_progress', 'done']
 default_status = 'todo'
+ITEM_SEND = 'send'
+item_operations.append(ITEM_SEND)
 
 
 def init_app(app):
@@ -228,10 +231,14 @@ class TasksService(BaseService):
         old_stage_id = original.get('task', {}).get('stage', '')
         new_user_id = updates.get('task', {}).get('user', '')
         if new_stage_id and new_stage_id != old_stage_id:
+            updates[ITEM_OPERATION] = ITEM_SEND
             send_to(doc=original, update=updates, desk_id=None, stage_id=new_stage_id, user_id=new_user_id)
-        update_version(updates, original)
+        resolve_document_version(updates, ARCHIVE, 'PATCH', original)
 
     def on_updated(self, updates, original):
+        updated = copy(original)
+        updated.update(updates)
+        insert_versioning_documents(ARCHIVE, updated)
         new_task = updates.get('task', {})
         old_task = original.get('task', {})
         if new_task.get('stage') != old_task.get('stage'):
@@ -243,8 +250,6 @@ class TasksService(BaseService):
                               )
         else:
             push_notification(self.datasource, updated=1)
-        updated = copy(original)
-        updated.update(updates)
 
         if is_assigned_to_a_desk(updated):
 

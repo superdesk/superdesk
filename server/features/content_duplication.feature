@@ -37,6 +37,13 @@ Feature: Duplication of Content within Desk
       """
       When we get "/archive/#duplicate._id#?version=all"
       Then we get list with 4 items
+
+      When we get "/archive/#duplicate._id#"
+      Then we get existing resource
+      """
+      {"operation": "duplicate"}
+      """
+
       When we get "/archive?q=#desks._id#"
       Then we get list with 2 items
 
@@ -58,10 +65,10 @@ Feature: Duplication of Content within Desk
       When we get "/archive/#duplicate._id#"
       Then we get existing resource
       """
-      {"state": "submitted", "_current_version": 1, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"state": "submitted", "_current_version": 2, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       When we get "/archive/#duplicate._id#?version=all"
-      Then we get list with 1 items
+      Then we get list with 2 items
       When we get "/archive?q=#desks._id#"
       Then we get list with 2 items
 

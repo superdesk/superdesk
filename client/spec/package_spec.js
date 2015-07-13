@@ -64,15 +64,7 @@ describe('Package', function() {
         browser.sleep(100);
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
 
-        browser.wait(function() {
-            return previewItems().first().isDisplayed();
-        });
-
-        expect(previewItems().count()).toBe(3);
-
-        function previewItems() {
-            return element(by.css('.condensed-preview')).all(by.repeater('child in item'));
-        }
+        expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
     });
 
     it('create package from multiple items', function() {
