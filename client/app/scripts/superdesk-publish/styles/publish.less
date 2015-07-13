@@ -10,6 +10,31 @@
     margin-right: 65px;
 }
 
+.filter-result-modal {
+    position: absolute;
+    .content {
+        .active {
+            background-color: #eff7fa !important;
+            border-right: 2px solid rgba(94,169,200,0.75) !important;
+            &:hover {
+                .item-functions {
+                    background-color: #eff7fa;
+                    .item-field {
+                        &:hover {
+                            background-color: #d6e8ef;
+                        }
+                        &.disabled {
+                            &:hover {
+                                background-color: #d6e8ef;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .publish-filter-modal {
     position: absolute;
     .content {

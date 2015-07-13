@@ -528,6 +528,18 @@
                     rel: 'io_errors'
                 }
             });
+            apiProvider.api('publish_filters', {
+                type: 'http',
+                backend: {
+                    rel: 'publish_filters'
+                }
+            });
+            apiProvider.api('publish_filter_test', {
+                type: 'http',
+                backend: {
+                    rel: 'publish_filter_test'
+                }
+            });
         }]);
 
     return app;
