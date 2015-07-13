@@ -4,7 +4,20 @@ Feature: Content Publishing
     Scenario: Publish a user content
       Given the "validators"
       """
-      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+        [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "_id": "publish_composite",
+            "act": "publish",
+            "type": "composite",
+            "schema": {}
+        }
+        ]
       """
       And "desks"
       """
@@ -14,6 +27,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -51,6 +65,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       Given empty "filter_conditions"
@@ -105,6 +120,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
 
@@ -151,6 +167,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
 
@@ -197,6 +214,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
 
@@ -309,6 +327,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -352,6 +371,7 @@ Feature: Content Publishing
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "publish_schedule":"2016-05-30T10:00:00+00:00",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -438,6 +458,7 @@ Feature: Content Publishing
       """
       [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
@@ -1115,7 +1136,20 @@ Feature: Content Publishing
     Scenario: Publish can't publish the same headline to SMS twice
       Given the "validators"
       """
-      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "schema": {},
+            "type": "composite",
+            "act": "publish",
+            "_id": "publish_composite"
+        }
+      ]
       """
       And "desks"
       """
@@ -1125,9 +1159,11 @@ Feature: Content Publishing
       """
       [{"guid": "122", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"},
         {"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
       """
       When we post to "/subscribers" with success
