@@ -367,11 +367,13 @@ function PublishFiltersController($scope, filters, notify, modal) {
     fetchPublishFilters();
 }
 
-ProductionTestController.$inject = ['$scope', 'filters', 'notify', 'modal', '$location', '$window'];
-function ProductionTestController($scope, filters, notify, modal, $location, $window) {
+ProductionTestController.$inject = ['$scope', 'filters', 'notify', '$location', '$window'];
+function ProductionTestController($scope, filters, notify, $location, $window) {
     $scope.preview = null;
     $scope.selected = {};
     $scope.selectedItem = {};
+    $scope.selectedfilter = null;
+    $scope.testResult = null;
     var UP = -1,
     DOWN = 1,
     MOVES = {
