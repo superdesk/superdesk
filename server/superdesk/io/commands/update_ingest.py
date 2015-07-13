@@ -215,11 +215,12 @@ def process_anpa_category(item, provider):
     try:
         anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
         if anpa_categories:
-            for anpa_category in anpa_categories['items']:
-                if anpa_category['is_active'] is True \
-                        and item['anpa-category']['qcode'].lower() == anpa_category['qcode'].lower():
-                    item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
-                    break
+            for item_category in item['anpa_category']:
+                for anpa_category in anpa_categories['items']:
+                    if anpa_category['is_active'] is True \
+                            and item_category['qcode'].lower() == anpa_category['qcode'].lower():
+                        item_category['name'] = anpa_category['name']
+                        break
     except Exception as ex:
         raise ProviderError.anpaError(ex, provider)
 
@@ -334,7 +335,7 @@ def ingest_item(item, provider, rule_set=None, routing_scheme=None):
         item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
                                          item.get('versioncreated'))
 
-        if 'anpa-category' in item:
+        if 'anpa_category' in item:
             process_anpa_category(item, provider)
 
         if 'subject' in item:

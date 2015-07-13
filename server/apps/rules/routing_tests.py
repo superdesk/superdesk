@@ -10,7 +10,7 @@
 
 
 from superdesk.tests import TestCase
-from .routing_rule_validator import RoutingRuleValidator
+from apps.rules.routing_rule_validator import RoutingRuleValidator
 
 
 class RoutingRuleValidatorTestCase(TestCase):
@@ -19,7 +19,7 @@ class RoutingRuleValidatorTestCase(TestCase):
         self.items = [
             {
                 '_id': 'item1',
-                'anpa-category': {'qcode': 'e'},
+                'anpa_category': [{'qcode': 'e'}],
                 'subject': [{'qcode': '01000000'}, {'qcode': '01001000'}],
                 'headline': 'this is about Kate Williams.',
                 'slugline': 'Kate Williams',
@@ -29,7 +29,7 @@ class RoutingRuleValidatorTestCase(TestCase):
             },
             {
                 '_id': 'item2',
-                'anpa-category': {'qcode': 'e'},
+                'anpa_category': [{'qcode': 'e'}],
                 'subject': [{'qcode': '01000000'}, {'qcode': '01001000'}],
                 'headline': 'this is about Robin Williams.',
                 'slugline': 'Robin Williams',
@@ -39,7 +39,7 @@ class RoutingRuleValidatorTestCase(TestCase):
             },
             {
                 '_id': 'item3',
-                'anpa-category': {'qcode': 's'},
+                'anpa_category': [{'qcode': 's'}],
                 'subject': [{'qcode': '04000000'}, {'qcode': '04001000'}],
                 'headline': 'This is about Michael Clarke.',
                 'slugline': 'WC15 Clarke',
@@ -55,7 +55,7 @@ class RoutingRuleValidatorTestCase(TestCase):
                         {"name": "tennis", "qcode": "15065000"}
                     ],
                 "genre": [],
-                'anpa-category': {'qcode': 's'},
+                'anpa_category': [{'qcode': 's'}],
                 "urgency": "4",
                 "type": "picture",
                 "description": "Casey Williamson of Australia stretches to reach a shot against Madison Keys.",
@@ -65,7 +65,7 @@ class RoutingRuleValidatorTestCase(TestCase):
             },
             {
                 '_id': 'item5',
-                'anpa-category': {'qcode': 's'},
+                'anpa_category': [{'qcode': 's'}],
                 'subject': [{"name": "sport", "qcode": "15000000"}],
                 'headline': 'Australia won the world cup.',
                 'slugline': 'WC15 Final',

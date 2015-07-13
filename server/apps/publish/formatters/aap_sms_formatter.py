@@ -23,7 +23,7 @@ class AAPSMSFormatter(Formatter):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
-            odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa-category', {}).get('qcode'),
+            odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa_category', [{}])[0].get('qcode'),
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': article.get('priority', 'r')}
             if article['type'] == 'preformatted':
@@ -34,7 +34,7 @@ class AAPSMSFormatter(Formatter):
 
             odbc_item['ident'] = '0'
 
-            return pub_seq_num, odbc_item
+            return [(pub_seq_num, odbc_item)]
         except Exception as ex:
             raise FormatterError.AAPSMSFormatterError(ex, subscriber)
 

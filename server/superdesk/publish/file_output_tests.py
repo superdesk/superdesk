@@ -24,15 +24,16 @@ class FileOutputTest(TestCase):
         self.subscribers = [{"_id": "1", "name": "Test", "media_type": "media",
                              "subscriber_type": SUBSCRIBER_TYPES.WIRE, "is_active": True,
                              "sequence_num_settings": {"max": 10, "min": 1},
-                             "destinations": [{"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                             "destinations": [{"name": "test", "delivery_type": "File", "format": "nitf",
                                                "config": {"file_path": self.fixtures}
                                                }]}]
 
     def test_file_write_binary(self):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
+                'published_seq_num': 1,
                 'formatted_item': b'I was here',
-                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                'destination': {"name": "test", "delivery_type": "File", "format": "nitf",
                                 "config": {"file_path": self.fixtures}}
                 }
         service = FilePublishService()
@@ -40,15 +41,16 @@ class FileOutputTest(TestCase):
             service._transmit(item, self.subscribers)
             self.assertTrue(True)
         finally:
-            path = os.path.join(self.fixtures, 'test_file_name-1.txt')
+            path = os.path.join(self.fixtures, 'test_file_name-1-1.txt')
             if os.path.isfile(path):
                 os.remove(path)
 
     def test_file_write_string(self):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
+                'published_seq_num': 1,
                 'formatted_item': 'I was here',
-                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                'destination': {"name": "test", "delivery_type": "File", "format": "nitf",
                                 "config": {"file_path": self.fixtures}}
                 }
         service = FilePublishService()
@@ -56,7 +58,7 @@ class FileOutputTest(TestCase):
             service._transmit(item, self.subscribers)
             self.assertTrue(True)
         finally:
-            path = os.path.join(self.fixtures, 'test_file_name-1.txt')
+            path = os.path.join(self.fixtures, 'test_file_name-1-1.txt')
             if os.path.isfile(path):
                 os.remove(path)
 
@@ -65,7 +67,7 @@ class FileOutputTest(TestCase):
         item = {'item_id': 'test_file_name',
                 'item_version': 1,
                 'formatted_item': 'I was here',
-                'destination': {"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
+                'destination': {"name": "test", "delivery_type": "File", "format": "nitf",
                                 "config": {"file_path": self.fixtures}}
                 }
 

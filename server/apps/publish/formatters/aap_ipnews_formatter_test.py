@@ -25,7 +25,7 @@ class AapIpNewsFormatterTest(TestCase):
 
     article = {
         'source': 'AAP',
-        'anpa-category': {'qcode': 'a'},
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
@@ -49,7 +49,7 @@ class AapIpNewsFormatterTest(TestCase):
             subscriber = self.app.data.find('subscribers', None, None)[0]
 
             f = AAPIpNewsFormatter()
-            seq, item = f.format(self.article, subscriber)
+            seq, item = f.format(self.article, subscriber)[0]
 
             self.assertGreater(int(seq), 0)
             self.assertEquals(seq, item['sequence'])
@@ -67,7 +67,7 @@ class AapIpNewsFormatterTest(TestCase):
     def TestIPNewsHtmlToText(self):
         article = {
             'source': 'AAP',
-            'anpa-category': {'qcode': 'a'},
+            'anpa_category': [{'qcode': 'a'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',
@@ -85,8 +85,31 @@ class AapIpNewsFormatterTest(TestCase):
             subscriber = self.app.data.find('subscribers', None, None)[0]
 
             f = AAPIpNewsFormatter()
-            seq, item = f.format(article, subscriber)
+            seq, item = f.format(article, subscriber)[0]
 
             expected = '\r\nThe story body line 1 \r\nLine 2 \r\n\r\nabcdefghi abcdefghi abcdefghi abcdefghi ' \
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
             self.assertEquals(item['article_text'], expected)
+
+    def TestMultipleCategories(self):
+        article = {
+            'source': 'AAP',
+            'anpa_category': [{'qcode': 'a'}, {'qcode': 'b'}],
+            'headline': 'This is a test headline',
+            'byline': 'joe',
+            'slugline': 'slugline',
+            'subject': [{'qcode': '02011001'}],
+            'anpa_take_key': 'take_key',
+            'unique_id': '1',
+            'type': 'text',
+            'body_html': 'body',
+            'word_count': '1',
+            'priority': '1'
+        }
+
+        with self.app.app_context():
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+
+            f = AAPIpNewsFormatter()
+            docs = f.format(article, subscriber)
+            self.assertEqual(len(docs), 2)

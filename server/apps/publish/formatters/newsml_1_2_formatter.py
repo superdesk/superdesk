@@ -40,7 +40,7 @@ class NewsML12Formatter(Formatter):
             self._format_news_management(article, news_item)
             self._format_news_component(article, news_item)
 
-            return pub_seq_num, self.XML_ROOT + etree.tostring(newsml).decode('utf-8')
+            return [(pub_seq_num, self.XML_ROOT + etree.tostring(newsml).decode('utf-8'))]
         except Exception as ex:
             raise FormatterError.newml12FormatterError(ex, subscriber)
 
@@ -127,9 +127,12 @@ class NewsML12Formatter(Formatter):
         for subject in article.get('subject', []):
             SubElement(subject_code, 'Subject', {'FormalName': subject.get('qcode', '')})
 
-        # For now there's only one category
-        SubElement(descriptive_metadata, 'Property',
-                   {'FormalName': 'Category', 'Value': article['anpa-category']['qcode']})
+        if 'anpa_category' in article:
+            for category in article.get('anpa_category', []):
+                SubElement(descriptive_metadata, 'Property',
+                           {'FormalName': 'Category', 'Value': category['qcode']})
+        else:
+            raise Exception('anpa category is missing')
 
         # TODO: Subcategory
         # TODO: Locator

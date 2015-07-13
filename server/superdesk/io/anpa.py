@@ -42,7 +42,7 @@ class ANPAFileParser(Parser):
                 lines[1], flags=re.I)
             if m:
                 item['priority'] = m.group(1).decode()
-                item['anpa-category'] = {'qcode': m.group(2).decode()}
+                item['anpa_category'] = [{'qcode': m.group(2).decode()}]
                 item['word_count'] = int(m.group(10).decode())
                 if m.group(4) == b'\x12':
                     item['type'] = 'preformatted'

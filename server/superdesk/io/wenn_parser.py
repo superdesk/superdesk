@@ -48,7 +48,7 @@ class WENNParser(Parser):
         item['type'] = 'text'
         item['urgency'] = 5
         item['pubstatus'] = 'usable'
-        item['anpa-category'] = {'qcode': 'e'}
+        item['anpa_category'] = [{'qcode': 'e'}]
         item['subject'] = [{'qcode': '01000000', 'name': 'arts, culture and entertainment'}]
 
     def parse_news_management(self, item, entry):

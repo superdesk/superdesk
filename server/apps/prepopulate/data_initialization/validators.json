@@ -22,9 +22,10 @@
                     "X"
                 ]
             },
-            "anpa-category": {
-                "type": "dict",
-                "required": true
+            "anpa_category": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
             },
             "pubstatus": {
                 "type": "string",
@@ -76,9 +77,10 @@
                     "T"
                 ]
             },
-            "anpa-category": {
-                "type": "dict",
-                "required": true
+            "anpa_category": {
+                "type": "list",
+                "required": true,
+                "minlength": 1
             },
             "pubstatus": {
                 "type": "string",

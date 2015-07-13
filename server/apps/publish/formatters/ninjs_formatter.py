@@ -46,7 +46,7 @@ class NINJSFormatter(Formatter):
             if article['type'] == 'composite':
                 ninjs['associations'] = self._get_associations(article)
 
-            return pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId)
+            return [(pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId))]
         except Exception as ex:
             raise FormatterError.ninjsFormatterError(ex, subscriber)
 

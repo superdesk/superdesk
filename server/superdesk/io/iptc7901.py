@@ -37,7 +37,7 @@ class Iptc7901FileParser(Parser):
                 item['original_source'] = m.group(1).decode()
                 item['ingest_provider_sequence'] = m.group(2).decode()
                 item['priority'] = self.map_priority(m.group(3).decode())
-                item['anpa-category'] = {'qcode': self.map_category(m.group(4).decode())}
+                item['anpa_category'] = [{'qcode': self.map_category(m.group(4).decode())}]
                 item['word_count'] = int(m.group(5).decode())
 
             inHeader = True

@@ -33,7 +33,7 @@ class PublicAPITest(TestCase):
             "original_creator": "user_id",
             "versioncreated": "2015-06-01T22:19:08+0000",
             "subject": [{"name": "medical research", "parent": "07000000", "qcode": "07005000"}],
-            "anpa-category": {"qcode": "a"},
+            "anpa_category": [{"qcode": "a"}],
             "task": {
                 "desk": "desk_id",
                 "stage": "stage_id",

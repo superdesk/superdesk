@@ -76,9 +76,9 @@
     </dl>
 
     <!-- category details -->
-    <dl ng-if="item['anpa-category']">
+    <dl ng-if="item['anpa_category']">
         <dt translate>ANPA category</dt>
-        <dd>{{ item['anpa-category'].name }}</dd>
+        <dd>{{ item['anpa_category'] | mergeWords:'name' }}</dd>
     </dl>
     <dl ng-if="item.subject && item.subject.length > 0">
         <dt translate>Subject</dt>

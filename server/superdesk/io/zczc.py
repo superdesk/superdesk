@@ -67,7 +67,7 @@ class ZCZCParser(Parser):
                                 item[self.header_map[line[0]]] = line[1:-1]
                             continue
                         if line[0] == self.CATEGORY:
-                            item['anpa-category'] = {'qcode': line[1]}
+                            item['anpa_category'] = [{'qcode': line[1]}]
                             continue
                         if line[0] == self.FORMAT:
                             if line[1] == self.TEXT:

@@ -92,7 +92,7 @@ def parse_meta(tree, item):
         elif attribute_name == 'anpa-sequence':
             item['ingest_provider_sequence'] = elem.get('content')
         elif attribute_name == 'anpa-category':
-            item['anpa-category'] = {'qcode': elem.get('content'), 'name': ''}
+            item['anpa_category'] = [{'qcode': elem.get('content'), 'name': ''}]
         elif attribute_name == 'anpa-wordcount':
             item['word_count'] = int(elem.get('content'))
         elif attribute_name == 'anpa-takekey':

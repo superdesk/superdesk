@@ -43,7 +43,7 @@ Feature: Subscribers
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest
@@ -171,7 +171,7 @@ Feature: Subscribers
 
   @auth
   @notification
-  Scenario: Update critical errors for subscriber
+  Scenario: Update critical errors for subscriber 1
     Given empty "subscribers"
     When we post to "/subscribers" with success
     """
@@ -192,11 +192,11 @@ Feature: Subscribers
   @auth
   @vocabulary
   @notification
-  Scenario: Update critical errors for subscriber
+  Scenario: Update critical errors for subscriber 2
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success
     """
-    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
 
     Then we get latest

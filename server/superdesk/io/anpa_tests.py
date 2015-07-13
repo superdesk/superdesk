@@ -32,7 +32,7 @@ class ANPATestCase(unittest.TestCase):
         self.assertEqual('text', item['type'])
         self.assertEqual('2870', item['provider_sequence'])
         self.assertEqual('r', item['priority'])
-        self.assertEqual('l', item['anpa-category']['qcode'])
+        self.assertEqual('l', item['anpa_category'][0]['qcode'])
         self.assertEqual('text', item['type'])
         self.assertEqual(1049, item['word_count'])
         self.assertEqual('For Argentine chemo patients, mirrors can hurt', item['headline'])

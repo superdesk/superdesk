@@ -278,7 +278,7 @@ define([
                     }],
                     controller: ['data', '$location', 'api', 'notify', 'session', 'desks', 'superdesk',
                         function(data, $location, api, notify, session, desks, superdesk) {
-                            var pick_fields = ['family_id', 'abstract', 'anpa-category',
+                            var pick_fields = ['family_id', 'abstract', 'anpa_category',
                                                 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline',
                                                 'priority', 'byline', 'dateline', 'headline'];
                             var update_item = {};

@@ -23,7 +23,7 @@ class AapSMSFormatterTest(TestCase):
 
     article = {
         'priority': '1',
-        'anpa-category': {'qcode': 'a'},
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'type': 'preformatted',
         'body_html': 'The story body',
@@ -40,7 +40,7 @@ class AapSMSFormatterTest(TestCase):
             subscriber = self.app.data.find('subscribers', None, None)[0]
 
             f = AAPSMSFormatter()
-            seq, item = f.format(self.article, subscriber)
+            seq, item = f.format(self.article, subscriber)[0]
 
             self.assertGreater(int(seq), 0)
             self.assertDictEqual(item, {'Category': 'a', 'Priority': '1', 'Sequence': item['Sequence'], 'ident': '0',

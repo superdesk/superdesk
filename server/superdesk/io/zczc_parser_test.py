@@ -26,7 +26,7 @@ class ZCZCTestCase(unittest.TestCase):
         self.assertEqual(self.items.get('headline'), 'MOTOR:  Collated results/standings after Sydney NRMA 500')
 
     def test_anpa_category(self):
-        self.assertEqual(self.items.get('anpa-category')['qcode'], 'T')
+        self.assertEqual(self.items.get('anpa_category')[0]['qcode'], 'T')
 
     def test_subject(self):
         self.assertEqual(self.items.get('subject')[0]['qcode'], '15039001')

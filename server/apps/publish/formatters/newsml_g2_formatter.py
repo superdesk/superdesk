@@ -44,7 +44,7 @@ class NewsMLG2Formatter(Formatter):
             if article['type'] == 'text' or article['type'] == 'preformatted':
                 self._format_newsitem(article, itemSet, nitf)
 
-            return pub_seq_num, self.XML_ROOT + etree.tostring(newsMessage).decode('utf-8')
+            return [(pub_seq_num, self.XML_ROOT + etree.tostring(newsMessage).decode('utf-8'))]
         except Exception as ex:
             raise FormatterError.newmsmlG2FormatterError(ex, subscriber)
 

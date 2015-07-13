@@ -23,7 +23,7 @@ from superdesk.etree import get_text_word_count
 # publication name
 pubnames = {
     'International Sport': 'S',
-    'Racing': 'H',  # WRONG
+    'Racing': 'R',
     'Parliamentary Press Releases': 'P',
     'Features': 'C',
     'Financial News': 'F',
@@ -70,7 +70,10 @@ class AppImportTextArchiveCommand(superdesk.Command):
         self._id = int(start_id)
         self._url_root = url
         self._query = urllib.parse.quote(query)
-        self._limit = int(limit)
+        if limit is not None:
+            self._limit = int(limit)
+        else:
+            self._limit = None
 
         self._api_login()
 
@@ -167,13 +170,13 @@ class AppImportTextArchiveCommand(superdesk.Command):
                 if publication_name in pubnames:
                     category = pubnames[publication_name]
             if category:
-                item['anpa-category'] = {}
-                item['anpa-category']['qcode'] = category
+                anpacategory = {}
+                anpacategory['qcode'] = category
                 for anpa_category in self._anpa_categories['items']:
-                    if anpa_category['is_active'] is True \
-                            and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
-                        item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
+                    if anpacategory['qcode'].lower() == anpa_category['qcode'].lower():
+                        anpacategory = {'qcode': anpacategory['qcode'], 'name': anpa_category['name']}
                         break
+                item['anpa_category'] = [anpacategory]
 
             self._addkeywords('CompanyCodes', doc, item)
 

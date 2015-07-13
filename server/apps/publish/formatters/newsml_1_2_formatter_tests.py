@@ -21,7 +21,7 @@ class Newsml12FormatterTest(TestCase):
 
     article = {
         'source': 'AAP',
-        'anpa-category': {'qcode': 'a'},
+        'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'byline': 'joe',
         'slugline': 'slugline',
@@ -71,7 +71,7 @@ class Newsml12FormatterTest(TestCase):
     def test_newsml_formatter_raises_error(self):
         with self.app.app_context():
             with assert_raises(FormatterError):
-                self.article.pop('anpa-category', None)
+                self.article.pop('anpa_category', None)
                 self.formatter.format(self.article, {'name': 'Test Subscriber'})
 
     def test_format_news_envelope(self):

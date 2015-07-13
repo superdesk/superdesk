@@ -36,7 +36,7 @@ class RoutingRuleValidator():
 
     def __is_valid_category(self, item, rule_filter):
         rule_categories = [category.get('qcode', '').lower() for category in rule_filter.get('category', [])]
-        item_categories = [str.lower(item.get('anpa-category', {}).get('qcode', ''))]
+        item_categories = [category.get('qcode') for category in item.get('anpa_category', [{}])]
         return self.__is_valid_field_values(item_categories, rule_categories)
 
     def __is_valid_subject(self, item, rule_filter):

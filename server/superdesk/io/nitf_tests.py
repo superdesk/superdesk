@@ -77,7 +77,7 @@ class AAPTestCase(NITFTestCase):
         self.assertEqual(self.item.get('ingest_provider_sequence'), '1747')
 
     def test_anpa_category(self):
-        self.assertEqual(self.item.get('anpa-category')['qcode'], 'a')
+        self.assertEqual(self.item.get('anpa_category')[0]['qcode'], 'a')
 
     def test_word_count(self):
         self.assertEqual(349, self.item.get('word_count'))

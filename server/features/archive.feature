@@ -236,11 +236,11 @@ Feature: News Items Archive
         """
         {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en",
          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : [{"name": "Test"}],
-         "anpa-category" :
-            {
+         "anpa_category" :
+            [{
                 "qcode" : "A",
                 "name" : "Australian News"
-            },
+            }],
          "subject" : [
             {
                 "qcode" : "11007000",
