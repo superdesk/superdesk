@@ -98,6 +98,12 @@ class SubscribersResource(Resource):
                     'default': 'blocking'
                 }
             }
+        },
+        'global_filters': {
+            'type': 'dict',
+            'keyschema': {
+                'type': 'boolean'
+            }
         }
     }
 

@@ -121,6 +121,21 @@
                             </div>
                         </div>
                     </tab>
+
+                    <tab heading="Applied Global Filters" class="TabContent">
+                        <div class="content privileges-settings">
+                            <div class="horizontal">
+                                <div class="roles-list">
+                                    <div ng-repeat="gf in globalFilters track by gf._id | orderBy:name" class="field">
+                                        <label>
+                                            {{:: gf.name}}
+                                            <span sd-switch ng-model="subscriber.global_filters[gf._id]"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
                 </tabset>
             </fieldset>
         </form>

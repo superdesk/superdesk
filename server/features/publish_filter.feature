@@ -35,6 +35,32 @@ Feature: Publish Filter
 
   @auth
   @vocabulary
+  Scenario: Add a new publish filter without global filter value
+    Given empty "filter_conditions"
+    When we post to "/filter_conditions" with success
+    """
+    [{"name": "sport", "field": "anpa-category", "operator": "in", "value": "4"}]
+    """
+
+    Then we get latest
+    Given empty "publish_filters"
+    When we post to "/publish_filters" with success
+    """
+    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
+    """
+    And we get "/publish_filters"
+    Then we get list with 1 items
+    """
+    {
+      "_items":
+        [
+          {"is_global": false}
+        ]
+    }
+    """
+
+  @auth
+  @vocabulary
   Scenario: Add a new publish filter with the same name fails
     Given empty "filter_conditions"
     When we post to "/filter_conditions" with success

@@ -399,6 +399,10 @@ class BasePublishService(BaseService):
         try:
             queued = False
             no_formatters = []
+            service = get_resource_service('publish_filters')
+            req = ParsedRequest()
+            req.args = {'is_global': True}
+            global_filters = service.get(req=req, lookup=None)
 
             for subscriber in subscribers:
                 if target_media_type:
@@ -414,6 +418,9 @@ class BasePublishService(BaseService):
 
                     if len(matching_target) > 0 and matching_target[0]['allow'] is False:
                         continue
+
+                if not self.conforms_global_filter(subscriber, global_filters, doc):
+                    continue
 
                 if not self.conforms_publish_filter(subscriber, doc):
                     continue
@@ -465,6 +472,17 @@ class BasePublishService(BaseService):
         get_resource_service('published').post([copy(published_item)])
 
     def conforms_publish_filter(self, subscriber, doc):
+        """
+        Checks if the document matches the subscriber filter
+        :param subscriber: Subscriber to get the filter
+        :param doc: Document to test the filter against
+        :return:
+        True if there's no filter
+        True if matches and permitting
+        False if matches and blocking
+        False if doesn't match and permitting
+        True if doesn't match and blocking
+        """
         publish_filter = subscriber.get('publish_filter')
 
         if not publish_filter or 'filter_id' not in publish_filter:
@@ -478,6 +496,27 @@ class BasePublishService(BaseService):
             return publish_filter['filter_type'] == 'permitting'
         else:
             return publish_filter['filter_type'] == 'blocking'
+
+    def conforms_global_filter(self, subscriber, global_filters, doc):
+        """
+        Checks if subscriber has a override rule against each of the
+        global filter and if not checks if document matches the global filter
+        :param subscriber: Subscriber to get if the global filter is overriden
+        :param global_filters: List of all global filters
+        :param doc: Document to test the global filter against
+        :return: True if at least one global filter is not overriden
+        and it matches the document
+        False if global filter matches the document or all of them overriden
+        """
+        service = get_resource_service('publish_filters')
+        gfs = subscriber.get('global_filters', {})
+        for global_filter in global_filters:
+            if gfs.get(str(global_filter['_id']), True):
+                # Global filter applies to this subscriber
+                if service.does_match(global_filter, doc):
+                    # All global filters behaves like blocking filters
+                    return False
+        return True
 
 
 class ArchivePublishResource(BasePublishResource):
