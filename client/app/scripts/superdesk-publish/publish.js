@@ -30,6 +30,9 @@
             label: 'File',
             templateUrl: 'scripts/superdesk-publish/views/file-config.html'
         },
+        pull: {
+            label: 'Pull'
+        },
         PublicArchive: {
             label: 'Public Archive',
             templateUrl: 'scripts/superdesk-publish/views/public-archive-config.html'

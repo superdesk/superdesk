@@ -13,8 +13,9 @@ from superdesk.utc import utcnow
 from datetime import timedelta
 from nose.tools import assert_raises
 from superdesk.errors import PublishQueueError
-from superdesk.publish.publish_content import is_on_time, update_content_state
+from superdesk.publish.publish_content import is_on_time, update_content_state, get_queue_items
 from apps.publish import init_app
+from superdesk import config
 
 
 class PublishContentTests(TestCase):
@@ -26,7 +27,7 @@ class PublishContentTests(TestCase):
                     },
                     "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
                     "subscriber_id": "552ba73f1d41c8437971613e",
-                    "state": "in-progress",
+                    "state": "pending",
                     "_created": "2015-04-17T13:15:20.000Z",
                     "_updated": "2015-04-20T05:04:25.000Z",
                     "item_id": 1
@@ -40,7 +41,7 @@ class PublishContentTests(TestCase):
                        },
                        "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
                        "subscriber_id": "552ba73f1d41c8437971613e",
-                       "state": "in-progress",
+                       "state": "pending",
                        "_created": "2015-04-17T13:15:20.000Z",
                        "_updated": "2015-04-20T05:04:25.000Z",
                        "item_id": 1,
@@ -54,11 +55,24 @@ class PublishContentTests(TestCase):
                        },
                        "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
                        "subscriber_id": "552ba73f1d41c8437971613e",
-                       "state": "in-progress",
+                       "state": "pending",
                        "_created": "2015-04-17T13:15:20.000Z",
                        "_updated": "2015-04-20T05:04:25.000Z",
                        "item_id": '2',
-                       "publish_schedule": "2015-04-20T05:04:25.000Z"}]
+                       "publish_schedule": "2015-04-20T05:04:25.000Z"},
+                   {
+                       "_id": 4,
+                       "destination": {
+                           "delivery_type": "pull",
+                           "config": {},
+                           "name": "destination1"
+                       },
+                       "_etag": "f28b9af64f169072fb171ec7f316fc03d5826d6b",
+                       "subscriber_id": "552ba73f1d41c8437971613e",
+                       "state": "pending",
+                       "_created": "2015-04-17T13:15:20.000Z",
+                       "_updated": "2015-04-20T05:04:25.000Z",
+                       "item_id": '2'}]
 
     articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
                  '_id': '2',
@@ -135,3 +149,11 @@ class PublishContentTests(TestCase):
             self.assertEquals(1, archive_items.count())
             self.assertEquals(published_items[0]['state'], 'published')
             self.assertEquals(archive_items[0]['state'], 'published')
+
+    def test_queue_items(self):
+        with self.app.app_context():
+            self.app.data.insert('publish_queue', self.queue_items)
+            items = get_queue_items()
+            self.assertEqual(3, items.count())
+            ids = [item[config.ID_FIELD] for item in items]
+            self.assertNotIn(4, ids)
