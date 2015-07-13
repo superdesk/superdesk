@@ -404,6 +404,8 @@
                                         angular.isDefined(response.data._issues.name.unique)) {
                                         notify.error(gettext('Error: Subscriber with Name ' + $scope.subscriber.name +
                                             ' already exists.'));
+                                    } else if (angular.isDefined(response.data._issues.destinations)) {
+                                        notify.error(gettext('Error: Subscriber must have at least one destination.'));
                                     }
                                 } else {
                                     notify.error(gettext('Error: Failed to save Subscriber.'));
@@ -423,6 +425,7 @@
                         $scope.subscriber = _.create($scope.origSubscriber);
                         $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
                         $scope.subscriber.publish_filter = $scope.origSubscriber.publish_filter || {};
+                        $scope.subscriber.destinations = $scope.subscriber.destinations || [];
                         $scope.subscriber.global_filters =  $scope.origSubscriber.global_filters || {};
                         $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
                         initGlobalFilters();
