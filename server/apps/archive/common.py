@@ -70,11 +70,9 @@ def on_create_item(docs):
 
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
+
     doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
-
-    if 'unique_id' not in doc:
-        generate_unique_id_and_name(doc)
-
+    generate_unique_id_and_name(doc)
     doc.setdefault('_id', doc[GUID_FIELD])
 
 
@@ -84,7 +82,7 @@ def update_dates_for(doc):
 
 
 def generate_guid(**hints):
-    '''Generate a GUID based on given hints'''
+    """Generate a GUID based on given hints"""
     newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
     tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
 
