@@ -55,7 +55,7 @@ class IngestService(BaseService):
             set_default_state(doc, STATE_INGESTED)
             handle_existing_data(doc, doc_type='ingest')
 
-        on_create_item(docs)  # do it after setting the state otherwise it will make it draft
+        on_create_item(docs, repo_type='ingest')  # do it after setting the state otherwise it will make it draft
 
     def post_in_mongo(self, docs, **kwargs):
         for doc in docs:

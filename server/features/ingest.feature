@@ -157,3 +157,17 @@ Feature: Fetch From Ingest
         """
         {"_message": "Deleting an Ingest Source after receiving items is prohibited."}
         """
+
+    @auth
+    Scenario: Ingested item must have unique id and unique name
+        Given "ingest"
+            """
+            [{
+                "guid": "tag_example.com_0000_newsml_BRE9A605",
+                "urgency": "1",
+                "source": "example.com",
+                "versioncreated": "2013-11-11T11:11:11+00:00"
+            }]
+            """
+        Then we get "unique_id" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
+        And we get "unique_name" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
