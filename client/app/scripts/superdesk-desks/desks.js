@@ -611,7 +611,10 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (!this.userDesks || !this.userDesks._items) {
+                        if (
+                            !this.userDesks || !this.userDesks._items ||
+                            this.userDesks._items.length === 0
+                        ) {
                             return null;
                         }
 
