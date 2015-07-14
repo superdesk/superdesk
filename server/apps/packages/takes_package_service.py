@@ -97,6 +97,7 @@ class TakesPackageService():
         })
         for field in ['anpa-category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline', 'publish_schedule']:
             takes_package[field] = target.get(field)
+        takes_package.setdefault(config.VERSION, 1)
 
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)
@@ -107,7 +108,7 @@ class TakesPackageService():
 
         # send the package to the desk where the first take was sent
         current_task = target.get('task')
-        tasks_service.patch(takes_package_id, {'task': current_task})
+        tasks_service.patch(takes_package_id, {'task': current_task or {}})
         return takes_package_id
 
     def link_as_next_take(self, target, link):
