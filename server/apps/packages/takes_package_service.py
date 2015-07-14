@@ -95,8 +95,8 @@ class TakesPackageService():
             'headline': target.get('headline'),
             'abstract': target.get('abstract'),
         })
-        for field in ['anpa-category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline']:
-            takes_package.setdefault(field, target.get(field))
+        for field in ['anpa-category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline', 'publish_schedule']:
+            takes_package[field] = target.get(field)
 
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)

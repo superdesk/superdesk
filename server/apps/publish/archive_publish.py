@@ -91,6 +91,8 @@ class BasePublishService(BaseService):
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original['_id'])
+        original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
+        updates.update(original)
         user = get_user()
         push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
@@ -121,6 +123,7 @@ class BasePublishService(BaseService):
                         updated.update(updates)
                         # create a takes package
                         package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
+                        original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
                         queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
 
                 # queue only text items
