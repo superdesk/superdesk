@@ -10,28 +10,81 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService', '$location', 'reloadService'];
-    function DeskDropdownDirective(desks, $route, preferencesService, $location, reloadService) {
-        return {
-            templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
-            link: function(scope) {
+    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session'];
+    function DashboardController($scope, desks, widgets, api, session) {
+        var vm = this;
 
-                scope.select = function selectDesk(desk) {
-                    scope.selected = desk;
-                    desks.setCurrentDeskId(desk._id);
+        desks.initialize().then(function() {
+            $scope.$watch(getActiveDesk, setupWorkspace);
+        });
 
-                    if (desk._id === 'personal') {
-                        $location.path('/workspace/content');
-                    }
-                };
+        function getActiveDesk() {
+            return desks.active.desk;
+        }
 
-                desks.initialize().then(function() {
-                    desks.fetchCurrentUserDesks().then(function(userDesks) {
-                        scope.userDesks = userDesks._items;
-                        scope.selected = desks.getCurrentDesk();
-                    });
-                });
+        function setupWorkspace(desk) {
+            var criteria = {};
+            if (desk && !desks.isPersonal(desk)) {
+                criteria.desk = desk;
+            } else {
+                criteria.user = session.identity._id;
             }
+
+            vm.current = null;
+            api.query('workspaces', {where: criteria})
+                .then(function(workspaces) {
+                    if (workspaces._items.length) {
+                        startEdit(workspaces._items[0]);
+                    } else {
+                        // BC: use existing user workspace if present in user profile
+                        startEdit({widgets: criteria.user && session.identity.workspace ? session.identity.workspace.widgets : []});
+                        angular.extend(vm.current, criteria);
+                    }
+
+                    vm.availableWidgets = getAvailableWidgets(vm.widgets);
+                });
+        }
+
+        function getAvailableWidgets(userWidgets) {
+            return _.filter(widgets, function(widget) {
+                return widget.multi || _.find(userWidgets, {_id: widget._id}) == null;
+            });
+        }
+
+        this.addWidget = function(widget) {
+            this.widgets.push(widget);
+            this.availableWidgets = getAvailableWidgets(this.widgets);
+            this.selectWidget();
+            this.save();
+        };
+
+        this.selectWidget = function(widget) {
+            this.selectedWidget = widget || null;
+        };
+
+        function startEdit(workspace) {
+            vm.current = workspace;
+            vm.widgets = extendWidgets(workspace.widgets || []);
+        }
+
+        function extendWidgets(currentWidgets) {
+            return _.map(currentWidgets, function(widget) {
+                var original = _.find(widgets, {_id: widget._id});
+                return angular.extend({}, original, widget);
+            });
+        }
+
+        function pickWidgets(widgets) {
+            return _.map(widgets, function(widget) {
+                return _.pick(widget, ['_id', 'configuration', 'sizex', 'sizey', 'col', 'row']);
+            });
+        }
+
+        this.save = function() {
+            this.edit = false;
+            var diff = angular.extend({}, this.current);
+            diff.widgets = pickWidgets(this.widgets);
+            api.save('workspaces', this.current, diff);
         };
     }
 
@@ -50,9 +103,8 @@ define([
         'superdesk.legal_archive'
     ])
 
-    .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
-    .directive('sdDeskDropdown', DeskDropdownDirective)
+    .controller('DashboardController', DashboardController)
 
     .filter('wcodeFilter', function() {
         return function(input, values) {
@@ -64,11 +116,13 @@ define([
         superdesk.activity('/workspace', {
             label: gettext('Workspace'),
             description: gettext('Customize your widgets and views'),
-            controller: require('./workspace-controller'),
+            controller: 'DashboardController',
+            controllerAs: 'dashboard',
             templateUrl: 'scripts/superdesk-dashboard/views/workspace.html',
             topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
             priority: -1000,
-            category: superdesk.MENU_MAIN
+            category: superdesk.MENU_MAIN,
+            reloadOnSearch: true
         });
     }]);
 });
