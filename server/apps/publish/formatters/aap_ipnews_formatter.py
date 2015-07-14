@@ -21,6 +21,36 @@ from superdesk.io.iptc import subject_codes
 
 
 class AAPIpNewsFormatter(Formatter):
+    def _set_subject(self, category, article):
+        """
+        Sets the subject code in the odbc_item based on the category, if multiple subject codes are available
+        :param category:
+        :param article:
+        :return:
+        """
+        subject_reference = '        '
+        # Ensure that there is a subject in the article
+        if 'subject' in article and 'qcode' in article['subject'][0]:
+            # set the subject reference with the first value, in case we can't do better
+            subject_reference = article['subject'][0].get('qcode')
+            # we have multiple categories and multiple subjects
+            if len(article['subject']) > 1 and len(article['anpa_category']) > 1:
+                # we need to find a more relevant subject reference if possible
+                all_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
+                ref_cat = [cat for cat in all_categories['items'] if
+                           cat['qcode'].upper() == category['qcode'].upper()]
+                # check if there is an associated subject with the category
+                if ref_cat and len(ref_cat) == 1 and 'subject' in ref_cat[0]:
+                    # try to find the lowest level subject that matches
+                    ref = 0
+                    for s in article['subject']:
+                        if s['qcode'][:2] == ref_cat[0]['subject'][:2]:
+                            if int(s['qcode']) > ref:
+                                ref = int(s['qcode'])
+                    if ref > 0:
+                        subject_reference = '{0:0>8}'.format(ref)
+        return subject_reference
+
     def format(self, article, subscriber):
         """
         Constructs a dictionary that represents the parameters passed to the IPNews InsertNews stored procedure
@@ -30,30 +60,25 @@ class AAPIpNewsFormatter(Formatter):
             docs = []
             for category in article.get('anpa_category'):
                 pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
-
                 odbc_item = {'originator': article.get('source', None), 'sequence': pub_seq_num,
                              'category': category.get('qcode'),
                              'headline': article.get('headline', '').replace('\'', '\'\''),
                              'author': article.get('byline', '').replace('\'', '\'\''),
                              'keyword': article.get('slugline', None).replace('\'', '\'\'')}
 
-                if article['subject'][0] and 'qcode' in article['subject'][0]:
-                    odbc_item['subject_reference'] = article['subject'][0].get('qcode', '        ')
-                    if odbc_item['subject_reference']:
-                        odbc_item['subject'] = subject_codes[odbc_item['subject_reference'][:2] + '000000']
-                        if odbc_item['subject_reference'][2:5] != '000':
-                            odbc_item['subject_matter'] = subject_codes[odbc_item['subject_reference'][:5] + '000']
-                        else:
-                            odbc_item['subject_matter'] = ''
-                        if not odbc_item['subject_reference'].endswith('000'):
-                            odbc_item['subject_detail'] = subject_codes[odbc_item['subject_reference']]
-                        else:
-                            odbc_item['subject_detail'] = ''
+                odbc_item['subject_reference'] = self._set_subject(category, article)
+                if 'subject_reference' in odbc_item:
+                    odbc_item['subject'] = subject_codes[odbc_item['subject_reference'][:2] + '000000']
+                    if odbc_item['subject_reference'][2:5] != '000':
+                        odbc_item['subject_matter'] = subject_codes[odbc_item['subject_reference'][:5] + '000']
+                    else:
+                        odbc_item['subject_matter'] = ''
+                    if not odbc_item['subject_reference'].endswith('000'):
+                        odbc_item['subject_detail'] = subject_codes[odbc_item['subject_reference']]
+                    else:
+                        odbc_item['subject_detail'] = ''
                 else:
                     odbc_item['subject_reference'] = '        '
-                    odbc_item['subject'] = ''
-                    odbc_item['subject_matter'] = ''
-                    odbc_item['subject_detail'] = ''
 
                 odbc_item['take_key'] = article.get('anpa_take_key', None)  # @take_key
                 odbc_item['usn'] = article.get('unique_id', None)  # @usn
