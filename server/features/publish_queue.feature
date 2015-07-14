@@ -102,6 +102,7 @@ Feature: Publish Queue
       And we post to "/archive" with success
       """
       [{"guid": "123", "headline": "test", "body_html": "body", "state": "fetched",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
       And we post to "/stages" with success
@@ -116,7 +117,7 @@ Feature: Publish Queue
       ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
-      Then we get "published_seq_num" in "/publish_queue/123"
+      Then we get "published_seq_num" in "/publish_queue/#archive.123.take_package#"
 
   @auth @notification
   Scenario: Creating a new publish queue entry should add published sequence number

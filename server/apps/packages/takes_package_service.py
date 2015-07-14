@@ -57,11 +57,12 @@ class TakesPackageService():
             target_ref[SEQUENCE] = sequence
             main_group[ASSOCIATIONS].append(target_ref)
 
-        link_ref = get_item_ref(link)
-        link_ref[SEQUENCE] = self.__next_sequence__(sequence)
-        main_group[ASSOCIATIONS].append(link_ref)
-        takes_package[SEQUENCE] = link_ref[SEQUENCE]
-        takes_package[LAST_TAKE] = link['_id']
+        if link is not None:
+            link_ref = get_item_ref(link)
+            link_ref[SEQUENCE] = self.__next_sequence__(sequence)
+            main_group[ASSOCIATIONS].append(link_ref)
+            takes_package[SEQUENCE] = link_ref[SEQUENCE]
+            takes_package[LAST_TAKE] = link['_id']
 
     def __next_sequence__(self, seq):
         return seq + 1
@@ -87,14 +88,17 @@ class TakesPackageService():
         for field in ['anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline']:
             to[field] = copy_from.get(field)
 
-    def create_takes_package(self, takes_package, target, link):
+    def package_story_as_a_take(self, target, takes_package, link):
         takes_package.update({
             ITEM_TYPE: ITEM_TYPE_COMPOSITE,
             PACKAGE_TYPE: TAKES_PACKAGE,
             'headline': target.get('headline'),
-            'slugline': target.get('slugline'),
-            'abstract': target.get('abstract')
+            'abstract': target.get('abstract'),
         })
+        for field in ['anpa-category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline', 'publish_schedule']:
+            takes_package[field] = target.get(field)
+        takes_package.setdefault(config.VERSION, 1)
+
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)
         archive_service = get_resource_service(ARCHIVE)
@@ -104,7 +108,7 @@ class TakesPackageService():
 
         # send the package to the desk where the first take was sent
         current_task = target.get('task')
-        tasks_service.patch(takes_package_id, {'task': current_task})
+        tasks_service.patch(takes_package_id, {'task': current_task or {}})
         return takes_package_id
 
     def link_as_next_take(self, target, link):
@@ -124,7 +128,7 @@ class TakesPackageService():
             archive_service.post([link])
 
         if not takes_package_id:
-            takes_package_id = self.create_takes_package(takes_package, target, link)
+            takes_package_id = self.package_story_as_a_take(target, takes_package, link)
         else:
             self.__link_items__(takes_package, target, link)
             del takes_package['_id']

@@ -77,7 +77,7 @@ Feature: Link content in takes
                     "package_type": "takes",
                     "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
                     "sequence": 2,
-                    "_current_version": 1
+                    "_current_version": 2
                 },
                 {
                     "_id": "#TAKE#",
@@ -145,7 +145,7 @@ Feature: Link content in takes
                     ],
                     "type": "composite",
                     "package_type": "takes",
-                    "_current_version": 2
+                    "_current_version": 3
                 },
                 {
                     "_id": "#TAKE#",
@@ -602,7 +602,7 @@ Feature: Link content in takes
         {
             "last_take": "#TAKE2#",
             "sequence": 2,
-            "_current_version": 1,
+            "_current_version": 2,
             "groups":[
                         {"id": "root", "refs": [{"idRef": "main"}]},
                         {
@@ -657,7 +657,7 @@ Feature: Link content in takes
         {
             "last_take": "#TAKE3#",
             "sequence": 3,
-            "_current_version": 2
+            "_current_version": 3
         }
         """
         When we publish "123" with "publish" type and "published" state
@@ -683,7 +683,7 @@ Feature: Link content in takes
         {
             "last_take": "123",
             "sequence": 1,
-            "_current_version": 6,
+            "_current_version": 7,
             "groups":[
                         {"id": "root", "refs": [{"idRef": "main"}]},
                         {

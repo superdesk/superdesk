@@ -13,6 +13,7 @@ import os
 import pymongo
 import unittest
 import elasticsearch
+import logging
 
 from app import get_app
 from base64 import b64encode
@@ -98,6 +99,12 @@ def setup(context=None, config=None):
         app_config.update(config)
 
     app = get_app(app_config)
+    logger = logging.getLogger('superdesk')
+    logger.setLevel(logging.ERROR)
+    logger = logging.getLogger('elasticsearch')
+    logger.setLevel(logging.ERROR)
+    logger = logging.getLogger('urllib3')
+    logger.setLevel(logging.ERROR)
     drop_elastic(app)
     drop_mongo(app)
 

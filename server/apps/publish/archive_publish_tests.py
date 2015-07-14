@@ -786,7 +786,7 @@ class ArchivePublishTestCase(TestCase):
             get_resource_service('archive_publish').patch(id=doc['_id'], updates={'state': 'published'})
 
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(4, queue_items.count())
+            self.assertEqual(5, queue_items.count())
 
     def test_targeted_for(self):
         with self.app.test_request_context(URL_PREFIX):
