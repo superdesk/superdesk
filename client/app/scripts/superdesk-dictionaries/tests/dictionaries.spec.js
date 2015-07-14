@@ -25,19 +25,25 @@ describe('dictionaries', function() {
 
     it('can get dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 1}]}));
+        spyOn(api, 'find').and.returnValue($q.when({}));
 
         var items;
-        dictionaries.getActive(LANG).then(function(res) {
-            items = res._items;
+        dictionaries.getActive(LANG).then(function(_items) {
+            items = _items;
         });
 
         $rootScope.$digest();
+
         expect(items.length).toBe(1);
-        expect(api.query).toHaveBeenCalledWith('dictionaries', {where: {
-            language_id: LANG,
-            $or: [{user: USER_ID}, {user: {$exists: false}}],
-            is_active: {$in: ['true', null]}
-        }});
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {
+            projection: {content: 0},
+            where: {
+                language_id: LANG,
+                $or: [{user: USER_ID}, {user: {$exists: false}}],
+                is_active: {$in: ['true', null]}
+            }
+        });
+        expect(api.find).toHaveBeenCalledWith('dictionaries', 1);
     }));
 
     it('can get and update user dictionary', inject(function(api, dictionaries, $q, $rootScope) {

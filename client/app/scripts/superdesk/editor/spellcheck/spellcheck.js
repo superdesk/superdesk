@@ -100,7 +100,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
 
         dict = dictionaries.getActive(lang).then(function(items) {
             dict = {};
-            angular.forEach(items._items, addDict);
+            angular.forEach(items, addDict);
             return dict;
         });
     }

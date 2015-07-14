@@ -25,11 +25,11 @@ describe('spellcheck', function() {
 
     beforeEach(inject(function(dictionaries, spellcheck, $q) {
 
-        spyOn(dictionaries, 'getActive').and.returnValue($q.when({_items: [
+        spyOn(dictionaries, 'getActive').and.returnValue($q.when([
             {_id: 'foo', content: DICT},
             {_id: 'bar', content: {bar: 1}},
             USER_DICT
-        ]}));
+        ]));
 
         spellcheck.setLanguage(LANG);
     }));

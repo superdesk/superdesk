@@ -11,8 +11,8 @@
 (function() {
     'use strict';
 
-    DictionaryService.$inject = ['api', 'urls', 'session', '$upload'];
-    function DictionaryService(api, urls, session, $upload) {
+    DictionaryService.$inject = ['api', 'urls', 'session', '$upload', '$q'];
+    function DictionaryService(api, urls, session, $upload, $q) {
         this.dictionaries = null;
         this.currDictionary = null;
 
@@ -98,12 +98,20 @@
          */
         function getActive(lang) {
             return session.getIdentity().then(function(identity) {
-                return api.query('dictionaries', {where: {
-                    language_id: lang,
-                    is_active: {$in: ['true', null]},
-                    $or: [{user: identity._id}, {user: {$exists: false}}]
-                }});
+                return api.query('dictionaries', {
+                    projection: {content: 0},
+                    where: {
+                        language_id: lang,
+                        is_active: {$in: ['true', null]},
+                        $or: [{user: identity._id}, {user: {$exists: false}}]
+                    }}).then(function(items) {
+                        return $q.all(items._items.map(fetchItem));
+                    });
             });
+
+            function fetchItem(item) {
+                return api.find('dictionaries', item._id);
+            }
         }
 
         /**
@@ -174,7 +182,7 @@
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
                 $scope.dictionary.content = _.create(result.content || {});
-                $scope.dictionary.is_active = $scope.dictionary.is_active !== false;
+                $scope.dictionary.is_active = $scope.dictionary.is_active !== 'false';
             });
         };
 
