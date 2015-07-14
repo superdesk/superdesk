@@ -9,6 +9,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license*.
 
+import superdesk
 from superdesk.io import Parser
 import datetime
 from superdesk.utc import utcnow
@@ -23,9 +24,23 @@ import logging
 from superdesk.errors import IngestEmailError
 from bs4 import BeautifulSoup, Comment, Doctype
 import re
+from eve.utils import ParsedRequest
 
 
 logger = logging.getLogger(__name__)
+
+
+class UserNotRegisteredException(Exception):
+    pass
+
+
+def get_user_by_email(from_field):
+    email_address = re.compile('^.*<(.*)>$').findall(from_field)[0]
+    lookup = superdesk.get_resource_service('users').find_one(
+        req=ParsedRequest(), email=email_address)
+    if not lookup:
+        raise UserNotRegisteredException()
+    return lookup['_id']
 
 
 class rfc822Parser(Parser):
@@ -54,11 +69,18 @@ class rfc822Parser(Parser):
                 if isinstance(response_part, tuple):
                     msg = email.message_from_bytes(response_part[1])
                     item['headline'] = self.parse_header(msg['subject'])
-                    item['original_creator'] = self.parse_header(msg['from'])
+                    email_address = self.parse_header(msg['from'])
+                    item['original_source'] = email_address
+                    try:
+                        item['original_creator'] = get_user_by_email(
+                            email_address)
+                    except UserNotRegisteredException:
+                        pass
                     item['guid'] = msg['Message-ID']
                     date_tuple = email.utils.parsedate_tz(msg['Date'])
                     if date_tuple:
-                        dt = datetime.datetime.utcfromtimestamp(email.utils.mktime_tz(date_tuple))
+                        dt = datetime.datetime.utcfromtimestamp(
+                            email.utils.mktime_tz(date_tuple))
                         dt = dt.replace(tzinfo=timezone('utc'))
                         item['firstcreated'] = dt
 
@@ -76,8 +98,10 @@ class rfc822Parser(Parser):
                                 continue
                             except Exception as ex:
                                 logger.exception(
-                                    "Exception parsing text body for {0} from {1}".format(item['headline'],
-                                                                                          item['original_creator']), ex)
+                                    "Exception parsing text body for {0} "
+                                    "from {1}: {2}".format(
+                                        item['headline'], email_address),
+                                    ex)
                                 continue
                         if part.get_content_type() == "text/html":
                             body = part.get_payload(decode=True)
@@ -91,8 +115,10 @@ class rfc822Parser(Parser):
                                 continue
                             except Exception as ex:
                                 logger.exception(
-                                    "Exception parsing text html for {0} from {1}".format(item['headline'],
-                                                                                          item['original_creator']), ex)
+                                    "Exception parsing text html for {0} "
+                                    "from {1}: {2}".format(
+                                        item['headline'], email_address),
+                                    ex)
                                 continue
                         if part.get_content_maintype() == 'multipart':
                             continue
