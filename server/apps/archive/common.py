@@ -49,7 +49,7 @@ def update_version(updates, original):
         updates.setdefault('version', updates[config.VERSION])
 
 
-def on_create_item(docs):
+def on_create_item(docs, repo_type=ARCHIVE):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
@@ -59,7 +59,7 @@ def on_create_item(docs):
             doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
 
         if 'unique_id' not in doc:
-            generate_unique_id_and_name(doc)
+            generate_unique_id_and_name(doc, repo_type)
 
         if 'family_id' not in doc:
             doc['family_id'] = doc[GUID_FIELD]
@@ -150,14 +150,17 @@ aggregations = {
 }
 
 
-def generate_unique_id_and_name(item):
+def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
     Generates and appends unique_id and unique_name to item.
     :throws IdentifierGenerationError: if unable to generate unique_id
     """
 
     try:
-        unique_id = update_key("INGEST_SEQ", flag=True)
+        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if superdesk.app.config.get('SUPERDESK_TESTING', False) \
+            else '{}_SEQ'.format(repo_type.upper())
+
+        unique_id = update_key(key_name, flag=True)
 
         if unique_id:
             item['unique_id'] = unique_id
