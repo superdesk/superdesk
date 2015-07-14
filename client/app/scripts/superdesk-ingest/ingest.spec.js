@@ -91,7 +91,7 @@ describe('ingest', function() {
                 // get the function that checks the additional conditions
                 extra_condition = extra_condition[extra_condition.length - 1];
                 fakeDesks = {
-                    getCurrentDeskId: function () { return 'personal'; }
+                    getCurrentDeskId: function () { return null; }
                 };
 
                 expect(extra_condition(fakeDesks)).toBe(false);

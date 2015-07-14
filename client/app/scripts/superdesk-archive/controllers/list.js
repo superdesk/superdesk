@@ -95,7 +95,7 @@ define([
             };
 
         function _refresh() {
-            if (desks.getCurrentDeskId() !== 'personal') {
+            if (desks.active.desk) {
                 if ($scope.published) {
                     resource = api('published');
                 } else {

@@ -20,7 +20,6 @@ describe('Search', function() {
         expect(searchTextbox.getAttribute('id')).toEqual(focused);
 
         element(by.id('search-button')).click();
-        content.setListView();
         expect(element.all(by.repeater('items._items')).count()).toBe(1);
     });
 
@@ -35,7 +34,6 @@ describe('Search', function() {
         searchTextbox.clear();
         searchTextbox.sendKeys('item3');
         element(by.id('search_within_button')).click();
-        content.setListView();
         expect(element.all(by.repeater('items._items')).count()).toBe(1);
         expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
     });
@@ -68,7 +66,6 @@ describe('Search', function() {
 
         element.all(by.repeater('(key,value) in aggregations.state'))
         .first().element(by.css('.sd-checkbox')).click();
-        content.setListView();
 
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
         expect(element.all(by.repeater('(type,keys) in tags.selectedFacets')).count()).toBe(1);

@@ -595,6 +595,7 @@
                             if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
+                            return self.activeDeskId;
                         });
                     },
                     fetchCurrentStageId: function() {
@@ -610,12 +611,10 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (this.activeDeskId === 'personal' ||
-                            !this.userDesks ||
-                            !this.userDesks._items ||
-                            !this.userDesks._items.length) {
-                            return 'personal';
+                        if (!this.userDesks || !this.userDesks._items) {
+                            return null;
                         }
+
                         if (!this.activeDeskId || !_.find(this.userDesks._items, {_id: this.activeDeskId})) {
                             return this.userDesks._items[0]._id;
                         }
@@ -649,11 +648,7 @@
                         return api.desks.getById(Id);
                     },
                     getCurrentDesk: function() {
-                        if (this.getCurrentDeskId() === 'personal') {
-                            return {'_id': 'personal'};
-                        } else {
-                            return this.deskLookup[this.getCurrentDeskId()];
-                        }
+                        return this.deskLookup[this.getCurrentDeskId()] || null;
                     },
                     setWorkspace: function(deskId, stageId) {
                         deskId = deskId || null;

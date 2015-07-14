@@ -98,6 +98,17 @@ define(['lodash'], function(_) {
             return localStorage.getItem(TOKEN_HREF);
         };
 
+        /**
+         * Setup test user with given id.
+         *
+         * @param {string} _id
+         */
+        this.testUser = function(_id) {
+            this.token = 1;
+            this.identity = {_id: _id};
+            this.sessionId = 's' + _id;
+        };
+
         $rootScope.$watch(getToken, _.bind(function(token) {
             this.token = token;
             this.identity = storage.getItem(IDENTITY_KEY);

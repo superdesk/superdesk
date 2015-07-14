@@ -72,6 +72,10 @@ describe('workspace', function() {
 
             expect(workspaces.active._id).toBe('deskworkspace');
             expect(api.query).toHaveBeenCalledWith('workspaces', {where: {desk: 'foo'}});
+            expect(preferencesService.update).toHaveBeenCalledWith(
+                {'workspace:active': {workspace: ''}},
+                'workspace:active'
+            );
         }));
 
         it('can create workspace', inject(function(workspaces, session, api, $q, $rootScope) {

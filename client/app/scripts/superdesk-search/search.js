@@ -702,10 +702,9 @@
                     scope.$on('key:v', toggleView);
 
                     function setView(view) {
+                        scope.view = view || 'mgrid';
                         update['archive:view'].view = view || 'mgrid';
-                        preferencesService.update(update, 'archive:view').then(function() {
-                            scope.view = view || 'mgrid';
-                        });
+                        preferencesService.update(update, 'archive:view');
                     }
 
                     function toggleView() {

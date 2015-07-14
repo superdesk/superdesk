@@ -7,13 +7,14 @@ var workspace = require('./helpers/workspace'),
 describe('authoring', function() {
     it('can open item stage', function() {
         workspace.open();
-        workspace.editItem(0, 'SPORTS DESK');
+        workspace.editItem('item4', 'SPORTS');
         element(by.css('button.stage')).click();
         expect(browser.getCurrentUrl()).toMatch(/workspace\/content$/);
     });
+
     it('Can Undo content', function() {
         workspace.open();
-        workspace.editItem(1);
+        workspace.editItem('item4', 'SPORTS');
         authoring.writeText('Two');
         browser.driver.switchTo().activeElement().getText().then(function(text) {
             expect(text).toEqual('Two');
@@ -37,7 +38,7 @@ describe('authoring', function() {
         // headline editor
         authoring.writeTextToHeadline('headline');
         browser.driver.switchTo().activeElement().getText().then(function(text) {
-            expect(text).toEqual('headlineitem1');
+            expect(text).toEqual('headlineitem4');
         });
 
         browser.sleep(500);
@@ -45,12 +46,13 @@ describe('authoring', function() {
         browser.actions().sendKeys(Key.chord(Key.CONTROL, 'z')).perform();
 
         browser.driver.switchTo().activeElement().getText().then(function(text) {
-            expect(text).toEqual('item1');
+            expect(text).toEqual('item4');
         });
     });
+
     it('Can Redo content', function () {
         workspace.open();
-        workspace.editItem(1);
+        workspace.editItem('item4', 'SPORTS');
         authoring.writeText('Undo');
         browser.driver.switchTo().activeElement().getText().then(function(text) {
             expect(text).toEqual('Undo');

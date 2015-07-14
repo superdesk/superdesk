@@ -16,7 +16,8 @@ define(['angular', 'lodash'], function(angular, _) {
                         'email:notification': 1,
                         'workqueue:items': 1,
                         'dashboard:ingest': 1,
-                        'agg:view': 1
+                        'agg:view': 1,
+                        'workspace:active': 1
                     },
                     original_preferences = null,
                     defaultPreferences = {};
@@ -111,35 +112,75 @@ define(['angular', 'lodash'], function(angular, _) {
                     return $q.reject();
                 };
 
+                /**
+                 * Update preferences
+                 *
+                 * It's done in 2 steps - schedule and commit. Schedule caches the changes
+                 * and calls commit async. Following calls to update in same $digest will
+                 * only cache changes. In next $digest those changes are pushed to api.
+                 * This way we can update multiple preferences without getting etag conflicts.
+                 *
+                 * @param {object} updates
+                 * @param {string} key
+                 */
                 this.update = function(updates, key) {
                     if (!key){
-                        return updatePreferences(USER_PREFERENCES, updates);
+                        return scheduleUpdate(USER_PREFERENCES, updates);
                     } else if (userPreferences[key]) {
-                        return updatePreferences(USER_PREFERENCES, updates, key);
+                        return scheduleUpdate(USER_PREFERENCES, updates, key);
                     } else {
-                        return updatePreferences(SESSION_PREFERENCES, updates, key);
+                        return scheduleUpdate(SESSION_PREFERENCES, updates, key);
                     }
                 };
 
-                function updatePreferences(type, updates, key) {
-                    var api = $injector.get('api');
-                    var original_prefs = _.cloneDeep(loadLocally());
-                    var user_updates = {};
-                    user_updates[type] = updates;
+                var updates,
+                    deferUpdate;
 
-                    if (type) {
-                        // make changes available right away
-                        angular.extend(original_preferences[type], updates);
+                /**
+                 * Schedule an update.
+                 *
+                 * Cache the changes and schedule a commit if it's first update in currect $digest.
+                 *
+                 * @param {string} type
+                 * @param {object} _updates
+                 */
+                function scheduleUpdate(type, _updates) {
+                    angular.extend(original_preferences[type], _updates);
+
+                    // schedule commit
+                    if (!updates) {
+                        updates = {};
+                        deferUpdate = $q.defer();
+                        $rootScope.$applyAsync(commitUpdates);
                     }
 
-                    return api.save('preferences', original_prefs, user_updates)
-                    .then(function(result) {
-                        saveLocally(result, type, key);
-                        return result;
-                    }, function(response) {
-                        console.error(response);
-                        notify.error(gettext('User preference could not be saved...'));
-                    });
+                    // adding updates to current schedule
+                    updates[type] = updates[type] || {};
+                    angular.extend(updates[type], _updates);
+
+                    return deferUpdate.promise;
+                }
+
+                /**
+                 * Commit updates.
+                 */
+                function commitUpdates() {
+                    var api = $injector.get('api'),
+                    serverUpdates = updates;
+                    updates = null;
+                    return api.save('preferences', loadLocally(), serverUpdates)
+                        .then(function(result) {
+                            original_preferences._etag = result._etag;
+                            storage.setItem(PREFERENCES, original_preferences);
+                            deferUpdate.resolve(result);
+                            return result;
+                        }, function(response) {
+                            console.error(response);
+                            notify.error(gettext('User preference could not be saved...'));
+                            deferUpdate.reject(response);
+                        }).finally(function() {
+                            deferUpdate = null;
+                        });
                 }
 
                 $rootScope.$watch(function() {

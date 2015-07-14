@@ -1,0 +1,22 @@
+<div sd-modal data-model="workspaces.edited">
+    <div class="modal-header">
+        <h3 translate>Create new Workspace</h3>
+    </div>
+
+    <div class="modal-body">
+        <fieldset>
+            <div class="field">
+                <label translate>Workspace name</label>
+                <input type="text" class="fullwidth-input"
+                    ng-model="workspaces.edited.name" required>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn pull-left" ng-click="workspaces.cancelEdit()" translate>Cancel</button>
+        <button class="btn btn-primary"
+            ng-disabled="!workspaces.edited.name"
+            ng-click="workspaces.save()" translate>Save</button>
+    </div>
+</div>

@@ -103,7 +103,8 @@ class SuperdeskTokenAuth(TokenAuth):
         # Step 3: Intrinsic Privileges
         intrinsic_privileges = get_intrinsic_privileges()
         if intrinsic_privileges.get(resource) and method in intrinsic_privileges[resource]:
-            authorized = get_resource_service(resource).is_authorized(user_id=request.view_args.get('_id'))
+            service = get_resource_service(resource)
+            authorized = service.is_authorized(user_id=str(user.get('_id')), _id=request.view_args.get('_id'))
 
             if not authorized:
                 raise SuperdeskApiError.forbiddenError()

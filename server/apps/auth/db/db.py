@@ -45,8 +45,8 @@ class DbAuthService(AuthService):
         return user
 
     def is_authorized(self, **kwargs):
-        if kwargs.get("user_id") is None:
+        if kwargs.get('_id') is None:
             return False
 
-        auth = self.find_one(_id=kwargs.get("user_id"), req=None)
-        return str(g.auth['_id']) == str(auth.get("_id"))
+        auth = self.find_one(_id=str(kwargs.get('_id')), req=None)
+        return str(g.auth['_id']) == str(auth.get('_id'))

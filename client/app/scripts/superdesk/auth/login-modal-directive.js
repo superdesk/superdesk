@@ -20,7 +20,7 @@ define([], function() {
                         .then(function() {
                             scope.isLoading = false;
                             scope.password = null;
-                            if ($route.current.redirectTo) {
+                            if ($route.current && $route.current.redirectTo) {
                                 $route.reload();
                             }
                         }, function(rejection) {

@@ -1,102 +1,75 @@
 <div class="subnav">
-	<h3 class="page-nav-title" translate>Workspace</h3>
+	<h3 class="page-nav-title" translate>Dashboard {{ dashboard.current.name }}</h3>
 
 	<div class="button-stack right-stack">
-		<button class="navbtn" href="" ng-click="flags.edit = true" ng-show="userWidgets.length && !flags.edit">
+		<button class="navbtn" ng-click="dashboard.edit = true" ng-show="dashboard.widgets.length && !dashboard.edit">
             <i class="svg-icon-move"></i> <span class="title" translate>Rearrange widgets</span>
         </button>
 
-        <button class="navbtn navbtn-info" href="" ng-click="saveWidgets()" ng-show="flags.edit">
+        <button class="navbtn navbtn-info" ng-click="dashboard.save()" ng-show="dashboard.edit">
             <i class="svg-icon-ok inverse"></i> <span class="title" translate>Save</span>
         </button>
 
-        <button class="navbtn sd-create-btn" ng-disabled="flags.edit" ng-click="flags.add = true"></button>
+        <button class="navbtn sd-create-btn" ng-disabled="dashboard.edit" ng-click="dashboard.add = true"></button>
     </div>
 </div>
 
-<!-- widgetbox -->
-<div ng-if="flags.add">
-	<div>
-	    <div class="modal-backdrop in"></div>
-	    <div class="widget-select modal-responsive modal in">
-	        <div class="modal-dialog">
-	            <div class="modal-content">
-	                <div class="modal-header">
-	                    <h3 class="pull-left" translate>Add new widget</h3>
-	                    <a href="" class="close" ng-click="flags.add = false"><i class="icon-close-small"></i></a>
-	                </div>
-
-                    <div class="modal-body" ng-if="!selectedWidget">
-                        <div class="nav-tabs">
-                            <label translate>Category: </label>
-                            <div class="dropdown" dropdown>
-                                <a href="#" class="dropdown-toggle" dropdown-toggle>All <b class="caret"></b></a>
-                                <ul class="dropdown-menu plain-menu">
-                                    <li translate>Article widgets</li>
-                                    <li translate>Desk widgets</li>
-                                    <li translate>Social widgets</li>
-                                    <li translate>Media widgets</li>
-                                    <li translate>Smart widgets</li>
-                                    <li translate>Other widgets</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="modal-screen">
-                        	<ul class="widget-list">
-	                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
-	                                <div class="thumbnail">
-	                                    <img ng-src="{{ widget.thumbnail }}">
-	                                </div>
-	                                <div class="title">
-	                                    {{ widget.label }}
-	                                </div>
-	                            </li>
-	                        </ul>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer" ng-if="!selectedWidget">
-                    	<div class="center">
-                    		<button class="btn" disabled="disable" ng-click="goPrev()"><i class="icon-chevron-left-thin"></i> {{ 'Previous' | translate}}</button>
-                       		<button class="btn btn-next" disabled="disable" ng-click="goNext()">{{ 'Next' | translate }} <i class="icon-chevron-right-thin"></i></button>
-                    	</div>
-                        <button class="btn btn-info btn-done" ng-click="flags.add = false" translate>Done</button>
-                    </div>
-
-	                <div class="modal-body" ng-if="selectedWidget">
-                        <div class="nav-tabs">
-                            <a href="" class="backlink" ng-click="selectWidget()" translate>Back to overview</a>
-                        </div>
-                        <div class="modal-screen widget-detail">
-                        	<div class="thumbnail-box">
-	                            <img ng-src="{{ selectedWidget.thumbnail }}">
-	                        </div>
-	                        <div class="title">
-	                            {{ selectedWidget.label }}
-	                        </div>
-	                        <div class="description">
-	                            {{ selectedWidget.description }}
-	                        </div>
-                        </div>
-                    </div>
-
-	                <div class="modal-footer" ng-if="selectedWidget">
-                        <button class="btn" ng-click="flags.add = false" translate>Cancel</button>
-                        <button class="btn btn-primary" ng-click="addWidget(selectedWidget)" translate>Add Widget</button>
-                    </div>
-
-	            </div>
-	        </div>
-	    </div>
-	</div>
+<div class="dashboard-container" ng-if="dashboard.current">
+    <div class="content clearfix">
+        <div sd-grid
+            data-status="dashboard.edit"
+            data-widgets="dashboard.widgets"
+            data-save="dashboard.save()"
+            ></div>
+        <div class="empty-dashboard" ng-show="dashboard.widgets.length === 0" translate>Dashboard is empty.</div>
+        <div class="empty-dashboard loading" ng-show="dashboard.widgets == null" translate>Loading..</div>
+    </div>
 </div>
-<!-- /widgetbox -->
 
-<div class="dashboard-container">
-	<div class="content clearfix">
-		<div sd-grid data-status="flags.edit" data-widgets="userWidgets"></div>
-		<div class="empty-dashboard" ng-show="userWidgets.length === 0" translate>Your dashboard is empty.</div>
-		<div class="empty-dashboard loading" ng-show="userWidgets === undefind" translate>Loading..</div>
-	</div>
-</div>
 <div sd-workqueue></div>
+
+<div ng-if="dashboard.add">
+    <div class="modal-backdrop in"></div>
+    <div class="widget-select modal-responsive modal in">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="pull-left" translate>Add new widget</h3>
+                    <button class="close" ng-click="dashboard.add = false"><i class="icon-close-small"></i></button>
+                </div>
+
+                <div class="modal-body" ng-if="!dashboard.selectedWidget">
+                    <div class="modal-screen">
+                    	<ul class="widget-list">
+                            <li ng-repeat="widget in dashboard.availableWidgets" ng-click="dashboard.selectWidget(widget)">
+                                <div class="thumbnail"><img ng-src="{{ :: widget.thumbnail }}"></div>
+                                <div class="title">{{ :: widget.label }}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="modal-body" ng-if="dashboard.selectedWidget">
+                    <div class="nav-tabs">
+                        <button class="backlink" ng-click="dashboard.selectWidget()" translate>Back to overview</button>
+                    </div>
+                    <div class="modal-screen widget-detail">
+                    	<div class="thumbnail-box">
+                            <img ng-src="{{ :: dashboard.selectedWidget.thumbnail }}">
+                        </div>
+                        <div class="title">{{ :: dashboard.selectedWidget.label }}</div>
+                        <div class="description">{{ :: dashboard.selectedWidget.description }}</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn" ng-click="dashboard.add = false" translate>Cancel</button>
+                    <button class="btn btn-primary"
+                        ng-click="dashboard.addWidget(dashboard.selectedWidget)"
+                        ng-disabled="!dashboard.selectedWidget"
+                        translate>Add Widget</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

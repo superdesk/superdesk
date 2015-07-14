@@ -11,29 +11,20 @@ describe('Fetch', function() {
         content.setListView();
     });
 
-    it('items in personal should have copy icon and in desk should have duplicate icon',
+    fit('items in personal should have copy icon and in desk should have duplicate icon',
         function() {
-            var itemEL;
-            content.getItem(0).waitReady().then(
-                function(elem) {
-                    itemEL = elem;
-                    return browser.actions().mouseMove(itemEL).perform();
-                }).then(function() {
-                    itemEL.element(by.className('more-activity-toggle')).click();
-                    expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
-                    expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
-                });
+            var itemEL = content.getItem('item4');
+            browser.actions().mouseMove(itemEL).perform();
+            itemEL.element(by.className('more-activity-toggle')).click();
+            expect(itemEL.element(by.css('[title="Duplicate"]')).isDisplayed()).toBe(true);
+            expect(browser.driver.isElementPresent(by.css('[title="Copy"]'))).toBe(false);
 
             workspace.switchToDesk('PERSONAL');
             content.setListView();
-            content.getItem(0).waitReady().then(
-                function(elem) {
-                    itemEL = elem;
-                    return browser.actions().mouseMove(itemEL).perform();
-                }).then(function() {
-                    expect(itemEL.element(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
-                    expect(browser.driver.isElementPresent(by.css('[title="Duplicate"]'))).toBe(false);
-                });
+            itemEL = content.getItem('item1');
+            browser.actions().mouseMove(itemEL).perform();
+            expect(itemEL.element(by.css('[title="Copy"]')).isDisplayed()).toBe(true);
+            expect(browser.driver.isElementPresent(by.css('[title="Duplicate"]'))).toBe(false);
         }
     );
 
@@ -62,9 +53,7 @@ describe('Fetch', function() {
         workspace.openContent();
         workspace.switchToDesk('PERSONAL');
         expect(content.count()).toBe(3);
-        content.actionOnItem('Copy', 0);
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.switchToDesk('PERSONAL');
+        content.actionOnItem('Copy', 'item1');
         expect(content.count()).toBe(4);
     });
 

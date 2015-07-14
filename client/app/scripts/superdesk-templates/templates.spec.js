@@ -60,7 +60,7 @@ describe('templates', function() {
             });
         }));
         it('can fetch templates using personal desk parameter', inject(function(api, templates) {
-            templates.fetchTemplates(undefined, undefined, undefined, 'personal');
+            templates.fetchTemplates(undefined, undefined, undefined, null);
             expect(api.content_templates.query).toHaveBeenCalledWith({
                 max_results: 10,
                 page: 1,

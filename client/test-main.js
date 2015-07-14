@@ -78,6 +78,7 @@ tests.push('superdesk-publish/filters/publish-filters');
 tests.push('superdesk/editor/spellcheck/spellcheck');
 tests.push('superdesk-templates/templates');
 tests.push('superdesk-monitoring/monitoring');
+tests.push('superdesk-workspace/workspace');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');

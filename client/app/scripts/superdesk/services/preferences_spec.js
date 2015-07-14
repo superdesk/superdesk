@@ -113,26 +113,18 @@ define([
 
         }));
 
-        it('update user preferences by key', inject(function(api, $rootScope) {
-
+        it('update user preferences by key', inject(function(api, $q, $rootScope) {
             expect(storage.getItem('preferences')).toBe(null);
             $rootScope.sessionId = 1;
             preferencesService.get();
             $rootScope.$digest();
 
             preferencesService.update(update, 'feature:preview');
+            preferencesService.update({'workspace:active': {'workspace': ''}}, 'workspace:active');
             $rootScope.$digest();
+            expect(api.save.calls.count()).toBe(1);
 
-            var preferences;
-            preferencesService.get('feature:preview').then(function(_preferences) {
-                preferences = _preferences;
-            });
-
-            $rootScope.$digest();
-
-            expect(preferences.enabled).toBe(false);
             expect(storage.getItem('preferences').user_preferences['feature:preview'].enabled).toBe(false);
-
         }));
 
         it('can remove preferences', inject(function(api, $rootScope) {

@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from flask import g, request
+from flask import request
 from eve.validation import ValidationError
 
 import superdesk
@@ -242,12 +242,11 @@ class PreferencesService(BaseService):
         :param kwargs:
         :return: True if authorized, False otherwise
         """
-
-        if kwargs.get("user_id") is None:
+        if not kwargs.get('_id') or not kwargs.get('user_id'):
             return False
 
-        session = get_resource_service('sessions').find_one(req=None, _id=kwargs.get('user_id'))
+        session = get_resource_service('sessions').find_one(req=None, _id=kwargs.get('_id'))
         if not session:
             return False
-        authorized = str(g.user['_id']) == str(session.get("user"))
-        return authorized
+
+        return str(kwargs.get('user_id')) == str(session.get('user'))
