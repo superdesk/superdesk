@@ -28,6 +28,12 @@ function FiltersService(api) {
         return _getAll('filter_conditions', page, items);
     };
 
+    this.getFilterSearchResults = function(inputParams) {
+        //call api to get search results
+        //return api.save('filter_search', {}, diff);
+        console.log(inputParams);
+    };
+
     this.getAllPublishFilters = function(page, items) {
         return _getAll('publish_filters', page, items);
     };
@@ -483,9 +489,59 @@ function ProductionTestController($scope, filters, notify, $location, $window) {
     };
 }
 
+FilterSearchDirective.$inject = ['filters'];
+function FilterSearchDirective(filters) {
+    return {
+        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search.html',
+        link: function(scope, element, attrs) {
+            scope.filterCondition = null;
+            scope.operatorLookup = {};
+            scope.valueLookup = {};
+            scope.valueFieldLookup = {};
+            //var inputParams = {};
+
+            populateData();
+            function populateData() {
+                filters.getFilterConditionParameters().then(function(params) {
+                    scope.filterConditionParameters = params;
+                    _.each(params, function(param) {
+                        scope.operatorLookup[param.field] = param.operators;
+                        scope.valueLookup[param.field] = param.values;
+                        scope.valueFieldLookup[param.field] = param.value_field;
+                    });
+
+                    scope.origFilterCondition = {};
+                    scope.filterCondition = _.create(scope.origFilterCondition);
+                    scope.filterCondition.values = [];
+                    setFilterValues();
+                });
+            }
+
+            function setFilterValues() {
+                var values = scope.filterCondition.value != null ? scope.filterCondition.value.split(',') : [];
+                var all_values = scope.valueLookup[scope.filterCondition.field];
+                var value_field = scope.valueFieldLookup[scope.filterCondition.field];
+
+                _.each(values, function(value) {
+                    var v = _.find(all_values, function(val) {
+                        return val[value_field] === value;
+                    });
+
+                    scope.filterCondition.values.push(v);
+                });
+            }
+
+            scope.search = function() {
+                // call api to get search result
+            };
+        }
+    };
+}
+
 angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
     .controller('PublishFiltersController', PublishFiltersController)
-    .controller('ProductionTestController', ProductionTestController);
+    .controller('ProductionTestController', ProductionTestController)
+    .directive('sdFilterSearch', FilterSearchDirective);
 })();

@@ -1,0 +1,25 @@
+<div>
+    <form name="searchForm" ng-submit="search()">
+        <fieldset>
+            <div class="field">
+                <label translate>Field</label>
+                <select class="input" required ng-model="filterCondition.field" >
+                    <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters">{{:: parameter.field}}</option>
+                </select>
+            </div>
+            <div class="field">
+                <label translate>Operator</label>
+                <select class="input" required ng-model="filterCondition.operator" >
+                    <option value="{{operator}}" ng-selected="operator === filterCondition.operator" ng-repeat="operator in operatorLookup[filterCondition.field]">{{operator}}</option>
+                </select>
+            </div>
+            <div class="field">
+                <label translate>Values</label>
+                <div class="term-editor" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+            </div>
+            <div>
+                <button class="btn btn-primary" ng-click="search()" ng-disabled="!editForm.$valid" translate>Search</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
