@@ -57,7 +57,7 @@ class TakesPackageService():
             target_ref[SEQUENCE] = sequence
             main_group[ASSOCIATIONS].append(target_ref)
 
-        if link:
+        if link is not None:
             link_ref = get_item_ref(link)
             link_ref[SEQUENCE] = self.__next_sequence__(sequence)
             main_group[ASSOCIATIONS].append(link_ref)

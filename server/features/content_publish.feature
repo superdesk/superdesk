@@ -981,7 +981,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 2,
+                  "_current_version": 3,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1075,7 +1075,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
