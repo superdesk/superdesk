@@ -38,10 +38,16 @@ class AapIpNewsFormatterTest(TestCase):
         'priority': '1'
     }
 
+    vocab = [{'_id': 'categories', 'items': [
+        {'is_active': True, 'name': 'Overseas Sport', 'qcode': 'S', 'subject': '15000000'},
+        {'is_active': True, 'name': 'Finance', 'qcode': 'F', 'subject': '04000000'}
+    ]}]
+
     def setUp(self):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('subscribers', self.subscribers)
+            self.app.data.insert('vocabularies', self.vocab)
             init_app(self.app)
 
     def TestIPNewsFormatter(self):
@@ -94,11 +100,12 @@ class AapIpNewsFormatterTest(TestCase):
     def TestMultipleCategories(self):
         article = {
             'source': 'AAP',
-            'anpa_category': [{'qcode': 'a'}, {'qcode': 'b'}],
+            'anpa_category': [{'name': 'Finance', 'qcode': 'F'},
+                              {'name': 'Overseas Sport', 'qcode': 'S'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',
-            'subject': [{'qcode': '02011001'}],
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
             'anpa_take_key': 'take_key',
             'unique_id': '1',
             'type': 'text',
@@ -113,3 +120,10 @@ class AapIpNewsFormatterTest(TestCase):
             f = AAPIpNewsFormatter()
             docs = f.format(article, subscriber)
             self.assertEqual(len(docs), 2)
+            for seq, doc in docs:
+                if doc['category'] == 'S':
+                    self.assertEqual(doc['subject_reference'], '15011002')
+                    self.assertEqual(doc['subject_detail'], 'four-man sled')
+                if doc['category'] == 'F':
+                    self.assertEqual(doc['subject_reference'], '04001005')
+                    self.assertEqual(doc['subject_detail'], 'viniculture')
