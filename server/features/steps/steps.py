@@ -76,7 +76,7 @@ def json_match(context_data, response_data):
             if key not in response_data:
                 print(key, ' not in ', response_data)
                 return False
-            if not context_data[key]:
+            if context_data[key] == "__any_value__":
                 test_key_is_present(key, context_data, response_data)
                 continue
             if not json_match(context_data[key], response_data[key]):

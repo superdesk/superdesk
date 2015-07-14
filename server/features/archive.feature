@@ -103,7 +103,7 @@ Feature: News Items Archive
         When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
+        {"guid": "__any_value__", "firstcreated": "__any_value__", "versioncreated": "__any_value__", "state": "draft"}
         """
         And we get "bike.jpg" metadata
         And we get "picture" renditions
@@ -124,7 +124,7 @@ Feature: News Items Archive
         When we upload a file "green.ogg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "state": "draft"}
+        {"guid": "__any_value__", "state": "draft"}
         """
         And we get "green.ogg" metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
@@ -144,7 +144,7 @@ Feature: News Items Archive
         When we upload a file "this_week_nasa.mp4" to "archive"
         Then we get new resource
         """
-        {"guid": "", "state": "draft"}
+        {"guid": "__any_value__", "state": "draft"}
         """
         And we get "this_week_nasa.mp4" metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
@@ -204,7 +204,10 @@ Feature: News Items Archive
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text", "original_creator": "", "word_count": 1, "operation": "create"}
+        {
+        	"_id": "__any_value__", "guid": "__any_value__", "type": "text",
+        	"original_creator": "__any_value__", "word_count": 1, "operation": "create"
+        }
         """
 
 	@auth
@@ -332,7 +335,7 @@ Feature: News Items Archive
         When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
+        {"guid": "__any_value__", "firstcreated": "__any_value__", "versioncreated": "__any_value__", "state": "draft"}
         """
         When we patch latest
         """

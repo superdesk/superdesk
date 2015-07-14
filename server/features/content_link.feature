@@ -352,7 +352,7 @@ Feature: Link content in takes
                     "package_type": "takes",
                     "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
                     "sequence": 2,
-                    "last_take": ""
+                    "last_take": "__any_value__"
                 },
                 {
                     "_id": "#TAKE2#",

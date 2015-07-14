@@ -139,5 +139,5 @@ Feature: News Items Archive Comments
         Then we get "_id"
         And we get notifications
         """
-        [{"event": "item:comment", "extra": {"item": "xyz"}, "_created": ""}, {"event": "activity"}]
+        [{"event": "item:comment", "extra": {"item": "xyz"}, "_created": "__any_value__"}, {"event": "activity"}]
         """

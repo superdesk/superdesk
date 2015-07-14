@@ -117,7 +117,7 @@ Feature: Highlights
 		"""
 		Then we get new resource
         """
-        {"_id": "","highlights": "#highlights._id#", "marked_item": "not_available_item_id"}
+        {"_id": "__any_value__","highlights": "#highlights._id#", "marked_item": "not_available_item_id"}
         """
         When we get "archive"
         Then we get list with 0 items
@@ -194,7 +194,7 @@ Feature: Highlights
 		
         Then we get new resource
         """
-        {"_id": "", "type": "composite", "headline": "highlights"}
+        {"_id": "__any_value__", "type": "composite", "headline": "highlights"}
         """
 			
         When we post to "generate_highlights"
@@ -204,7 +204,7 @@ Feature: Highlights
 
         Then we get new resource
         """
-        {"_id": "", "type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<p></p>\n<h2>item2</h2>\n<p>item2 first</p>\n<p></p>"}
+        {"_id": "__any_value__", "type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<p></p>\n<h2>item2</h2>\n<p>item2 first</p>\n<p></p>"}
         """
 
         When we get "/archive"

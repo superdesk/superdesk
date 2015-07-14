@@ -70,5 +70,5 @@ Feature: Default Comments
         Then we get "_id"
         And we get notifications
         """
-        [{"event": "comments", "extra": {"item": "xyz"}, "_created": ""}, {"event": "activity"}]
+        [{"event": "comments", "extra": {"item": "xyz"}, "_created": "__any_value__"}, {"event": "activity"}]
         """
