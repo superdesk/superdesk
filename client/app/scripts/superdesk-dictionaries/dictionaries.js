@@ -16,7 +16,7 @@
         this.dictionaries = null;
         this.currDictionary = null;
 
-        this.queryByLanguage = queryByLanguage;
+        this.getActive = getActive;
         this.getUserDictionary = getUserDictionary;
         this.addWordToUserDictionary = addWordToUserDictionary;
 
@@ -53,7 +53,7 @@
             // pick own properties
             angular.forEach(data, function(val, key) {
                 if (key !== 'content') {
-                    sendData[key] = val === null? val: val.toString();
+                    sendData[key] = val === null ? val: val.toString();
                 }
             });
             setPersonalName(sendData);
@@ -81,7 +81,7 @@
         this.update = function (dictionary, data, success, error) {
             var sendData = {};
             angular.forEach(data, function(val, key) {
-                sendData[key] = (key !== 'content' && val !== null) ? val.toString() : val;
+                sendData[key] = key === 'is_active' ? val.toString() : val;
             });
             setPersonalName(sendData);
             return api.save('dictionaries', dictionary, sendData).then(success, error);
@@ -92,16 +92,18 @@
         };
 
         /**
-         * Get list of dictionaries for given language
+         * Get list of active dictionaries for given lang
          *
          * @param {string} lang
          */
-        function queryByLanguage(lang) {
-            return api.query('dictionaries', {where: {
-                language_id: lang,
-                user: {$exists: false},
-                is_active: {$in: ['true', null]}
-            }});
+        function getActive(lang) {
+            return session.getIdentity().then(function(identity) {
+                return api.query('dictionaries', {where: {
+                    language_id: lang,
+                    is_active: {$in: ['true', null]},
+                    $or: [{user: identity._id}, {user: {$exists: false}}]
+                }});
+            });
         }
 
         /**
@@ -127,18 +129,15 @@
          * Add word to user dictionary
          *
          * @param {string} word
-         * @param {Object} userDict
+         * @param {string} lang
          */
-        function addWordToUserDictionary(word, userDict) {
-            var words = userDict.content || {};
-            if (!words[word]) {
-                words[word] = 1;
-            } else {
-                words[word] += 1;
-            }
-
-            userDict.content = words;
-            return api.save('dictionaries', userDict);
+        function addWordToUserDictionary(word, lang) {
+            return getUserDictionary(lang).then(function(userDict) {
+                var words = userDict.content || {};
+                words[word] = words[word] ? words[word] + 1 : 1;
+                userDict.content = words;
+                return api.save('dictionaries', userDict);
+            });
         }
     }
 
@@ -155,14 +154,14 @@
         };
 
         $scope.createDictionary = function() {
-            $scope.dictionary = {is_active: true};
+            $scope.dictionary = {is_active: 'true'};
             $scope.origDictionary = {};
         };
 
         $scope.createPersonalDictionary = function() {
             return session.getIdentity().then(function(identity) {
                 $scope.dictionary = {
-                    is_active: true,
+                    is_active: 'true',
                     user: identity._id,
                     name: identity._id
                 };
@@ -175,7 +174,7 @@
                 $scope.origDictionary = result;
                 $scope.dictionary = _.create(result);
                 $scope.dictionary.content = _.create(result.content || {});
-                $scope.dictionary.is_active = $scope.dictionary.is_active !== 'false';
+                $scope.dictionary.is_active = $scope.dictionary.is_active !== false;
             });
         };
 

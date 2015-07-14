@@ -68,10 +68,7 @@ function removeClass(elem, className) {
 SpellcheckService.$inject = ['$q', 'api', 'dictionaries', 'editor'];
 function SpellcheckService($q, api, dictionaries, editor) {
     var lang,
-        promise,
-        userDict,
         dict = {},
-        loaded = false,
         numberOfErrors,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
@@ -84,10 +81,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.setLanguage = function(_lang) {
         if (lang !== _lang) {
             lang = _lang;
-            dict = {};
-            userDict = null;
-            loaded = false;
-            promise = null;
+            fetchDict();
         }
     };
 
@@ -98,36 +92,24 @@ function SpellcheckService($q, api, dictionaries, editor) {
         return elem.classList.contains(ERROR_CLASS);
     };
 
+    function fetchDict() {
+        if (!lang) {
+            dict = $q.reject();
+            return;
+        }
+
+        dict = dictionaries.getActive(lang).then(function(items) {
+            dict = {};
+            angular.forEach(items._items, addDict);
+            return dict;
+        });
+    }
+
     /**
      * Get dictionary for spellchecking
      */
     function getDict() {
-        if (loaded) {
-            return $q.when();
-        }
-
-        if (!promise) {
-            promise = dictionaries.queryByLanguage(lang)
-                .then(mergeDictionaries)
-                .then(fetchUserDictionary)
-                .then(mergeUserDictionary);
-        }
-
-        return promise;
-
-        function mergeDictionaries(result) {
-            angular.forEach(result._items, addDict);
-        }
-
-        function fetchUserDictionary() {
-            return dictionaries.getUserDictionary(lang);
-        }
-
-        function mergeUserDictionary(_userDict) {
-            userDict = _userDict;
-            addDict(userDict);
-            loaded = true;
-        }
+        return $q.when(dict);
     }
 
     /**
@@ -157,9 +139,9 @@ function SpellcheckService($q, api, dictionaries, editor) {
                 }
             });
 
-            numberOfErrors = _.uniq(errors).length;
-
-            return _.uniq(errors);
+            var uniqErrors = _.uniq(errors);
+            numberOfErrors = uniqErrors.length;
+            return uniqErrors;
         });
     };
 
@@ -276,8 +258,8 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * Add word to user dictionary
      */
     this.addWordToUserDictionary = function(word) {
-        dictionaries.addWordToUserDictionary(word, userDict);
-        addDict(userDict);
+        dictionaries.addWordToUserDictionary(word, lang);
+        dict[word] = dict[word] ? dict[word] + 1 : 1;
     };
 }
 
