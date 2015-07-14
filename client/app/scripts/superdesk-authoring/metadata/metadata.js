@@ -270,6 +270,59 @@ function MetadataListEditingDirective() {
     };
 }
 
+MetadataSliderDirective.$inject = ['desks'];
+function MetadataSliderDirective(desks) {
+    return {
+        scope: {
+            list: '=',
+            disabled: '=ngDisabled',
+            item: '=',
+            field: '@',
+            change: '&'
+        },
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-slider.html',
+        link: function(scope) {
+            desks.initialize().then(function() {
+                var maxValue = scope.list.length,
+                    currentValue = scope.item[scope.field];
+
+                $('.sd-slider').slider({
+                    range: 'max',
+                    min: 0,
+                    max: maxValue,
+                    value: currentValue,
+                    create: function () {
+                        $(this).find('.ui-slider-thumb').css('left', (currentValue * 100) / maxValue + '%');
+                    },
+                    slide: function (event, ui) {
+                        $(this).find('.ui-slider-thumb').css('left', (ui.value * 100) / maxValue + '%').text(ui.value);
+                        scope.select(scope.list[ui.value - 1]);
+                    },
+                    start: function () {
+                        $(this).find('.ui-slider-thumb').addClass('ui-slider-thumb-active');
+                    },
+                    stop: function () {
+                        $(this).find('.ui-slider-thumb').removeClass('ui-slider-thumb-active');
+                    }
+                });
+            });
+
+            scope.select = function (item) {
+                var o = {};
+
+                if (angular.isDefined(item)) {
+                    o[scope.field] = (scope.field === 'anpa-category') ? item : item.name;
+                } else {
+                    o[scope.field] = null;
+                }
+
+                _.extend(scope.item, o);
+                scope.change({item: scope.item});
+            };
+        }
+    };
+}
+
 MetadataService.$inject = ['api', '$q'];
 function MetadataService(api, $q) {
 
@@ -346,5 +399,6 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .service('metadata', MetadataService)
     .directive('sdMetaTerms', MetadataListEditingDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
-    .directive('sdMetaWordsList', MetadataWordsListEditingDirective);
+    .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
+    .directive('sdMetaSlider', MetadataSliderDirective);
 })();

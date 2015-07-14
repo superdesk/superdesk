@@ -1,25 +1,20 @@
 <div sd-authoring class="auth-screen" ng-if="origItem">
     <div sd-authoring-topbar></div>
     <section class="main-section" ng-class="{'auth-sendto': views.send}">
-		<div sd-authoring-widgets data-item="item">
+        <div sd-authoring-widgets data-item="item">
             <div class="page-content-container"
-                ng-click="views.send = false">
+                 ng-click="views.send = false">
                 <article class="theme-container" ng-class="{preview: !_editable}">
-                    <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
-                        <span class="button-lable" translate>Mode: </span>
-                        <span ng-show="proofread" translate>Proofread</span>
-                        <span ng-show="!proofread" translate>Normal</span>
-                    </button>
-
-                    <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
-                    <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
+                    
+                    <header sd-header-info ng-class="{active: !toggleHeader}"></header>
+                    <button ng-class="{active: toggleHeader}" ng-click="toggleHeader = !toggleHeader"><i class="icon-chevron-up-thin"></i></button>
 
                     <div class="fieldset" sd-article-edit></div>
                 </article>
             </div>
-		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
-		</div>
-	</section>
+            <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
+        </div>
+    </section>
 
     <div sd-authoring-sidebar></div>
 </div>

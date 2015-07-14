@@ -1,28 +1,3 @@
-<div class="field" ng-class="{'limit-error': item.slugline.length > limits.slugline}">
-    <label translate>Keyword</label>
-    <span sd-character-count data-item="item.slugline" data-limit="limits.slugline"></span>
-    <input type="text"
-        class="keyword"
-        id="keyword"
-        ng-model="item.slugline"
-        ng-change="autosave(item)"
-        ng-if="_editable"
-        ng-trim="false">
-	<div ng-if="!_editable">{{item.slugline}}</div>
-</div>
-
-<div class="field">
-  <label translate>Take key</label>
-  <input type="text"
-         class="keyword"
-         id="anpa_take_key"
-         ng-model="item.anpa_take_key"
-         ng-change="autosave(item)"
-         ng-if="_editable"
-         ng-trim="false">
-  <div ng-if="!_editable">{{item.anpa_take_key}}</div>
-</div>
-
 <div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
 	<label translate>Headline</label>
     <span sd-character-count data-item="item.headline" data-html="true" data-limit="limits.headline"></span>
