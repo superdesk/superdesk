@@ -100,4 +100,22 @@ describe('desks service', function() {
         expect(active).toBe(desks.active);
     }));
 
+    describe('getCurrentDeskId() method', function () {
+        var desks;
+
+        beforeEach(inject(function (_desks_) {
+            desks = _desks_;
+        }));
+
+        it('returns null if user desks list is empty', function () {
+            var result;
+
+            desks.userDesks = {
+                _items: []
+            };
+
+            result = desks.getCurrentDeskId();
+            expect(result).toBe(null);
+        });
+    });
 });
