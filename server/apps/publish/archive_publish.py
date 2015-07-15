@@ -378,6 +378,14 @@ class BasePublishService(BaseService):
         return len(subscribers) > 0
 
     def get_subscribers(self, doc, target_media_type):
+        """
+        Get the subscribers for this document based on the target_media_type.
+        :param doc: Document to publish/correct/kill
+        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
+                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
+                then the doc being queues is an Individual Article.
+        :return: List of of filtered subscriber.
+        """
         subscribers, subscribers_yet_to_receive = [], []
         if self.published_state == 'corrected':
             query = {'$and': [{'item_id': doc[config.ID_FIELD]},
@@ -420,6 +428,11 @@ class BasePublishService(BaseService):
         return subscribers, subscribers_yet_to_receive
 
     def _get_subscribers_for_previously_sent_items(self, lookup):
+        """
+        Returns list of subscribers that have previously received the item.
+        :param lookup: query to filter the publish queue
+        :return: list of subscribers
+        """
         req = ParsedRequest()
         subscribers = []
         queued_items = get_resource_service('publish_queue').get(req=req, lookup=lookup)
@@ -431,7 +444,13 @@ class BasePublishService(BaseService):
 
     def filter_subscribers(self, doc, subscribers, target_media_type):
         """
-        Filter subscribers to whom the current story is going to be delivered.
+        Filter subscribers to whom the current document is going to be delivered.
+        :param doc: Document to publish/kill/correct
+        :param subscribers: List of Subscribers that might potentially get this document
+        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
+                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
+                then the doc being queues is an Individual Article.
+        :return: List of of filtered subscriber.
         """
         filtered_subscribers = []
         req = ParsedRequest()
@@ -639,10 +658,13 @@ class KillPublishService(BasePublishService):
                     original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
                     updates_data = copy(updates)
                     queued = self.publish(doc=original_data, updates=updates_data, target_media_type=WIRE)
-                    # we need to update the archive item and not worry about queued.
+                    # we need to update the archive item and not worry about queued as we could have
+                    # a takes only going to digital client.
                     self._set_version_last_modified_and_state(original_data, updates_data, last_updated)
                     self._update_archive(original=original_data, updates=updates_data,
                                          should_insert_into_versions=True)
+                    self.update_published_collection(published_item_id=original_data['_id'])
+
                     if not queued:
                         logger.warn("Could not publish the kill for take {} with headline {}".
                                     format(original_data.get(config.ID_FIELD), original_data.get('headline')))
