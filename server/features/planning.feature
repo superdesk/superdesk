@@ -16,7 +16,7 @@ Feature: News Items Planning
         """
         Then we get new resource
         """
-        {"_id": "", "guid": ""}
+        {"_id": "__any_value__", "guid": "__any_value__"}
         """
         
     @auth

@@ -8,12 +8,12 @@ Feature: Templates fetching
     """
     Then we get new resource
     """
-    {"_id": "", "template_name": "kill", "template_type": "kill", "anpa_take_key": "TAKEDOWN"}
+    {"_id": "__any_value__", "template_name": "kill", "template_type": "kill", "anpa_take_key": "TAKEDOWN"}
     """
     When we get "content_templates/kill"
     Then we get existing resource
     """
-    {"_id": "", "template_name": "kill", "anpa_take_key": "TAKEDOWN"}
+    {"_id": "__any_value__", "template_name": "kill", "anpa_take_key": "TAKEDOWN"}
     """
 
     @auth

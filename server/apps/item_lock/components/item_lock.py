@@ -80,6 +80,7 @@ class ItemLock(BaseComponent):
             self.app.on_item_unlock(item, user_id)
 
             # delete the item if nothing is saved so far
+            # version 0 created on lock item
             if item[config.VERSION] == 0 and item['state'] == 'draft':
                 superdesk.get_resource_service('archive').delete(lookup={'_id': item['_id']})
                 return

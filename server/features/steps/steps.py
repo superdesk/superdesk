@@ -76,7 +76,7 @@ def json_match(context_data, response_data):
             if key not in response_data:
                 print(key, ' not in ', response_data)
                 return False
-            if not context_data[key]:
+            if context_data[key] == "__any_value__":
                 test_key_is_present(key, context_data, response_data)
                 continue
             if not json_match(context_data[key], response_data[key]):
@@ -1179,6 +1179,7 @@ def get_spiked_content(context, item_id):
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['state'], 'spiked')
+    assert_equal(response_data['operation'], 'spike')
 
 
 @then('we get unspiked content "{id}"')
@@ -1188,6 +1189,7 @@ def get_unspiked_content(context, id):
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['state'], 'draft')
+    assert_equal(response_data['operation'], 'unspike')
     # Tolga Akin (05/11/14)
     # Expiry value doesn't get set to None properly in Elastic.
     # Discussed with Petr so we'll look into this later

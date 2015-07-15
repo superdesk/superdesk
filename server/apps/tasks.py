@@ -11,12 +11,13 @@
 
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
-from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry
+from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry,\
+    item_operations, ITEM_OPERATION, update_version
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import on_create_item, item_url, update_version
+from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 import superdesk
@@ -30,6 +31,8 @@ from superdesk import get_resource_service
 
 task_statuses = ['todo', 'in_progress', 'done']
 default_status = 'todo'
+ITEM_SEND = 'send'
+item_operations.append(ITEM_SEND)
 
 
 def init_app(app):
@@ -224,14 +227,20 @@ class TasksService(BaseService):
         self.update_times(updates)
         if is_assigned_to_a_desk(updates):
             self.__update_state(updates, original)
-        new_stage_id = updates.get('task', {}).get('stage', '')
-        old_stage_id = original.get('task', {}).get('stage', '')
+        new_stage_id = str(updates.get('task', {}).get('stage', ''))
+        old_stage_id = str(original.get('task', {}).get('stage', ''))
         new_user_id = updates.get('task', {}).get('user', '')
         if new_stage_id and new_stage_id != old_stage_id:
+            updates[ITEM_OPERATION] = ITEM_SEND
             send_to(doc=original, update=updates, desk_id=None, stage_id=new_stage_id, user_id=new_user_id)
+            resolve_document_version(updates, ARCHIVE, 'PATCH', original)
         update_version(updates, original)
 
     def on_updated(self, updates, original):
+        updated = copy(original)
+        updated.update(updates)
+        if self._stage_changed(updates, original):
+            insert_into_versions(doc=updated)
         new_task = updates.get('task', {})
         old_task = original.get('task', {})
         if new_task.get('stage') != old_task.get('stage'):
@@ -243,14 +252,11 @@ class TasksService(BaseService):
                               )
         else:
             push_notification(self.datasource, updated=1)
-        updated = copy(original)
-        updated.update(updates)
 
         if is_assigned_to_a_desk(updated):
-
-            if self.__is_content_assigned_to_new_desk(original, updates):
-                insert_into_versions(original['_id'])
-
+            if self.__is_content_assigned_to_new_desk(original, updates) and \
+                    not self._stage_changed(updates, original):
+                insert_into_versions(doc=updated)
             add_activity(ACTIVITY_UPDATE, 'updated task {{ subject }} for item {{ type }}',
                          self.datasource, item=updated, subject=get_subject(updated), type=updated['type'])
 
@@ -259,5 +265,10 @@ class TasksService(BaseService):
 
     def assign_user(self, item_id, user):
         return self.patch(item_id, {'task': user})
+
+    def _stage_changed(self, updates, original):
+        new_stage_id = str(updates.get('task', {}).get('stage', ''))
+        old_stage_id = str(original.get('task', {}).get('stage', ''))
+        return new_stage_id and new_stage_id != old_stage_id
 
 superdesk.privilege(name='tasks', label='Tasks Management', description='Tasks Management')

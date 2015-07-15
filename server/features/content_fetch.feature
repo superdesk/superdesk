@@ -20,7 +20,13 @@ Feature: Fetch Items from Ingest
       When we get "/archive?q=#desks._id#"
       Then we get list with 1 items
       """
-      {"_items": [{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]}
+      {"_items": [
+      	{
+      		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", 
+      		"ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
+      		"operation": "fetch"
+      	}
+      ]}
       """
 
     @auth

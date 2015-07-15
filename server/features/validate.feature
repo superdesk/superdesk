@@ -28,7 +28,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": ""}
+    {"errors": "__any_value__"}
     """
 
   @auth
@@ -101,7 +101,7 @@ Feature: Validate
       """
     Then we get existing resource
     """
-    {"errors": {}}
+    {"errors": "__any_value__"}
     """
   @auth
   Scenario: Missing validator

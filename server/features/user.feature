@@ -82,7 +82,10 @@ Feature: User Resource
         When we get "/users/foo"
         Then we get existing resource
         """
-        {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "_created": "", "_updated": "", "_id": ""}
+        {
+        	"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar",
+        	"_created": "__any_value__", "_updated": "__any_value__", "_id": "__any_value__"
+        }
         """
         And we get no "password"
 

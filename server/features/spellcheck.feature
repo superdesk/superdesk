@@ -41,5 +41,5 @@ Feature: Spellcheck
 
         Then we get new resource
         """
-        {"word": "foe", "corrections": false}
+        {"word": "foe", "corrections": "__any_value__"}
         """

@@ -27,8 +27,9 @@ Feature: Copy Content in Personal Workspace
       """
       {"state": "draft"}
       """
+      And we get version 4
       When we get "/archive/#copy._id#?version=all"
-      Then we get list with 3 items
+      Then we get list with 4 items
       When we get "/archive/"
       Then we get list with 2 items
 

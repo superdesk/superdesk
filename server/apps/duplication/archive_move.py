@@ -18,10 +18,15 @@ from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from apps.archive.common import item_url, insert_into_versions
+from apps.archive.common import item_url, insert_into_versions, item_operations,\
+    ITEM_OPERATION
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from eve.utils import config
+
+
+ITEM_MOVE = 'move'
+item_operations.append(ITEM_MOVE)
 
 
 class MoveResource(Resource):
@@ -77,6 +82,7 @@ class MoveService(BaseService):
 
         if archived_doc[config.CONTENT_STATE] not in ['published', 'scheduled', 'killed']:
             archived_doc[config.CONTENT_STATE] = 'submitted'
+        archived_doc[ITEM_OPERATION] = ITEM_MOVE
 
         resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
 
