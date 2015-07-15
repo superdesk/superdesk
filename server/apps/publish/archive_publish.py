@@ -119,7 +119,8 @@ class BasePublishService(BaseService):
                 package_id = TakesPackageService().get_take_package_id(original)
 
                 if package_id:
-                    queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
+                    queued_digital, takes_package = self._publish_takes_package(package_id, updates,
+                                                                                original, last_updated)
                 else:
                     # if item is going to be sent to digital subscribers, package it as a take
                     updated = copy(original)
@@ -129,7 +130,8 @@ class BasePublishService(BaseService):
                         # create a takes package
                         package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
                         original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
-                        queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
+                        queued_digital, takes_package = self._publish_takes_package(package_id, updates,
+                                                                                    original, last_updated)
 
                 # queue only text items
                 queued_wire = \
@@ -166,13 +168,12 @@ class BasePublishService(BaseService):
         queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
-        return queued_digital
+        return queued_digital, package
 
     def _publish_package_items(self, package, last_updated):
         """
         Publishes items of a package recursively
         """
-
         items = [ref.get('residRef') for group in package.get('groups', [])
                  for ref in group.get('refs', []) if 'residRef' in ref]
 
@@ -264,22 +265,23 @@ class BasePublishService(BaseService):
                     break
 
             if sequence_num_of_take_to_be_published:
-                for sequence in range(sequence_num_of_take_to_be_published, 0, -1):
-                    previous_take_ref = next(ref for ref in take_refs if ref.get(SEQUENCE) == sequence)
-                    if previous_take_ref[GUID_FIELD] != take_article_id:
-                        previous_take = super().find_one(req=None, _id=previous_take_ref[GUID_FIELD])
+                if self.published_state != "killed":
+                    for sequence in range(sequence_num_of_take_to_be_published, 0, -1):
+                        previous_take_ref = next(ref for ref in take_refs if ref.get(SEQUENCE) == sequence)
+                        if previous_take_ref[GUID_FIELD] != take_article_id:
+                            previous_take = super().find_one(req=None, _id=previous_take_ref[GUID_FIELD])
 
-                        if not previous_take:
-                            raise PublishQueueError.article_not_found_error(
-                                Exception("Take with id %s not found" % previous_take_ref[GUID_FIELD]))
+                            if not previous_take:
+                                raise PublishQueueError.article_not_found_error(
+                                    Exception("Take with id %s not found" % previous_take_ref[GUID_FIELD]))
 
-                        if previous_take and previous_take[config.CONTENT_STATE] not in ['published', 'corrected']:
-                            raise PublishQueueError.previous_take_not_published_error(
-                                Exception("Take with id {} is not published in Takes Package with id {}"
-                                          .format(previous_take_ref[GUID_FIELD], package[config.ID_FIELD])))
+                            if previous_take and previous_take[config.CONTENT_STATE] not in ['published', 'corrected']:
+                                raise PublishQueueError.previous_take_not_published_error(
+                                    Exception("Take with id {} is not published in Takes Package with id {}"
+                                              .format(previous_take_ref[GUID_FIELD], package[config.ID_FIELD])))
 
-                        package_updates['body_html'] = \
-                            previous_take['body_html'] + '<br>' + package_updates['body_html']
+                            package_updates['body_html'] = \
+                                previous_take['body_html'] + '<br>' + package_updates['body_html']
 
                 metadata_tobe_copied = ['headline', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency',
                                         'subject', 'byline', 'dateline']
@@ -295,8 +297,7 @@ class BasePublishService(BaseService):
         1. Sets the Metadata Properties - source and pubstatus
         2. Formats and queues the article to subscribers based on the state of the article:
             a. If the state of the article is killed then:
-                i.  An email should be sent to all Subscribers irrespective of their status.
-                ii. The article should be formatted as per the type of the format and then queue article to the
+                i. The article should be formatted as per the type of the format and then queue article to the
                     Subscribers who received the article previously.
             b. If the state of the article is corrected then:
                 i.      The article should be formatted as per the type of the format and then queue article to the
@@ -343,14 +344,8 @@ class BasePublishService(BaseService):
                 req=req, lookup={'item_id': updated[config.ID_FIELD]})
 
             if queued_items.count():
-                queued_items = list(queued_items)
-
-                # Step 2(a)(i)
                 subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
-                recipients = [s.get('email') for s in subscribers if s.get('email')]
-                send_article_killed_email(doc, recipients, queued_items[0].get('completed_at'))
-
-                # Step 2(a)(ii)
+                # Step 2(a)(i)
                 no_formatters, queued = self.queue_transmission(updated, subscribers, None)
         elif self.published_state == 'corrected':  # Step 2(b)
             subscribers, subscribers_yet_to_receive = self.get_subscribers(updated)
@@ -390,7 +385,8 @@ class BasePublishService(BaseService):
     def get_subscribers(self, doc):
         subscribers, subscribers_yet_to_receive = [], []
         if self.published_state == 'corrected':
-            query = {'$and': [{'item_id': doc[config.ID_FIELD]}, {'publishing_action': 'published'}]}
+            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+                              {'publishing_action': {'$in': ['published', 'corrected']}}]}
             queued_items = get_resource_service('publish_queue').get(req=None, lookup=query)
 
             if queued_items.count():
@@ -592,6 +588,7 @@ class KillPublishResource(BasePublishResource):
 class KillPublishService(BasePublishService):
     publish_type = 'kill'
     published_state = 'killed'
+    takes_service = TakesPackageService()
 
     def __init__(self, datasource=None, backend=None):
         super().__init__(datasource=datasource, backend=backend)
@@ -599,7 +596,42 @@ class KillPublishService(BasePublishService):
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
-        TakesPackageService().process_killed_takes_package(original)
+        self.takes_service.process_killed_takes_package(original)
+
+    def update(self, id, updates, original):
+        """
+        Kill will broadcast kill email and then kill the item.
+        If item is a take then all the takes are killed as well.
+        """
+        self._broadcast_kill_email(original)
+        super().update(id, updates, original)
+        self._publish_kill_for_takes(updates, original)
+
+    def _broadcast_kill_email(self, doc):
+        subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
+        recipients = [s.get('email') for s in subscribers if s.get('email')]
+        send_article_killed_email(doc, recipients, utcnow())
+
+    def _publish_kill_for_takes(self, updates, original):
+        """
+        Kill all the takes in a takes package.
+        """
+        package = self.takes_service.get_take_package(original)
+        last_updated = updates.get(config.LAST_UPDATED, utcnow())
+        if package:
+            for ref in[ref for group in package.get('groups', []) if group['id'] == 'main'
+                       for ref in group.get('refs')]:
+                if ref[GUID_FIELD] != original[config.ID_FIELD]:
+                    original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
+                    updates_data = copy(updates)
+                    queued = self.publish(doc=original_data, updates=updates_data, target_media_type=WIRE)
+                    # we need to update the archive item and not worry about queued.
+                    self._set_version_last_modified_and_state(original_data, updates_data, last_updated)
+                    self._update_archive(original=original_data, updates=updates_data,
+                                         should_insert_into_versions=True)
+                    if not queued:
+                        logger.warn("Could not publish the kill for take {} with headline {}".
+                                    format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
 
 class CorrectPublishResource(BasePublishResource):
