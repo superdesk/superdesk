@@ -425,7 +425,7 @@ class BasePublishService(BaseService):
         req = ParsedRequest()
         req.args = {'is_global': True}
         service = get_resource_service('publish_filters')
-        global_filters = service.get(req=req, lookup=None)
+        global_filters = list(service.get(req=req, lookup=None))
 
         for subscriber in subscribers:
             if target_media_type:
