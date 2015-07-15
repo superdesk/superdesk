@@ -8,6 +8,7 @@ describe('authoring', function() {
     var item = {guid: GUID};
 
     beforeEach(module('superdesk.preferences'));
+    beforeEach(module('superdesk.archive'));
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.publish'));
     beforeEach(module('superdesk.auth'));

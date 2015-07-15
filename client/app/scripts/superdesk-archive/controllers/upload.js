@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UploadController.$inject = ['$scope', '$q', 'upload', 'api'];
-    function UploadController($scope, $q, upload, api) {
+    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService'];
+    function UploadController($scope, $q, upload, api, archiveService) {
 
         $scope.items = [];
         $scope.saving = false;
@@ -77,6 +77,7 @@ define(['lodash'], function(_) {
             $scope.saving = true;
             return $scope.upload().then(function(results) {
                 $q.all(_.map($scope.items, function(item) {
+                    archiveService.addTaskToArticle(item.meta);
                     return api.archive.update(item.model, item.meta);
                 })).then(function(results) {
                     $scope.resolve(results);

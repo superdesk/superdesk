@@ -1,21 +1,21 @@
 <li>
-    <button ng-click="content.create()">
+    <button id="create_text_article" ng-click="content.create()">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Plain text' | translate }}
     </button>
 </li>
 <li>
-    <button ng-click="content.create('preformatted')">
+    <button id="create_preformatted_article" ng-click="content.create('preformatted')">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Preformatted' | translate }}
     </button>
 </li>
 <li class="divider"></li>
 <li>
-    <button ng-click="content.createPackage()">
+    <button id="create_package"  ng-click="content.createPackage()">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Empty Package' | translate }}
     </button>
 </li>
 <li ng-if="item">    
-    <button ng-click="content.createPackage(item)">
+    <button id="package_item" ng-click="content.createPackage(item)">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Package current item' | translate }}
     </button>
 </li>

@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q'];
-    function PackagesService(api, $q) {
+    PackagesService.$inject = ['api', '$q', 'archiveService'];
+    function PackagesService(api, $q, archiveService) {
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
@@ -123,10 +123,12 @@
         }
 
         function setDefaults(item, defaults) {
-            if (_.isObject(defaults)) {
-                return _.merge(item, defaults);
+            if (angular.isUndefined(defaults) || !_.isObject(defaults)) {
+                defaults = {};
             }
-            return item;
+
+            archiveService.addTaskToArticle(defaults);
+            return _.merge(item, defaults);
         }
 
         function getReferenceFor(item) {

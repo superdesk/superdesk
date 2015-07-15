@@ -1,8 +1,8 @@
 (function() {
 'use strict';
 
-ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks'];
-function ContentCtrlFactory(api, superdesk, templates, desks) {
+ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks', 'archiveService'];
+function ContentCtrlFactory(api, superdesk, templates, desks, archiveService) {
     return function ContentCtrl($scope) {
         var templateFields = [
             'abstract',
@@ -23,11 +23,12 @@ function ContentCtrlFactory(api, superdesk, templates, desks) {
          */
         this.create = function(type) {
             var item = {type: type || 'text', version: 0};
-            api('archive')
-            .save(item)
-            .then(function() {
-                superdesk.intent('author', 'article', item);
-            });
+            archiveService.addTaskToArticle(item);
+
+            api('archive').save(item).then(
+                function() {
+                    superdesk.intent('author', 'article', item);
+                });
         };
 
         this.createPackage = function createPackage(current_item) {
