@@ -148,6 +148,7 @@ class ArchivePublishTestCase(TestCase):
                           'state': 'in_progress',
                           'expiry': utcnow() + timedelta(minutes=20),
                           'type': 'text',
+                          'linked_in_packages': [{"package": "7", "package_type": "takes"}],
                           'unique_name': '#4'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fg',
                           '_id': '5',
@@ -163,6 +164,7 @@ class ArchivePublishTestCase(TestCase):
                           'byline': 'By Alan Karben',
                           'dateline': 'Sydney',
                           'slugline': 'taking takes',
+                          'linked_in_packages': [{"package": "7", "package_type": "takes"}],
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
@@ -222,10 +224,11 @@ class ArchivePublishTestCase(TestCase):
                           'expiry': utcnow() + timedelta(minutes=20),
                           'sequence': 2,
                           'unique_name': '#7'},
-                         {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fb',
+                         {'guid': '8',
                           '_id': '8',
                           'last_version': 3,
                           config.VERSION: 4,
+                          'targeted_for': [{'name': 'New South Wales', 'allow': True}],
                           'body_html': 'Take-1 body',
                           'urgency': 4,
                           'headline': 'Take-1 headline',
@@ -282,6 +285,7 @@ class ArchivePublishTestCase(TestCase):
             with open(self.filename, "w+") as file:
                 json.dump(self.json_data, file)
             init_app(self.app)
+            ValidatorsPopulateCommand().run(self.filename)
 
     def tearDown(self):
         super().tearDown()
@@ -372,9 +376,7 @@ class ArchivePublishTestCase(TestCase):
 
     def test_publish(self):
         with self.app.app_context():
-            ValidatorsPopulateCommand().run(self.filename)
             doc = self.articles[3].copy()
-
             get_resource_service('archive_publish').patch(id=doc['_id'], updates={'state': 'published'})
             published_doc = get_resource_service('archive').find_one(req=None, _id=doc['_id'])
             self.assertIsNotNone(published_doc)
@@ -385,9 +387,9 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
-            doc = copy(self.articles[0])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
+            archive_publish = get_resource_service('archive_publish')
+            doc = copy(self.articles[1])
+            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
 
@@ -395,24 +397,29 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
+            archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[0])
             doc['type'] = 'image'
-            no_formatters, queued = get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
-
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'digital')
+            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-            self.assertEqual(5, len(no_formatters))
+            self.assertEqual(1, len(no_formatters))
+            self.assertFalse(queued)
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'wire')
+            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+            queue_items = self.app.data.find('publish_queue', None, None)
+            self.assertEqual(0, queue_items.count())
+            self.assertEqual(4, len(no_formatters))
             self.assertFalse(queued)
 
     def test_queue_transmission_for_scheduled_publish(self):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
+            archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[1])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
-
+            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
@@ -425,9 +432,10 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
+            archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[1])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers, 'digital')
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'digital')
+            archive_publish.queue_transmission(doc, subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(1, queue_items.count())
             self.assertEqual('3', queue_items[0]["subscriber_id"])
@@ -436,9 +444,10 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
+            archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[1])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers, 'wire')
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'wire')
+            archive_publish.queue_transmission(doc, subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(4, queue_items.count())
             expected_subscribers = ['1', '2']
@@ -450,15 +459,17 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
-
+            archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[1])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers)
+            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
-
+            # this will delete queue transmission for the wire article not the takes package.
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(doc['_id'])
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
+            self.assertEqual(1, queue_items.count())
+            queue_items = list(queue_items)
+            self.assertEqual('composite', queue_items[0]['content_type'])
 
     def test_remove_published_expired_content(self):
         with self.app.app_context():
@@ -466,9 +477,10 @@ class ArchivePublishTestCase(TestCase):
 
             published_service = get_resource_service('published')
             text_archive = get_resource_service('text_archive')
-
+            archive_publish = get_resource_service('archive_publish')
             original = self.articles[0].copy()
-            get_resource_service('archive_publish').queue_transmission(original, self.subscribers)
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, 'wire')
+            archive_publish.queue_transmission(original, subscribers)
 
             original[config.VERSION] += 1
             published_service.post([original])
@@ -512,10 +524,10 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             published_service = get_resource_service('published')
             text_archive = get_resource_service('text_archive')
-
+            archive_publish = get_resource_service('archive_publish')
             original = self.articles[2].copy()
-
-            get_resource_service('archive_publish').queue_transmission(original, self.subscribers)
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, 'wire')
+            archive_publish.queue_transmission(original, subscribers)
 
             original[config.VERSION] += 1
             published_service.post([original])
@@ -566,10 +578,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertEqual(articles_in_text_archive.count(), 0)
 
     def test_remove_published_and_killed_content_separately(self):
-        cmd = ValidatorsPopulateCommand()
-
         with self.app.app_context():
-            cmd.run(self.filename)
             self.app.data.insert('archive_versions', self.article_versions)
 
             published_service = get_resource_service('published')
@@ -578,6 +587,7 @@ class ArchivePublishTestCase(TestCase):
             # Publishing an Article
             doc = self.articles[7]
             original = doc.copy()
+
             get_resource_service('archive_publish').patch(id=doc['_id'], updates={config.CONTENT_STATE: 'published'})
 
             published_items = published_service.get_other_published_items(original[config.ID_FIELD])
@@ -787,17 +797,6 @@ class ArchivePublishTestCase(TestCase):
 
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(4, queue_items.count())
-
-    def test_targeted_for(self):
-        with self.app.test_request_context(URL_PREFIX):
-            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': False}]}
-            get_resource_service('archive').patch(id=self.articles[9][config.ID_FIELD], updates=updates)
-
-            doc = get_resource_service('archive').find_one(req=None, _id=self.articles[9][config.ID_FIELD])
-            get_resource_service('archive_publish').queue_transmission(doc, self.subscribers, 'wire')
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(3, queue_items.count())
-
             expected_subscribers = ['1', '2']
             self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
             self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
