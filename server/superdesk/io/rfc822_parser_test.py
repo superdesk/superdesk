@@ -46,7 +46,7 @@ class rfc822TestCase(TestCase):
     def test_body(self):
         self.assertEquals(self.items[0]['body_html'].strip(), '<div>body text<br/><div>\n</div></div>')
 
-    def test_rfc_from(self):
+    def test_from(self):
         self.assertEqual(self.items[0]['original_source'],
                          'a sender <asender@a.com.au>')
         self.assertEqual(self.items[0]['original_creator'], self.user_id)
@@ -70,6 +70,11 @@ class rfc822ComplexTestCase(TestCase):
         self.assertEqual(len(self.items), 3)
         for item in self.items:
             self.assertIn('versioncreated', item)
+
+    def test_from(self):
+        self.assertEqual(self.items[0]['original_source'],
+                         'someone <a@a.com.au>')
+        self.assertNotIn('original_creator', self.items[0])
 
 
 class rfc822OddCharSet(TestCase):
