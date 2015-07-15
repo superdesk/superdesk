@@ -14,7 +14,9 @@ from eve.utils import ParsedRequest
 import json
 import superdesk
 import re
+import os
 from settings import URL_PREFIX
+from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
 class FilterConditionTests(TestCase):
@@ -50,6 +52,24 @@ class FilterConditionTests(TestCase):
                                    'field': 'urgency',
                                    'operator': 'in',
                                    'value': '2',
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 3,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '3,4,5',
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 4,
+                                   'field': 'urgency',
+                                   'operator': 'nin',
+                                   'value': '1,2,3',
+                                   'name': 'test-2'}])
+            self.app.data.insert('filter_conditions',
+                                 [{'_id': 5,
+                                   'field': 'urgency',
+                                   'operator': 'in',
+                                   'value': '2,5',
                                    'name': 'test-2'}])
             self.app.data.insert('publish_filters',
                                  [{"_id": 1,
@@ -394,3 +414,23 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self.assertTrue(f._get_referenced_filter_conditions(1).count() == 1)
             self.assertTrue(f._get_referenced_filter_conditions(2).count() == 0)
+
+    def test_check_similar(self):
+        f = superdesk.get_resource_service('filter_conditions')
+        filter_condition1 = {'field': 'urgency', 'operator': 'in', 'value': '2'}
+        filter_condition2 = {'field': 'urgency', 'operator': 'in', 'value': '3'}
+        filter_condition3 = {'field': 'urgency', 'operator': 'in', 'value': '1'}
+        filter_condition4 = {'field': 'urgency', 'operator': 'in', 'value': '5'}
+        filter_condition5 = {'field': 'urgency', 'operator': 'nin', 'value': '5'}
+        filter_condition6 = {'field': 'headline', 'operator': 'like', 'value': 'tor'}
+        with self.app.app_context():
+            cmd = VocabulariesPopulateCommand()
+            filename = os.path.join(os.path.abspath(
+                os.path.dirname("apps/prepopulate/data_initialization/vocabularies.json")), "vocabularies.json")
+            cmd.run(filename)
+            self.assertTrue(len(f._check_similar(filter_condition1)) == 2)
+            self.assertTrue(len(f._check_similar(filter_condition2)) == 1)
+            self.assertTrue(len(f._check_similar(filter_condition3)) == 0)
+            self.assertTrue(len(f._check_similar(filter_condition4)) == 3)
+            self.assertTrue(len(f._check_similar(filter_condition5)) == 1)
+            self.assertTrue(len(f._check_similar(filter_condition6)) == 1)

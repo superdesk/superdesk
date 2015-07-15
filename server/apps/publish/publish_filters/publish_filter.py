@@ -79,16 +79,33 @@ class PublishFilterService(BaseService):
         super().update(id, updates, original)
 
     def delete(self, lookup):
-        referenced_filters = self._get_referenced_publish_filters(lookup.get('_id'))
+        referenced_filters = self._get_publish_filters_by_publish_filter(lookup.get('_id'))
         if referenced_filters.count() > 0:
             references = ','.join([pf['name'] for pf in referenced_filters])
             raise SuperdeskApiError.badRequestError('Publish filter has been referenced in {}'.format(references))
         return super().delete(lookup)
 
-    def _get_referenced_publish_filters(self, id):
-        lookup = {'publish_filter.expression.pf': [id]}
+    def _get_publish_filters_by_publish_filter(self, publish_filter_id):
+        lookup = {'publish_filter.expression.pf': {'$in': [publish_filter_id]}}
         publish_filters = get_resource_service('publish_filters').get(req=None, lookup=lookup)
         return publish_filters
+
+    def _get_publish_filters_by_filter_condition(self, filter_condition_id):
+        lookup = {'publish_filter.expression.fc': {'$in': [filter_condition_id]}}
+        publish_filters = super().get(req=None, lookup=lookup)
+        all_publish_filters = self._get_referenced_publish_filters(list(publish_filters), None)
+        return all_publish_filters
+
+    def _get_referenced_publish_filters(self, publish_filters, pf_list):
+        if not pf_list:
+            pf_list = []
+
+        for pf in publish_filters:
+            pf_list.append(pf)
+            references = list(self._get_publish_filters_by_publish_filter(pf['_id']))
+            if references and len(references) > 0:
+                return self._get_referenced_publish_filters(references, pf_list)
+        return pf_list
 
     def _validate_no_circular_reference(self, publish_filter, filter_id):
         for expression in publish_filter.get('publish_filter', []):
