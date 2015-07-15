@@ -37,7 +37,8 @@ describe('spellcheck', function() {
     it('can spellcheck using multiple dictionaries', inject(function(spellcheck, dictionaries, $q, $rootScope) {
         spellcheck.errors('test what if foo bar baz').then(assignErrors);
         $rootScope.$digest();
-        expect(errors).toEqual(['test', 'if']);
+        expect(errors).toContain({word: 'test', index: 0});
+        expect(errors).toContain({word: 'if', index: 10});
         expect(dictionaries.getActive).toHaveBeenCalledWith(LANG);
     }));
 
@@ -72,14 +73,14 @@ describe('spellcheck', function() {
         spyOn(api, 'save');
         spellcheck.errors('test').then(assignErrors);
         $rootScope.$digest();
-        expect(errors).toEqual(['test']);
+        expect(errors.length).toBe(1);
 
         spellcheck.addWordToUserDictionary('test');
 
         spellcheck.errors('test').then(assignErrors);
         $rootScope.$digest();
 
-        expect(errors).toEqual([]);
+        expect(errors.length).toBe(0);
     }));
 
     it('can suggest', inject(function(spellcheck, api, $q) {

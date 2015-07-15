@@ -205,7 +205,6 @@
                 workspaces.getActiveId().then(function(activeId) {
                     desks.initialize().then(function() {
                         desks.fetchCurrentUserDesks().then(function(userDesks) {
-                            console.log('init', activeId, desks.activeDeskId);
                             scope.desks = userDesks._items;
                             if (!activeId) {
                                 scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});

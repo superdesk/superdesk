@@ -9,13 +9,6 @@
 var ERROR_CLASS = 'sderror';
 
 /**
- * Escape given string for usage in regexp (&copy; mdn)
- */
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
  * Find text node + offset for given node and offset
  */
 function findTextNode(node, offset) {
@@ -68,7 +61,7 @@ function removeClass(elem, className) {
 SpellcheckService.$inject = ['$q', 'api', 'dictionaries', 'editor'];
 function SpellcheckService($q, api, dictionaries, editor) {
     var lang,
-        dict = {},
+        dict,
         numberOfErrors,
         COLOR = '#123456', // use some unlikely color for hilite, we will change these to class
         COLOR_RGB = rgb(COLOR);
@@ -81,7 +74,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.setLanguage = function(_lang) {
         if (lang !== _lang) {
             lang = _lang;
-            fetchDict();
+            dict = null;
         }
     };
 
@@ -92,24 +85,25 @@ function SpellcheckService($q, api, dictionaries, editor) {
         return elem.classList.contains(ERROR_CLASS);
     };
 
-    function fetchDict() {
-        if (!lang) {
-            dict = $q.reject();
-            return;
-        }
-
-        dict = dictionaries.getActive(lang).then(function(items) {
-            dict = {};
-            angular.forEach(items, addDict);
-            return dict;
-        });
-    }
-
     /**
      * Get dictionary for spellchecking
+     *
+     * @return {Promise}
      */
     function getDict() {
-        return $q.when(dict);
+        if (!lang) {
+            return $q.reject();
+        }
+
+        if (!dict) {
+            dict = dictionaries.getActive(lang).then(function(items) {
+                dict.content = {};
+                angular.forEach(items, addDict);
+                return dict.content;
+            });
+        }
+
+        return dict;
     }
 
     /**
@@ -118,7 +112,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * @param {Object} item
      */
     function addDict(item) {
-        angular.extend(dict, item.content || {});
+        angular.extend(dict.content, item.content || {});
     }
 
     /**
@@ -127,21 +121,22 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * @param {string} text
      */
     this.errors = function check(text) {
-        return getDict().then(function() {
-            var words = text.match(/[0-9a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g),
-                errors = [];
-            angular.forEach(words, function(word) {
-                if (isNaN(word)) {
-                    var lowerWord = word.toLowerCase();
-                    if (!dict[lowerWord]) {
-                        errors.push(word);
-                    }
+        return getDict().then(function(d) {
+            var errors = [],
+                regexp = /[0-9a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g,
+                match;
+            while ((match = regexp.exec(text)) != null) {
+                var word = match[0];
+                if (isNaN(word) && !dict.content[word.toLowerCase()]) {
+                    errors.push({
+                        word: word,
+                        index: match.index
+                    });
                 }
-            });
+            }
 
-            var uniqErrors = _.uniq(errors);
-            numberOfErrors = uniqErrors.length;
-            return uniqErrors;
+            numberOfErrors = errors.length;
+            return errors;
         });
     };
 
@@ -179,31 +174,24 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * Highlight `error` word in node elem
      */
     function hiliteError(node, error) {
-        var regexp = new RegExp('\\b' + escapeRegExp(error) + '\\b', 'im'),
-            index, lastIndex = 0, text = node.textContent,
-            selection = document.getSelection();
-        while ((index = text.search(regexp)) > -1) {
-            var range = document.createRange(),
-                start = findTextNode(node, index + lastIndex),
-                end = findTextNode(node, index + lastIndex + error.length);
-            if (start.node === end.node) {
-                // optimize error hilite when the word is within single text node
-                var replace = start.node.splitText(start.offset),
-                    span = document.createElement('span');
-                span.classList.add(ERROR_CLASS);
-                replace.splitText(end.offset - start.offset);
-                span.textContent = replace.textContent;
-                replace.parentNode.replaceChild(span, replace);
-            } else {
-                range.setStart(start.node, start.offset);
-                range.setEnd(end.node, end.offset);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                document.execCommand('hiliteColor', false, COLOR);
-            }
-
-            lastIndex += index + error.length;
-            text = text.substring(index + error.length);
+        var selection = document.getSelection(),
+            range = document.createRange(),
+            start = findTextNode(node, error.index),
+            end = findTextNode(node, error.index + error.word.length);
+        if (start.node === end.node) {
+            // optimize error hilite when the word is within single text node
+            var replace = start.node.splitText(start.offset),
+                span = document.createElement('span');
+            span.classList.add(ERROR_CLASS);
+            replace.splitText(end.offset - start.offset);
+            span.textContent = replace.textContent;
+            replace.parentNode.replaceChild(span, replace);
+        } else {
+            range.setStart(start.node, start.offset);
+            range.setEnd(end.node, end.offset);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('hiliteColor', false, COLOR);
         }
     }
 
@@ -214,16 +202,18 @@ function SpellcheckService($q, api, dictionaries, editor) {
      */
     this.render = function render(elem) {
         var node = elem;
-        return this.errors(node.textContent).then(function(errors) {
-            editor.storeSelection(node);
 
-            angular.forEach(errors, function(error) {
-                hiliteError(node, error);
+        return this.errors(node.textContent)
+            .then(function(errors) {
+                editor.storeSelection(node);
+
+                angular.forEach(errors, function(error) {
+                    hiliteError(node, error);
+                });
+
+                setErrorClass(node);
+                editor.resetSelection(node);
             });
-
-            setErrorClass(node);
-            editor.resetSelection(node);
-        });
     };
 
     /**
@@ -259,7 +249,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
      */
     this.addWordToUserDictionary = function(word) {
         dictionaries.addWordToUserDictionary(word, lang);
-        dict[word] = dict[word] ? dict[word] + 1 : 1;
+        dict.content[word] = dict.content[word] ? dict.content[word] + 1 : 1;
     };
 }
 
