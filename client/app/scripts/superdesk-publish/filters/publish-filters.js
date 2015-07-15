@@ -395,6 +395,18 @@ function ProductionTestController($scope, filters, notify, $location, $window) {
     $scope.preview = function(Item) {
         $location.search('_id', Item ? Item._id : Item);
     };
+    $scope.openView = function(item) {
+        $scope.openLightbox(item);
+    };
+    $scope.openLightbox = function (item) {
+        $scope.selected.view = item;
+    };
+    $scope.closeLightbox = function () {
+        $scope.selected.view = null;
+    };
+    $scope.hideActions = function () {
+        return true;
+    };
 
     $scope.$on('$routeUpdate', previewItem);
 
@@ -443,11 +455,6 @@ function ProductionTestController($scope, filters, notify, $location, $window) {
     }
     $scope.fetchResults = function() {
         fetchProductionTestResult();
-    };
-
-    $scope.openViewTab = function(guid) {
-        var url = '#/authoring/' + guid + '/view';
-        $window.open(url, '_blank');
     };
 
     $scope.$on('triggerTest', function (event, filter) {
