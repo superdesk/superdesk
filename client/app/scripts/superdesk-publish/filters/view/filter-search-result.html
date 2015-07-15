@@ -1,0 +1,151 @@
+<div style="padding-left:100px;">
+    <div class="content">
+        <div sd-shadow>
+            <table class="table styled-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th translate>Subscriber</th>
+                        <th translate>Filter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="result in searchResult track by result._id">
+                        <td></td>
+                        <td>{{result.name}} | <div class="actions">
+                        <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="    icon-pencil"></i></button>
+                        </div>
+                    </td>
+                        <td>{{result.publish_filter.filter_id}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- subscriber popup -->
+<div sd-modal data-model="subscriber" class="subscriber-modal modal-big moz-scroll-fix">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="subscriber._id" translate>Edit Subscriber "{{ origSubscriber.name }}"</h3>
+        <h3 translate ng-hide="subscriber._id" translate>Add New Subscriber</h3>
+    </div>
+    <div class="modal-body">
+        <form name="editForm" ng-submit="save()">
+            <fieldset>
+                <tabset>
+                    <tab heading="General" class="TabContent">
+                        <div class="field">
+                            <label class="right">
+                                {{:: 'Status' | translate }}
+                                <span tooltip="{{ subscriber.is_active ? 'Deactivate' : 'Activate'  | translate }}" tooltip-placement="right">
+                                    <span class="pull-right" sd-switch ng-model="subscriber.is_active"></span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="field">
+                            <label for="subscriber-name" translate>Name</label>
+                            <input type="text" id="subscriber-name" required ng-model="subscriber.name">
+                        </div>
+
+                        <div class="field">
+                            <label for="subscriber-email" translate>E-Mail to broadcast Kill Events</label>
+                            <input type="email" id="subscriber-email" ng-model="subscriber.email" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="subType" translate>Subscriber Type</label>
+                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes" required>
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="media-type" translate>Media Type</label>
+                            <select id="media-type" class="input" ng-model="subscriber.media_type">
+                                <option value="media" translate>Media</option>
+                                <option value="nonmedia" translate>Non-media</option>
+                                <option value="" translate>Both</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="geoRestrictions" translate>Geographical Restrictions</label>
+                            <select id="geoRestrictions" ng-model="subscriber.geo_restrictions" ng-options="g.value as g.name for g in geoRestrictions">
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label translate class="right">Publish Filter</label>
+                            <select class="input" ng-model="subscriber.publish_filter.filter_id">
+                                <option value=""></option>
+                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.publish_filter.filter_id" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="field" ng-if="subscriber.publish_filter.filter_id">
+                            <label translate>Publish Filter Type</label>
+                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="permitting"><span translate>Permitting</span>
+                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="blocking"><span translate>Blocking</span>
+                        </div>
+
+                        <div class="field">
+                            <label translate>Sequence Number Settings</label>
+                            <span translate>Minimum</span>
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min" required>
+                            <span translate>Maximum</span>
+                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max" required>
+                        </div>
+
+                        <div class="field">
+                            <label translate>Destinations</label>
+                            <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination"
+                                 data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
+                            <div sd-destination ng-if="newDestination"
+                                data-destination="newDestination"
+                                data-actions="[{label: 'Save', fn: saveNewDestination}, {label: 'Cancel', fn: cancelNewDestination}]"></div>
+                            <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
+                                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Destination</span>
+                            </button>
+                        </div>
+                    </tab>
+
+                    <tab heading="Critical Errors" class="TabContent">
+                        <div class="content privileges-settings">
+                            <div class="horizontal">
+                                <div class="roles-list">
+                                    <div ng-repeat="(key, val) in all_errors | orderBy:name" class="field">
+                                        <label>
+                                            {{::key}}: {{::val}}
+                                            <span sd-switch ng-model="subscriber.critical_errors[key]"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+
+                    <tab heading="Applied Global Filters" class="TabContent">
+                        <div class="content privileges-settings">
+                            <div class="horizontal">
+                                <div class="roles-list">
+                                    <div ng-repeat="gf in globalFilters track by gf._id | orderBy:name" class="field">
+                                        <label>
+                                            {{:: gf.name}}
+                                            <span sd-switch ng-model="subscriber.global_filters[gf._id]"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+                </tabset>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" ng-disabled="subscriber.destinations.length === 0" translate>Save</button>
+    </div>
+</div>
