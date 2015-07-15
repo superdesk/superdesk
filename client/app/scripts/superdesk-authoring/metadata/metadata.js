@@ -183,7 +183,8 @@ function MetadataListEditingDirective() {
             list: '=',
             unique: '@',
             postprocessing: '&',
-            change: '&'
+            change: '&',
+            header: '@'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
@@ -282,21 +283,27 @@ function MetadataSliderDirective(desks) {
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-slider.html',
         link: function(scope) {
-            desks.initialize().then(function() {
+            scope.$watch('list', function (list) {
+                if (!list) {
+                    return;
+                }
+
                 var maxValue = scope.list.length,
-                    currentValue = scope.item[scope.field];
+                    currentValue = scope.item[scope.field],
+                    sliderDisabled = scope.disabled;
 
                 $('.sd-slider').slider({
                     range: 'max',
                     min: 0,
                     max: maxValue,
                     value: currentValue,
+                    disabled: sliderDisabled,
                     create: function () {
                         $(this).find('.ui-slider-thumb').css('left', (currentValue * 100) / maxValue + '%');
                     },
                     slide: function (event, ui) {
                         $(this).find('.ui-slider-thumb').css('left', (ui.value * 100) / maxValue + '%').text(ui.value);
-                        scope.select(scope.list[ui.value - 1]);
+                        select(scope.list[ui.value - 1]);
                     },
                     start: function () {
                         $(this).find('.ui-slider-thumb').addClass('ui-slider-thumb-active');
@@ -307,7 +314,7 @@ function MetadataSliderDirective(desks) {
                 });
             });
 
-            scope.select = function (item) {
+            function select(item) {
                 var o = {};
 
                 if (angular.isDefined(item)) {
@@ -318,7 +325,7 @@ function MetadataSliderDirective(desks) {
 
                 _.extend(scope.item, o);
                 scope.change({item: scope.item});
-            };
+            }
         }
     };
 }

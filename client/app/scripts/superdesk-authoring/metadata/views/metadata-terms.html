@@ -1,9 +1,16 @@
+<div class="term-editor data visible" ng-show="!header">
+    <div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
+        <ul>
+            <li typeahead-item="t" ng-repeat="t in terms ">{{ :: t.name }}</li>
+        </ul>
+    </div>
+</div>
 <div class="dropdown dropleft dropdown-bigger" dropdown>
-    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-show="header && !disabled">
         <i class="icon-white icon-plus-large"></i>
     </button>
     <ul class="dropdown-menu nested-menu">
-        <li ng-show="!activeTerm" ng-class="{single : !activeTree.length}">
+        <li ng-show="!activeTerm && header" ng-class="{single : !activeTree.length}">
             <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled" ng-click="$event.stopPropagation()">
                 <li typeahead-item="t" ng-repeat="t in terms "><button>{{ :: t.name }}</button></li>
             </ul>
@@ -29,6 +36,7 @@
 </div>
 <div class="terms" ng-if="item[field].length">
     <ul>
-        <li class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}</li>
+        <li ng-if="!disabled" class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}</li>
+        <li ng-if="disabled" class="pull-left disabled" ng-repeat="t in item[field]">{{ :: t.name}}</li>
     </ul>
 </div>

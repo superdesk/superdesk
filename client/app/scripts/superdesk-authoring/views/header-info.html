@@ -9,12 +9,12 @@
 
 <ul class="metadata-list" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
     <li class="date-info full-width clearfix">
-        <label translate>Created&nbsp;</label>
-        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}" ng-if="item.firstcreated">{{ item.firstcreated|reldate }}&nbsp;</time>
-        <label translate>by&nbsp;</label>
-        <b>{{userLookup[item.original_creator].display_name}}&nbsp;</b>
+        <label translate>Created</label>
+        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}" ng-if="item.firstcreated">{{ item.firstcreated|reldate }}</time>
+        <label translate>by</label>
+        <b>{{userLookup[item.original_creator].display_name}}</b>
         <div class="modified" ng-if="item.versioncreated">
-            <label translate>Modified&nbsp;</label>
+            <label translate>Modified</label>
             <time datetime="{{ item.versioncreated}}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
         </div>
     </li>
@@ -27,7 +27,7 @@
                 <div class="dropdown dropleft" dropdown>
                     <i class="urgency-icon-{{item.urgency}} dropdown-toggle" dropdown-toggle></i>
                     <div class="dropdown-menu">
-                        <label>{{ :: "URGENCY" | translate }}</label>
+                        <label>{{ "URGENCY" | translate }}</label>
                         <div class="item">
                             <label><i class="urgency-icon-{{item.urgency}}"></i></label>
                             <div class="data">
@@ -47,7 +47,7 @@
                 <div class="dropdown dropleft" dropdown>
                     <i class="output-item-label label-{{item.urgency}} dropdown-toggle" dropdown-toggle>{{ item.urgency }}</i>
                     <div class="dropdown-menu">
-                        <label>{{ :: "NEWS VALUE" | translate }}</label>
+                        <label>{{ "NEWS VALUE" | translate }}</label>
                         <div class="item">
                             <div class="data">
                                 <div sd-meta-slider 
@@ -89,7 +89,7 @@
                    id="keyword"
                    ng-model="item.slugline"
                    ng-change="autosave(item)"
-                   ng-if="_editable"
+                   ng-disabled="!_editable"
                    ng-trim="false">
         </div>
     </li>
@@ -101,7 +101,7 @@
                    id="anpa_take_key"
                    ng-model="item.anpa_take_key"
                    ng-change="autosave(item)"
-                   ng-if="_editable"
+                   ng-disabled="!_editable"
                    ng-trim="false">
         </div>
     </li>
@@ -115,12 +115,12 @@
 
     <li class="terms-box">
         <label translate>GENRE</label>
-        <div class="data" sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
+        <div class="data" sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-header="true" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
     </li>
 
     <li class="full-width terms-box">
         <label translate>SUBJECT</label>
-        <div class="data" sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" ng-disabled="!_editable" data-change="autosave(item)"></div>
+        <div class="data" sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
     </li>
 
     <li class="full-width ed-note">

@@ -1783,7 +1783,11 @@
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             link: function (scope, elem, attrs) {
-                metadata.initialize().then(function () {
+                scope.$watch('item', function (item) {
+                    if (!item) {
+                        return;
+                    }
+
                     scope.loaded = true;
                     familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
                             .then(function (items) {
