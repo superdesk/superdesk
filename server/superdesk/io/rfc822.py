@@ -9,6 +9,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license*.
 
+import superdesk
 from superdesk.io import Parser
 import datetime
 from superdesk.utc import utcnow
@@ -23,9 +24,26 @@ import logging
 from superdesk.errors import IngestEmailError
 from bs4 import BeautifulSoup, Comment, Doctype
 import re
+from eve.utils import ParsedRequest
 
 
 logger = logging.getLogger(__name__)
+
+
+class UserNotRegisteredException(Exception):
+    pass
+
+
+email_regex = re.compile('^.*<(.*)>$')
+
+
+def get_user_by_email(field_from):
+    email_address = email_regex.findall(field_from)[0]
+    lookup = superdesk.get_resource_service('users').find_one(
+        req=ParsedRequest(), email=email_address)
+    if not lookup:
+        raise UserNotRegisteredException()
+    return lookup['_id']
 
 
 class rfc822Parser(Parser):
@@ -54,11 +72,18 @@ class rfc822Parser(Parser):
                 if isinstance(response_part, tuple):
                     msg = email.message_from_bytes(response_part[1])
                     item['headline'] = self.parse_header(msg['subject'])
-                    item['original_creator'] = self.parse_header(msg['from'])
+                    field_from = self.parse_header(msg['from'])
+                    item['original_source'] = field_from
+                    try:
+                        item['original_creator'] = get_user_by_email(
+                            field_from)
+                    except UserNotRegisteredException:
+                        pass
                     item['guid'] = msg['Message-ID']
                     date_tuple = email.utils.parsedate_tz(msg['Date'])
                     if date_tuple:
-                        dt = datetime.datetime.utcfromtimestamp(email.utils.mktime_tz(date_tuple))
+                        dt = datetime.datetime.utcfromtimestamp(
+                            email.utils.mktime_tz(date_tuple))
                         dt = dt.replace(tzinfo=timezone('utc'))
                         item['firstcreated'] = dt
 
@@ -76,8 +101,10 @@ class rfc822Parser(Parser):
                                 continue
                             except Exception as ex:
                                 logger.exception(
-                                    "Exception parsing text body for {0} from {1}".format(item['headline'],
-                                                                                          item['original_creator']), ex)
+                                    "Exception parsing text body for {0} "
+                                    "from {1}: {2}".format(
+                                        item['headline'], field_from),
+                                    ex)
                                 continue
                         if part.get_content_type() == "text/html":
                             body = part.get_payload(decode=True)
@@ -91,8 +118,10 @@ class rfc822Parser(Parser):
                                 continue
                             except Exception as ex:
                                 logger.exception(
-                                    "Exception parsing text html for {0} from {1}".format(item['headline'],
-                                                                                          item['original_creator']), ex)
+                                    "Exception parsing text html for {0} "
+                                    "from {1}: {2}".format(
+                                        item['headline'], field_from),
+                                    ex)
                                 continue
                         if part.get_content_maintype() == 'multipart':
                             continue
@@ -124,6 +153,9 @@ class rfc822Parser(Parser):
                                 comp_item['groups'] = []
                                 comp_item['headline'] = item['headline']
                                 comp_item['groups'] = []
+                                comp_item['original_source'] = item['original_source']
+                                if 'original_creator' in item:
+                                    comp_item['original_creator'] = item['original_creator']
 
                                 # create a reference to the item that stores the body of the email
                                 item_ref = {}
@@ -132,6 +164,9 @@ class rfc822Parser(Parser):
                                 item_ref['headline'] = item['headline']
                                 item_ref['location'] = 'ingest'
                                 item_ref['itemClass'] = 'icls:text'
+                                item_ref['original_source'] = item['original_source']
+                                if 'original_creator' in item:
+                                    item_ref['original_creator'] = item['original_creator']
                                 refs.append(item_ref)
 
                             media_item = dict()
@@ -145,6 +180,9 @@ class rfc822Parser(Parser):
                             if text_body is not None:
                                 media_item['body_html'] = text_body
                             media_item['headline'] = item['headline']
+                            media_item['original_source'] = item['original_source']
+                            if 'original_creator' in item:
+                                media_item['original_creator'] = item['original_creator']
                             new_items.append(media_item)
 
                             # add a reference to this item in the composite item
@@ -154,6 +192,9 @@ class rfc822Parser(Parser):
                             media_ref['headline'] = fileName
                             media_ref['location'] = 'ingest'
                             media_ref['itemClass'] = 'icls:picture'
+                            media_ref['original_source'] = item['original_source']
+                            if 'original_creator' in item:
+                                media_ref['original_creator'] = item['original_creator']
                             refs.append(media_ref)
 
             if html_body is not None:
