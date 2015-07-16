@@ -9,13 +9,20 @@
     float: right;
     margin-right: 65px;
 }
+.pull-left-20 {
+    float: left;
+    margin-left: 65px;
+}
 .panel-search {
     float: left;
     width: 30%;
 }
 .panel-search-result {
     float: right;
-    width: 70%;   
+    width: 70%;
+    .column-width {
+        width:50%;
+    }
 }
 .panel-subscriber {
     float: right;
@@ -26,38 +33,7 @@ div {
     -moz-column-rule: 4px outset #ff00ff; /* Firefox */
     column-rule: 4px outset #ff00ff;
 }
-/*
-.sd-typeahead {
-    position: relative;
-    input {
 
-    }
-    .item-list {
-        min-width: 190px;
-        max-width: 50%;
-        height:auto;
-        max-height: 170px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        .box-sizing(border-box);
-        background: #fff;
-        border: 1px #bbb;
-        .box-shadow(0 0 3px 0 #ccc);
-        position: absolute;
-        right: -5px;
-        top:4px;
-        z-index: 1;
-        ul {
-            li {
-                padding: 5px 10px;
-                &.active {
-                    background: #f0f0f0;
-                }
-            }
-        }
-    }
-}
-*/
 
 .filter-result-modal {
     position: absolute;

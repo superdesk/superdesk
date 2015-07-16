@@ -196,7 +196,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
     $scope.filterConditionLookup = {};
     $scope.publishFiltersLookup = {};
 
-    $scope.edit = function(pf) {
+    $scope.editFilter = function(pf) {
         $scope.origPublishFilter = pf || {};
         $scope.publishFilter = _.create($scope.origPublishFilter);
         $scope.publishFilter.name =  $scope.origPublishFilter.name;
@@ -205,7 +205,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.previewPublishFilter();
     };
 
-    $scope.cancel = function() {
+    $scope.close = function() {
         $scope.previewPublishFilter();
         $scope.origPublishFilter = null;
         $scope.publishFilter = null;
@@ -213,13 +213,13 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.test.article_id = null;
     };
 
-    $scope.save = function() {
+    $scope.saveFilter = function() {
         delete $scope.publishFilter.article_id;
         filters.savePublishFilter($scope.origPublishFilter, $scope.publishFilter)
             .then(
                 function() {
                     notify.success(gettext('Publish filter saved.'));
-                    $scope.cancel();
+                    $scope.close();
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues['validator exception'])) {
@@ -496,10 +496,30 @@ function FilterSearchController($scope, filters, notify) {
     $scope.operatorLookup = {};
     $scope.valueLookup = {};
     $scope.valueFieldLookup = {};
-    $scope.searchResult = {};
-    //var inputParams = {};
+    $scope.searchResult = null;
+    $scope.publishFiltersLookup = {};
 
     populateData();
+    fetchPublishFilters();
+
+    $scope.hideList = function () {
+        return true;
+    };
+
+    $scope.editView = function(filterId) {
+        var filter = _.find($scope.publishFilters, {_id: filterId.filter_id});
+        $scope.editFilter(filter);
+    };
+
+    function fetchPublishFilters() {
+        filters.getAllPublishFilters().then(function(_filters) {
+            $scope.publishFilters = _filters;
+            _.each($scope.publishFilters, function(filter) {
+                $scope.publishFiltersLookup[filter._id] = filter;
+            });
+        });
+    }
+
     function populateData() {
         filters.getFilterConditionParameters().then(function(params) {
             $scope.filterConditionParameters = params;
@@ -543,6 +563,13 @@ function FilterSearchController($scope, filters, notify) {
     };
 }
 
+function PublishFilterDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-publish/filters/view/publish_filters.html',
+        controller: PublishFiltersController
+    };
+}
+
 function FilterSearchDirective() {
     return {
         templateUrl: 'scripts/superdesk-publish/filters/view/filter-search.html',
@@ -559,8 +586,9 @@ function FilterSearchResultDirective() {
 angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
-    .controller('PublishFiltersController', PublishFiltersController)
+    //.controller('PublishFiltersController', PublishFiltersController)
     .controller('ProductionTestController', ProductionTestController)
     .directive('sdFilterSearch', FilterSearchDirective)
-    .directive('sdFiltersearchResult', FilterSearchResultDirective);
+    .directive('sdFiltersearchResult', FilterSearchResultDirective)
+    .directive('sdPublishFilter', PublishFilterDirective);
 })();
