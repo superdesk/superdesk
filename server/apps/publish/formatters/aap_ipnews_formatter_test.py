@@ -67,8 +67,7 @@ class AapIpNewsFormatterTest(TestCase):
                                   'subject_matter': 'international law', 'news_item_type': 'News',
                                   'subject_reference': '02011001', 'subject': 'crime, law and justice',
                                   'wordcount': '1', 'subject_detail': 'international court or tribunal',
-                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe',
-                                  'selector_codes': '3**'})
+                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
 
     def TestIPNewsHtmlToText(self):
         article = {
@@ -127,3 +126,18 @@ class AapIpNewsFormatterTest(TestCase):
                 if doc['category'] == 'F':
                     self.assertEqual(doc['subject_reference'], '04001005')
                     self.assertEqual(doc['subject_detail'], 'viniculture')
+
+    def Test_is_in_subject(self):
+        article = {
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+        }
+        f = AAPIpNewsFormatter()
+        self.assertTrue(f._is_in_subject(article, '150'))
+        self.assertFalse(f._is_in_subject(article, '151'))
+        self.assertTrue(f._is_in_subject(article, '04001'))
+
+    def Test_join_selector_codes(self):
+        f = AAPIpNewsFormatter()
+        result = f._join_selector_codes('ipnewS', 'newsi', 'cnewsi', 'cnewsi')
+        result_list = result.split()
+        self.assertEquals(len(result_list), 12)
