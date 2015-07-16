@@ -852,3 +852,46 @@ class OnFetchedMethodTestCase(ItemsServiceTestCase):
 
         self_link = result.get('_links', {}).get('self', {}).get('href')
         self.assertEqual(self_link, 'items?start_date=1975-12-31')
+
+
+class GetUriMethodTestCase(ItemsServiceTestCase):
+    """Tests for the _get_uri() helper method."""
+
+    def setUp(self):
+        super().setUp()
+
+        self.app = Flask(__name__)
+        self.app.config['PUBLICAPI_URL'] = 'http://api.com'
+        self.app.config['URLS'] = {
+            'items': 'items_endpoint',
+            'packages': 'packages_endpoint'
+        }
+
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+
+    def tearDown(self):
+        self.app_context.pop()
+        super().tearDown()
+
+    def test_generates_correct_uri_for_non_composite_items(self):
+        document = {
+            '_id': 'foo:bar',
+            'type': 'picture'
+        }
+
+        instance = self._make_one(datasource='items')
+        result = instance._get_uri(document)
+
+        self.assertEqual(result, 'http://api.com/items_endpoint/foo%3Abar')
+
+    def test_generates_correct_uri_for_composite_items(self):
+        document = {
+            '_id': 'foo:bar',
+            'type': 'composite'
+        }
+
+        instance = self._make_one(datasource='items')
+        result = instance._get_uri(document)
+
+        self.assertEqual(result, 'http://api.com/packages_endpoint/foo%3Abar')

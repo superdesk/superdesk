@@ -341,7 +341,7 @@
 {
     "_id": "tag:demodata.org,0011:ninjs_XYZ123",
     "type": "composite",
-    "profile": "text-photo",
+    "profile": "rich-interlinked-story",
     "version": "v1",
     "versioncreated": {"$date": "2015-05-03T07:48:51Z"},
     "pubstatus": "usable",
@@ -388,29 +388,13 @@
     "body_text": "Reporter: \"Don Vito Corleone, bongiorno!\", etc.",
     "body_html": "<b>Reporter:</b> &quot;Don Vito Corleone, bongiorno!&quot;, etc.",
     "associations": {
-        "mainpic": {
-            "type": "picture",
-            "versioncreated": {"$date": "2015-04-26T11:50:14Z"},
-            "byline": "Photo Grapher jr.",
-            "headline": "Don Vito Corleone in a restaurant",
-            "description_text": "Mafia boss enjoying red wine at lunch",
-            "description_html": "<p>Mafia boss enjoying red wine at lunch</p>",
-            "renditions": {
-                "main": {
-                    "href": "http://ninjs.example.com/pictures/don_vito.png",
-                    "mimetype": "image/png",
-                    "title": "Original Resolution",
-                    "height": 780,
-                    "width": 965
-                },
-                "small": {
-                    "href": "http://ninjs.example.com/pictures/small/don_vito.png",
-                    "mimetype": "image/png",
-                    "title": "Low Resolution",
-                    "height": 260,
-                    "width": 320
-                }
-            }
+        "videoFootage" : {
+            "_id": "tag:demodata.org,0002:ninjs_XYZ123",
+            "type": "video"
+        },
+        "relatedStory" : {
+            "_id": "tag:demodata.org,0012:ninjs_XYZ123",
+            "type": "composite"
         }
     }
 }
@@ -466,28 +450,12 @@
     "body_html": "<p>Want to try <em>McRide</em> or <em>McGhostHouse</em>?</p>",
     "associations": {
         "mainpic": {
-            "type": "picture",
-            "versioncreated": {"$date": "2014-08-11T09:39:02Z"},
-            "byline": "The Phototaker",
-            "headline": "Spain's first McTheme Park, main entrance",
-            "description_text": "Visitors waiting in a queue to visit McTheme Park",
-            "description_html": "<p>Visitors waiting in a queue to visit McTheme Park</p>",
-            "renditions": {
-                "main": {
-                    "href": "http://ninjs.example.com/pictures/mcthemepark_orig.jpg",
-                    "mimetype": "image/jpg",
-                    "title": "Original Resolution",
-                    "height": 900,
-                    "width": 1500
-                },
-                "thumbnail": {
-                    "href": "http://ninjs.example.com/pictures/small/mcthemepark_thumb.jpg",
-                    "mimetype": "image/jpg",
-                    "title": "Thumbnail Size",
-                    "height": 300,
-                    "width": 500
-                }
-            }
+            "_id": "tag:demodata.org,0001:ninjs_XYZ123",
+            "type": "picture"
+        },
+        "storyText": {
+            "_id": "tag:demodata.org,0003:ninjs_XYZ123",
+            "type": "text"
         }
     }
 }
