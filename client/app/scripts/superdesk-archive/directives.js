@@ -6,9 +6,9 @@
         'superdesk.ingest',
         'superdesk.workflow'
     ])
-        .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
+        .directive('sdItemLock', ['api', 'lock', 'privileges', 'asset', function(api, lock, privileges, asset) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/item-lock.html'),
                 scope: {item: '='},
                 link: function(scope) {
 
@@ -62,9 +62,9 @@
                 }
             };
         }])
-        .directive('sdInlineMeta', function() {
+        .directive('sdInlineMeta', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/inline-meta.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/inline-meta.html'),
                 scope: {
                     'placeholder': '@',
                     'showmeta': '=',
@@ -72,23 +72,23 @@
                     'setmeta': '&'
                 }
             };
-        })
-        .directive('sdMediaPreview', [function() {
+        }])
+        .directive('sdMediaPreview', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/preview.html'
+                templateUrl: asset.templateUrl('superdesk-archive/views/preview.html')
             };
         }])
-        .directive('sdMediaPreviewWidget', [function() {
+        .directive('sdMediaPreviewWidget', ['asset', function(asset) {
             return {
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
+                templateUrl: asset.templateUrl('superdesk-archive/archive-widget/item-preview.html')
             };
         }])
-        .directive('sdMediaView', ['keyboardManager', 'packages', function(keyboardManager, packages) {
+        .directive('sdMediaView', ['keyboardManager', 'packages', 'asset', function(keyboardManager, packages, asset) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/media-view.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/media-view.html'),
                 scope: {
                     items: '=',
                     item: '=',
@@ -178,12 +178,12 @@
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['userList', function(userList) {
+        .directive('sdMediaMetadata', ['userList', 'asset', function(userList, asset) {
             return {
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-archive/views/metadata-view.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/metadata-view.html'),
                 link: function(scope, elem) {
 
                     scope.$watch('item', reloadData);
@@ -208,12 +208,12 @@
                 }
             };
         }])
-        .directive('sdMediaRelated', ['familyService', 'superdesk', function(familyService, superdesk) {
+        .directive('sdMediaRelated', ['familyService', 'superdesk', 'asset', function(familyService, superdesk, asset) {
             return {
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-archive/views/related-view.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/related-view.html'),
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
                         familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
@@ -227,12 +227,12 @@
                 }
             };
         }])
-        .directive('sdFetchedDesks', ['desks', 'familyService', '$location', function(desks, familyService, $location) {
+        .directive('sdFetchedDesks', ['desks', 'familyService', '$location', 'asset', function(desks, familyService, $location, asset) {
             return {
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/fetched-desks.html'),
                 link: function(scope, elem) {
                     scope.$watchGroup(['item', 'item.archived'], function() {
                         if (scope.item) {
@@ -274,10 +274,10 @@
                 }
             };
         }])
-        .directive('sdSingleItem', [ function() {
+        .directive('sdSingleItem', ['asset', function(asset) {
 
             return {
-                templateUrl: 'scripts/superdesk-archive/views/single-item-preview.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/single-item-preview.html'),
                 scope: {
                     item: '=',
                     contents: '=',
@@ -285,10 +285,10 @@
                 }
             };
         }])
-        .directive('sdMediaBox', ['$location', 'lock', 'multi', function($location, lock, multi) {
+        .directive('sdMediaBox', ['$location', 'lock', 'multi', 'asset', function($location, lock, multi, asset) {
             return {
                 restrict: 'A',
-                templateUrl: 'scripts/superdesk-archive/views/media-box.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/media-box.html'),
                 link: function(scope, element, attrs) {
                     scope.lock = {isLocked: false};
 
@@ -296,10 +296,10 @@
                         switch (view) {
                         case 'mlist':
                         case 'compact':
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-list.html';
+                            scope.itemTemplate = asset.templateUrl('superdesk-archive/views/media-box-list.html');
                             break;
                         default:
-                            scope.itemTemplate = 'scripts/superdesk-archive/views/media-box-grid.html';
+                            scope.itemTemplate = asset.templateUrl('superdesk-archive/views/media-box-grid.html');
                         }
                     });
 
@@ -352,9 +352,9 @@
                 }
             };
         }])
-        .directive('sdItemRendition', function() {
+        .directive('sdItemRendition', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/item-rendition.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/item-rendition.html'),
                 scope: {
                     item: '=',
                     rendition: '@',
@@ -405,7 +405,7 @@
                     }
                 }
             };
-        })
+        }])
         .directive('sdRatioCalc', ['$window', function($window) {
             return {
                 link: function(scope, elem) {
@@ -442,10 +442,10 @@
                 }
             };
         }])
-        .directive('sdProviderMenu', ['$location', function($location) {
+        .directive('sdProviderMenu', ['$location', 'asset', function($location, asset) {
             return {
                 scope: {items: '='},
-                templateUrl: 'scripts/superdesk-archive/views/provider-menu.html',
+                templateUrl: asset.templateUrl('superdesk-archive/views/provider-menu.html'),
                 link: function(scope, element, attrs) {
 
                     scope.setProvider = function(provider) {
@@ -465,9 +465,9 @@
             };
         }])
 
-        .directive('sdGridLayout', function() {
+        .directive('sdGridLayout', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',
+                templateUrl: asset.templateUrl('superdesk-items-common/views/grid-layout.html'),
                 scope: {items: '='},
                 link: function(scope, elem, attrs) {
                     scope.view = 'mgrid';
@@ -477,7 +477,7 @@
                     };
                 }
             };
-        })
+        }])
 
         .service('familyService', ['api', 'desks', function(api, desks) {
             this.fetchItems = function(familyId, excludeItem) {

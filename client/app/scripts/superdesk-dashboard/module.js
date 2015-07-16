@@ -91,14 +91,14 @@ define([
         };
     })
 
-    .config(['superdeskProvider', function(superdesk) {
+    .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
         superdesk.activity('/workspace', {
             label: gettext('Workspace'),
             description: gettext('Customize your widgets and views'),
             controller: 'DashboardController',
             controllerAs: 'dashboard',
-            templateUrl: 'scripts/superdesk-dashboard/views/workspace.html',
-            topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+            templateUrl: asset.templateUrl('superdesk-dashboard/views/workspace.html'),
+            topTemplateUrl: asset.templateUrl('superdesk-dashboard/views/workspace-topnav.html'),
             priority: -1000,
             category: superdesk.MENU_MAIN,
             reloadOnSearch: true

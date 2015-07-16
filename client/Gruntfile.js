@@ -14,7 +14,31 @@ module.exports = function (grunt) {
         distDir: 'dist',
         bowerDir: 'bower',
         poDir: 'po',
-        livereloadPort: 35729
+        livereloadPort: 35729,
+        ngtemplates: {
+            app: {
+                cwd: "app",
+                src: "scripts/**/*.html",
+                dest: "app/scripts/templates.js",
+                options: {
+                    htmlmin: {
+                        collapseWhitespace: true,
+                        collapseBooleanAttributes: true
+                    },
+                    bootstrap:  function(module, script) {
+                        return '\
+                        define(["angular"], function (angular) {\
+                            "use strict";\
+                            var templates = angular.module("templates", []);\
+                            templates.run(function($templateCache) {\
+                              ' + script + '\
+                            });\
+                            return templates;\
+                        });';
+                    }
+                }
+            }
+        }
     };
 
     grunt.initConfig(config);
@@ -24,6 +48,9 @@ module.exports = function (grunt) {
         config: config,
         configPath: require('path').join(process.cwd(), 'tasks', 'options')
     });
+
+    // automatically minify and cache HTML templates into $templateCache
+    grunt.loadNpmTasks('grunt-angular-templates');
 
     grunt.registerTask('style', ['less:dev', 'cssmin']);
 

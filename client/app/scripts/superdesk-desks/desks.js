@@ -73,10 +73,10 @@
         });
     }
 
-    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', 'cards', '$timeout', '$q', '$location', '$anchorScroll'];
-    function StageItemListDirective(search, api, superdesk, desks, cards, $timeout, $q, $location, $anchorScroll) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks', 'cards', '$timeout', '$q', '$location', '$anchorScroll', 'asset'];
+    function StageItemListDirective(search, api, superdesk, desks, cards, $timeout, $q, $location, $anchorScroll, asset) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
+            templateUrl: asset.templateUrl('superdesk-desks/views/stage-item-list.html'),
             scope: {
                 stage: '=',
                 total: '=',
@@ -286,10 +286,10 @@
         };
     }
 
-    TaskStatusItemsDirective.$inject = ['search', 'api', 'desks'];
-    function TaskStatusItemsDirective(search, api, desks) {
+    TaskStatusItemsDirective.$inject = ['search', 'api', 'desks', 'asset'];
+    function TaskStatusItemsDirective(search, api, desks, asset) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/task-status-items.html',
+            templateUrl: asset.templateUrl('superdesk-desks/views/task-status-items.html'),
             scope: {
                 status: '=',
                 desk: '=',
@@ -321,10 +321,10 @@
         };
     }
 
-    UserRoleItemListDirective.$inject = ['desks', 'usersService'];
-    function UserRoleItemListDirective(desks, usersService) {
+    UserRoleItemListDirective.$inject = ['desks', 'usersService', 'asset'];
+    function UserRoleItemListDirective(desks, usersService, asset) {
         return {
-            templateUrl: 'scripts/superdesk-desks/views/user-role-items.html',
+            templateUrl: asset.templateUrl('superdesk-desks/views/user-role-items.html'),
             scope: {
                 role: '=',
                 desk: '=',
@@ -426,12 +426,12 @@
     };
 
     app
-        .config(['superdeskProvider', function(superdesk) {
+        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk
                 .activity('/desks/', {
                     label: gettext('Master Desk'),
                     description: gettext('Navigate through the newsroom'),
-                    templateUrl: 'scripts/superdesk-desks/views/main.html',
+                    templateUrl: asset.templateUrl('superdesk-desks/views/main.html'),
                     controller: DeskListController,
                     category: superdesk.MENU_MAIN,
                     privileges: {desks: 1}
@@ -440,7 +440,7 @@
                 .activity('/settings/desks', {
                     label: gettext('Desks'),
                     controller: DeskSettingsController,
-                    templateUrl: 'scripts/superdesk-desks/views/settings.html',
+                    templateUrl: asset.templateUrl('superdesk-desks/views/settings.html'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -800,
                     privileges: {desks: 1}
@@ -595,7 +595,6 @@
                             if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
-                            return self.activeDeskId;
                         });
                     },
                     fetchCurrentStageId: function() {
@@ -611,13 +610,12 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (
-                            !this.userDesks || !this.userDesks._items ||
-                            this.userDesks._items.length === 0
-                        ) {
-                            return null;
+                        if (this.activeDeskId === 'personal' ||
+                            !this.userDesks ||
+                            !this.userDesks._items ||
+                            !this.userDesks._items.length) {
+                            return 'personal';
                         }
-
                         if (!this.activeDeskId || !_.find(this.userDesks._items, {_id: this.activeDeskId})) {
                             return this.userDesks._items[0]._id;
                         }
@@ -651,7 +649,11 @@
                         return api.desks.getById(Id);
                     },
                     getCurrentDesk: function() {
-                        return this.deskLookup[this.getCurrentDeskId()] || null;
+                        if (this.getCurrentDeskId() === 'personal') {
+                            return {'_id': 'personal'};
+                        } else {
+                            return this.deskLookup[this.getCurrentDeskId()];
+                        }
                     },
                     setWorkspace: function(deskId, stageId) {
                         deskId = deskId || null;
@@ -728,7 +730,7 @@
                 controller: DeskConfigController
             };
         })
-        .directive('sdDeskConfigModal', function() {
+        .directive('sdDeskConfigModal', ['asset', function(asset) {
             return {
                 scope: {
                     modalActive: '=active',
@@ -738,12 +740,12 @@
                     cancel: '&'
                 },
                 require: '^sdDeskConfig',
-                templateUrl: 'scripts/superdesk-desks/views/desk-config-modal.html',
+                templateUrl: asset.templateUrl('superdesk-desks/views/desk-config-modal.html'),
                 link: function(scope, elem, attrs, ctrl) {
 
                 }
             };
-        })
+        }])
         .directive('sdFocusElement', [function() {
             return {
                 link: function(scope, elem, attrs) {
@@ -755,9 +757,9 @@
                 }
             };
         }])
-        .directive('sdContentExpiry', [function() {
+        .directive('sdContentExpiry', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-desks/views/content-expiry.html',
+                templateUrl: asset.templateUrl('superdesk-desks/views/content-expiry.html'),
                 scope: {
                     item: '=',
                     preview: '=',
@@ -1040,13 +1042,13 @@
                 }
             };
         }])
-        .directive('sdUserSelectList', ['$filter', 'api', function($filter, api) {
+        .directive('sdUserSelectList', ['$filter', 'api', 'asset', function($filter, api, asset) {
             return {
                 scope: {
                     exclude: '=',
                     onchoose: '&'
                 },
-                templateUrl: 'scripts/superdesk-desks/views/user-select.html',
+                templateUrl: asset.templateUrl('superdesk-desks/views/user-select.html'),
                 link: function(scope, elem, attrs) {
 
                     var ARROW_UP = 38, ARROW_DOWN = 40, ENTER = 13;
@@ -1207,15 +1209,15 @@
                 }
             };
         }])
-        .directive('sdActionPicker', ['desks', 'macros',
-            function(desks, macros) {
+        .directive('sdActionPicker', ['desks', 'macros', 'asset',
+            function(desks, macros, asset) {
             return {
                 scope: {
                     desk: '=',
                     stage: '=',
                     macro: '='
                 },
-                templateUrl: 'scripts/superdesk-desks/views/actionpicker.html',
+                templateUrl: asset.templateUrl('superdesk-desks/views/actionpicker.html'),
                 link: function(scope, elem, attrs) {
                     scope.desks = null;
                     scope.deskStages = null;
@@ -1244,8 +1246,9 @@
         .directive('sdStageHeader', StageHeaderDirective)
         ;
 
-    function StageHeaderDirective() {
-        return {templateUrl: 'scripts/superdesk-desks/views/stage-header.html'};
+    StageHeaderDirective.$inject = ['asset'];
+    function StageHeaderDirective(asset) {
+        return {templateUrl: asset.templateUrl('superdesk-desks/views/stage-header.html')};
     }
 
     return app;

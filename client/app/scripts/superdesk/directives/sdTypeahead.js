@@ -21,12 +21,12 @@ define(['angular'], function(angular) {
          * @scope {Function} select - callback for select item aciton
          *
          */
-        directive('sdTypeahead', ['$timeout', function($timeout) {
+        directive('sdTypeahead', ['$timeout', 'asset', function($timeout, asset) {
             return {
                 restrict: 'A',
                 transclude: true,
                 replace: true,
-                templateUrl: 'scripts/superdesk/views/sdTypeahead.html',
+                templateUrl: asset.templateUrl('superdesk/views/sdTypeahead.html'),
                 scope: {
                     search: '&',
                     select: '&',
