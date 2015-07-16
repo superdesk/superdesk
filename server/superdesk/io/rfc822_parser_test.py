@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8; -*-
 #
 # This file is part of Superdesk.
@@ -10,9 +11,10 @@
 
 
 import os
+import superdesk
 from superdesk.io.rfc822 import rfc822Parser
-from superdesk.tests import TestCase
-from superdesk.tests import setup
+from superdesk.tests import TestCase, setup
+from apps.users.services import UsersService
 
 
 class rfc822TestCase(TestCase):
@@ -21,6 +23,15 @@ class rfc822TestCase(TestCase):
     def setUp(self):
         setup(context=self)
         with self.app.app_context():
+            # mock one user:
+            user_service = UsersService(
+                'users', backend=superdesk.get_backend())
+            self.user_id = user_service.create([{
+                'name': 'user',
+                'user_type': 'administrator',
+                'email': 'asender@a.com.au'
+            }])[0]
+
             provider = {'name': 'Test'}
             dirname = os.path.dirname(os.path.realpath(__file__))
             fixture = os.path.join(dirname, 'fixtures', self.filename)
@@ -34,6 +45,11 @@ class rfc822TestCase(TestCase):
 
     def test_body(self):
         self.assertEquals(self.items[0]['body_html'].strip(), '<div>body text<br/><div>\n</div></div>')
+
+    def test_from(self):
+        self.assertEqual(self.items[0]['original_source'],
+                         'a sender <asender@a.com.au>')
+        self.assertEqual(self.items[0]['original_creator'], self.user_id)
 
 
 class rfc822ComplexTestCase(TestCase):
@@ -54,6 +70,11 @@ class rfc822ComplexTestCase(TestCase):
         self.assertEqual(len(self.items), 3)
         for item in self.items:
             self.assertIn('versioncreated', item)
+
+    def test_from(self):
+        self.assertEqual(self.items[0]['original_source'],
+                         'someone <a@a.com.au>')
+        self.assertNotIn('original_creator', self.items[0])
 
 
 class rfc822OddCharSet(TestCase):

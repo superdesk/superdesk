@@ -54,3 +54,5 @@ class ItemsResource(Resource):
 
     item_methods = ['GET']
     resource_methods = ['GET']
+
+    mongo_prefix = 'PUBLICAPI_MONGO'

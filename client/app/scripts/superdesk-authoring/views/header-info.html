@@ -1,0 +1,136 @@
+<button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
+    <span class="button-lable" translate>Mode: </span>
+    <span ng-show="proofread" translate>Proofread</span>
+    <span ng-show="!proofread" translate>Normal</span>
+</button>
+
+<span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
+<span sd-theme-select ng-if="!proofread" data-key="theme"></span>
+
+<ul class="metadata-list" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
+    <li class="date-info full-width clearfix">
+        <label translate>Created</label>
+        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}" ng-if="item.firstcreated">{{ item.firstcreated|reldate }}</time>
+        <label translate>by</label>
+        <b>{{userLookup[item.original_creator].display_name}}</b>
+        <div class="modified" ng-if="item.versioncreated">
+            <label translate>Modified</label>
+            <time datetime="{{ item.versioncreated}}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
+        </div>
+    </li>
+
+    <li class="full-width general-info">
+        <div class="item info-icons">
+            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected"></i>
+            
+            <div class="slider-icon pull-left">
+                <div class="dropdown dropleft" dropdown>
+                    <i class="urgency-icon-{{item.urgency}} dropdown-toggle" dropdown-toggle></i>
+                    <div class="dropdown-menu">
+                        <label>{{ "URGENCY" | translate }}</label>
+                        <div class="item">
+                            <label><i class="urgency-icon-{{item.urgency}}"></i></label>
+                            <div class="data">
+                                <div sd-meta-slider 
+                                     data-list="metadata.newsvalue" 
+                                     data-item="item" 
+                                     data-field="urgency" 
+                                     data-change="autosave(item)" 
+                                     ng-disabled="!_editable">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-icon pull-left" ng-if="item.urgency">
+                <div class="dropdown dropleft" dropdown>
+                    <i class="output-item-label label-{{item.urgency}} dropdown-toggle" dropdown-toggle>{{ item.urgency }}</i>
+                    <div class="dropdown-menu">
+                        <label>{{ "NEWS VALUE" | translate }}</label>
+                        <div class="item">
+                            <div class="data">
+                                <div sd-meta-slider 
+                                     data-list="metadata.newsvalue" 
+                                     data-item="item" 
+                                     data-field="urgency" 
+                                     data-change="autosave(item)" 
+                                     ng-disabled="!_editable">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <label class="word-count"><b>{{item.word_count ? item.word_count : 0}}</b> {{item.word_count === 1 ? "WORD" : "WORDS"}}</label>
+        </div>
+        <div class="item" ng-if="item.signal">
+            <span class="signal">{{ item.signal }}</span>
+        </div>
+        <div class="item">
+            <label translate>SOURCE</label>
+            <div class="data" sd-meta-ingest data-item="item"></div>
+        </div>
+        <div class="item" ng-if="metadata.categories">
+            <div class="data" sd-meta-dropdown data-list="metadata.categories" data-item="item" data-field="anpa-category" data-change="autosave(item)" ng-disabled="!_editable"></div>
+        </div>
+        <div class="item">
+            <label translate>RELATED</label>
+            <div class="data">{{relatedItems._items.length}}</div>
+        </div>
+    </li>
+
+    <li class="keyword">
+        <label translate>KEYWORD</label>
+        <div class="data">
+            <input type="text"
+                   id="keyword"
+                   ng-model="item.slugline"
+                   ng-change="autosave(item)"
+                   ng-disabled="!_editable"
+                   ng-trim="false">
+        </div>
+    </li>
+
+    <li>
+        <label translate>TAKEKEY</label>
+        <div class="data">
+            <input type="text"
+                   id="anpa_take_key"
+                   ng-model="item.anpa_take_key"
+                   ng-change="autosave(item)"
+                   ng-disabled="!_editable"
+                   ng-trim="false">
+        </div>
+    </li>
+
+    <li>
+        <label translate>LOCATED</label>
+        <div class="data">
+            <input type="text" ng-model="item.located" ng-disabled="!_editable" ng-change="autosave(item)">
+        </div>
+    </li>
+
+    <li class="terms-box">
+        <label translate>GENRE</label>
+        <div class="data" sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-header="true" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
+    </li>
+
+    <li class="full-width terms-box">
+        <label translate>SUBJECT</label>
+        <div class="data" sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
+    </li>
+
+    <li class="full-width ed-note">
+        <label translate>ED. NOTE</label>
+        <div class="data">
+            <input type="text" 
+                   sd-auto-height 
+                   ng-model="item.ednote" 
+                   ng-disabled="!_editable" 
+                   ng-change="autosave(item)">
+        </div>
+    </li>
+</ul>

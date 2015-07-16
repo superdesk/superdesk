@@ -4,7 +4,7 @@
 			<label translate>GUID</label>
 			<div class="data">{{item.guid}}</div>
 		</li>
-        <li>
+                <li>
 			<label translate>Unique name</label>
 			<div class="data">
 				<input type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
@@ -24,10 +24,6 @@
 			<label translate>Original source</label>
 			<div class="data">{{ item.original_source}}</div>
 		</li>
-		<li>
-			<label translate>Source</label>
-			<div class="data" sd-meta-ingest data-item="item"></div>
-		</li>
 		<li ng-if="item.ingest_provider_sequence">
 			<label translate>Provider sequence</label>
 			<div class="data">{{item.ingest_provider_sequence}}</div>
@@ -46,14 +42,6 @@
 				<span class="state-label for-publication" ng-show="!item.marked_for_not_publication" translate>For Publication</span>
 			</label>
 		</li>
-		<li ng-if="item.firstcreated">
-			<label translate>Created</label>
-			<div class="data" sd-reldate-complex ng-model="item.firstcreated"></div>
-		</li>
-		<li ng-if="item.versioncreated">
-			<label translate>Last updated</label>
-			<div class="data" sd-reldate-complex ng-model="item.versioncreated"></div>
-		</li>
 		<li ng-if="item.sign_off">
 			<label translate>Sign-off</label>
 			<div class="data">{{item.sign_off}}</div>
@@ -63,57 +51,21 @@
 			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
 		</li>
 		<li>
-			<label translate>Urgency</label>
-			<div class="data visible small" ng-if="metadata.newsvalue">
-				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item" data-field="urgency" data-change="autosave(item)" ng-disabled="!_editable" ></div>
-			</div>
-		</li>
-		<li>
 			<label translate>Priority</label>
 			<div class="data visible small" ng-if="metadata.priority">
 				<div sd-meta-dropdown data-list="metadata.priority" data-item="item" data-field="priority" data-change="autosave(item)" ng-disabled="!_editable" ></div>
 			</div>
 		</li>
-		<li class="terms-box">
-			<label translate>Subject</label>
-			<div sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" ng-disabled="!_editable" data-change="autosave(item)"></div>
-		</li>
-		<li class="terms-box">
-			<label translate>ANPA category</label>
-			<div ng-if="metadata.categories">
-				<div sd-meta-terms data-list="metadata.categories" data-item="item" data-field="anpa_category" data-change="autosave(item)" ng-disabled="!_editable"></div>
-			</div>
-		</li>
-		<li class="terms-box">
-			<label translate>Genre</label>
-			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
-		</li>
-		<li class="terms-box">
-			<label translate>Targeted For</label>
-			<div ng-if="metadata.targeted_for">
-				<span sd-check ng-model="item.negation" tooltip="Adds Negation" tooltip-placement="right" ng-disabled="!_editable"></span>
-				<select id="targeted_for_list" ng-model="item.targeted_for_value" ng-disabled="!_editable">
-					<option value=""></option>
-					<option value="{{:: g.value}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
-				</select>
-				<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="!_editable" translate>Add</button>
-				<div class="terms" ng-if="item['targeted_for'].length">
-					<ul>
-						<li ng-repeat="t in item['targeted_for']" ng-click="removeTargeted(t)">{{ :: t['allow'] === false ? 'Not ' + t.name : t.name}}<i class="icon-close-small"></i></li>
-					</ul>
-				</div>
+		<li>
+			<label translate>Restrictions</label>
+			<div class="data visible" ng-if="metadata.geographical_restrictions">
+				<div sd-meta-dropdown data-list="metadata.geographical_restrictions" data-item="item" data-field="restrictions" data-change="autosave(item)" ng-disabled="!_editable"></div>
 			</div>
 		</li>
 		<li>
 			<label translate>Usageterms</label>
 			<div class="data">
 				<input type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
-			</div>
-		</li>
-		<li class="ednote">
-			<label translate>Editorial note</label>
-			<div class="data">
-				<textarea sd-auto-height ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
 			</div>
 		</li>
 		<li class="terms-box">
@@ -177,10 +129,6 @@
 				<label translate>Desk</label>
 				<div class="data">{{deskLookup[item.task.desk].name}}</div>
 			</li>
-            <li>
-                <label translate>Creator</label>
-                <div class="data">{{userLookup[item.original_creator].display_name}}</div>
-            </li>
 			<li ng-if="item.task.user">
 				<label translate>Assignee</label>
 				<div class="data">{{userLookup[item.task.user].display_name}}</div>
