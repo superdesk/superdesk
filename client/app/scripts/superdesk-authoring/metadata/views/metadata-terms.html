@@ -1,32 +1,42 @@
-<div class="term-editor data visible">
+<div class="term-editor data visible" ng-show="!header">
     <div sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled">
         <ul>
             <li typeahead-item="t" ng-repeat="t in terms ">{{ :: t.name }}</li>
         </ul>
     </div>
 </div>
-<div class="dropdown dropdown-noarrow dropdown-nested dropdown-bigger pull-right" dropdown>
-    <button class="dropdown-toggle" dropdown-toggle ng-show="activeTree.length" ng-disabled="disabled">
-        <i class="icon-list-menu"></i>
+<div class="dropdown dropleft dropdown-bigger" dropdown>
+    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-show="header && !disabled">
+        <i class="icon-white icon-plus-large"></i>
     </button>
-    <ul class="dropdown-menu nested-menu" ng-show="activeTree.length">
-        <li ng-if="activeTerm">
-            <i class="backlink level-up" ng-click="openParent(activeTerm, $event)"></i>
+    <ul class="dropdown-menu nested-menu">
+        <li ng-show="!activeTerm && header" ng-class="{single : !activeTree.length}">
+            <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" data-disabled="disabled" ng-click="$event.stopPropagation()">
+                <li typeahead-item="t" ng-repeat="t in terms "><button>{{ :: t.name }}</button></li>
+            </ul>
+        </li>
+
+        <li class="levelup" ng-if="activeTerm">
+            <i class="backlink" ng-click="openParent(activeTerm, $event)"></i>
             <button ng-click="selectTerm(activeTerm)">
                 <b class="category">{{ activeTerm.name }}</b>
                 <b class="category-hover">{{ :: "Choose entire category" | translate }}</b>
             </button>
         </li>
-        <li ng-if="activeTerm" class="divider"></li>
 
-        <li ng-repeat="term in activeTree track by term.qcode">
-            <button ng-if="tree[term.qcode]" class="nested-toggle" ng-click="openTree(term, $event)">{{ :: term.name }} <i class="icon-chevron-right-thin submenu-icon"></i></button>
-            <button ng-if="!tree[term.qcode]" ng-click="selectTerm(term)">{{ :: term.name }}</button>
+        <li ng-if="activeTree.length">
+            <ul sd-shadow class="main-list">
+                <li ng-repeat="term in activeTree track by term.qcode">
+                    <button ng-if="tree[term.qcode]" class="nested-toggle" ng-click="openTree(term, $event)">{{ :: term.name }} <i class="icon-chevron-right-thin submenu-icon"></i></button>
+                    <button ng-if="!tree[term.qcode]" ng-click="selectTerm(term)">{{ :: term.name }}</button>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>
 <div class="terms" ng-if="item[field].length">
     <ul>
-        <li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}<i class="icon-close-small"></i></li>
+        <li ng-if="!disabled" class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}</li>
+        <li ng-if="disabled" class="pull-left disabled" ng-repeat="t in item[field]">{{ :: t.name}}</li>
     </ul>
 </div>

@@ -1599,6 +1599,7 @@
         .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
+        .directive('sdHeaderInfo', headerInfoDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -1773,6 +1774,26 @@
                         scope.action = 'edit';
                     });
                 };
+            }
+        };
+    }
+
+    headerInfoDirective.$inject = ['metadata', 'familyService'];
+    function headerInfoDirective(metadata, familyService) {
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
+            link: function (scope, elem, attrs) {
+                scope.$watch('item', function (item) {
+                    if (!item) {
+                        return;
+                    }
+
+                    scope.loaded = true;
+                    familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
+                            .then(function (items) {
+                                scope.relatedItems = items;
+                            });
+                });
             }
         };
     }
