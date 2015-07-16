@@ -21,8 +21,8 @@
 
     <li class="full-width general-info">
         <div class="item info-icons">
-            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected"></i>
-            
+            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected" tooltip="Article Type" tooltip-placement="middle"></i>
+
             <div class="slider-icon pull-left">
                 <div class="dropdown dropleft" dropdown>
                     <i class="urgency-icon-{{item.urgency}} dropdown-toggle" dropdown-toggle></i>
@@ -73,9 +73,6 @@
             <label translate>SOURCE</label>
             <div class="data" sd-meta-ingest data-item="item"></div>
         </div>
-        <div class="item" ng-if="metadata.categories">
-            <div class="data" sd-meta-dropdown data-list="metadata.categories" data-item="item" data-field="anpa-category" data-change="autosave(item)" ng-disabled="!_editable"></div>
-        </div>
         <div class="item">
             <label translate>RELATED</label>
             <div class="data">{{relatedItems._items.length}}</div>
@@ -116,6 +113,11 @@
     <li class="terms-box">
         <label translate>GENRE</label>
         <div class="data" sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-header="true" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
+    </li>
+
+    <li class="full-width terms-box" ng-if="metadata.categories">
+        <label translate>CATEGORY</label>
+        <div class="data" sd-meta-terms data-item="item" data-field="anpa_category" data-unique="qcode" data-list="metadata.categories" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
     </li>
 
     <li class="full-width terms-box">

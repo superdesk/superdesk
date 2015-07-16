@@ -122,9 +122,10 @@ class BasePublishService(BaseService):
                     queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
                 else:
                     # if item is going to be sent to digital subscribers, package it as a take
-                    if self.sending_to_digital_subscribers(updates):
-                        updated = copy(original)
-                        updated.update(updates)
+                    updated = copy(original)
+                    updated.update(updates)
+
+                    if self.sending_to_digital_subscribers(updated):
                         # create a takes package
                         package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
                         original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
