@@ -1,0 +1,42 @@
+{
+    "rules": {
+        "indent": [2, 4],
+        "quotes": [2, "single"],
+        "linebreak-style": [2, "unix"],
+        "semi": [2, "always"],
+        "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+        "camelcase": [2, {"properties": "never"}],
+        "comma-dangle": [2, "never"],
+        "no-cond-assign": [2, "except-parens"],
+        "valid-jsdoc": [2, {"requireReturn": false, "requireReturnDescription": false}],
+        "array-bracket-spacing": [2, "never"],
+        "brace-style": [2, "1tbs", {"allowSingleLine": false}],
+        "comma-style": [2, "last"],
+        "computed-property-spacing": [2, "never"],
+        "consistent-this": [2, "self"],
+        "no-underscore-dangle": 0,
+        "no-use-before-define": 0,
+        "no-lonely-if": 2,
+        "no-multiple-empty-lines": [2, {"max": 2}],
+        "no-nested-ternary": 2,
+        "no-unneeded-ternary": 2,
+        "object-curly-spacing": [2, "never"],
+        "space-after-keywords": [2, "always"],
+        "space-before-blocks": [2, "always"],
+        "space-in-parens": [2, "never"]
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "jasmine": true,
+        "amd": true
+    },
+    "globals": {
+        "$": false,
+        "_": false,
+        "angular": false,
+        "gettext": false,
+        "inject": false,
+        "moment": false
+    }
+}

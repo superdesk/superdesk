@@ -1,0 +1,10 @@
+.tmp/*
+dist/*
+bower/*
+report/*
+coverage/*
+node_modules/*
+app/scripts/bower_components/*
+
+po/*
+app/scripts/translations.js
