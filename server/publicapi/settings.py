@@ -32,9 +32,10 @@ def env(variable, fallback_value=None):
         else:
             return env_value
 
-
 PUBLICAPI_MONGO_DBNAME = 'publicapi'
-PUBLICAPI_MONGO_URI = os.environ.get('PUBLICAPI_MONGO_URI')
+PUBLICAPI_MONGO_URI = os.environ.get(
+    'PUBLICAPI_MONGO_URI',
+    'mongodb://localhost/' + PUBLICAPI_MONGO_DBNAME)
 
 INSTALLED_APPS = [
     'publicapi.items',
