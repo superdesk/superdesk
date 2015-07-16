@@ -130,14 +130,12 @@ define([
         };
     }
 
-    ArchiveService.$inject = ['desks', 'storage'];
-    function ArchiveService(desks, storage) {
+    ArchiveService.$inject = ['desks', 'session'];
+    function ArchiveService(desks, session) {
         this.addTaskToArticle = function (item) {
             if ((!item.task || !item.task.desk) && desks.activeDeskId && desks.userDesks) {
-                var user = storage.getItem('sess:user');
                 var currentDesk = _.find(desks.userDesks._items, {_id: desks.activeDeskId});
-
-                item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': user._id};
+                item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': session.identity._id};
             }
         };
     }
