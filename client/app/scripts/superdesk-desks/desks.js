@@ -322,7 +322,7 @@
     }
 
     UserRoleItemListDirective.$inject = ['desks', 'usersService', 'asset'];
-    function UserRoleItemListDirective(desks, usersService, asset) {
+    function UserRoleItemListDirective(desks, usersService) {
         return {
             templateUrl: asset.templateUrl('superdesk-desks/views/user-role-items.html'),
             scope: {
@@ -426,7 +426,7 @@
     };
 
     app
-        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
+        .config(['superdeskProvider', 'assetProvider', function(superdesk) {
             superdesk
                 .activity('/desks/', {
                     label: gettext('Master Desk'),
@@ -595,6 +595,7 @@
                             if (angular.isDefined(result)) {
                                 self.activeDeskId = result;
                             }
+                            return self.activeDeskId;
                         });
                     },
                     fetchCurrentStageId: function() {
@@ -610,12 +611,13 @@
                         });
                     },
                     getCurrentDeskId: function() {
-                        if (this.activeDeskId === 'personal' ||
-                            !this.userDesks ||
-                            !this.userDesks._items ||
-                            !this.userDesks._items.length) {
-                            return 'personal';
+                        if (
+                            !this.userDesks || !this.userDesks._items ||
+                            this.userDesks._items.length === 0
+                        ) {
+                            return null;
                         }
+
                         if (!this.activeDeskId || !_.find(this.userDesks._items, {_id: this.activeDeskId})) {
                             return this.userDesks._items[0]._id;
                         }
@@ -649,11 +651,7 @@
                         return api.desks.getById(Id);
                     },
                     getCurrentDesk: function() {
-                        if (this.getCurrentDeskId() === 'personal') {
-                            return {'_id': 'personal'};
-                        } else {
-                            return this.deskLookup[this.getCurrentDeskId()];
-                        }
+                        return this.deskLookup[this.getCurrentDeskId()] || null;
                     },
                     setWorkspace: function(deskId, stageId) {
                         deskId = deskId || null;
@@ -730,7 +728,7 @@
                 controller: DeskConfigController
             };
         })
-        .directive('sdDeskConfigModal', ['asset', function(asset) {
+        .directive('sdDeskConfigModal', ['asset' function(asset) {
             return {
                 scope: {
                     modalActive: '=active',
@@ -745,7 +743,7 @@
 
                 }
             };
-        }])
+        })
         .directive('sdFocusElement', [function() {
             return {
                 link: function(scope, elem, attrs) {
@@ -1209,7 +1207,7 @@
                 }
             };
         }])
-        .directive('sdActionPicker', ['desks', 'macros', 'asset',
+        .directive('sdActionPicker', ['desks', 'macros', 'asset'
             function(desks, macros, asset) {
             return {
                 scope: {
