@@ -13,9 +13,10 @@ define([
      * <div sd-toggle-box data-title="Some title" data-open="true" data-icon="list"></div>
      *
      */
-    function ToggleBoxDirective() {
+    ToggleBoxDirective.$inject = ['asset'];
+    function ToggleBoxDirective(asset) {
         return {
-            templateUrl: 'scripts/superdesk/ui/views/toggle-box.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/toggle-box.html'),
             transclude: true,
             scope: true,
             link: function($scope, element, attrs) {
@@ -106,10 +107,10 @@ define([
         return service;
     }
 
-    WizardDirective.$inject = [];
-    function WizardDirective() {
+    WizardDirective.$inject = ['asset'];
+    function WizardDirective(asset) {
         return {
-            templateUrl: 'scripts/superdesk/ui/views/wizard.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/wizard.html'),
             scope: {
                 currentStep: '=',
                 finish: '&',
@@ -185,10 +186,10 @@ define([
         };
     }
 
-    WizardStepDirective.$inject = [];
-    function WizardStepDirective() {
+    WizardStepDirective.$inject = ['asset'];
+    function WizardStepDirective(asset) {
         return {
-            templateUrl: 'scripts/superdesk/ui/views/wizardStep.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/wizardStep.html'),
             scope: {
                 title: '@',
                 code: '@',
@@ -332,10 +333,11 @@ define([
         return service;
     }
 
-    function DatepickerWrapper() {
+    DatepickerWrapper.$inject = ['asset'];
+    function DatepickerWrapper(asset) {
         return {
             transclude: true,
-            templateUrl: 'scripts/superdesk/ui/views/datepicker-wrapper.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/datepicker-wrapper.html'),
             link:function (scope, element) {
                 element.bind('click', function(event) {
                     event.preventDefault();
@@ -359,14 +361,14 @@ define([
      *     > date format as parameter
      *     > keep time not reseting it
      */
-
-    function DatepickerDirective() {
+    DatepickerDirective.$inject = ['asset'];
+    function DatepickerDirective(asset) {
         return {
             scope: {
                 dt: '=ngModel',
                 disabled: '=ngDisabled'
             },
-            templateUrl: 'scripts/superdesk/ui/views/sd-datepicker.html'
+            templateUrl: asset.templateUrl('superdesk/ui/views/sd-datepicker.html')
         };
     }
 
@@ -517,13 +519,14 @@ define([
         };
     }
 
-    function TimepickerDirective() {
+    TimepickerDirective.$inject = ['asset'];
+    function TimepickerDirective(asset) {
         return {
             scope: {
                 tt: '=ngModel',
                 disabled: '=ngDisabled'
             },
-            templateUrl: 'scripts/superdesk/ui/views/sd-timepicker.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/sd-timepicker.html'),
             link: function(scope) {
             }
         };
@@ -663,10 +666,10 @@ define([
         };
     }
 
-    TimepickerPopupDirective.$inject = ['$timeout'];
-    function TimepickerPopupDirective($timeout) {
+    TimepickerPopupDirective.$inject = ['$timeout', 'asset'];
+    function TimepickerPopupDirective($timeout, asset) {
         return {
-            templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-popup.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/sd-timepicker-popup.html'),
             scope: {
                 open: '=',
                 select: '&',
@@ -727,7 +730,8 @@ define([
         };
     }
 
-    function TimepickerAltDirective() {
+    TimepickerAltDirective.$inject = ['asset'];
+    function TimepickerAltDirective(asset) {
         var STEP = 5;
 
         var convertIn = function(time) {
@@ -762,7 +766,7 @@ define([
             scope: {
                 model: '='
             },
-            templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
+            templateUrl: asset.templateUrl('superdesk/ui/views/sd-timepicker-alt.html'),
             link: function(scope) {
                 scope.open = false;
                 scope.hours = 0;
