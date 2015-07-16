@@ -1304,16 +1304,14 @@
                         return sendAuthoring(deskId, stageId, scope.selectedMacro);
                     } else if (scope.mode === 'archive') {
                         return sendContent(deskId, stageId, scope.selectedMacro, open);
+                    } else if (scope.config) {
+                        return scope.config.resolve({
+                            desk: deskId,
+                            stage: stageId,
+                            macro: scope.selectedMacro ? scope.selectedMacro.name : null
+                        });
                     } else if (scope.mode === 'ingest') {
-                        if (scope.config) {
-                            scope.config.resolve({
-                                desk: deskId,
-                                stage: stageId,
-                                macro: scope.selectedMacro ? scope.selectedMacro.name : null
-                            });
-                        } else {
-                            return sendIngest(deskId, stageId, scope.selectedMacro, open);
-                        }
+                        return sendIngest(deskId, stageId, scope.selectedMacro, open);
                     }
                 }
 
