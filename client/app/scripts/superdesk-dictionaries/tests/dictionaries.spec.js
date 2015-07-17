@@ -23,21 +23,27 @@ describe('dictionaries', function() {
               ]}});
     }));
 
-    it('can get global dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {
+    it('can get dictionaries for given language', inject(function(api, dictionaries, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 1}]}));
+        spyOn(api, 'find').and.returnValue($q.when({}));
 
         var items;
-        dictionaries.queryByLanguage(LANG).then(function(res) {
-            items = res._items;
+        dictionaries.getActive(LANG).then(function(_items) {
+            items = _items;
         });
 
         $rootScope.$digest();
+
         expect(items.length).toBe(1);
-        expect(api.query).toHaveBeenCalledWith('dictionaries', {where: {
-            language_id: LANG,
-            user: {$exists: false},
-            is_active: {$in: ['true', null]}
-        }});
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {
+            projection: {content: 0},
+            where: {
+                language_id: LANG,
+                $or: [{user: USER_ID}, {user: {$exists: false}}],
+                is_active: {$in: ['true', null]}
+            }
+        });
+        expect(api.find).toHaveBeenCalledWith('dictionaries', 1);
     }));
 
     it('can get and update user dictionary', inject(function(api, dictionaries, $q, $rootScope) {
@@ -52,19 +58,15 @@ describe('dictionaries', function() {
         spyOn(api, 'query').and.returnValue($q.when({_items: []}));
         spyOn(api, 'save').and.returnValue($q.when());
 
-        var userDict;
-        dictionaries.getUserDictionary(LANG).then(function(_userDict) {
-            userDict = _userDict;
-        });
-
+        dictionaries.addWordToUserDictionary('test', LANG);
         $rootScope.$digest();
-        expect(userDict.language_id).toBe(LANG);
-        expect(userDict.content).toEqual({});
-        expect(userDict.user).toBe(USER_ID);
-        expect(userDict.name).toBe(USER_ID + ':' + LANG);
 
-        dictionaries.addWordToUserDictionary('test', userDict);
-        expect(api.save).toHaveBeenCalledWith('dictionaries', userDict);
+        expect(api.save).toHaveBeenCalledWith('dictionaries', {
+            language_id: LANG,
+            content: {test: 1},
+            user: USER_ID,
+            name: USER_ID + ':' + LANG
+        });
     }));
 
     describe('config modal directive', function() {

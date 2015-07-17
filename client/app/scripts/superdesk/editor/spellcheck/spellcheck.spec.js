@@ -11,6 +11,8 @@ describe('spellcheck', function() {
             and: 1
         },
         USER_DICT = {
+            _id: 'baz',
+            user: 'foo',
             content: {
                 baz: 1
             }
@@ -22,22 +24,22 @@ describe('spellcheck', function() {
     beforeEach(module('superdesk.editor.spellcheck'));
 
     beforeEach(inject(function(dictionaries, spellcheck, $q) {
-        spyOn(dictionaries, 'queryByLanguage').and.returnValue($q.when({_items: [
+
+        spyOn(dictionaries, 'getActive').and.returnValue($q.when([
             {_id: 'foo', content: DICT},
-            {_id: 'bar', content: {bar: 1}}
-        ]}));
-        spyOn(dictionaries, 'getUserDictionary').and.returnValue($q.when(USER_DICT));
+            {_id: 'bar', content: {bar: 1}},
+            USER_DICT
+        ]));
+
         spellcheck.setLanguage(LANG);
     }));
 
-    it('can spellcheck using global + user dictionaries', inject(function(spellcheck, dictionaries, $q, $rootScope) {
+    it('can spellcheck using multiple dictionaries', inject(function(spellcheck, dictionaries, $q, $rootScope) {
         spellcheck.errors('test what if foo bar baz').then(assignErrors);
-
         $rootScope.$digest();
-
-        expect(errors).toEqual(['test', 'if']);
-        expect(dictionaries.queryByLanguage).toHaveBeenCalledWith(LANG);
-        expect(dictionaries.getUserDictionary).toHaveBeenCalledWith(LANG);
+        expect(errors).toContain({word: 'test', index: 0});
+        expect(errors).toContain({word: 'if', index: 10});
+        expect(dictionaries.getActive).toHaveBeenCalledWith(LANG);
     }));
 
     it('can render errors in given node', inject(function(spellcheck, $rootScope) {
@@ -71,20 +73,28 @@ describe('spellcheck', function() {
         spyOn(api, 'save');
         spellcheck.errors('test').then(assignErrors);
         $rootScope.$digest();
-        expect(errors).toEqual(['test']);
+        expect(errors.length).toBe(1);
 
         spellcheck.addWordToUserDictionary('test');
 
         spellcheck.errors('test').then(assignErrors);
         $rootScope.$digest();
 
-        expect(errors).toEqual([]);
+        expect(errors.length).toBe(0);
     }));
 
     it('can suggest', inject(function(spellcheck, api, $q) {
         spyOn(api, 'save').and.returnValue($q.when({}));
         spellcheck.suggest('test');
         expect(api.save).toHaveBeenCalledWith('spellcheck', {word: 'test', language_id: LANG});
+    }));
+
+    it('can reset dict when language is set to null', inject(function(spellcheck, $rootScope) {
+        spellcheck.setLanguage(null);
+        var then = jasmine.createSpy('then');
+        spellcheck.errors('test').then(then);
+        $rootScope.$digest();
+        expect(then).not.toHaveBeenCalled();
     }));
 
     function assignErrors(_errors) {

@@ -475,6 +475,7 @@ angular.module('superdesk.editor', [])
                         editor.clear();
                         editor.removeEventListeners(editorElem[0]);
                         editorElem.off();
+                        spellcheck.setLanguage(null);
                     });
 
                     scope.cursor = {};
