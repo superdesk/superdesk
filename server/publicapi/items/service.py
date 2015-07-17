@@ -101,34 +101,27 @@ class ItemsService(BaseService):
     def on_fetched_item(self, document):
         """Event handler when a single item is retrieved from database.
 
-        It sets the item's `uri` field and removes all the fields added by the
-        `Eve` framework that are not part of the NINJS standard (except for
-        the HATEOAS `_links` object).
+        It triggers the post-processing of the fetched item.
 
         :param dict document: fetched MongoDB document representing the item
         """
-        document['uri'] = self._get_uri(document)
-
-        for field_name in ('_id', '_etag', '_created', '_updated'):
-            document.pop(field_name, None)
-        if 'renditions' in document:
-            for k, v in document['renditions'].items():
-                if 'media' in v:
-                    v['href'] = url_for_media(v['media'])
+        self._process_fetched_object(document)
 
     def on_fetched(self, result):
         """Event handler when a collection of items is retrieved from database.
 
-        For each item in the fetched collection it sets its `uri` field and
-        removes from it all the fields added by the `Eve` framework that are
-        not part of the NINJS standard (except for the HATEOAS `_links`
-        object).
+        For each item in the fetched collection it triggers the post-processing
+        of it.
+
+        It also changes the default-generated HATEOAS "self" link so that it
+        does not expose the internal DB query details, but instead reflects
+        what the client has sent in request.
 
         :param dict result: dictionary contaning the list of MongoDB documents
             (the fetched items) and some metadata, e.g. pagination info
         """
         for document in result['_items']:
-            self.on_fetched_item(document)
+            self._process_fetched_object(document)
 
         if '_links' in result:  # might not be present if HATEOAS disabled
             url_parts = urlparse(request.url)
@@ -137,14 +130,39 @@ class ItemsService(BaseService):
                 url_parts.query
             )
 
+    def _process_fetched_object(self, document):
+        """Does some processing on the raw document fetched from database.
+
+        It sets the item's `uri` field and removes all the fields added by the
+        `Eve` framework that are not part of the NINJS standard (except for
+        the HATEOAS `_links` object).
+        It also sets the URLs for all externally referenced media content.
+
+        :param dict document: MongoDB document to process
+        """
+        document['uri'] = self._get_uri(document)
+
+        for field_name in ('_id', '_etag', '_created', '_updated'):
+            document.pop(field_name, None)
+
+        if 'renditions' in document:
+            for k, v in document['renditions'].items():
+                if 'media' in v:
+                    v['href'] = url_for_media(v['media'])
+
     def _get_uri(self, document):
         """Return the given document's `uri`.
 
         :param dict document: MongoDB document fetched from database
         """
+        if document.get('type') == 'composite':
+            endpoint_name = 'packages'
+        else:
+            endpoint_name = 'items'
+
         resource_url = '{api_url}/{endpoint}/'.format(
             api_url=app.config['PUBLICAPI_URL'],
-            endpoint=app.config['URLS'][self.datasource]
+            endpoint=app.config['URLS'][endpoint_name]
         )
         return urljoin(resource_url, quote(document['_id']))
 
