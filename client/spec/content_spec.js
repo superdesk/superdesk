@@ -3,7 +3,8 @@
 
 var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
-    content = require('./helpers/content');
+    content = require('./helpers/content'),
+    authoring = require('./helpers/authoring');
 
 describe('Content', function() {
 
@@ -78,4 +79,33 @@ describe('Content', function() {
         expect(browser.getCurrentUrl()).toMatch(/multiedit$/);
         expect(element.all(by.repeater('board in boards')).count()).toBe(2);
     });
+
+    it('can create text article in a desk', function() {
+        workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
+
+        element(by.className('sd-create-btn')).click();
+        element(by.id('create_text_article')).click();
+
+        authoring.writeText('Words');
+        authoring.save();
+        authoring.close();
+
+        expect(content.count()).toBe(3);
+    });
+
+    it('can create empty package in a desk', function() {
+        workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
+
+        element(by.className('sd-create-btn')).click();
+        element(by.id('create_package')).click();
+
+        authoring.writeTextToHeadline('Empty Package');
+        authoring.save();
+        authoring.close();
+
+        expect(content.count()).toBe(3);
+    });
+
 });

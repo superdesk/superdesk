@@ -29,6 +29,11 @@ define(['./upload'], function(UploadController) {
                     return this.defer.promise;
                 };
             });
+
+            $provide.service('archiveService', function() {
+                this.addTaskToArticle = function(item) {
+                };
+            });
         }));
 
         it('can upload files when added', inject(function($controller, $rootScope, $q, api, upload) {

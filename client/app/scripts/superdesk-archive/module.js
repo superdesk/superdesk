@@ -130,6 +130,16 @@ define([
         };
     }
 
+    ArchiveService.$inject = ['desks', 'session'];
+    function ArchiveService(desks, session) {
+        this.addTaskToArticle = function (item) {
+            if ((!item.task || !item.task.desk) && desks.activeDeskId && desks.userDesks) {
+                var currentDesk = _.find(desks.userDesks._items, {_id: desks.activeDeskId});
+                item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': session.identity._id};
+            }
+        };
+    }
+
     return angular.module('superdesk.archive', [
         'superdesk.search',
         'superdesk.archive.directives',
@@ -140,7 +150,7 @@ define([
 
         .service('spike', SpikeService)
         .service('multi', MultiService)
-
+        .service('archiveService', ArchiveService)
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('/workspace/content', {
