@@ -1339,8 +1339,8 @@ define([
             .activity('fetchAs', {
                 label: gettext('Fetch As'),
                 icon: 'archive',
-                controller: ['$location', 'data', function($location, data) {
-                    $location.search('fetch', data.item._id);
+                controller: ['data', 'send', function(data, send) {
+                    send.allAs([data.item]);
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
@@ -1486,7 +1486,10 @@ define([
          */
         function sendOneAs(item, config) {
             var data = getData(config);
-            return api.save('fetch', {}, data, item);
+            return api.save('fetch', {}, data, item).then(function(archived) {
+                item.archived = archived._created;
+                return archived;
+            });
 
             function getData(config) {
                 var data = {
@@ -1513,14 +1516,15 @@ define([
          * it gets resolved and items are sent.
          *
          * @param {Array} items
+         * @return {Promise}
          */
         function sendAllAs(items) {
             vm.config = $q.defer();
-            vm.config.promise.then(function(config) {
+            return vm.config.promise.then(function(config) {
                 vm.config = null;
-                angular.forEach(items, function(item) {
-                    sendOneAs(item, config);
-                });
+                return $q.all(items.map(function(item) {
+                    return sendOneAs(item, config);
+                }));
             });
         }
 

@@ -35,25 +35,32 @@ describe('ingest', function() {
                     macro: 'macro1'
                 };
 
-            spyOn(api, 'save').and.returnValue($q.when({}));
+            spyOn(api, 'save').and.returnValue($q.when({_created: 'now'}));
 
             expect(send.oneAs(item, config).then).toBeDefined();
             $rootScope.$digest();
 
             expect(api.save).toHaveBeenCalled();
+            expect(item.archived).toBe('now');
         }));
 
         it('can send multiple items as', inject(function(send, api, $q, $rootScope) {
-            spyOn(api, 'save').and.returnValue($q.when({}));
+            spyOn(api, 'save').and.returnValue($q.when({_id: 'foo', _created: 'now'}));
 
             var items = [{_id: 1}, {_id: 2}];
             expect(send.config).toBe(null);
 
-            send.allAs(items);
+            var archives;
+            send.allAs(items).then(function(_archives) {
+                archives = _archives;
+            });
+
             send.config.resolve({desk: 'desk1', stage: 'stage1'});
             $rootScope.$digest();
 
             expect(api.save.calls.count()).toBe(2);
+            expect(archives.length).toBe(2);
+            expect(items[0].archived).toBe('now');
         }));
     });
 
