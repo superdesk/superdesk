@@ -80,7 +80,11 @@ describe('templates', function() {
             expect(api.content_templates.query).toHaveBeenCalledWith({
                 max_results: 2,
                 page: 25,
-                where: '{"$and":[{"template_type":"create","template_desk":"desk1","template_name":{"$regex":"keyword","$options":"-i"}}]}'
+                where: angular.toJson({$and: [{
+                    template_type: 'create',
+                    template_desk: 'desk1',
+                    template_name: {$regex: 'keyword', $options: '-i'}
+                }]})
             });
         }));
         it('can fetch templates by id', inject(function(api, templates) {

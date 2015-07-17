@@ -24,7 +24,9 @@ describe('Login', function() {
         expect(
             element(by.css('.user-info .displayname'))
                 .waitReady()
-                .then(function(elem) { return elem.getText(); })
+                .then(function(elem) {
+                    return elem.getText();
+                })
         ).toBe('admin');
     });
 

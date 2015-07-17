@@ -5,7 +5,7 @@ describe('authoring', function() {
 
     var GUID = 'urn:tag:superdesk-1';
     var USER = 'user:1';
-    var item = {guid: GUID};
+    var ITEM = {guid: GUID};
 
     beforeEach(module('superdesk.preferences'));
     beforeEach(module('superdesk.archive'));
@@ -22,10 +22,10 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(preferencesService, desks, $q) {
-        spyOn(preferencesService, 'get').and.returnValue($q.when({'items':['urn:tag:superdesk-1']}));
+        spyOn(preferencesService, 'get').and.returnValue($q.when({'items': ['urn:tag:superdesk-1']}));
         spyOn(preferencesService, 'update').and.returnValue($q.when({}));
         spyOn(preferencesService, 'getPrivileges').and.returnValue($q.when({}));
-        spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items:[]}));
+        spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items: []}));
     }));
 
     beforeEach(inject(function($route) {
@@ -37,11 +37,12 @@ describe('authoring', function() {
         expect(session.identity._id).toBe(USER);
     }));
 
-    it('can open an item', inject(function(superdesk, api, lock, autosave, $injector, $q, $rootScope, $httpBackend) {
+    it('can open an item',
+    inject(function(superdesk, api, lock, autosave, $injector, $q, $rootScope, $httpBackend) {
         var _item,
-            lockedItem = angular.extend({_locked: false}, item);
+            lockedItem = angular.extend({_locked: false}, ITEM);
 
-        spyOn(api, 'find').and.returnValue($q.when(item));
+        spyOn(api, 'find').and.returnValue($q.when(ITEM));
         spyOn(lock, 'lock').and.returnValue($q.when(lockedItem));
         spyOn(autosave, 'open').and.returnValue($q.when(lockedItem));
 
@@ -52,20 +53,21 @@ describe('authoring', function() {
         $rootScope.$digest();
 
         expect(api.find).toHaveBeenCalledWith('archive', GUID, jasmine.any(Object));
-        expect(lock.lock).toHaveBeenCalledWith(item);
+        expect(lock.lock).toHaveBeenCalledWith(ITEM);
         expect(autosave.open).toHaveBeenCalledWith(lockedItem);
         expect(_item.guid).toBe(GUID);
     }));
 
-    it('does lock item only once', inject(function(superdesk, api, lock, autosave, session, $injector, $q, $rootScope) {
-        var lockedItem = item;
+    it('does lock item only once',
+    inject(function(superdesk, api, lock, autosave, session, $injector, $q, $rootScope) {
+        var lockedItem = ITEM;
         lockedItem.lock_user = USER;
 
         spyOn(api, 'find').and.returnValue($q.when(lockedItem));
 
         $injector.invoke(superdesk.activity('authoring').resolve.item);
         $rootScope.$digest();
-        expect(item._locked).toBe(false);
+        expect(ITEM._locked).toBe(false);
     }));
 
     it('unlocks a locked item and locks by current user',
@@ -144,13 +146,21 @@ describe('authoring', function() {
 
     /**
      * Start authoring ctrl for given item.
+     *
+     * @param {object} item
+     * @param {string} action
+     * @returns {object}
      */
     function startAuthoring(item, action) {
         var $scope;
 
         inject(function($rootScope, $controller, superdesk, $compile) {
             $scope = $rootScope.$new();
-            $controller(superdesk.activity('authoring').controller, {$scope: $scope, item: item, action: action});
+            $controller(superdesk.activity('authoring').controller, {
+                $scope: $scope,
+                item: item,
+                action: action
+            });
             $compile(angular.element('<div sd-authoring></div>'))($scope);
         });
 
@@ -171,11 +181,12 @@ describe('authoring', function() {
 
         it('can check if an item is editable', inject(function(authoring, session) {
             expect(authoring.isEditable({})).toBe(false);
-            expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId})).toBe(true);
+            expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId}))
+                .toBe(true);
         }));
 
         it('can close a read-only item', inject(function(authoring, confirm, lock, $rootScope) {
-            var done = jasmine.createSpy('done') ;
+            var done = jasmine.createSpy('done');
             authoring.close({}).then(done);
             $rootScope.$digest();
 
@@ -184,19 +195,21 @@ describe('authoring', function() {
             expect(done).toHaveBeenCalled();
         }));
 
-        it('can unlocks on close editable item without changes made', inject(function(authoring, confirm, lock, $rootScope) {
-            expect(authoring.isEditable(item)).toBe(true);
-            authoring.close(item, false);
+        it('can unlocks on close editable item without changes made',
+        inject(function(authoring, confirm, lock, $rootScope) {
+            expect(authoring.isEditable(ITEM)).toBe(true);
+            authoring.close(ITEM, false);
             $rootScope.$digest();
             expect(confirm.confirm).not.toHaveBeenCalled();
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
-        it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, $q, $rootScope) {
-            var edit = Object.create(item);
+        it('confirms if an item is dirty and saves',
+        inject(function(authoring, confirm, lock, $q, $rootScope) {
+            var edit = Object.create(ITEM);
             edit.headline = 'test';
 
-            authoring.close(edit, item, true);
+            authoring.close(edit, ITEM, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
@@ -206,7 +219,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(item, edit);
+            expect(authoring.save).toHaveBeenCalledWith(ITEM, edit);
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
@@ -227,8 +240,9 @@ describe('authoring', function() {
             expect(api.update).toHaveBeenCalledWith('archive_publish', item, {});
         }));
 
-        it('confirms if an item is dirty and saves and publish', inject(function(authoring, api, confirm, lock, $q, $rootScope) {
-            var edit = Object.create(item);
+        it('confirms if an item is dirty and saves and publish',
+        inject(function(authoring, api, confirm, lock, $q, $rootScope) {
+            var edit = Object.create(ITEM);
             _.extend(edit, {
                 _id: 1,
                 headline: 'test',
@@ -236,7 +250,7 @@ describe('authoring', function() {
                 state: 'submitted'
             });
 
-            authoring.publishConfirmation(item, edit, true, 'publish');
+            authoring.publishConfirmation(ITEM, edit, true, 'publish');
             $rootScope.$digest();
 
             expect(confirm.confirmPublish).toHaveBeenCalled();
@@ -250,15 +264,17 @@ describe('authoring', function() {
             expect(api.update).toHaveBeenCalledWith('archive_publish', edit, {});
             expect(lock.unlock).toHaveBeenCalled();
         }));
-        it('confirms if an item is dirty and save work in personal', inject(function(authoring, api, confirm, lock, $q, $rootScope) {
-            var edit = Object.create(item);
+
+        it('confirms if an item is dirty and save work in personal',
+        inject(function(authoring, api, confirm, lock, $q, $rootScope) {
+            var edit = Object.create(ITEM);
             _.extend(edit, {
-                task: {desk: null, stage: null, user:1},
+                task: {desk: null, stage: null, user: 1},
                 type: 'text',
                 version: 1
             });
 
-            authoring.saveWorkConfirmation(item, edit, true, 'User is disabled');
+            authoring.saveWorkConfirmation(ITEM, edit, true, 'User is disabled');
             $rootScope.$digest();
 
             expect(confirm.confirmSaveWork).toHaveBeenCalled();
@@ -332,7 +348,7 @@ describe('lock service', function() {
 
     var user = {_id: 'user'};
     var sess = {_id: 'sess'};
-    var another_user = {_id: 'another_user'};
+    var anotherUser = {_id: 'another_user'};
 
     beforeEach(inject(function(session) {
         session.start(sess, user);
@@ -358,7 +374,7 @@ describe('lock service', function() {
         // testing if the user can unlock its own content.
         expect(lock.can_unlock({lock_user: user._id})).toBe(true);
         expect(lock.can_unlock({lock_user: user._id, lock_session: 'another_session'})).toBe(true);
-        expect(lock.can_unlock({lock_user: another_user._id, lock_session: 'another_session'})).toBe(1);
+        expect(lock.can_unlock({lock_user: anotherUser._id, lock_session: 'another_session'})).toBe(1);
     }));
 
     it('can unlock the item if user has no unlock privileges', inject(function(lock, privileges, $rootScope) {
@@ -367,12 +383,12 @@ describe('lock service', function() {
         // testing if the user can unlock its own content.
         expect(lock.can_unlock({lock_user: user._id})).toBe(true);
         expect(lock.can_unlock({lock_user: user._id, lock_session: 'another_session'})).toBe(true);
-        expect(lock.can_unlock({lock_user: another_user._id, lock_session: 'another_session'})).toBe(0);
+        expect(lock.can_unlock({lock_user: anotherUser._id, lock_session: 'another_session'})).toBe(0);
     }));
 });
 
 describe('authoring actions', function() {
-    var user_desks = [{'_id': 'desk1'}, {'_id': 'desk2'}];
+    var userDesks = [{'_id': 'desk1'}, {'_id': 'desk2'}];
 
     /**
     * Assert the actions
@@ -397,7 +413,7 @@ describe('authoring actions', function() {
     beforeEach(module('superdesk.desks'));
 
     beforeEach(inject(function(desks, $q) {
-        spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items:user_desks}));
+        spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items: userDesks}));
     }));
 
     it('can perform actions if the item is located on the personal workspace',
@@ -409,7 +425,7 @@ describe('authoring actions', function() {
                 'type': 'text'
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -418,7 +434,7 @@ describe('authoring actions', function() {
                 'unlock': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'copy', 'view',
@@ -437,7 +453,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -447,7 +463,7 @@ describe('authoring actions', function() {
                 'publish': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
@@ -466,7 +482,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -476,7 +492,7 @@ describe('authoring actions', function() {
                 'publish': false
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
@@ -495,7 +511,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -504,7 +520,7 @@ describe('authoring actions', function() {
                 'unlock': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view', 'duplicate']);
@@ -522,7 +538,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -531,7 +547,7 @@ describe('authoring actions', function() {
                 'unlock': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view']);
@@ -549,7 +565,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -558,7 +574,7 @@ describe('authoring actions', function() {
                 'unlock': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view', 'unspike']);
@@ -577,7 +593,7 @@ describe('authoring actions', function() {
                 'more_coming': true
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -587,7 +603,7 @@ describe('authoring actions', function() {
                 'publish': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike',
@@ -624,7 +640,7 @@ describe('authoring actions', function() {
                 'more_coming': false
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -636,7 +652,7 @@ describe('authoring actions', function() {
                 'kill': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
@@ -694,7 +710,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -706,7 +722,7 @@ describe('authoring actions', function() {
                 'kill': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
@@ -738,7 +754,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -750,7 +766,7 @@ describe('authoring actions', function() {
                 'kill': false
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
@@ -782,7 +798,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -794,7 +810,7 @@ describe('authoring actions', function() {
                 'kill': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view']);
@@ -825,7 +841,7 @@ describe('authoring actions', function() {
                 }
             };
 
-            var user_privileges = {
+            var userPrivileges = {
                 'duplicate': true,
                 'mark_item': false,
                 'spike': true,
@@ -837,7 +853,7 @@ describe('authoring actions', function() {
                 'kill': true
             };
 
-            privileges.setUserPrivileges(user_privileges);
+            privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view', 'deschedule']);

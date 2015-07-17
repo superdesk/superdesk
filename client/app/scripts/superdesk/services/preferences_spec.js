@@ -10,11 +10,10 @@ define([
         beforeEach(module(storageSpec.name));
         beforeEach(module('superdesk.api'));
 
-        var $q,
-            storage,
+        var storage,
             preferencesService,
-            test_preferences = {
-                'active_privileges': {'privilege1':1, 'privilege2':0},
+            testPreferences = {
+                'active_privileges': {'privilege1': 1, 'privilege2': 0},
                 'user_preferences': {
                     'archive:view': {
                         'default': 'mgrid',
@@ -46,29 +45,28 @@ define([
                     'desk:items': [],
                     'pinned:items': [],
                     'scratchpad:items': [
-                        '/archive/urn:newsml:localhost:2014-10-23T16:25:04.022745:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8',
-                        '/archive/urn:newsml:localhost:2014-10-23T16:25:04.022745:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8'
+                        '/archive/urn:newsml:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8',
+                        '/archive/urn:newsml:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8'
                     ]
                 }
             };
 
         var update = {
             'feature:preview': {
-                'default':false,
-                'enabled':false,
-                'label':'Test Label',
-                'type':'bool',
-                'category':'feature'
+                'default': false,
+                'enabled': false,
+                'label': 'Test Label',
+                'type': 'bool',
+                'category': 'feature'
             }
         };
 
         beforeEach(inject(function(api, $q) {
-            spyOn(api, 'find').and.returnValue($q.when(test_preferences));
+            spyOn(api, 'find').and.returnValue($q.when(testPreferences));
             spyOn(api, 'save').and.returnValue($q.when({'user_preferences': update}));
         }));
 
-        beforeEach(inject(function($injector, session, api) {
-            $q = $injector.get('$q');
+        beforeEach(inject(function($injector, $q, session, api) {
             storage = $injector.get('storage');
             preferencesService = $injector.get('preferencesService');
             storage.clear();

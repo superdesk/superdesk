@@ -25,23 +25,28 @@
         var PREFERENCE_KEY = 'workspace:active',
             RESOURCE = 'workspaces',
             deferEdit,
-            vm = this;
+            self = this;
 
         /**
          * Start editing of new custom workspace
+         *
+         * @return {Promise}
          */
         function create() {
-            vm.edited = {user: session.identity._id};
+            self.edited = {user: session.identity._id};
             deferEdit = $q.defer();
             return deferEdit.promise;
         }
 
         /**
          * Resolve edit promise with given workspace
+         *
+         * @param {object} workspace
+         * @return {object}
          */
         function resolvePromise(workspace) {
             deferEdit.resolve(workspace);
-            vm.edited = null;
+            self.edited = null;
             return workspace;
         }
 
@@ -49,15 +54,17 @@
          * Cancel workspace editing
          */
         function cancelEdit() {
-            vm.edited = null;
+            self.edited = null;
             deferEdit.reject();
         }
 
         /**
          * Save currently edited workspace
+         *
+         * @return {Promise}
          */
         function save() {
-            return api.save(RESOURCE, vm.edited).then(updateActive).then(resolvePromise);
+            return api.save(RESOURCE, self.edited).then(updateActive).then(resolvePromise);
         }
 
         /**
@@ -76,6 +83,7 @@
          * Set active workspace for given desk
          *
          * @param {Object} desk
+         * @return {Promise}
          */
         function setActiveDesk(desk) {
             setActiveWorkspace(null);
@@ -86,14 +94,17 @@
          * Set this.active to given workspace
          *
          * @param {Object} workspace
+         * @return {object}
          */
         function updateActive(workspace) {
-            vm.active = workspace || null;
+            self.active = workspace || null;
             return workspace;
         }
 
         /**
          * Get active workspace id
+         *
+         * @return {Promise}
          */
         function getActiveWorkspaceId() {
             return preferences.get(PREFERENCE_KEY).then(function(prefs) {
@@ -106,6 +117,8 @@
          *
          * First it reads preferences to get last workspace id,
          * in case it's not set it opens workspace for active desk.
+         *
+         * @return {Promise}
          */
         function getActiveWorkspace() {
             return desks.fetchCurrentDeskId()
@@ -125,6 +138,7 @@
          * Find workspace by given id
          *
          * @param {string} workspaceId
+         * @return {Promise}
          */
         function findWorkspace(workspaceId) {
             return api.find(RESOURCE, workspaceId);
@@ -134,6 +148,7 @@
          * Get workspace for given desk
          *
          * @param {string} deskId
+         * @return {Promise}
          */
         function getDeskWorkspace(deskId) {
             return api.query(RESOURCE, {where: {desk: deskId}}).then(function(result) {
@@ -147,6 +162,8 @@
 
         /**
          * Create custom workspace for given user using old config
+         *
+         * @return {object}
          */
         function createUserWorkspace() {
             return {
@@ -158,6 +175,8 @@
 
         /**
          * Get list of user workspaces
+         *
+         * @return {Promise}
          */
         function queryUserWorkspaces() {
             return session.getIdentity().then(function(identity) {

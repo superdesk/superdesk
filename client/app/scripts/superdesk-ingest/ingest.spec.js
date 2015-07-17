@@ -79,29 +79,33 @@ describe('ingest', function() {
             }));
 
             it('is allowed if the current desk is not "personal"', function () {
-                var extra_condition = activity.additionalCondition,
+                var extraCondition = activity.additionalCondition,
                     fakeDesks;
 
                 // get the function that checks the additional conditions
-                extra_condition = extra_condition[extra_condition.length - 1];
+                extraCondition = extraCondition[extraCondition.length - 1];
                 fakeDesks = {
-                    getCurrentDeskId: function () { return '1234'; }
+                    getCurrentDeskId: function () {
+                        return '1234';
+                    }
                 };
 
-                expect(extra_condition(fakeDesks)).toBe(true);
+                expect(extraCondition(fakeDesks)).toBe(true);
             });
 
             it('is not allowed if the current desk is "personal"', function () {
-                var extra_condition = activity.additionalCondition,
+                var extraCondition = activity.additionalCondition,
                     fakeDesks;
 
                 // get the function that checks the additional conditions
-                extra_condition = extra_condition[extra_condition.length - 1];
+                extraCondition = extraCondition[extraCondition.length - 1];
                 fakeDesks = {
-                    getCurrentDeskId: function () { return null; }
+                    getCurrentDeskId: function () {
+                        return null;
+                    }
                 };
 
-                expect(extra_condition(fakeDesks)).toBe(false);
+                expect(extraCondition(fakeDesks)).toBe(false);
             });
         });
     });

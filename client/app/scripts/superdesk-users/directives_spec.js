@@ -5,12 +5,13 @@ define([
 
     var template = [
         '<form name="userForm">',
-        '<input type="text" name="username" sd-user-unique data-unique-field="username" data-exclude="user" ng-model="user.username">',
+        '<input type="text" name="username" ng-model="user.username"',
+            'sd-user-unique data-unique-field="username" data-exclude="user">',
         '<input type="password" name="password" ng-model="user.password">',
         '<input type="password" name="passwordConfirm" ng-model="_confirm"',
         ' sd-password-confirm ng-model="passwordConfirm" data-password="user.password">',
         '</form>'
-    ].join('');
+    ].join(' ');
 
     describe('sdUserUnique Directive', function() {
         var scope;

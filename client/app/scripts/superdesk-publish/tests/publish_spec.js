@@ -23,7 +23,7 @@ describe('publish queue', function() {
         }
     ]};
 
-    var publish_queue = {'_items': [
+    var publishQueue = {'_items': [
             {
             '_created': '2015-05-15T06:27:13+0000',
             '_etag': 'd18bf9f762b03815acc189fdcef633bf67f8e222',
@@ -101,7 +101,7 @@ describe('publish queue', function() {
         }
     ]};
 
-    var $scope, controller;
+    var $scope;
 
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.users'));
@@ -111,9 +111,9 @@ describe('publish queue', function() {
 
     beforeEach(inject(function($rootScope, $controller, adminPublishSettingsService, $q, api) {
         spyOn(adminPublishSettingsService, 'fetchSubscribers').and.returnValue($q.when(subscribers));
-        spyOn(api.publish_queue, 'query').and.returnValue($q.when(publish_queue));
+        spyOn(api.publish_queue, 'query').and.returnValue($q.when(publishQueue));
         $scope = $rootScope.$new();
-        controller = $controller('publishQueueCtrl',
+        $controller('publishQueueCtrl',
             {
                 $scope: $scope,
                 'adminPublishSettingsService': adminPublishSettingsService,
@@ -197,7 +197,7 @@ describe('publish queue', function() {
         $rootScope.$digest();
         expect($scope.publish_queue.length).toBe(3);
         spyOn(api.publish_queue, 'save').and.callFake(function () {
-            publish_queue._items.push($scope.buildNewSchedule($scope.publish_queue[0]));
+            publishQueue._items.push($scope.buildNewSchedule($scope.publish_queue[0]));
             return $q.when();
         });
         $scope.scheduleToSend($scope.publish_queue[0]);

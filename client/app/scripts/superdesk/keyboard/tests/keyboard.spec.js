@@ -8,7 +8,7 @@ describe('keyboardManager', function() {
         options = {inputDisabled: false};
 
     function keydown(label, code) {
-        var e = $.Event('keydown');
+        var e = new $.Event('keydown');
         e.which = code;
         elem.trigger(e);
         km.keyboardEvent[label].callback(e);
@@ -71,7 +71,7 @@ describe('keyboardManager', function() {
         var handler = jasmine.createSpy('handler');
         $rootScope.$on('key:t', handler);
 
-        var e = $.Event('keydown');
+        var e = new $.Event('keydown');
         e.which = 't'.charCodeAt(0);
         $(document.body).trigger(e);
 
@@ -118,11 +118,11 @@ describe('keyboardManager', function() {
         expect(handle).toHaveBeenCalled();
     }));
 
-    function elemKeydown(which, ctrl, shift, elem) {
-        var e = $.Event('keydown');
+    function elemKeydown(which, ctrl, shift, target) {
+        var e = new $.Event('keydown');
         e.which = which.charCodeAt(0);
         e.ctrlKey = ctrl;
         e.shiftKey = shift;
-        $(elem || document.body).trigger(e);
+        $(target || document.body).trigger(e);
     }
 });

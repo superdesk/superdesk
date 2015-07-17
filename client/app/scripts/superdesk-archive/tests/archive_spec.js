@@ -64,7 +64,7 @@ describe('content', function() {
             $provide.service('api', function($q) {
                 return function() {
                     return {
-                        save: function(item) {
+                        save: function() {
                             return $q.when();
                         }
                     };

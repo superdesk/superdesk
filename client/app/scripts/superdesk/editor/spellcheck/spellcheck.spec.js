@@ -34,7 +34,8 @@ describe('spellcheck', function() {
         spellcheck.setLanguage(LANG);
     }));
 
-    it('can spellcheck using multiple dictionaries', inject(function(spellcheck, dictionaries, $q, $rootScope) {
+    it('can spellcheck using multiple dictionaries',
+    inject(function(spellcheck, dictionaries, $q, $rootScope) {
         spellcheck.errors('test what if foo bar baz').then(assignErrors);
         $rootScope.$digest();
         expect(errors).toContain({word: 'test', index: 0});

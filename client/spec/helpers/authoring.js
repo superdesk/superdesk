@@ -10,6 +10,8 @@ function Authoring() {
 
     /**
      * Send item to given desk
+     *
+     * @param {string} desk Desk name
      */
     this.sendTo = function sendTo(desk) {
         var sidebar = element(by.css('.send-to-pane')),
@@ -127,7 +129,8 @@ function Authoring() {
 
     this.checkMarkedForHighlight = function(highlight, item) {
         expect(element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        expect(element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe')).toContain(highlight);
+        expect(element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe'))
+            .toContain(highlight);
     };
 
     this.writeText = function (text) {

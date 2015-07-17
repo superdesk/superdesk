@@ -6,12 +6,12 @@ var pp = browser.params;
 exports.resetApp = resetApp;
 exports.post = post;
 
-function resetApp(fixture_profile, callback) {
+function resetApp(profile, callback) {
     backendRequestAuth({
         uri: '/prepopulate',
         method: 'POST',
         json: {
-            'profile': fixture_profile
+            'profile': profile
         }
     }, function(e, r, j) {
         pp.token = null;

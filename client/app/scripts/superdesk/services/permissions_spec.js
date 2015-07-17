@@ -15,7 +15,7 @@ define([
             $provide.value('config', {server: {url: 'http://localhost'}});
         }));
 
-        var rootScope, httpBackend, em, permissionsService;
+        var rootScope, httpBackend, permissionsService;
 
         var testPermissions = {
             testResource_1: {read: true},
@@ -27,7 +27,6 @@ define([
             inject(function($rootScope, $httpBackend, _em_, _permissionsService_) {
                 rootScope = $rootScope;
                 httpBackend = $httpBackend;
-                em = _em_;
                 permissionsService = _permissionsService_;
             });
         });

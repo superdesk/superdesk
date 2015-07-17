@@ -75,11 +75,17 @@ define([
 
     /**
      * Mock auth adapter which will authenticate admin:admin and fail otherwise
+     *
+     * @param {object} $q
      */
     function AuthAdapterMock($q) {
 
         /**
          * Mock auth - authenticate with admin:admin
+         *
+         * @param {string} username
+         * @param {string} password
+         * @returns {Promise}
          */
         this.authenticate = function(username, password) {
             var defer = $q.defer();

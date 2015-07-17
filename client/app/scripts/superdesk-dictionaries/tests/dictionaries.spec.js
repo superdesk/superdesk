@@ -16,7 +16,7 @@ describe('dictionaries', function() {
         spyOn(api, 'query').and.returnValue($q.when());
         dictionaries.fetch();
         $rootScope.$digest();
-        expect(api.query).toHaveBeenCalledWith('dictionaries', {projection: {content: 0},  where: {
+        expect(api.query).toHaveBeenCalledWith('dictionaries', {projection: {content: 0}, where: {
             $or: [
                   {user: {$exists: false}},
                   {user: 'foo'}
