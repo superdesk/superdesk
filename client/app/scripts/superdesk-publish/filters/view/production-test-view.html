@@ -39,7 +39,7 @@
                                 </td>
                                 <td>{{ :: result_item.slugline | limitTo: 40}}</td>
                                 <td>{{ :: result_item.source}}</td>
-                                <td>{{ :: result_item['anpa-category'].name }}</td>
+                                <td>{{ :: result_item['anpa_category'] | mergeWords:'name' }}</td>
                                 <td>
                                     <i ng-click="openView(result_item)" class="icon-fullscreen true" title="Open in new tab"></i>
                                 </td>

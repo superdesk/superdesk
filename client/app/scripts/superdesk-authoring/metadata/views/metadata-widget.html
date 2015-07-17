@@ -16,10 +16,6 @@
 				<div class="state-label state-{{item.state}}">{{item.state}}</div>
 			</div>
 		</li>
-		<li>
-			<label translate>Type</label>
-			<div class="data">{{item.type}}</div>
-		</li>
 		<li ng-if="item.original_source">
 			<label translate>Original source</label>
 			<div class="data">{{ item.original_source}}</div>
@@ -56,10 +52,20 @@
 				<div sd-meta-dropdown data-list="metadata.priority" data-item="item" data-field="priority" data-change="autosave(item)" ng-disabled="!_editable" ></div>
 			</div>
 		</li>
-		<li>
-			<label translate>Restrictions</label>
-			<div class="data visible" ng-if="metadata.geographical_restrictions">
-				<div sd-meta-dropdown data-list="metadata.geographical_restrictions" data-item="item" data-field="restrictions" data-change="autosave(item)" ng-disabled="!_editable"></div>
+		<li class="terms-box">
+			<label translate>Targeted For</label>
+			<div ng-if="metadata.targeted_for">
+				<span sd-check ng-model="item.negation" tooltip="Adds Negation" tooltip-placement="right" ng-disabled="!_editable"></span>
+				<select id="targeted_for_list" ng-model="item.targeted_for_value" ng-disabled="!_editable">
+					<option value=""></option>
+					<option value="{{g.value}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
+				</select>
+				<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="!_editable" translate>Add</button>
+				<div class="terms" ng-if="item['targeted_for'].length">
+					<ul>
+						<li ng-repeat="t in item['targeted_for']" ng-click="removeTargeted(t)">{{ :: t['allow'] == false ? 'Not ' + t.name : t.name}}<i class="icon-close-small"></i></li>
+					</ul>
+				</div>
 			</div>
 		</li>
 		<li>
