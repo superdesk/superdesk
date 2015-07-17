@@ -26,7 +26,7 @@
         <h3 translate ng-hide="subscriber._id" translate>Add New Subscriber</h3>
     </div>
     <div class="modal-body">
-        <form name="editForm" ng-submit="save()">
+        <form name="editForm">
             <fieldset>
                 <tabset>
                     <tab heading="General" class="TabContent">
@@ -142,6 +142,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-click="save()" ng-disabled="subscriber.destinations.length === 0" translate>Save</button>
+        <button class="btn btn-primary" ng-click="save()" ng-disabled="editForm.$invalid || subscriber.destinations.length === 0" translate>Save</button>
     </div>
 </div>
