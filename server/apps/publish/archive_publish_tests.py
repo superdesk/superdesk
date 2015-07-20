@@ -790,10 +790,10 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             ValidatorsPopulateCommand().run(self.filename)
             updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
-            get_resource_service('archive').patch(id=self.articles[9][config.ID_FIELD], updates=updates)
+            doc_id = self.articles[9][config.ID_FIELD]
+            get_resource_service('archive').patch(id=doc_id, updates=updates)
 
-            doc = get_resource_service('archive').find_one(req=None, _id=self.articles[9][config.ID_FIELD])
-            get_resource_service('archive_publish').patch(id=doc['_id'], updates={'state': 'published'})
+            get_resource_service('archive_publish').patch(id=doc_id, updates={'state': 'published'})
 
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(4, queue_items.count())
