@@ -176,24 +176,28 @@ class AAPIpNewsFormatter(Formatter):
         return format_type == 'AAP IPNEWS' and article['type'] in ['text', 'preformatted']
 
     def _set_selector_codes(self, article, subscriber_name, odbc_item, category):
+        handlers = {
+            'NATIONAL': self._set_ndx_selector_codes,
+            'SPORTS': self._set_sdx_selector_codes,
+            'FINANCE': self._set_fdx_selector_codes,
+        }
+
         desk_id = article.get('task', {}).get('desk', None)
         if desk_id:
             desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
-            if desk['name'] == 'NDX':
-                self._set_ndx_selector_codes(article, subscriber_name, odbc_item, category)
-            elif desk['name'] == 'SDX':
-                self._set_sdx_selector_codes(article, subscriber_name, odbc_item, category)
-            elif desk['name'] == 'FDX':
-                self._set_fdx_selector_codes(article, subscriber_name, odbc_item, category)
+            handler = handlers.get(desk['name'].upper(), lambda *args: None)
+            handler(article, subscriber_name, odbc_item, category)
 
     def _set_ndx_selector_codes(self, article, subscriber_name, odbc_item, category):
-        if 'MONITOR' in article['slugline'].upper():
+        slugline = article['slugline'].upper()
+
+        if 'MONITOR' in slugline:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['monitor'][subscriber_name]
             return
-        if 'DIARY' in article['slugline'].upper():
+        if 'DIARY' in slugline:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'printsubs', 'cnewsd', 'rnewsd')
             return
-        if 'FRONTERS' in article['slugline'].upper():
+        if 'FRONTERS' in slugline:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['fronters'][subscriber_name]
             return
         if category['qcode'] == 'A' and article['urgency'] > 3:
@@ -280,4 +284,4 @@ class AAPIpNewsFormatter(Formatter):
         def compare(code1, code2):
             return code1[:len(code2)] == code2
 
-        return any([compare(s['qcode'], qcode) for s in article.get('subject', [])])
+        return any(compare(s['qcode'], qcode) for s in article.get('subject', []))
