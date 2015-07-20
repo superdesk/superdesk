@@ -997,7 +997,6 @@ Feature: Content Publishing
       """
         [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
       """
-      And empty "ingest"
       And "desks"
       """
       [{"name": "Sports"}]
@@ -1188,4 +1187,213 @@ Feature: Content Publishing
       Then we get response code 400
       """
       {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
+      """
+
+    @auth
+    Scenario: Publish takes package and kill takes
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      [{
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }, {
+        "name":"Channel 4","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      When we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 headline=2",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      When we post to "archive/#TAKE2#/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE3"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 headline=3",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=3",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE3#"
+      """
+      {"body_html": "Take-3", "abstract": "Take-3 Abstract"}
+      """
+      And we post to "/archive/#TAKE3#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we get "/archive"
+      Then we get list with 4 items
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "#TAKE2#" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "#TAKE3#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+          "_items": [
+              {
+                  "_id": "123",
+                  "_current_version": 3,
+                  "state": "published",
+                  "body_html": "Take-1"
+              },
+              {
+                  "_current_version": 6,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1<br>Take-2<br>Take-3<br>"
+              },
+              {
+                  "_id": "#TAKE2#",
+                  "_current_version": 4,
+                  "state": "published",
+                  "body_html": "Take-2"
+              },
+              {
+                  "_id": "#TAKE3#",
+                  "_current_version": 4,
+                  "state": "published",
+                  "body_html": "Take-3"
+              }
+          ]
+      }
+      """
+      When we publish "#TAKE2#" with "kill" type and "killed" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+          "_items": [
+              {
+                  "_id": "123",
+                  "_current_version": 3,
+                  "state": "published",
+                  "body_html": "Take-1"
+              },
+              {
+                  "_id": "#archive.123.take_package#",
+                  "_current_version": 4,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1<br>"
+              },
+              {
+                  "_id": "#archive.123.take_package#",
+                  "_current_version": 5,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1<br>Take-2<br>"
+              },
+              {
+                  "_id": "#archive.123.take_package#",
+                  "_current_version": 6,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1<br>Take-2<br>Take-3<br>"
+              },
+              {
+                  "_id": "#TAKE2#",
+                  "_current_version": 4,
+                  "state": "published",
+                  "body_html": "Take-2"
+              },
+              {
+                  "_id": "#TAKE3#",
+                  "_current_version": 4,
+                  "state": "published",
+                  "body_html": "Take-3"
+              },
+              {
+                  "_id": "123",
+                  "_current_version": 5,
+                  "state": "killed"
+              },
+              {
+                  "_id": "#TAKE2#",
+                  "_current_version": 5,
+                  "state": "killed"
+              },
+              {
+                  "_id": "#TAKE3#",
+                  "_current_version": 5,
+                  "state": "killed"
+              },
+              {
+                  "_id": "#archive.123.take_package#",
+                  "_current_version": 7,
+                  "state": "killed",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-2<br>"
+              }
+          ]
+      }
       """

@@ -113,23 +113,27 @@ class BasePublishService(BaseService):
 
             set_sign_off(updates, original)
             queued_digital = False
+            package_id = None
 
             if original['type'] != 'composite':
-                # check if item is in a digital package
-                package_id = TakesPackageService().get_take_package_id(original)
+                # if target_for is set the we don't to digital client.
+                if not updates.get('targeted_for', original.get('targeted_for')):
+                    # check if item is in a digital package
+                    package_id = TakesPackageService().get_take_package_id(original)
 
-                if package_id:
-                    queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
-                else:
-                    # if item is going to be sent to digital subscribers, package it as a take
-                    updated = copy(original)
-                    updated.update(updates)
-
-                    if self.sending_to_digital_subscribers(updated):
-                        # create a takes package
-                        package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
-                        original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
-                        queued_digital = self._publish_takes_package(package_id, updates, original, last_updated)
+                    if package_id:
+                        queued_digital, takes_package = self._publish_takes_package(package_id, updates,
+                                                                                    original, last_updated)
+                    else:
+                        # if item is going to be sent to digital subscribers, package it as a take
+                        if self.sending_to_digital_subscribers(updates):
+                            updated = copy(original)
+                            updated.update(updates)
+                            # create a takes package
+                            package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
+                            original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
+                            queued_digital, takes_package = self._publish_takes_package(package_id, updates,
+                                                                                        original, last_updated)
 
                 # queue only text items
                 queued_wire = \
@@ -166,13 +170,12 @@ class BasePublishService(BaseService):
         queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
-        return queued_digital
+        return queued_digital, package
 
     def _publish_package_items(self, package, last_updated):
         """
         Publishes items of a package recursively
         """
-
         items = [ref.get('residRef') for group in package.get('groups', [])
                  for ref in group.get('refs', []) if 'residRef' in ref]
 
@@ -264,22 +267,23 @@ class BasePublishService(BaseService):
                     break
 
             if sequence_num_of_take_to_be_published:
-                for sequence in range(sequence_num_of_take_to_be_published, 0, -1):
-                    previous_take_ref = next(ref for ref in take_refs if ref.get(SEQUENCE) == sequence)
-                    if previous_take_ref[GUID_FIELD] != take_article_id:
-                        previous_take = super().find_one(req=None, _id=previous_take_ref[GUID_FIELD])
+                if self.published_state != "killed":
+                    for sequence in range(sequence_num_of_take_to_be_published, 0, -1):
+                        previous_take_ref = next(ref for ref in take_refs if ref.get(SEQUENCE) == sequence)
+                        if previous_take_ref[GUID_FIELD] != take_article_id:
+                            previous_take = super().find_one(req=None, _id=previous_take_ref[GUID_FIELD])
 
-                        if not previous_take:
-                            raise PublishQueueError.article_not_found_error(
-                                Exception("Take with id %s not found" % previous_take_ref[GUID_FIELD]))
+                            if not previous_take:
+                                raise PublishQueueError.article_not_found_error(
+                                    Exception("Take with id %s not found" % previous_take_ref[GUID_FIELD]))
 
-                        if previous_take and previous_take[config.CONTENT_STATE] not in ['published', 'corrected']:
-                            raise PublishQueueError.previous_take_not_published_error(
-                                Exception("Take with id {} is not published in Takes Package with id {}"
-                                          .format(previous_take_ref[GUID_FIELD], package[config.ID_FIELD])))
+                            if previous_take and previous_take[config.CONTENT_STATE] not in ['published', 'corrected']:
+                                raise PublishQueueError.previous_take_not_published_error(
+                                    Exception("Take with id {} is not published in Takes Package with id {}"
+                                              .format(previous_take_ref[GUID_FIELD], package[config.ID_FIELD])))
 
-                        package_updates['body_html'] = \
-                            previous_take['body_html'] + '<br>' + package_updates['body_html']
+                            package_updates['body_html'] = \
+                                previous_take['body_html'] + '<br>' + package_updates['body_html']
 
                 metadata_tobe_copied = ['headline', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency',
                                         'subject', 'byline', 'dateline']
@@ -295,8 +299,7 @@ class BasePublishService(BaseService):
         1. Sets the Metadata Properties - source and pubstatus
         2. Formats and queues the article to subscribers based on the state of the article:
             a. If the state of the article is killed then:
-                i.  An email should be sent to all Subscribers irrespective of their status.
-                ii. The article should be formatted as per the type of the format and then queue article to the
+                i. The article should be formatted as per the type of the format and then queue article to the
                     Subscribers who received the article previously.
             b. If the state of the article is corrected then:
                 i.      The article should be formatted as per the type of the format and then queue article to the
@@ -337,36 +340,24 @@ class BasePublishService(BaseService):
 
         # Step 2(a)
         if self.published_state == 'killed':
-            req = ParsedRequest()
-            req.sort = '[("completed_at", 1)]'
-            queued_items = get_resource_service('publish_queue').get(
-                req=req, lookup={'item_id': updated[config.ID_FIELD]})
+            subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, target_media_type)
 
-            if queued_items.count():
-                queued_items = list(queued_items)
-
-                # Step 2(a)(i)
-                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
-                recipients = [s.get('email') for s in subscribers if s.get('email')]
-                send_article_killed_email(doc, recipients, queued_items[0].get('completed_at'))
-
-                # Step 2(a)(ii)
-                no_formatters, queued = self.queue_transmission(updated, subscribers, None)
+            # Step 2(a)(i)
+            no_formatters, queued = self.queue_transmission(updated, subscribers)
         elif self.published_state == 'corrected':  # Step 2(b)
-            subscribers, subscribers_yet_to_receive = self.get_subscribers(updated)
+            subscribers, subscribers_yet_to_receive = self.get_subscribers(updated, target_media_type)
             if subscribers:
                 no_formatters, queued = self.queue_transmission(updated, subscribers)
 
                 if subscribers_yet_to_receive:
                     # Step 2(b)(iv)
                     formatters_not_found, queued_new_subscribers = \
-                        self.queue_transmission(updated, subscribers_yet_to_receive, target_media_type)
+                        self.queue_transmission(updated, subscribers_yet_to_receive)
                     no_formatters.extend(formatters_not_found)
         elif self.published_state == 'published':  # Step 2(c)
-            subscribers, subscribers_yet_to_receive = self.get_subscribers(updated)
-
+            subscribers, subscribers_yet_to_receive = self.get_subscribers(updated, target_media_type)
             # Step 2(c)(iii)
-            no_formatters, queued = self.queue_transmission(updated, subscribers, target_media_type)
+            no_formatters, queued = self.queue_transmission(updated, subscribers)
 
         # Step 3
         user = get_user()
@@ -383,34 +374,40 @@ class BasePublishService(BaseService):
         return queued
 
     def sending_to_digital_subscribers(self, doc):
-        subscribers, subscribers_yet_to_receive = self.get_subscribers(doc)
-        filtered_subscribers = self.filter_subscribers(doc, subscribers, DIGITAL)
-        return len(filtered_subscribers) > 0
+        subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, DIGITAL)
+        return len(subscribers) > 0
 
-    def get_subscribers(self, doc):
+    def get_subscribers(self, doc, target_media_type):
+        """
+        Get the subscribers for this document based on the target_media_type.
+        :param doc: Document to publish/correct/kill
+        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
+                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
+                then the doc being queues is an Individual Article.
+        :return: List of of filtered subscriber.
+        """
         subscribers, subscribers_yet_to_receive = [], []
         if self.published_state == 'corrected':
-            query = {'$and': [{'item_id': doc[config.ID_FIELD]}, {'publishing_action': 'published'}]}
-            queued_items = get_resource_service('publish_queue').get(req=None, lookup=query)
+            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+                              {'publishing_action': {'$in': ['published', 'corrected']}}]}
 
-            if queued_items.count():
-                # Step 2(b)(i)
-                queued_items = list(queued_items)
-                subscriber_ids = {queued_item['subscriber_id'] for queued_item in queued_items}
+            subscribers = self._get_subscribers_for_previously_sent_items(query)
 
-                query = {'$and': [{config.ID_FIELD: {'$in': list(subscriber_ids)}}]}
-                subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
-                if subscribers:
-                    # Step 2(b)(ii)
-                    active_subscribers = get_resource_service('subscribers').get(req=None, lookup={'is_active': True})
-                    subscribers_yet_to_receive = [a for a in active_subscribers
-                                                  if not any(a[config.ID_FIELD] == s[config.ID_FIELD]
-                                                             for s in subscribers)]
+            if subscribers:
+                # Step 2(b)(ii)
+                active_subscribers = get_resource_service('subscribers').get(req=None, lookup={'is_active': True})
+                subscribers_yet_to_receive = [a for a in active_subscribers
+                                              if not any(a[config.ID_FIELD] == s[config.ID_FIELD]
+                                                         for s in subscribers)]
 
-                    if len(subscribers_yet_to_receive) > 0:
-                        # Step 2(b)(iii)
-                        if doc.get('targeted_for'):
-                            subscribers_yet_to_receive = list(self.non_digital(subscribers_yet_to_receive))
+                if len(subscribers_yet_to_receive) > 0:
+                    # Step 2(b)(iii)
+                    if doc.get('targeted_for'):
+                        subscribers_yet_to_receive = list(self.non_digital(subscribers_yet_to_receive))
+
+                    subscribers_yet_to_receive = \
+                        self.filter_subscribers(doc, subscribers_yet_to_receive,
+                                                WIRE if doc.get('targeted_for') else target_media_type)
 
         elif self.published_state == 'published':  # Step 2(c)
             # Step 2(c)(i)
@@ -420,11 +417,40 @@ class BasePublishService(BaseService):
             if doc.get('targeted_for'):
                 subscribers = list(self.non_digital(subscribers))
 
+            subscribers = self.filter_subscribers(doc, subscribers,
+                                                  WIRE if doc.get('targeted_for') else target_media_type)
+
+        elif self.published_state == 'killed':
+            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
+                              {'publishing_action': {'$in': ['published', 'corrected']}}]}
+            subscribers = self._get_subscribers_for_previously_sent_items(query)
+
         return subscribers, subscribers_yet_to_receive
+
+    def _get_subscribers_for_previously_sent_items(self, lookup):
+        """
+        Returns list of subscribers that have previously received the item.
+        :param lookup: query to filter the publish queue
+        :return: list of subscribers
+        """
+        req = ParsedRequest()
+        subscribers = []
+        queued_items = get_resource_service('publish_queue').get(req=req, lookup=lookup)
+        if queued_items.count():
+            subscriber_ids = {queued_item['subscriber_id'] for queued_item in queued_items}
+            query = {'$and': [{config.ID_FIELD: {'$in': list(subscriber_ids)}}]}
+            subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
+        return subscribers
 
     def filter_subscribers(self, doc, subscribers, target_media_type):
         """
-        Filter subscribers to whom the current story is going to be delivered.
+        Filter subscribers to whom the current document is going to be delivered.
+        :param doc: Document to publish/kill/correct
+        :param subscribers: List of Subscribers that might potentially get this document
+        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
+                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
+                then the doc being queues is an Individual Article.
+        :return: List of of filtered subscriber.
         """
         filtered_subscribers = []
         req = ParsedRequest()
@@ -456,54 +482,54 @@ class BasePublishService(BaseService):
 
         return filtered_subscribers
 
-    def queue_transmission(self, doc, subscribers, target_media_type=None):
+    def queue_transmission(self, doc, subscribers):
         """
         Method formats and then queues the article for transmission to the passed subscribers.
         ::Important Note:: Format Type across Subscribers can repeat. But we can't have formatted item generated once
         based on the format_types configured across for all the subscribers as the formatted item must have a published
         sequence number generated by Subscriber.
-
-        :param: target_media_type - dictate if the doc being queued is a Takes Package or an Individual Article.
-                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
-                then the doc being queues is an Individual Article.
         """
 
         try:
             queued = False
             no_formatters = []
-            for subscriber in self.filter_subscribers(doc, subscribers, target_media_type):
-                for destination in subscriber['destinations']:
-                    # Step 2(a)
-                    formatter = get_formatter(destination['format'], doc)
+            for subscriber in subscribers:
+                try:
+                    for destination in subscriber['destinations']:
+                        # Step 2(a)
+                        formatter = get_formatter(destination['format'], doc)
 
-                    if not formatter:  # if formatter not found then record it
-                        no_formatters.append(destination['format'])
-                        continue
+                        if not formatter:  # if formatter not found then record it
+                            no_formatters.append(destination['format'])
+                            continue
 
-                    formatted_docs = formatter.format(doc, subscriber)
+                        formatted_docs = formatter.format(doc, subscriber)
 
-                    for pub_seq_num, formatted_doc in formatted_docs:
-                        publish_queue_item = dict()
-                        publish_queue_item['item_id'] = doc['_id']
-                        publish_queue_item['item_version'] = doc[config.VERSION] + 1
-                        publish_queue_item['formatted_item'] = formatted_doc
-                        publish_queue_item['subscriber_id'] = subscriber['_id']
-                        publish_queue_item['destination'] = destination
-                        publish_queue_item['published_seq_num'] = pub_seq_num
-                        publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
-                        publish_queue_item['unique_name'] = doc.get('unique_name', None)
-                        publish_queue_item['content_type'] = doc.get('type', None)
-                        publish_queue_item['headline'] = doc.get('headline', None)
+                        for pub_seq_num, formatted_doc in formatted_docs:
+                            publish_queue_item = dict()
+                            publish_queue_item['item_id'] = doc['_id']
+                            publish_queue_item['item_version'] = doc[config.VERSION] + 1
+                            publish_queue_item['formatted_item'] = formatted_doc
+                            publish_queue_item['subscriber_id'] = subscriber['_id']
+                            publish_queue_item['destination'] = destination
+                            publish_queue_item['published_seq_num'] = pub_seq_num
+                            publish_queue_item['publish_schedule'] = doc.get('publish_schedule', None)
+                            publish_queue_item['unique_name'] = doc.get('unique_name', None)
+                            publish_queue_item['content_type'] = doc.get('type', None)
+                            publish_queue_item['headline'] = doc.get('headline', None)
 
-                        self.set_state(doc, publish_queue_item)
-                        if publish_queue_item.get(config.CONTENT_STATE):
-                            publish_queue_item['publishing_action'] = publish_queue_item.get(config.CONTENT_STATE)
-                            del publish_queue_item[config.CONTENT_STATE]
-                        else:
-                            publish_queue_item['publishing_action'] = self.published_state
+                            self.set_state(doc, publish_queue_item)
+                            if publish_queue_item.get(config.CONTENT_STATE):
+                                publish_queue_item['publishing_action'] = publish_queue_item.get(config.CONTENT_STATE)
+                                del publish_queue_item[config.CONTENT_STATE]
+                            else:
+                                publish_queue_item['publishing_action'] = self.published_state
 
-                        get_resource_service('publish_queue').post([publish_queue_item])
-                        queued = True
+                            get_resource_service('publish_queue').post([publish_queue_item])
+                            queued = True
+                except:
+                    logger.exception("Failed to queue item for id {} with headline {} for subscriber {}."
+                                     .format(doc.get(config.ID_FIELD), doc.get('headline'), subscriber.get('name')))
 
             return no_formatters, queued
         except:
@@ -592,6 +618,7 @@ class KillPublishResource(BasePublishResource):
 class KillPublishService(BasePublishService):
     publish_type = 'kill'
     published_state = 'killed'
+    takes_service = TakesPackageService()
 
     def __init__(self, datasource=None, backend=None):
         super().__init__(datasource=datasource, backend=backend)
@@ -599,7 +626,48 @@ class KillPublishService(BasePublishService):
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
-        TakesPackageService().process_killed_takes_package(original)
+        self.takes_service.process_killed_takes_package(original)
+
+    def update(self, id, updates, original):
+        """
+        Kill will broadcast kill email and then kill the item.
+        If item is a take then all the takes are killed as well.
+        """
+        self._broadcast_kill_email(original)
+        super().update(id, updates, original)
+        self._publish_kill_for_takes(updates, original)
+
+    def _broadcast_kill_email(self, original):
+        """
+        Send the broadcast email to all subscribers
+        """
+        subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
+        recipients = [s.get('email') for s in subscribers if s.get('email')]
+        send_article_killed_email(original, recipients, utcnow())
+
+    def _publish_kill_for_takes(self, updates, original):
+        """
+        Kill all the takes in a takes package.
+        """
+        package = self.takes_service.get_take_package(original)
+        last_updated = updates.get(config.LAST_UPDATED, utcnow())
+        if package:
+            for ref in[ref for group in package.get('groups', []) if group['id'] == 'main'
+                       for ref in group.get('refs')]:
+                if ref[GUID_FIELD] != original[config.ID_FIELD]:
+                    original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
+                    updates_data = copy(updates)
+                    queued = self.publish(doc=original_data, updates=updates_data, target_media_type=WIRE)
+                    # we need to update the archive item and not worry about queued as we could have
+                    # a takes only going to digital client.
+                    self._set_version_last_modified_and_state(original_data, updates_data, last_updated)
+                    self._update_archive(original=original_data, updates=updates_data,
+                                         should_insert_into_versions=True)
+                    self.update_published_collection(published_item_id=original_data['_id'])
+
+                    if not queued:
+                        logger.warn("Could not publish the kill for take {} with headline {}".
+                                    format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
 
 class CorrectPublishResource(BasePublishResource):
