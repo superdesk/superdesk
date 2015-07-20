@@ -506,6 +506,15 @@ function FilterSearchController($scope, filters, notify) {
         return true;
     };
 
+    $scope.handleKey = function(event) {
+        if ($scope.filterCondition.values.length > 0) {
+            notify.error(gettext('single value is required'));
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+    };
+
     $scope.editView = function(filterId) {
         var filter = _.find($scope.publishFilters, {_id: filterId.filter_id});
         $scope.editFilter(filter);
@@ -586,7 +595,6 @@ function FilterSearchResultDirective() {
 angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
-    //.controller('PublishFiltersController', PublishFiltersController)
     .controller('ProductionTestController', ProductionTestController)
     .directive('sdFilterSearch', FilterSearchDirective)
     .directive('sdFiltersearchResult', FilterSearchResultDirective)

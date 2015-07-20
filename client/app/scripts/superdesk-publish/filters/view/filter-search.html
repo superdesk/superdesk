@@ -15,10 +15,10 @@
             </div>
             <div class="field">
                 <label translate>Values</label>
-                <div class="term-editor" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+                <div class="term-editor" ng-keypress="handleKey($event)" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
             </div>
-            <div>
-                <button class="btn btn-primary" ng-click="search()" translate>Search</button>
+            <div class="pull-right">
+                <button ng-disabled="!(filterCondition && filterCondition.values.length > 0)" class="btn btn-primary" ng-click="search()" translate>Search</button>
             </div>
         </fieldset>
     </form>
