@@ -99,7 +99,8 @@ class SubscribersResource(Resource):
                     'allowed': ['blocking', 'permitting'],
                     'default': 'blocking'
                 }
-            }
+            },
+            'nullable': True
         },
         'global_filters': {
             'type': 'dict',

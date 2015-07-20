@@ -387,7 +387,7 @@
                 $scope.save = function() {
 
                     if ($scope.subscriber.publish_filter && $scope.subscriber.publish_filter.filter_id === '') {
-                        $scope.subscriber.publish_filter.filter_id = null;
+                        $scope.subscriber.publish_filter = null;
                     }
 
                     api.subscribers.save($scope.origSubscriber, $scope.subscriber)

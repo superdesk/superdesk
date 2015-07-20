@@ -559,7 +559,7 @@ class BasePublishService(BaseService):
         """
         publish_filter = subscriber.get('publish_filter')
 
-        if not publish_filter or 'filter_id' not in publish_filter:
+        if publish_filter is None or 'filter_id' not in publish_filter or publish_filter['filter_id'] is None:
             return True
 
         service = get_resource_service('publish_filters')
