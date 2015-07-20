@@ -23,6 +23,10 @@ class AapIpNewsFormatterTest(TestCase):
                                       }]
                     }]
 
+    desks = [{'_id': 1, 'name': 'National'},
+             {'_id': 2, 'name': 'Sports'},
+             {'_id': 3, 'name': 'Finance'}]
+
     article = {
         'source': 'AAP',
         'anpa_category': [{'qcode': 'a'}],
@@ -48,6 +52,7 @@ class AapIpNewsFormatterTest(TestCase):
         with self.app.app_context():
             self.app.data.insert('subscribers', self.subscribers)
             self.app.data.insert('vocabularies', self.vocab)
+            self.app.data.insert('desks', self.desks)
             init_app(self.app)
 
     def TestIPNewsFormatter(self):
@@ -58,7 +63,7 @@ class AapIpNewsFormatterTest(TestCase):
             seq, item = f.format(self.article, subscriber)[0]
 
             self.assertGreater(int(seq), 0)
-            self.assertEquals(seq, item['sequence'])
+            self.assertEqual(seq, item['sequence'])
             item.pop('sequence')
             self.assertDictEqual(item,
                                  {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
@@ -67,8 +72,7 @@ class AapIpNewsFormatterTest(TestCase):
                                   'subject_matter': 'international law', 'news_item_type': 'News',
                                   'subject_reference': '02011001', 'subject': 'crime, law and justice',
                                   'wordcount': '1', 'subject_detail': 'international court or tribunal',
-                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe',
-                                  'selector_codes': '3**'})
+                                  'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
 
     def TestIPNewsHtmlToText(self):
         article = {
@@ -95,7 +99,7 @@ class AapIpNewsFormatterTest(TestCase):
 
             expected = '\r\nThe story body line 1 \r\nLine 2 \r\n\r\nabcdefghi abcdefghi abcdefghi abcdefghi ' \
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
-            self.assertEquals(item['article_text'], expected)
+            self.assertEqual(item['article_text'], expected)
 
     def TestMultipleCategories(self):
         article = {
@@ -127,3 +131,31 @@ class AapIpNewsFormatterTest(TestCase):
                 if doc['category'] == 'F':
                     self.assertEqual(doc['subject_reference'], '04001005')
                     self.assertEqual(doc['subject_detail'], 'viniculture')
+
+    def Test_is_in_subject(self):
+        article = {
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+        }
+        f = AAPIpNewsFormatter()
+        self.assertTrue(f._is_in_subject(article, '150'))
+        self.assertFalse(f._is_in_subject(article, '151'))
+        self.assertTrue(f._is_in_subject(article, '04001'))
+
+    def Test_join_selector_codes(self):
+        f = AAPIpNewsFormatter()
+        result = f._join_selector_codes('ipnewS', 'newsi', 'cnewsi', 'cnewsi')
+        result_list = result.split()
+        self.assertEqual(len(result_list), 12)
+
+    def Test_set_selector_codes(self):
+        article = {
+            'task': {'desk': 1},
+            'slugline': 'Test',
+            'urgency': 3
+        }
+        f = AAPIpNewsFormatter()
+        odbc_item = {}
+        with self.app.app_context():
+            f._set_selector_codes(article, 'ipnews', odbc_item, category={'qcode': 'A'})
+            self.assertSetEqual(set(odbc_item['selector_codes'].split()),
+                                set('and axd pnd cxd 0fh 0ir 0px 0ah 0hw cxx axx cnd 0nl az pxd pxx'.split()))
