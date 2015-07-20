@@ -3,22 +3,25 @@
         <fieldset>
             <div class="field">
                 <label translate>Field</label>
-                <select class="input" required ng-model="filterCondition.field" >
+                <select class="input" ng-change="resetValues()" required ng-model="filterCondition.field">
                     <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters">{{:: parameter.field}}</option>
                 </select>
             </div>
             <div class="field">
                 <label translate>Operator</label>
-                <select class="input" required ng-model="filterCondition.operator" >
+                <select class="input" ng-change="resetValues()" required ng-model="filterCondition.operator" >
                     <option value="{{operator}}" ng-selected="operator === filterCondition.operator" ng-repeat="operator in operatorLookup[filterCondition.field]">{{operator}}</option>
                 </select>
             </div>
             <div class="field">
                 <label translate>Values</label>
-                <div class="term-editor" ng-keypress="handleKey($event)" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+                <input ng-if="!isListValue()" required ng-model="filterCondition.value">
+                <div ng-if="isListValue()">
+                    <div class="term-editor" ng-keypress="handleKey($event)" sd-meta-terms data-item="filterCondition" data-field="values" data-unique="qcode" data-list="valueLookup[filterCondition.field]"></div>
+                </div>
             </div>
             <div class="pull-right">
-                <button ng-disabled="!(filterCondition && filterCondition.values.length > 0)" class="btn btn-primary" ng-click="search()" translate>Search</button>
+                <button class="btn btn-primary" ng-disabled="!(filterCondition.value || filterCondition.values.length > 0)" ng-click="search()" translate>Search</button>
             </div>
         </fieldset>
     </form>

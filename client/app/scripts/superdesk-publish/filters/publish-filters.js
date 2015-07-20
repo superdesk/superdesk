@@ -502,6 +502,12 @@ function FilterSearchController($scope, filters, notify) {
     populateData();
     fetchPublishFilters();
 
+    $scope.isListValue = function() {
+        if ($scope.filterCondition != null) {
+            return _.contains(['in', 'nin'], $scope.filterCondition.operator) && $scope.valueLookup[$scope.filterCondition.field];
+        }
+    };
+
     $scope.hideList = function () {
         return true;
     };
@@ -513,6 +519,12 @@ function FilterSearchController($scope, filters, notify) {
             event.stopPropagation();
             return false;
         }
+    };
+
+    $scope.resetValues = function() {
+        $scope.searchResult = null;
+        $scope.filterCondition.values.length = 0;
+        $scope.filterCondition.value = null;
     };
 
     $scope.editView = function(filterId) {
@@ -558,16 +570,32 @@ function FilterSearchController($scope, filters, notify) {
             $scope.filterCondition.values.push(v);
         });
     }
+    function getFilterValue() {
+        if ($scope.isListValue()) {
+            var values = [];
+            _.each($scope.filterCondition.values, function(value) {
+                values.push(value[$scope.valueFieldLookup[$scope.filterCondition.field]]);
+            });
+            return values.join();
+        } else {
+            return $scope.filterCondition.value;
+        }
+    }
 
     $scope.search = function() {
+        $scope.searchResult = null;
+        $scope.filterCondition.value = getFilterValue();
         var inputs = {
             'field': $scope.filterCondition.field,
             'operator': $scope.filterCondition.operator,
-            'value': $scope.filterCondition.values[0].name
+            'value': $scope.filterCondition.value
         };
 
         filters.getFilterSearchResults(inputs).then(function(result) {
             $scope.searchResult = result;
+            if (result.length === 0) {
+                notify.error(gettext('no results found'));
+            }
         });
     };
 }
