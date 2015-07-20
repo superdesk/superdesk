@@ -251,7 +251,7 @@ class FilterConditionService(BaseService):
 
     def _get_field_value(self, field, article):
         if field == 'anpa_category':
-            return article[field]['value']
+            return [c['qcode'] for c in article[field]]
         elif field == 'genre':
             return [g['name'] for g in article[field]]
         elif field == 'subject':
