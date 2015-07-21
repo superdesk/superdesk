@@ -81,7 +81,7 @@ class AAPIpNewsFormatter(Formatter):
         :param article:
         :return:
         """
-        subject_reference = '        '
+        subject_reference = None
         # Ensure that there is a subject in the article
         if 'subject' in article and 'qcode' in article['subject'][0]:
             # set the subject reference with the first value, in case we can't do better
@@ -120,7 +120,8 @@ class AAPIpNewsFormatter(Formatter):
                              'keyword': article.get('slugline', None).replace('\'', '\'\'')}
 
                 odbc_item['subject_reference'] = self._set_subject(category, article)
-                if 'subject_reference' in odbc_item:
+                if 'subject_reference' in odbc_item and odbc_item['subject_reference'] is not None \
+                        and odbc_item['subject_reference'] != '00000000':
                     odbc_item['subject'] = subject_codes[odbc_item['subject_reference'][:2] + '000000']
                     if odbc_item['subject_reference'][2:5] != '000':
                         odbc_item['subject_matter'] = subject_codes[odbc_item['subject_reference'][:5] + '000']
@@ -131,7 +132,7 @@ class AAPIpNewsFormatter(Formatter):
                     else:
                         odbc_item['subject_detail'] = ''
                 else:
-                    odbc_item['subject_reference'] = '        '
+                    odbc_item['subject_reference'] = '00000000'
 
                 odbc_item['take_key'] = article.get('anpa_take_key', None)  # @take_key
                 odbc_item['usn'] = article.get('unique_id', None)  # @usn
@@ -165,7 +166,7 @@ class AAPIpNewsFormatter(Formatter):
                 odbc_item['fullStory'] = 1
                 odbc_item['ident'] = '0'  # @ident
 
-                self._set_selector_codes(article, subscriber['name'], odbc_item, category)
+                self._set_selector_codes(article, subscriber['name'], odbc_item, category.get('qcode').upper())
                 docs.append((pub_seq_num, odbc_item))
 
             return docs
@@ -200,40 +201,40 @@ class AAPIpNewsFormatter(Formatter):
         if 'FRONTERS' in slugline:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['fronters'][subscriber_name]
             return
-        if category['qcode'] == 'A' and article['urgency'] > 3:
+        if category == 'A' and article['urgency'] > 3:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['newsd'][subscriber_name]
             return
-        if category['qcode'] == 'A' and article['urgency'] <= 3:
+        if category == 'A' and article['urgency'] <= 3:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'newsd', 'cnewsd')
             return
-        if category['qcode'] == 'I' and article['source'] == 'AAP':
+        if category == 'I' and article['source'] == 'AAP':
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'newsd', 'cnewsd')
             return
-        if category['qcode'] == 'I' and article['source'] != 'AAP' and article['urgency'] <= 3:
+        if category == 'I' and article['source'] != 'AAP' and article['urgency'] <= 3:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'newsi', 'cnewsi')
             return
-        if category['qcode'] == 'I' and article['source'] != 'AAP' and article['urgency'] > 3:
+        if category == 'I' and article['source'] != 'AAP' and article['urgency'] > 3:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['newsi'][subscriber_name]
             return
-        if category['qcode'] == 'F' and article['source'] != 'AAP':
+        if category == 'F' and article['source'] != 'AAP':
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name,
                                                                     'financei', 'cfinancei', 'sfinancei', 'cnewsi')
             return
-        if category['qcode'] == 'F' and article['source'] != 'AAP':
+        if category == 'F' and article['source'] == 'AAP':
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'newsd', 'cnewsd')
             return
-        if category['qcode'] == 'E' and article['source'] == 'AAP' \
-                and article['urgency'] < 3 and self._is_in_subject('010'):
+        if category == 'E' and article['source'] == 'AAP' \
+                and article['urgency'] < 3 and self._is_in_subject(article, '010'):
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'eprem', 'newsd', 'cnewsd')
             return
-        if category['qcode'] == 'E' and article['source'] != 'AAP' \
-                and article['urgency'] < 3 and self._is_in_subject('010'):
+        if category == 'E' and article['source'] != 'AAP' \
+                and article['urgency'] < 3 and self._is_in_subject(article, '010'):
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'eprem', 'newsi', 'cnewsi')
             return
-        if category['qcode'] == 'E' and article['urgency'] >= 3 and self._is_in_subject('010'):
+        if category == 'E' and article['urgency'] >= 3 and self._is_in_subject(article, '010'):
             odbc_item['selector_codes'] = self.SELECTOR_CODES['eprem'][subscriber_name]
             return
-        if category['qcode'] == 'N' and article['source'] != 'NZN':
+        if category == 'N' and article['source'] != 'NZN':
             odbc_item['selector_codes'] = self.SELECTOR_CODES['newsz'][subscriber_name]
             return
 
@@ -241,35 +242,36 @@ class AAPIpNewsFormatter(Formatter):
         if 'NEWSLIST' in article['slugline'].upper():
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'sportmedia', 'sportseds')
             return
-        if category['qcode'] == 'T' and article['source'] == 'AAP' and article['urgency'] > 3:
+        if category == 'T' and article['source'] == 'AAP' and article['urgency'] > 3:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['sportd'][subscriber_name]
             return
-        if category['qcode'] == 'T' and article['source'] == 'AAP' and article['urgency'] <= 3:
+        if category == 'T' and article['source'] == 'AAP' and article['urgency'] <= 3:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'sportd', 'csportd')
             return
-        if category['qcode'] == 'S' and article['source'] == 'AAP':
+        if category == 'S' and article['source'] == 'AAP':
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'sporti', 'csporti', 'csportd')
             return
-        if category['qcode'] == 'S' and article['source'] != 'AAP' and article['urgency'] <= 3:
+        if category == 'S' and article['source'] != 'AAP' and article['urgency'] <= 3:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name, 'sporti', 'csporti')
             return
-        if category['qcode'] == 'S' and article['source'] != 'AAP' and article['urgency'] > 3:
+        if category == 'S' and article['source'] != 'AAP' and article['urgency'] > 3:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['sporti'][subscriber_name]
             return
 
     def _set_fdx_selector_codes(self, article, subscriber_name, odbc_item, category):
-        if category['qcode'] == 'F' and article['priority'] in ['N'] and article['urgency'] > 3:
+        if category == 'F' and article['priority'] in ['N'] and article['urgency'] > 3:
             odbc_item['selector_codes'] = self.SELECTOR_CODES['sfinanced'][subscriber_name]
             return
-        if category['qcode'] == 'F' and article['source'] == 'AAP' and article['priority'] in ['N', 'M']:
+        if category == 'F' and article['source'] == 'AAP' and article['priority'] in ['N', 'M']:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name,
                                                                     'financed', 'cfinanced', 'sfinanced')
             return
-        if category['qcode'] == 'F' and article['source'] != 'AAP':
+        if category == 'F' and article['source'] != 'AAP':
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name,
                                                                     'financei', 'cfinancei', 'sfinancei')
             return
-        if category['qcode'] == 'F' and article['source'] == 'AAP' and article.get('locator', '') not in ['N', 'M']:
+        if category == 'F' and article['source'] == 'AAP' \
+                and article.get('locator', '') not in ['N', 'M']:
             odbc_item['selector_codes'] = self._join_selector_codes(subscriber_name,
                                                                     'financei', 'cfinancei', 'sfinancei')
             return

@@ -16,7 +16,7 @@ from apps.publish.formatters.aap_ipnews_formatter import AAPIpNewsFormatter
 
 
 class AapIpNewsFormatterTest(TestCase):
-    subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
+    subscribers = [{"_id": "1", "name": "ipnews", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "AAP IPNEWS", "delivery_type": "email", "format": "AAP IPNEWS",
                                       "config": {"recipients": "test@sourcefabric.org"}
@@ -115,7 +115,8 @@ class AapIpNewsFormatterTest(TestCase):
             'type': 'text',
             'body_html': 'body',
             'word_count': '1',
-            'priority': '1'
+            'priority': '1',
+            'task': {'desk': 1}
         }
 
         with self.app.app_context():
@@ -131,6 +132,9 @@ class AapIpNewsFormatterTest(TestCase):
                 if doc['category'] == 'F':
                     self.assertEqual(doc['subject_reference'], '04001005')
                     self.assertEqual(doc['subject_detail'], 'viniculture')
+                    codes = set(doc['selector_codes'].split(' '))
+                    expected_codes = set('cxx 0fh axx az and pxx 0ah 0ir 0px 0hw pnd pxd cnd cxd 0nl axd'.split(' '))
+                    self.assertSetEqual(codes, expected_codes)
 
     def Test_is_in_subject(self):
         article = {
@@ -156,6 +160,6 @@ class AapIpNewsFormatterTest(TestCase):
         f = AAPIpNewsFormatter()
         odbc_item = {}
         with self.app.app_context():
-            f._set_selector_codes(article, 'ipnews', odbc_item, category={'qcode': 'A'})
+            f._set_selector_codes(article, 'ipnews', odbc_item, 'A')
             self.assertSetEqual(set(odbc_item['selector_codes'].split()),
                                 set('and axd pnd cxd 0fh 0ir 0px 0ah 0hw cxx axx cnd 0nl az pxd pxx'.split()))
