@@ -147,10 +147,15 @@ class PublishFilterService(BaseService):
         return {'query': {'filtered': {'query': self._get_elastic_query(doc)}}}
 
     def build_elastic_not_filter(self, doc):
-        return {'query': {'filtered': {'filter': {'not': {'filter': self._get_elastic_query(doc)}}}}}
+        return {'query': {'filtered': {'query': self._get_elastic_query(doc, matching=False)}}}
 
-    def _get_elastic_query(self, doc):
-        expressions = {'should': []}
+    def _get_elastic_query(self, doc, matching=True):
+        expressions_list = []
+        if matching:
+            expressions = {'should': expressions_list}
+        else:
+            expressions = {'must_not': expressions_list}
+
         filter_condition_service = get_resource_service('filter_conditions')
         for expression in doc.get('publish_filter', []):
             filter_conditions = {'must': []}
@@ -165,7 +170,7 @@ class PublishFilterService(BaseService):
                     elastic_query = self._get_elastic_query(current_filter)
                     filter_conditions['must'].append(elastic_query)
 
-            expressions['should'].append({'bool': filter_conditions})
+            expressions_list.append({'bool': filter_conditions})
         return {'bool': expressions}
 
     def does_match(self, publish_filter, article):
