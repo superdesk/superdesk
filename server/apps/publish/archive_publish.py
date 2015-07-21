@@ -466,15 +466,18 @@ class BasePublishService(BaseService):
                     continue
 
             if doc.get('targeted_for'):
-                matching_target = [t for t in doc.get('targeted_for')
-                                   if t['name'] == subscriber.get('subscriber_type', '') or
-                                   t['name'] == subscriber.get('geo_restrictions', '')]
+                found_match = [t for t in doc['targeted_for'] if t['name'] == subscriber.get('subscriber_type', '')]
 
-                if len(matching_target) > 0 and matching_target[0]['allow'] is False:
+                if len(found_match) == 0 and subscriber.get('geo_restrictions'):
+                    found_match = [t for t in doc['targeted_for'] if t['name'] == subscriber['geo_restrictions']]
+                    if len(found_match) == 0 or found_match[0]['allow'] is False:
+                        continue
+                elif len(found_match) > 0 and found_match[0]['allow'] is False:
                     continue
 
             if not self.conforms_global_filter(subscriber, global_filters, doc):
                 continue
+
             if not self.conforms_publish_filter(subscriber, doc):
                 continue
 
