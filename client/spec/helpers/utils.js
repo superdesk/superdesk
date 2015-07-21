@@ -36,7 +36,7 @@ function changeUrl(url) {
             function(err) {
                 console.log('WARNING: catched error from waitForSuperdesk ' +
                     'in changeUrl.');
-                //return webdriver.promise.rejected(err);
+                console.log(err);
                 console.log('trying again...');
                 return browser.sleep(500).then(function() {
                     return changeUrl(url);
@@ -64,15 +64,14 @@ function printLogs(prefix) {
 }
 
 var clientSideScripts = require(path.resolve('node_modules') + '/protractor/lib/clientsidescripts.js');
-function waitForAngular(opt_description) {
-    var description = opt_description ? ' - ' + opt_description : '';
-    var self = browser;
+function waitForAngular(_description) {
+    var description = _description ? ' - ' + _description : '';
 
     function doWork() {
-        return self.executeAsyncScript_(
+        return browser.executeAsyncScript_(
             clientSideScripts.waitForAngular,
             'Protractor.waitForAngular()' + description,
-            self.rootEl
+            browser.rootEl
         ).then(function(browserErr) {
             if (browserErr) {
                 throw 'Error while waiting for Protractor to ' +
@@ -130,7 +129,8 @@ function waitForSuperdesk() {
  *
  * Unlinke openUrl it doesn't reload the page, only changes #hash in url
  *
- * @param {string} location
+ * @param {string} location Location where to navigate without # (eg. users, workspace/content)
+ * @return {Promise}
  */
 function nav(location) {
     return login().then(function() {

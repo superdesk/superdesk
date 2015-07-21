@@ -68,7 +68,8 @@ describe('multi content view', function() {
         expect(multicontent.getTextItem(1, 0)).toBe('item3');
     });
 
-    it('configure a stage and a saved search then unselect stage and show search on multicontent view', function() {
+    it('configure a stage and a saved search then unselect stage and show search on multicontent view',
+    function() {
         multicontent.showMulticontentSettings();
         multicontent.toggleDesk(0);
         multicontent.toggleStage(0, 2);

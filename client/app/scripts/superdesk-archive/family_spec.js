@@ -72,7 +72,8 @@ describe('familyService', function() {
         expect(memberDesks.length).toBe(1);
     }));
 
-    it('can fetch desks of members of a family with exclusion', inject(function($rootScope, familyService, api, desks) {
+    it('can fetch desks of members of a family with exclusion',
+    inject(function($rootScope, familyService, api, desks) {
         var memberDesks = null;
         familyService.fetchDesks({_id: 'z', family_id: 'family1'}, true)
         .then(function(result) {
@@ -82,7 +83,8 @@ describe('familyService', function() {
         expect(memberDesks.length).toBe(0);
     }));
 
-    it('can use item._id for ingest items instead of family id', inject(function($rootScope, $q, familyService) {
+    it('can use item._id for ingest items instead of family id',
+    inject(function($rootScope, $q, familyService) {
         spyOn(familyService, 'fetchItems').and.returnValue($q.when({}));
         familyService.fetchDesks({_id: 'id', family_id: 'family_id', state: 'ingested'});
         expect(familyService.fetchItems).toHaveBeenCalledWith('id', undefined);

@@ -25,6 +25,9 @@ function Workspace() {
 
     /**
      * Open a workspace of given name, can be both desk or custom
+     *
+     * @param {string} desk Desk or workspace name.
+     * @return {Promise}
      */
     this.switchToDesk = function(desk) {
 

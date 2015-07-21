@@ -1,5 +1,3 @@
-(function() {
-
 'use strict';
 
 describe('item comments', function() {
@@ -36,5 +34,3 @@ describe('item comments', function() {
         });
     }));
 });
-
-})();

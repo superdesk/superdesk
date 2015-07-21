@@ -7,7 +7,8 @@ describe('desks service', function() {
 
     beforeEach(module('superdesk.desks'));
 
-    it('can fetch current user desks', inject(function(desks, session, api, preferencesService, $rootScope, $q) {
+    it('can fetch current user desks',
+    inject(function(desks, session, api, preferencesService, $rootScope, $q) {
         spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
         spyOn(api, 'get').and.returnValue($q.when({_items: [{name: 'sport'}, {name: 'news'}]}));
         spyOn(preferencesService, 'get').and.returnValue($q.when([]));

@@ -7,7 +7,9 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Search', function() {
 
-    beforeEach(function(done) {openUrl('/#/workspace/content').then(done);});
+    beforeEach(function(done) {
+        openUrl('/#/workspace/content').then(done);
+    });
 
     it('can search by search field', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);

@@ -8,7 +8,8 @@ describe('list directives', function() {
         var scope = $rootScope.$new(true);
         scope.items = [{href: 1, name: 'foo'}, {href: 2, name: 'bar'}];
 
-        var elem = $compile('<div sd-list-view data-items="items"><div class="item">{{ item.name }}</div></div>')(scope);
+        var elem = $compile('<div sd-list-view data-items="items">' +
+            '<div class="item">{{ item.name }}</div></div>')(scope);
         scope.$digest();
 
         expect(elem.html()).toContain('foo');

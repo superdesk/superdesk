@@ -12,7 +12,7 @@
 
 var ElementFinder = $('').constructor;
 
-ElementFinder.prototype.waitReady = function(opt_optStr) {
+ElementFinder.prototype.waitReady = function(optStr) {
     var self = this;
     var specTimeoutMs = browser.allScriptsTimeout * 2;
     var driverWaitIterations = 0;
@@ -31,7 +31,7 @@ ElementFinder.prototype.waitReady = function(opt_optStr) {
 
     return browser.driver.wait(function() {
         driverWaitIterations++;
-        if (opt_optStr === 'withRefresh') {
+        if (optStr === 'withRefresh') {
             // Refresh page after more than some retries
             if (driverWaitIterations > 7) {
                 _refreshPage();
@@ -49,7 +49,9 @@ ElementFinder.prototype.waitReady = function(opt_optStr) {
             }
         }, _isPresentError);
     }, specTimeoutMs).then(function(waitResult) {
-        if (!waitResult) { _throwError(); }
+        if (!waitResult) {
+            _throwError();
+        }
         return self;
     }, function(err) {
         _isPresentError(err);

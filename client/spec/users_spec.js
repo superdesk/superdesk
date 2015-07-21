@@ -20,7 +20,9 @@ describe('Users', function() {
 
     describe('profile:', function() {
 
-        beforeEach(function(done) {openUrl('/#/profile').then(done);});
+        beforeEach(function(done) {
+            openUrl('/#/profile').then(done);
+        });
 
         it('can render user profile', function() {
             expect(bindingValue('user.username')).toBe('admin');
@@ -38,14 +40,17 @@ describe('Users', function() {
 
         it('can list users', function() {
             expect(element.all(by.repeater('user in users')).count()).toBe(6);
-            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
+            expect(element(by.repeater('user in users').row(0).column('username')).getText())
+                .toBe('test_user');
         });
 
         it('list online users', function() {
             element(by.id('online_users')).click();
             expect(element.all(by.repeater('user in users')).count()).toBe(2);
-            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
-            expect(element(by.repeater('user in users').row(1).column('username')).getText()).toBe('admin');
+            expect(element(by.repeater('user in users').row(0).column('username')).getText())
+                .toBe('test_user');
+            expect(element(by.repeater('user in users').row(1).column('username')).getText())
+                .toBe('admin');
         });
 
         xit('can disable user', function() {
@@ -57,7 +62,9 @@ describe('Users', function() {
                     return browser.actions().mouseMove(elem).perform();
                 })
                 .then(function() {
-                    activity.waitReady().then(function(elem) { elem.click(); });
+                    activity.waitReady().then(function(elem) {
+                        elem.click();
+                    });
                 });
 
             element(by.css('.modal-dialog')).waitReady().then(function(elem) {
@@ -76,8 +83,12 @@ describe('Users', function() {
                     try {
                         return elem.element(by.partialButtonText('OK'))
                             .click()
-                            .then(function() { return true; });
-                    } catch (err) { console.log(err); }
+                            .then(function() {
+                                return true;
+                            });
+                    } catch (err) {
+                        console.log(err);
+                    }
                 }, 5000);
             }).then(function() {
                 browser.wait(function() {
@@ -94,7 +105,9 @@ describe('Users', function() {
     });
 
     describe('user detail:', function() {
-        beforeEach(function(done) {openUrl('/#/users').then(done);});
+        beforeEach(function(done) {
+            openUrl('/#/users').then(done);
+        });
 
         it('can open user detail', function() {
             element.all(by.repeater('users')).first().click();

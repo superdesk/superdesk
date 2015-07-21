@@ -9,11 +9,8 @@ exports.getBackendUrl = getBackendUrl;
 exports.backendRequest = backendRequest;
 exports.backendRequestAuth = backendRequestAuth;
 
-function getBackendUrl(uri)
-{
-    return constructUrl(
-        browser.params.baseBackendUrl, uri
-    );
+function getBackendUrl(uri) {
+    return constructUrl(browser.params.baseBackendUrl, uri);
 }
 
 function backendRequest(params, callback) {

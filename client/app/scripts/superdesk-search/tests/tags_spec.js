@@ -3,8 +3,8 @@
 describe('Tag Service', function() {
 
     var deskList = {
-        desk1: {id:'123', title: 'desk1'},
-        desk2: {id:'456', title: 'desk2'}
+        desk1: {id: '123', title: 'desk1'},
+        desk2: {id: '456', title: 'desk2'}
     };
 
     beforeEach(module('superdesk.search'));
@@ -77,7 +77,11 @@ describe('Tag Service', function() {
 
     it('can populate complete filters from location', inject(function($location, tags, $rootScope, desks, $q) {
         var members = null;
-        $location.search('type=["text","composite"]&state=["submitted","faked","madeup"]&q=slugline:(FBI) (Obama) (Australia)');
+        $location.search([
+            'type=["text","composite"]',
+            'state=["submitted","faked","madeup"]',
+            'q=slugline:(FBI) (Obama) (Australia)'
+        ].join('&'));
         $rootScope.$apply();
 
         spyOn(desks, 'initialize').and.returnValue($q.when({deskLookup: deskList}));

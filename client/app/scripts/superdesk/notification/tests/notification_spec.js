@@ -16,7 +16,10 @@ describe('Reload Service', function() {
             session.start({}, USER);
 
             spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
-            spyOn(api, 'get').and.returnValue($q.when({_items: [{_id: '5567ff31102454c7bac47644'}, {_id: '55394997102454b5ea111bd5'}]}));
+            spyOn(api, 'get').and.returnValue($q.when({_items: [
+                {_id: '5567ff31102454c7bac47644'},
+                {_id: '55394997102454b5ea111bd5'}
+            ]}));
             spyOn(preferencesService, 'get').and.returnValue($q.when([]));
             spyOn(preferencesService, 'update');
 
@@ -55,7 +58,10 @@ describe('Reload Service', function() {
 
         var reload = spyOn(reloadService, 'reload');
         rootScope.$broadcast('reload', msg);
-        expect(reload).toHaveBeenCalledWith(Object({reload: true, message: 'Stage is created/updated/deleted'}));
+        expect(reload).toHaveBeenCalledWith(Object({
+            reload: true,
+            message: 'Stage is created/updated/deleted'
+        }));
         expect(reloadService.result.reload).toBe(true);
     }));
 });

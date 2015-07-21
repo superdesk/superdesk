@@ -122,8 +122,8 @@ function Highlights() {
     };
 
     this.getHighlights = function(elem) {
-        return elem.all(by.repeater('h in highlights')).filter(function(elem, index) {
-            return elem.getText().then(function(text) {
+        return elem.all(by.repeater('h in highlights')).filter(function(highlight, index) {
+            return highlight.getText().then(function(text) {
                 return text;
             });
         });

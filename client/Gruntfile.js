@@ -12,6 +12,8 @@ module.exports = function (grunt) {
         appDir: 'app',
         tmpDir: '.tmp',
         distDir: 'dist',
+        specDir: 'spec',
+        tasksDir: 'tasks',
         bowerDir: 'bower',
         poDir: 'po',
         livereloadPort: 35729
@@ -28,7 +30,7 @@ module.exports = function (grunt) {
     grunt.registerTask('style', ['less:dev', 'cssmin']);
 
     grunt.registerTask('test', ['karma:unit']);
-    grunt.registerTask('hint', ['jshint', 'jscs']);
+    grunt.registerTask('hint', ['jshint', 'jscs', 'eslint:specs', 'eslint:tasks', 'eslint:root']);
     grunt.registerTask('hint:docs', ['jshint:docs', 'jscs:docs']);
     grunt.registerTask('ci', ['test', 'hint']);
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);

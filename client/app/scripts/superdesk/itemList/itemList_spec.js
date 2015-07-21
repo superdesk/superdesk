@@ -181,7 +181,8 @@ describe('itemListService', function() {
         ]);
     }));
 
-    it('can query with headline, subject, keyword, uniqueName and body search', inject(function($rootScope, itemListService, api) {
+    it('can query with headline, subject, keyword, uniqueName and body search',
+    inject(function($rootScope, itemListService, api) {
         var queryParams = null;
 
         itemListService.fetch({

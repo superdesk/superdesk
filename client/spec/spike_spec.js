@@ -3,7 +3,7 @@
 
 var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
-	content = require('./helpers/pages').content;
+    content = require('./helpers/pages').content;
 
 describe('Spike', function() {
 
