@@ -1,46 +1,28 @@
 <div class="widget-wrapper" 
     ng-class="{
-        'active-left': active.left,
-        'left-extended': active.left.extended,
-        'active-right': active.right,
-        'right-extended': active.right.extended
+        'active-right': active,
+        'right-extended': active.extended
     }">
-    <div class="tablist left-tablist" ng-if="item">
-        <ul class="navigation-tabs">
-            <li ng-repeat="widget in widgets | orderBy:'order'"
-                ng-if="widget.side==='left' && widget.display[widget_target]"
-                ng-class="{active: widget === active.left}">
-                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" id="{{ widget.label }}" tooltip="{{ widget.label }}" tooltip-placement="right">
-                    <i class="big-icon-{{ widget.icon }}"></i>
-                </button>
-            </li>
-        </ul>
-    </div>
-
-    <div class="tabpane left-tabpane open-tabpane widget-{{active.left._id}}" ng-if="active.left && (!active.left.needUnlock || !item._locked)">
-        <section class="tabcontent" ng-init="widget=active.left">
-            <div sd-widget data-widget="active.left">
-                <div ng-include="active.left.template"></div>
-            </div>
-        </section>
-    </div>
-
     <div class="tablist right-tablist" ng-if="item">
         <ul class="navigation-tabs">
             <li ng-repeat="widget in widgets | orderBy:'order'"
-                ng-if="widget.side==='right' && widget.display[widget_target]"
-                ng-class="{active: widget === active.right}">
-                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" id="{{ widget.label }}" tooltip="{{ widget.label }}" tooltip-placement="left">
-                    <i class="big-icon-{{ widget.icon }}"></i>
+                ng-class="{active: widget === active}">
+                <button class="btn" type="submit"
+                    ng-click="activate(widget)"
+                    ng-disabled="isLocked(widget)"
+                    id="{{ :: widget.label }}"
+                    tooltip="{{ :: widget.label }}" tooltip-placement="left">
+                    <i class="big-icon-{{ :: widget.icon }}"></i>
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="tabpane right-tabpane open-tabpane widget-{{active.right._id}}" ng-if="active.right && (!active.right.needUnlock || !item._locked)">
-        <section class="tabcontent" ng-init="widget=active.right">
-            <div sd-widget data-widget="active.right">
-                <div ng-include="active.right.template"></div>
+    <div class="tabpane right-tabpane open-tabpane widget-{{active._id}}"
+        ng-if="active && !isLocked(active)">
+        <section class="tabcontent" ng-init="widget=active">
+            <div sd-widget data-widget="active">
+                <div ng-include="active.template"></div>
             </div>
         </section>
     </div>

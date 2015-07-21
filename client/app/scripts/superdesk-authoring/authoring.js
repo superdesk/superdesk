@@ -675,7 +675,6 @@
     AuthoringController.$inject = ['$scope', 'item', 'action', 'superdesk'];
     function AuthoringController($scope, item, action, superdesk) {
         $scope.origItem = item;
-        $scope.widget_target = 'authoring';
         $scope.action = action || 'edit';
 
         $scope.lock = function() {
