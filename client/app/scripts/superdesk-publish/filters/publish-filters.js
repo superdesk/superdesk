@@ -501,7 +501,6 @@ function FilterSearchController($scope, filters, notify) {
 
     populateData();
     fetchPublishFilters();
-
     $scope.isListValue = function() {
         if ($scope.filterCondition != null) {
             return _.contains(['in', 'nin'], $scope.filterCondition.operator) && $scope.valueLookup[$scope.filterCondition.field];
@@ -624,6 +623,7 @@ angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
     .controller('ProductionTestController', ProductionTestController)
+    .controller('FilterSearchController', FilterSearchController)
     .directive('sdFilterSearch', FilterSearchDirective)
     .directive('sdFiltersearchResult', FilterSearchResultDirective)
     .directive('sdPublishFilter', PublishFilterDirective);
