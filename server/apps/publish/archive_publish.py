@@ -470,7 +470,7 @@ class BasePublishService(BaseService):
 
                 if len(found_match) == 0 and subscriber.get('geo_restrictions'):
                     found_match = [t for t in doc['targeted_for'] if t['name'] == subscriber['geo_restrictions']]
-                    if len(found_match) == 0 or (len(found_match) > 0 and found_match[0]['allow'] is False):
+                    if len(found_match) == 0 or found_match[0]['allow'] is False:
                         continue
                 elif len(found_match) > 0 and found_match[0]['allow'] is False:
                     continue
