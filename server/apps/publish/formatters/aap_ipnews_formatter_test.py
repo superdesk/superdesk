@@ -160,6 +160,6 @@ class AapIpNewsFormatterTest(TestCase):
         f = AAPIpNewsFormatter()
         odbc_item = {}
         with self.app.app_context():
-            f._set_selector_codes(article, 'ipnews', odbc_item, category={'qcode': 'A'})
+            f._set_selector_codes(article, 'ipnews', odbc_item, 'A')
             self.assertSetEqual(set(odbc_item['selector_codes'].split()),
                                 set('and axd pnd cxd 0fh 0ir 0px 0ah 0hw cxx axx cnd 0nl az pxd pxx'.split()))
