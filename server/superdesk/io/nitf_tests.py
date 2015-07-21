@@ -52,7 +52,7 @@ class AAPTestCase(NITFTestCase):
         self.assertEqual(self.item.get('urgency'), 5)
 
     def test_dateline(self):
-        self.assertEqual(self.item.get('dateline'), 'Sydney')
+        self.assertEqual(self.item.get('dateline', {}).get('located', {}).get('city'), 'Sydney')
 
     def test_byline(self):
         self.assertEqual(self.item.get('byline'), 'By John Doe')

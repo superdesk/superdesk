@@ -107,11 +107,9 @@
         </div>
     </li>
 
-    <li>
-        <label translate>LOCATED</label>
-        <div class="data">
-            <input type="text" ng-model="item.located" ng-disabled="!_editable" ng-change="autosave(item)">
-        </div>
+    <li ng-if="metadata.locators">
+        <label tooltip="AKA Locator" tooltip-placement="middle" translate>PLACE</label>
+        <div sd-meta-dropdown data-item="item" data-field="place" data-list="metadata.locators" ng-disabled="!_editable" data-change="autosave(item)"></div>
     </li>
 
     <li class="terms-box" ng-if="metadata.categories">

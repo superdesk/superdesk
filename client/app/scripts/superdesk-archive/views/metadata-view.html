@@ -92,13 +92,10 @@
         <dt translate>Place</dt>
         <dd>{{ item.place | mergeWords:'name'}}</dd>
     </dl>
-        <dl ng-if="item.dateline">
+
+    <dl ng-if="item.dateline.text">
         <dt translate>Dateline</dt>
-        <dd>{{ item.dateline }}</dd>
-    </dl>
-    <dl ng-if="item.located">
-        <dt translate>Located</dt>
-        <dd>{{ item.located }}</dd>
+        <dd>{{ item.dateline.text }}</dd>
     </dl>
 
     <dl ng-if="item.targeted_for">
@@ -142,10 +139,6 @@
     <dl ng-if="item.byline">
         <dt translate>Byline</dt>
         <dd>{{ item.byline }}</dd>
-    </dl>
-    <dl ng-if="item.located">
-        <dt translate>Location</dt>
-        <dd>{{ item.located }}</dd>
     </dl>
 
     <!-- publish schedule data -->

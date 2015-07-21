@@ -1,7 +1,9 @@
 define([
     'angular',
-    'lodash'
-], function(angular, _) {
+    'lodash',
+    'moment',
+    'moment-timezone'
+], function(angular, _, moment) {
     'use strict';
 
     return angular.module('superdesk.filters', []).
@@ -116,5 +118,50 @@ define([
 
                 return merged.join(', ');
             };
-        });
+        })
+        .filter('formatDatelinesDate', function() {
+            return function(located, date_to_format) {
+                var momentizedTimestamp = angular.isDefined(date_to_format) ? moment.utc(date_to_format) : moment.utc();
+
+                if (angular.isDefined(located) && located.tz !== 'UTC') {
+                    momentizedTimestamp = momentizedTimestamp.tz(located.tz);
+                }
+
+                var currentMonth = momentizedTimestamp.month() + 1;
+
+                if (currentMonth === 9) {
+                    return 'Sept '.concat(momentizedTimestamp.date());
+                } else if ((momentizedTimestamp.month() + 1) >= 3 && (momentizedTimestamp.month() + 1) <= 7) {
+                    return momentizedTimestamp.format('MMMM DD');
+                } else {
+                    return momentizedTimestamp.format('MMM DD');
+                }
+            };
+        })
+        .filter('previewDateline', ['$filter', function($filter) {
+            return function(located, source, datelineDate) {
+                if (angular.isUndefined(source)) {
+                    source = '';
+                }
+
+                if (_.isObject(located) && angular.isDefined(located.city)) {
+                    var currentDateTime = $filter('formatDatelinesDate')(located, datelineDate);
+
+                    var dateline = located.city_code;
+                    var datelineFields = located.dateline.split(',');
+
+                    if (_.indexOf(datelineFields, 'state')) {
+                        dateline.concat(', ', located.state_code);
+                    }
+
+                    if (_.indexOf(datelineFields, 'country')) {
+                        dateline.concat(', ', located.country_code);
+                    }
+
+                    return dateline.concat(', ', currentDateTime, ' ', source, ' -');
+                } else {
+                    return '';
+                }
+            };
+        }]);
 });

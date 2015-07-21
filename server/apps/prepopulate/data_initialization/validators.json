@@ -51,6 +51,16 @@
                 "type": "integer",
                 "required": true,
                 "allowed": [1, 2, 3, 4, 5]
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "date": {"type": "datetime", "required": true},
+                    "source": {"type": "string", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
             }
         }
     },
@@ -106,6 +116,16 @@
                 "type": "integer",
                 "required": true,
                 "allowed": [1, 2, 3, 4, 5]
+            },
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "date": {"type": "datetime", "required": true},
+                    "source": {"type": "string", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
             }
         }
     },

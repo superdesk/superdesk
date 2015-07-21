@@ -10,11 +10,12 @@
 
 
 """Superdesk IO"""
+
 import logging
 import superdesk
 from superdesk.etree import etree
 from superdesk.celery_app import celery
-
+from superdesk.locators.locators import find_cities
 
 parsers = []
 providers = {}
@@ -84,6 +85,27 @@ class Parser(metaclass=ParserRegistry):
             ns = 'http://www.w3.org/XML/1998/namespace'
 
         return str(etree.QName(ns, tag))
+
+    def set_dateline(self, item, city=None, text=None):
+        """
+        Sets the 'dateline' to the article identified by item. If city is passed then the system checks if city is
+        available in Cities collection. If city is not found in Cities collection then dateline's located is set with
+        default values.
+
+        :param item: article.
+        :param city: Name of the city, if passed the system will search in Cities collection.
+        :param text: dateline in full. For example, "STOCKHOLM, Aug 29, 2014"
+        """
+
+        item['dateline'] = {}
+
+        if city:
+            cities = find_cities()
+            located = [c for c in cities if c['city'] == city]
+            item['dateline']['located'] = located[0] if len(located) > 0 else {'city_code': city, 'city': city,
+                                                                               'tz': 'UTC', 'dateline': 'city'}
+        if text:
+            item['dateline']['text'] = text
 
 
 def get_xml_parser(etree):

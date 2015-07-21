@@ -222,8 +222,14 @@ metadata_schema = {
         'nullable': True,
     },
     'dateline': {
-        'type': 'string',
+        'type': 'dict',
         'nullable': True,
+        'schema': {
+            'located': {'type': 'dict'},
+            'date': {'type': 'datetime'},
+            'source': {'type': 'string'},
+            'text': {'type': 'string'}
+        }
     },
     'expiry': {
         'type': 'datetime'
@@ -250,14 +256,20 @@ metadata_schema = {
         'type': 'list'
     },
 
-    # Not Categorized
+    # aka Locator as per NewML Specification
     'place': {
-        'type': 'list'
-    },
-    'located': {
-        'type': 'string',
+        'type': 'list',
         'nullable': True,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'qcode': {'type': 'string'},
+                'name': {'type': 'string'}
+            }
+        }
     },
+
+    # Not Categorized
     'creditline': {
         'type': 'string'
     },

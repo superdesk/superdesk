@@ -43,7 +43,6 @@ class ninjsFormatterTest(TestCase):
             'state': 'published',
             'urgency': 2,
             'pubstatus': 'usable',
-            'dateline': 'sample dateline',
             'creditline': 'sample creditline',
             'keywords': ['traffic'],
             'abstract': 'sample abstract',

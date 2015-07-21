@@ -1755,3 +1755,45 @@ Feature: Content Publishing
           ]
       }
       """
+
+    @auth
+    Scenario: Publish fails when publish validators fail
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "type": "text", "act": "publish", "schema": {
+              "dateline": {
+                  "type": "dict",
+                  "required": true,
+                  "schema": {
+                      "located": {"type": "dict", "required": true},
+                      "date": {"type": "datetime", "required": true},
+                      "source": {"type": "string", "required": true},
+                      "text": {"type": "string", "required": true}
+                  }
+              }
+            }
+        }]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "dateline": {},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}], "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "[['DATELINE is a required field']]"}, "_status": "ERR"}
+      """

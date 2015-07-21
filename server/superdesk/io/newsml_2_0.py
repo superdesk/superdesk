@@ -10,6 +10,7 @@
 
 
 import datetime
+from apps.content import ITEM_TYPE
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging
@@ -62,7 +63,7 @@ class NewsMLTwoParser(Parser):
     def parse_item_meta(self, tree, item):
         """Parse itemMeta tag"""
         meta = tree.find(self.qname('itemMeta'))
-        item['type'] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
+        item[ITEM_TYPE] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
         item['pubstatus'] = (meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]).lower()
@@ -81,7 +82,10 @@ class NewsMLTwoParser(Parser):
 
             elem = elemTree.find(self.qname(key))
             if elem is not None:
-                item[dest] = elem.text
+                if dest == 'dateline':
+                    self.set_dateline(item, city=elem.text)
+                else:
+                    item[dest] = elem.text
 
         parse_meta_item_text('urgency')
         parse_meta_item_text('slugline')

@@ -59,35 +59,6 @@
         ]
     },
     {
-        "_id": "locators",
-        "items": [
-            {"is_active": true, "name": "ACT", "value": "ACT"},
-            {"is_active": true, "name": "ADV", "value": "ADV"},
-            {"is_active": true, "name": "AFR", "value": "AFR"},
-            {"is_active": true, "name": "ASIA", "value": "ASIA"},
-            {"is_active": true, "name": "CAN", "value": "CAN"},
-            {"is_active": true, "name": "CHN", "value": "CHN"},
-            {"is_active": true, "name": "CIS", "value": "CIS"},
-            {"is_active": true, "name": "EUR", "value": "EUR"},
-            {"is_active": true, "name": "FED", "value": "FED"},
-            {"is_active": true, "name": "IRE", "value": "IRE"},
-            {"is_active": true, "name": "JPN", "value": "JPN"},
-            {"is_active": true, "name": "MID", "value": "MID"},
-            {"is_active": true, "name": "NSW", "value": "NSW"},
-            {"is_active": true, "name": "NT", "value": "NT"},
-            {"is_active": true, "name": "NZ", "value": "NZ"},
-            {"is_active": true, "name": "PAC", "value": "PAC"},
-            {"is_active": true, "name": "QLD", "value": "QLD"},
-            {"is_active": true, "name": "SA", "value": "SA"},
-            {"is_active": true, "name": "SAM", "value": "SAM"},
-            {"is_active": true, "name": "TAS", "value": "TAS"},
-            {"is_active": true, "name": "UK", "value": "UK"},
-            {"is_active": true, "name": "US", "value": "US"},
-            {"is_active": true, "name": "VIC", "value": "VIC"},
-            {"is_active": true, "name": "WA", "value": "WA"}
-        ]
-    },
-    {
         "_id": "newsvalue",
         "items": [
             {"is_active": true, "name": "1", "value": "1"},
@@ -147,6 +118,35 @@
                 "copyrightNotice": "AAP content is owned by or licensed to Australian Associated Press Pty Limited (AAP) and is\r\ncopyright protected.  AAP content is published on an \"as is\" basis for personal use only and\r\nmust not be copied, republished, rewritten, resold or redistributed, whether by caching,\r\nframing or similar means, without AAP's prior written permission.  AAP and its licensors\r\nare not liable for any loss, through negligence or otherwise, resulting from errors or\r\nomissions in or reliance on AAP content.  The globe symbol and \"AAP\" are registered trade marks.\r\nFurther this AAP content is supplied to the direct recipient pursuant to an Information Supply\r\nAgreement with AAP (AAP Information Supply Agreement).  The direct recipient has a non-exclusive,\r\nnon-transferable right to display this AAP content in accordance with and subject to the\r\nterms of the AAP Information Supply Agreement.",
                 "usageTerms": "The direct recipient must comply with the limitations specified in the AAP Information\r\nSupply Agreement relating to the AAP content including, without limitation, not permitting\r\nredistribution and storage of the content (outside the terms of the Agreement) and not\r\npermitting deep hyperlinking to the content, framing of the content on a web site,\r\nposting the content to usenet newsgroups or facilitating such actions."
             }
+        ]
+    },
+    {
+        "_id": "locators",
+        "items": [
+            {"is_active": true, "name": "ACT", "qcode": "ACT"},
+            {"is_active": true, "name": "ADV", "qcode": "ADV"},
+            {"is_active": true, "name": "AFR", "qcode": "AFR"},
+            {"is_active": true, "name": "ASIA", "qcode": "ASIA"},
+            {"is_active": true, "name": "CAN", "qcode": "CAN"},
+            {"is_active": true, "name": "CHN", "qcode": "CHN"},
+            {"is_active": true, "name": "CIS", "qcode": "CIS"},
+            {"is_active": true, "name": "EUR", "qcode": "EUR"},
+            {"is_active": true, "name": "FED", "qcode": "FED"},
+            {"is_active": true, "name": "IRE", "qcode": "IRE"},
+            {"is_active": true, "name": "JPN", "qcode": "JPN"},
+            {"is_active": true, "name": "MID", "qcode": "MID"},
+            {"is_active": true, "name": "NSW", "qcode": "NSW"},
+            {"is_active": true, "name": "NT", "qcode": "NT"},
+            {"is_active": true, "name": "NZ", "qcode": "NZ"},
+            {"is_active": true, "name": "PAC", "qcode": "PAC"},
+            {"is_active": true, "name": "QLD", "qcode": "QLD"},
+            {"is_active": true, "name": "SA", "qcode": "SA"},
+            {"is_active": true, "name": "SAM", "qcode": "SAM"},
+            {"is_active": true, "name": "TAS", "qcode": "TAS"},
+            {"is_active": true, "name": "UK", "qcode": "UK"},
+            {"is_active": true, "name": "US", "qcode": "US"},
+            {"is_active": true, "name": "VIC", "qcode": "VIC"},
+            {"is_active": true, "name": "WA", "qcode": "WA"}
         ]
     }
 ]

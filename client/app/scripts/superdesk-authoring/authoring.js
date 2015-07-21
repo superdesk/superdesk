@@ -18,7 +18,7 @@
         ednote: null,
         place: [],
         located: null,
-        dateline: '',
+        dateline: null,
         language: null,
         unique_name: '',
         keywords: [],
@@ -1569,12 +1569,46 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring'];
-    function ArticleEditDirective(autosave, authoring) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout'];
+    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
+
+                scope.$watch('item', function(item) {
+                    if (angular.isDefined(item)) {
+                        item._datelinedate = '';
+
+                        if (angular.isDefined(item.dateline) && angular.isDefined(item.dateline.date)) {
+                            item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
+                        }
+                    }
+                });
+
+                metadata.initialize().then(function() {
+                    scope.metadata = metadata.values;
+                });
+
+                scope.updateDateline = function(item, city) {
+                    if (angular.isUndefined(item.dateline.located) ||
+                        (angular.isDefined(item.dateline.located) && item.dateline.located.city !== city)) {
+                        if (city === '') {
+                            item.dateline.located = null;
+                            item.dateline.text = '';
+                        } else {
+                            item.dateline.located = {'city': city, 'city_code': city, 'tz': 'UTC',
+                                'dateline': 'city', 'country': '', 'country_code': '', 'state_code': '', 'state': ''};
+                        }
+                    }
+
+                    if (angular.isDefined(item.dateline.located)) {
+                        item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
+                        item.dateline.text = $filter('previewDateline')(item.dateline.located, item.dateline.source, item.dateline.date);
+                    } else {
+                        item._datelinedate = '';
+                    }
+                };
             }
         };
     }

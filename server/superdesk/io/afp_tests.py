@@ -27,7 +27,7 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('headline'), 'Sweden court accepts receivership for Saab carmaker')
 
     def test_dateline(self):
-        self.assertEquals(self.item.get('dateline'), 'STOCKHOLM, Aug 29, 2014 (AFP) -')
+        self.assertEquals(self.item.get('dateline', {}).get('text'), 'STOCKHOLM, Aug 29, 2014 (AFP) -')
 
     def test_slugline(self):
         self.assertEquals(self.item.get('slugline'), 'Sweden-SAAB')

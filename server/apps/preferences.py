@@ -114,6 +114,12 @@ class PreferencesResource(Resource):
 
     superdesk.register_default_user_preference('templates:recent', {})
 
+    superdesk.register_default_user_preference('dateline:located', {
+        'type': 'dict',
+        'label': 'Located',
+        'category': 'dateline'
+    })
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])

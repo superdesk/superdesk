@@ -241,28 +241,16 @@ Feature: News Items Archive
         """
         When we patch given
         """
-        {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en",
-         "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : [{"name": "Test"}],
-         "anpa_category" :
-            [{
-                "qcode" : "A",
-                "name" : "Australian News"
-            }],
-         "subject" : [
-            {
-                "qcode" : "11007000",
-                "name" : "human rights"
-            },
-            {
-                "qcode" : "11014000",
-                "name" : "treaty and international organisation-DEPRECATED"
-            }
-         ]}
+        {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en", "genre" : [{"name": "Test"}],
+         "anpa_category" : [{"qcode" : "A", "name" : "Australian News"}],
+         "subject" : [{"qcode" : "11007000", "name" : "human rights"},
+                      {"qcode" : "11014000", "name" : "treaty and international organisation-DEPRECATED"}
+                     ]
+        }
         """
         Then we get updated response
         """
-        { "headline": "test1", "pubstatus" : "usable", "byline" : "By Line",
-          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre": [{"name": "Test"}]}
+        { "headline": "test1", "pubstatus" : "usable", "byline" : "By Line", "genre": [{"name": "Test"}]}
         """
         And we get version 2
 
@@ -417,3 +405,25 @@ Feature: News Items Archive
         """
         {"type": "text", "source":"AAP"}
         """
+
+    @auth
+    Scenario: Dateline is populated from user preferences for new articles
+      Given empty "archive"
+      And we have sessions "/sessions"
+      When we get "/preferences/#SESSION_ID#"
+      And we patch latest
+      """
+      {"user_preferences": {"dateline:located": {
+          "located" : {
+              "dateline" : "city", "city" : "Sydney", "city_code" : "Sydney", "country" : "Australia", "country_code" : "AU",
+              "state" : "New South Wales", "state_code" : "NSW", "tz" : "Australia/Sydney", "alt_name": ""
+          }}}}
+      """
+      And we post to "/archive"
+      """
+      [{"headline": "Article with Dateline populated from preferences"}]
+      """
+      Then we get latest
+      """
+      {"dateline": {"located": {"city": "Sydney"}}}
+      """

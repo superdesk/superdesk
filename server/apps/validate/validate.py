@@ -47,7 +47,7 @@ class ValidateService(superdesk.Service):
             error_list = v.errors
             response = []
             for e in error_list:
-                if error_list[e] == 'required field':
+                if error_list[e] == 'required field' or type(error_list[e]) is dict:
                     response.append('{} is a required field'.format(e.upper()))
                 elif 'min length is' in error_list[e]:
                     response.append('{} is too short'.format(e.upper()))

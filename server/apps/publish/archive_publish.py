@@ -86,7 +86,9 @@ class BasePublishService(BaseService):
         if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
 
-        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updates}
+        updated = original.copy()
+        updates.update(updates)
+        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updated}
         validation_errors = get_resource_service('validate').post([validate_item])
 
         if validation_errors[0]:

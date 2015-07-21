@@ -104,7 +104,7 @@ function MetadataDropdownDirective() {
                 var o = {};
 
                 if (angular.isDefined(item)) {
-                    o[scope.field] = (scope.field === 'anpa_category') ? item : item.name;
+                    o[scope.field] = (scope.field === 'place') ? [item] : item.name;
                 } else {
                     o[scope.field] = null;
                 }
@@ -281,6 +281,71 @@ function MetadataListEditingDirective() {
     };
 }
 
+MetadataLocatorsDirective.$inject = [];
+function MetadataLocatorsDirective() {
+    return {
+        scope: {
+            item: '=',
+            fieldprefix: '@',
+            field: '@',
+            disabled: '=ngDisabled',
+            list: '=',
+            change: '&',
+            postprocessing: '&',
+            header: '@'
+        },
+
+        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-locators.html',
+        link: function(scope, element) {
+            scope.locators = scope.list;
+            scope.selectedTerm = '';
+
+            scope.$watch('item', function(item) {
+                if (angular.isDefined(item)) {
+                    if (angular.isDefined(scope.fieldprefix) && angular.isDefined(item[scope.fieldprefix]) &&
+                        angular.isDefined(item[scope.fieldprefix][scope.field])) {
+                        scope.selectedTerm = item[scope.fieldprefix][scope.field].city;
+                    } else if (angular.isDefined(item[scope.field])) {
+                        scope.selectedTerm = item[scope.field].city;
+                    }
+                }
+            });
+
+            scope.searchLocator = function(locator_to_find) {
+                if (!locator_to_find) {
+                    scope.locators = scope.list;
+                } else {
+                    scope.locators = _.filter(scope.list, function(t) {
+                        return ((t.city.toLowerCase().indexOf(locator_to_find.toLowerCase()) !== -1));
+                    });
+                }
+                return scope.locators;
+            };
+
+            scope.selectLocator = function(locator) {
+                if (locator) {
+                    if (angular.isDefined(scope.fieldprefix)) {
+                        if (angular.isUndefined(scope.item[scope.fieldprefix])) {
+                            scope.item[scope.fieldprefix] = {};
+                        }
+
+                        scope.item[scope.fieldprefix][scope.field] = locator;
+                    } else {
+                        scope.item[scope.field] = locator;
+                    }
+
+                    scope.selectedTerm = locator.city;
+                }
+
+                var selectedLocator = {item: scope.item, city: scope.selectedTerm};
+
+                scope.postprocessing(selectedLocator);
+                scope.change(selectedLocator);
+            };
+        }
+    };
+}
+
 MetadataService.$inject = ['api', '$q'];
 function MetadataService(api, $q) {
 
@@ -328,11 +393,19 @@ function MetadataService(api, $q) {
 
             self.subjectScope.change({item: self.subjectScope.item});
         },
+        fetchCities: function() {
+            var self = this;
+            return api.get('/cities').then(function(result) {
+                self.values.cities = result._items;
+            });
+        },
         initialize: function() {
             if (!this.loaded) {
                 this.loaded = this.fetchMetadataValues()
-                    .then(angular.bind(this, this.fetchSubjectcodes));
+                    .then(angular.bind(this, this.fetchSubjectcodes))
+                    .then(angular.bind(this, this.fetchCities));
             }
+
             return this.loaded;
         }
     };
@@ -357,5 +430,6 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .service('metadata', MetadataService)
     .directive('sdMetaTerms', MetadataListEditingDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
-    .directive('sdMetaWordsList', MetadataWordsListEditingDirective);
+    .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
+    .directive('sdMetaLocators', MetadataLocatorsDirective);
 })();

@@ -1,0 +1,866 @@
+[
+    {"qcode": "AU", "name": "Australia", "states": [
+        {"qcode": "WA", "name": "Western Australia", "cities": [
+            {"qcode": "Albany",       "name": "Albany",     "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Bunbury",      "name": "Bunbury",    "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Fremantle‎",    "name": "Fremantle",  "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Geraldton‎",    "name": "Geraldton‎",  "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Kalgoorlie",   "name": "Kalgoorlie", "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Mandurah‎",     "name": "Mandurah‎",   "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Rockingham",   "name": "Rockingham", "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "Perth",        "name": "Perth",      "dateline_format": "city",        "timezone": "Australia/Perth"},
+            {"qcode": "EUCLA",        "name": "Eucla",      "dateline_format": "city",  "timezone": "Australia/Eucla"}
+        ]},
+        {"qcode": "NT", "name": "Northern Territory", "cities": [
+            {"qcode": "Darwin",       "name": "Darwin",       "dateline_format": "city",        "timezone": "Australia/Darwin"},
+            {"qcode": "Alice Springs","name": "Alice Springs","dateline_format": "city",  "timezone": "Australia/Darwin"},
+            {"qcode": "Katherine",    "name": "Katherine",    "dateline_format": "city",  "timezone": "Australia/Darwin"},
+            {"qcode": "Tennant Creek","name": "Tennant Creek","dateline_format": "city",  "timezone": "Australia/Darwin"}
+        ]},
+        {"qcode": "SA", "name": "South Australia", "cities": [
+            {"qcode": "Adelaide",     "name": "Adelaide",       "dateline_format": "city",              "timezone": "Australia/Adelaide"},
+            {"qcode": "Burnside",     "name": "Burnside",       "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Campbelltown", "name": "Campbelltown",   "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Charles Sturt","name": "Charles Sturt",  "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Holdfast Bay", "name": "Holdfast Bay",   "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Marion",       "name": "Marion",         "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Mitcham",      "name": "Mitcham",        "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Norwood Payneham St Peters", "name": "Norwood Payneham St Peters", "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Onkaparinga",  "name": "Onkaparinga",    "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Playford",     "name": "Playford",       "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Port Adelaide Enfield", "name": "Port Adelaide Enfield", "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Prospect",     "name": "Prospect",       "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Salisbury",    "name": "Salisbury",      "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "Tea Tree Gully", "name": "Tea Tree Gully",       "dateline_format": "city","timezone": "Australia/Adelaide"},
+            {"qcode": "Unley",        "name": "Unley",          "dateline_format": "city",        "timezone": "Australia/Adelaide"},
+            {"qcode": "West Torrens", "name": "West Torrens",   "dateline_format": "city",        "timezone": "Australia/Adelaide"}
+        ]},
+        {"qcode": "VIC", "name": "Victoria", "cities": [
+            {"qcode": "Mel", "name": "Melbourne",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Geelong", "name": "Geelong",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Ballarat", "name": "Ballarat",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Bendigo", "name": "Bendigo",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Shepparton-Mooroopna", "name": "Shepparton-Mooroopna",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Melton", "name": "Melton",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Sunbury", "name": "Sunbury",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Pakenham", "name": "Pakenham",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Mildura", "name": "Mildura",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Wodonga", "name": "Wodonga",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Warrnambool", "name": "Warrnambool",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Traralgon", "name": "Traralgon",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Wangaratta", "name": "Wangaratta",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Ocean Grove-Barwon Heads", "name": "Ocean Grove-Barwon Heads",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Moe-Yallourn", "name": "Moe-Yallourn",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Horsham", "name": "Horsham",       "dateline_format": "city",              "timezone": "Australia/Melbourne"},
+            {"qcode": "Bacchus Marsh", "name": "Bacchus Marsh",       "dateline_format": "city",              "timezone": "Australia/Melbourne"}
+        ]},
+        {"qcode": "QLD", "name": "Queensland", "cities": [
+            {"qcode": "Brisbane", "name": "Brisbane",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Gold Coast", "name": "Gold Coast",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Sunshine Coast", "name": "Sunshine Coast",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Townsville", "name": "Townsville",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Cairns", "name": "Cairns",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Toowoomba", "name": "Toowoomba",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Mackay", "name": "Mackay",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Rockhampton", "name": "Rockhampton",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Bundaberg", "name": "Bundaberg",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Hervey Bay", "name": "Hervey Bay",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Gladstone", "name": "Gladstone",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Maryborough", "name": "Maryborough",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Mount Isa", "name": "Mount Isa",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Gympie", "name": "Gympie",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Bongaree", "name": "Bongaree",       "dateline_format": "city",              "timezone": "Australia/Brisbane"},
+            {"qcode": "Lindeman Island", "name": "Lindeman Island",       "dateline_format": "city",              "timezone": "Australia/Lindeman"}
+        ]},
+        {"qcode": "TAS", "name": "Tasmania", "cities": [
+            {"qcode": "Hobart", "name": "Hobart",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Currie", "name": "Currie",       "dateline_format": "city",              "timezone": "Australia/Currie"},
+            {"qcode": "Launceston", "name": "Launceston",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Devonport", "name": "Devonport",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Burnie", "name": "Burnie",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Kingston", "name": "Kingston",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Ulverstone", "name": "Ulverstone",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "New Norfolk", "name": "New Norfolk",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Wynyard", "name": "Wynyard",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "George Town", "name": "George Town",       "dateline_format": "city",              "timezone": "Australia/Hobart"},
+            {"qcode": "Sorell", "name": "Sorell",       "dateline_format": "city",              "timezone": "Australia/Hobart"}
+        ]},
+        {"qcode": "ACT", "name": "Australian Capital Territory", "cities": [
+            {"qcode": "Canberra", "name": "Canberra", "alt_name": "FED", "dateline_format": "city", "timezone": "Australia/Canberra"}
+        ]},
+        {"qcode": "NSW", "name": "New South Wales", "cities": [
+            {"qcode": "Sydney", "name": "Sydney",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "New Castle", "name": "New Castle",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Central Coast", "name": "Central Coast",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Wollongong", "name": "Wollongong",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Wagga Wagga", "name": "Wagga Wagga",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Albury", "name": "Albury",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Port Macquarie", "name": "Port Macquarie",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Dubbo", "name": "Dubbo",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Bathurst", "name": "Bathurst",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Coffs Harbour", "name": "Coffs Harbour",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Richmond", "name": "Richmond",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Casino", "name": "Casino",       "dateline_format": "city",              "timezone": "Australia/Sydney"},
+            {"qcode": "Broken Hill", "name": "Broken Hill",       "dateline_format": "city",              "timezone": "Australia/Broken_Hill"},
+            {"qcode": "LHI", "name": "Lord Howe Island",       "dateline_format": "city",              "timezone": "Australia/Lord_Howe"}
+        ]}
+    ]},
+    {"qcode": "AS", "name": "American Samoa", "states": [
+        {"qcode": "Tafuna", "name": "Tafuna", "cities": [
+          {"qcode": "Pago Pago", "name": "Pago Pago", "dateline_format": "city,state,country", "timezone": "Pacific/Pago_Pago"}
+        ]}
+      ]
+    },
+    {"qcode": "NZ", "name": "New Zealand", "states": [
+          {"qcode": "Northland", "name": "Northland", "cities": [
+              {"qcode": "Whangarei", "name": "Whangarei", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Auckland", "name": "Auckland", "cities": [
+              {"qcode": "Auckland", "name": "Auckland", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Waikato", "name": "Waikato", "cities": [
+              {"qcode": "Hamilton", "name": "Hamilton", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Bay of Plenty", "name": "Bay of Plenty", "cities": [
+              {"qcode": "Whakatane", "name": "Whakatane", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Tauranga", "name": "Tauranga", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Gisborne", "name": "Gisborne", "cities": [
+              {"qcode": "Gisborne", "name": "Gisborne", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Hawke's Bay", "name": "Hawke's Bay", "cities": [
+              {"qcode": "Hastings", "name": "Hastings", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Napier", "name": "Napier", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Taranaki", "name": "Taranaki", "cities": [
+              {"qcode": "New Plymouth", "name": "New Plymouth", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Manawatu-Wanganui", "name": "Manawatu-Wanganui", "cities": [
+              {"qcode": "Palmerston North", "name": "Palmerston North", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Whanganui", "name": "Whanganui", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Wellington", "name": "Wellington", "cities": [
+              {"qcode": "Wellington", "name": "Wellington", "alt_name": "FED", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Tasman", "name": "Tasman", "cities": [
+              {"qcode": "Tasman", "name": "Tasman", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Nelson", "name": "Nelson", "cities": [
+              {"qcode": "Nelson", "name": "Nelson", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Marlborough", "name": "Marlborough", "cities": [
+              {"qcode": "Blenheim", "name": "Blenheim", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "West Coast", "name": "West Coast", "cities": [
+              {"qcode": "Westport", "name": "Westport", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Greymouth", "name": "Greymouth", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Hokitika", "name": "Hokitika", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Canterbury", "name": "Canterbury", "cities": [
+              {"qcode": "Christchurch", "name": "Christchurch", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Otago", "name": "Otago", "cities": [
+              {"qcode": "Dunedin", "name": "Dunedin", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Queenstown", "name": "Queenstown", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Southland", "name": "Southland", "cities": [
+              {"qcode": "Invercargill", "name": "Invercargill", "dateline_format": "city", "timezone": "Pacific/Auckland"},
+              {"qcode": "Riverton", "name": "Riverton", "dateline_format": "city", "timezone": "Pacific/Auckland"}
+          ]},
+          {"qcode": "Chatham Islands", "name": "Chatham Islands", "cities": [
+              {"qcode": "Chatham Island", "name": "Chatham Island", "dateline_format": "city", "timezone": "Pacific/Chatham"},
+              {"qcode": "Pitt Island", "name": "Pitt Island", "dateline_format": "city", "timezone": "Pacific/Chatham"}
+          ]}
+      ]},
+    {"qcode": "AF", "name": "Afghanistan", "states": [
+          {"qcode": "Badakhshan", "name": "Badakhshan", "cities": [
+              {"qcode": "Fayzabad", "name": "Fayzabad", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Badghis", "name": "Badghis", "cities": [
+              {"qcode": "Qadis", "name": "Qadis", "dateline_format": "city", "timezone": "Asia/Kabul"},
+              {"qcode": "Jawand", "name": "Jawand", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Baghlan", "name": "Baghlan", "cities": [
+              {"qcode": "Puli Khumri", "name": "Puli Khumri", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Balkh", "name": "Balkh", "cities": [
+              {"qcode": "Mazar-i-Sharif", "name": "Mazar-i-Sharif", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Bamyan", "name": "Bamyan", "cities": [
+              {"qcode": "Bamyan", "name": "Bamyan", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Daykundi", "name": "Daykundi", "cities": [
+              {"qcode": "Nili", "name": "Nili", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Farah", "name": "Farah", "cities": [
+              {"qcode": "Farah", "name": "Farah", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Faryab", "name": "Faryab", "cities": [
+              {"qcode": "Maymana", "name": "Maymana", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Ghazni", "name": "Ghazni", "cities": [
+              {"qcode": "Ghazni", "name": "Ghazni", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Ghor", "name": "Ghor", "cities": [
+              {"qcode": "Firuzkoh", "name": "Firuzkoh", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Helmand", "name": "Helmand", "cities": [
+              {"qcode": "Lashkar Gah", "name": "Lashkar Gah", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Herat", "name": "Herat", "cities": [
+              {"qcode": "Herat", "name": "Herat", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Jowzjan", "name": "Jowzjan", "cities": [
+              {"qcode": "Sheberghan", "name": "Sheberghan", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Kabul", "name": "Kabul", "cities": [
+              {"qcode": "Kabul", "name": "Kabul", "dateline_format": "city", "timezone": "Asia/Kabul"},
+              {"qcode": "Paghman", "name": "Paghman", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Kandahar", "name": "Kandahar", "cities": [
+              {"qcode": "Kandahar", "name": "Kandahar", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Kapisa", "name": "Kapisa", "cities": [
+              {"qcode": "Mahmud-i-Raqi", "name": "Mahmud-i-Raqi", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Khost", "name": "Khost", "cities": [
+              {"qcode": "Khost", "name": "Khost", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Kunar", "name": "Kunar", "cities": [
+              {"qcode": "Asadabad", "name": "Asadabad", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Kunduz", "name": "Kunduz", "cities": [
+              {"qcode": "Kunduz", "name": "Kunduz", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Laghman", "name": "Laghman", "cities": [
+              {"qcode": "Mihtarlam", "name": "Mihtarlam", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Logar", "name": "Logar", "cities": [
+              {"qcode": "Pul-i-Alam", "name": "Pul-i-Alam", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Nangarhar", "name": "Nangarhar", "cities": [
+              {"qcode": "Jalalabad", "name": "Jalalabad", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Nimruz", "name": "Nimruz", "cities": [
+              {"qcode": "Zaranj", "name": "Zaranj", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Nurestan", "name": "Nurestan", "cities": [
+              {"qcode": "Parun", "name": "Parun", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Urozgan ", "name": "Urozgan", "cities": [
+              {"qcode": "Tarinkot", "name": "Tarinkot", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Paktia", "name": "Paktia", "cities": [
+              {"qcode": "Gardez", "name": "Gardez", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Paktika", "name": "Paktika", "cities": [
+              {"qcode": "Sharana", "name": "Sharana", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Panjshir", "name": "Panjshir", "cities": [
+              {"qcode": "Bazarak", "name": "Bazarak", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Parvan", "name": "Parvan", "cities": [
+              {"qcode": "Charikar", "name": "Charikar", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Samangan", "name": "Samangan", "cities": [
+              {"qcode": "Samangan", "name": "Samangan", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Sar-e Pol", "name": "Sar-e Pol", "cities": [
+              {"qcode": "Sar-e Pol", "name": "Sar-e Pol", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Takhar", "name": "Takhar", "cities": [
+              {"qcode": "Taloqan", "name": "Taloqan", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Wardak", "name": "Wardak", "cities": [
+              {"qcode": "Maidan Shar", "name": "Maidan Shar", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]},
+          {"qcode": "Zabul", "name": "Zabul", "cities": [
+              {"qcode": "Qalat", "name": "Qalat", "dateline_format": "city", "timezone": "Asia/Kabul"}
+          ]}
+      ]},
+    {"qcode": "DZ", "name": "Algeria", "states": [
+          {"qcode": "Adrar", "name": "Adrar", "cities": [
+              {"qcode": "Adrar", "name": "Adrar", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Chlef", "name": "Chlef", "cities": [
+              {"qcode": "Chlef", "name": "Chlef", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Laghouat", "name": "Laghouat", "cities": [
+              {"qcode": "Laghouat", "name": "Laghouat", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Oum El Bouaghi", "name": "Oum El Bouaghi", "cities": [
+              {"qcode": "Oum El Bouaghi", "name": "Oum El Bouaghi", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Batna", "name": "Batna", "cities": [
+              {"qcode": "Batna", "name": "Batna", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Bejaia", "name": "Bejaia", "cities": [
+              {"qcode": "Bejaia", "name": "Bejaia", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Biskra", "name": "Biskra", "cities": [
+              {"qcode": "Biskra", "name": "Biskra", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Bechar", "name": "Bechar", "cities": [
+              {"qcode": "Bechar", "name": "Bechar", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Blida", "name": "Blida", "cities": [
+              {"qcode": "Blida", "name": "Blida", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Bouira", "name": "Bouira", "cities": [
+              {"qcode": "Bouira", "name": "Bouira", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tamanrasset", "name": "Tamanrasset", "cities": [
+              {"qcode": "Tamanrasset", "name": "Tamanrasset", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tebessa", "name": "Tebessa", "cities": [
+              {"qcode": "Tebessa", "name": "Tebessa", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tlemcen", "name": "Tlemcen", "cities": [
+              {"qcode": "Tlemcen", "name": "Tlemcen", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tiaret", "name": "Tiaret", "cities": [
+              {"qcode": "Tiaret", "name": "Tiaret", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tizi Ouzou", "name": "Tizi Ouzou", "cities": [
+              {"qcode": "Tizi Ouzou", "name": "Tizi Ouzou", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Algiers", "name": "Algiers", "cities": [
+              {"qcode": "Algiers", "name": "Algiers", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Djelfa", "name": "Djelfa", "cities": [
+              {"qcode": "Djelfa", "name": "Djelfa", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Jijel", "name": "Jijel", "cities": [
+              {"qcode": "Jijel", "name": "Jijel", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Setif", "name": "Setif", "cities": [
+              {"qcode": "Setif", "name": "Setif", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Saida", "name": "Saida", "cities": [
+              {"qcode": "Saida", "name": "Saida", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Skikda", "name": "Skikda", "cities": [
+              {"qcode": "Skikda", "name": "Skikda", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Sidi Bel Abbes", "name": "Sidi Bel Abbes", "cities": [
+              {"qcode": "Sidi Bel Abbes", "name": "Sidi Bel Abbes", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Annaba", "name": "Annaba", "cities": [
+              {"qcode": "Annaba", "name": "Annaba", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Guelma", "name": "Guelma", "cities": [
+              {"qcode": "Guelma", "name": "Guelma", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Constantine", "name": "Constantine", "cities": [
+              {"qcode": "Constantine", "name": "Constantine", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Medea", "name": "Medea", "cities": [
+              {"qcode": "Medea", "name": "Medea", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Mostaganem", "name": "Mostaganem", "cities": [
+              {"qcode": "Mostaganem", "name": "Mostaganem", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "M'Sila", "name": "M'Sila", "cities": [
+              {"qcode": "M'Sila", "name": "M'Sila", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Mascara", "name": "Mascara", "cities": [
+              {"qcode": "Mascara", "name": "Mascara", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Ouargla", "name": "Ouargla", "cities": [
+              {"qcode": "Ouargla", "name": "Ouargla", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Oran", "name": "Oran", "cities": [
+              {"qcode": "Oran", "name": "Oran", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "El Bayadh", "name": "El Bayadh", "cities": [
+              {"qcode": "El Bayadh", "name": "El Bayadh", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Illizi", "name": "Illizi", "cities": [
+              {"qcode": "Illizi", "name": "Illizi", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Bordj Bou Arreridj", "name": "Bordj Bou Arreridj", "cities": [
+              {"qcode": "Bordj Bou Arreridj", "name": "Bordj Bou Arreridj", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Boumerdes", "name": "Boumerdes", "cities": [
+              {"qcode": "Boumerdes", "name": "Boumerdes", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "El Taref", "name": "El Taref", "cities": [
+              {"qcode": "El Taref", "name": "El Taref", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tindouf", "name": "Tindouf", "cities": [
+              {"qcode": "Tindouf", "name": "Tindouf", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tissemsilt", "name": "Tissemsilt", "cities": [
+              {"qcode": "Tissemsilt", "name": "Tissemsilt", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "El Oued", "name": "El Oued", "cities": [
+              {"qcode": "El Oued", "name": "El Oued", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Khenchela", "name": "Khenchela", "cities": [
+              {"qcode": "Khenchela", "name": "Khenchela", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Souk Ahras", "name": "Souk Ahras", "cities": [
+              {"qcode": "Souk Ahras", "name": "Souk Ahras", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Tipaza", "name": "Tipaza", "cities": [
+              {"qcode": "Tipaza", "name": "Tipaza", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Mila", "name": "Mila", "cities": [
+              {"qcode": "Mila", "name": "Mila", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Ain Defla", "name": "Ain Defla", "cities": [
+              {"qcode": "Ain Defla", "name": "Ain Defla", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Naama", "name": "Naama", "cities": [
+              {"qcode": "Naama", "name": "Naama", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Ain Timouchent", "name": "Ain Timouchent", "cities": [
+              {"qcode": "Ain Timouchent", "name": "Ain Timouchent", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Ghardaia", "name": "Ghardaia", "cities": [
+              {"qcode": "Ghardaia", "name": "Ghardaia", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]},
+          {"qcode": "Relizane", "name": "Relizane", "cities": [
+              {"qcode": "Relizane", "name": "Relizane", "dateline_format": "city", "timezone": "Africa/Algiers"}
+          ]}
+      ]},
+    {"qcode": "AT", "name": "Austria", "states": [
+          {"qcode": "Vienna", "name": "Vienna", "cities": [
+              {"qcode": "Vienna", "name": "Vienna", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Lower Austria", "name": "Lower Austria", "cities": [
+              {"qcode": "St Polten", "name": "Sankt Polten", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Upper Austria", "name": "Upper Austria", "cities": [
+              {"qcode": "Linz", "name": "Linz", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Styria", "name": "Styria", "cities": [
+              {"qcode": "Graz", "name": "Graz", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Tyrol", "name": "Tyrol", "cities": [
+              {"qcode": "Innsbruck", "name": "Innsbruck", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Carinthia", "name": "Carinthia", "cities": [
+              {"qcode": "Klagenfurt", "name": "Klagenfurt", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Salzburg", "name": "Salzburg", "cities": [
+              {"qcode": "Salzburg", "name": "Salzburg", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Vorarlberg", "name": "Vorarlberg", "cities": [
+              {"qcode": "Bregenz", "name": "Bregenz", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]},
+          {"qcode": "Burgenland", "name": "Burgenland", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "Europe/Vienna"}
+          ]}
+      ]},
+    {"qcode": "AR", "name": "Argentina", "states": [
+          {"qcode": "Buenos Aires", "name": "Buenos Aires", "cities": [
+              {"qcode": "Buenos Aires", "name": "Buenos Aires", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Catamarca", "name": "Catamarca", "cities": [
+              {"qcode": "St Polten", "name": "Sankt Polten", "dateline_format": "city", "timezone": "America/Argentina/Catamarca"}
+          ]},
+          {"qcode": "Chaco", "name": "Chaco", "cities": [
+              {"qcode": "Linz", "name": "Linz", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"},
+              {"qcode": "Resistencia", "name": "Resistencia", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Chubut", "name": "Chubut", "cities": [
+              {"qcode": "Graz", "name": "Graz", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Cordoba", "name": "Cordoba", "cities": [
+              {"qcode": "Innsbruck", "name": "Innsbruck", "dateline_format": "city", "timezone": "America/Argentina/Cordoba"},
+              {"qcode": "Cordoba", "name": "Cordoba", "dateline_format": "city", "timezone": "America/Argentina/Cordoba"}
+          ]},
+          {"qcode": "Corrientes", "name": "Corrientes", "cities": [
+              {"qcode": "Klagenfurt", "name": "Klagenfurt", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Entre Rios", "name": "Entre Rios", "cities": [
+              {"qcode": "Salzburg", "name": "Salzburg", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Formosa", "name": "Formosa", "cities": [
+              {"qcode": "Bregenz", "name": "Bregenz", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Jujuy", "name": "Jujuy", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Jujuy"}
+          ]},
+          {"qcode": "La Pampa", "name": "La Pampa", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "La Rioja", "name": "La Rioja", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/La_Rioja"}
+          ]},
+          {"qcode": "Mendoza", "name": "Mendoza", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Mendoza"}
+          ]},
+          {"qcode": "Misiones", "name": "Misiones", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Neuquen", "name": "Neuquen", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Rio Negro", "name": "Rio Negro", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Salta", "name": "Salta", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/Salta"}
+          ]},
+          {"qcode": "San Juan", "name": "San Juan", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/San_Juan"}
+          ]},
+          {"qcode": "San Luis", "name": "San Luis", "cities": [
+              {"qcode": "Eisenstadt", "name": "Eisenstadt", "dateline_format": "city", "timezone": "America/Argentina/San_Luis"}
+          ]},
+          {"qcode": "Santa Cruz", "name": "Santa Cruz", "cities": [
+              {"qcode": "Rio Gallegos", "name": "Rio Gallegos", "dateline_format": "city", "timezone": "America/Argentina/Rio_Gallegos"}
+          ]},
+          {"qcode": "Santa Fe", "name": "Santa Fe", "cities": [
+              {"qcode": "Santa Fe", "name": "Santa Fe", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Santiago del Estero", "name": "Santiago del Estero", "cities": [
+              {"qcode": "Santiago del Estero", "name": "Santiago del Estero", "dateline_format": "city", "timezone": "America/Argentina/Buenos_Aires"}
+          ]},
+          {"qcode": "Tucuman", "name": "Tucuman", "cities": [
+              {"qcode": "San Miguel de Tucuman", "name": "San Miguel de Tucuman", "dateline_format": "city", "timezone": "America/Argentina/Tucuman"}
+          ]},
+          {"qcode": "Tierra del Fuego", "name": "Tierra del Fuego", "cities": [
+              {"qcode": "Ushuaia", "name": "Ushuaia", "dateline_format": "city", "timezone": "America/Argentina/Ushuaia"}
+          ]}
+      ]},
+    {"qcode": "BD", "name": "Bangladesh", "states": [
+          {"qcode": "Barisal", "name": "Barisal", "cities": [
+              {"qcode": "Barisal", "name": "Barisal", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Chittagong", "name": "Chittagong", "cities": [
+              {"qcode": "Chittagong", "name": "Chittagong", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Dhaka", "name": "Dhaka", "cities": [
+              {"qcode": "Dhaka", "name": "Dhaka", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Khulna", "name": "Khulna", "cities": [
+              {"qcode": "Khulna", "name": "Khulna", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Rajshahi", "name": "Rajshahi", "cities": [
+              {"qcode": "Rajshahi", "name": "Rajshahi", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Rangpur", "name": "Rangpur", "cities": [
+              {"qcode": "Rangpur", "name": "Rangpur", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]},
+          {"qcode": "Sylhet", "name": "Sylhet", "cities": [
+              {"qcode": "Sylhet", "name": "Sylhet", "dateline_format": "city", "timezone": "Asia/Dhaka"}
+          ]}
+      ]},
+    {"qcode": "CA", "name": "Canada", "states": [
+          {"qcode": "ON", "name": "Ontario", "cities": [
+              {"qcode": "Toronto", "name": "Toronto", "dateline_format": "city", "timezone": "America/Toronto"},
+              {"qcode": "Nipigon", "name": "Nipigon", "dateline_format": "city", "timezone": "America/Nipigon"},
+              {"qcode": "Thunder Bay", "name": "Thunder Bay", "dateline_format": "city", "timezone": "America/Thunder_Bay"},
+              {"qcode": "Atikokan", "name": "Atikokan", "dateline_format": "city", "timezone": "America/Atikokan"},
+              {"qcode": "Rainy River", "name": "Rainy River", "dateline_format": "city", "timezone": "America/Rainy_River"}
+          ]},
+          {"qcode": "QC", "name": "Quebec", "cities": [
+              {"qcode": "Blanc-Sablon", "name": "Blanc-Sablon", "dateline_format": "city", "timezone": "America/Blanc-Sablon"},
+              {"qcode": "Quebec City", "name": "Quebec City", "dateline_format": "city", "timezone": "America/Toronto"},
+              {"qcode": "Montreal", "name": "Montreal", "dateline_format": "city", "timezone": "America/Toronto"}
+          ]},
+          {"qcode": "NS", "name": "Nova Scotia", "cities": [
+              {"qcode": "Halifax", "name": "Halifax", "dateline_format": "city", "timezone": "America/Halifax"},
+              {"qcode": "Glace Bay", "name": "Glace Bay", "dateline_format": "city", "timezone": "America/Glace_Bay"}
+          ]},
+          {"qcode": "NB", "name": "New Brunswick", "cities": [
+              {"qcode": "Fredericton", "name": "Fredericton", "dateline_format": "city", "timezone": "America/Halifax"},
+              {"qcode": "Saint John", "name": "Saint John", "dateline_format": "city", "timezone": "America/Halifax"},
+              {"qcode": "Moncton", "name": "Moncton", "dateline_format": "city", "timezone": "America/Moncton"}
+          ]},
+          {"qcode": "MB", "name": "Manitoba", "cities": [
+              {"qcode": "Winnipeg", "name": "Winnipeg", "dateline_format": "city", "timezone": "America/Winnipeg"}
+          ]},
+          {"qcode": "BC", "name": "British Columbia", "cities": [
+              {"qcode": "Victoria", "name": "Victoria", "dateline_format": "city", "timezone": "America/Vancouver"},
+              {"qcode": "Vancouver", "name": "Vancouver", "dateline_format": "city", "timezone": "America/Vancouver"},
+              {"qcode": "Creston", "name": "Creston", "dateline_format": "city", "timezone": "America/Creston"},
+              {"qcode": "Dawson Creek", "name": "Dawson Creek", "dateline_format": "city", "timezone": "America/Dawson_Creek"}
+          ]},
+          {"qcode": "PE", "name": "Prince Edward Island", "cities": [
+              {"qcode": "Charlottetown", "name": "Charlottetown", "dateline_format": "city", "timezone": "America/Halifax"}
+          ]},
+          {"qcode": "SK", "name": "Saskatchewan", "cities": [
+              {"qcode": "Regina", "name": "Regina", "dateline_format": "city", "timezone": "America/Regina"},
+              {"qcode": "Saskatoon", "name": "Saskatoon", "dateline_format": "city", "timezone": "America/Regina"},
+              {"qcode": "Swift Current", "name": "Swift Current", "dateline_format": "city", "timezone": "America/Swift_Current"}
+          ]},
+          {"qcode": "AB", "name": "Alberta", "cities": [
+              {"qcode": "Edmonton", "name": "Edmonton", "dateline_format": "city", "timezone": "America/Edmonton"},
+              {"qcode": "Calgary", "name": "Calgary", "dateline_format": "city", "timezone": "America/Edmonton"}
+          ]},
+          {"qcode": "NL", "name": "Newfoundland and Labrador", "cities": [
+              {"qcode": "St. John's", "name": "St. John's", "dateline_format": "city", "timezone": "America/St_Johns"},
+              {"qcode": "Goose Bay", "name": "Happy Valley-Goose Bay", "dateline_format": "city", "timezone": "America/Glace_Bay"}
+          ]},
+          {"qcode": "NT", "name": "Northwest Territories", "cities": [
+              {"qcode": "Yellowknife", "name": "Yellowknife", "dateline_format": "city", "timezone": "America/Yellowknife"},
+              {"qcode": "Inuvik", "name": "Inuvik", "dateline_format": "city", "timezone": "America/Inuvik"}
+          ]},
+          {"qcode": "YT", "name": "Yukon", "cities": [
+              {"qcode": "Whitehorse", "name": "Whitehorse", "dateline_format": "city", "timezone": "America/Whitehorse"},
+              {"qcode": "Dawson City", "name": "Dawson City", "dateline_format": "city", "timezone": "America/Dawson"}
+          ]},
+          {"qcode": "NU", "name": "Nunavut", "cities": [
+              {"qcode": "Iqaluit", "name": "Iqaluit", "dateline_format": "city", "timezone": "America/Iqaluit"},
+              {"qcode": "Pangnirtung", "name": "Pangnirtung", "dateline_format": "city", "timezone": "America/Pangnirtung"},
+              {"qcode": "Resolute Bay", "name": "Resolute Bay", "dateline_format": "city", "timezone": "America/Resolute"},
+              {"qcode": "Rankin Inlet", "name": "Rankin Inlet", "dateline_format": "city", "timezone": "America/Rankin_Inlet"},
+              {"qcode": "Cambridge Bay", "name": "Cambridge Bay", "dateline_format": "city", "timezone": "America/Cambridge_Bay"}
+          ]}
+      ]},
+    {"qcode": "CZ", "name": "Czech Republic", "states": [
+          {"qcode": "Prague", "name": "Prague", "cities": [
+              {"qcode": "Prague", "name": "Prague", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Central Bohemia", "name": "Central Bohemia", "cities": [
+              {"qcode": "Prague", "name": "Prague", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "South Bohemia", "name": "South Bohemia", "cities": [
+              {"qcode": "Budweis", "name": "Budweis", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Pilsen", "name": "Pilsen", "cities": [
+              {"qcode": "Pilsen", "name": "Pilsen", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Karlovy Vary", "name": "Karlovy Vary", "cities": [
+              {"qcode": "Karlovy Vary", "name": "Karlovy Vary", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Usti nad Labem", "name": "Usti nad Labem", "cities": [
+              {"qcode": "Usti nad Labem", "name": "Usti nad Labem", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Liberec", "name": "Liberec", "cities": [
+              {"qcode": "Liberec", "name": "Liberec", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Hradec Kralove", "name": "Hradec Kralove", "cities": [
+              {"qcode": "Hradec Kralove", "name": "Hradec Kralove", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Pardubice", "name": "Pardubice", "cities": [
+              {"qcode": "Pardubice", "name": "Pardubice", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Olomouc", "name": "Olomouc", "cities": [
+              {"qcode": "Olomouc", "name": "Olomouc", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Moravia-Silesia", "name": "Moravia-Silesia", "cities": [
+              {"qcode": "Ostrava", "name": "Ostrava", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "South Moravia", "name": "South Moravia", "cities": [
+              {"qcode": "Brno", "name": "Brno", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Zlin", "name": "Zlin", "cities": [
+              {"qcode": "Zlin", "name": "Zlin", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Prague", "name": "Prague", "cities": [
+              {"qcode": "Prague", "name": "Prague", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]},
+          {"qcode": "Vysocina", "name": "Vysocina", "cities": [
+              {"qcode": "Jihlava", "name": "Jihlava", "dateline_format": "city", "timezone": "Europe/Prague"}
+          ]}
+        ]},
+    {"qcode": "US", "name": "USA", "states": [
+            {"name": "Alabama", "qcode": "AL", "cities": [
+                {"qcode": "Birmingham", "name": "Birmingham", "dateline_format": "city", "timezone": "America/Chicago"},
+                {"qcode": "Montgomery", "name": "Montgomery", "dateline_format": "city", "timezone": "America/Chicago"}
+            ]},
+            {"name": "Alaska", "qcode": "AK", "cities": [
+                {"qcode": "Metlakatla", "name": "Metlakatla", "dateline_format": "city", "timezone": "America/Metlakatla"},
+                {"qcode": "Anchorage", "name": "Anchorage", "dateline_format": "city", "timezone": "America/Anchorage"},
+                {"qcode": "Juneau", "name": "Juneau", "dateline_format": "city", "timezone": "America/Juneau"},
+                {"qcode": "Sitka", "name": "Sitka", "dateline_format": "city", "timezone": "America/Sitka"},
+                {"qcode": "Yakutat", "name": "Yakutat", "dateline_format": "city", "timezone": "America/Yakutat"},
+                {"qcode": "Adak", "name": "Adak", "dateline_format": "city", "timezone": "America/Adak"},
+                {"qcode": "Nome", "name": "Nome", "dateline_format": "city", "timezone": "America/Nome"}
+            ]},
+            {"name": "Arizona", "qcode": "AZ", "cities": [
+                {"qcode": "Phoenix", "name": "Phoenix", "dateline_format": "city", "timezone": "America/Phoenix"}
+            ]},
+            {"name": "Arkansas", "qcode": "AR", "cities": [
+                {"qcode": "Little Rock", "name": "Little Rock", "dateline_format": "city", "timezone": "America/Chicago"}
+            ]},
+            {"name": "California", "qcode": "CA", "cities": [
+                {"qcode": "Sacramento", "name": "Sacramento", "dateline_format": "city", "timezone": "America/Los_Angeles"},
+                {"qcode": "Los Angeles", "name": "Los Angeles", "dateline_format": "city", "timezone": "America/Los_Angeles"}
+            ]},
+            {"name": "Colorado", "qcode": "CO", "cities": [
+                {"qcode": "Denver", "name": "Denver", "dateline_format": "city", "timezone": "America/Denver"}
+            ]},
+            {"name": "Connecticut", "qcode": "CT", "cities": [
+                {"qcode": "Hartford", "name": "Hartford", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Bridgeport", "name": "Bridgeport", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Delaware", "qcode": "DE", "cities": [
+                {"qcode": "Dover", "name": "Dover", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Wilmington", "name": "Wilmington", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "District of Columbia", "qcode": "DC", "cities": [
+                {"qcode": "Washington", "name": "Washington", "alt_name": "FED", "dateline_format": "city", "timezone": "America/Denver"}
+            ]},
+            {"name": "Florida", "qcode": "FL", "cities": [
+                {"qcode": "Tallahassee", "name": "Tallahassee", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Jacksonville", "name": "Jacksonville", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Georgia", "qcode": "GA", "cities": [
+                {"qcode": "Atlanta", "name": "Atlanta", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Hawaii", "qcode": "HI", "cities": [
+                {"qcode": "Honolulu", "name": "Honolulu", "dateline_format": "city", "timezone": "Pacific/Honolulu"}
+            ]},
+            {"name": "Idaho", "qcode": "ID", "cities": [
+                {"qcode": "Boise", "name": "Boise", "dateline_format": "city", "timezone": "America/Boise"}
+            ]},
+            {"name": "Illinois", "qcode": "IL", "cities": [
+                {"qcode": "Springfield", "name": "Springfield", "dateline_format": "city", "timezone": "America/Chicago"},
+                {"qcode": "Chicago", "name": "Chicago", "dateline_format": "city", "timezone": "America/Chicago"}
+            ]},
+            {"name": "Indiana", "qcode": "IN", "cities": [
+                {"qcode": "Indianapolis", "name": "Indianapolis", "dateline_format": "city", "timezone": "America/Indiana/Indianapolis"},
+                {"qcode": "Vincennes", "name": "Vincennes", "dateline_format": "city", "timezone": "America/Indiana/Vincennes"},
+                {"qcode": "Winamac", "name": "Winamac", "dateline_format": "city", "timezone": "America/Indiana/Winamac"},
+                {"qcode": "Marengo", "name": "Marengo", "dateline_format": "city", "timezone": "America/Indiana/Marengo"},
+                {"qcode": "Petersburg", "name": "Petersburg", "dateline_format": "city", "timezone": "America/Indiana/Petersburg"},
+                {"qcode": "Vevay", "name": "Vevay", "dateline_format": "city", "timezone": "America/Indiana/Vevay"},
+                {"qcode": "Tell City", "name": "Tell City", "dateline_format": "city", "timezone": "America/Indiana/Tell_City"},
+                {"qcode": "Knox", "name": "Knox", "dateline_format": "city", "timezone": "America/Indiana/Knox"}
+            ]},
+            {"name": "Iowa", "qcode": "IA", "cities": [
+                {"qcode": "Des Moines", "name": "Des Moines", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Kansas", "qcode": "KS", "cities": [
+                {"qcode": "Topeka", "name": "Topeka", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Wichita", "name": "Wichita", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Kentucky", "qcode": "KY", "cities": [
+                {"qcode": "Frankfort", "name": "Frankfort", "dateline_format": "city", "timezone": "America/Kentucky/Louisville"},
+                {"qcode": "Louisville", "name": "Louisville", "dateline_format": "city", "timezone": "America/Kentucky/Louisville"},
+                {"qcode": "Monticello", "name": "Monticello", "dateline_format": "city", "timezone": "America/Kentucky/Monticello"}
+            ]},
+            {"name": "Louisiana", "qcode": "LA", "cities": [
+                {"qcode": "Baton Rouge", "name": "Baton Rouge", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "New Orleans", "name": "New Orleans", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Maine", "qcode": "ME", "cities": [
+                {"qcode": "Augusta", "name": "Augusta", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Portland", "name": "Portland", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Maryland", "qcode": "MD", "cities": [
+                {"qcode": "Annapolis", "name": "Annapolis", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Baltimore", "name": "Baltimore", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Massachusetts", "qcode": "MA", "cities": [
+                {"qcode": "Boston", "name": "Boston", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Michigan", "qcode": "MI", "cities": [
+                {"qcode": "Lansing", "name": "Lansing", "dateline_format": "city", "timezone": "America/Detroit"},
+                {"qcode": "Detroit", "name": "Detroit", "dateline_format": "city", "timezone": "America/Detroit"}
+            ]},
+            {"name": "Minnesota", "qcode": "MN", "cities": [
+                {"qcode": "St. Paul", "name": "St. Paul", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Minneapolis", "name": "Minneapolis", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Mississippi", "qcode": "MS", "cities": [
+                {"qcode": "Jackson", "name": "Jackson", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Missouri", "qcode": "MO", "cities": [
+                {"qcode": "Jefferson City", "name": "Jefferson City", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Kansas City", "name": "Kansas City", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Montana", "qcode": "MT", "cities": [
+                {"qcode": "Helena", "name": "Helena", "dateline_format": "city", "timezone": "America/Denver"},
+                {"qcode": "Billings", "name": "Billings", "dateline_format": "city", "timezone": "America/Denver"}
+            ]},
+            {"name": "Nebraska", "qcode": "NE", "cities": [
+                {"qcode": "Lincoln", "name": "Lincoln", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Omaha", "name": "Omaha", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Nevada", "qcode": "NV", "cities": [
+                {"qcode": "Carson City", "name": "Carson City", "dateline_format": "city", "timezone": "America/Los_Angeles"},
+                {"qcode": "Las Vegas", "name": "Las Vegas", "dateline_format": "city", "timezone": "America/Los_Angeles"}
+            ]},
+            {"name": "New Hampshire", "qcode": "NH", "cities": [
+                {"qcode": "Concord", "name": "Concord", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Manchester", "name": "Manchester", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "New Jersey", "qcode": "NJ", "cities": [
+                {"qcode": "Trenton", "name": "Trenton", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Newark", "name": "Newark", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "New Mexico", "qcode": "NM", "cities": [
+                {"qcode": "Santa Fe", "name": "Santa Fe", "dateline_format": "city", "timezone": "America/Denver"},
+                {"qcode": "Albuquerque", "name": "Albuquerque", "dateline_format": "city", "timezone": "America/Denver"}
+            ]},
+            {"name": "New York", "qcode": "NY", "cities": [
+                {"qcode": "Albany", "name": "Albany", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "New York", "name": "New York", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "North Carolina", "qcode": "NC", "cities": [
+                {"qcode": "Raleigh", "name": "Raleigh", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Charlotte", "name": "Charlotte", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "North Dakota", "qcode": "ND", "cities": [
+                {"qcode": "Bismarck", "name": "Bismarck", "dateline_format": "city", "timezone": "America/North_Dakota/Center"},
+                {"qcode": "Fargo", "name": "Fargo", "dateline_format": "city", "timezone": "America/North_Dakota/Center"},
+                {"qcode": "Center", "name": "Center", "dateline_format": "city", "timezone": "America/North_Dakota/Center"},
+                {"qcode": "New Salem", "name": "New Salem", "dateline_format": "city", "timezone": "America/North_Dakota/New_Salem"},
+                {"qcode": "Beulah", "name": "Beulah", "dateline_format": "city", "timezone": "America/North_Dakota/Beulah"}
+            ]},
+            {"name": "Ohio", "qcode": "OH", "cities": [
+                {"qcode": "Columbus", "name": "Columbus", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Oklahoma", "qcode": "OK", "cities": [
+                {"qcode": "Oklahoma City", "name": "Oklahoma City", "dateline_format": "city", "timezone": "America/Chicago"}
+            ]},
+            {"name": "Oregon", "qcode": "OR", "cities": [
+                {"qcode": "Portland", "name": "Portland", "dateline_format": "city", "timezone": "America/Los_Angeles"},
+                {"qcode": "Salem", "name": "Salem", "dateline_format": "city", "timezone": "America/Los_Angeles"}
+            ]},
+            {"name": "Pennsylvania", "qcode": "PA", "cities": [
+                {"qcode": "Harrisburg", "name": "Harrisburg", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Philadelphia", "name": "Philadelphia", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Rhode Island", "qcode": "RI", "cities": [
+                {"qcode": "Providence", "name": "Providence", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "South Carolina", "qcode": "SC", "cities": [
+                {"qcode": "Columbia", "name": "Columbia", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "South Dakota", "qcode": "SD", "cities": [
+                {"qcode": "Pierre", "name": "Pierre", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Sioux Falls", "name": "Sioux Falls", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Tennessee", "qcode": "TN", "cities": [
+                {"qcode": "Nashville", "name": "Nashville", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Memphis", "name": "Memphis", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Texas", "qcode": "TX", "cities": [
+                {"qcode": "Austin", "name": "Austin", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Houston", "name": "Houston", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Utah", "qcode": "UT", "cities": [
+                {"qcode": "Salt Lake City", "name": "Salt Lake City", "dateline_format": "city", "timezone": "America/Denver"}
+            ]},
+            {"name": "Vermont", "qcode": "VT", "cities": [
+                {"qcode": "Montpelier", "name": "Montpelier", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Burlington", "name": "Burlington", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Virginia", "qcode": "VA", "cities": [
+                {"qcode": "Richmond", "name": "Richmond", "dateline_format": "city", "timezone": "America/New_York"},
+                {"qcode": "Virginia Beach", "name": "Virginia Beach", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Washington", "qcode": "WA", "cities": [
+                {"qcode": "Olympia", "name": "Olympia", "dateline_format": "city", "timezone": "America/Los_Angeles"},
+                {"qcode": "Seattle", "name": "Seattle", "dateline_format": "city", "timezone": "America/Los_Angeles"}
+            ]},
+            {"name": "West Virginia", "qcode": "WV", "cities": [
+                {"qcode": "Charleston", "name": "Charleston", "dateline_format": "city", "timezone": "America/New_York"}
+            ]},
+            {"name": "Wisconsin", "qcode": "WI", "cities": [
+                {"qcode": "Madison", "name": "Madison", "dateline_format": "city", "timezone": "America/Menominee"},
+                {"qcode": "Milwaukee", "name": "Milwaukee", "dateline_format": "city", "timezone": "America/Menominee"}
+            ]},
+            {"name": "Wyoming", "qcode": "WY", "cities": [
+                {"qcode": "Cheyenne", "name": "Cheyenne", "dateline_format": "city", "timezone": "America/Denver"}
+            ]}
+    ]}
+]
