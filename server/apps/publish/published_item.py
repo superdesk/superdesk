@@ -30,6 +30,7 @@ from superdesk.utc import utcnow, get_expiry_date
 from superdesk import get_resource_service
 
 logger = logging.getLogger(__name__)
+LAST_PUBLISHED_VERSION = 'last_published_version'
 
 
 class PublishedItemResource(Resource):
@@ -49,11 +50,18 @@ class PublishedItemResource(Resource):
             'type': 'string',
             'mapping': not_analyzed
         },
-        'last_publish_action': {'type': 'string'}
+
+        # last_published_version field is set to true for last published version of the item in the published collection
+        # and for the older version is set to false. This field is used to display the last version of the digital copy
+        # in the published view.
+        LAST_PUBLISHED_VERSION: {
+            'type': 'boolean',
+            'default': True
+        }
     }
 
     schema = item_schema(published_item_fields)
-    etag_ignore_fields = [config.ID_FIELD, 'last_publish_action', 'highlights', 'item_id']
+    etag_ignore_fields = [config.ID_FIELD, 'highlights', 'item_id', LAST_PUBLISHED_VERSION]
 
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
@@ -85,16 +93,19 @@ class PublishedItemService(BaseService):
         """
 
         for doc in docs:
-            doc['item_id'] = doc[config.ID_FIELD]
             doc['_created'] = utcnow()
-            doc['versioncreated'] = utcnow()
+            self.set_defaults(doc)
 
-            self.__set_published_item_expiry(doc)
+    def set_defaults(self, doc):
+        doc['item_id'] = doc[config.ID_FIELD]
+        doc['versioncreated'] = utcnow()
 
-            doc.pop(config.ID_FIELD, None)
-            doc.pop('lock_user', None)
-            doc.pop('lock_time', None)
-            doc.pop('lock_session', None)
+        self.__set_published_item_expiry(doc)
+
+        doc.pop(config.ID_FIELD, None)
+        doc.pop('lock_user', None)
+        doc.pop('lock_time', None)
+        doc.pop('lock_session', None)
 
     def enhance_with_archive_items(self, items):
         if items:
@@ -178,10 +189,6 @@ class PublishedItemService(BaseService):
             return super().get(req=request, lookup=None)
         except:
             return []
-
-    def is_published_before(self, item_id):
-        item = super().find_one(req=None, _id=item_id)
-        return 'last_publish_action' in item
 
     def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)
