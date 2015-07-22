@@ -507,9 +507,7 @@ function FilterSearchController($scope, filters, notify) {
         }
     };
 
-    $scope.hideList = function () {
-        return true;
-    };
+    $scope.hideList = true;
 
     $scope.handleKey = function(event) {
         if ($scope.filterCondition.values.length > 0) {

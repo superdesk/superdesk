@@ -4,13 +4,13 @@
             <div class="field">
                 <label translate>Field</label>
                 <select class="input" ng-change="resetValues()" required ng-model="filterCondition.field">
-                    <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters">{{:: parameter.field}}</option>
+                    <option value="{{parameter.field}}" ng-selected="parameter.field === filterCondition.field" ng-repeat="parameter in filterConditionParameters track by $index">{{:: parameter.field | translate}}</option>
                 </select>
             </div>
             <div class="field">
                 <label translate>Operator</label>
                 <select class="input" ng-change="resetValues()" required ng-model="filterCondition.operator" >
-                    <option value="{{operator}}" ng-selected="operator === filterCondition.operator" ng-repeat="operator in operatorLookup[filterCondition.field]">{{operator}}</option>
+                    <option value="{{operator}}" ng-selected="operator === filterCondition.operator" ng-repeat="operator in operatorLookup[filterCondition.field] track by $index">{{:: operator | translate}}</option>
                 </select>
             </div>
             <div class="field">
