@@ -28,12 +28,16 @@ define([
                     return;
                 }
 
-                var initializeActivities = function() {
+                var initializeActivities = function(item) {
+                    if (!item) {
+                        return;
+                    }
+
                     scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
                         if (activity.monitor) {
                             scope.item.actioning = {};
                             scope.item.actioning[activity._id] = false;
-                            scope.$watch('item.actioning', function(newValue, oldValue) {
+                            scope.$watchCollection('item.actioning', function(newValue, oldValue) {
                                 if (scope.item.actioning &&
                                     !scope.item.actioning[activity._id] &&
                                     oldValue &&
@@ -43,7 +47,7 @@ define([
                                         delete scope.item.error;
                                     }
                                 }
-                            }, true);
+                            });
                         }
 
                         return workflowService.isActionAllowed(scope.item, activity.action);
@@ -92,8 +96,7 @@ define([
 
                 };
 
-                scope.$watch('item', initializeActivities, true);
-                initializeActivities();
+                scope.$watch('item', initializeActivities);
             }
         };
     }];
