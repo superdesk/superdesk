@@ -11,7 +11,7 @@ describe('Fetch', function() {
         content.setListView();
     });
 
-    fit('items in personal should have copy icon and in desk should have duplicate icon',
+    it('items in personal should have copy icon and in desk should have duplicate icon',
         function() {
             var itemEL = content.getItem('item4');
             browser.actions().mouseMove(itemEL).perform();

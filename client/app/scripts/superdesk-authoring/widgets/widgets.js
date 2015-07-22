@@ -18,21 +18,32 @@ function AuthoringWidgetsProvider() {
 
 WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets'];
 function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
-    $scope.active = {
-        left: null,
-        right: null
+    $scope.active = null;
+
+    $scope.$watch('item', function(item) {
+        if (!item) {
+            $scope.widgets = null;
+            return;
+        }
+
+        var display = item.type === 'composite' ? 'packages' : 'authoring';
+        $scope.widgets = authoringWidgets.filter(function(widget) {
+            return !!widget.display[display];
+        });
+    });
+
+    $scope.isLocked = function(widget) {
+        return widget.needUnlock && $scope.item._locked;
     };
 
-    $scope.widgets = authoringWidgets;
-
     $scope.activate = function(widget) {
-        if (!widget.needUnlock || !$scope.item._locked) {
-            $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
+        if (!$scope.isLocked(widget)) {
+            $scope.active = $scope.active === widget ? null : widget;
         }
     };
 
     $scope.closeWidget = function(widget) {
-        $scope.active[widget.side] = null;
+        $scope.active = null;
     };
 
     // activate widget based on query string
@@ -43,14 +54,11 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
     });
 
     $scope.$watch('item._locked', function() {
-        var widget;
-        _.each(['left', 'right'], function(side) {
-            if ($scope.active[side]) {
-                widget = $scope.active[side];
-                $scope.closeWidget(widget);
-                $scope.activate(widget);
-            }
-        });
+        if ($scope.active) {
+            var widget = $scope.active;
+            $scope.closeWidget(widget);
+            $scope.activate(widget);
+        }
     });
 }
 

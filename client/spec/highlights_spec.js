@@ -181,8 +181,6 @@ describe('HIGHLIGHTS', function() {
         });
 
         it('create highlight package', function() {
-            workspace.switchToDesk('PERSONAL');
-            expect(content.getCount()).toBe(3);
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 0);
@@ -193,8 +191,7 @@ describe('HIGHLIGHTS', function() {
             expect(authoring.getGroupItems('ONE').count()).toBe(1);
             authoring.save();
             authoring.close();
-            workspace.switchToDesk('PERSONAL');
-            expect(content.getCount()).toBe(4);
+            expect(content.getCount()).toBe(3);
         });
 
         it('filter by highlights in highlight package', function() {
@@ -203,13 +200,11 @@ describe('HIGHLIGHTS', function() {
             content.actionOnItem('Mark item', 0);
             highlights.selectHighlight(content.getItem(0), 'Highlight one');
 
-            workspace.switchToDesk('PERSONAL');
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 1);
             highlights.selectHighlight(content.getItem(1), 'Highlight one');
 
-            workspace.switchToDesk('PERSONAL');
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             content.actionOnItem('Mark item', 1);
@@ -229,11 +224,6 @@ describe('HIGHLIGHTS', function() {
             content.actionOnItem('Mark item', 0);
             highlights.selectHighlight(content.getItem(0), 'Highlight two');
 
-            workspace.switchToDesk('PERSONAL');
-            content.setListView();
-            expect(content.getCount()).toBe(3);
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
             content.actionOnItem('Mark item', 1);
             highlights.selectHighlight(content.getItem(1), 'Highlight two');
 
@@ -250,7 +240,7 @@ describe('HIGHLIGHTS', function() {
             authoring.save();
             authoring.close();
 
-            workspace.switchToDesk('PERSONAL');
+            workspace.switchToDesk('SPORTS');
             content.setListView();
             expect(content.getCount()).toBe(4);
         });

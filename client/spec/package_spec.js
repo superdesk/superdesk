@@ -18,7 +18,7 @@ describe('Package', function() {
         authoring.addToGroup(0, 'MAIN');
         authoring.save();
         authoring.showVersions();
-        expect(element.all(by.css('[ng-click="openVersion(version)"]')).count()).toBe(2);
+        expect(element.all(by.repeater('version in versions')).count()).toBe(1);
     });
 
     it('reorder item on package', function() {
