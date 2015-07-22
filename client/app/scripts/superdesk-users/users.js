@@ -319,8 +319,7 @@
             }
         }
 
-        $scope.$watch(getCriteria, fetchUsers, true);
-        $scope.$watch($scope.online_users, fetchUsers, true);
+        $scope.$watchCollection(getCriteria, fetchUsers);
     }
 
     UserEditController.$inject = ['$scope', 'server', 'superdesk', 'user', 'session'];
