@@ -71,6 +71,9 @@ def on_create_item(docs, repo_type=ARCHIVE):
         if 'family_id' not in doc:
             doc['family_id'] = doc[GUID_FIELD]
 
+        if 'event_id' not in doc:
+            doc['event_id'] = generate_guid(type=GUID_TAG)
+
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc[GUID_FIELD])
         if not doc.get(ITEM_OPERATION):

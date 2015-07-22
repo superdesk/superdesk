@@ -26,6 +26,7 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
+from apps.archive.archive_rewrite import ArchiveRewriteService
 from apps.archive.common import item_operations, ITEM_OPERATION
 
 
@@ -70,9 +71,19 @@ class ArchiveSpikeService(BaseService):
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_SPIKE
+        self._validate_take(original)
+        self._update_rewrite(original)
+
+    def _validate_take(self, original):
         takes_service = TakesPackageService()
-        if not takes_service.can_spike_takes_package_item(original):
+        if not takes_service.is_last_takes_package_item(original):
             raise SuperdeskApiError.badRequestError(message="Only last take of the package can be spiked.")
+
+    def _update_rewrite(self, original):
+        """ Removes the reference from the rewritten story in published collection """
+        rewrite_service = ArchiveRewriteService()
+        if original.get('rewrite_of') and original.get('event_id'):
+            rewrite_service._clear_rewritten_flag(original.get('event_id'), original['_id'])
 
     def update(self, id, updates, original):
         original_state = original[config.CONTENT_STATE]
@@ -92,6 +103,9 @@ class ArchiveSpikeService(BaseService):
 
         updates[EXPIRY] = get_expiry_date(expiry_minutes)
         updates[REVERT_STATE] = item.get(app.config['CONTENT_STATE'], None)
+
+        if original.get('rewrite_of'):
+            updates['rewrite_of'] = None
 
         item = self.backend.update(self.datasource, id, updates, original)
         push_notification('item:spike', item=str(item.get('_id')), user=str(user))

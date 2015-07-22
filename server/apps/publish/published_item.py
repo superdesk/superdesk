@@ -57,6 +57,11 @@ class PublishedItemResource(Resource):
         LAST_PUBLISHED_VERSION: {
             'type': 'boolean',
             'default': True
+        },
+        'rewritten_by': {
+            'type': 'string',
+            'mapping': not_analyzed,
+            'nullable': True
         }
     }
 
@@ -189,6 +194,55 @@ class PublishedItemService(BaseService):
             return super().get(req=request, lookup=None)
         except:
             return []
+
+    def get_rewritten_take_packages_per_event(self, event_id):
+        """ Returns all the published and rewritten take stories for the same event """
+        try:
+            query = {'query':
+                     {'filtered':
+                      {'filter':
+                       {'bool':
+                        {'must': [
+                            {'term': {'package_type': 'takes'}},
+                            {'term': {'event_id': event_id}},
+                            {'exists': {'field': 'rewritten_by'}}
+                        ]}}}}}
+
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            return super().get(req=request, lookup=None)
+        except:
+            return []
+
+    def get_rewritten_items_by_event_story(self, event_id, rewrite_id):
+        """ Returns all the published and rewritten stories for the given event and rewrite_id"""
+        try:
+            query = {'query':
+                     {'filtered':
+                      {'filter':
+                       {'bool':
+                        {'must': [
+                            {'term': {'event_id': event_id}},
+                            {'term': {'rewritten_by': rewrite_id}}
+                        ]}}}}}
+
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            return super().get(req=request, lookup=None)
+        except:
+            return []
+
+    def is_published_before(self, item_id):
+        item = super().find_one(req=None, _id=item_id)
+        return 'last_publish_action' in item
+
+    def is_rewritten_before(self, item_id):
+        """ Checks if the published item is rewritten before
+        :param _id: item_id of the published item
+        :return: True is it is rewritten before
+        """
+        doc = self.find_one(req=None, item_id=item_id)
+        return 'rewritten_by' in doc and doc['rewritten_by']
 
     def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)

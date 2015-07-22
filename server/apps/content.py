@@ -45,11 +45,6 @@ metadata_schema = {
         'unique': True,
         'mapping': not_analyzed
     },
-    'parent_id': {
-        'type': 'string',
-        'unique': True,
-        'mapping': not_analyzed
-    },
     'version': {
         'type': 'integer'
     },
@@ -64,6 +59,15 @@ metadata_schema = {
     'related_to': {  # this field keeps a reference to the related item from which metadata has been copied
         'type': 'string',
         'mapping': not_analyzed
+    },
+    'event_id': {
+        'type': 'string',
+        'mapping': not_analyzed
+    },
+    'rewrite_of': {
+        'type': 'string',
+        'mapping': not_analyzed,
+        'nullable': True
     },
 
     # Audit Information

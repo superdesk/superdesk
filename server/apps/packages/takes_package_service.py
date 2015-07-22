@@ -77,6 +77,7 @@ class TakesPackageService():
         sequence = self.__next_sequence__(sequence)
         headline = self.__strip_take_info__(target.get('headline', ''))
         take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
+        to['event_id'] = target.get('event_id')
         to['headline'] = '{}={}'.format(headline, sequence)
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(config.CONTENT_STATE) in PUBLISH_STATES:
@@ -93,9 +94,11 @@ class TakesPackageService():
             ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
             PACKAGE_TYPE: TAKES_PACKAGE,
             'headline': target.get('headline'),
-            'abstract': target.get('abstract'),
+            'abstract': target.get('abstract')
         })
-        for field in ['anpa-category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline', 'publish_schedule']:
+        for field in ['anpa-category', 'pubstatus', 'slugline',
+                      'urgency', 'subject', 'dateline',
+                      'publish_schedule', 'event_id']:
             takes_package[field] = target.get(field)
         takes_package.setdefault(config.VERSION, 1)
 
@@ -139,16 +142,18 @@ class TakesPackageService():
 
         return link
 
-    def can_spike_takes_package_item(self, doc):
+    def is_last_takes_package_item(self, doc):
         """
         checks whether if the item is the last item of the takes package.
         if the item is not the last item then raise exception
-        :param dict doc: take of a spike package
+        :param dict doc: take of a package
         """
         if doc and doc.get(LINKED_IN_PACKAGES):
             package_id = self.get_take_package_id(doc)
             if package_id:
                 takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+                if LAST_TAKE not in takes_package:
+                    return True
                 return takes_package[LAST_TAKE] == doc['_id']
 
         return True

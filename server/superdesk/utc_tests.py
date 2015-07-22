@@ -16,7 +16,6 @@ from pytz import utc, timezone # flake8: noqa
 from nose.tools import assert_raises
 
 
-
 class UTCTestCase(TestCase):
 
     def test_get_date(self):
