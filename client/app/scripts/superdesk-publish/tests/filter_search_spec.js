@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Filter search directive', function() {
-    var $scope, controller;
+    var $scope;
 
     beforeEach(module('superdesk.publish'));
     beforeEach(module('superdesk.mocks'));
@@ -9,7 +9,7 @@ describe('Filter search directive', function() {
     it('can perform filter search with -in- operator',
         inject(function(filters, $rootScope, $compile, api, $q, $httpBackend, $controller, notify) {
         $scope = $rootScope.$new();
-        controller = $controller('FilterSearchController', {
+        $controller('FilterSearchController', {
             $scope: $scope,
             'filters': filters,
             'notify': notify
@@ -27,11 +27,13 @@ describe('Filter search directive', function() {
             'value': $scope.filterCondition.value
         };
 
-        var searchResult = [{_id:'1', name: 'guido', is_active: false, publish_filter: {filter_id: '1', filter_type: 'permitting'}}];
+        var searchResult = [{_id: '1', name: 'guido', is_active: false,
+            publish_filter: {filter_id: '1', filter_type: 'permitting'}}];
 
         spyOn(api, 'query').and.returnValue($q.when({_items: searchResult}));
         $compile('<div sd-filter-search data-search="search"></div>')($scope);
-        $httpBackend.expectGET('scripts/superdesk-publish/filters/view/filter-search.html').respond(searchResult);
+        $httpBackend.expectGET('scripts/superdesk-publish/filters/view/filter-search.html').
+            respond(searchResult);
 
         $scope.search();
 
@@ -47,7 +49,7 @@ describe('Filter search directive', function() {
     it('can perform filter search with like operator',
         inject(function(filters, $rootScope, $compile, api, $q, $httpBackend, $controller, notify) {
         $scope = $rootScope.$new();
-        controller = $controller('FilterSearchController', {
+        $controller('FilterSearchController', {
             $scope: $scope,
             'filters': filters,
             'notify': notify
@@ -65,11 +67,13 @@ describe('Filter search directive', function() {
             'value': $scope.filterCondition.value
         };
 
-        var searchResult = [{_id:'2', name: 'Lasky', is_active: true, publish_filter: {filter_id: '2', filter_type: 'permitting'}}];
+        var searchResult = [{_id: '2', name: 'Lasky', is_active: true,
+            publish_filter: {filter_id: '2', filter_type: 'permitting'}}];
 
         spyOn(api, 'query').and.returnValue($q.when({_items: searchResult}));
         $compile('<div sd-filter-search data-search="search"></div>')($scope);
-        $httpBackend.expectGET('scripts/superdesk-publish/filters/view/filter-search.html').respond(searchResult);
+        $httpBackend.expectGET('scripts/superdesk-publish/filters/view/filter-search.html').
+            respond(searchResult);
 
         $scope.search();
 
