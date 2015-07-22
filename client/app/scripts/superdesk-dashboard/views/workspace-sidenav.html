@@ -1,0 +1,24 @@
+<ul class="top-links">
+    <li ng-class="{active: currentRoute.href == '/workspace'}">
+        <a href="#/workspace" class="big-icon-dashboard" translate></a>
+    </li>
+    <li ng-class="{active: currentRoute.href == '/workspace/monitoring'}">
+        <a href="#/workspace/monitoring" class="big-icon-view" translate></a>
+    </li>
+    <li>
+        <a href="#" class="big-icon-dynamic-list" translate></a>
+    </li>
+    <li ng-class="{active: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks">
+        <a href="#/workspace/tasks" class="big-icon-tasks" translate></a>
+    </li>
+    <hr>
+    <li>
+        <a href="#" class="big-icon-personal" translate></a>
+    </li>
+    <li ng-class="{active: currentRoute.href == '/search'}">
+        <a href="#/search" class="big-icon-global-search" translate></a>
+    </li>
+    <li ng-class="{active: currentRoute.href == '/legal_archive/'}">
+        <a href="#/legal_archive" class="big-icon-archive" translate></a>
+    </li>
+</ul>

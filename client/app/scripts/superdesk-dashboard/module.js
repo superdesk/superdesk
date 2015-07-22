@@ -99,6 +99,7 @@ define([
             controllerAs: 'dashboard',
             templateUrl: 'scripts/superdesk-dashboard/views/workspace.html',
             topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+            sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
             priority: -1000,
             category: superdesk.MENU_MAIN,
             reloadOnSearch: true

@@ -17,7 +17,8 @@
                 label: gettext('Monitoring'),
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/monitoring.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html'
+                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
             });
     }
 

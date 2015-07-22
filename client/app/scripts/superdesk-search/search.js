@@ -1246,7 +1246,8 @@
                 category: superdesk.MENU_MAIN,
                 label: gettext('Search'),
                 controller: SearchController,
-                templateUrl: asset.templateUrl('superdesk-search/views/search.html')
+                templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
+                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
             });
         }]);
 
