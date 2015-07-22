@@ -539,6 +539,7 @@ class BasePublishService(BaseService):
     def update_published_collection(self, published_item_id):
         """
         Updates the published collection with the published item.
+        Set the last_published_version to false for previous versions of the published items.
         """
         published_item = super().find_one(req=None, _id=published_item_id)
         published_item = copy(published_item)

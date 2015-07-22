@@ -50,6 +50,10 @@ class PublishedItemResource(Resource):
             'type': 'string',
             'mapping': not_analyzed
         },
+
+        # last_published_version field is set to true for last published version of the item in the published collection
+        # and for the older version is set to false. This field is used to display the last version of the digital copy
+        # in the published view.
         LAST_PUBLISHED_VERSION: {
             'type': 'boolean',
             'default': True
