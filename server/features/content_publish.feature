@@ -1298,26 +1298,30 @@ Feature: Content Publishing
                   "_id": "123",
                   "_current_version": 3,
                   "state": "published",
-                  "body_html": "Take-1"
+                  "body_html": "Take-1",
+                  "last_published_version": true
               },
               {
                   "_current_version": 6,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>"
+                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "last_published_version": true
               },
               {
                   "_id": "#TAKE2#",
                   "_current_version": 4,
                   "state": "published",
-                  "body_html": "Take-2"
+                  "body_html": "Take-2",
+                  "last_published_version": true
               },
               {
                   "_id": "#TAKE3#",
                   "_current_version": 4,
                   "state": "published",
-                  "body_html": "Take-3"
+                  "body_html": "Take-3",
+                  "last_published_version": true
               }
           ]
       }
@@ -1333,7 +1337,8 @@ Feature: Content Publishing
                   "_id": "123",
                   "_current_version": 3,
                   "state": "published",
-                  "body_html": "Take-1"
+                  "body_html": "Take-1",
+                  "last_published_version": false
               },
               {
                   "_id": "#archive.123.take_package#",
@@ -1341,7 +1346,8 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>"
+                  "body_html": "Take-1<br>",
+                  "last_published_version": false
               },
               {
                   "_id": "#archive.123.take_package#",
@@ -1349,7 +1355,8 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>"
+                  "body_html": "Take-1<br>Take-2<br>",
+                  "last_published_version": false
               },
               {
                   "_id": "#archive.123.take_package#",
@@ -1357,34 +1364,40 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>"
+                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "last_published_version": false
               },
               {
                   "_id": "#TAKE2#",
                   "_current_version": 4,
                   "state": "published",
-                  "body_html": "Take-2"
+                  "body_html": "Take-2",
+                  "last_published_version": false
               },
               {
                   "_id": "#TAKE3#",
                   "_current_version": 4,
                   "state": "published",
-                  "body_html": "Take-3"
+                  "body_html": "Take-3",
+                  "last_published_version": false
               },
               {
                   "_id": "123",
                   "_current_version": 5,
-                  "state": "killed"
+                  "state": "killed",
+                  "last_published_version": true
               },
               {
                   "_id": "#TAKE2#",
                   "_current_version": 5,
-                  "state": "killed"
+                  "state": "killed",
+                  "last_published_version": true
               },
               {
                   "_id": "#TAKE3#",
                   "_current_version": 5,
-                  "state": "killed"
+                  "state": "killed",
+                  "last_published_version": true
               },
               {
                   "_id": "#archive.123.take_package#",
@@ -1392,7 +1405,8 @@ Feature: Content Publishing
                   "state": "killed",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-2<br>"
+                  "body_html": "Take-2<br>",
+                  "last_published_version": true
               }
           ]
       }

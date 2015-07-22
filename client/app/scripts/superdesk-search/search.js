@@ -225,6 +225,11 @@
                 this.filter({not: {term: {state: 'spiked'}}});
             }
 
+            // remove the older version of digital package as part for base filtering.
+            this.filter({not: {and: [{term: {_type: 'published'}},
+                {term: {package_type: 'takes'}},
+                {term: {last_published_version: false}}]}});
+
             buildFilters(params, this);
         }
 

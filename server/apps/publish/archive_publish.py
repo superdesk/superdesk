@@ -34,6 +34,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
     set_sign_off, SEQUENCE, GUID_FIELD, item_operations, ITEM_OPERATION
 from apps.packages import TakesPackageService
+from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +84,6 @@ class BasePublishService(BaseService):
 
         if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
-
-        if original.get('item_id') and get_resource_service('published').is_published_before(original['item_id']):
-            raise PublishQueueError.post_publish_exists_error(Exception('Story with id:{}'.format(original['_id'])))
 
         validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updates}
         validation_errors = get_resource_service('validate').post([validate_item])
@@ -542,11 +540,10 @@ class BasePublishService(BaseService):
         """
         Updates the published collection with the published item.
         """
-
         published_item = super().find_one(req=None, _id=published_item_id)
-        get_resource_service('published').update_published_items(published_item_id, 'last_publish_action',
-                                                                 self.published_state)
-        get_resource_service('published').post([copy(published_item)])
+        published_item = copy(published_item)
+        get_resource_service('published').update_published_items(published_item_id, LAST_PUBLISHED_VERSION, False)
+        get_resource_service('published').post([published_item])
 
     def conforms_publish_filter(self, subscriber, doc):
         """
