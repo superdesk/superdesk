@@ -205,7 +205,6 @@
                     scope.selected = workspace;
                     desks.setCurrentDeskId(null);
                     workspaces.setActive(workspace);
-                    console.log(workspace);
                 };
 
                 scope.createWorkspace = function() {
