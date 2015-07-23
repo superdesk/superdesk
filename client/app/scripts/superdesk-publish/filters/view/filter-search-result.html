@@ -1,0 +1,47 @@
+<div ng-if="searchResult.length > 0" class="pull-left-20">
+    <div class="content">
+        <div sd-shadow>
+            <table>
+                <thead>
+                    <tr>
+                        <th translate>Subscriber</th>
+                        <th translate>Filter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="column-width">
+                            <div class="content">
+                                <ul class="pills-list provider-list">
+                                    <li ng-repeat="subscriber in searchResult track by subscriber._id" class="clearfix">
+                                        <div class="header">
+                                            <h6>{{:: subscriber.name }} <span class="label offProvider" ng-if="!subscriber.is_active" translate>Not Active</span></h6>
+                                            <div class="actions">
+                                                <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="column-width">
+                            <div class="content">
+                                <ul class="pills-list provider-list">
+                                    <li ng-repeat="subscriber in searchResult track by subscriber._id" class="clearfix">
+                                        <div class="header">
+                                            <h6>{{:: publishFiltersLookup[subscriber.publish_filter.filter_id].name }}</h6>
+                                            <i>{{:: subscriber.publish_filter.is_global?'[Global]':'' }}</i>
+                                            <div class="actions">
+                                                <button ng-click="editView(subscriber.publish_filter)" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

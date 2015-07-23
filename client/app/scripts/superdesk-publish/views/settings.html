@@ -11,12 +11,27 @@
             <li ng-class="{active: tab === 'publish_filters'}" ng-show="showFilterConditions">
                 <button ng-click="tab = 'publish_filters'" translate>Publish Filters</button>
             </li>
+            <li ng-class="{active: tab === 'filter_search'}">
+                <button ng-click="tab = 'filter_search'" translate>Filter Search</button>
+            </li>
         </ul>
         
         <div class="content">
             <div ng-if="tab === 'subscribers'" sd-admin-pub-subscribers></div>
             <div ng-if="tab === 'filter_conditions'" ng-include="'scripts/superdesk-publish/filters/view/filter-conditions.html'"></div>
-            <div ng-if="tab === 'publish_filters'" ng-include="'scripts/superdesk-publish/filters/view/publish_filters.html'"></div>
+            <div ng-if="tab === 'publish_filters'" sd-publish-filter></div>
+            <div ng-if="tab === 'filter_search'">
+                <div>
+                    <div class="panel-search">
+                        <div sd-filter-search data-search="search"></div>
+                    </div>
+                    <div class="panel-search-result">
+                        <div sd-filtersearch-result></div>
+                        <div sd-admin-pub-subscribers></div>
+                        <div sd-publish-filter></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

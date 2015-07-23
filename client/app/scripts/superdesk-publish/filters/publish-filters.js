@@ -28,6 +28,14 @@ function FiltersService(api) {
         return _getAll('filter_conditions', page, items);
     };
 
+    this.getFilterSearchResults = function(inputParams) {
+        //call api to get search results
+        return api.query('subscribers', {'filter_condition': inputParams})
+            .then(angular.bind(this, function(resultSet) {
+                return resultSet._items;
+            }));
+    };
+
     this.getAllPublishFilters = function(page, items) {
         return _getAll('publish_filters', page, items);
     };
@@ -188,7 +196,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
     $scope.filterConditionLookup = {};
     $scope.publishFiltersLookup = {};
 
-    $scope.edit = function(pf) {
+    $scope.editFilter = function(pf) {
         $scope.origPublishFilter = pf || {};
         $scope.publishFilter = _.create($scope.origPublishFilter);
         $scope.publishFilter.name =  $scope.origPublishFilter.name;
@@ -197,7 +205,7 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.previewPublishFilter();
     };
 
-    $scope.cancel = function() {
+    $scope.close = function() {
         $scope.previewPublishFilter();
         $scope.origPublishFilter = null;
         $scope.publishFilter = null;
@@ -205,13 +213,13 @@ function PublishFiltersController($scope, filters, notify, modal) {
         $scope.test.article_id = null;
     };
 
-    $scope.save = function() {
+    $scope.saveFilter = function() {
         delete $scope.publishFilter.article_id;
         filters.savePublishFilter($scope.origPublishFilter, $scope.publishFilter)
             .then(
                 function() {
                     notify.success(gettext('Publish filter saved.'));
-                    $scope.cancel();
+                    $scope.close();
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues['validator exception'])) {
@@ -456,7 +464,6 @@ function ProductionTestController($scope, filters, notify, $location, $window) {
     $scope.fetchResults = function() {
         fetchProductionTestResult();
     };
-
     $scope.$on('triggerTest', function (event, filter) {
         $scope.productionTest = true;
         $scope.testResult = null;
@@ -483,9 +490,139 @@ function ProductionTestController($scope, filters, notify, $location, $window) {
     };
 }
 
+FilterSearchController.$inject = ['$scope', 'filters', 'notify'];
+function FilterSearchController($scope, filters, notify) {
+    $scope.filterCondition = null;
+    $scope.operatorLookup = {};
+    $scope.valueLookup = {};
+    $scope.valueFieldLookup = {};
+    $scope.searchResult = null;
+    $scope.publishFiltersLookup = {};
+
+    populateData();
+    fetchPublishFilters();
+    $scope.isListValue = function() {
+        if ($scope.filterCondition != null) {
+            return _.contains(['in', 'nin'], $scope.filterCondition.operator) && $scope.valueLookup[$scope.filterCondition.field];
+        }
+    };
+
+    $scope.hideList = true;
+
+    $scope.handleKey = function(event) {
+        if ($scope.filterCondition.values.length > 0) {
+            notify.error(gettext('single value is required'));
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+    };
+
+    $scope.resetValues = function() {
+        $scope.searchResult = null;
+        $scope.filterCondition.values.length = 0;
+        $scope.filterCondition.value = null;
+    };
+
+    $scope.editView = function(filterId) {
+        var filter = _.find($scope.publishFilters, {_id: filterId.filter_id});
+        $scope.editFilter(filter);
+    };
+
+    function fetchPublishFilters() {
+        filters.getAllPublishFilters().then(function(_filters) {
+            $scope.publishFilters = _filters;
+            _.each($scope.publishFilters, function(filter) {
+                $scope.publishFiltersLookup[filter._id] = filter;
+            });
+        });
+    }
+
+    function populateData() {
+        filters.getFilterConditionParameters().then(function(params) {
+            $scope.filterConditionParameters = params;
+            _.each(params, function(param) {
+                $scope.operatorLookup[param.field] = param.operators;
+                $scope.valueLookup[param.field] = param.values;
+                $scope.valueFieldLookup[param.field] = param.value_field;
+            });
+
+            $scope.origFilterCondition = {};
+            $scope.filterCondition = _.create($scope.origFilterCondition);
+            $scope.filterCondition.values = [];
+            setFilterValues();
+        });
+    }
+
+    function setFilterValues() {
+        var values = $scope.filterCondition.value != null ? $scope.filterCondition.value.split(',') : [];
+        var all_values = $scope.valueLookup[$scope.filterCondition.field];
+        var value_field = $scope.valueFieldLookup[$scope.filterCondition.field];
+
+        _.each(values, function(value) {
+            var v = _.find(all_values, function(val) {
+                return val[value_field] === value;
+            });
+
+            $scope.filterCondition.values.push(v);
+        });
+    }
+    function getFilterValue() {
+        if ($scope.isListValue()) {
+            var values = [];
+            _.each($scope.filterCondition.values, function(value) {
+                values.push(value[$scope.valueFieldLookup[$scope.filterCondition.field]]);
+            });
+            return values.join();
+        } else {
+            return $scope.filterCondition.value;
+        }
+    }
+
+    $scope.search = function() {
+        $scope.searchResult = null;
+        $scope.filterCondition.value = getFilterValue();
+        var inputs = {
+            'field': $scope.filterCondition.field,
+            'operator': $scope.filterCondition.operator,
+            'value': $scope.filterCondition.value
+        };
+
+        filters.getFilterSearchResults(inputs).then(function(result) {
+            $scope.searchResult = result;
+            if (result.length === 0) {
+                notify.error(gettext('no results found'));
+            }
+        });
+    };
+}
+
+function PublishFilterDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-publish/filters/view/publish_filters.html',
+        controller: PublishFiltersController
+    };
+}
+
+function FilterSearchDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search.html',
+        controller: FilterSearchController
+    };
+}
+function FilterSearchResultDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search-result.html',
+        controller: FilterSearchController
+    };
+}
+
 angular.module('superdesk.publish.filters', [])
     .service('filters', FiltersService)
     .controller('FilterConditionsController', FilterConditionsController)
-    .controller('PublishFiltersController', PublishFiltersController)
-    .controller('ProductionTestController', ProductionTestController);
+    .controller('ProductionTestController', ProductionTestController)
+    .controller('FilterSearchController', FilterSearchController)
+    .directive('sdFilterSearch', FilterSearchDirective)
+    .directive('sdFiltersearchResult', FilterSearchResultDirective)
+    .directive('sdPublishFilter', PublishFilterDirective);
 })();
