@@ -36,7 +36,9 @@ describe('spellcheck', function() {
 
     it('can spellcheck using multiple dictionaries',
     inject(function(spellcheck, dictionaries, $q, $rootScope) {
-        spellcheck.errors('test what if foo bar baz').then(assignErrors);
+        var p = createParagraph('test what if foo bar baz');
+
+        spellcheck.errors(p).then(assignErrors);
         $rootScope.$digest();
         expect(errors).toContain({word: 'test', index: 0});
         expect(errors).toContain({word: 'if', index: 10});
@@ -71,14 +73,16 @@ describe('spellcheck', function() {
     }));
 
     it('can add words to user dictionary', inject(function(spellcheck, api, $rootScope) {
+        var p = createParagraph('test');
+
         spyOn(api, 'save');
-        spellcheck.errors('test').then(assignErrors);
+        spellcheck.errors(p).then(assignErrors);
         $rootScope.$digest();
         expect(errors.length).toBe(1);
 
         spellcheck.addWordToUserDictionary('test');
 
-        spellcheck.errors('test').then(assignErrors);
+        spellcheck.errors(p).then(assignErrors);
         $rootScope.$digest();
 
         expect(errors.length).toBe(0);
