@@ -1,7 +1,8 @@
 <div class="monitoring sidenav-container">
     <div class="subnav">
         <h3 class="page-nav-title">
-            <span ng-if="!monitoring.singleGroup" translate>Monitoring</span>
+            <span ng-if="!monitoring.singleGroup && type !== 'spike'" translate>Monitoring</span>
+            <span ng-if="!monitoring.singleGroup && type === 'spike'" translate>Spike Monitoring</span>
             <span ng-if="monitoring.singleGroup">
                 <button class="btn btn-light" ng-click="monitoring.viewSingleGroup(null)">
                     <i class="icon-chevron-left-thin"></i>
@@ -17,8 +18,12 @@
 
         <div class="preview-layout">
             <div class="content-list" ng-if="!aggregate.loading">
-                <div ng-if="!monitoring.singleGroup">
-                    <div ng-repeat="group in aggregate.getGroups() track by group._id"
+                <div ng-if="!monitoring.singleGroup && type !== 'spike'">
+                    <div ng-repeat="group in aggregate.getGroups(type) track by group._id"
+                        sd-monitoring-group data-group="group"></div>
+                </div>
+                <div ng-if="!monitoring.singleGroup && type === 'spike'">
+                    <div ng-repeat="group in aggregate.getSpikeGroups() track by group._id"
                         sd-monitoring-group data-group="group"></div>
                 </div>
                 <div ng-if="monitoring.singleGroup">
