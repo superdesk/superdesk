@@ -78,7 +78,7 @@ describe('authoring', function() {
 
         browser.actions().sendKeys(Key.chord(Key.CONTROL, 'y')).perform();
         browser.driver.switchTo().activeElement().getText().then(function(text) {
-            expect(text).toEqual('UndoRedo');
+            expect(text).toEqual('Undo');
         });
 
         // abstract editor
