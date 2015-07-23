@@ -6,7 +6,6 @@ require.config({
         jquery: 'bower_components/jquery/dist/jquery',
         lodash: 'bower_components/lodash/lodash',
         angular: 'bower_components/angular/angular',
-        bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         moment: 'bower_components/momentjs/moment',
         bower_components: 'bower_components/',
 
@@ -19,7 +18,6 @@ require.config({
         'angular-file-upload-shim': 'bower_components/ng-file-upload/angular-file-upload-shim',
         'moment-timezone': 'bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020',
 
-        'jquery-ui': 'bower_components/jquery-ui/jquery-ui',
         'raven-js': 'bower_components/raven-js/dist/raven'
     },
     shim: {
@@ -39,10 +37,8 @@ require.config({
         'angular-file-upload': ['angular', 'angular-file-upload-shim'],
 
         'translations': ['angular-gettext'],
-        'angular-ui': ['angular', 'bootstrap'],
+        'angular-ui': ['angular'],
 
-        'bootstrap': ['jquery'],
-        'jquery-ui': ['jquery'],
         'bower_components/jcrop/js/jquery.Jcrop': ['jquery']
     }
 });

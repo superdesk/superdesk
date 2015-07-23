@@ -156,12 +156,7 @@ describe('HIGHLIGHTS', function() {
         it('mark for highlights in list view', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
-            content.actionOnItem('Mark item', 0);
-            expect(highlights.getHighlights(content.getItem(0)).count()).toBe(2);
-            highlights.selectHighlight(content.getItem(0), 'Highlight one');
-            workspace.switchToDesk('PERSONAL');
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
+            highlights.mark('Highlight one', 0);
             content.checkMarkedForHighlight('Highlight one', 0);
         });
 
@@ -183,8 +178,7 @@ describe('HIGHLIGHTS', function() {
         it('create highlight package', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
-            content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight two');
+            highlights.mark('Highlight two', 0);
             highlights.createHighlightsPackage('HIGHLIGHT TWO');
             authoring.showSearch();
             authoring.addToGroup(0, 'ONE');
@@ -197,18 +191,10 @@ describe('HIGHLIGHTS', function() {
         it('filter by highlights in highlight package', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
-            content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight one');
+            highlights.mark('Highlight one', 0);
 
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.actionOnItem('Mark item', 1);
-            highlights.selectHighlight(content.getItem(1), 'Highlight one');
-
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.actionOnItem('Mark item', 1);
-            highlights.selectHighlight(content.getItem(1), 'Highlight two');
+            highlights.mark('Highlight one', 1);
+            highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('HIGHLIGHT ONE');
             authoring.showSearch();
@@ -221,11 +207,9 @@ describe('HIGHLIGHTS', function() {
         it('export highlight package', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
-            content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight two');
 
-            content.actionOnItem('Mark item', 1);
-            highlights.selectHighlight(content.getItem(1), 'Highlight two');
+            highlights.mark('Highlight two', 0);
+            highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('HIGHLIGHT TWO');
             authoring.showSearch();
@@ -264,8 +248,7 @@ describe('HIGHLIGHTS', function() {
         it('multi mark for highlights, in case of partial mark for selected items', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
-            content.actionOnItem('Mark item', 0);
-            highlights.selectHighlight(content.getItem(0), 'Highlight one');
+            highlights.mark('Highlight one', 0);
             content.selectItem(0);
             content.selectItem(1);
             highlights.multiMarkHighlight('Highlight one');

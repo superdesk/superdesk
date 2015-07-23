@@ -11,16 +11,7 @@
             <button ng-click="openLightbox()" class="fullscreen">
                 <i class="icon-fullscreen"></i>
             </button>
-            <div class="dropdown dropdown-big" dropdown>
-                <button class="dropdown-toggle condensed" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-                <div class="dropdown-menu pull-right"
-                        sd-activity-list
-                        data-item="selected.preview"
-                        data-type="{{ spike ? 'spike' : selected.preview._type }}"
-                        data-single="true"
-                        data-preview="true">
-                </div>
-            </div>
+            <div sd-item-actions-menu data-item="selected.preview" data-active="selected.preview"></div>
         </div>
 
         <div id="locked" class="clearfix" sd-item-lock data-item="selected.preview"></div>

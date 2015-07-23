@@ -1,0 +1,29 @@
+<div class="item-actions-menu more-activity-dropdown dropdown-big"
+    dropdown
+    dropdown-append-to-body
+    on-toggle="toggleActions(open)"
+    sd-dropdown-position-right>
+    <button class="more-activity-toggle condensed dropdown-toggle"
+        ng-click="stopEvent($event)"
+        ng-show="active || open"
+        dropdown-toggle><i class="icon-dots-vertical"></i></button>
+
+    <ul class="dropdown-menu more-activity-menu" ng-class="{active: open}">
+        <li><div class="menu-label" translate>Actions</div></li>
+        <li class="divider"></li>
+
+        <li ng-repeat="activity in actions.default" sd-activity-item></li>
+
+        <li class="divider" ng-if="actions.packaging"></li>
+        <li ng-if="actions.packaging"><div class="menu-label" translate>Packaging</div></li>
+        <li ng-repeat="activity in actions.packaging" sd-activity-item></li>
+
+        <li class="divider" ng-if="actions.highlights"></li>
+        <li ng-if="actions.highlights"><div class="menu-label" translate>Highlights</div></li>
+        <li ng-repeat="activity in actions.highlights" sd-activity-item></li>
+
+        <li ng-if="actions.corrections" class="divider"></li>
+        <li ng-if="actions.corrections"><div class="menu-label" translate>Corrections</div></li>
+        <li ng-repeat="activity in actions.corrections" sd-activity-item></li>
+    </ul>
+</div>

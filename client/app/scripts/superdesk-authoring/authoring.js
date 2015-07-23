@@ -1634,6 +1634,7 @@
                     label: gettext('Kill item'),
                     priority: 100,
                     icon: 'remove',
+                    group: 'corrections',
                     controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('kill', 'content_article', data.item);
                     }],
@@ -1664,6 +1665,7 @@
                     label: gettext('Correct item'),
                     priority: 100,
                     icon: 'pencil',
+                    group: 'corrections',
                     controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('correct', 'content_article', data.item);
                     }],

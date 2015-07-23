@@ -634,7 +634,7 @@
 		}
 
 		.item-info {
-			padding: 10px;
+			padding: 10px 47px 10px 10px;
 			.line {
 				height: 18px;
 				line-height: 18px;
@@ -706,46 +706,37 @@
 			}
 		}
 		.item-right {
-			border-left: 0;
-			min-width: @rightfield-width;
+			border-left: 1px solid #f4f4f4;
+			width: 36px;
 			position: absolute;
 			right: 0;
-			top:0;
-			text-align: right;
+			top: 0;
+			bottom: 0;
 			padding: 0;
-			.action {
-				background: #f4f4f4;
-				position: relative;
-				right: -2px; bottom: 0;
-				min-width: @rightfield-width;
-				display: none;
-				.item-functions {
-					.item-field {
-						a {
-							display: inline-block;
-							padding: 10px 20px;
-							height: 35px;
-							line-height: 35px;
-							text-align: center;
-							vertical-align: middle;
-							.actioning {
-								background-image: url("../../images/loading-small.gif");
-								background-repeat: no-repeat;
-			    				background-position: center;
-								display: inline-block;
-								height: 35px;
-								line-height: 35px;
-								text-align: center;
-								vertical-align: middle;
-							}
-						}
-						button {
-							margin-top: 7px;
-						}
-					}
-				}
 
+			.more-activity-dropdown {
+				position: relative;
+				width: 100%;
+				height: 100%;
+
+				.submenu {
+					overflow: hidden;
+					display: block;
+				}
 			}
+			
+			.more-activity-toggle {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				right: 0;
+				top: 0;
+				text-align: center;
+				vertical-align: middle;
+				border: none;
+				background: none;
+			}
+
 		}
 
 		&.archived {
@@ -779,6 +770,12 @@
 	}
 }
 
+.more-activity-menu.dropdown-menu {
+	margin: 8px 0;
+	&:before {
+		display: none;
+	}
+}
 
 .mgrid-view, #scratchpad {
 	.active {

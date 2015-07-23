@@ -692,7 +692,7 @@
                     return item ? item.state !== 'killed' && item.package_type !== 'takes' : true;
                 }
             })
-            .activity('package.item', {
+            .activity('packageitem', {
                 label: gettext('Package item'),
                 priority: 5,
                 icon: 'package-plus',
@@ -711,7 +711,8 @@
                 ],
                 additionalCondition:['authoring', 'item', function(authoring, item) {
                     return authoring.itemActions(item).package_item;
-                }]
+                }],
+                group: 'packaging'
             });
     }])
     .config(['apiProvider', function(apiProvider) {
