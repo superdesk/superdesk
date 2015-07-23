@@ -35,18 +35,25 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
         setPublishScheduleDate(newValue, oldValue);
     });
 
+    $scope.disableAddingTargetedFor = function() {
+        return !$scope.item._editable || angular.isUndefined($scope.item.targeted_for_value) || $scope.item.targeted_for_value === '';
+    };
+
     $scope.addTargeted = function() {
         if (angular.isUndefined($scope.item.targeted_for)) {
             $scope.item.targeted_for = [];
         }
 
-        var targeted_for = {'name': $scope.item.targeted_for_value};
+        if (!angular.isUndefined($scope.item.targeted_for_value) && $scope.item.targeted_for_value !== '') {
+            var targeted_for = {'name': $scope.item.targeted_for_value};
 
-        if (angular.isUndefined(_.find($scope.item.targeted_for, targeted_for))) {
-            targeted_for.allow = angular.isUndefined($scope.item.negation) ? true : !$scope.item.negation;
-            $scope.item.targeted_for.push(targeted_for);
-            $scope.autosave($scope.item);
+            if (angular.isUndefined(_.find($scope.item.targeted_for, targeted_for))) {
+                targeted_for.allow = angular.isUndefined($scope.item.negation) ? true : !$scope.item.negation;
+                $scope.item.targeted_for.push(targeted_for);
+                $scope.autosave($scope.item);
+            }
         }
+
     };
 
     $scope.removeTargeted = function(to_remove) {

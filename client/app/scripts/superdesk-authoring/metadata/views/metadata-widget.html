@@ -60,7 +60,7 @@
 					<option value=""></option>
 					<option value="{{g.value}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
 				</select>
-				<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="!_editable" translate>Add</button>
+				<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="disableAddingTargetedFor()" translate>Add</button>
 				<div class="terms" ng-if="item['targeted_for'].length">
 					<ul>
 						<li ng-repeat="t in item['targeted_for']" ng-click="removeTargeted(t)">{{ :: t['allow'] == false ? 'Not ' + t.name : t.name}}<i class="icon-close-small"></i></li>
