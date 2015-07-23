@@ -1,4 +1,4 @@
-<div class="monitoring">
+<div class="monitoring sidenav-container">
     <div class="subnav">
         <h3 class="page-nav-title">
             <span ng-if="!monitoring.singleGroup" translate>Monitoring</span>
@@ -11,10 +11,9 @@
         </h3>
     </div>
 
-    <section
-        class="main-section search-page-container"
-        ng-class="monitoring.state"
-        ng-controller="AggregateCtrl as aggregate">
+    <section class="main-section search-page-container"
+             ng-class="monitoring.state"
+             ng-controller="AggregateCtrl as aggregate">
 
         <div class="preview-layout">
             <div class="content-list" ng-if="!aggregate.loading">

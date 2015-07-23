@@ -177,7 +177,47 @@
 			}
 		}
 	}
+    
+}
 
+.sidenav-container {
+    left: @sidebar-width;
+}
+#side-menu {
+    position: absolute;
+    width: @sidebar-width;
+    top: @nav-height;
+    left: 0;
+    height: 100%;
+    background-color: @sidebar-background;
+    z-index: @zindexFixedNavbar - 1;
+    .box-shadow(2px 0 5px 0 #cbcbcb);
+    .transition( all 0.3s ease);
+    &.menu-open {
+        left: @sf-main-menu-width !important;
+        right: 0 !important;
+    }
+    hr {
+        width: @sidebar-width / 2;
+        margin: 18px @sidebar-width / 4;
+        border-top: 1px dotted #9b9b9b;
+        border-bottom: 0;
+    }
+    li {
+        text-align: center;
+        line-height: @sidebar-width;
+        a {
+            opacity: .5;
+            &.big-icon-view {
+                background-size: 24px;
+            }
+        }
+        &.active {
+            a {
+                opacity: 1;
+            }
+        }
+    }
 }
 
 #main-menu {
