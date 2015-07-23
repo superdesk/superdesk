@@ -1411,3 +1411,225 @@ Feature: Content Publishing
           ]
       }
       """
+
+    @auth @vocabulary @test
+    Scenario: Publish subsequent takes to same wire clients as published before.
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "filter_conditions"
+      """
+      [{"name": "sport", "field": "headline", "operator": "like", "value": "soccer"}]
+      """
+      And "publish_filters"
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      When we post to "/subscribers" with "First_Wire_Subscriber" and success
+      """
+      [{
+        "name":"Soccer Client1","media_type":"media", "subscriber_type": "wire",
+        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[
+            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
+          ]
+      }]
+      """
+      And we post to "/subscribers" with "Digital_Subscriber" and success
+      """
+      [{
+        "name":"Soccer Client Digital","media_type":"media", "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[
+            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
+          ]
+      }]
+      """
+      And we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 soccer headline=2",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we get "/archive"
+      Then we get list with 3 items
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/publish_queue"
+      Then we get list with 2 items
+      """
+      {
+          "_items": [
+            {
+              "item_id" : "123",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "state" : "pending",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "headline" : "Take-1 soccer headline",
+              "item_version": 4
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "state" : "pending",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "headline" : "Take-1 soccer headline",
+              "item_version": 4
+            }
+          ]
+      }
+      """
+      When we post to "/subscribers" with "Second_Wire_Subscriber" and success
+      """
+      [{
+        "name":"Soccer Client2","media_type":"media", "subscriber_type": "wire",
+        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[
+            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
+          ]
+      }]
+      """
+      When we publish "#TAKE2#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/publish_queue"
+      Then we get list with 4 items
+      """
+      {
+          "_items": [
+            {
+              "item_id" : "123",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 4
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 4
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 5
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 5
+            }
+          ]
+      }
+      """
+      When we publish "#TAKE2#" with "correct" type and "corrected" state
+      Then we get OK response
+      When we get "/publish_queue"
+      Then we get list with 6 items
+      """
+      {
+          "_items": [
+            {
+              "item_id" : "123",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 4
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 4
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 5
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 5
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "corrected",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 6
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "corrected",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 6
+            }
+          ]
+      }
+      """
