@@ -74,8 +74,8 @@ class ResourceConfigTestCase(ItemsResourceTestCase):
     def test_datasource_filter_is_set_to_non_composite_types(self):
         klass = self._get_target_class()
         datasource = klass.datasource or {}
-        filter_config = datasource.get('filter')
-        self.assertEqual(filter_config, {'type': {'$ne': 'composite'}})
+        filter_config = datasource.get('elastic_filter')
+        self.assertEqual(filter_config, {"bool": {"must_not": {"term": {"type": "composite"}}}})
 
     def test_allowed_item_http_methods(self):
         klass = self._get_target_class()

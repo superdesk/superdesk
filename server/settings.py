@@ -21,7 +21,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from publicapi.settings import PUBLICAPI_MONGO_DBNAME  # noqa @UnusedImport
+from publicapi.settings import MONGO_DBNAME as PUBLICAPI_MONGO_DBNAME  # noqa @UnusedImport
 
 
 def env(variable, fallback_value=None):

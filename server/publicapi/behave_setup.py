@@ -17,12 +17,15 @@ from settings import ELASTICSEARCH_URL
 from eve_elastic import get_es, get_indices
 
 
+TEST_DBNAME = 'sptests'
+
+
 def get_test_settings():
     test_settings = {}
     test_settings['ELASTICSEARCH_URL'] = ELASTICSEARCH_URL
-    test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
-    test_settings['MONGO_DBNAME'] = 'sptests'
-    test_settings['PUBLICAPI_MONGO_URI'] = 'mongodb://localhost/sptests'
+    test_settings['ELASTICSEARCH_INDEX'] = TEST_DBNAME
+    test_settings['MONGO_DBNAME'] = TEST_DBNAME
+    test_settings['MONGO_URI'] = 'mongodb://localhost/%s' % TEST_DBNAME
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
     test_settings['SUPERDESK_TESTING'] = True

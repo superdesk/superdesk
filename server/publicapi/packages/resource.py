@@ -15,6 +15,9 @@ class PackagesResource(ItemsResource):
     """A class defining and configuring the /packages API endpoint."""
 
     datasource = {
-        'filter': {'type': 'composite'},
+        'elastic_filter': {"bool": {"must": {"term": {"type": "composite"}}}},
         'source': 'items',
     }
+
+    item_methods = ['GET']
+    resource_methods = ['GET']

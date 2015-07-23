@@ -12,8 +12,11 @@ from publicapi.packages.resource import PackagesResource
 
 
 class PublicPackagesResource(PackagesResource):
-    datasource = {'source': 'items'}
-    item_methods = ['DELETE', 'PATCH', 'GET', 'DELETE']
+    datasource = {
+        'search_backend': 'elastic',
+        'source': 'items'
+    }
+    item_methods = ['DELETE', 'PATCH', 'GET']
     resource_methods = ['POST', 'GET']
     mongo_prefix = 'PUBLICAPI_MONGO'
     privileges = {'POST': 'publish_queue', 'DELETE': 'publish_queue', 'PATCH': 'publish_queue',

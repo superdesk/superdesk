@@ -8,7 +8,7 @@ Feature: Prepopulate public content
         Then we get response code 201
 
         When we get "/items?start_date=2014-03-16"
-        Then we get list with 1 items
+        Then we get list with 3 items
         """
         {
         	"_items": [

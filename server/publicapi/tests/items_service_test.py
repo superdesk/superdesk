@@ -163,7 +163,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         expected_whitelist = sorted([
             'start_date', 'end_date',
             'exclude_fields', 'include_fields',
-            'q'
+            'q', 'filter'
         ])
 
         whitelist_arg = kwargs.get('whitelist')
@@ -187,7 +187,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(fake_request, lookup)
 
         self.assertTrue(fake_set_fields_filter.called)
-        args, kwargs = fake_set_fields_filter.call_args
+        args, _ = fake_set_fields_filter.call_args
 
         self.assertGreater(len(args), 0)
         self.assertIs(args[0], fake_request)
@@ -201,7 +201,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertEqual(len(args), 2)
         self.assertIs(args[0], request)
         self.assertIs(args[1], lookup)
@@ -213,24 +213,24 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(None, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertEqual(len(args), 2)
         self.assertIsInstance(args[0], ParsedRequest)
 
     def test_sets_query_filter_on_request_object_if_present(self):
         request = MagicMock()
-        request.args = MultiDict([('q', '{"language": "de"}')])
+        request.args = MultiDict([('filter', '{"language": "de"}')])
         lookup = {}
 
         instance = self._make_one()
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        query_filter = json.loads(args[0].where)
-        self.assertEqual(query_filter.get('language'), 'de')
+        query_filter = args[0].args['filters'][0]
+        self.assertEqual(query_filter.get('term', {}).get('language'), 'de')
 
     def test_raises_correct_error_on_invalid_start_date_parameter(self):
         request = MagicMock()
@@ -310,15 +310,34 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        date_filter = json.loads(args[0].args['filter']).get('range', {}).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21T00:00:00+0000',
-            '$lt': '2012-08-27T00:00:00+0000'  # end_date + 1 day
+            'from': '2012-08-21',
+            'to': '2012-08-26'
         }
         self.assertEqual(date_filter, expected_filter)
+
+    def test_includes_text_query_if_given(self):
+        request = MagicMock()
+        request.args = MultiDict([
+            ('q', 'text')
+        ])
+        lookup = {}
+
+        instance = self._make_one()
+        instance.get(request, lookup)
+
+        self.assertTrue(fake_super_get.called)
+        args, _ = fake_super_get.call_args
+        self.assertGreater(len(args), 0)
+
+        text_query = args[0].args['q']
+        self.assertEqual(text_query, 'text')
+        default_operator = args[0].args['default_operator']
+        self.assertEqual(default_operator, 'OR')
 
     @mock.patch('publicapi.items.service.utcnow')
     def test_sets_end_date_to_today_if_not_given(self, fake_utcnow):
@@ -332,13 +351,13 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        date_filter = json.loads(args[0].args['filter']).get('range', {}).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21T00:00:00+0000',
-            '$lt': '2014-07-16T00:00:00+0000'  # today + 1 day
+            'from': '2012-08-21',
+            'to': '2014-07-15'
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -351,13 +370,13 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        date_filter = json.loads(args[0].args['filter']).get('range', {}).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2012-08-21T00:00:00+0000',
-            '$lt': '2012-08-22T00:00:00+0000'  # end_date + 1 day
+            'from': '2012-08-21',
+            'to': '2012-08-21'
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -375,13 +394,13 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        date_filter = json.loads(args[0].args['filter']).get('range', {}).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2014-07-15T00:00:00+0000',
-            '$lt': '2014-07-16T00:00:00+0000'  # today + 1 day
+            'from': '2014-07-15',
+            'to': '2014-07-15'
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -397,13 +416,13 @@ class GetMethodTestCase(ItemsServiceTestCase):
         instance.get(request, lookup)
 
         self.assertTrue(fake_super_get.called)
-        args, kwargs = fake_super_get.call_args
+        args, _ = fake_super_get.call_args
         self.assertGreater(len(args), 0)
 
-        date_filter = json.loads(args[0].where).get('versioncreated', {})
+        date_filter = json.loads(args[0].args['filter']).get('range', {}).get('versioncreated', {})
         expected_filter = {
-            '$gte': '2010-09-17T00:00:00+0000',
-            '$lt': '2010-09-18T00:00:00+0000'
+            'from': '2010-09-17',
+            'to': '2010-09-17'
         }
         self.assertEqual(date_filter, expected_filter)
 
@@ -521,7 +540,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         fake_schema = {'foo': 'schema_bar'}
-        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):  # @UndefinedVariable
             with self.assertRaises(BadParameterValueError) as context:
                 instance._set_fields_filter(request)
 
@@ -540,7 +559,7 @@ class SetFieldsFilterMethodTestCase(ItemsServiceTestCase):
         instance = self._make_one()
 
         fake_schema = {'foo': 'schema_bar'}
-        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):
+        with mock.patch.object(ItemsResource, 'schema', new=fake_schema):  # @UndefinedVariable
             with self.assertRaises(BadParameterValueError) as context:
                 instance._set_fields_filter(request)
 
@@ -629,7 +648,7 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         instance.find_one(fake_request, **lookup)
 
         self.assertTrue(fake_set_fields_filter.called)
-        args, kwargs = fake_set_fields_filter.call_args
+        args, _ = fake_set_fields_filter.call_args
 
         self.assertGreater(len(args), 0)
         self.assertIs(args[0], fake_request)
@@ -655,7 +674,7 @@ class FindOneMethodTestCase(ItemsServiceTestCase):
         instance.find_one(None, **lookup)
 
         self.assertTrue(fake_super_find_one.called)
-        args, kwargs = fake_super_find_one.call_args
+        args, _ = fake_super_find_one.call_args
         self.assertEqual(len(args), 1)
         self.assertIsInstance(args[0], ParsedRequest)
 

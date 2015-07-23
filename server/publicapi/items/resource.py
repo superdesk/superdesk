@@ -49,10 +49,10 @@ class ItemsResource(Resource):
     }
 
     datasource = {
-        'filter': {'type': {'$ne': 'composite'}},
+        'search_backend': 'elastic',
+        'elastic_filter': {"bool": {"must_not": {"term": {"type": "composite"}}}},
+        'default_sort': [('_updated', -1)],
     }
 
     item_methods = ['GET']
     resource_methods = ['GET']
-
-    mongo_prefix = 'PUBLICAPI_MONGO'
