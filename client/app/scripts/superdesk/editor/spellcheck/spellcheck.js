@@ -15,6 +15,7 @@ function findTextNode(node, offset) {
     var currentOffset = 0,
         tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     while (tree.nextNode()) {
+        tree.currentNode.textContent = tree.currentNode.textContent.replace(String.fromCharCode(65279), '');
         if (currentOffset + tree.currentNode.textContent.length >= offset) {
             return {node: tree.currentNode, offset: offset - currentOffset};
         }
@@ -118,21 +119,28 @@ function SpellcheckService($q, api, dictionaries, editor) {
     /**
      * Find errors in given text
      *
-     * @param {string} text
+     * @param {Node} node
      */
-    this.errors = function check(text) {
+    this.errors = function check(node) {
         return getDict().then(function(d) {
             var errors = [],
                 regexp = /[0-9a-zA-Z\u00C0-\u1FFF\u2C00-\uD7FF]+/g,
-                match;
-            while ((match = regexp.exec(text)) != null) {
-                var word = match[0];
-                if (isNaN(word) && !dict.content[word.toLowerCase()]) {
-                    errors.push({
-                        word: word,
-                        index: match.index
-                    });
+                match,
+                currentOffset = 0,
+                tree = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+
+            while (tree.nextNode()) {
+                while ((match = regexp.exec(tree.currentNode.textContent)) != null) {
+                    var word = match[0];
+                    if (isNaN(word) && !dict.content[word.toLowerCase()]) {
+                        errors.push({
+                            word: word,
+                            index: currentOffset + match.index
+                        });
+                    }
                 }
+
+                currentOffset += tree.currentNode.length;
             }
 
             numberOfErrors = errors.length;
@@ -203,7 +211,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     this.render = function render(elem) {
         var node = elem;
 
-        return this.errors(node.textContent)
+        return this.errors(node)
             .then(function(errors) {
                 editor.storeSelection(node);
 
