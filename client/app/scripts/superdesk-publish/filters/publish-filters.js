@@ -499,8 +499,6 @@ function FilterSearchController($scope, filters, notify) {
     $scope.searchResult = null;
     $scope.publishFiltersLookup = {};
 
-    populateData();
-    fetchPublishFilters();
     $scope.isListValue = function() {
         if ($scope.filterCondition != null) {
             return _.contains(['in', 'nin'], $scope.filterCondition.operator) && $scope.valueLookup[$scope.filterCondition.field];
@@ -517,16 +515,14 @@ function FilterSearchController($scope, filters, notify) {
             return false;
         }
     };
-
     $scope.resetValues = function() {
         $scope.searchResult = null;
         $scope.filterCondition.values.length = 0;
         $scope.filterCondition.value = null;
     };
 
-    $scope.editView = function(filterId) {
-        var filter = _.find($scope.publishFilters, {_id: filterId.filter_id});
-        $scope.editFilter(filter);
+    $scope.getFilter = function(filterId) {
+        return _.find($scope.publishFilters, {_id: filterId});
     };
 
     function fetchPublishFilters() {
@@ -539,7 +535,7 @@ function FilterSearchController($scope, filters, notify) {
     }
 
     function populateData() {
-        filters.getFilterConditionParameters().then(function(params) {
+        return filters.getFilterConditionParameters().then(function(params) {
             $scope.filterConditionParameters = params;
             _.each(params, function(param) {
                 $scope.operatorLookup[param.field] = param.operators;
@@ -580,21 +576,29 @@ function FilterSearchController($scope, filters, notify) {
     }
 
     $scope.search = function() {
-        $scope.searchResult = null;
-        $scope.filterCondition.value = getFilterValue();
-        var inputs = {
-            'field': $scope.filterCondition.field,
-            'operator': $scope.filterCondition.operator,
-            'value': $scope.filterCondition.value
-        };
-
-        filters.getFilterSearchResults(inputs).then(function(result) {
-            $scope.searchResult = result;
-            if (result.length === 0) {
-                notify.error(gettext('no results found'));
-            }
-        });
+        if (!$scope.loading) {
+            $scope.searchResult = null;
+            $scope.filterCondition.value = getFilterValue();
+            var inputs = {
+                'field': $scope.filterCondition.field,
+                'operator': $scope.filterCondition.operator,
+                'value': $scope.filterCondition.value
+            };
+            $scope.loading = true;
+            filters.getFilterSearchResults(inputs).then(function(result) {
+                $scope.searchResult = result;
+                if (result.length === 0) {
+                    notify.error(gettext('no results found'));
+                }
+                $scope.filterCondition.value = null;
+                $scope.loading = false;
+            });
+        }
     };
+
+    populateData().then(function() {
+        fetchPublishFilters();
+    });
 }
 
 function PublishFilterDirective() {
@@ -606,14 +610,12 @@ function PublishFilterDirective() {
 
 function FilterSearchDirective() {
     return {
-        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search.html',
-        controller: FilterSearchController
+        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search.html'
     };
 }
 function FilterSearchResultDirective() {
     return {
-        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search-result.html',
-        controller: FilterSearchController
+        templateUrl: 'scripts/superdesk-publish/filters/view/filter-search-result.html'
     };
 }
 

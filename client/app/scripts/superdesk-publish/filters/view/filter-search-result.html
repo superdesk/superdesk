@@ -1,4 +1,4 @@
-<div ng-if="searchResult.length > 0" class="pull-left-20">
+<div ng-if="searchResult.length > 0 && !loading" class="pull-left-20">
     <div class="content">
         <div sd-shadow>
             <table>
@@ -30,9 +30,10 @@
                                     <li ng-repeat="subscriber in searchResult track by subscriber._id" class="clearfix">
                                         <div class="header">
                                             <h6>{{:: publishFiltersLookup[subscriber.publish_filter.filter_id].name }}</h6>
-                                            <i>{{:: subscriber.publish_filter.is_global?'[Global]':'' }}</i>
+                                            <i>{{:: subscriber.global_filters[subscriber.publish_filter.filter_id]?'[Global]':'' }}</i>
+                                            <i>{{:: subscriber.publish_filter.filter_id != null?'':'[Global]' }}</i>
                                             <div class="actions">
-                                                <button ng-click="editView(subscriber.publish_filter)" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
+                                                <button ng-show="subscriber.publish_filter.filter_id != null" ng-click="editFilter(getFilter(subscriber.publish_filter.filter_id))" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
                                             </div>
                                         </div>
                                     </li>

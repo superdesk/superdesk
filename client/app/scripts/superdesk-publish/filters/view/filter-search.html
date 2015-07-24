@@ -1,5 +1,6 @@
-<div>
-    <form name="searchForm" ng-submit="search()">
+<div ng-controller="FilterSearchController">
+    <div ng-if="filterCondition">
+        <form name="searchForm" ng-submit="search()">
         <fieldset>
             <div class="field">
                 <label translate>Field</label>
@@ -24,5 +25,11 @@
                 <button class="btn btn-primary" ng-disabled="!(filterCondition.value || filterCondition.values.length > 0)" ng-click="search()" translate>Search</button>
             </div>
         </fieldset>
-    </form>
+        </form>
+    </div>
+    <div class="panel-search-result" ng-if="searchResult">
+        <div sd-filtersearch-result></div>
+        <div sd-admin-pub-subscribers></div>
+        <div sd-publish-filter></div>
+    </div>
 </div>
