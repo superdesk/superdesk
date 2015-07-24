@@ -1412,7 +1412,7 @@ Feature: Content Publishing
       }
       """
 
-    @auth @vocabulary @test
+    @auth @vocabulary
     Scenario: Publish subsequent takes to same wire clients as published before.
       Given the "validators"
       """
