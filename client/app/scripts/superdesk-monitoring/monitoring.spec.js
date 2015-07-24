@@ -64,5 +64,16 @@ describe('monitoring', function() {
             var criteria = cards.criteria(card);
             expect(criteria.source.query.filtered.query.query_string.query).toBe('foo');
         }));
+
+        it('can get criteria for spike desk', inject(function(cards) {
+            var card = {type: 'spike'};
+            var criteria = cards.criteria(card);
+            expect(criteria.source.query.filtered.filter.and).toContain({
+                term: {'task.desk': card._id}
+            });
+            expect(criteria.source.query.filtered.filter.and).toContain({
+                term: {'state': 'spiked'}
+            });
+        }));
     });
 });

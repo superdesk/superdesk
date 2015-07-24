@@ -8,7 +8,8 @@
         .directive('sdMonitoringView', MonitoringViewDirective)
         .directive('sdMonitoringGroup', MonitoringGroupDirective)
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
-        .config(configureMonitoring);
+        .config(configureMonitoring)
+        .config(configureSpikeMonitoring);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {
@@ -17,6 +18,18 @@
                 label: gettext('Monitoring'),
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/monitoring.html',
+                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
+            });
+    }
+
+    configureSpikeMonitoring.$inject = ['superdeskProvider'];
+    function configureSpikeMonitoring(superdesk) {
+        superdesk
+            .activity('/workspace/spike-monitoring', {
+                label: gettext('Spike Monitoring'),
+                priority: 100,
+                templateUrl: 'scripts/superdesk-monitoring/views/spike-monitoring.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
             });
@@ -36,7 +49,8 @@
          * @param {string} queryString
          */
         function getCriteria(card, queryString) {
-            var query = search.query(card.type === 'search' ? card.search.filter.query : {});
+            var params = (card.type === 'spike') ? {spike: true}: {};
+            var query = search.query(card.type === 'search' ? card.search.filter.query : params);
 
             switch (card.type) {
                 case 'search':
@@ -47,6 +61,10 @@
                         must: {term: {original_creator: session.identity._id}},
                         must_not: {exists: {field: 'task.desk'}}
                     }});
+                    break;
+
+                case 'spike':
+                    query.filter({term: {'task.desk': card._id}});
                     break;
 
                 default:
@@ -108,7 +126,10 @@
         return {
             templateUrl: 'scripts/superdesk-monitoring/views/monitoring-view.html',
             controller: 'Monitoring',
-            controllerAs: 'monitoring'
+            controllerAs: 'monitoring',
+            scope: {
+                type: '='
+            }
         };
     }
 
