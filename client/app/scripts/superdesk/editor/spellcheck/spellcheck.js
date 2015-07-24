@@ -119,6 +119,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
     /**
      * Find errors in given text
      *
+     * @param {Node} node
      */
     this.errors = function check(node) {
         return getDict().then(function(d) {
