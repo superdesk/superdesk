@@ -49,8 +49,18 @@
          * @param {string} queryString
          */
         function getCriteria(card, queryString) {
-            var params = (card.type === 'spike') ? {spike: true}: {};
-            var query = search.query(card.type === 'search' ? card.search.filter.query : params);
+            var params = (card.type === 'search') ? JSON.parse(JSON.stringify(card.search.filter.query)): {};
+            params.spike = (card.type === 'spike');
+
+            if (card.type === 'search') {
+                if (card.query) {
+                    params.q = '(' + card.query + ') ' + card.search.filter.query.q;
+                }
+            } else {
+                params.q = card.query;
+            }
+
+            var query = search.query(params);
 
             switch (card.type) {
                 case 'search':
@@ -179,6 +189,7 @@
                 scope.viewSingleGroup = viewSingleGroup;
 
                 scope.$watch('group', queryItems);
+                scope.$watch('group.query', queryItems);
                 scope.$on('task:stage', handleStage);
                 scope.$on('ingest:update', update);
 

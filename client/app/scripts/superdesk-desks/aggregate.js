@@ -121,7 +121,45 @@
         };
 
         this.search = function(query) {
-            this.query = query;
+            _.each(this.groups, function(item) {
+                item.query = query;
+            });
+            if (this.allStages) {
+                _.each(this.allStages, function(item) {
+                    item.query = query;
+                });
+            }
+            if (this.spikeGroups) {
+                _.each(this.spikeGroups, function(item) {
+                    item.query = query;
+                });
+            }
+            if (this.allDesks) {
+                _.each(this.allDesks, function(item) {
+                    item.query = query;
+                });
+            }
+        };
+
+        this.resetSearch = function() {
+            _.each(this.groups, function(item) {
+                item.query = null;
+            });
+            if (this.allStages) {
+                _.each(this.allStages, function(item) {
+                    item.query = null;
+                });
+            }
+            if (this.spikeGroups) {
+                _.each(this.spikeGroups, function(item) {
+                    item.query = null;
+                });
+            }
+            if (this.allDesks) {
+                _.each(this.allDesks, function(item) {
+                    item.query = null;
+                });
+            }
         };
 
         /**
@@ -156,7 +194,7 @@
             return this.allDesks;
         };
 
-        this.getGroups = function(type) {
+        this.getGroups = function() {
             if (this.groups.length > 0) {
                 return this.groups;
             }
