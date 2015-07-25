@@ -290,8 +290,7 @@ define([
                         function(data, $location, api, notify, session, desks, superdesk) {
                             session.getIdentity()
                                 .then(function(user) {
-                                    var payload = {'desk_id': user.desk? user.desk: desks.getCurrentDeskId()}
-                                    return api.save('archive_rewrite', {}, payload, data.item);
+                                    return api.save('archive_rewrite', {}, {}, data.item);
                                 })
                                 .then(function(new_item) {
                                     notify.success(gettext('Rewrite Created.'));

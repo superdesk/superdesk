@@ -62,7 +62,9 @@ def send_to(doc, update=None, desk_id=None, stage_id=None, user_id=None):
     """
 
     original_task = doc.setdefault('task', {})
-    current_stage = get_resource_service('stages').find_one(req=None, _id=original_task.get('stage'))
+    current_stage = None
+    if original_task.get('stage'):
+        current_stage = get_resource_service('stages').find_one(req=None, _id=original_task.get('stage'))
     destination_stage = calculate_expiry_from = None
     task = {'desk': desk_id, 'stage': stage_id, 'user': original_task.get('user') if user_id is None else user_id}
 

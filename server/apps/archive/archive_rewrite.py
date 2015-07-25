@@ -16,6 +16,8 @@ from apps.archive.common import item_url, CUSTOM_HATEOAS
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from apps.packages.takes_package_service import TakesPackageService
+from apps.tasks import send_to
+from eve.utils import config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,7 +32,6 @@ class ArchiveRewriteResource(Resource):
     }
 
     url = 'archive/<{0}:original_id>/rewrite'.format(item_url)
-
     resource_methods = ['POST']
     privileges = {'POST': 'rewrite'}
 
@@ -38,14 +39,11 @@ class ArchiveRewriteResource(Resource):
 class ArchiveRewriteService(Service):
     def create(self, docs, **kwargs):
         original_id = request.view_args['original_id']
-        doc = docs[0]
-        desk_id = doc.get('desk_id')
         archive_service = get_resource_service('archive')
         original = archive_service.find_one(req=None, _id=original_id)
-        digital = TakesPackageService().get_take_package(original)
-
         self._validate_rewrite(original)
-        rewrite = self._create_rewrite_article(original, digital, desk_id)
+        digital = TakesPackageService().get_take_package(original)
+        rewrite = self._create_rewrite_article(original, digital)
         archive_service.post([rewrite])
         build_custom_hateoas(CUSTOM_HATEOAS, rewrite)
         self._add_rewritten_flag(original, digital, rewrite)
@@ -66,18 +64,17 @@ class ArchiveRewriteService(Service):
         if get_resource_service('published').is_rewritten_before(original['_id']):
             raise SuperdeskApiError.badRequestError(message='Article has been rewritten before !')
 
-        if not is_workflow_state_transition_valid('rewrite', original['state']):
+        if not is_workflow_state_transition_valid('rewrite', original[config.CONTENT_STATE]):
             raise InvalidStateTransitionError()
 
         if not TakesPackageService().is_last_takes_package_item(original):
             raise SuperdeskApiError.badRequestError(message="Only last take of the package can be rewritten.")
 
-    def _create_rewrite_article(self, original, digital, desk_id):
+    def _create_rewrite_article(self, original, digital):
         """
         Creates a new story and sets the metadata from original and digital
         :param original: original story
         :param digital: digital version of the story
-        :param desk_id: desk it belongs to
         :return:new story
         """
         rewrite = dict()
@@ -96,6 +93,7 @@ class ArchiveRewriteService(Service):
             # if not use original's id
             rewrite['rewrite_of'] = original['_id']
 
+        send_to(doc=rewrite, desk_id=original['task']['desk'])
         rewrite['task'] = original['task']
         rewrite['state'] = 'in_progress'
         self._set_take_key(rewrite, original.get('event_id'))

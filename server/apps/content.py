@@ -60,15 +60,6 @@ metadata_schema = {
         'type': 'string',
         'mapping': not_analyzed
     },
-    'event_id': {
-        'type': 'string',
-        'mapping': not_analyzed
-    },
-    'rewrite_of': {
-        'type': 'string',
-        'mapping': not_analyzed,
-        'nullable': True
-    },
 
     # Audit Information
     'original_creator': Resource.rel('users'),

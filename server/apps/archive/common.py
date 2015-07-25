@@ -27,6 +27,7 @@ import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
+from apps.content import not_analyzed
 
 GUID_TAG = 'tag'
 GUID_FIELD = 'guid'
@@ -368,6 +369,15 @@ def item_schema(extra=None):
                     'allow': {'type': 'boolean'}
                 }
             }
+        },
+        'event_id': {
+            'type': 'string',
+            'mapping': not_analyzed
+        },
+        'rewrite_of': {
+            'type': 'string',
+            'mapping': not_analyzed,
+            'nullable': True
         }
     }
     schema.update(metadata_schema)
