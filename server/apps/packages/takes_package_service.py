@@ -98,7 +98,7 @@ class TakesPackageService():
         })
         for field in ['anpa-category', 'pubstatus', 'slugline',
                       'urgency', 'subject', 'dateline',
-                      'publish_schedule', 'event_id']:
+                      'publish_schedule', 'event_id', 'rewrite_of']:
             takes_package[field] = target.get(field)
         takes_package.setdefault(config.VERSION, 1)
 
