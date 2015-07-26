@@ -96,7 +96,7 @@ class TakesPackageService():
             'headline': target.get('headline'),
             'abstract': target.get('abstract')
         })
-        for field in ['anpa-category', 'pubstatus', 'slugline',
+        for field in ['anpa_category', 'pubstatus', 'slugline',
                       'urgency', 'subject', 'dateline',
                       'publish_schedule', 'event_id', 'rewrite_of']:
             takes_package[field] = target.get(field)

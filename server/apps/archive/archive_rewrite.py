@@ -94,7 +94,6 @@ class ArchiveRewriteService(Service):
             rewrite['rewrite_of'] = original['_id']
 
         send_to(doc=rewrite, desk_id=original['task']['desk'])
-        rewrite['task'] = original['task']
         rewrite['state'] = 'in_progress'
         self._set_take_key(rewrite, original.get('event_id'))
         return rewrite
