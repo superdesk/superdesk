@@ -64,8 +64,7 @@ def test_key_is_present(key, context, response):
     :param context
     :param response
     """
-    assert not isinstance(context[key], bool) or \
-        not response[key], \
+    assert not isinstance(context[key], bool) or not response[key], \
         '"%s" should be empty or false, but it was "%s" in (%s)' % (key, response[key], response)
 
 
@@ -1395,6 +1394,19 @@ def then_field_is_populated(context, field_name):
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
 
 
+@then('we get "{field_name}" not populated')
+def then_field_is_not_populated(context, field_name):
+    resp = parse_json_response(context.response)
+    assert resp[field_name] is None, 'item is not populated'
+
+
+@then('we get "{field_name}" not populated in results')
+def then_field_is_not_populated(context, field_name):
+    resps = parse_json_response(context.response)
+    for resp in resps['_items']:
+        assert resp[field_name] is None, 'item is not populated'
+
+
 @when('we delete publish filter "{name}"')
 def step_delete_publish_filter(context, name):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
@@ -1402,6 +1414,24 @@ def step_delete_publish_filter(context, name):
         url = '/publish_filters/{}'.format(filter['_id'])
         headers = if_match(context, filter.get('_etag'))
         context.response = context.client.delete(get_prefixed_url(context.app, url), headers=headers)
+
+
+@when('we rewrite "{item_id}"')
+def step_impl_when_rewrite(context, item_id):
+    context_data = {}
+    _id = apply_placeholders(context, item_id)
+    if context.text:
+        context_data.update(json.loads(apply_placeholders(context, context.text)))
+    data = json.dumps(context_data)
+    context.response = context.client.post(
+        get_prefixed_url(context.app, '/archive/{}/rewrite'.format(_id)),
+        data=data, headers=context.headers)
+    if context.response.status_code == 400:
+        return
+
+    resp = parse_json_response(context.response)
+    set_placeholder(context, 'REWRITE_OF', _id)
+    set_placeholder(context, 'REWRITE_ID', resp['_id']['_id'])
 
 
 @when('we publish "{item_id}" with "{pub_type}" type and "{state}" state')

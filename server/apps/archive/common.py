@@ -27,6 +27,7 @@ import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
+from apps.content import not_analyzed
 
 GUID_TAG = 'tag'
 GUID_FIELD = 'guid'
@@ -70,6 +71,9 @@ def on_create_item(docs, repo_type=ARCHIVE):
 
         if 'family_id' not in doc:
             doc['family_id'] = doc[GUID_FIELD]
+
+        if 'event_id' not in doc:
+            doc['event_id'] = generate_guid(type=GUID_TAG)
 
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc[GUID_FIELD])
@@ -365,6 +369,15 @@ def item_schema(extra=None):
                     'allow': {'type': 'boolean'}
                 }
             }
+        },
+        'event_id': {
+            'type': 'string',
+            'mapping': not_analyzed
+        },
+        'rewrite_of': {
+            'type': 'string',
+            'mapping': not_analyzed,
+            'nullable': True
         }
     }
     schema.update(metadata_schema)

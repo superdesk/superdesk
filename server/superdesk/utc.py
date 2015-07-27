@@ -11,7 +11,7 @@
 
 import arrow
 import datetime
-from pytz import utc, timezone # flake8: noqa
+from pytz import utc, timezone  # flake8: noqa
 
 tzinfo = getattr(datetime, 'tzinfo', object)
 

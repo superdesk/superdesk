@@ -802,3 +802,9 @@ superdesk.workflow_action(
     include_states=['published', 'corrected'],
     privileges=['correct']
 )
+
+superdesk.workflow_action(
+    name='rewrite',
+    include_states=['published', 'corrected'],
+    privileges=['rewrite']
+)

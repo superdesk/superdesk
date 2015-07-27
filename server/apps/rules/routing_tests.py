@@ -14,7 +14,6 @@ from apps.rules.routing_rule_validator import RoutingRuleValidator
 
 
 class RoutingRuleValidatorTestCase(TestCase):
-
     def setUp(self):
         self.items = [
             {
@@ -50,10 +49,10 @@ class RoutingRuleValidatorTestCase(TestCase):
             {
                 "_id": "item4",
                 "subject":
-                    [
-                        {"name": "sport", "qcode": "15000000"},
-                        {"name": "tennis", "qcode": "15065000"}
-                    ],
+                [
+                    {"name": "sport", "qcode": "15000000"},
+                    {"name": "tennis", "qcode": "15065000"}
+                ],
                 "genre": [],
                 'anpa_category': [{'qcode': 's'}],
                 "urgency": "4",

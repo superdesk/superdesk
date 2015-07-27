@@ -45,11 +45,6 @@ metadata_schema = {
         'unique': True,
         'mapping': not_analyzed
     },
-    'parent_id': {
-        'type': 'string',
-        'unique': True,
-        'mapping': not_analyzed
-    },
     'version': {
         'type': 'integer'
     },
