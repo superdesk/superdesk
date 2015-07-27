@@ -180,14 +180,6 @@ class ADAuthService(AuthService):
             if not user.get('is_active', False):
                 raise UserInactiveError()
 
-            '''
-             Needs to delete the below from updates as disabled and inactive users are prevented from login
-             Also, changing status will trigger terminating authenticated sessions of the user.
-            '''
-            del user_data['is_active']
-            del user_data['is_enabled']
-            del user_data['needs_activation']
-
             superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
 
