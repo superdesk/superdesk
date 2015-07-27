@@ -643,8 +643,8 @@
 // Back screen button
 // ---------------------------------------------
 .backlink {
-	background: transparent url('../../images/back-arrow.png') no-repeat 5px 7px;
-	padding-left: 25px;
+	background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAwIDI2IDI2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNiAyNiI+PHBhdGggZmlsbD0iIzdjN2M3YyIgZD0ibTUuMjkyIDEyLjI5NGw2LTZjLjM4OS0uMzg5IDEuMDI1LS4zODkgMS40MTQgMCAuMzg5LjM4OS4zODkgMS4wMjUgMCAxLjQxNGwtNC4yOTMgNC4yOTNoMTIuNTg2Yy41NTIgMCAxIC40NDggMSAxIDAgLjU1Mi0uNDQ4IDEtMSAxaC0xMi41ODZsNC4yOTIgNC4yOTJjLjM4OS4zODkuMzg5IDEuMDI1IDAgMS40MTRzLTEuMDI1LjM4OS0xLjQxNCAwYzAgMC01Ljk5OS01Ljk5Ni02LTUuOTk4LS4zODgtLjM4OS0uMzg4LTEuMDI1LjAwMDEtMS40MTQiLz48L3N2Zz4=) no-repeat;
+	padding-left: 30px;
 	text-decoration: none;
 	color: @sd-text;
 	display: inline-block;
@@ -654,11 +654,14 @@
 	height: 28px;
 	line-height: 24px;
 	margin-top: -5px;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: 500;
 	&.white {
-		background: transparent url('../../images/back-arrow-white.png') no-repeat 5px 7px;
+		background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAwIDI2IDI2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNiAyNiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0ibTUuMjkyIDEyLjI5NGw2LTZjLjM4OS0uMzg5IDEuMDI1LS4zODkgMS40MTQgMCAuMzg5LjM4OS4zODkgMS4wMjUgMCAxLjQxNGwtNC4yOTMgNC4yOTNoMTIuNTg2Yy41NTIgMCAxIC40NDggMSAxIDAgLjU1Mi0uNDQ4IDEtMSAxaC0xMi41ODZsNC4yOTIgNC4yOTJjLjM4OS4zODkuMzg5IDEuMDI1IDAgMS40MTRzLTEuMDI1LjM4OS0xLjQxNCAwYzAgMC01Ljk5OS01Ljk5Ni02LTUuOTk4LS4zODgtLjM4OS0uMzg4LTEuMDI1LjAwMDEtMS40MTQiLz48L3N2Zz4=) no-repeat;
 	}
 	&:hover {
-		background-position: 0 7px;
+		background-position: -5px 0;
 		text-decoration: none;
 		color: @sd-text;
 	}

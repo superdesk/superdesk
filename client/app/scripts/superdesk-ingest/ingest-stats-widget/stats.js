@@ -17,7 +17,7 @@ define([
                 max_sizey: 1,
                 sizex: 1,
                 sizey: 1,
-                thumbnail: require.toUrl('./thumbnail.png'),
+                thumbnail: require.toUrl('./thumbnail.svg'),
                 template: require.toUrl('./widget-ingeststats.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {
