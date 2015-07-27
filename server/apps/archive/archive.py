@@ -434,8 +434,6 @@ class ArchiveService(BaseService):
         # delete entry from published repo
         get_resource_service('published').delete_by_article_id(doc['_id'])
 
-
-
     def validate_schedule(self, schedule):
         if not isinstance(schedule, datetime.date):
             raise SuperdeskApiError.badRequestError("Schedule date is not recognized")

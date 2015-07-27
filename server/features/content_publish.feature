@@ -376,10 +376,15 @@ Feature: Content Publishing
       """
       When we post to "/subscribers" with success
       """
+      [{
+        "name":"Digital","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      },
       {
-        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "name":"Wire","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
+      ]
       """
       And we publish "#archive._id#" with "publish" type and "published" state
       Then we get OK response
@@ -388,18 +393,20 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled"}
       """
       When we get "/publish_queue"
-      Then we get list with 1 items
+      Then we get list with 2 items
       """
       {
         "_items":
           [
-            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
+            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000", "content_type": "text"},
+            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000",
+            "content_type": "composite"}
           ]
       }
       """
       When we patch "/archive/123"
       """
-      {"publish_schedule": "2017-05-30T10:00:00+00:00"}
+      {"publish_schedule": null}
       """
       And we get "/archive"
       Then we get existing resource
@@ -408,15 +415,23 @@ Feature: Content Publishing
           "_items": [
               {
                   "_current_version": 3,
-                  "state": "in_progress"
+                  "state": "in_progress",
+                  "type": "text",
+                  "_id": "123"
+
+              },
+              {
+                  "_current_version": 3,
+                  "state": "in_progress",
+                  "type": "composite"
               }
           ]
       }
       """
       When we get "/publish_queue"
-      Then we get list with 1 items
+      Then we get list with 0 items
       When we get "/published"
-      Then we get list with 1 items
+      Then we get list with 0 items
 
     @auth
     Scenario: Deschedule an item fails if date is past
