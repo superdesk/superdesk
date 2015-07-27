@@ -24,11 +24,7 @@
              * Create an item and start editing it
              */
             this.create = function(type) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(createItem, type);
-                } else {
-                    createItem(type);
-                }
+                scope.closeOpenNew(createItem, type);
             };
 
             var createItem = function (type) {
@@ -39,11 +35,7 @@
             };
 
             this.createPackage = function createPackage(current_item) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(createPackageItem, current_item);
-                } else {
-                    createPackageItem(current_item);
-                }
+                scope.closeOpenNew(createPackageItem, current_item);
             };
 
             var createPackageItem = function (current_item) {
@@ -55,11 +47,7 @@
             };
 
             this.createFromTemplate = function(template) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(createFromTemplateItem, template);
-                } else {
-                    createFromTemplateItem(template);
-                }
+                scope.closeOpenNew(createFromTemplateItem, template);
             };
 
             var createFromTemplateItem = function (template) {

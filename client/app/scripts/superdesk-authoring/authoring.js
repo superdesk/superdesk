@@ -913,10 +913,14 @@
                 };
 
                 $scope.closeOpenNew = function(createFunction, paramValue) {
-                    _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.dirty, true).then(function() {
+                    if ($scope && $scope.dirty){
+                        _closing = true;
+                        authoring.close($scope.item, $scope.origItem, $scope.dirty, true).then(function() {
+                            createFunction(paramValue);
+                        });
+                    } else {
                         createFunction(paramValue);
-                    });
+                    }
                 };
 
                 $scope.beforeSend = function() {
