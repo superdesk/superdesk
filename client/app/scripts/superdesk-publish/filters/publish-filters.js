@@ -591,6 +591,8 @@ function FilterSearchController($scope, filters, notify) {
                     notify.error(gettext('no results found'));
                 }
                 $scope.filterCondition.value = null;
+            })
+            ['finally'](function() {
                 $scope.loading = false;
             });
         }
