@@ -186,8 +186,13 @@ class ArchiveService(BaseService):
         user = get_user()
 
         if 'publish_schedule' in updates and original['state'] == 'scheduled':
-            # this is an descheduling action
+            # this is an deschedule action
             self.deschedule_item(updates, original)
+            # check if there is a takes package and deschedule the takes package.
+            package = TakesPackageService().get_take_package(original)
+            if package and package.get('state') == 'scheduled':
+                package_updates = {'publish_schedule': None, 'groups': package.get('groups')}
+                self.patch(package.get(config.ID_FIELD), package_updates)
             return
 
         if updates.get('publish_schedule'):
@@ -237,6 +242,12 @@ class ArchiveService(BaseService):
             self.packageService.on_updated(updates, original)
 
         user = get_user()
+
+        # # check if there is a takes package and deschedule the takes package.
+        # package = TakesPackageService().get_take_package(original)
+        # if package and package.get('state') == 'scheduled':
+        #     package_updates = {'published_schedule': None}
+        #     self.patch(package.get(config.ID_FIELD), package_updates)
 
         if config.VERSION in updates:
             updated = copy(original)
@@ -410,6 +421,11 @@ class ArchiveService(BaseService):
             get_resource_service('archive_versions').post(new_versions)
 
     def deschedule_item(self, updates, doc):
+        """
+        Deschedule an item. This operation removed the item from publish queue and published collection.
+        :param dict updates: updates for the document
+        :param doc: original is document.
+        """
         updates['state'] = 'in_progress'
         updates['publish_schedule'] = None
         updates[ITEM_OPERATION] = ITEM_DESCHEDULE
@@ -417,6 +433,8 @@ class ArchiveService(BaseService):
         get_resource_service('publish_queue').delete_by_article_id(doc['_id'])
         # delete entry from published repo
         get_resource_service('published').delete_by_article_id(doc['_id'])
+
+
 
     def validate_schedule(self, schedule):
         if not isinstance(schedule, datetime.date):
