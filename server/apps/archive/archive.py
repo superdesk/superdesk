@@ -243,12 +243,6 @@ class ArchiveService(BaseService):
 
         user = get_user()
 
-        # # check if there is a takes package and deschedule the takes package.
-        # package = TakesPackageService().get_take_package(original)
-        # if package and package.get('state') == 'scheduled':
-        #     package_updates = {'published_schedule': None}
-        #     self.patch(package.get(config.ID_FIELD), package_updates)
-
         if config.VERSION in updates:
             updated = copy(original)
             updated.update(updates)
