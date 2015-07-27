@@ -8,7 +8,6 @@ define(['angular'], function(angular) {
                 okText = okText || gettext('OK');
                 cancelText = cancelText != null ? cancelText : gettext('Cancel');
                 additionalCancelText = additionalCancelText != null ? additionalCancelText : null;
-
                 var delay = $q.defer();
 
                 $modal.open({
@@ -76,10 +75,8 @@ define(['angular'], function(angular) {
                     });
 
                     $(document).on('hidden.bs.modal', '.modal', function () {
-                        if (scope.$parent) {
-                            scope.$parent.modalActive = false;
-                            scope.$parent.$evalAsync();
-                        }
+                        scope.model = false;
+                        scope.$evalAsync();
                     });
 
                     function initialized() {
