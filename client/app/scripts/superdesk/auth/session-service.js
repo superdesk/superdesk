@@ -7,11 +7,17 @@ define(['lodash'], function(_) {
     SessionService.$inject = ['$q', '$rootScope', 'storage'];
     function SessionService($q, $rootScope, storage) {
 
-        var TOKEN_KEY = 'sess:token',
-            TOKEN_HREF = 'sess:href',
-            IDENTITY_KEY = 'sess:user',
-            SESSION_ID = 'sess:id',
-            defer;
+        var TOKEN_KEY = 'sess:token';
+        var TOKEN_HREF = 'sess:href';
+        var IDENTITY_KEY = 'sess:user';
+        var SESSION_ID = 'sess:id';
+        var IDENTITY_BLACKLIST = [
+            'session_preferences',
+            'user_preferences',
+            'allowed_actions',
+            'workspace'
+        ];
+        var defer;
 
         this.token = null;
         this.identity = null;
@@ -38,9 +44,11 @@ define(['lodash'], function(_) {
          * @returns {object} identity
          */
         this.updateIdentity = function(updates) {
-            this.identity = this.identity || {};
-            _.extend(this.identity, updates);
+            var identity = this.identity || {};
+            _.extend(identity, updates);
+            this.identity = _.omit(identity, IDENTITY_BLACKLIST);
             storage.setItem(IDENTITY_KEY, this.identity);
+            return this.identity;
         };
 
         /**
@@ -57,8 +65,7 @@ define(['lodash'], function(_) {
             setSessionHref(session._links && session._links.self.href);
 
             this.identity = null;
-            this.updateIdentity(identity);
-            resolveIdentity(identity);
+            resolveIdentity(this.updateIdentity(identity));
         };
 
         function resolveIdentity(identity) {
