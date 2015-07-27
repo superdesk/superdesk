@@ -4,16 +4,49 @@
 		"data": {
 			"_id": "tag:example.com,0000:newsml_BRE9A605",
 			"type": "picture",
-			"versioncreated": "2014-03-16T06:49:47+0000"
+			"headline": "lorem ipsum",
+			"versioncreated": "2014-03-16T06:49:47+0000",
+			"language": "en",
+			"pubstatus": "usable",
+			"version": "1"
+		}
+	},
+	{
+		"resource": "packages",
+		"data": {
+			"_id": "tag:example.com,0001:newsml_BRE9A606",
+			"type": "composite",
+			"headline": "foo bar",
+			"versioncreated": "2015-02-10T06:49:47+0000",
+			"language": "en",
+			"pubstatus": "usable",
+			"version": "1"
 		}
 	},
 	{
 		"resource": "items",
 		"data": {
-			"_id": "tag:example.com,0001:newsml_BRE9A606",
-			"type": "composite",
-			"headline": "foo bar",
-			"versioncreated": "2015-02-10T06:49:47+0000"
+			"_id": "tag:example.com,0001:newsml_BRE9A607",
+			"type": "text",
+			"headline": "Andromeda on a collision course",
+			"body_text": "Andromeda and Milky Way will collide in about 2 billion years",
+			"versioncreated": "2015-03-09T16:32:23+0000",
+			"language": "en",
+			"pubstatus": "usable",
+			"version": "2"
+		}
+	},
+	{
+		"resource": "items",
+		"data": {
+			"_id": "tag:example.com,0001:newsml_BRE9A608",
+			"type": "text",
+			"headline": "Die Lore-Ley",
+			"body_text": "Ich weiß nicht was soll es bedeuten",
+			"versioncreated": "2015-04-19T13:45:54+0000",
+			"language": "de",
+			"pubstatus": "usable",
+			"version": "3"
 		}
 	}
 ]

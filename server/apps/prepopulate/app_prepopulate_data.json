@@ -205,6 +205,8 @@
     {
     	"data": {
 		    "_id" : "publish",
+	        "act": "publish",
+        	"type": "text",
 		    "schema" : {
 		        "headline" : {
 		            "type" : "string",
@@ -244,6 +246,7 @@
     {
     	"data": {
     		"name" : "Public API",
+    		"subscriber_type": "digital",
     		"is_active" : true,
     		"destinations" : [ { "delivery_type" : "PublicArchive", "name" : "Public" } ]
     	},

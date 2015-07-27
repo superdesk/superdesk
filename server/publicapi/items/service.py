@@ -12,7 +12,7 @@ import functools
 import json
 import logging
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from eve.utils import ParsedRequest
 from flask import current_app as app
 from flask import request
@@ -23,7 +23,7 @@ from superdesk.utc import utcnow
 from urllib.parse import urljoin, urlparse, quote
 from werkzeug.datastructures import MultiDict
 from publicapi.assets import url_for_media
-from publicapi.settings import DATE_FORMAT
+from publicapi.settings import ELASTIC_DATE_FORMAT
 
 
 logger = logging.getLogger(__name__)
@@ -73,27 +73,29 @@ class ItemsService(BaseService):
             req = ParsedRequest()
 
         allowed_params = (
-            'q', 'start_date', 'end_date',
+            'q', 'start_date', 'end_date', 'filter',
             'include_fields', 'exclude_fields'
         )
         self._check_for_unknown_params(req, whitelist=allowed_params)
 
-        # set the "q" filter
         request_params = req.args or {}
-        query_filter = {}
+        req.args = {}
 
+        # set the search query
         if 'q' in request_params:
-            # TODO: add validation for the "q" parameter when we define its
-            # format and implement the corresponding actions
-            query_filter = json.loads(request_params['q'])
+            req.args['q'] = request_params['q']
+            req.args['default_operator'] = 'OR'
+
+        # TODO: add validation for the "filter" parameter when we define its
+        # format and implement the corresponding actions
+        if 'filter' in request_params:
+            req.args['filters'] = [{'term': json.loads(request_params['filter'])}]
 
         # set the date range filter
         start_date, end_date = self._get_date_range(request_params)
         date_filter = self._create_date_range_filter(start_date, end_date)
-        query_filter.update(date_filter)
 
-        req.where = json.dumps(query_filter)
-
+        req.args['filter'] = json.dumps(date_filter)
         self._set_fields_filter(req)  # Eve's "projection"
 
         return super().get(req, lookup)
@@ -146,7 +148,7 @@ class ItemsService(BaseService):
             document.pop(field_name, None)
 
         if 'renditions' in document:
-            for k, v in document['renditions'].items():
+            for _k, v in document['renditions'].items():
                 if 'media' in v:
                     v['href'] = url_for_media(v['media'])
 
@@ -280,7 +282,7 @@ class ItemsService(BaseService):
         if start_date is None:
             start_date = end_date
 
-        return start_date, end_date + timedelta(days=1)
+        return start_date, end_date
 
     def _create_date_range_filter(self, start_date, end_date):
         """Create a MongoDB date range query filter from the given dates.
@@ -299,15 +301,16 @@ class ItemsService(BaseService):
         if (start_date is None) and (end_date is None):
             return {}  # nothing to set for the date range filter
 
-        date_filter = {'versioncreated': {}}
+        if end_date is None:
+            end_date = utcnow().date()
 
-        if start_date is not None:
-            date_filter['versioncreated']['$gte'] = self._format_date(start_date)
+        date_filter = {'range': {'versioncreated': {}}}
 
-        if end_date is not None:
-            # need to set it to strictly less than end_date + 1 day,
-            # because internally dates are stored as datetimes
-            date_filter['versioncreated']['$lt'] = self._format_date(end_date)
+        date_filter['range']['versioncreated']['from'] = self._format_date(start_date)
+
+        # need to set it to strictly less than end_date + 1 day,
+        # because internally dates are stored as datetimes
+        date_filter['range']['versioncreated']['to'] = self._format_date(end_date)
 
         return date_filter
 
@@ -453,4 +456,4 @@ class ItemsService(BaseService):
 
     @staticmethod
     def _format_date(date):
-        return datetime.strftime(date, DATE_FORMAT)
+        return datetime.strftime(date, ELASTIC_DATE_FORMAT)
