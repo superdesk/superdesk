@@ -55,6 +55,8 @@ class TakesPackageService():
             target_ref = get_item_ref(target)
             sequence = self.__next_sequence__(sequence)
             target_ref[SEQUENCE] = sequence
+            takes_package[SEQUENCE] = target_ref[SEQUENCE]
+            takes_package[LAST_TAKE] = target['_id']
             main_group[ASSOCIATIONS].append(target_ref)
 
         if link is not None:

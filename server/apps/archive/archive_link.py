@@ -46,11 +46,9 @@ class ArchiveLinkService(Service):
         desk_id = doc.get('desk')
         service = get_resource_service(ARCHIVE)
         target = service.find_one(req=None, _id=target_id)
+        self._validate_link(target, target_id)
 
         link = {'task': {'desk': desk_id}} if desk_id else {}
-
-        if not target:
-            raise SuperdeskApiError.notFoundError(message='Cannot find the target item with id {}.'.format(target_id))
 
         if link_id:
             link = service.find_one(req=None, _id=link_id)
@@ -59,3 +57,16 @@ class ArchiveLinkService(Service):
         doc.update(linked_item)
         build_custom_hateoas(CUSTOM_HATEOAS, doc)
         return [linked_item['_id']]
+
+    def _validate_link(self, target, target_id):
+        """
+        Validates the article to be linked
+        :param target: article to be linked
+        :param target_id: id of the article to be linked
+        :raises: SuperdeskApiError
+        """
+        if not target:
+            raise SuperdeskApiError.notFoundError(message='Cannot find the target item with id {}.'.format(target_id))
+
+        if get_resource_service('published').is_rewritten_before(target['_id']):
+            raise SuperdeskApiError.badRequestError(message='Article has been rewritten before !')

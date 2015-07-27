@@ -1633,3 +1633,100 @@ Feature: Content Publishing
           ]
       }
       """
+
+    @auth
+    Scenario: Reopen a published story by adding a new take
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      When we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "publish" type and "published" state
+      And we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 headline=2",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take (reopens)",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
+      """
+      And we post to "/archive/#TAKE#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we get "/archive"
+      Then we get list with 1 items
+      When we publish "#TAKE#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+          "_items": [
+              {
+                  "_id": "123",
+                  "_current_version": 3,
+                  "state": "published",
+                  "body_html": "Take-1"
+              },
+              {
+                  "_current_version": 5,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1<br>Take-2<br>"
+              },
+              {
+                  "_current_version": 4,
+                  "state": "published",
+                  "body_html": "Take-2"
+              }
+          ]
+      }
+      """

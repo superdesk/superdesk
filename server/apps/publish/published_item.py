@@ -232,17 +232,13 @@ class PublishedItemService(BaseService):
         except:
             return []
 
-    def is_published_before(self, item_id):
-        item = super().find_one(req=None, _id=item_id)
-        return 'last_publish_action' in item
-
     def is_rewritten_before(self, item_id):
         """ Checks if the published item is rewritten before
         :param _id: item_id of the published item
         :return: True is it is rewritten before
         """
         doc = self.find_one(req=None, item_id=item_id)
-        return 'rewritten_by' in doc and doc['rewritten_by']
+        return doc and 'rewritten_by' in doc and doc['rewritten_by']
 
     def update_published_items(self, _id, field, state):
         items = self.get_other_published_items(_id)
