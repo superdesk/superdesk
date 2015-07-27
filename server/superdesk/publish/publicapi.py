@@ -10,7 +10,7 @@
 
 import json
 
-from apps.content import ITEM_TYPE, ITEM_TYPE_COMPOSITE
+from apps.content import ITEM_TYPE, CONTENT_TYPE
 from superdesk import get_resource_service, config, app
 from superdesk.errors import PublishPublicAPIError
 from superdesk.publish import register_transmitter
@@ -34,7 +34,7 @@ class PublicAPIPublishService(PublishService):
             self._fix_dates(item)
             self._process_renditions(item)
 
-            if item[ITEM_TYPE] == ITEM_TYPE_COMPOSITE:
+            if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 public_api_service = get_resource_service('publish_packages')
             else:
                 public_api_service = get_resource_service('publish_items')

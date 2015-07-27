@@ -52,6 +52,8 @@ def init_app(app):
 
     superdesk.privilege(name='subscribers', label='Subscribers', description='User can manage subscribers')
     superdesk.privilege(name='publish', label='Publish', description='Publish a content')
+    superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
+    superdesk.privilege(name='correct', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='publish_queue', label='Publish Queue', description='User can update publish queue')
 
 

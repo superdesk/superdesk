@@ -18,13 +18,16 @@ PACKAGE = 'package'
 PACKAGE_TYPE = 'package_type'
 TAKES_PACKAGE = 'takes'
 ITEM_TYPE = 'type'
-ITEM_TYPE_COMPOSITE = 'composite'
 LAST_TAKE = 'last_take'
 
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
 
 pub_status = ['usable', 'withhold', 'canceled']
 PUB_STATUS = namedtuple('PUBSTATUS', ['USABLE', 'HOLD', 'CANCELED'])(*pub_status)
+content_type = ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', 'composite']
+CONTENT_TYPE = namedtuple('CONTENT_TYPE',
+                          ['TEXT', 'PREFORMATTED', 'AUDIO', 'VIDEO',
+                           'PICTURE', 'GRAPHIC', 'COMPOSITE'])(*content_type)
 
 metadata_schema = {
     # Identifiers
@@ -129,7 +132,7 @@ metadata_schema = {
     # Story Metadata
     ITEM_TYPE: {
         'type': 'string',
-        'allowed': ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', ITEM_TYPE_COMPOSITE],
+        'allowed': content_type,
         'default': 'text',
         'mapping': not_analyzed
     },

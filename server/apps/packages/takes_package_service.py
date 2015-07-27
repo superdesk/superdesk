@@ -15,7 +15,7 @@ from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, \
-    ITEM_TYPE_COMPOSITE, PACKAGE, LAST_TAKE
+    PACKAGE, LAST_TAKE, CONTENT_TYPE
 from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES, ITEM_REF, insert_into_versions
 from .package_service import get_item_ref, create_root_group
 
@@ -90,7 +90,7 @@ class TakesPackageService():
 
     def package_story_as_a_take(self, target, takes_package, link):
         takes_package.update({
-            ITEM_TYPE: ITEM_TYPE_COMPOSITE,
+            ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
             PACKAGE_TYPE: TAKES_PACKAGE,
             'headline': target.get('headline'),
             'abstract': target.get('abstract'),
@@ -179,3 +179,21 @@ class TakesPackageService():
                     except:
                         logger.exception("Unexpected error while spiking items of takes package")
                         break
+
+    def get_first_take_in_takes_package(self, item):
+        """
+        Returns the id of the first take in the takes package.
+        :param dict item: document
+        :return str: id of the first take else None
+        """
+        package = self.get_take_package(item)
+        if package:
+            groups = package.get('groups', [])
+            refs = next((group.get('refs') for group in groups if group['id'] == 'main'), None)
+            if refs:
+                ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
+                            and ref.get(ITEM_REF, '') != item.get(config.ID_FIELD, '')), None)
+                if ref:
+                    return ref.get(ITEM_REF, None)
+
+        return None

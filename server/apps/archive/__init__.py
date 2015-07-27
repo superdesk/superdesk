@@ -112,8 +112,6 @@ def init_app(app):
     superdesk.privilege(name='saved_searches', label='Manage Saved Searches',
                         description='User can manage Saved Searches')
 
-    superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
-    superdesk.privilege(name='correct', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
     superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
 
