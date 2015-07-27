@@ -31,31 +31,35 @@
                         <div class="item">
                             <label><i class="urgency-icon-{{item.urgency}}"></i></label>
                             <div class="data">
-                                <div sd-meta-slider 
-                                     data-list="metadata.newsvalue" 
-                                     data-item="item" 
-                                     data-field="urgency" 
-                                     data-change="autosave(item)" 
-                                     ng-disabled="!_editable">
+                                <div sd-slider 
+                                     data-value="item.urgency"
+                                     data-list="metadata.newsvalue"
+                                     data-unique="value"
+                                     data-field="urgency"
+                                     data-invert="true"
+                                     data-disabled="!_editable"
+                                     data-update="sliderUpdate(item, field)">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="slider-icon pull-left" ng-if="item.urgency">
+            <div class="slider-icon pull-left">
                 <div class="dropdown dropleft" dropdown>
                     <i class="output-item-label label-{{item.urgency}} dropdown-toggle" dropdown-toggle>{{ item.urgency }}</i>
                     <div class="dropdown-menu">
                         <label>{{ "NEWS VALUE" | translate }}</label>
                         <div class="item">
                             <div class="data">
-                                <div sd-meta-slider 
-                                     data-list="metadata.newsvalue" 
-                                     data-item="item" 
-                                     data-field="urgency" 
-                                     data-change="autosave(item)" 
-                                     ng-disabled="!_editable">
+                                <div sd-slider 
+                                     data-value="item.urgency"
+                                     data-list="metadata.newsvalue"
+                                     data-unique="value"
+                                     data-field="urgency"
+                                     data-invert="true"
+                                     data-disabled="!_editable"
+                                     data-update="sliderUpdate(item, field)">
                                 </div>
                             </div>
                         </div>
@@ -75,7 +79,7 @@
         </div>
         <div class="item">
             <label translate>RELATED</label>
-            <div class="data">{{relatedItems._items.length}}</div>
+            <div class="data"><a href="" ng-click="activateWidget()">{{relatedItems._items.length}}</a></div>
         </div>
     </li>
 
@@ -110,17 +114,12 @@
         </div>
     </li>
 
-    <li class="terms-box">
-        <label translate>GENRE</label>
-        <div class="data" sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" ng-disabled="!_editable" data-header="true" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
-    </li>
-
-    <li class="full-width terms-box" ng-if="metadata.categories">
+    <li class="terms-box" ng-if="metadata.categories">
         <label translate>CATEGORY</label>
         <div class="data" sd-meta-terms data-item="item" data-field="anpa_category" data-unique="qcode" data-list="metadata.categories" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
     </li>
 
-    <li class="full-width terms-box">
+    <li class="full-width terms-box" ng-if="metadata.subjectcodes">
         <label translate>SUBJECT</label>
         <div class="data" sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
     </li>
@@ -128,11 +127,7 @@
     <li class="full-width ed-note">
         <label translate>ED. NOTE</label>
         <div class="data">
-            <input type="text" 
-                   sd-auto-height 
-                   ng-model="item.ednote" 
-                   ng-disabled="!_editable" 
-                   ng-change="autosave(item)">
+            <textarea ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
         </div>
     </li>
 </ul>

@@ -553,7 +553,7 @@
 // Info header for authoring
 // ---------------------
 .main-article {
-    header {
+    header.header-info {
         height: 0px;
         margin: -60px -60px 20px -60px;
         padding: 22px 40px;
@@ -586,6 +586,7 @@
             .date-info {
                 margin-top: -7px;
                 margin-bottom: 15px;
+                white-space: nowrap;
                 * {
                     font-size: 12px;
                     color: #c0c0c0;
@@ -651,6 +652,7 @@
                         .item { 
                             display: flex;
                             margin-top: 40px;
+                            margin-bottom: 5px;
                             label {
                                 margin-top: -9px;                                   
                             }
@@ -661,6 +663,9 @@
                         margin-bottom: 0;
                         padding-right: 10px;
                         line-height: 18px;
+                        white-space: nowrap; 
+                        text-overflow: ellipsis; 
+                        overflow: hidden;
                         b {
                             color: #575656;
                             font-size: 12px;
@@ -681,12 +686,15 @@
             > li {
                 display: inline-flex;
                 vertical-align: top;
-                width: 40%;
+                width: 45%;
                 margin-right: 9%;
                 margin-bottom: 10px;
+                &:nth-of-type(2n+2) {
+                    margin-right: 0;
+                }
                 &.full-width {
                     display: flex;
-                    width: 89.5%;
+                    width: 100%;
                     margin-right: 0;
                 }
                 label, .data {
@@ -702,17 +710,19 @@
                     flex-grow: 1;
                     color: #575656;
                 }
-                input {
+                input, textarea {
                     width: 100%;
+                    border: 0 !important;
                     border-bottom: 1px solid #e5e5e5 !important;
                     &:hover, &:focus {
+                        .box-shadow(none) !important;
                         border-color: transparent !important; 
                         border-bottom: 1px solid #e5e5e5 !important;
                     }
                 }
                 &.ed-note {
                     input {
-                        font-size: 12px;
+                        textarea: 12px;
                         color: #cf4925 !important;
                     }
                 }
@@ -793,10 +803,17 @@
                                     }
                                 }
                             }
+                            .main-list {
+                                margin-top: -16px;
+                                &.active {
+                                    margin-top: 0;
+                                }
+                            }
                         }
                         .sd-typeahead {
                             position: static;
                             .item-list {
+                                position: static;
                                 width: 230px;
                                 min-height: 0;
                                 border: 0;
@@ -805,17 +822,13 @@
                                 .box-shadow(none);
                             }
                         }
-                        .single {
-                            .item-list {
-                                position: static;
-                            }
-                        }
                     }
                     .terms {
                         display: inline-block;
                         vertical-align: top;
                         width: calc(~'100% - 28px');
                         li {
+                            position: relative;
                             font-size: 12px;;
                             color: @black;
                             background-color: #f3f3f3;
@@ -823,13 +836,26 @@
                             margin-bottom: 3px;
                             padding: 3px 6px;
                             cursor: pointer;
+                            .transition(color .2s);
                             .border-radius(2px);
-                            &:hover {
-                                background-color: #e0e0e0;
+                            &:not(.disabled):hover {
+                                text-align: center;
+                                color: #f3f3f3;
+                                .icon-close-small {
+                                    opacity: .7;
+                                }
                             }
                             &.disabled {
                                 background-color: #f3f3f3;
                                 cursor: default;
+                            }
+                            .icon-close-small {
+                                position: absolute;
+                                margin-left: -7px;
+                                left: 50%;
+                                top: 5px;
+                                opacity: 0;
+                                .transition(opacity .2s);
                             }
                         }
                     }

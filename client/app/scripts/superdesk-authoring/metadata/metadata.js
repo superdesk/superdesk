@@ -224,17 +224,20 @@ function MetadataListEditingDirective() {
                 $event.stopPropagation();
             };
 
-            scope.terms = [];
+            scope.terms = scope.list;
+            scope.activeList = false;
             scope.selectedTerm = '';
             var uniqueField = scope.unique || 'qcode';
 
             scope.searchTerms = function(term) {
                 if (!term) {
-                    scope.terms = [];
+                    scope.terms = scope.list;
+                    scope.activeList = false;
                 } else {
                     scope.terms = _.filter(scope.list, function(t) {
                         var searchObj = {};
                         searchObj[uniqueField] = t[uniqueField];
+                        scope.activeList = true;
                         return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
                             !_.find(scope.item[scope.field], searchObj));
                     });
@@ -274,65 +277,6 @@ function MetadataListEditingDirective() {
                 _.extend(scope.item, tempItem);
                 scope.change({item: scope.item});
             };
-        }
-    };
-}
-
-MetadataSliderDirective.$inject = ['desks'];
-function MetadataSliderDirective(desks) {
-    return {
-        scope: {
-            list: '=',
-            disabled: '=ngDisabled',
-            item: '=',
-            field: '@',
-            change: '&'
-        },
-        templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-slider.html',
-        link: function(scope) {
-            scope.$watch('list', function (list) {
-                if (!list) {
-                    return;
-                }
-
-                var maxValue = scope.list.length,
-                    currentValue = scope.item[scope.field],
-                    sliderDisabled = scope.disabled;
-
-                $('.sd-slider').slider({
-                    range: 'max',
-                    min: 0,
-                    max: maxValue,
-                    value: currentValue,
-                    disabled: sliderDisabled,
-                    create: function () {
-                        $(this).find('.ui-slider-thumb').css('left', (currentValue * 100) / maxValue + '%');
-                    },
-                    slide: function (event, ui) {
-                        $(this).find('.ui-slider-thumb').css('left', (ui.value * 100) / maxValue + '%').text(ui.value);
-                        select(scope.list[ui.value - 1]);
-                    },
-                    start: function () {
-                        $(this).find('.ui-slider-thumb').addClass('ui-slider-thumb-active');
-                    },
-                    stop: function () {
-                        $(this).find('.ui-slider-thumb').removeClass('ui-slider-thumb-active');
-                    }
-                });
-            });
-
-            function select(item) {
-                var o = {};
-
-                if (angular.isDefined(item)) {
-                    o[scope.field] = (scope.field === 'anpa_category') ? item : item.name;
-                } else {
-                    o[scope.field] = null;
-                }
-
-                _.extend(scope.item, o);
-                scope.change({item: scope.item});
-            }
         }
     };
 }
@@ -413,6 +357,5 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .service('metadata', MetadataService)
     .directive('sdMetaTerms', MetadataListEditingDirective)
     .directive('sdMetaDropdown', MetadataDropdownDirective)
-    .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
-    .directive('sdMetaSlider', MetadataSliderDirective);
+    .directive('sdMetaWordsList', MetadataWordsListEditingDirective);
 })();

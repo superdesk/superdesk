@@ -1775,21 +1775,52 @@
         };
     }
 
-    headerInfoDirective.$inject = ['metadata', 'familyService'];
-    function headerInfoDirective(metadata, familyService) {
+    headerInfoDirective.$inject = ['familyService', 'authoringWidgets', 'authoring'];
+    function headerInfoDirective(familyService, authoringWidgets, authoring) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
-            link: function (scope, elem, attrs) {
+            require: '^sdAuthoringWidgets',
+            link: function (scope, elem, attrs, WidgetsManagerCtrl) {
                 scope.$watch('item', function (item) {
                     if (!item) {
                         return;
                     }
 
                     scope.loaded = true;
+
+                    /*
+                     * Related items
+                     */
                     familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
-                            .then(function (items) {
-                                scope.relatedItems = items;
-                            });
+                        .then(function (items) {
+                            scope.relatedItems = items;
+                        });
+
+                    var relatedItemWidget = _.filter(authoringWidgets, function (widget) {
+                        return widget._id === 'related-item';
+                    });
+
+                    scope.activateWidget = function () {
+                        WidgetsManagerCtrl.activate(relatedItemWidget[0]);
+                    };
+
+                    /*
+                     * Slider for Urgency and News Value
+                     */
+                    scope.sliderUpdate = function(item, field) {
+
+                        var o = {};
+
+                        if (angular.isDefined(item)) {
+                            o[field] = item.name;
+                        } else {
+                            o[field] = null;
+                        }
+
+                        _.extend(scope.item, o);
+                        authoring.autosave(scope.item);
+                    };
+
                 });
             }
         };

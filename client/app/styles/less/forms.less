@@ -739,17 +739,17 @@ form.flat, .form-flat {
 
 // sdSlider
 .sd-slider.ui-slider {
-    height: 2px;
-    background-color: @sd-blue;
+    border-top: 2px solid @sd-blue;
     .ui-slider-range {
-        .transition(width .2s);
-        background-color: @inputBorder;
+        .transition(width .1s);
+        margin-top: -2px;
+        border-top: 2px solid @inputBorder;
     }
     .ui-slider-handle {
         width: 12px;
         height: 12px;
-        top: -5px;
-        .transition(left .2s);
+        top: -7px;
+        .transition(left .1s);
         .border-radius(50%);
         background-color: @sd-blue;
     }
@@ -781,7 +781,7 @@ form.flat, .form-flat {
             border-top-style: solid;
             border-top-color: @sd-blue;
             .translate3d(0,-8px,0);
-            .transition(all .2s ease-in-out);
+            .transition(all .1s ease-in-out);
         }
         &.ui-slider-thumb-active {
             .scale(.4);
