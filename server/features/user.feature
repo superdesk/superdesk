@@ -261,7 +261,7 @@ Feature: User Resource
 
     @auth
     Scenario: A logged-in user can't delete themselves from the system
-        Given we login as user "foo" with password "bar"
+        Given we login as user "foo" with password "bar" and user type "user"
         When we delete "/users/#user._id#"
         Then we get error 403
 
@@ -271,7 +271,7 @@ Feature: User Resource
         """
         [{"name": "A", "is_default": true}, {"name": "B"}]
         """
-        And we login as user "foo" with password "bar"
+        And we login as user "foo" with password "bar" and user type "user"
         """
         {"user_type": "user", "email": "foo.bar@foobar.org"}
         """

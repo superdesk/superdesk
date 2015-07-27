@@ -718,7 +718,7 @@ Feature: Content Publishing
       """
       [{"headline": "test", "_current_version": 1, "state": "fetched"}]
       """
-      And we login as user "foo" with password "bar"
+      And we login as user "foo" with password "bar" and user type "user"
       """
       {"user_type": "user", "email": "foo.bar@foobar.org"}
       """

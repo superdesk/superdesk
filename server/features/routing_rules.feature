@@ -369,7 +369,7 @@ Feature: Routing Scheme and Routing Rules
 
     @auth
     Scenario: A user with no privilege to "routing schemes" can't create a Routing Scheme
-      Given we login as user "foo" with password "bar"
+      Given we login as user "foo" with password "bar" and user type "user"
       """
       {"user_type": "user", "email": "foo.bar@foobar.org"}
       """

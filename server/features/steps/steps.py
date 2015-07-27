@@ -1342,9 +1342,9 @@ def then_we_get_activity(context):
             set_placeholder(context, 'USERS_ID', item['user'])
 
 
-def login_as(context, username, password):
+def login_as(context, username, password, user_type):
     user = {'username': username, 'password': password, 'is_active': True,
-            'is_enabled': True, 'needs_activation': False}
+            'is_enabled': True, 'needs_activation': False, user_type: user_type}
 
     if context.text:
         user.update(json.loads(context.text))
@@ -1352,14 +1352,14 @@ def login_as(context, username, password):
     tests.setup_auth_user(context, user)
 
 
-@given('we login as user "{username}" with password "{password}"')
-def given_we_login_as_user(context, username, password):
-    login_as(context, username, password)
+@given('we login as user "{username}" with password "{password}" and user type "{user_type}"')
+def given_we_login_as_user(context, username, password, user_type):
+    login_as(context, username, password, user_type)
 
 
-@when('we login as user "{username}" with password "{password}"')
-def when_we_login_as_user(context, username, password):
-    login_as(context, username, password)
+@when('we login as user "{username}" with password "{password}" and user type "{user_type}"')
+def when_we_login_as_user(context, username, password, user_type):
+    login_as(context, username, password, user_type)
 
 
 def is_user_resource(resource):

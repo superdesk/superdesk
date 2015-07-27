@@ -34,7 +34,7 @@ Feature: Legal archive
       """
       [{"_id": "tag:example.com,0000:newsml_BRE9A605", "headline": "test", "_current_version": 1, "state": "published"}]
       """
-      And we login as user "foo" with password "bar"
+      And we login as user "foo" with password "bar" and user type "user"
       """
       {"user_type": "user", "email": "foo.bar@foobar.org"}
       """

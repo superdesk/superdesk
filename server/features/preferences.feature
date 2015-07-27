@@ -147,7 +147,7 @@ Feature: User preferences
         {"session_preferences": {"desk:items": [123]}}
         """
         When we delete "/auth/#SESSION_ID#"
-        Given we login as user "test_user" with password "test_password"
+        Given we login as user "test_user" with password "test_password" and user type "user"
         When we get "/preferences/#SESSION_ID#"
         Then we get error 404
 
@@ -253,7 +253,7 @@ Feature: User preferences
     @auth
     Scenario: Session Preferences are deleted when user logsout of Superdesk
       Given I logout
-      When we login as user "foo" with password "bar"
+      When we login as user "foo" with password "bar" and user type "user"
       Then we get "/users/test_user" and match
       """
       {"username": "test_user", "session_preferences": {}}

@@ -151,7 +151,7 @@ Feature: Duplication of Content within Desk
         [{  "type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "published",
             "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
         """
-        When we login as user "foo" with password "bar"
+        When we login as user "foo" with password "bar" and user type "user"
         """
         {"user_type": "user", "email": "foo.bar@foobar.org"}
         """
