@@ -109,3 +109,33 @@ describe('userlist service', function() {
         expect(api).not.toHaveBeenCalled();
     }));
 });
+
+describe('mentio directive', function() {
+
+    beforeEach(module('superdesk.users'));
+    beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
+
+    beforeEach(module(function($provide) {
+        $provide.service('api', function($q) {
+            return function(resource) {
+                return {
+                    query: function() {
+                        return $q.when({_items: [{_id: 1, username: 'moo'}, {_id: 2, username: 'foo'}, {_id: 3, username: 'fast'}]});
+                    }
+                };
+            };
+        });
+    }));
+
+    it('can return sorted users', inject(function($rootScope, $compile) {
+        var scope = $rootScope.$new(true);
+        var elem = $compile('<div sd-user-mentio></div>')(scope);
+        scope.$digest();
+
+        var iscope = elem.scope();
+        iscope.searchUsers();
+        $rootScope.$digest();
+        expect(iscope.users).toEqual([{_id: 3, username: 'fast'}, {_id: 2, username: 'foo'}, {_id: 1, username: 'moo'}]);
+    }));
+});
