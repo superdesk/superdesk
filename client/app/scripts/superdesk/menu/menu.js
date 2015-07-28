@@ -19,8 +19,8 @@
             };
         }])
 
-        .directive('sdMenuWrapper', ['$route', 'superdesk', 'betaService', 'userNotifications', 'asset',
-        function($route, superdesk, betaService, userNotifications, asset) {
+        .directive('sdMenuWrapper', ['$route', 'superdesk', 'betaService', 'userNotifications', 'asset', 'lodash',
+        function($route, superdesk, betaService, userNotifications, asset, _) {
             return {
                 require: '^sdSuperdeskView',
                 templateUrl: asset.templateUrl('superdesk/menu/views/menu.html'),
