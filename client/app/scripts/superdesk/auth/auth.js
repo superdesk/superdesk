@@ -64,17 +64,22 @@ define([
     angular.module('superdesk.session', [])
         .service('session', require('./session-service'));
 
-    return angular.module('superdesk.auth', ['superdesk.features', 'superdesk.activity', 'superdesk.session'])
+    return angular.module('superdesk.auth', [
+        'superdesk.features',
+        'superdesk.activity',
+        'superdesk.session',
+        'superdesk.asset'
+        ])
         .service('auth', require('./auth-service'))
         .service('authAdapter', require('./basic-auth-adapter'))
         .directive('sdLoginModal', require('./login-modal-directive'))
-        .config(['$httpProvider', 'superdeskProvider', function($httpProvider, superdesk) {
+        .config(['$httpProvider', 'superdeskProvider', 'assetProvider', function($httpProvider, superdesk, asset) {
             $httpProvider.interceptors.push(AuthInterceptor);
 
             superdesk
                 .activity('/reset-password/', {
                     controller: ResetPassworController,
-                    templateUrl: 'scripts/superdesk/auth/reset-password.html',
+                    templateUrl: asset.templateUrl('superdesk/auth/reset-password.html'),
                     auth: false
                 });
         }])
