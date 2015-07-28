@@ -169,7 +169,7 @@ Feature: Content Locking
         Then we get error 403
 
 
-    @auth
+    @auth @test
     Scenario: Fail lock if item is locked in another session
         Given "archive"
         """

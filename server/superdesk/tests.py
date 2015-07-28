@@ -146,12 +146,16 @@ def get_prefixed_url(current_app, endpoint):
 
 
 def setup_db_user(context, user):
+    """
+    Setup the user for the DB authentication.
+    :param context: test context
+    :param dict user: user
+    """
     user = user or test_user
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         original_password = user['password']
 
-        if user.get('user_type') is None:
-            user['user_type'] = 'administrator'
+        user.setdefault('user_type', 'administrator')
 
         if not get_resource_service('users').find_one(username=user['username'], req=None):
             get_resource_service('users').post([user])
@@ -166,6 +170,12 @@ def setup_db_user(context, user):
 
 
 def setup_ad_user(context, user):
+    """
+    Setup the AD user for the LDAP authentication.
+    The method patches the authenticate_and_fetch_profile method of the ADAuth class
+    :param context: test context
+    :param dict user: user
+    """
     ad_user = user or test_user
 
     '''
@@ -176,10 +186,26 @@ def setup_ad_user(context, user):
     ad_user = ad_user.copy()
     ad_user['email'] = 'mock@mail.com.au'
 
-    if ad_user.get('user_type') is None:
-        ad_user['user_type'] = 'administrator'
+    ad_user.setdefault('user_type', 'administrator')
 
-    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
+    # ad profile to be return from the patch object
+    ad_profile = {
+        'email': ad_user['email'],
+        'username': ad_user['username'],
+        # so that test run under the administrator context.
+        'user_type': ad_user.get('user_type'),
+        'sign_off': ad_user.get('sign_off', 'abc'),
+        'preferences': {
+            'email:notification': {
+                'label': 'Send notifications via email',
+                'type': 'bool',
+                'default': True,
+                'category': 'notifications',
+                'enabled': True}
+        }
+    }
+
+    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_profile):
         auth_data = json.dumps({'username': ad_user['username'], 'password': ad_user['password']})
         auth_response = context.client.post(get_prefixed_url(context.app, '/auth'),
                                             data=auth_data, headers=context.headers)

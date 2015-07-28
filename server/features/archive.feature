@@ -379,7 +379,7 @@ Feature: News Items Archive
       {"_message": "Cannot delete desk as it has article(s)."}
       """
 
-    @auth
+    @auth @test
     Scenario: Sign-off is properly updated
         When we post to "/archive"
         """
