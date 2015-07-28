@@ -10,7 +10,8 @@
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
-        .config(configureSpikeMonitoring);
+        .config(configureSpikeMonitoring)
+        .config(configureHighlightsView);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {
@@ -36,6 +37,18 @@
             });
     }
 
+    configureHighlightsView.$inject = ['superdeskProvider'];
+    function configureHighlightsView(superdesk) {
+        superdesk
+            .activity('/workspace/highlights-view', {
+                label: gettext('Highlights View'),
+                priority: 100,
+                templateUrl: 'scripts/superdesk-monitoring/views/highlights-view.html',
+                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
+            });
+    }
+
     CardsService.$inject = ['api', 'search', 'session'];
     function CardsService(api, search, session) {
         this.criteria = getCriteria;
@@ -49,7 +62,7 @@
          * @param {Object} card
          * @param {string} queryString
          */
-        function getCriteria(card, queryString) {
+        function getCriteria(card, queryString, queryParam) {
             var params = (card.type === 'search') ? JSON.parse(JSON.stringify(card.search.filter.query)): {};
             params.spike = (card.type === 'spike');
             if (card.fileType) {
@@ -81,6 +94,12 @@
                     query.filter({term: {'task.desk': card._id}});
                     break;
 
+                case 'highlights':
+                    query.filter({and: [
+                        {term: {'highlights': queryParam.highlight}}
+                    ]});
+                    break;
+
                 default:
                     query.filter({term: {'task.stage': card._id}});
                     break;
@@ -97,7 +116,8 @@
         }
     }
 
-    function MonitoringController() {
+    MonitoringController.$inject = ['$location'];
+    function MonitoringController('$location') {
         this.state = {};
 
         this.preview = preview;
@@ -111,6 +131,8 @@
         this.editItem = null;
 
         var vm = this;
+
+        this.queryParam = $location.search().data ? JSON.parse($location.search().data) : null;
 
         function preview(item) {
             vm.previewItem = item;
@@ -154,8 +176,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout'];
-    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout', '$location'];
+    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout, $location) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -232,7 +254,8 @@
                 }
 
                 function queryItems() {
-                    criteria = cards.criteria(scope.group);
+                    var queryParam = $location.search();
+                    criteria = cards.criteria(scope.group, null, queryParam);
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;

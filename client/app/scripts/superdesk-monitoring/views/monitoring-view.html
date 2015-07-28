@@ -6,45 +6,42 @@
         </span>
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: aggregate.monitoringSearch}">
             <div class="search-handler">
-                <label for="search-input" class="trigger-icon" ng-click="aggregate.monitoringSearch = !aggregate.monitoringSearch || (query != null && aggregate.search(query = null))"></label>
+                <label for="search-input" class="trigger-icon" ng-click="aggregate.monitoringSearch = !aggregate.monitoringSearch"></label>
                 <input id="search-input" type="text" placeholder="{{ :: 'Search' | translate }}" ng-model="query" ng-model-options="{debounce: 500}" ng-change="aggregate.search(query)">
                 <button class="search-close" ng-click="aggregate.search(query = null)" ng-class="{visible: query}"><i class="icon-close-small"></i></button>
             </div>
             <div class="separator-handler"></div>
         </div>
         <h3 class="page-nav-title">
-            <span ng-if="!monitoring.singleGroup && type !== 'spike'" translate>Monitoring</span>
+            <span ng-if="!monitoring.singleGroup && type !== 'spike' && type !== 'highlights'" translate>Monitoring</span>
             <span ng-if="!monitoring.singleGroup && type === 'spike'" translate>Spiked Items</span>
+            <div ng-if="type === 'highlights'" sd-highlight-label data-highlight="monitoring.queryParam.highlight"></div>
             <span ng-if="monitoring.singleGroup">
                 {{monitoring.singleGroup.header}} / {{monitoring.singleGroup.subheader}} {{monitoring.singleGroup.type}}
             </span>
         </h3>
+        <div ng-if="type === 'highlights'" sd-create-highlights-button data-highlight="monitoring.queryParam.highlight"></div>
 
         <div sd-multi-action-bar></div>
 
-        <div class="button-stack right-stack">
-            <div class="dropdown navbtn strict" dropdown>
-                <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-                <div class="dropdown-menu pull-right">
-                    <ul>
-                        <li>
-                            <button ng-click="aggregate.edit()">
-                                <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="dropdown navbtn strict" ng-if="!state.opened" title="{{ :: 'Create' | translate }}" dropdown>
-                <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-                <ul class="dropdown-menu pull-right" sd-content-create></ul>
+        <div class="dropdown more-actions" dropdown >
+            <button class="dropdown-toggle dropdown-monitoring-settings pull-right" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+            <div class="dropdown-menu dropdown-monitoring-menu pull-right">
+                <ul>
+                    <li>
+                        <button ng-click="aggregate.edit()">
+                            <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
+
     </div>
 
     <section class="main-section search-page-container"
-             ng-class="monitoring.state">
+             ng-class="monitoring.state"
+             >
 
         <div class="subnav">
             <ul class="filtertype-icon-list">
@@ -55,8 +52,8 @@
             </ul>
         </div>
         <div class="preview-layout monitoring-preview-layout">
-            <div class="content-list" ng-if="!aggregate.loading">
-                <div ng-if="!monitoring.singleGroup && type !== 'spike'">
+            <div class="content-list" ng-if="!aggregate.loading">   
+                <div ng-if="!monitoring.singleGroup && type !== 'spike' && type !== 'highlights'">
                     <div ng-repeat="group in aggregate.getGroups() track by group._id"
                         sd-monitoring-group data-group="group"></div>
                 </div>
@@ -66,6 +63,9 @@
                 </div>
                 <div ng-if="monitoring.singleGroup">
                     <div sd-monitoring-group data-group="monitoring.singleGroup" data-num-items="10"></div>
+                </div>
+                <div ng-if="!monitoring.singleGroup && type === 'highlights'">
+                    <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query}"></div>
                 </div>
             </div>
 
@@ -88,3 +88,5 @@
 	    </div>
     </section>
 </div>
+
+ 

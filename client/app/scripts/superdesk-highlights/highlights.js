@@ -254,8 +254,8 @@
         };
     }
 
-    PackageHighlightsDropdownDirective.$inject = ['superdesk', 'desks', 'highlightsService'];
-    function PackageHighlightsDropdownDirective(superdesk, desks, highlightsService) {
+    PackageHighlightsDropdownDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location'];
+    function PackageHighlightsDropdownDirective(superdesk, desks, highlightsService, $location) {
         return {
             templateUrl: 'scripts/superdesk-highlights/views/package_highlights_dropdown_directive.html',
             link: function(scope) {
@@ -266,11 +266,41 @@
                         superdesk.intent('author', 'package', new_package);
                     });
                 };
+                scope.listHighlight = function(highlight) {
+                    var data = {highlightId: highlight._id, name: highlight.name};
+                    $location.url('workspace/highlights-view?data=' + encodeURIComponent(JSON.stringify(data)));
+                };
 
                 highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlights = result._items;
                     scope.hasHighlights = _.size(scope.highlights) > 0;
                 });
+            }
+        };
+    }
+
+    CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location'];
+    function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, $location) {
+        return {
+            require: ['^sdAuthoringContainer'],
+            scope: {highlight_id: '=highlight'},
+            templateUrl: 'scripts/superdesk-highlights/views/create_highlights_button_directive.html',
+            link: function(scope, elem, attrs, ctrls) {
+                var authoring = ctrls[0];
+
+                scope.createHighlight = function(highlight) {
+                    highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                    scope.highlight = _.find(result._items, {_id: scope.highlight_id});
+                    scope.$parent.highlight = scope.highlight;
+                    scope.hasHighlights = _.size(scope.highlight) > 0;
+                }).then(function() {
+                    highlightsService.createEmptyHighlight(scope.highlight)
+                    .then(function(new_package) {
+                        scope.$parent._editable = 'edit';
+                        authoring.edit(new_package);
+                    });
+                });
+                };
             }
         };
     }
@@ -432,6 +462,7 @@
 
     app
     .service('highlightsService', HighlightsService)
+    .directive('sdCreateHighlightsButton', CreateHighlightsButtonDirective)
     .directive('sdMarkHighlightsDropdown', MarkHighlightsDropdownDirective)
     .directive('sdMultiMarkHighlightsDropdown', MultiMarkHighlightsDropdownDirective)
     .directive('sdPackageHighlightsDropdown', PackageHighlightsDropdownDirective)
@@ -462,7 +493,6 @@
             filters: [
                 {action: 'list', type: 'archive'}
             ],
-            group: 'highlights',
             additionalCondition:['authoring', 'item', function(authoring, item) {
                 return authoring.itemActions(item).mark_item;
             }]
