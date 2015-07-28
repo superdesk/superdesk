@@ -302,7 +302,7 @@ class RssIngestService(IngestService):
         the text item preceeds the references to image items.
 
         Package's `firstcreated` and `versioncreated` fields are set to values
-        of these fields in `text_item`.
+        of these fields in `text_item`, and the `headline` is copied as well.
 
         :param dict text_item: item representing the text content
         :param list image_items: list of items (dicts) representing the images
@@ -315,6 +315,7 @@ class RssIngestService(IngestService):
             'guid': generate_guid(type=GUID_TAG),
             'firstcreated': text_item['firstcreated'],
             'versioncreated': text_item['versioncreated'],
+            'headline': text_item.get('headline', ''),
             'groups': [
                 {
                     'id': 'root',

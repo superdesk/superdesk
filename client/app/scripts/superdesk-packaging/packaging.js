@@ -467,7 +467,7 @@
             link: function(scope) {
                 scope.data = null;
                 scope.error = null;
-                scope.type = scope.item.type || scope.item.itemClass.split(':')[1];
+
                 if (scope.item.location) {
                     api[scope.item.location].getById(scope.item.residRef)
                     .then(function(result) {

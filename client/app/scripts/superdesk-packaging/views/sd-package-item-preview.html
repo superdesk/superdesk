@@ -1,28 +1,32 @@
-<div class="item {{ :: type }}" ng-class="{locked: isLocked, published: isPublished}">
+<div class="item {{ :: data.type }}" ng-class="{locked: isLocked, published: isPublished}">
 	<div class="info">
-	    <figure class="icons-holder" ng-if=":: type === 'composite' || type === 'text'">
-	    	<i class="filetype-icon-large-{{ :: type }}"></i>
+        <figure class="icons-holder" ng-if="data.type === 'composite' || data.type === 'text'">
+            <i class="filetype-icon-large-{{ :: data.type }}"></i>
 	    </figure>
 
-		<div class="holder" ng-if=":: type !== 'composite' && type !== 'text'">
+		<div class="holder" ng-if="data.type !== 'composite' && data.type !== 'text'">
 			<div class="loading" ng-show="data == null && error == null"></div>
-			<div class="error-icon" ng-show="error != null"><i class="filetype-icon-large-{{ :: type}}"></i></div>
-			<div ng-if=":: type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
-			<audio ng-if=":: type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
-			<div ng-if=":: type === 'video'"><i class="filetype-icon-large-video"></i></div>
+			<div class="error-icon" ng-show="error != null"><i class="filetype-icon-large-{{data.type}}"></i></div>
+			<div ng-if="data.type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
+			<audio ng-if="data.type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
+			<div ng-if="data.type === 'video'"><i class="filetype-icon-large-video"></i></div>
 		</div>
 
         <div class="item-headline">
-            <div ng-show=":: item.headline || item.slugline || item.description">{{ :: item.headline || item.slugline || item.description}}</div>
-            <div ng-hide=":: item.headline || item.slugline || item.description" translate>Blank headline received</div>
+            <div ng-show=":: data.headline || data.slugline || data.description">{{ :: data.headline || data.slugline || data.description}}</div>
+            <div ng-hide=":: data.headline || data.slugline || data.description" translate>Blank headline received</div>
         </div>
 
-        <a ng-href="#/{{ :: type !== 'composite' ? 'authoring' : 'packaging'}}/{{ :: item.residRef }}/view?_id={{ :: item.guid }}" 
-        	title="{{ :: 'Open item' | translate }}" ng-if="item.guid && !error" ng-click="$event.stopPropagation();" class="open-item">
+        <a
+            ng-href="#/{{ data.type !== 'composite' ? 'authoring' : 'packaging'}}/{{ data.residRef }}/view?_id={{ data.guid }}"
+            title="{{ :: 'Open item' | translate }}"
+            ng-if="data.guid && !error"
+            ng-click="$event.stopPropagation();"
+            class="open-item">
             <i class="icon-external"></i>
         </a>
 
-        <div class="package-details" ng-if=":: type === 'composite'"><i class="svg-icon-right"></i></div>
+        <div class="package-details" ng-if="data.type === 'composite'"><i class="svg-icon-right"></i></div>
 
 	    <div class="alert-error" ng-show="error" translate>Problems occurred while fetching data.</div>
 	</div>
