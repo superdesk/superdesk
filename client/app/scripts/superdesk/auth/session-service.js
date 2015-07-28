@@ -116,14 +116,14 @@ define(['lodash'], function(_) {
             this.sessionId = 's' + _id;
         };
 
-        $rootScope.$watch(getToken, _.bind(function(token) {
+        $rootScope.$watch(getToken, angular.bind(this, function(token) {
             this.token = token;
             this.identity = storage.getItem(IDENTITY_KEY);
             this.sessionId = localStorage.getItem(SESSION_ID);
-            if (this.identity) {
+            if (this.identity && this.token) {
                 resolveIdentity(this.identity);
             }
-        }, this));
+        }));
 
         /**
          * Save token into local storage
