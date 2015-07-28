@@ -42,6 +42,15 @@ backend:
    - elastic
    - logstash
    - postfix
+  environment:
+   - SUPERDESK_RELOAD=True
+   - SUPERDESK_URL=http://localhost:5000/api
+   - SUPERDESK_CLIENT_URL=http://localhost:9000
+  volumes:
+   - ../server:/opt/superdesk/
+  ports:
+   - "5000:5000"
+   - "5100:5100"
 
 frontend:
   extends:
@@ -49,3 +58,9 @@ frontend:
     service: frontend
   links:
    - backend
+  command: sh -c "grunt --force server --server='http://localhost:5000/api' --ws='ws://localhost:5100'"
+  volumes:
+   - ../client:/opt/superdesk-client/
+  ports:
+   - "9000:9000"
+   - "35729:35729"
