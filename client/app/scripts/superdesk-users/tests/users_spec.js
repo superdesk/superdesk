@@ -121,7 +121,8 @@ describe('mentio directive', function() {
             return function(resource) {
                 return {
                     query: function() {
-                        return $q.when({_items: [{_id: 1, username: 'moo'}, {_id: 2, username: 'foo'}, {_id: 3, username: 'fast'}]});
+                        return $q.when({_items: [{_id: 1, username: 'moo'},
+                            {_id: 2, username: 'foo'}, {_id: 3, username: 'fast'}]});
                     }
                 };
             };
@@ -136,6 +137,7 @@ describe('mentio directive', function() {
         var iscope = elem.scope();
         iscope.searchUsers();
         $rootScope.$digest();
-        expect(iscope.users).toEqual([{_id: 3, username: 'fast'}, {_id: 2, username: 'foo'}, {_id: 1, username: 'moo'}]);
+        expect(iscope.users).toEqual([{_id: 3, username: 'fast'},
+            {_id: 2, username: 'foo'}, {_id: 1, username: 'moo'}]);
     }));
 });
