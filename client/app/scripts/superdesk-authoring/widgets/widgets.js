@@ -42,6 +42,10 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
         }
     };
 
+    this.activate = function(widget) {
+        $scope.activate(widget);
+    };
+
     $scope.closeWidget = function(widget) {
         $scope.active = null;
     };

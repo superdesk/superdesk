@@ -11,6 +11,7 @@ define([
     './sdUserAvatar',
     './sdDragDrop',
     './sdTypeahead',
+    './sdSlider',
     './sdSearchList'
 ], function(require) {
     'use strict';
@@ -27,6 +28,7 @@ define([
         require('./sdUserAvatar').name,
         require('./sdDragDrop').name,
         require('./sdTypeahead').name,
+        require('./sdSlider').name,
         require('./sdSearchList').name
     ];
 });

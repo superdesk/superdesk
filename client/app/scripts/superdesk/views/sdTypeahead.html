@@ -1,6 +1,6 @@
 <div class="sd-typeahead">
 	<div class="input-term">
-		<input ng-model="term" ng-change="query()" type="text" ng-disabled="disabled" autocomplete="off" />
+		<input ng-model="term" ng-change="query()" type="text" ng-disabled="disabled" autocomplete="off" ng-click="$event.stopPropagation()">
 	</div>
 	<div class="item-list" ng-transclude>
 

@@ -17,6 +17,7 @@ define(['angular'], function(angular) {
          * Params:
          * @scope {Object} items - choice list
          * @scope {Object} term - search term
+         * @scope {Boolen} alwaysVisible - list of posible choices always stay visible
          * @scope {Function} search - callback for filtering choice action
          * @scope {Function} select - callback for select item aciton
          *
@@ -32,6 +33,7 @@ define(['angular'], function(angular) {
                     select: '&',
                     items: '=',
                     term: '=',
+                    alwaysVisible: '=',
                     disabled: '='
                 },
                 controller: ['$scope', function($scope) {
@@ -134,7 +136,7 @@ define(['angular'], function(angular) {
                     });
 
                     scope.$watch('isVisible()', function(visible) {
-                        if (visible) {
+                        if (visible || scope.alwaysVisible) {
                             $list.show();
                         } else {
                             $list.hide();
