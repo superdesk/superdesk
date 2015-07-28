@@ -90,7 +90,6 @@ Feature: Publish content to the public API
         """
         [
            {
-                "_id": "20150723001158606583",
                 "task": {
                     "user": "#CONTEXT_USER_ID#",
                     "status": "todo",
@@ -395,8 +394,8 @@ Feature: Publish content to the public API
         """
         {"_items": [{"state": "pending"}]}
         """
-    When we get "/published"
+    When we get "/published/compositeitem"
     Then we get existing resource
         """
-        {"_items" : [{"guid": "compositeitem", "_current_version": 2, "state": "published"}]}
+        {"guid": "compositeitem", "_current_version": 2, "state": "published"}
         """

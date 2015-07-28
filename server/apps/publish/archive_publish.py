@@ -126,7 +126,8 @@ class BasePublishService(BaseService):
                     else:
                         # if text or preformatted item is going to be sent to digital subscribers, package it as a take
                         if self.sending_to_digital_subscribers(original):
-                            if (original['type'] == 'text' or original['type'] == 'preformatted'):
+                            # takes packages are only created for these types
+                            if (original['type'] == CONTENT_TYPE.TEXT or original['type'] == CONTENT_TYPE.PREFORMATTED):
                                 updated = copy(original)
                                 updated.update(updates)
                                 # create a takes package
