@@ -40,12 +40,21 @@ define([
             this.save();
         };
 
+        /*
+         * If widget is not selected, opens single view of specific widget
+         * @param {object} widget
+         */
         this.selectWidget = function(widget) {
             if (!this.isSelected(widget)) {
                 this.selectedWidget = widget || null;
             }
         };
 
+        /*
+         * Checks if widget is already selected
+         * @param {object} widget
+         * @returns {boolean}
+         */
         this.isSelected = function (widget) {
             return !_.find(getAvailableWidgets(this.widgets), widget);
         };
