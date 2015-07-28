@@ -135,7 +135,7 @@ Feature: Rewrite content
         {
             "_id": "#TAKE#",
             "type": "text",
-            "headline": "Take-1 headline=2",
+            "headline": "Take-1 headline",
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=2",
             "state": "draft",
@@ -169,7 +169,7 @@ Feature: Rewrite content
         {
             "_id": "#TAKE2#",
             "type": "text",
-            "headline": "Take-1 headline=3",
+            "headline": "Take-1 headline",
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=3",
             "state": "draft",
@@ -244,7 +244,7 @@ Feature: Rewrite content
         {
             "_id": "#TAKE#",
             "type": "text",
-            "headline": "Take-1 headline=2",
+            "headline": "Take-1 headline",
             "slugline": "Take-1 slugline",
             "anpa_take_key": "Take=2",
             "state": "draft",
@@ -628,7 +628,7 @@ Feature: Rewrite content
         {
             "_id": "#TAKE#",
             "type": "text",
-            "headline": "RETAKE=2",
+            "headline": "RETAKE",
             "slugline": "RETAKE",
             "anpa_take_key": "update (reopens)",
             "state": "draft",

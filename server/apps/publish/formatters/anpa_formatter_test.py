@@ -93,3 +93,35 @@ class ANPAFormatterTest(TestCase):
                 line = lines.readline()
                 self.assertEqual(line[2:3], cat)  # skip the date
                 cat = 'b'
+
+    def test_process_headline_empty_sequence_short_headline(self):
+        f = AAPAnpaFormatter()
+        article = {'headline': '1234567890' * 5}
+        anpa = []
+        f._process_headline(anpa, article)
+        self.assertEqual(anpa[0], b'12345678901234567890123456789012345678901234567890')
+
+    def test_process_headline_empty_sequence_long_headline(self):
+        f = AAPAnpaFormatter()
+        article = {'headline': '1234567890' * 7}
+        anpa = []
+        f._process_headline(anpa, article)
+        self.assertEqual(anpa[0], b'1234567890123456789012345678901234567890123456789012345678901234')
+
+    def test_process_headline_with_sequence_short_headline(self):
+        f = AAPAnpaFormatter()
+        article = {'headline': '1234567890=7', 'sequence': 7}
+        anpa = []
+        f._process_headline(anpa, article)
+        self.assertEqual(anpa[0], b'1234567890=7')
+
+    def test_process_headline_with_sequence_long_headline(self):
+        f = AAPAnpaFormatter()
+        article1 = {'headline': '1234567890' * 7 + '=7', 'sequence': 7}
+        anpa = []
+        f._process_headline(anpa, article1)
+        self.assertEqual(anpa[0], b'12345678901234567890123456789012345678901234567890123456789012=7')
+        article2 = {'headline': '1234567890' * 7 + '=7', 'sequence': 17}
+        anpa = []
+        f._process_headline(anpa, article2)
+        self.assertEqual(anpa[0], b'1234567890123456789012345678901234567890123456789012345678901=17')

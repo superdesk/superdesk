@@ -68,9 +68,7 @@ class AAPAnpaFormatter(Formatter):
 
                 anpa.append(b'\x02')  # STX
 
-                # Add the actual story bits
-                anpa.append(article.get('headline', '').encode('ascii', 'replace'))
-                anpa.append(b'\x0D\x0A')
+                self._process_headline(anpa, article)
 
                 keyword = article.get('slugline', '').encode('ascii', 'ignore')
                 anpa.append(keyword)
@@ -105,6 +103,19 @@ class AAPAnpaFormatter(Formatter):
             return docs
         except Exception as ex:
             raise FormatterError.AnpaFormatterError(ex, subscriber)
+
+    def _process_headline(self, anpa, article):
+        # Set the maximum size to 64 including the sequence number if any
+        if len(article.get('headline', '')) > 64:
+            if article.get('sequence'):
+                digits = len(str(article['sequence'])) + 1
+                shortened_headline = '{}={}'.format(article['headline'][:-digits][:(64 - digits)], article['sequence'])
+                anpa.append(shortened_headline.encode('ascii', 'replace'))
+            else:
+                anpa.append(article['headline'][:64].encode('ascii', 'replace'))
+        else:
+            anpa.append(article['headline'].encode('ascii', 'replace'))
+        anpa.append(b'\x0D\x0A')
 
     def can_format(self, format_type, article):
         return format_type == 'AAP ANPA' and article['type'] in ['text', 'preformatted']

@@ -889,7 +889,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "test1=2",
+          "headline": "test1",
           "slugline": "comics",
           "anpa_take_key": "Take=2",
           "subject":[{"qcode": "17004000", "name": "Statistics"}],
@@ -966,7 +966,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 headline=2",
+          "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take=2",
           "state": "draft",
@@ -1056,7 +1056,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 headline=2",
+          "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take=2",
           "state": "draft",
@@ -1258,7 +1258,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 headline=2",
+          "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take=2",
           "state": "draft",
@@ -1281,7 +1281,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 headline=3",
+          "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take=3",
           "state": "draft",
@@ -1502,7 +1502,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 soccer headline=2",
+          "headline": "Take-1 soccer headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take=2",
           "state": "draft",
@@ -1700,7 +1700,7 @@ Feature: Content Publishing
       """
       {
           "type": "text",
-          "headline": "Take-1 headline=2",
+          "headline": "Take-1 headline",
           "slugline": "Take-1 slugline",
           "anpa_take_key": "Take (reopens)",
           "state": "draft",

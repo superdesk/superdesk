@@ -378,6 +378,9 @@ def item_schema(extra=None):
             'type': 'string',
             'mapping': not_analyzed,
             'nullable': True
+        },
+        SEQUENCE: {
+            'type': 'integer'
         }
     }
     schema.update(metadata_schema)

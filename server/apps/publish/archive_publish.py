@@ -317,10 +317,11 @@ class BasePublishService(BaseService):
         Queue the content for publishing.
         1. Sets the Metadata Properties - source and pubstatus
         2. Get the subscribers.
-        3. Queue the content for subscribers
-        4. Queue the content for previously published subscribers if any.
-        5. Sends notification if no formatter has found for any of the formats configured in Subscriber.
-        6. If not queued and not formatters then raise exception.
+        3. Update the headline of wire stories with the sequence
+        4. Queue the content for subscribers
+        5. Queue the content for previously published subscribers if any.
+        6. Sends notification if no formatter has found for any of the formats configured in Subscriber.
+        7. If not queued and not formatters then raise exception.
         :param dict doc: document to publish
         :param dict updates: updates for the document
         :param str target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
@@ -347,21 +348,26 @@ class BasePublishService(BaseService):
                     else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
             updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'killed' else PUB_STATUS.USABLE
+
             updated.update(updates)
 
         # Step 2
         subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, target_media_type)
 
         # Step 3
-        no_formatters, queued = self.queue_transmission(updated, subscribers)
+        if target_media_type == WIRE:
+            self._update_headline_sequence(updated)
 
         # Step 4
+        no_formatters, queued = self.queue_transmission(updated, subscribers)
+
+        # Step 5
         if subscribers_yet_to_receive:
             formatters_not_found, queued_new_subscribers = self.queue_transmission(updated, subscribers_yet_to_receive)
             no_formatters.extend(formatters_not_found)
             queued = queued or queued_new_subscribers
 
-        # Step 5
+        # Step 6
         user = get_user()
         if len(no_formatters) > 0:
             push_notification('item:publish:wrong:format',
@@ -370,7 +376,7 @@ class BasePublishService(BaseService):
                               user=str(user.get(config.ID_FIELD, '')),
                               formats=no_formatters)
 
-        # Step 6
+        # Step 7
         if not target_media_type and not queued:
             raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
@@ -564,6 +570,11 @@ class BasePublishService(BaseService):
                     # All global filters behaves like blocking filters
                     return False
         return True
+
+    def _update_headline_sequence(self, doc):
+        """ Updates the headline of the text story if there's any sequence value in it """
+        if doc.get(SEQUENCE):
+            doc['headline'] = '{}={}'.format(doc['headline'], doc.get(SEQUENCE))
 
 
 class ArchivePublishResource(BasePublishResource):
