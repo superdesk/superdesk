@@ -76,7 +76,7 @@ describe('content', function() {
             spyOn(superdesk, 'intent').and.returnValue(null);
 
             var content = new ContentCtrl();
-            content.create();
+            content.createItem();
             $rootScope.$digest();
             expect(superdesk.intent).toHaveBeenCalledWith('author', 'article', {type: 'text', version: 0});
         }));
@@ -85,7 +85,7 @@ describe('content', function() {
             spyOn(superdesk, 'intent').and.returnValue(null);
 
             var content = new ContentCtrl();
-            content.createPackage();
+            content.createPackageItem();
             expect(superdesk.intent).toHaveBeenCalledWith('create', 'package');
         }));
 
@@ -93,7 +93,7 @@ describe('content', function() {
             spyOn(superdesk, 'intent').and.returnValue(null);
 
             var content = new ContentCtrl();
-            content.createPackage({data: 123});
+            content.createPackageItem({data: 123});
             expect(superdesk.intent).toHaveBeenCalledWith('create', 'package', {items: [{data: 123}]});
         }));
 
@@ -101,7 +101,7 @@ describe('content', function() {
             spyOn(superdesk, 'intent').and.returnValue(null);
 
             var content = new ContentCtrl();
-            content.createFromTemplate({
+            content.createFromTemplateItem({
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
                 irrelevantData: 'yes'
@@ -112,5 +112,6 @@ describe('content', function() {
                 body_html: 'test_body_html'
             });
         }));
+
     });
 });

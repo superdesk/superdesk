@@ -24,21 +24,21 @@
              * Create an item and start editing it
              */
             this.create = function(type) {
-                scope.closeOpenNew(createItem, type);
+                scope.closeOpenNew(this.createItem, type);
             };
 
-            var createItem = function (type) {
+            this.createItem = function (type) {
                 var item = {type: type || 'text', version: 0};
                 api('archive').save(item).then(function() {
                     superdesk.intent('author', 'article', item);
                 });
             };
 
-            this.createPackage = function createPackage(current_item) {
-                scope.closeOpenNew(createPackageItem, current_item);
+            this.createPackage = function (current_item) {
+                scope.closeOpenNew(this.createPackageItem, current_item);
             };
 
-            var createPackageItem = function (current_item) {
+            this.createPackageItem = function (current_item) {
                 if (current_item) {
                     superdesk.intent('create', 'package', {items: [current_item]});
                 } else {
@@ -47,10 +47,10 @@
             };
 
             this.createFromTemplate = function(template) {
-                scope.closeOpenNew(createFromTemplateItem, template);
+                scope.closeOpenNew(this.createFromTemplateItem, template);
             };
 
-            var createFromTemplateItem = function (template) {
+            this.createFromTemplateItem = function (template) {
                 var item = _.pick(template, templateFields);
                 api('archive').save(item).then(function() {
                     return templates.addRecentTemplate(desks.activeDeskId, template._id);
@@ -59,6 +59,7 @@
                     superdesk.intent('author', 'article', item);
                 });
             };
+
         };
     }
 
