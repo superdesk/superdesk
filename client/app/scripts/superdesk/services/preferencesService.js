@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function(angular, _) {
+define(['angular'], function(angular) {
     'use strict';
 
     return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.session'])
@@ -18,13 +18,12 @@ define(['angular', 'lodash'], function(angular, _) {
                         'agg:view': 1,
                         'workspace:active': 1
                     },
-                    preferences = null,
-                    defaultPreferences = {};
+                    preferences,
+                    preferencesPromise;
 
-                defaultPreferences[USER_PREFERENCES] = {};
-                defaultPreferences[SESSION_PREFERENCES] = {};
-                defaultPreferences[ACTIVE_PRIVILEGES] = {};
-                defaultPreferences[ACTIONS] = {};
+                $rootScope.$watch(function() {
+                    return session.token;
+                }, resetPreferences);
 
                 /**
                  * Get privileges for current user.
@@ -51,21 +50,18 @@ define(['angular', 'lodash'], function(angular, _) {
                 /**
                  * Fetch preferences from server and store local copy.
                  * On next call it will remove local copy and fetch again.
-                 *
-                 * @returns {Promise}
                  */
                 function getPreferences() {
-                    if (!session.sessionId) {
-                        return $q.reject();
-                    }
-
                     preferences = null;
-                    return $injector.get('api')
-                        .find('preferences', session.sessionId, null, true)
-                        .then(function(_preferences) {
-                            preferences = _preferences;
-                            _.defaults(preferences, defaultPreferences);
-                            return preferences;
+                    preferencesPromise = session.getIdentity()
+                        .then(function() {
+                            var api = $injector.get('api');
+                            return api.find('preferences', session.sessionId, null, true)
+                                .then(function(_preferences) {
+                                    preferences = _preferences;
+                                    initPreferences(preferences);
+                                    return preferences;
+                                });
                         });
                 }
 
@@ -92,13 +88,11 @@ define(['angular', 'lodash'], function(angular, _) {
                  * @returns {Promise}
                  */
                 this.get = function(key) {
-                    if (preferences) {
-                        return $q.when().then(returnValue);
+                    if (!preferencesPromise) {
+                        getPreferences();
                     }
 
-                    return session.getIdentity()
-                        .then(getPreferences)
-                        .then(returnValue);
+                    return preferencesPromise.then(returnValue);
 
                     function returnValue() {
                         return getValue(key);
@@ -175,8 +169,29 @@ define(['angular', 'lodash'], function(angular, _) {
                         });
                 }
 
-                $rootScope.$watch(function() {
-                    return session.sessionId;
-                }, getPreferences);
+                /**
+                 * Make preferences reload after session expiry - token is set from something to null.
+                 */
+                function resetPreferences(newId, oldId) {
+                    if (oldId && !newId) {
+                        preferencesPromise = null;
+                    }
+                }
+
+                /**
+                 * Make sure all segments are presented in preferences.
+                 */
+                function initPreferences(preferences) {
+                    angular.forEach([
+                        USER_PREFERENCES,
+                        SESSION_PREFERENCES,
+                        ACTIVE_PRIVILEGES,
+                        ACTIONS
+                    ], function(key) {
+                        if (preferences[key] == null) {
+                            preferences[key] = {};
+                        }
+                    });
+                }
             }]);
 });
