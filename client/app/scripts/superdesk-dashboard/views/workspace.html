@@ -43,7 +43,7 @@
                     </div>
                     <div class="modal-screen">
                     	<ul class="widget-list">
-                            <li ng-repeat="widget in dashboard.availableWidgets" ng-click="dashboard.selectWidget(widget)" class="widget {{ widget._id }}">
+                            <li ng-repeat="widget in dashboard.availableWidgets" ng-click="dashboard.selectWidget(widget)" ng-class="{selected: dashboard.isSelected(widget)}" class="widget {{ widget._id }}">
                                 <div class="thumbnail"><img ng-src="{{ :: widget.thumbnail }}"></div>
                                 <div class="title">{{ :: widget.label }}</div>
                             </li>
@@ -71,9 +71,7 @@
                 </div>
 
                 <div class="modal-footer" ng-if="!dashboard.selectedWidget">                
-                    <button class="btn" ng-click="dashboard.add = false" translate>Cancel</button>
-                    <button class="btn btn-primary"
-                        translate>Done</button>
+                    <button class="btn btn-primary" ng-click="dashboard.add = false" translate>Done</button>
                 </div>
 
                 <div class="modal-footer" ng-if="dashboard.selectedWidget">                
