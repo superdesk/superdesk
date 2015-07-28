@@ -73,6 +73,21 @@ define([
             expect(session.identity.name).toBe('bar');
         }));
 
+        it('can filter blacklisted fields from indentity', inject(function(session) {
+            session.start(SESSION, {
+                name: 'foo',
+                session_preferences: ['session'],
+                user_preferences: ['user'],
+                workspace: ['workspace'],
+                allowed_actions: ['actions']
+            });
+            expect(session.identity.name).not.toBeUndefined();
+            expect(session.identity.session_preferences).toBeUndefined();
+            expect(session.identity.user_preferences).toBeUndefined();
+            expect(session.identity.workspace).toBeUndefined();
+            expect(session.identity.allowed_actions).toBeUndefined();
+        }));
+
         it('can clear session', inject(function (session) {
             session.start(SESSION, {name: 'bar'});
             session.clear();
