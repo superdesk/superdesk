@@ -304,7 +304,7 @@ class BasePublishService(BaseService):
                                 previous_take['body_html'] + '<br>' + package_updates['body_html']
 
                 metadata_tobe_copied = ['headline', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency',
-                                        'subject', 'byline', 'dateline']
+                                        'subject', 'byline', 'dateline', 'publish_schedule']
 
                 for metadata in metadata_tobe_copied:
                     package_updates[metadata] = \
