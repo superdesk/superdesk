@@ -1,6 +1,6 @@
-<div id="{{item._id}}"
-    class="media-box media-{{item.type}}"
+<div id="{{ :: item._id }}"
+    class="media-box media-{{ :: item.type}}"
     ng-class="{selected: item._id === selected._id, archived: item.archived || item.created, locked: lock.isLocked}"
-    ng-include="itemTemplate"
->
-</div>
+    ng-mouseenter="focused=true"
+    ng-mouseleave="focused=false"
+    ng-include="itemTemplate"></div>

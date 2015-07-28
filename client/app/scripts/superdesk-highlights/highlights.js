@@ -458,6 +458,7 @@
             filters: [
                 {action: 'list', type: 'archive'}
             ],
+            group: 'highlights',
             additionalCondition:['authoring', 'item', function(authoring, item) {
                 return authoring.itemActions(item).mark_item;
             }]

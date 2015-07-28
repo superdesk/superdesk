@@ -210,7 +210,7 @@ define([
                         return authoring.itemActions(item).unspike;
                     }]
                 })
-                .activity('duplicate-content', {
+                .activity('duplicate', {
                     label: gettext('Duplicate'),
                     icon: 'copy',
                     controller: ['$location', 'data', function($location, data) {
@@ -225,7 +225,7 @@ define([
                         return authoring.itemActions(item).duplicate;
                     }]
                 })
-                .activity('copy-content', {
+                .activity('copy', {
                     label: gettext('Copy'),
                     icon: 'copy',
                     monitor: true,
@@ -251,7 +251,7 @@ define([
                         return authoring.itemActions(item).copy;
                     }]
                 })
-                .activity('New Take', {
+                .activity('newtake', {
                     label: gettext('New Take'),
                     icon: 'plus-small',
                     filters: [{action: 'list', type: 'archive'}],
@@ -275,10 +275,11 @@ define([
                                 });
                         }]
                 })
-                .activity('Re-write', {
+                .activity('rewrite', {
                     label: gettext('Re-write'),
                     icon: 'multi-star-color',
                     filters: [{action: 'list', type: 'archive'}],
+                    group: 'corrections',
                     privileges: {archive: 1},
                     condition: function(item) {
                         return (item.lock_user === null || angular.isUndefined(item.lock_user));

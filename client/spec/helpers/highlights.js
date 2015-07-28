@@ -2,6 +2,7 @@
 'use strict';
 
 var openUrl = require('./utils').open;
+var content = require('./content');
 
 module.exports = new Highlights();
 
@@ -130,7 +131,7 @@ function Highlights() {
     };
 
     this.selectHighlight = function(elem, name) {
-        elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
+        elem.all(by.repeater('h in highlights')).all(by.partialButtonText(name.toUpperCase())).click();
     };
 
     this.createHighlightsPackage = function(highlight) {
@@ -153,5 +154,10 @@ function Highlights() {
         browser.sleep(200);
         elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
         browser.sleep(200);
+    };
+
+    this.mark = function(highlight, item) {
+        var menu = content.openItemMenu(item);
+        return menu.element(by.partialButtonText(highlight.toUpperCase())).click();
     };
 }

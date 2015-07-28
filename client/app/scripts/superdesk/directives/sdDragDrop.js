@@ -1,7 +1,6 @@
 define([
     'jquery',
-    'angular',
-    'jquery-ui'
+    'angular'
 ], function($, angular) {
     'use strict';
 

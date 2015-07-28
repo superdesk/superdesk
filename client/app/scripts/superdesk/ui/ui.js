@@ -301,6 +301,45 @@ define([
         };
     }
 
+    DropdownPositionRightDirective.$inject = ['$position'];
+    /**
+     * Correct dropdown menu position to be right aligned
+     * with dots-vertical icon.
+     */
+    function DropdownPositionRightDirective($position) {
+        return {
+            require: 'dropdown',
+            link: function(scope, elem, attrs, dropdown) {
+                var icon = elem.find('.icon-dots-vertical');
+                // ported from bootstrap 0.13.1
+                scope.$watch(dropdown.isOpen, function(isOpen) {
+                    if (isOpen) {
+                        var pos = $position.positionElements(
+                            icon,
+                            dropdown.dropdownMenu,
+                            'bottom-right',
+                            true
+                        );
+
+                        var css = {
+                            top: pos.top + 'px',
+                            display: isOpen ? 'block' : 'none',
+                            opacity: '1'
+                        };
+
+                        css.left = 'auto';
+                        css.right = Math.max(5, window.innerWidth - pos.left) + 'px';
+
+                        dropdown.dropdownMenu.css({opacity: '0'}); // avoid flickering
+                        scope.$applyAsync(function() {
+                            dropdown.dropdownMenu.css(css);
+                        });
+                    }
+                });
+            }
+        };
+    }
+
     PopupService.$inject = ['$document'];
     function PopupService($document) {
         var service = {};
@@ -860,5 +899,7 @@ define([
         .service('popupService', PopupService)
         .service('datetimeHelper', DateTimeHelperService)
         .filter('leadingZero', LeadingZeroFilter)
-        .directive('sdDropdownPosition', DropdownPositionDirective);
+        .directive('sdDropdownPosition', DropdownPositionDirective)
+        .directive('sdDropdownPositionRight', DropdownPositionRightDirective)
+        ;
 });
