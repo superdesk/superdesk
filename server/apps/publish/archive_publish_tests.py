@@ -395,7 +395,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
+            self.assertEqual(6, queue_items.count())
 
     def test_queue_transmission_wrong_article_type_fails(self):
         with self.app.app_context():
@@ -425,7 +425,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
+            self.assertEqual(6, queue_items.count())
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
             self.assertEqual("2016-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
@@ -467,7 +467,7 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
+            self.assertEqual(6, queue_items.count())
             # this will delete queue transmission for the wire article not the takes package.
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(doc['_id'])
             queue_items = self.app.data.find('publish_queue', None, None)
@@ -825,7 +825,7 @@ class ArchivePublishTestCase(TestCase):
             get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD], updates={'state': 'published'})
 
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
+            self.assertEqual(6, queue_items.count())
             published_items = self.app.data.find('published', None, None)
             self.assertEqual(2, published_items.count())
             published_digital_doc = next((item for item in published_items
@@ -837,7 +837,7 @@ class ArchivePublishTestCase(TestCase):
 
             get_resource_service('archive_correct').patch(id=doc[config.ID_FIELD], updates={'state': 'corrected'})
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(10, queue_items.count())
+            self.assertEqual(12, queue_items.count())
             published_items = self.app.data.find('published', None, None)
             self.assertEqual(4, published_items.count())
             last_published_digital = get_publish_items(published_digital_doc['item_id'], True)

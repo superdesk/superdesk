@@ -95,14 +95,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
-      When we get "/published"
+      When we get "/published/123"
       Then we get existing resource
       """
-      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      {"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       When we get "/publish_queue"
-      Then we get list with 1 items
+      Then we get list with 2 items
 
 
     @auth
@@ -251,14 +251,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
-      When we get "/published"
+      When we get "/published/123"
       Then we get existing resource
       """
-      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
+      {"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
       When we get "/publish_queue"
-      Then we get list with 1 items
+      Then we get list with 2 items
 
     @auth
     Scenario: Publish user content that fails validation
@@ -344,15 +344,10 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
 
-      When we get "/publish_queue"
-      Then we get list with 1 items
+      When we get "/publish_queue/123"
+      Then we get existing resource
       """
-      {
-        "_items":
-          [
-            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
-          ]
-      }
+        {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
       """
 
     @auth
@@ -786,12 +781,21 @@ Feature: Content Publishing
     Scenario: Publish a package
         Given the "validators"
         """
-          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}}]
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
         """
     	And empty "ingest"
     	And "desks"
         """
         [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+        }
         """
     	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
@@ -1198,7 +1202,9 @@ Feature: Content Publishing
       }
       """
 
-      And we publish "122" with "publish" type and "published" state
+      When we publish "122" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "123" with "publish" type and "published" state
       Then we get response code 400
       """
       {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}

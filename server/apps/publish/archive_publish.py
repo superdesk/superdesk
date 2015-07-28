@@ -108,7 +108,7 @@ class BasePublishService(BaseService):
             last_updated = updates.get(config.LAST_UPDATED, utcnow())
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                self._publish_package_items(original, last_updated)
+                self._publish_package_items(original, updates, last_updated)
 
             set_sign_off(updates, original)
             queued_digital = False
@@ -124,19 +124,22 @@ class BasePublishService(BaseService):
                         queued_digital, takes_package = self._publish_takes_package(package_id, updates,
                                                                                     original, last_updated)
                     else:
-                        # if item is going to be sent to digital subscribers, package it as a take
-                        if self.sending_to_digital_subscribers(updates):
-                            updated = copy(original)
-                            updated.update(updates)
-                            # create a takes package
-                            package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
-                            original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
-                            queued_digital, takes_package = self._publish_takes_package(package_id, updates,
-                                                                                        original, last_updated)
+                        # if text or preformatted item is going to be sent to digital subscribers, package it as a take
+                        if self.sending_to_digital_subscribers(original):
+                            if (original['type'] == 'text' or original['type'] == 'preformatted'):
+                                updated = copy(original)
+                                updated.update(updates)
+                                # create a takes package
+                                package_id = TakesPackageService().package_story_as_a_take(updated, {}, None)
+                                original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
+                                queued_digital, takes_package = self._publish_takes_package(package_id, updates,
+                                                                                            original, last_updated)
+                            queued_digital_item = self.publish(doc=original, updates=updates, target_media_type=DIGITAL)
+                            queued_digital = queued_digital or queued_digital_item
 
                 # queue only text items
                 queued_wire = \
-                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package_id else None)
+                    self.publish(doc=original, updates=updates, target_media_type=WIRE)
 
                 queued = queued_digital or queued_wire
                 if not queued:
@@ -180,7 +183,7 @@ class BasePublishService(BaseService):
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
         return queued_digital, package
 
-    def _publish_package_items(self, package, last_updated):
+    def _publish_package_items(self, package, updates, last_updated):
         """
         Publishes items of a package recursively
         :param: package to publish
@@ -190,25 +193,17 @@ class BasePublishService(BaseService):
                  for ref in group.get('refs', []) if 'residRef' in ref]
 
         if items:
+            archive_publish = get_resource_service('archive_publish')
             for guid in items:
                 doc = super().find_one(req=None, _id=guid)
                 try:
                     if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         self._publish_package_items(doc)
 
-                    original = copy(doc)
-
-                    set_sign_off(doc, original)
-
-                    self._set_version_last_modified_and_state(original, doc, last_updated)
-                    self._update_archive(original, {config.CONTENT_STATE: doc[config.CONTENT_STATE],
-                                                    config.ETAG: doc[config.ETAG],
-                                                    config.VERSION: doc[config.VERSION],
-                                                    config.LAST_UPDATED: doc[config.LAST_UPDATED],
-                                                    'sign_off': doc['sign_off']},
-                                         versioned_doc=doc)
+                    archive_publish.patch(id=doc['_id'], updates=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
+            self.publish(package, updates, target_media_type=DIGITAL)
 
     def _set_version_last_modified_and_state(self, original, updates, last_updated):
         """

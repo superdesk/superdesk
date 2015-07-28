@@ -67,8 +67,11 @@ class NINJSFormatter(Formatter):
         return article['type']
 
     def _get_associations(self, article):
-        associations = set()
+        associations = dict()
         for group in article['groups']:
             for ref in group['refs']:
                 if 'guid' in ref:
-                    associations.add(ref['guid'])
+                    associations[group['id']] = {}
+                    associations[group['id']]['_id'] = ref['residRef']
+                    associations[group['id']]['type'] = ref['type']
+        return associations
