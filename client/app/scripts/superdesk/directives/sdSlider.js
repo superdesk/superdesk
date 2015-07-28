@@ -20,7 +20,6 @@ define(['angular'], function (angular) {
         directive('sdSlider', function () {
             return {
                 transclude: true,
-                replace: true,
                 templateUrl: 'scripts/superdesk/views/sdSlider.html',
                 scope: {
                     value: '=',
