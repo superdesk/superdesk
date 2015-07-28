@@ -217,7 +217,6 @@
 
                 function reset() {
                     $location.search('_id', null);
-                    $location.path('/workspace');
                 }
 
                 // init
