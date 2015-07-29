@@ -141,3 +141,54 @@ describe('mentio directive', function() {
             {_id: 2, username: 'foo'}, {_id: 1, username: 'moo'}]);
     }));
 });
+
+describe('user edit form', function() {
+    beforeEach(module('superdesk.desks'));
+    beforeEach(module('superdesk.users'));
+    beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
+
+    beforeEach(module(function($provide) {
+        $provide.service('session', function() {
+            return {
+                identity: {_id: 1}
+            };
+        });
+    }));
+
+    it('check if first_name, last_name, phone and email are readonly', inject(function($rootScope, $compile) {
+        var scope = $rootScope.$new(true);
+
+        scope.user = {
+            _id: 1,
+            _readonly: {'first_name': true, 'last_name': true, 'phone': true, 'email': true},
+            is_active: true,
+            need_activation: false
+        };
+
+        var elm = $compile('<div sd-user-edit data-user="user"></div>')(scope);
+        scope.$digest();
+        expect($(elm.find('input[name=first_name]')[0]).attr('readonly')).toBeDefined();
+        expect($(elm.find('input[name=last_name]')[0]).attr('readonly')).toBeDefined();
+        expect($(elm.find('input[name=phone]')[0]).attr('readonly')).toBeDefined();
+        expect($(elm.find('input[name=email]')[0]).attr('readonly')).toBeDefined();
+    }));
+
+    it('check if first_name, last_name, phone and email are not readonly',
+        inject(function($rootScope, $compile) {
+        var scope = $rootScope.$new(true);
+
+        scope.user = {
+            _id: 1,
+            is_active: true,
+            need_activation: false
+        };
+
+        var elm = $compile('<div sd-user-edit data-user="user"></div>')(scope);
+        scope.$digest();
+        expect($(elm.find('input[name=first_name]')[0]).attr('readonly')).not.toBeDefined();
+        expect($(elm.find('input[name=last_name]')[0]).attr('readonly')).not.toBeDefined();
+        expect($(elm.find('input[name=phone]')[0]).attr('readonly')).not.toBeDefined();
+        expect($(elm.find('input[name=email]')[0]).attr('readonly')).not.toBeDefined();
+    }));
+});

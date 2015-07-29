@@ -193,8 +193,8 @@
         return userservice;
     }
 
-    UserListController.$inject = ['$scope', '$location', 'api', 'lodash'];
-    function UserListController($scope, $location, api, _) {
+    UserListController.$inject = ['$scope', '$location', 'api'];
+    function UserListController($scope, $location, api) {
         var DEFAULT_SIZE = 25;
 
         $scope.selected = {user: null};
@@ -328,8 +328,8 @@
         $scope.profile = $scope.user._id === session.identity._id;
     }
 
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', 'lodash'];
-    function ChangeAvatarController($scope, upload, session, urls, beta, _) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
+    function ChangeAvatarController($scope, upload, session, urls, beta) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
@@ -873,9 +873,9 @@
         }])
 
         .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session',
-            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager', 'lodash',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
         function(api, gettext, notify, usersService, userList, session, $location, $route, superdesk, features,
-                 asset, privileges, desks, keyboardManager, _) {
+                 asset, privileges, desks, keyboardManager) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -998,7 +998,6 @@
                         scope._active = usersService.isActive(user);
                         scope._pending = usersService.isPending(user);
                         scope.profile = scope.user._id === session.identity._id;
-
                         scope.userDesks = [];
                         if (angular.isDefined(user) && angular.isDefined(user._links)) {
                             desks.fetchUserDesks(user).then(function(response) {
