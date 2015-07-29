@@ -147,7 +147,7 @@
                 return $q.when(value);
             } else {
                 var criteria = {
-                    max_results: perPage
+                    max_results: page * perPage
                 };
                 if (search) {
                     criteria.where = JSON.stringify({
@@ -1282,9 +1282,36 @@
                 templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {
                     scope.users = [];
+                    scope.fetching = false;
+                    scope.prefix = '';
+
+                    var container = elem.children()[0];
+                    elem.children().bind('scroll', function() {
+                        if (container.scrollTop + container.offsetHeight >= container.scrollHeight - 3) {
+                            container.scrollTop = container.scrollTop - 3;
+                            scope.fetchNext();
+                        }
+                    });
+
+                    scope.fetchNext = function() {
+                        if (!scope.fetching) {
+                            var page = scope.users.length / 10 + 1;
+                            scope.fetching = true;
+
+                            userList.get(scope.prefix, page, 10)
+                            .then(function(result) {
+                                _.each(_.sortBy(result._items.slice((page - 1) * 10, page * 10), 'username'), function(item) {
+                                    scope.users.push(item);
+                                });
+
+                                scope.fetching = false;
+                            });
+                        }
+                    };
 
                     // filter user by given prefix
                     scope.searchUsers = function(prefix) {
+                        scope.prefix = prefix;
 
                         return userList.get(prefix, 1, 10)
                         .then(function(result) {
