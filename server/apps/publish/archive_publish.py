@@ -198,8 +198,7 @@ class BasePublishService(BaseService):
                 try:
                     if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         self._publish_package_items(doc)
-
-                    archive_publish.patch(id=doc['_id'], updates=doc)
+                    archive_publish.patch(id=doc.pop('_id'), updates=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
             self.publish(package, updates, target_media_type=DIGITAL)
