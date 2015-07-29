@@ -20,11 +20,17 @@
 
             var scope = $scope;
 
+            var createCall = function (createFunction, type) {
+                if (scope && scope.closeOpenNew){
+                    scope.closeOpenNew(createFunction, type);
+                }
+            };
+
             /**
              * Create an item and start editing it
              */
             this.create = function(type) {
-                scope.closeOpenNew(this.createItem, type);
+                createCall(this.createItem, type);
             };
 
             this.createItem = function (type) {
@@ -35,7 +41,7 @@
             };
 
             this.createPackage = function (current_item) {
-                scope.closeOpenNew(this.createPackageItem, current_item);
+                createCall(this.createPackageItem, current_item);
             };
 
             this.createPackageItem = function (current_item) {
@@ -47,7 +53,7 @@
             };
 
             this.createFromTemplate = function(template) {
-                scope.closeOpenNew(this.createFromTemplateItem, template);
+                createCall(this.createFromTemplateItem, template);
             };
 
             this.createFromTemplateItem = function (template) {
