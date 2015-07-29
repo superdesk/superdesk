@@ -721,6 +721,9 @@
                     $scope.itemActions = null;
                     if (new_value) {
                         $scope.itemActions = authoring.itemActions(new_value);
+                        desks.fetchDeskById(new_value.task.desk).then(function (desk) {
+                            $scope.deskName = desk.name;
+                        });
                     }
                 }, true);
 

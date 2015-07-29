@@ -76,7 +76,7 @@ describe('authoring', function() {
             spyOn(api, 'save').and.returnValue($q.when({}));
             spyOn(lock, 'unlock').and.returnValue($q.when({}));
 
-            var lockedItem = {guid: GUID, _id: GUID, _locked: true, lock_user: 'user:5'};
+            var lockedItem = {guid: GUID, _id: GUID, _locked: true, lock_user: 'user:5', task: 'desk:1'};
             var $scope = startAuthoring(lockedItem, 'edit');
             $rootScope.$digest();
 
@@ -87,7 +87,7 @@ describe('authoring', function() {
         }));
 
     it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
-        var $scope = startAuthoring({guid: GUID, _id: GUID}, 'edit'),
+        var $scope = startAuthoring({guid: GUID, _id: GUID, task: 'desk:1'}, 'edit'),
             headline = 'test headline';
 
         expect($scope.dirty).toBe(false);
@@ -117,7 +117,7 @@ describe('authoring', function() {
     }));
 
     it('can save while item is being autosaved', inject(function($rootScope, $timeout, $q, api) {
-        var $scope = startAuthoring({headline: 'test'}, 'edit');
+        var $scope = startAuthoring({headline: 'test', task: 'desk:1'}, 'edit');
 
         $scope.item.body_html = 'test';
         $rootScope.$digest();
