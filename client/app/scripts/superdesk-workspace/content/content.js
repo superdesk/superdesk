@@ -20,17 +20,15 @@
 
             var scope = $scope;
 
-            var createCall = function (createFunction, type) {
-                if (scope && scope.closeOpenNew){
-                    scope.closeOpenNew(createFunction, type);
-                }
-            };
-
             /**
              * Create an item and start editing it
              */
             this.create = function(type) {
-                createCall(this.createItem, type);
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createItem, type);
+                } else {
+                    this.createItem(type);
+                }
             };
 
             this.createItem = function (type) {
@@ -41,7 +39,11 @@
             };
 
             this.createPackage = function (current_item) {
-                createCall(this.createPackageItem, current_item);
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createPackageItem, current_item);
+                } else {
+                    this.createItem(current_item);
+                }
             };
 
             this.createPackageItem = function (current_item) {
@@ -53,7 +55,11 @@
             };
 
             this.createFromTemplate = function(template) {
-                createCall(this.createFromTemplateItem, template);
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createFromTemplateItem, template);
+                } else {
+                    this.createFromTemplateItem(template);
+                }
             };
 
             this.createFromTemplateItem = function (template) {
