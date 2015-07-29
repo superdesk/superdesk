@@ -42,7 +42,7 @@ a:hover {
 	top:0; right: 0; left:0;
 	padding-top:@topspace;
 	.box-sizing(border-box);
-	height:100%;
+	bottom: 0;
 	background: @background-main;
 	overflow-y:visible;
 	.transition( all 0.3s ease);
@@ -52,11 +52,12 @@ a:hover {
 		left: @sf-main-menu-width;
 	}
 
-	&.sidenav {
+	&.workspace {
     	left: @sidebar-width;
+    	bottom: @authoring-opened-articles;
 	}
 
-	&.menu.sidenav {
+	&.menu.workspace {
 		left: @sf-main-menu-width + @sidebar-width;
 	}
 }

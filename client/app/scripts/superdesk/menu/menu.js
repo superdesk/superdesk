@@ -30,13 +30,11 @@
                     scope.flags = ctrl.flags;
                     scope.menu = [];
 
-                    console.time('menu');
                     superdesk.getMenu(superdesk.MENU_MAIN)
                         .then(filterSettingsIfEmpty)
                         .then(function(menu) {
                             scope.menu = menu;
                             setActiveMenuItem($route.current);
-                            console.timeEnd('menu');
                         });
 
                     function filterSettingsIfEmpty(menu) {
@@ -77,7 +75,7 @@
                     }, function(route) {
                         scope.currentRoute = route || null;
                         setActiveMenuItem(scope.currentRoute);
-                        ctrl.flags.sidenav = route ? !!route.sideTemplateUrl : false;
+                        ctrl.flags.workspace = route ? !!route.sideTemplateUrl : false;
                     });
 
                     scope.notifications = userNotifications;

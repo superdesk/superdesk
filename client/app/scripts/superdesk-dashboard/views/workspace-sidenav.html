@@ -1,26 +1,33 @@
 <ul>
     <li ng-class="{active: currentRoute.href == '/workspace'}">
-        <a href="#/workspace" class="big-icon-dashboard"></a>
+        <a href="#/workspace" class="big-icon-dashboard"
+            title="{{ :: 'Dashboard' | translate }}"></a>
     </li>
     <li ng-class="{active: currentRoute.href == '/workspace/monitoring'}">
-        <a href="#/workspace/monitoring" class="big-icon-view"></a>
+        <a href="#/workspace/monitoring" class="big-icon-view"
+            title="{{ :: 'Monitoring' | translate }}"></a>
     </li>
     <li>
-        <a href="" class="big-icon-dynamic-list" disabled></a>
+        <a href="" class="big-icon-dynamic-list"
+            title="{{ :: 'Highlights' | translate }}"></a>
     </li>
     <li ng-class="{active: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks">
-        <a href="#/workspace/tasks" class="big-icon-tasks"></a>
+        <a href="#/workspace/tasks" class="big-icon-tasks"
+            title="{{ :: 'Tasks' | translate }}"></a>
     </li>
     <li ng-class="{active: currentRoute.href == '/workspace/spike-monitoring'}">
-        <a href="#/workspace/spike-monitoring" class="big-icon-spiked"></a>
+        <a href="#/workspace/spike-monitoring" class="big-icon-spiked"
+            title="{{ :: 'Spike' | translate }}"></a>
     </li>
 
     <hr>
     <li>
-        <a href="#" class="big-icon-personal" translate></a>
+        <a href="" class="big-icon-personal"
+            title="{{ :: 'Personal' | translate }}"></a>
     </li>
     <li ng-class="{active: currentRoute.href == '/search'}">
-        <a href="#/search" class="big-icon-global-search" translate></a>
+        <a href="#/search" class="big-icon-global-search" 
+            title="{{ :: 'Search' | translate }}"></a>
     </li>
 
     <hr><!-- this is something like deprecated.. don't add, only remove -->

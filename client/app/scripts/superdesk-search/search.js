@@ -1232,6 +1232,7 @@
                 controller: 'MultiActionBar',
                 controllerAs: 'action',
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                scope: true,
                 link: function(scope) {
                     scope.multi = multi;
                     scope.$watch(multi.getItems, detectType);
