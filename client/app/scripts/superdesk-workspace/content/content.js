@@ -33,6 +33,7 @@
 
             this.createItem = function (type) {
                 var item = {type: type || 'text', version: 0};
+                archiveService.addTaskToArticle(item);
                 api('archive').save(item).then(function() {
                     superdesk.intent('author', 'article', item);
                 });
