@@ -18,38 +18,61 @@
                 'type'
             ];
 
+            var scope = $scope;
+
             /**
              * Create an item and start editing it
              */
             this.create = function(type) {
-                var item = {type: type || 'text', version: 0};
-                archiveService.addTaskToArticle(item);
-
-                api('archive').save(item).then(
-                    function() {
-                        superdesk.intent('author', 'article', item);
-                    });
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createItem, type);
+                } else {
+                    this.createItem(type);
+                }
             };
 
-            this.createPackage = function createPackage(currentItem) {
-                if (currentItem) {
-                    superdesk.intent('create', 'package', {items: [currentItem]});
+            this.createItem = function (type) {
+                var item = {type: type || 'text', version: 0};
+                archiveService.addTaskToArticle(item);
+                api('archive').save(item).then(function() {
+                    superdesk.intent('author', 'article', item);
+                });
+            };
+
+            this.createPackage = function (current_item) {
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createPackageItem, current_item);
+                } else {
+                    this.createItem(current_item);
+                }
+            };
+
+            this.createPackageItem = function (current_item) {
+                if (current_item) {
+                    superdesk.intent('create', 'package', {items: [current_item]});
                 } else {
                     superdesk.intent('create', 'package');
                 }
             };
 
             this.createFromTemplate = function(template) {
+                if (scope && scope.dirty){
+                    scope.closeOpenNew(this.createFromTemplateItem, template);
+                } else {
+                    this.createFromTemplateItem(template);
+                }
+            };
+
+            this.createFromTemplateItem = function (template) {
                 var item = _.pick(template, templateFields);
-                api('archive')
-                .save(item)
-                .then(function() {
+                api('archive').save(item).then(function() {
                     return templates.addRecentTemplate(desks.activeDeskId, template._id);
                 })
                 .then(function() {
                     superdesk.intent('author', 'article', item);
                 });
             };
+
         };
     }
 

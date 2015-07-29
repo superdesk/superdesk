@@ -79,7 +79,7 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
 
     $scope.closeItem = function(item) {
         if ($scope.active && $scope.active._id === item._id) {
-            $scope.close(item);
+            $scope.close();
         } else {
             lock.unlock(item).then(updateWorkqueue);
         }
