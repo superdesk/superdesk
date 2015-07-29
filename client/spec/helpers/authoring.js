@@ -7,6 +7,7 @@ function Authoring() {
 
     this.lock = element(by.css('[ng-click="lock()"]'));
     this.publish = element(by.css('[ng-click="publish()"]'));
+    this.close_button = element(by.css('[ng-click="close()"]'));
 
     /**
      * Send item to given desk
@@ -30,7 +31,7 @@ function Authoring() {
     };
 
     this.close = function() {
-        return element(by.css('[ng-click="close()"]')).click();
+        return this.close_button.click();
     };
 
     this.save = function() {

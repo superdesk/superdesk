@@ -1,15 +1,19 @@
 
 'use strict';
 
-module.exports = new Multicontent();
+var openUrl = require('./utils').open;
+module.exports = new Monitoring();
 
-function Multicontent() {
+function Monitoring() {
 
     var config = element(by.className('aggregate-settings'));
-    this.widget = element(by.css('.sd-widget.aggregate'));
+
+    this.openMonitoring = function() {
+        openUrl('/#/workspace/monitoring');
+    };
 
     this.getGroup = function(group) {
-        return element.all(by.repeater('group in agg.cards')).get(group);
+        return element.all(by.repeater('group in aggregate.getGroups()')).get(group);
     };
 
     this.getItem = function(group, item) {
@@ -17,11 +21,11 @@ function Multicontent() {
     };
 
     this.getTextItem = function(group, item) {
-        return this.getItem(group, item).element(by.css('.headline')).getText();
+        return this.getItem(group, item).element(by.id('title')).getText();
     };
 
     this.searchAction = function(search) {
-        this.widget.element(by.model('query')).sendKeys(search);
+        element(by.model('query')).sendKeys(search);
     };
 
     this.previewAction = function(group, item) {
@@ -29,32 +33,27 @@ function Multicontent() {
     };
 
     this.getPreviewTitle = function() {
-        return element(by.css('.preview-container'))
-        .element(by.binding('item.headline'))
+        return element(by.css('.content-container'))
+        .element(by.binding('selected.preview.headline'))
         .getText();
     };
 
     this.openAction = function(group, item) {
-        var crtItem = this.getItem(group, item);
-        browser.actions().mouseMove(crtItem).perform();
-        crtItem.element(by.className('icon-external')).click();
+        browser.actions().doubleClick(
+                this.getItem(group, item)
+        ).perform();
     };
 
-    this.editAction = function(group, item) {
-        var crtItem = this.getItem(group, item);
-        browser.actions().mouseMove(crtItem).perform();
-        crtItem.element(by.className('icon-pencil')).click();
-    };
-
-    this.showMulticontentSettings = function() {
-        this.widget.element(by.css('.icon-dots-vertical')).click();
+    this.showMonitoringSettings = function() {
+        element(by.css('.icon-dots-vertical')).click();
         browser.wait(function() {
-            return element(by.css('.sd-widget.aggregate')).element(by.css('.icon-settings')).isDisplayed();
+            return element(by.css('.icon-settings')).isDisplayed();
         });
-        this.widget.element(by.css('.icon-settings')).click();
+        element(by.css('.icon-settings')).click();
         browser.wait(function() {
             return element.all(by.css('.aggregate-widget-config')).isDisplayed();
         });
+        element(by.css('[ng-click="goTo(step)"]')).click();
     };
 
     this.nextStages = function() {

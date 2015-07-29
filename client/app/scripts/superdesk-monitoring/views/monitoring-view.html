@@ -18,8 +18,27 @@
 
         <div class="preview-layout">
             <div class="content-list" ng-if="!aggregate.loading">
+	            <div class="search-box">
+		            <input type="text" placeholder="{{ :: 'Search' | translate }}"
+		                ng-model="query"
+		                ng-model-options="{debounce: 500}"
+		                ng-change="aggregate.search(query)">
+		                
+				    <div class="dropdown more-actions" dropdown >
+		                <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+		                <div class="dropdown-menu pull-right">
+		                    <ul>
+		                        <li>
+		                            <button ng-click="aggregate.edit()">
+		                                <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
+		                            </button>
+		                        </li>
+		                    </ul>
+		                </div>
+		            </div>
+		        </div>        
                 <div ng-if="!monitoring.singleGroup && type !== 'spike'">
-                    <div ng-repeat="group in aggregate.getGroups(type) track by group._id"
+                    <div ng-repeat="group in aggregate.getGroups() track by group._id"
                         sd-monitoring-group data-group="group"></div>
                 </div>
                 <div ng-if="!monitoring.singleGroup && type === 'spike'">
@@ -35,5 +54,18 @@
                 data-item="monitoring.previewItem"
                 data-close="monitoring.closePreview()"></div>
         </div>
+        
+	    <div sd-aggregate-settings 
+	         data-modal-active="aggregate.modalActive"
+	         data-desks="aggregate.desks" 
+	         data-desk-stages="aggregate.deskStages"
+	         data-searches="aggregate.searches"
+	         data-desk-lookup="aggregate.deskLookup" 
+	         data-stage-lookup="aggregate.stageLookup"
+	         data-search-lookup="aggregate.searchLookup"
+	         data-groups="aggregate.groups"
+	         data-edit-groups="aggregate.editGroups"
+	         data-onclose="aggregate.refresh()">
+	    </div>
     </section>
 </div>
