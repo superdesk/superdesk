@@ -196,6 +196,7 @@ Feature: Publish content to the public API
   @auth
   @notification
   Scenario: Publish a composite item with a story and a picture to the API
+    Given empty "archive"
     Given "desks"
         """
         [{"name": "test_desk1"}]

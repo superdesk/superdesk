@@ -779,6 +779,7 @@ Feature: Content Publishing
     @auth
     @provider
     Scenario: Publish a package
+        Given empty "archive"
         Given the "validators"
         """
           [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
