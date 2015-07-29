@@ -1,18 +1,19 @@
-<ul class="top-links">
+<ul>
     <li ng-class="{active: currentRoute.href == '/workspace'}">
         <a href="#/workspace" class="big-icon-dashboard" translate></a>
     </li>
     <li ng-class="{active: currentRoute.href == '/workspace/monitoring'}">
         <a href="#/workspace/monitoring" class="big-icon-view" translate></a>
     </li>
-        <li ng-class="{active: currentRoute.href == '/workspace/spike-monitoring'}">
-        <a href="#/workspace/spike-monitoring" class="big-icon-spiked" translate></a>
-    </li>
     <li>
         <a href="#" class="big-icon-dynamic-list" translate></a>
     </li>
+
     <li ng-class="{active: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks">
         <a href="#/workspace/tasks" class="big-icon-tasks" translate></a>
+    </li>
+    <li ng-class="{active: currentRoute.href == '/workspace/spike-monitoring'}">
+        <a href="#/workspace/spike-monitoring" class="big-icon-spiked" translate></a>
     </li>
     <hr>
     <li>
@@ -20,5 +21,13 @@
     </li>
     <li ng-class="{active: currentRoute.href == '/search'}">
         <a href="#/search" class="big-icon-global-search" translate></a>
+    </li>
+
+    <hr><!-- this is something like deprecated.. don't add, only remove -->
+    <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}" class="text" ng-if="privileges.ingest">
+        <a href="#/workspace/ingest" translate>INGEST</a>
+    </li>
+    <li ng-class="{selected: currentRoute.href == '/workspace/content'}" class="text" ng-if="privileges.archive">
+        <a href="#/workspace/content" translate>CONTENT</a>
     </li>
 </ul>

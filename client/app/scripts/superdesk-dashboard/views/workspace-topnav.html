@@ -1,19 +1,1 @@
 <div sd-desk-dropdown class="navbtn dropdown"></div>
-
-<ul class="top-links">
-    <li ng-class="{selected: currentRoute.href == '/workspace/monitoring'}">
-        <a href="#/workspace/monitoring" translate>MONITORING</a>
-    </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks">
-        <a href="#/workspace/tasks" translate>TASKS</a>
-    </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}" ng-if="privileges.ingest">
-        <a href="#/workspace/ingest" translate>INGEST</a>
-    </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/content'}" ng-if="privileges.archive">
-        <a href="#/workspace/content" translate>CONTENT</a>
-    </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" ng-show="selected.name">
-        <a href="#/workspace/stream" translate>ACTIVITY STREAM</a>
-    </li>
-</ul>

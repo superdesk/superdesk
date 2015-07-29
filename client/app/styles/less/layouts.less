@@ -47,8 +47,17 @@ a:hover {
 	overflow-y:visible;
 	.transition( all 0.3s ease);
 	overflow-x:hidden; 
+
 	&.menu {
-		left: @sf-main-menu-width !important;
+		left: @sf-main-menu-width;
+	}
+
+	&.sidenav {
+    	left: @sidebar-width;
+	}
+
+	&.menu.sidenav {
+		left: @sf-main-menu-width + @sidebar-width;
 	}
 }
 
