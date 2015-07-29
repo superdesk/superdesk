@@ -350,7 +350,7 @@ Feature: Content Publishing
         {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
       """
 
-    @auth
+   @auth
     Scenario: Deschedule an item
       Given empty "subscribers"
       And "desks"
@@ -388,7 +388,7 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled"}
       """
       When we get "/publish_queue"
-      Then we get list with 2 items
+      Then we get list with 3 items
       """
       {
         "_items":
