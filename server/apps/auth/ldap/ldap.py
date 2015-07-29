@@ -130,7 +130,7 @@ class ADAuth:
 
                 return response
         except LDAPException as e:
-            raise CredentialsAuthError(credentials={'username': username, 'password': password}, error=e)
+            raise CredentialsAuthError(credentials={'username': username}, error=e)
 
 
 class ADAuthService(AuthService):
