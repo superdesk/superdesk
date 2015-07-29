@@ -127,7 +127,7 @@ class BasePublishService(BaseService):
                         # if text or preformatted item is going to be sent to digital subscribers, package it as a take
                         if self.sending_to_digital_subscribers(original):
                             # takes packages are only created for these types
-                            if (original['type'] == CONTENT_TYPE.TEXT or original['type'] == CONTENT_TYPE.PREFORMATTED):
+                            if original['type'] in (CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED):
                                 updated = copy(original)
                                 updated.update(updates)
                                 # create a takes package
@@ -135,12 +135,10 @@ class BasePublishService(BaseService):
                                 original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
                                 queued_digital, takes_package = self._publish_takes_package(package_id, updates,
                                                                                             original, last_updated)
-                            queued_digital_item = self.publish(doc=original, updates=updates, target_media_type=DIGITAL)
-                            queued_digital = queued_digital or queued_digital_item
 
                 # queue only text items
                 queued_wire = \
-                    self.publish(doc=original, updates=updates, target_media_type=WIRE)
+                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package_id else None)
 
                 queued = queued_digital or queued_wire
                 if not queued:

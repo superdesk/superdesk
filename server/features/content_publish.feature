@@ -95,14 +95,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
-      When we get "/published/123"
+      When we get "/published"
       Then we get existing resource
       """
-      {"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
       When we get "/publish_queue"
-      Then we get list with 2 items
+      Then we get list with 1 items
 
 
     @auth
@@ -251,14 +251,14 @@ Feature: Content Publishing
       """
       {"_current_version": 2, "state": "published", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
-      When we get "/published/123"
+      When we get "/published"
       Then we get existing resource
       """
-      {"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "test", "_current_version": 2, "state": "published",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]}
       """
       When we get "/publish_queue"
-      Then we get list with 2 items
+      Then we get list with 1 items
 
     @auth
     Scenario: Publish user content that fails validation
@@ -344,10 +344,15 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled", "operation": "publish"}
       """
 
-      When we get "/publish_queue/123"
-      Then we get existing resource
+      When we get "/publish_queue"
+      Then we get list with 1 items
       """
-        {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
+      {
+        "_items":
+          [
+            {"destination":{"name":"Test"}, "publish_schedule":"2016-05-30T10:00:00+0000"}
+          ]
+      }
       """
 
    @auth
@@ -388,7 +393,7 @@ Feature: Content Publishing
       {"_current_version": 2, "state": "scheduled"}
       """
       When we get "/publish_queue"
-      Then we get list with 3 items
+      Then we get list with 2 items
       """
       {
         "_items":
@@ -1203,9 +1208,7 @@ Feature: Content Publishing
       }
       """
 
-      When we publish "122" with "publish" type and "published" state
-      Then we get OK response
-      When we publish "123" with "publish" type and "published" state
+      And we publish "122" with "publish" type and "published" state
       Then we get response code 400
       """
       {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
