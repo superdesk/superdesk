@@ -65,6 +65,7 @@ class TakesPackageService():
             main_group[ASSOCIATIONS].append(link_ref)
             takes_package[SEQUENCE] = link_ref[SEQUENCE]
             takes_package[LAST_TAKE] = link['_id']
+            link[SEQUENCE] = link_ref[SEQUENCE]
 
     def __next_sequence__(self, seq):
         return seq + 1
@@ -80,7 +81,7 @@ class TakesPackageService():
         headline = self.__strip_take_info__(target.get('headline', ''))
         take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
         to['event_id'] = target.get('event_id')
-        to['headline'] = '{}={}'.format(headline, sequence)
+        to['headline'] = headline
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(config.CONTENT_STATE) in PUBLISH_STATES:
             to['anpa_take_key'] = '{} (reopens)'.format(take_key)
@@ -139,6 +140,9 @@ class TakesPackageService():
             del takes_package['_id']
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
+
+        if link.get(SEQUENCE):
+            archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})
 
         insert_into_versions(id_=takes_package_id)
 

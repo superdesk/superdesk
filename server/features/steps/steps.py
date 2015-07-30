@@ -662,6 +662,16 @@ def step_impl_then_get_list(context, total_count):
         test_json(context)
 
 
+@then('we get "{value}" in formatted output')
+def step_impl_then_get_formatted_output(context, value):
+    assert_200(context.response)
+    data = get_json_data(context.response)
+    for item in data['_items']:
+        if value in item['formatted_item']:
+            return
+    assert False
+
+
 @then('we get no "{field}"')
 def step_impl_then_get_nofield(context, field):
     assert_200(context.response)
