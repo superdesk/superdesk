@@ -24,9 +24,6 @@ export COMPOSE_PROJECT_NAME=build_$INSTANCE
 
 # clean-up container stuff:
 cd $SCRIPT_DIR &&
-docker-compose stop;
-docker-compose kill;
-docker-compose rm --force;
 sudo rm -r $BAMBOO_DIR/data/
 mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
 
@@ -48,7 +45,7 @@ fi
 cd $SCRIPT_DIR &&
 docker-compose pull &&
 docker-compose build &&
-docker-compose up -d &&
+docker-compose up -d --x-smart-recreate -t 600 &&
 
 (
 	# run backend unit tests:
@@ -83,9 +80,6 @@ echo "===clean-up:"
 	docker-compose kill;
 	killall chromedriver;
 );
-test $CODE -gt 0 && (
-	docker-compose rm --force;
-) ;
 echo "+++clean-up done"
 
 exit $CODE
