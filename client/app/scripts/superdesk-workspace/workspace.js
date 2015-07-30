@@ -248,6 +248,17 @@
             scope: true,
             link: function(scope) {
                 scope.workspaces = workspaces;
+
+                /**
+                 * Trigger workspace.save and in case there is an error returned assign it to scope.
+                 */
+                scope.save = function() {
+                    workspaces.save().then(function() {
+                        scope.errors = null;
+                    }, function(response) {
+                        scope.errors = response.data._issues;
+                    });
+                };
             }
         };
     }
