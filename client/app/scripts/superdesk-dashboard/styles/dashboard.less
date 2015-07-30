@@ -398,11 +398,15 @@ Add new widget modal
 
 	.modal-screen {
 		top: @nav-height;
+		bottom: auto;
 	}
 	.modal-body {
+		height: 500px;
+		max-height: 500px;
+		background-color: #f8f8f8;
 		.nav-tabs {
 			line-height: @nav-height;
-			padding-left: 30px;
+			padding-left: 20px;
 			label {
 				display: inline-block;
 				color: #989898;
@@ -414,6 +418,7 @@ Add new widget modal
 
 	}
 	.modal-footer {
+		min-height: 60px;
 		.center {
 			.center-block();
 			text-align: center;
@@ -432,46 +437,170 @@ Add new widget modal
 .widget-list {
 	list-style-type: none;
 	margin: 0;
-	padding: 20px 30px;
+	padding: 0px 30px;
+	display: flex;
+	flex-flow: row wrap;
 	li {
-		float: left;
-		margin: 0 30px 15px 0;
+		width: 197px;
+		margin: 20px;
+		padding: 0;
+		.box-shadow (0 1px 4px 0 rgba(0,0,0,0.2));
+		.border-radius(2px);
+		.box-sizing(border-box);
+		background-color: white;
+		position: relative;
 		.thumbnail {
-			width: 140px;
-			height: 110px;
-			border: 1px solid #d8d8d8;
-			.border-radius(0px);
+			.border-radius(2px 2px 0 0);
+			position: relative;
+			padding-top: 6px;
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 8px;
+				background-color: rgba(0,0,0,.2);
+				.border-radius (2px 2px 0 0);
+			}
 			img {
 				max-width: 100%;
 			}
 		}
 		.title {
 			text-align: center;
-			font-size: 14px;
-			color: #000;
-			padding: 5px 0;
+			font-size: 12px;
+			font-weight: 500;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			color: @sd-text;
+			padding: 8px 0;
 		}
 		&:hover {
 			cursor:pointer;
+			.box-shadow (0 1px 8px 0 rgba(0,0,0,0.5));
+		}
+		&.widget {
+			// specific colors
+			&.world-clock {
+				.thumbnail {
+					background-color: @widget_world-clock;				
+				}
+			}
+			&.ingest-stats {
+				.thumbnail {
+					background-color: @widget_ingest-stats;
+				}
+			}
+			&.aggregate {
+				.thumbnail {
+					background-color: @widget_aggregate;
+				}
+			}
+			&.archive {
+				.thumbnail {
+					background-color: @widget_archive;
+				}
+			}
+			&.ingest {
+				.thumbnail {
+					background-color: @widget_ingest;
+				}
+			}
+			&.activity {
+				.thumbnail {
+					background-color: @widget_activity;
+				}
+			}
+			// selected
+			&.selected {
+				cursor: default;
+				.box-shadow (0 1px 4px 0 rgba(0,0,0,0.06));
+				.thumbnail, .title {
+					.opacity(30);
+				}
+				//green checkmark
+				&::before {
+					content: "";
+					position: absolute;
+					width: 32px;
+					height: 32px;
+					background-color: #49b04b;
+					background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNiAyMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjYgMjIiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Im0yNS4zMSAyLjU1NWMtLjgtLjgtMi4yLS42LTMgLjJsLTEyLjQgMTIuNC02LjI4OC02LjI4OWMtMS0xLTIuNC0xLTMtLjItLjguOC0uNiAyLjIuMiAzLjJsNy40ODkgNy40ODljMCAwIC44MDcuNiAxLjYuNnMxLjUwOS0uNTgxIDEuNTA5LS41ODFsMTMuNjktMTMuODE5YzEtLjggMS0yLjIuMi0zIi8+PC9zdmc+);
+					background-repeat: no-repeat;
+					background-size: 20px;
+					background-position: center center;
+					.border-radius(50%);
+					top: -16px;
+					right: -16px;
+					z-index: 1;
+					.box-shadow (0 2px 6px 0 rgba(0,0,0,0.55));
+				}
+			}
 		}
 	}
 }
 
 .widget-detail {
-
+	padding: 40px !important;
+	display: flex;
 	.thumbnail-box {
-		width: 350px;
-		float: left;
-		padding: 20px;
+		position: relative;
+		width: 400px;
+		margin-right: 30px;		
+		.box-shadow (0 1px 4px 0 rgba(0,0,0,0.2));
+		.border-radius (2px);
+		.box-sizing(border-box);
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 8px;
+			background-color: rgba(0,0,0,.2);
+			.border-radius (2px 2px 0 0);
+			}
+
+		// specific colors
+		&.world-clock {
+			background-color: @widget_world-clock;				
+		}
+		&.ingest-stats {
+			background-color: @widget_ingest-stats;
+		}
+		&.aggregate {
+			background-color: @widget_aggregate;
+		}
+		&.archive {
+			background-color: @widget_archive;
+		}
+		&.ingest {
+			background-color: @widget_ingest;
+		}
+		&.activity {
+			background-color: @widget_activity;
+		}
 	}
-	.title {
-		font-size: 18px;
-		font-weight: bold;
-		padding: 20px 0 30px;
-	}
-	.description {
-		width: 340px;
-		margin-left: 390px;
+	.content-box {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: flex-start;
+		width: 330px;
+		.title {
+			font-size: 30px;
+			line-height: 110%;
+			font-weight: 700;
+			padding: 4px 0 20px;
+			width: 100%;
+		}
+		.description {
+			font-size: 14px;
+			width: 100%;
+		}
+		button {
+			align-self: flex-end;
+		}
 	}
 }
 

@@ -18,7 +18,7 @@ define([
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: require.toUrl('./thumbnail.png'),
+                thumbnail: require.toUrl('./thumbnail.svg'),
                 template: require.toUrl('./widget-archive.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},

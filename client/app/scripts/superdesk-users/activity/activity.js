@@ -10,7 +10,7 @@
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: asset.imageUrl('superdesk-users/activity/thumbnail.png'),
+                thumbnail: asset.imageUrl('superdesk-users/activity/thumbnail.svg'),
                 template: asset.templateUrl('superdesk-users/activity/widget-activity.html'),
                 configurationTemplate: asset.templateUrl('superdesk-users/activity/configuration.html'),
                 configuration: {maxItems: 5},

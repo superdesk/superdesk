@@ -23,7 +23,7 @@ define([
                 $scope.$applyAsync(function() {
                     vm.current = workspace;
                     vm.widgets = extendWidgets(workspace.widgets || []);
-                    vm.availableWidgets = getAvailableWidgets(vm.widgets);
+                    vm.availableWidgets = widgets;
                 });
             }
         }
@@ -36,13 +36,27 @@ define([
 
         this.addWidget = function(widget) {
             this.widgets.push(widget);
-            this.availableWidgets = getAvailableWidgets(this.widgets);
             this.selectWidget();
             this.save();
         };
 
+        /*
+         * If widget is not selected, opens single view of specific widget
+         * @param {object} widget
+         */
         this.selectWidget = function(widget) {
-            this.selectedWidget = widget || null;
+            if (!this.isSelected(widget)) {
+                this.selectedWidget = widget || null;
+            }
+        };
+
+        /*
+         * Checks if widget is already selected
+         * @param {object} widget
+         * @returns {boolean}
+         */
+        this.isSelected = function (widget) {
+            return !_.find(getAvailableWidgets(this.widgets), widget);
         };
 
         function extendWidgets(currentWidgets) {
