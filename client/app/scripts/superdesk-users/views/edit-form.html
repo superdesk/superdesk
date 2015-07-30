@@ -35,13 +35,13 @@
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="first_name" id="first-name" ng-model="user.first_name" required ng-readonly="user._readonly">
+                  <input type="text" name="first_name" id="first-name" ng-model="user.first_name" required ng-readonly="user._readonly && user._readonly.first_name">
                   <i ng-show="userForm.first_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="last_name" id="last-name" ng-model="user.last_name" required ng-readonly="user._readonly">
+                  <input type="text" name="last_name" id="last-name" ng-model="user.last_name" required ng-readonly="user._readonly && user._readonly.last_name">
                   <i ng-show="userForm.last_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
@@ -66,7 +66,7 @@
 
                 <div sd-info-item>
                   <label for="sign_off" translate>sign off</label>
-                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" required ng-readonly="user._readonly">
+                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" required>
                   <i ng-show="userForm.sign_off.$error.required" class="required-asteriks">*</i>
                 </div>
 
@@ -85,7 +85,7 @@
                   <input type="email" name="email" id="email"
                     ng-model="user.email"
                     sd-user-unique data-unique-field="email" data-exclude="user"
-                    ng-readonly="user._readonly"
+                    ng-readonly="user._readonly && user._readonly.email"
                     required>
                     <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.email.$error.email || error.email.format" sd-valid-info>
@@ -112,7 +112,7 @@
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
-                  <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly">
+                  <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly && user._readonly.phone">
                   <div ng-show="userForm.phone.$error.pattern || error.phone.format" sd-valid-info>
                     <i class="icon-info-sign-warning"></i>
                     <span translate>please provide number in international format</span>

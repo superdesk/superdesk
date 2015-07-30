@@ -73,7 +73,7 @@ Feature: User Resource
         When we get "/users"
         Then we get list with +2 items
 
-    @auth
+    @auth @test
     Scenario: Fetch single user
         Given "users"
         """
@@ -348,4 +348,21 @@ Feature: User Resource
         Then we get existing resource
         """
         {"username": "foo", "desk": "#desks._id#"}
+        """
+
+    @ldapauth @auth
+    Scenario: Fetch user from LDAP
+        Given "users"
+        """
+        [{"username": "foo", "password": "barbar", "email": "foo@bar.com", "sign_off": "fb"}]
+        """
+        When we get "/users/#users._id#"
+        Then we get existing resource
+        """
+        {
+            "username": "foo", "display_name": "foo",
+            "email": "foo@bar.com", "is_active": true,
+            "needs_activation": false,
+            "_readonly": {"first_name": true, "last_name": true, "phone": true, "email": true }
+        }
         """

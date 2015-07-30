@@ -29,6 +29,9 @@ def before_feature(context, feature):
     if 'dbauth' in feature.tags and LDAP_SERVER:
         feature.mark_skipped()
 
+    if 'ldapauth' in feature.tags and not LDAP_SERVER:
+        feature.mark_skipped()
+
 
 def before_scenario(context, scenario):
     config = {}
@@ -42,6 +45,9 @@ def before_scenario(context, scenario):
     ]
 
     if 'dbauth' in scenario.tags and LDAP_SERVER:
+        scenario.mark_skipped()
+
+    if 'ldapauth' in scenario.tags and not LDAP_SERVER:
         scenario.mark_skipped()
 
     if scenario.status != 'skipped' and 'auth' in scenario.tags:
