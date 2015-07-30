@@ -94,5 +94,13 @@ describe('monitoring', function() {
             var criteria = cards.criteria(card);
             expect(criteria.source.query.filtered.query.query_string.query).toBe('test');
         }));
+
+        it('can get criteria for file type filter', inject(function(cards) {
+            var card = {_id: '123', fileType: JSON.stringify(['text'])};
+            var criteria = cards.criteria(card);
+            expect(criteria.source.post_filter.and).toContain({
+                terms: {type: ['text']}
+            });
+        }));
     });
 });
