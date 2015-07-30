@@ -6,7 +6,7 @@ from flask import request
 class WorkspaceResource(superdesk.Resource):
 
     schema = {
-        'name': {'type': 'string'},
+        'name': {'type': 'string', 'unique_to_user': True},
         'widgets': {'type': 'list'},
         'desk': superdesk.Resource.rel('desks'),
         'user': superdesk.Resource.rel('users'),

@@ -15,6 +15,7 @@ from bson import ObjectId
 from eve.io.mongo import Validator
 from eve.utils import config
 from werkzeug.datastructures import FileStorage
+from eve.auth import auth_field_and_value
 
 
 ERROR_PATTERN = {'pattern': 1}
@@ -116,3 +117,21 @@ class SuperdeskValidator(Validator):
         """It will fail later when loading."""
         if not isinstance(value, type('')):
             self._error(field, ERROR_JSON_LIST)
+
+    def _validate_unique_to_user(self, unique, field, value):
+        """Check that value is unique globally or to current user.
+
+        In case 'user' is set within document it will check for unique within
+        docs with same 'user' value.
+
+        Otherwise it will check for unique within docs without any 'user' value.
+        """
+        doc = getattr(self, 'document', getattr(self, 'original_document', {}))
+
+        if 'user' in doc:
+            _, auth_value = auth_field_and_value(self.resource)
+            query = {'user': auth_value}
+        else:
+            query = {'user': {'$exists': False}}
+
+        self._is_value_unique(unique, field, value, query)

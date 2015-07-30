@@ -7,8 +7,9 @@
         <fieldset>
             <div class="field">
                 <label translate>Workspace name</label>
-                <input type="text" class="fullwidth-input"
+                <input type="text" class="fullwidth-input" ng-class="{error: errors.name}"
                     ng-model="workspaces.edited.name" required>
+                <div class="error" ng-show="errors.name" translate>sorry, given workspace name is in use</div>
             </div>
         </fieldset>
     </div>
@@ -17,6 +18,6 @@
         <button class="btn pull-left" ng-click="workspaces.cancelEdit()" translate>Cancel</button>
         <button class="btn btn-primary"
             ng-disabled="!workspaces.edited.name"
-            ng-click="workspaces.save()" translate>Save</button>
+            ng-click="save()" translate>Save</button>
     </div>
 </div>

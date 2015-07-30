@@ -27,6 +27,7 @@ class SuperdeskDataLayer(DataLayer):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
         self.aapmm = AAPMMDatalayer(app)
+        self.driver = self.mongo.driver
         self.storage = self.driver
 
     def find(self, resource, req, lookup):

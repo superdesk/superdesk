@@ -8,10 +8,10 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import flask
 import logging
 from eve.auth import TokenAuth
-from flask import current_app as app, request
-import flask
+from flask import request
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service, get_resource_privileges, get_intrinsic_privileges
@@ -128,13 +128,12 @@ class SuperdeskTokenAuth(TokenAuth):
             flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
             flask.g.role = get_resource_service('users').get_role(flask.g.user)
             flask.g.auth = auth_token
+            flask.g.auth_value = auth_token['user']
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):
         """Ignores auth on home endpoint."""
         if not resource:
-            return True
-        if app.debug and request.args.get('skip_auth'):
             return True
         return super(SuperdeskTokenAuth, self).authorized(allowed_roles, resource, method)
 
