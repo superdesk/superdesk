@@ -17,12 +17,14 @@ var LoginModal = require('./pages').login;
 var path = require('path');
 
 // authenticate if needed
-function login() {
+function login(username, password) {
+    username = username || 'admin';
+    password = password || 'admin';
     var modal = new LoginModal();
     return modal.btn.isDisplayed()
         .then(function(needLogin) {
             if (needLogin) {
-                return modal.login('admin', 'admin');
+                return modal.login(username, password);
             }
         });
 }
