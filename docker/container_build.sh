@@ -45,6 +45,7 @@ fi
 cd $SCRIPT_DIR &&
 docker-compose pull &&
 docker-compose build &&
+docker-compose migrate-to-labels &&
 docker-compose up -d --x-smart-recreate -t 600 &&
 
 (
