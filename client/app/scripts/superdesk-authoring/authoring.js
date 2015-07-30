@@ -721,9 +721,6 @@
                     $scope.itemActions = null;
                     if (new_value) {
                         $scope.itemActions = authoring.itemActions(new_value);
-                        desks.fetchDeskById(new_value.task.desk).then(function (desk) {
-                            $scope.deskName = desk.name;
-                        });
                     }
                 }, true);
 
@@ -774,7 +771,18 @@
                     .then(function(result) {
                         $scope.stage = result;
                     });
+                    desks.fetchDeskById($scope.origItem.task.desk).then(function (desk) {
+                        $scope.deskName = desk.name;
+                    });
                 }
+
+                /*
+                 * Open list of items in selected stage
+                 */
+                $scope.openStage = function openStage() {
+                    desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
+                    superdesk.intent('view', 'content');
+                };
 
                 /**
                  * Create a new version
@@ -1038,11 +1046,6 @@
                         refreshItem();
                     }
                 });
-
-                $scope.openStage = function openStage() {
-                    desks.setWorkspace($scope.item.task.desk, $scope.item.task.stage);
-                    superdesk.intent('view', 'content');
-                };
 
                 $scope.$on('item:publish:wrong:format', function(_e, data) {
                     if (data.item === $scope.item._id) {
