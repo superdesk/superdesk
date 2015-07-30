@@ -1232,8 +1232,26 @@
                 controller: 'MultiActionBar',
                 controllerAs: 'action',
                 templateUrl: asset.templateUrl('superdesk-search/views/multi-action-bar.html'),
+                scope: true,
                 link: function(scope) {
                     scope.multi = multi;
+                    scope.$watch(multi.getItems, detectType);
+
+                    /**
+                     * Detects type of all selected items and assign it to scope,
+                     * but only when it's same for all of them.
+                     *
+                     * @param {Array} items
+                     */
+                    function detectType(items) {
+                        var types = {};
+                        angular.forEach(items, function(item) {
+                            types[item._type] = 1;
+                        });
+
+                        var typesList = Object.keys(types);
+                        scope.type = typesList.length === 1 ? typesList[0] : null;
+                    }
                 }
             };
         }])

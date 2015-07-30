@@ -45,12 +45,12 @@ describe('search service', function() {
         var scope;
 
         beforeEach(module('superdesk.archive'));
-        beforeEach(module('superdesk.authoring.multiedit'));
         beforeEach(module('superdesk.packaging'));
+        beforeEach(module('superdesk.authoring.multiedit'));
 
         beforeEach(inject(function($rootScope, $compile) {
-            scope = $rootScope.$new();
-            $compile('<div sd-multi-action-bar></div>')(scope);
+            var elem = $compile('<div sd-multi-action-bar></div>')($rootScope.$new());
+            scope = elem.scope();
             scope.$digest();
         }));
 

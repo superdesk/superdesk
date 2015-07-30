@@ -75,7 +75,7 @@
                     }, function(route) {
                         scope.currentRoute = route || null;
                         setActiveMenuItem(scope.currentRoute);
-                        ctrl.flags.sidenav = route ? !!route.sideTemplateUrl : false;
+                        ctrl.flags.workspace = route ? !!route.sideTemplateUrl : false;
                     });
 
                     scope.notifications = userNotifications;
