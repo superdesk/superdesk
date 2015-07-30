@@ -26,6 +26,8 @@
         this.searchLookup = {};
         this.deskLookup = {};
         this.stageLookup = {};
+        this.fileTypes = ['all', 'text', 'photo', 'composite', 'video', 'audio'];
+        this.selectedFileType = 'all';
 
         desks.initialize()
         .then(angular.bind(this, function() {
@@ -64,6 +66,44 @@
          */
         this.refresh = function() {
             setupCards();
+        };
+
+        /**
+         * Return true if the 'fileType' filter is selected
+         * param {string} fileType
+         * @return boolean
+         */
+        this.hasFileType = function(fileType) {
+            return this.selectedFileType === fileType;
+        };
+
+        /**
+         * Set the current 'fileType' filter
+         * param {string} fileType
+         */
+        this.setFileType = function(fileType) {
+            console.log('set filter: ', fileType);
+            this.selectedFileType = fileType;
+            var value = (fileType === 'all') ? null: JSON.stringify([fileType]);
+
+            _.each(this.groups, function(item) {
+                item.fileType = value;
+            });
+            if (this.allStages) {
+                _.each(this.allStages, function(item) {
+                    item.fileType = value;
+                });
+            }
+            if (this.spikeGroups) {
+                _.each(this.spikeGroups, function(item) {
+                    item.fileType = value;
+                });
+            }
+            if (this.allDesks) {
+                _.each(this.allDesks, function(item) {
+                    item.fileType = value;
+                });
+            }
         };
 
         function setupCards() {
