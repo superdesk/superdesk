@@ -248,7 +248,7 @@
     		"name" : "Public API",
     		"subscriber_type": "digital",
     		"is_active" : true,
-    		"destinations" : [ { "delivery_type" : "PublicArchive", "name" : "Public" } ]
+    		"destinations" : [ { "delivery_type" : "PublicArchive", "format": "ninjs", "name" : "Public" } ]
     	},
     	"resource": "subscribers",
     	"username": "admin",

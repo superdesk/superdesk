@@ -1632,6 +1632,7 @@
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
+            'superdesk.authoring.history',
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',

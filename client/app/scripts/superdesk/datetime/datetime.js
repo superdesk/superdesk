@@ -4,7 +4,8 @@ define([
     'require',
     './group-dates-directive',
     './reldate-directive',
-    './reldate-directive-complex'
+    './reldate-directive-complex',
+    './absdate-directive'
 ], function(angular, moment, require) {
     'use strict';
 
@@ -33,6 +34,7 @@ define([
         .directive('sdGroupDates', require('./group-dates-directive'))
         .directive('sdReldate', require('./reldate-directive'))
         .directive('sdReldateComplex', require('./reldate-directive-complex'))
+        .directive('sdAbsdate', require('./absdate-directive'))
         .directive('sdDatetime', DateTimeDirective)
 
         .filter('reldate', function reldateFactory() {
