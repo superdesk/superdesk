@@ -28,6 +28,7 @@
         this.stageLookup = {};
         this.fileTypes = ['all', 'text', 'photo', 'composite', 'video', 'audio'];
         this.selectedFileType = 'all';
+        this.monitoringSearch = false;
 
         desks.initialize()
         .then(angular.bind(this, function() {

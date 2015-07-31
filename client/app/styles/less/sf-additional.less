@@ -183,6 +183,13 @@
 
 .flat-searchbar {
 	float: left;
+	&.monitoring-flat-searchbar{
+		margin-top: -9px;
+		margin-left: -20px;
+		.search-handler{
+			padding-left:15px;
+		}
+	}
 	.search-handler {
 		min-width: 40px;
 		height: @nav-height - 1;
@@ -248,6 +255,28 @@
 		}
 		.search-close {
 			display: inline-block;
+		}
+	}
+}
+
+.monitoring-backlink{
+	.backlink{
+	    float: left;
+    	margin-top: 0;
+	}
+	.separator-handler{
+	    margin-top: 0;
+    	margin-right: 20px;
+	}
+}
+
+.filtertype-icon-list{
+	padding-top: 5px;
+	> li {
+		cursor: pointer;
+		opacity: 0.5;
+		&.active{
+			opacity: 1;
 		}
 	}
 }
