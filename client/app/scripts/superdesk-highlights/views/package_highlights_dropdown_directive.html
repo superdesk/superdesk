@@ -1,8 +1,8 @@
-<div id="highlightPackage" ng-if="hasHighlights" tooltip="{{ :: 'Create highlight' | translate }}" tooltip-placement="left">
+<div id="highlightPackage" ng-if="hasHighlights" tooltip="{{ :: 'Create highlight' | translate }}" tooltip-placement="left"> 
     <button class="dropdown-toggle" dropdown-toggle><i class="svg-icon-create-list"></i></button>
     <ul class="dropdown-menu pull-left">
 		<li ng-repeat="h in highlights">
-		    <button option="{{ h.name | uppercase  }}" ng-click="createHighlight(h);">{{ h.name | uppercase  }}</button>
+		    <button option="{{ h.name | uppercase  }}" ng-click="listHighlight(h);">{{ h.name | uppercase  }}</button>
 		</li>
 	</ul>
 </div>

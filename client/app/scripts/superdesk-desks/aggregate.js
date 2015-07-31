@@ -251,7 +251,10 @@
          * Handling Highlights
          */
         this.getHighlightsGroups = function() {
+<<<<<<< HEAD
 
+=======
+>>>>>>> [sd-2744-1]- WIP - Highlight List - (incomplete)
             if (!this.allDesks) {
                 this.allDesks = Object.keys(this.deskLookup).map(function(key) {
                     return {_id: key, type: 'highlights'};

@@ -96,7 +96,7 @@
 
                 case 'highlights':
                     query.filter({and: [
-                        {term: {'highlights': queryParam.highlight}}
+                        {term: {'highlights': queryParam.highlightId}}
                     ]});
                     break;
 
@@ -117,7 +117,7 @@
     }
 
     MonitoringController.$inject = ['$location'];
-    function MonitoringController('$location') {
+    function MonitoringController($location) {
         this.state = {};
 
         this.preview = preview;
@@ -126,6 +126,8 @@
 
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
+
+        this.queryParam = $location.search().data ? JSON.parse($location.search().data) : null;
 
         this.edit = edit;
         this.editItem = null;
@@ -176,8 +178,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout', '$location'];
-    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout, $location) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout', '$location', 'highlightsService'];
+    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout, $location, highlightsService) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -254,8 +256,7 @@
                 }
 
                 function queryItems() {
-                    var queryParam = $location.search();
-                    criteria = cards.criteria(scope.group, null, queryParam);
+                    criteria = cards.criteria(scope.group, null, monitoring.queryParam);
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;
