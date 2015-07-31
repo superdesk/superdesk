@@ -86,19 +86,14 @@ function HistoryController($scope, authoring, api, notify, desks) {
     $scope.$watchGroup(['item._id', 'item._latest_version'], fetchHistory);
 }
 
-angular.module('superdesk.authoring.history', [])
-    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-        authoringWidgetsProvider
-            .widget('history', {
-                icon: 'revision',
-                label: gettext('History'),
-                template: 'scripts/superdesk-authoring/history/views/history.html',
-                order: 4,
-                side: 'right',
-                display: {authoring: true, packages: true}
-            });
-    }])
+versioningHistoryDirective.$inject = [];
+function versioningHistoryDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/versioning/history/views/history.html'
+    };
+}
 
+angular.module('superdesk.authoring.versioning.history', [])
+    .directive('sdVersioningHistory', versioningHistoryDirective)
     .controller('HistoryWidgetCtrl', HistoryController);
-
 })();
