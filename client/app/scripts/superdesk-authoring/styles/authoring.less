@@ -636,14 +636,17 @@
                     }
                     .slider-icon {
                         height: 16px;
-                        line-height: 12px;
-                        .dropdown.open {
-                            padding: 5px;
-                            margin-top: -4px;
-                            margin-left: -5px;
-                            margin-right: -5px;
-                            .border-radius(23px);
-                            .box-shadow(0px 0px 5px 0px @grayLight);
+                        line-height: 10px;
+                        .dropdown {
+                            cursor: pointer;
+                            &.open, &:hover {
+                                padding: 5px;
+                                margin-top: -5px;
+                                margin-left: -5px;
+                                margin-right: -5px;
+                                .border-radius(23px);
+                                .box-shadow(0px 0px 5px 0px @grayLight);
+                            }
                         }
                         label { 
                             font-size: 11px;
@@ -655,6 +658,9 @@
                             label {
                                 margin-top: -9px;                                   
                             }
+                        }
+                        [class*="urgency-icon-"] {
+                            margin: 2px 0;
                         }
                     }
                     label { 
