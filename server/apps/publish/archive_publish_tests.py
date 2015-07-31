@@ -250,7 +250,6 @@ class ArchivePublishTestCase(TestCase):
                           'unique_name': '#8'},
                          {'_id': '9', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'},
                          {'guid': 'tag:localhost:2015:69b961ab-a7b402fed4fb',
-                          '_id': '10',
                           'last_version': 3,
                           config.VERSION: 4,
                           'body_html': 'Student Crime. Police Missing.',
@@ -268,7 +267,7 @@ class ArchivePublishTestCase(TestCase):
                                       {'qcode': '04001002', 'name': 'Weather'}],
                           'state': 'in_progress',
                           'type': 'text',
-                          'unique_name': '#10'}]
+                          'unique_name': '#9'}]
 
     def setUp(self):
         super().setUp()
@@ -392,7 +391,7 @@ class ArchivePublishTestCase(TestCase):
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
-            doc = copy(self.articles[1])
+            doc = copy(self.articles[9])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
@@ -423,14 +422,17 @@ class ArchivePublishTestCase(TestCase):
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[1])
+            archive = get_resource_service('archive')
+            schedule_date = utcnow() + timedelta(hours=2)
+            archive.patch(id=doc['_id'], updates={'publish_schedule': schedule_date})
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
-            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[0]["publish_schedule"])
-            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[1]["publish_schedule"])
-            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[2]["publish_schedule"])
-            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[3]["publish_schedule"])
-            self.assertEqual("2016-05-30T10:00:00+0000", queue_items[4]["publish_schedule"])
+            self.assertEqual(schedule_date, queue_items[0]["publish_schedule"])
+            self.assertEqual(schedule_date, queue_items[1]["publish_schedule"])
+            self.assertEqual(schedule_date, queue_items[2]["publish_schedule"])
+            self.assertEqual(schedule_date, queue_items[3]["publish_schedule"])
+            self.assertEqual(schedule_date, queue_items[4]["publish_schedule"])
 
     def test_queue_transmission_for_digital_channels(self):
         with self.app.app_context():
@@ -464,7 +466,7 @@ class ArchivePublishTestCase(TestCase):
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
-            doc = copy(self.articles[1])
+            doc = copy(self.articles[9])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())

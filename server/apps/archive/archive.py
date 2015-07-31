@@ -16,9 +16,8 @@ SOURCE = 'archive'
 import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
-    is_update_allowed
-from .common import on_create_item, on_duplicate_item
-from .common import get_user, update_version, set_sign_off, handle_existing_data, item_schema
+    is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
+    handle_existing_data, item_schema, validate_schedule
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -44,7 +43,7 @@ from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
 from apps.archive.common import ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE,\
-    ITEM_UPDATE, ITEM_DESCHEDULE
+    ITEM_UPDATE, ITEM_DESCHEDULE, SEQUENCE
 
 
 logger = logging.getLogger(__name__)
@@ -196,12 +195,14 @@ class ArchiveService(BaseService):
             return
 
         if updates.get('publish_schedule'):
+
             if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None
             else:
                 # validate the schedule
-                self.validate_schedule(updates.get('publish_schedule'))
+                package = TakesPackageService().get_take_package(original) or {}
+                validate_schedule(updates.get('publish_schedule'), package.get(SEQUENCE, 1))
 
         if 'unique_name' in updates and not is_admin(user) \
                 and (user['active_privileges'].get('metadata_uniquename', 0) == 0):

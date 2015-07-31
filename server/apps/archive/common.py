@@ -372,6 +372,29 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
             doc['marked_for_not_publication'] = False
 
 
+def validate_schedule(schedule, package_sequence=1):
+    """
+    Validates the publish schedule.
+    :param updates: updates to the item
+    :param original: original item
+    :raises: SuperdeskApiError.badRequestError if following cases
+        - Not a valid date or Not a valid time
+        - Less than current time
+        - Takes cannot be scheduled.
+    """
+    if schedule:
+        if not isinstance(schedule, datetime):
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.date() or schedule.date().year <= 1970:
+            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
+        if not schedule.time():
+            raise SuperdeskApiError.badRequestError("Schedule time is not recognized")
+        if schedule < utcnow():
+            raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
+        if package_sequence > 1:
+            raise SuperdeskApiError.badRequestError("Takes cannot be scheduled.")
+
+
 def item_schema(extra=None):
     """Create schema for item.
 

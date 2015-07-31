@@ -1798,7 +1798,7 @@ Feature: Content Publishing
       {"_issues": {"validator exception": "[['DATELINE is a required field']]"}, "_status": "ERR"}
       """
 
-   @auth
+    @auth
     @notification
     Scenario: Publish a composite item with a locked story
       Given empty "archive"
@@ -2096,3 +2096,113 @@ Feature: Content Publishing
       """
         {"_issues": {"validator exception": "[['ABSTRACT is a required field']]"}, "_status": "ERR"}
       """
+
+    @auth @vocabulary
+    Scenario: Takes cannot be scheduled.
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "filter_conditions"
+      """
+      [{"name": "sport", "field": "headline", "operator": "like", "value": "soccer"}]
+      """
+      And "publish_filters"
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      When we post to "/subscribers" with "First_Wire_Subscriber" and success
+      """
+      [{
+        "name":"Soccer Client1","media_type":"media", "subscriber_type": "wire",
+        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[
+            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
+          ]
+      }]
+      """
+      And we post to "/subscribers" with "Digital_Subscriber" and success
+      """
+      [{
+        "name":"Soccer Client Digital","media_type":"media", "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "destinations":[
+            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
+          ]
+      }]
+      """
+      And we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we get "/archive"
+      Then we get list with 3 items
+      When we patch "/archive/123"
+      """
+      {"publish_schedule": "2016-05-30T10:00:00+00:00"}
+      """
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"publish_schedule": "2016-05-30T10:00:00+00:00"}
+      """
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
+      """
+

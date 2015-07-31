@@ -13,11 +13,11 @@ from superdesk.tests import TestCase
 from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent
-from apps.archive import ArchiveService
 from apps.archive.archive import SOURCE as ARCHIVE
 from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
 from datetime import datetime, timedelta
+from apps.archive.common import validate_schedule
 
 
 class RemoveSpikedContentTestCase(TestCase):
@@ -161,10 +161,8 @@ class ArchiveTestCase(TestCase):
         date_in_past = utcnow() + timedelta(hours=-2)
         date_in_future = utcnow() + timedelta(hours=2)
 
-        ArchiveService().validate_schedule(date_in_future)
-
-        with assert_raises(SuperdeskApiError):
-            ArchiveService().validate_schedule("2015-04-27T10:53:48+00:00")
-            ArchiveService().validate_schedule(date_without_time)
-            ArchiveService().validate_schedule(time_without_date)
-            ArchiveService().validate_schedule(date_in_past)
+        validate_schedule(date_in_future)
+        self.assertRaises(SuperdeskApiError, validate_schedule, "2015-04-27T10:53:48+00:00")
+        self.assertRaises(SuperdeskApiError, validate_schedule, date_without_time)
+        self.assertRaises(SuperdeskApiError, validate_schedule, time_without_date)
+        self.assertRaises(SuperdeskApiError, validate_schedule, date_in_past)
