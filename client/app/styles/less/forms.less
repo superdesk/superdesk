@@ -739,6 +739,7 @@ form.flat, .form-flat {
 
 // sdSlider
 [sd-slider].ui-slider {
+    margin-left: 10px;
     border-top: 2px solid @sd-blue;
     .ui-slider-range {
         .transition(width .1s);
@@ -749,6 +750,7 @@ form.flat, .form-flat {
         width: 12px;
         height: 12px;
         top: -7px;
+        margin-left: -6px;
         .transition(left .1s);
         .border-radius(50%);
         background-color: @sd-blue;
@@ -797,6 +799,20 @@ form.flat, .form-flat {
         }
         &.right {
             float: right;
+        }
+    }
+    .ui-slider-indicator {
+        font-size: 0;
+        line-height: 0;
+        padding-top: 7px;
+        span {
+            display: inline-block;
+            height: 5px;
+            box-sizing: border-box;
+            border-left: 1px solid #d1d1d1;
+            &:last-of-type {
+                border-right: 1px solid #d1d1d1;
+            }
         }
     }
 }
