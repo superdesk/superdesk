@@ -31,10 +31,12 @@
     </li>
 
     <hr><!-- this is something like deprecated.. don't add, only remove -->
-    <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}" class="text" ng-if="privileges.ingest">
-        <a href="#/workspace/ingest" translate>INGEST</a>
+    <li ng-class="{active: currentRoute.href == '/workspace/ingest'}" ng-if="privileges.ingest">
+        <a href="#/workspace/ingest" class="big-icon-ingest"
+             title="{{ :: 'Ingest' | translate }}"></a>
     </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/content'}" class="text" ng-if="privileges.archive">
-        <a href="#/workspace/content" translate>CONTENT</a>
+    <li ng-class="{active: currentRoute.href == '/workspace/content'}" ng-if="privileges.archive">
+        <a href="#/workspace/content" class="big-icon-archive"
+             title="{{ :: 'Content' | translate }}"></a>
     </li>
 </ul>
