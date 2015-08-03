@@ -1,24 +1,34 @@
-<div id="workspace-dropdown" class="dropdown">
-    <button id="selected-desk" data-toggle="dropdown" class="dropdown-toggle pull-left">
+<div id="workspace-dropdown" class="dropdown navbtn">
+    <button id="selected-desk" data-toggle="dropdown" class="dropdown-toggle {{workspaceType}} pull-left">
         <span class="name" ng-if="selected.name">{{ selected.name | uppercase }}</span>
         <span class="name" ng-if="!selected" translate>Select Workspace</span>
         <span class="caret"></span>
     </button>
 
     <ul id="select-desk-menu" class="dropdown-menu" role="menu">
-        <li><div class="menu-label" translate>DESKS</div></li>
-        <li ng-repeat="desk in desks track by desk._id"
-            ng-if="desk._id !== selected._id">
-            <button ng-click="selectDesk(desk)">{{ :: desk.name }}</button>
+        <li class="menu-label" translate><div>DESKS</div></li>
+        <li class="desk-item" ng-repeat="desk in desks track by desk._id">
+            <button ng-click="selectDesk(desk)"
+                    ng-disabled="desk._id === selected._id">
+                {{ :: desk.name }}
+            </button>
         </li>
 
-        <li><div class="menu-label" translate>CUSTOM WORKSPACES</div></li>
-        <li ng-repeat="workspace in workspaces track by workspace._id"
-            ng-if="workspace._id !== selected._id">
-            <button ng-click="selectWorkspace(workspace)">{{ :: workspace.name }}</button>
+        <li class="menu-label" translate><div>CUSTOM WORKSPACES</div></li>
+        <li class="workspace-item" ng-repeat="workspace in workspaces track by workspace._id">
+            <button ng-click="selectWorkspace(workspace)"
+                    ng-disabled="workspace._id === selected._id">
+                {{ :: workspace.name }}
+            </button>
         </li>
-        <li><button class="btn"
-            ng-click="createWorkspace()" translate>CREATE NEW WORKSPACE</button></li>
+
+        <li>
+            <button class="action-btn" ng-click="createWorkspace()" translate>
+                <i class="icon-plus-small icon-round icon-white"></i>
+                <span class="circle"></span>
+                Create new Workspace
+            </button>
+        </li>
     </ul>
 </div>
 

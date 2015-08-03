@@ -192,10 +192,10 @@
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-dropdown.html',
             link: function(scope) {
-
                 scope.selectDesk = function(desk) {
                     reset();
                     scope.selected = desk;
+                    scope.workspaceType = 'desk';
                     desks.setCurrentDeskId(desk._id);
                     workspaces.setActiveDesk(desk);
                 };
@@ -203,6 +203,7 @@
                 scope.selectWorkspace = function(workspace) {
                     reset();
                     scope.selected = workspace;
+                    scope.workspaceType = 'workspace';
                     desks.setCurrentDeskId(null);
                     workspaces.setActive(workspace);
                 };
@@ -210,6 +211,7 @@
                 scope.createWorkspace = function() {
                     workspaces.create().then(function() {
                         scope.selected = workspaces.active;
+                        scope.workspaceType = 'workspace';
                         desks.setCurrentDeskId(null);
                         scope.workspaces.push(scope.selected);
                     });
@@ -226,6 +228,7 @@
                             scope.desks = userDesks._items;
                             if (!activeId) {
                                 scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
+                                scope.workspaceType = 'desk';
                             }
                         });
                     });
@@ -234,6 +237,7 @@
                         scope.workspaces = _workspaces;
                         if (activeId) {
                             scope.selected = _.find(scope.workspaces, {_id: activeId});
+                            scope.workspaceType = 'workspace';
                         }
                     });
                 });

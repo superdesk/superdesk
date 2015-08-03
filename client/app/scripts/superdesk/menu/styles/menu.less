@@ -101,62 +101,102 @@
 		float: left;
 	}
 
-	.dropdown {
-		float: left;
-		position: relative;
-		.dropdown-toggle .caret {
-			border-top-color: #fff;
-		}
-		&.open {
-			.dropdown-toggle {
-				background-color: #fff;
-				color: #5aa1bf;
-				.caret {
-					border-top-color: #595959;
-				}
-			}
-		}
-		&.navbtn, button {
-			border-right: none;
-		}
-
-		.name {
-			display: block;
-			float: left;
-			width: 100px;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			text-align: left;
-			text-transform: uppercase;
-		}
-
-		.dropdown-toggle {
-			background-color: #5ea9c8;
-			color: #fff;
-			font-size: 12px;
-			overflow: hidden;
-		}
-
-		.dropdown-menu {
-			button {
-				background-color: #fff;
-				color: #626262;
-				border: none;
-				height: auto;
-				line-height: 1.3em;
-				margin: 0 10px;
-				padding: 9px;
-				text-transform: uppercase;
-
-				&:hover {
-					background-color: #deecf2;
-					color: #000;
-					border-radius: 3px;
-				}
-			}
-		}
-	}
+        .dropdown {
+            position: relative;
+            float: left;
+            &.navbtn, button {
+                .box-shadow(none);
+                border-right: none;
+                .name {
+                    display: block;
+                    float: left;
+                    width: 155px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    text-align: left;
+                    text-transform: uppercase;
+                }
+            }
+            &.open {
+                .dropdown-toggle {
+                    background-color: @white;
+                    color: #5aa1bf;
+                    .caret {
+                        border-top-color: #595959;
+                    }
+                    &.workspace {
+                        background-color: @white;
+                        color: @purple;
+                    }
+                }
+            }
+            .dropdown-toggle {
+                background-color: @sd-blue;
+                color: @white;
+                padding: 0 15px;
+                font-size: 12px;
+                overflow: hidden;
+                .caret {
+                    border-top-color: @white;
+                }
+                &.workspace {
+                    background-color: @purple;
+                }
+            }
+            .dropdown-menu {
+                min-width: 295px;
+                margin: 0;
+                padding: 0;
+                z-index: 4;
+                .menu-label {
+                    font-size: 10px;
+                    color: @grayLight;
+                    padding: 5px 15px;
+                    margin-top: 9px;
+                    border-top: 1px solid #ebebeb;
+                    &:first-of-type { 
+                        margin-top: 0;
+                        border-top: 0;
+                    }
+                }
+                button {
+                    width: 100%;
+                    background-color: @white;
+                    color: @sd-blue-text;
+                    border: none;
+                    height: auto;
+                    font-size: 12px;
+                    line-height: 1.3em;
+                    margin: 0;
+                    padding: 10px 15px;
+                    border-radius: 0;
+                    text-transform: uppercase;
+                    &[disabled] {
+                        &:hover {
+                            cursor: default;
+                            background-color: @white;
+                        }
+                    }
+                    &.action-btn {
+                        font-size: 13px;
+                        margin-top: 9px;
+                        padding: 12px 15px;
+                        text-transform: none;
+                        color: #757676;
+                        border-top: 1px solid #ebebeb;
+                    }
+                    &:hover {
+                        background-color: #eef5f8;
+                    }
+                }
+                .workspace-item {
+                    button {
+                        color: @purple;
+                    }
+                }
+            }
+        }
 }
 
 #side-menu {
@@ -192,15 +232,6 @@
             a {
                 opacity: 1;
             }
-        }
-
-        &.text {
-        	line-height: 96px;
-        	transform: rotate(90deg);
-        	a {
-        		color: #9b9b9b;
-        		opacity: 1;
-        	}
         }
     }
 }
