@@ -20,6 +20,7 @@ elasticsearch==1.4.0
 feedparser==5.2.0.post1
 flake8==2.4.0
 gunicorn==19.3.0
+hachoir3-superdesk==3.0a1.post2
 honcho==0.6.6
 itsdangerous==0.24
 mccabe==0.3
@@ -43,4 +44,3 @@ wooper==0.4.2
 boto3==1.0.0
 
 git+git://github.com/superdesk/eve@sync-develop-24-june#egg=Eve==0.6.0-dev
-https://bitbucket.org/petrjasek/hachoir3/get/tip.tar.gz
