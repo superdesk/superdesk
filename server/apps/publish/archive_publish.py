@@ -94,6 +94,21 @@ class BasePublishService(BaseService):
         if validation_errors[0]:
             raise ValidationError(validation_errors)
 
+        # We do not allow packages to be published if any items in the package do not validate
+        if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+            items = [ref.get('residRef') for group in original.get('groups', [])
+                     for ref in group.get('refs', []) if 'residRef' in ref]
+            if items:
+                for guid in items:
+                    doc = super().find_one(req=None, _id=guid)
+                    validate_item = {'act': self.publish_type, 'type': doc['type'], 'validate': doc}
+                    validation_errors = get_resource_service('validate').post([validate_item])
+                    if validation_errors[0]:
+                        raise ValidationError(validation_errors)
+                    # check the locks on the items
+                    if doc.get('lock_session', None) and original['lock_session'] != doc['lock_session']:
+                        raise ValidationError(['A packaged item is locked'])
+
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original['_id'])
         original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
