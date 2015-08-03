@@ -86,7 +86,7 @@ class LocatorMapper(FieldMapper):
         '15072000': 'WRES'
     }
 
-    def map(self, article, category):
+    def map(self, article, category, **kwargs):
         """ Returns the mapping iptc_locator or the locator/place of article"""
         if category == 'S':
             mapped_value = self._map_subject_code(article, category, self.iptc_sports_locators)

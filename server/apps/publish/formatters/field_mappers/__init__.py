@@ -12,6 +12,6 @@
 class FieldMapper():
     """Base mapper class can be used in all formatters"""
 
-    def map(self, article, subscriber, category, formatted_item):
+    def map(self, article, category, **kwargs):
         """Formats the article and returns the transformed string"""
         raise NotImplementedError()

@@ -116,7 +116,9 @@ class AAPIpNewsFormatter(Formatter):
                 odbc_item['fullStory'] = 1
                 odbc_item['ident'] = '0'  # @ident
 
-                SelectorcodeMapper().map(article, subscriber, category.get('qcode').upper(), odbc_item)
+                SelectorcodeMapper().map(article, category.get('qcode').upper(),
+                                         subscriber=subscriber,
+                                         formatted_item=odbc_item)
                 headline_prefix = LocatorMapper().map(article, category)
                 if headline_prefix:
                     odbc_item['headline'] = '{}: {}'.format(headline_prefix, odbc_item['headline'])

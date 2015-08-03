@@ -67,7 +67,7 @@ class SelectorcodeMapper(FieldMapper):
                                 'ipnews': '0ah 0al 0fh 0hw 0nh 0nl 0pb 0px 0tb 0tc 0tn 0wm 3ff 3pn jxx'},
                       'newsnz': {'newscentre': 'nxx', 'notes': 'nxx', 'ipnews': 'nxx'}}
 
-    def map(self, article, subscriber, category, formatted_item):
+    def map(self, article, category, **kwargs):
         handlers = {
             'NATIONAL': self._set_ndx_selector_codes,
             'SPORTS': self._set_sdx_selector_codes,
@@ -77,6 +77,8 @@ class SelectorcodeMapper(FieldMapper):
         desk_id = article.get('task', {}).get('desk', None)
         if desk_id:
             desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+            subscriber = kwargs['subscriber']
+            formatted_item = kwargs['formatted_item']
             handler = handlers.get(desk['name'].upper(), lambda *args: None)
             handler(article, subscriber['name'], formatted_item, category)
 

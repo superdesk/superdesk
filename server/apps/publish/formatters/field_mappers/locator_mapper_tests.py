@@ -25,7 +25,7 @@ class SelectorcodeMapperTest(TestCase):
             self.app.data.insert('desks', self.desks)
             init_app(self.app)
 
-    def Test_map_subject_code(self):
+    def test_map_subject_code(self):
         article1 = {
             'subject': [{'qcode': '10006000'}, {'qcode': '15011002'}]
 
