@@ -52,6 +52,9 @@
         function getCriteria(card, queryString) {
             var params = (card.type === 'search') ? JSON.parse(JSON.stringify(card.search.filter.query)): {};
             params.spike = (card.type === 'spike');
+            if (card.fileType) {
+                params.type = card.fileType;
+            }
 
             if (card.type === 'search') {
                 if (card.query) {
@@ -191,6 +194,7 @@
 
                 scope.$watch('group', queryItems);
                 scope.$watch('group.query', queryItems);
+                scope.$watch('group.fileType', queryItems);
                 scope.$on('task:stage', handleStage);
                 scope.$on('ingest:update', update);
 

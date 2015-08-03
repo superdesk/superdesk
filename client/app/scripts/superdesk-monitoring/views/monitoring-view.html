@@ -20,12 +20,17 @@
 
         <div class="preview-layout">
             <div class="content-list" ng-if="!aggregate.loading">
+                <ul>
+                    <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" ng-class="{active: aggregate.hasFileType(fileType)}">
+                       <i class="filetype-icon-{{fileType}}"></i>
+                    </li>
+                </ul>
 	            <div class="search-box">
 		            <input type="text" placeholder="{{ :: 'Search' | translate }}"
 		                ng-model="query"
 		                ng-model-options="{debounce: 500}"
 		                ng-change="aggregate.search(query)">
-		                
+		               
 				    <div class="dropdown more-actions" dropdown >
 		                <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
 		                <div class="dropdown-menu pull-right">
