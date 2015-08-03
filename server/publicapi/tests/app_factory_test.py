@@ -166,3 +166,23 @@ class ApiApplicationFactoryTestCase(ApiTestCase):
             mock.call('endpoint_2', endpoint_2_config),
         ]
         app.register_resource.assert_has_calls(expected_calls, any_order=True)
+
+    def test_media_storage_is_properly_initialized(self, fake_settings):
+        from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
+        self._init_settings(fake_settings)
+        fake_settings.AMAZON_CONTAINER_NAME = ''
+
+        app = self.app_factory()
+
+        self.assertIsInstance(app.media, SuperdeskGridFSMediaStorage)
+
+    def test_amazon_media_storage_is_properly_initialized(self, fake_settings):
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        self._init_settings(fake_settings)
+        fake_settings.AMAZON_CONTAINER_NAME = 'Test'
+        fake_settings.AMAZON_ACCESS_KEY_ID = 'test'
+        fake_settings.AMAZON_SECRET_ACCESS_KEY = 'test'
+
+        app = self.app_factory()
+
+        self.assertIsInstance(app.media, AmazonMediaStorage)
