@@ -19,7 +19,7 @@ def _load_json(file_path):
     :param file_path: path of the file having JSON string.
     :return: JSON Object
     """
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
