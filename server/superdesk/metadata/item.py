@@ -254,7 +254,7 @@ metadata_schema = {
     },
     'contents': {
         'type': 'list'
-    },
+    }
 
     # aka Locator as per NewML Specification
     'place': {

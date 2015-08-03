@@ -133,7 +133,16 @@
         "_id": "publish_picture",
         "act": "publish",
         "type": "picture",
-        "schema": {}
+        "schema": {
+            "renditions": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "4-3": {"type": "dict", "required": true},
+                    "16-9": {"type": "dict", "required": true}
+                }
+            }
+        }
     },
     {
         "_id": "kill_text",
