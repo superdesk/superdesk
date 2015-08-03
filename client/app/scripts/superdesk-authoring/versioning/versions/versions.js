@@ -97,19 +97,14 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
     $scope.$watchGroup(['item._id', 'item._latest_version'], fetchVersions);
 }
 
-angular.module('superdesk.authoring.versions', [])
-    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-        authoringWidgetsProvider
-            .widget('versions', {
-                icon: 'revision',
-                label: gettext('Versions'),
-                template: 'scripts/superdesk-authoring/versioning/views/versions.html',
-                order: 4,
-                side: 'right',
-                display: {authoring: true, packages: true}
-            });
-    }])
+versioningVersionDirective.$inject = [];
+function versioningVersionDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/versioning/versions/views/versions.html'
+    };
+}
 
+angular.module('superdesk.authoring.versioning.versions', [])
+    .directive('sdVersioningVersion', versioningVersionDirective)
     .controller('VersioningWidgetCtrl', VersioningController);
-
 })();
