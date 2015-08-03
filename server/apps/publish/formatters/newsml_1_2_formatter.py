@@ -97,7 +97,7 @@ class NewsML12Formatter(Formatter):
         news_lines = SubElement(main_news_component, "NewsLines")
         SubElement(news_lines, 'Headline').text = article.get('headline', '')
         SubElement(news_lines, 'ByLine').text = article.get('byline', '')
-        SubElement(news_lines, 'DateLine').text = article.get('dateline', '')
+        SubElement(news_lines, 'DateLine').text = article.get('dateline', {}).get('text', '')
         SubElement(news_lines, 'CreditLine').text = article.get('creditline', '')
         SubElement(news_lines, 'KeywordLine').text = article.get('slugline', '')
 
@@ -114,7 +114,7 @@ class NewsML12Formatter(Formatter):
 
         usage_rights = SubElement(rights_metadata, "UsageRights")
         SubElement(usage_rights, 'UsageType').text = rights['copyrightNotice']
-        SubElement(usage_rights, 'Geography').text = article.get('place', article.get('located', ''))
+        # SubElement(usage_rights, 'Geography').text = article.get('place', article.get('located', ''))
         SubElement(usage_rights, 'RightsHolder').text = article.get('source', article.get('original_source', ''))
         SubElement(usage_rights, 'Limitations').text = rights['usageTerms']
         SubElement(usage_rights, 'StartDate').text = self.string_now

@@ -16,10 +16,11 @@ from eve.utils import config
 import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
+from pytz import timezone
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
-from settings import SERVER_DOMAIN
+from settings import SERVER_DOMAIN, OrganizationNameAbbreviation
 from superdesk import get_resource_service
 from apps.content import metadata_schema
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
@@ -77,8 +78,46 @@ def on_create_item(docs, repo_type=ARCHIVE):
 
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc[GUID_FIELD])
+        set_dateline(doc, repo_type)
+
         if not doc.get(ITEM_OPERATION):
             doc[ITEM_OPERATION] = ITEM_CREATE
+
+
+def set_dateline(doc, repo_type):
+    """
+    If repo_type is ARCHIVE then sets dateline property for the article represented by doc. Dateline has 3 parts:
+    Located, Date (Format: Month Day) and Source. Dateline can either be simple: Sydney, July 30 AAP - or can be
+    complex: Surat,Gujarat,IN, July 30 AAP -. Date in the dateline should be timezone sensitive to the Located.
+
+    Located is set on the article based on user preferences if available. If located is not available in
+    user preferences then dateline in full will not be set.
+
+    :param doc: article
+    :param repo_type: collection name where the doc will be persisted
+    """
+
+    if repo_type == ARCHIVE:
+        current_date_time = dateline_ts = utcnow()
+        doc['dateline'] = {'date': current_date_time, 'source': OrganizationNameAbbreviation}
+
+        user = get_user()
+        if user and user.get('user_preferences', {}).get('dateline:located'):
+            located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
+            if located:
+                if located['tz'] != 'UTC':
+                    dateline_ts = datetime.fromtimestamp(dateline_ts.timestamp(), tz=timezone(located['tz']))
+
+                if dateline_ts.month == 9:
+                    formatted_date = 'Sept {}'.format(dateline_ts.strftime('%d'))
+                elif 3 <= dateline_ts.month <= 7:
+                    formatted_date = dateline_ts.strftime('%B %d')
+                else:
+                    formatted_date = dateline_ts.strftime('%b %d')
+
+                doc['dateline']['located'] = located
+                doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
+                                                               OrganizationNameAbbreviation)
 
 
 def on_duplicate_item(doc):

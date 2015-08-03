@@ -30,7 +30,7 @@ pyflakes==0.8.1
 pymongo==2.8
 python-dateutil==2.4.2
 python-magic==0.4.6
-pytz==2015.2
+pytz==2015.4
 raven[flask]==5.3.1
 requests==2.7.0
 simplejson==3.6.5

@@ -1012,25 +1012,29 @@
                 }
             };
         }])
-        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset',
-            function(api, session, preferencesService, notify, asset) {
+        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset', 'metadata', '$timeout',
+            function(api, session, preferencesService, notify, asset, metadata, $timeout) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
-                link: function(scope, elem, attrs) {
-
+                link: function(scope, element, attrs) {
                     var orig;
+
                     preferencesService.get().then(function(result) {
                         orig = result;
                         buildPreferences(orig);
+
+                        scope.datelineSource = session.identity.dateline_source;
+                        scope.datelinePreview = scope.preferences['dateline:located'].located;
                     });
 
                     scope.cancel = function() {
                         scope.userPrefs.$setPristine();
                         buildPreferences(orig);
+
+                        scope.datelinePreview = scope.preferences['dateline:located'].located;
                     };
 
                     scope.save = function() {
-
                         var update = patch();
 
                         preferencesService.update(update).then(function() {
@@ -1040,6 +1044,21 @@
                             });
                     };
 
+                    scope.changeDatelinePreview = function(preferences, city) {
+                        if (angular.isUndefined(preferences.located) || preferences.located.city !== city) {
+                            if (city === '') {
+                                preferences.located = null;
+                            } else {
+                                preferences.located = {'city': city, 'city_code': city, 'alt_name': city, 'tz': 'UTC',
+                                    'dateline': 'city', 'country': '', 'country_code': '', 'state_code': '', 'state': ''};
+                            }
+                        }
+
+                        $timeout(function () {
+                            scope.datelinePreview = preferences.located;
+                        });
+                    };
+
                     function buildPreferences(struct) {
                         scope.preferences = {};
                         _.each(struct, function(val, key) {
@@ -1047,11 +1066,24 @@
                                 scope.preferences[key] = _.create(val);
                             }
                         });
+
+                        if (angular.isUndefined(metadata.values) || angular.isUndefined(metadata.values.cities)) {
+                            metadata.initialize().then(function() {
+                                scope.cities = metadata.values.cities;
+                            });
+                        } else {
+                            scope.cities = metadata.values.cities;
+                        }
                     }
 
                     function patch() {
                         var p = {};
                         _.each(orig, function(val, key) {
+                            if (key === 'dateline:located') {
+                                var $input = element.find('.input-term > input');
+                                scope.changeDatelinePreview(scope.preferences[key], $input[0].value);
+                            }
+
                             p[key] = _.extend(val, scope.preferences[key]);
                         });
                         return p;

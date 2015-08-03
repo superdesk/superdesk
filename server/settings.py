@@ -140,6 +140,7 @@ INSTALLED_APPS = [
     'superdesk.macro_register',
     'superdesk.commands',
     'superdesk.data_consistency',
+    'superdesk.locators.locators',
 
     'apps.archive',
     'apps.stages',

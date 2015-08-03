@@ -7,7 +7,6 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from superdesk.etree import get_word_count
 
 """Simple NITF parser"""
 
@@ -16,9 +15,8 @@ from superdesk.io import Parser
 import xml.etree.ElementTree as etree
 from superdesk.errors import ParserError
 from superdesk.utc import utc
-
-ITEM_CLASS_TEXT = 'text'
-ITEM_CLASS_PRE_FORMATTED = 'preformatted'
+from apps.content import CONTENT_TYPE, ITEM_TYPE
+from superdesk.etree import get_word_count
 
 subject_fields = ('tobject.subject.type', 'tobject.subject.matter', 'tobject.subject.detail')
 
@@ -99,7 +97,7 @@ def parse_meta(tree, item):
             item['anpa_take_key'] = elem.get('content')
         elif attribute_name == 'anpa-format':
             anpa_format = elem.get('content').lower() if elem.get('content') is not None else 'x'
-            item['type'] = ITEM_CLASS_TEXT if anpa_format == 'x' else ITEM_CLASS_PRE_FORMATTED
+            item[ITEM_TYPE] = CONTENT_TYPE.TEXT if anpa_format == 'x' else CONTENT_TYPE.PREFORMATTED
 
 
 class NITFParser(Parser):
@@ -115,7 +113,7 @@ class NITFParser(Parser):
         try:
             docdata = tree.find('head/docdata')
             # set the default type.
-            item['type'] = ITEM_CLASS_TEXT
+            item[ITEM_TYPE] = CONTENT_TYPE.TEXT
             item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
             item['urgency'] = int(docdata.find('urgency').get('ed-urg', '5'))
             item['pubstatus'] = (docdata.attrib.get('management-status', 'usable')).lower()
@@ -136,7 +134,9 @@ class NITFParser(Parser):
             item['abstract'] = elem.text if elem is not None else ''
 
             elem = tree.find('body/body.head/dateline/location/city')
-            item['dateline'] = elem.text if elem is not None else ''
+            if elem is not None:
+                self.set_dateline(item, city=elem.text)
+
             item['byline'] = get_byline(tree)
 
             parse_meta(tree, item)

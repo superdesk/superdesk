@@ -37,7 +37,7 @@ class NewsMLG2FormatterTest(TestCase):
         'state': 'published',
         'urgency': 2,
         'pubstatus': 'usable',
-        'dateline': 'sample dateline',
+        'dateline': {'text': 'sample dateline'},
         'creditline': 'sample creditline',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',

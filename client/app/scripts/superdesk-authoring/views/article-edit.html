@@ -39,15 +39,14 @@
 </div>
 
 <div class="field">
-  <label translate>Dateline</label>
-  <input type="text"
-         class="keyword"
-         id="dateline"
-         ng-model="item.dateline"
-         ng-change="autosave(item)"
-         ng-if="_editable"
-         >
-  <div ng-if="!_editable">{{item.dateline}}</div>
+    <label translate>Dateline</label>
+    <div sd-meta-locators class="dateline-info" ng-show="_editable && !proofread"
+         data-list="metadata.cities" data-item="item" data-fieldprefix="dateline" data-field="located"
+         data-postprocessing="updateDateline(item, city)" data-change="autosave(item)">
+    </div>
+    <div class="dateline-info" ng-show="_editable && !proofread"> {{item._datelinedate}} </div>
+
+    <div ng-show="!_editable || proofread">{{ item.dateline.text }}</div>
 </div>
 
 <div class="field body" ng-if="!isMediaType">

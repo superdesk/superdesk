@@ -78,9 +78,8 @@ class ArchiveRewriteService(Service):
         :return:new story
         """
         rewrite = dict()
-        fields = ['family_id', 'abstract', 'anpa_category',
-                  'pubstatus', 'slugline', 'urgency', 'subject', 'dateline',
-                  'priority', 'byline', 'dateline', 'headline', 'event_id']
+        fields = ['family_id', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'priority',
+                  'byline', 'dateline', 'headline', 'event_id']
 
         for field in fields:
             if original.get(field):

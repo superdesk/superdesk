@@ -1,5 +1,12 @@
 <div class="dropdown" dropdown>
-	<div class="dropdown-toggle" dropdown-toggle>{{ item[field].name || item[field] ? item[field].name || item[field] : "none" | translate }}<b class="caret"></b></div>
+	<div class="dropdown-toggle" dropdown-toggle ng-if="field !== 'place'">
+        {{ item[field].name || item[field] ? item[field].name || item[field] : "none" | translate }}
+        <b class="caret"></b>
+    </div>
+	<div class="dropdown-toggle" dropdown-toggle ng-if="field === 'place'">
+        {{ item[field].length > 0 ? item[field][0].name : "none" | translate }}
+        <b class="caret"></b>
+    </div>
 	<ul class="dropdown-menu pull-right">
 		<li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
 		<li ng-repeat="o in list" ng-click="select(o)"><button ng-disabled="disabled">{{::o.name}}</button></li>

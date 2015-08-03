@@ -9,7 +9,7 @@
 .#*
 *TAGS
 .ropeproject
-data/
+/data
 static/*
 upload/*
 .coverage

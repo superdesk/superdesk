@@ -85,7 +85,7 @@ class NITFFormatter(Formatter):
 
         if article.get('dateline'):
             dateline = SubElement(body_head, 'dateline')
-            dateline.text = article['dateline']
+            dateline.text = article['dateline'].get('text')
 
     def __format_body_end(self, article, body_end):
         if article.get('ednote'):
