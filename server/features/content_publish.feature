@@ -355,7 +355,7 @@ Feature: Content Publishing
       }
       """
 
-    @auth
+   @auth
     Scenario: Deschedule an item
       Given empty "subscribers"
       And "desks"
@@ -784,14 +784,24 @@ Feature: Content Publishing
     @auth
     @provider
     Scenario: Publish a package
+        Given empty "archive"
         Given the "validators"
         """
-          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}}]
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
         """
     	And empty "ingest"
     	And "desks"
         """
         [{"name": "Sports"}]
+        """
+        When we post to "/subscribers" with success
+        """
+        {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+        }
         """
     	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         And we post to "/ingest/#reuters.tag_reuters.com_2014_newsml_KBN0FL0NM#/fetch"
