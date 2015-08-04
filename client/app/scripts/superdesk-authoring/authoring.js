@@ -1335,7 +1335,7 @@
                 };
 
                 /**
-                 * Send the current item (take) to different desk or stage and create a new take. 
+                 * Send the current item (take) to different desk or stage and create a new take.
                  * If publish_schedule is set then the user cannot schedule the take.
                  */
                 scope.sendAndContinue = function () {
