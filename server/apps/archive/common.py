@@ -375,12 +375,12 @@ def handle_existing_data(doc, pub_status_value='usable', doc_type='archive'):
 def validate_schedule(schedule, package_sequence=1):
     """
     Validates the publish schedule.
-    :param updates: updates to the item
-    :param original: original item
+    :param datetime schedule: schedule datetime
+    :param int package_sequence: takes package sequence.
     :raises: SuperdeskApiError.badRequestError if following cases
-        - Not a valid date or Not a valid time
-        - Less than current time
-        - Takes cannot be scheduled.
+        - Not a valid datetime
+        - Less than current utc time
+        - if more than 1 takes exist in the package.
     """
     if schedule:
         if not isinstance(schedule, datetime):
