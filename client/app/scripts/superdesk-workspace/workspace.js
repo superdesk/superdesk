@@ -12,10 +12,8 @@
     function WorkspaceService(api, desks, session, preferences, $q) {
 
         this.active = null;
-        this.edited = null;
         this.create = create;
         this.save = save;
-        this.cancelEdit = cancelEdit;
         this.setActive = setActiveWorkspace;
         this.setActiveDesk = setActiveDesk;
         this.getActive = getActiveWorkspace;
@@ -24,8 +22,11 @@
 
         var PREFERENCE_KEY = 'workspace:active',
             RESOURCE = 'workspaces',
-            deferEdit,
             self = this;
+
+        function save(workspace) {
+            return api.save(RESOURCE, workspace).then(updateActive);
+        }
 
         /**
          * Start editing of new custom workspace
@@ -33,38 +34,8 @@
          * @return {Promise}
          */
         function create() {
-            self.edited = {user: session.identity._id};
-            deferEdit = $q.defer();
-            return deferEdit.promise;
-        }
-
-        /**
-         * Resolve edit promise with given workspace
-         *
-         * @param {object} workspace
-         * @return {object}
-         */
-        function resolvePromise(workspace) {
-            deferEdit.resolve(workspace);
-            self.edited = null;
+            var workspace = {user: session.identity._id};
             return workspace;
-        }
-
-        /**
-         * Cancel workspace editing
-         */
-        function cancelEdit() {
-            self.edited = null;
-            deferEdit.reject();
-        }
-
-        /**
-         * Save currently edited workspace
-         *
-         * @return {Promise}
-         */
-        function save() {
-            return api.save(RESOURCE, self.edited).then(updateActive).then(resolvePromise);
         }
 
         /**
@@ -192,6 +163,15 @@
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-dropdown.html',
             link: function(scope) {
+                scope.workspaces = workspaces;
+                scope.edited = null;
+
+                scope.afterSave = function(workspace) {
+                    desks.setCurrentDeskId(null);
+                    workspaces.setActive(workspace);
+                    scope.selected = workspace;
+                };
+
                 scope.selectDesk = function(desk) {
                     reset();
                     scope.selected = desk;
@@ -209,12 +189,7 @@
                 };
 
                 scope.createWorkspace = function() {
-                    workspaces.create().then(function() {
-                        scope.selected = workspaces.active;
-                        scope.workspaceType = 'workspace';
-                        desks.setCurrentDeskId(null);
-                        scope.workspaces.push(scope.selected);
-                    });
+                    scope.edited = workspaces.create();
                 };
 
                 function reset() {
@@ -222,25 +197,30 @@
                 }
 
                 // init
-                workspaces.getActiveId().then(function(activeId) {
-                    desks.initialize().then(function() {
-                        desks.fetchCurrentUserDesks().then(function(userDesks) {
-                            scope.desks = userDesks._items;
-                            if (!activeId) {
-                                scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
-                                scope.workspaceType = 'desk';
+                function initialize() {
+                    workspaces.getActiveId().then(function(activeId) {
+                        desks.initialize().then(function() {
+                            desks.fetchCurrentUserDesks().then(function(userDesks) {
+                                scope.desks = userDesks._items;
+                                if (!activeId) {
+                                    scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
+                                }
+                            });
+                        });
+
+                        workspaces.queryUserWorkspaces().then(function(_workspaces) {
+                            scope.workspaces = _workspaces;
+                            if (activeId) {
+                                scope.selected = _.find(scope.workspaces, {_id: activeId});
                             }
                         });
                     });
+                }
 
-                    workspaces.queryUserWorkspaces().then(function(_workspaces) {
-                        scope.workspaces = _workspaces;
-                        if (activeId) {
-                            scope.selected = _.find(scope.workspaces, {_id: activeId});
-                            scope.workspaceType = 'workspace';
-                        }
-                    });
-                });
+                //initialize();
+                scope.$watch(function() {
+                    return workspaces.active;
+                }, initialize, true);
             }
         };
     }
@@ -249,7 +229,10 @@
     function EditWorkspaceDirective(workspaces) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/edit-workspace-modal.html',
-            scope: true,
+            scope: {
+                workspace: '=',
+                done: '='
+            },
             link: function(scope) {
                 scope.workspaces = workspaces;
 
@@ -257,11 +240,21 @@
                  * Trigger workspace.save and in case there is an error returned assign it to scope.
                  */
                 scope.save = function() {
-                    workspaces.save().then(function() {
+                    workspaces.save(scope.workspace)
+                    .then(function() {
                         scope.errors = null;
+                        var workspace = scope.workspace;
+                        scope.workspace = null;
+                        if (scope.done) {
+                            return scope.done(workspace);
+                        }
                     }, function(response) {
                         scope.errors = response.data._issues;
                     });
+                };
+
+                scope.cancel = function() {
+                    scope.workspace = null;
                 };
             }
         };
