@@ -93,29 +93,28 @@ class TakesPackageService():
             to[field] = copy_from.get(field)
 
     def package_story_as_a_take(self, target, takes_package, link):
-        takes_package.update({
-            ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
-            PACKAGE_TYPE: TAKES_PACKAGE,
-            'headline': target.get('headline'),
-            'abstract': target.get('abstract')
-        })
-        for field in ['anpa_category', 'pubstatus', 'slugline',
-                      'urgency', 'subject', 'dateline',
-                      'publish_schedule', 'event_id', 'rewrite_of']:
+        """
+        This function create the takes package using the target item metadata and links the
+        target and link together in the takes package as target as take1 and link as take2.
+        If the link is not provided then only target is added to the takes package.
+        :param dict target: Target item to be added to the takes package.
+        :param dict takes_package: takes package.
+        :param dict link: item to be linked.
+        :return: Takes Package Id
+        """
+        takes_package[ITEM_TYPE] = CONTENT_TYPE.COMPOSITE
+        takes_package[PACKAGE_TYPE] = TAKES_PACKAGE
+        for field in ['anpa_category', 'pubstatus', 'slugline', 'headline',
+                      'urgency', 'subject', 'dateline', 'abstract',
+                      'publish_schedule', 'event_id', 'rewrite_of', 'task']:
             takes_package[field] = target.get(field)
         takes_package.setdefault(config.VERSION, 1)
 
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)
         archive_service = get_resource_service(ARCHIVE)
-        tasks_service = get_resource_service('tasks')
         ids = archive_service.post([takes_package])
-        takes_package_id = ids[0]
-
-        # send the package to the desk where the first take was sent
-        current_task = target.get('task')
-        tasks_service.patch(takes_package_id, {'task': current_task or {}})
-        return takes_package_id
+        return ids[0]
 
     def link_as_next_take(self, target, link):
         """

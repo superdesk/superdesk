@@ -421,7 +421,7 @@ Feature: Content Publishing
 
               },
               {
-                  "_current_version": 3,
+                  "_current_version": 2,
                   "state": "in_progress",
                   "type": "composite"
               }
@@ -1006,7 +1006,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 3,
+                  "_current_version": 2,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1099,7 +1099,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1327,7 +1327,7 @@ Feature: Content Publishing
                   "last_published_version": true
               },
               {
-                  "_current_version": 6,
+                  "_current_version": 5,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1367,7 +1367,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1376,7 +1376,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 5,
+                  "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1385,7 +1385,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 6,
+                  "_current_version": 5,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1426,7 +1426,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 7,
+                  "_current_version": 6,
                   "state": "killed",
                   "type": "composite",
                   "package_type": "takes",
@@ -1552,7 +1552,7 @@ Feature: Content Publishing
               "state" : "pending",
               "subscriber_id" : "#Digital_Subscriber#",
               "headline" : "Take-1 soccer headline",
-              "item_version": 4
+              "item_version": 3
             }
           ]
       }
@@ -1587,7 +1587,7 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#TAKE2#",
@@ -1601,7 +1601,7 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 5
+              "item_version": 4
             }
           ]
       }
@@ -1625,24 +1625,24 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 3
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 5
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 4
             },
             {
               "item_id" : "#TAKE2#",
-              "publishing_action" : "published",
-              "content_type" : "text",
-              "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 5
-            },
-            {
-              "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "published",
-              "content_type" : "composite",
-              "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 5
-            },
-            {
-              "item_id" : "#TAKE2#",
               "publishing_action" : "corrected",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
@@ -1653,7 +1653,7 @@ Feature: Content Publishing
               "publishing_action" : "corrected",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 6
+              "item_version": 5
             }
           ]
       }
@@ -1741,7 +1741,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 5,
+                  "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
