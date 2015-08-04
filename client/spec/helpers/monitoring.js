@@ -25,6 +25,7 @@ function Monitoring() {
     };
 
     this.searchAction = function(search) {
+        element(by.css('.flat-searchbar')).click();
         element(by.model('query')).sendKeys(search);
     };
 
