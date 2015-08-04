@@ -392,7 +392,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[9])
-            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
+            archive_publish.patch(id=doc['_id'], updates={'state': 'published', 'task': {}})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
 
@@ -424,15 +424,12 @@ class ArchivePublishTestCase(TestCase):
             doc = copy(self.articles[1])
             archive = get_resource_service('archive')
             schedule_date = utcnow() + timedelta(hours=2)
-            archive.patch(id=doc['_id'], updates={'publish_schedule': schedule_date})
+            archive.patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(5, queue_items.count())
-            self.assertEqual(schedule_date, queue_items[0]["publish_schedule"])
-            self.assertEqual(schedule_date, queue_items[1]["publish_schedule"])
-            self.assertEqual(schedule_date, queue_items[2]["publish_schedule"])
-            self.assertEqual(schedule_date, queue_items[3]["publish_schedule"])
-            self.assertEqual(schedule_date, queue_items[4]["publish_schedule"])
+            for item in queue_items:
+                self.assertEqual(schedule_date, item["publish_schedule"])
 
     def test_queue_transmission_for_digital_channels(self):
         with self.app.app_context():
@@ -466,16 +463,14 @@ class ArchivePublishTestCase(TestCase):
             queue_items = self.app.data.find('publish_queue', None, None)
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
-            doc = copy(self.articles[9])
+            doc = copy(self.articles[7])
             archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
+            self.assertEqual(4, queue_items.count())
             # this will delete queue transmission for the wire article not the takes package.
             publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(doc['_id'])
             queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(1, queue_items.count())
-            queue_items = list(queue_items)
-            self.assertEqual('composite', queue_items[0]['content_type'])
+            self.assertEqual(0, queue_items.count())
 
     def test_remove_published_expired_content(self):
         with self.app.app_context():
@@ -821,7 +816,7 @@ class ArchivePublishTestCase(TestCase):
 
             ValidatorsPopulateCommand().run(self.filename)
             get_resource_service('archive').patch(id=self.articles[1][config.ID_FIELD],
-                                                  updates={'publish_schedule': None})
+                                                  updates={'publish_schedule': None, 'task': {}})
 
             doc = get_resource_service('archive').find_one(req=None, _id=self.articles[1][config.ID_FIELD])
             get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD], updates={'state': 'published'})
