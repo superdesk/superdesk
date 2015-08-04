@@ -82,8 +82,8 @@
 
                         <div class="field" ng-if="subscriber.publish_filter.filter_id">
                             <label translate>Publish Filter Type</label>
-                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="permitting"><span translate>Permitting</span>
-                            <input type="radio" ng-model="subscriber.publish_filter.filter_type" value="blocking"><span translate>Blocking</span>
+                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.publish_filter.filter_type" value="permitting">Permitting</label>
+                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.publish_filter.filter_type" value="blocking">Blocking</label>
                         </div>
 
                         <div class="field">
@@ -91,11 +91,11 @@
                             <span translate>Minimum</span>
                             <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.min" min ="1" id="subscriber-seq_num_settings.min" required>
                             <span translate>Maximum</span>
-                            <input type="number" class="input-mini" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max" required>
+                            <input type="number" class="input-small" ng-model="subscriber.sequence_num_settings.max" min ="2" id="subscriber-seq_num_settings.max" required>
                         </div>
 
-                        <div class="field">
-                            <label translate>Destinations</label>
+                        <fieldset class="separated">
+                        <legend translate>Destinations</legend>
                             <div sd-destination ng-repeat="destination in subscriber.destinations" data-destination="destination"
                                  data-actions="[{label: 'Delete', fn: deleteDestination}]"></div>
                             <div sd-destination ng-if="newDestination"
@@ -104,7 +104,7 @@
                             <button type="button" class="btn btn-info" ng-click="addNewDestination()" ng-show="newDestination === null">
                                 <i class="icon-plus-sign icon-white"></i> <span translate>Add New Destination</span>
                             </button>
-                        </div>
+                        </fieldset>
                     </tab>
 
                     <tab heading="Critical Errors" class="TabContent">

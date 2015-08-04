@@ -117,12 +117,14 @@ body:not(:-moz-handler-blocked) .modal{
 
 // Body (where all modal content resises)
 .modal-body {
-	background: @white;
+	background: @sd-background;
 	overflow-y: auto;
 	//max-height: 400px;
 	padding: 20px;
 	position: relative;
-
+	&.modal-body-white {
+		background: @white;
+	}
 	.nav-tabs {
 		position: absolute;
 		left: 0; right: 0; top: 0;
