@@ -17,8 +17,6 @@ logstash:
 kibana:
   build: kibana
   restart: always
-  ports:
-  - "5601:5601"
 
 elastic:
   image: elasticsearch:1.5
@@ -69,6 +67,3 @@ frontend:
   command: sh -c "grunt build --server='http://127.0.0.1/api' --ws='ws://127.0.0.1/ws' && nginx"
   volumes:
    - ../results/client/unit:/opt/superdesk-client/unit-test-results
-  ports:
-   - "443:443"
-   - "80:80"

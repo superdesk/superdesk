@@ -21,6 +21,8 @@ kibana:
     service: kibana
   links:
   - elastic
+  ports:
+  - "5601:5601"
 
 elastic:
   extends:
@@ -49,3 +51,6 @@ frontend:
     service: frontend
   links:
    - backend
+  ports:
+   - "443:443"
+   - "80:80"
