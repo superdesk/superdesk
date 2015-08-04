@@ -502,7 +502,7 @@ class BasePublishService(BaseService):
                         for pub_seq_num, formatted_doc in formatted_docs:
                             publish_queue_item = dict()
                             publish_queue_item['item_id'] = doc['_id']
-                            publish_queue_item['item_version'] = doc[config.VERSION] + 1
+                            publish_queue_item['item_version'] = doc[config.VERSION]
                             publish_queue_item['formatted_item'] = formatted_doc
                             publish_queue_item['subscriber_id'] = subscriber['_id']
                             publish_queue_item['destination'] = destination

@@ -1543,7 +1543,7 @@ Feature: Content Publishing
               "state" : "pending",
               "subscriber_id" : "#First_Wire_Subscriber#",
               "headline" : "Take-1 soccer headline",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
@@ -1552,7 +1552,7 @@ Feature: Content Publishing
               "state" : "pending",
               "subscriber_id" : "#Digital_Subscriber#",
               "headline" : "Take-1 soccer headline",
-              "item_version": 3
+              "item_version": 2
             }
           ]
       }
@@ -1580,6 +1580,20 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 3
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 2
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
               "item_version": 4
             },
             {
@@ -1588,20 +1602,6 @@ Feature: Content Publishing
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 3
-            },
-            {
-              "item_id" : "#TAKE2#",
-              "publishing_action" : "published",
-              "content_type" : "text",
-              "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 5
-            },
-            {
-              "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "published",
-              "content_type" : "composite",
-              "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 4
             }
           ]
       }
@@ -1618,6 +1618,20 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 3
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 2
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
               "item_version": 4
             },
             {
@@ -1629,31 +1643,17 @@ Feature: Content Publishing
             },
             {
               "item_id" : "#TAKE2#",
-              "publishing_action" : "published",
+              "publishing_action" : "corrected",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
               "item_version": 5
             },
             {
               "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "published",
+              "publishing_action" : "corrected",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 4
-            },
-            {
-              "item_id" : "#TAKE2#",
-              "publishing_action" : "corrected",
-              "content_type" : "text",
-              "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 6
-            },
-            {
-              "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "corrected",
-              "content_type" : "composite",
-              "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 5
             }
           ]
       }
