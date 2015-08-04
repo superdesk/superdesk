@@ -12,12 +12,12 @@ define([
     function DashboardController($scope, desks, widgets, api, session, workspaces, modal, gettext) {
         var vm = this;
 
+        $scope.edited = null;
         $scope.workspaces = workspaces;
         $scope.$watch('workspaces.active', setupWorkspace);
         workspaces.getActive();
 
         function setupWorkspace(workspace) {
-            console.log(workspace);
             vm.current = null;
             if (workspace) {
                 // do this async so that it can clean up previous grid
@@ -88,8 +88,16 @@ define([
                 return api.remove(vm.current);
             })
             .then(function(result) {
-                console.log(result);
+                
             });
+        };
+
+        this.rename = function() {
+            $scope.edited = angular.copy(vm.current);
+        };
+
+        this.afterRename = function() {
+            workspaces.getActive();
         };
     }
 
