@@ -44,3 +44,17 @@ Feature: Workspace
         {"name": "test"}
         """
         Then we get response code 400
+
+    @auth
+    Scenario: Deleting workspace works
+        When we post to "/workspaces"
+        """
+        {"name": "test"}
+        """
+        And we delete latest
+        Then we get response code 204
+        When we post to "/workspaces"
+        """
+        {"name": "test"}
+        """
+        Then we get new resource

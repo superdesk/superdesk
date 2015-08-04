@@ -13,8 +13,8 @@
         </li>
 
         <li><div class="menu-label" translate>CUSTOM WORKSPACES</div></li>
-        <li ng-repeat="workspace in workspaces track by workspace._id"
-            ng-if="workspace._id !== selected._id">
+        <li ng-repeat="workspace in workspaces"
+            ng-if="workspace._id && workspace._id !== selected._id">
             <button ng-click="selectWorkspace(workspace)">{{ :: workspace.name }}</button>
         </li>
         <li><button class="btn"
@@ -22,4 +22,4 @@
     </ul>
 </div>
 
-<div sd-edit-workspace></div>
+<div sd-edit-workspace data-workspace="edited" data-done="afterSave"></div>
