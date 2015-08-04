@@ -14,7 +14,7 @@
         </div>
         <h3 class="page-nav-title">
             <span ng-if="!monitoring.singleGroup && type !== 'spike'" translate>Monitoring</span>
-            <span ng-if="!monitoring.singleGroup && type === 'spike'" translate>Spike Monitoring</span>
+            <span ng-if="!monitoring.singleGroup && type === 'spike'" translate>Spiked Items</span>
             <span ng-if="monitoring.singleGroup">
                 {{monitoring.singleGroup.header}} / {{monitoring.singleGroup.subheader}} {{monitoring.singleGroup.type}}
             </span>
