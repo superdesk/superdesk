@@ -88,7 +88,15 @@ define([
                 return api.remove(vm.current);
             })
             .then(function(result) {
-                
+                workspaces.queryUserWorkspaces()
+                .then(function(items) {
+                    if (items && items.length) {
+                        workspaces.setActive(items[0]);
+                    } else {
+                        workspaces.setActive(null);
+                    }
+                    workspaces.getActive();
+                })
             });
         };
 
