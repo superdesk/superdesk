@@ -1334,6 +1334,10 @@
                     return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
                 };
 
+                /**
+                 * Send the current item (take) to different desk or stage and create a new take. 
+                 * If publish_schedule is set then the user cannot schedule the take.
+                 */
                 scope.sendAndContinue = function () {
                     // cannot schedule takes.
                     if (scope.item && scope.item.publish_schedule) {
