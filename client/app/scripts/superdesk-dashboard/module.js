@@ -8,8 +8,8 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces'];
-    function DashboardController($scope, desks, widgets, api, session, workspaces) {
+    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces', 'modal', 'gettext'];
+    function DashboardController($scope, desks, widgets, api, session, workspaces, modal, gettext) {
         var vm = this;
 
         $scope.workspaces = workspaces;
@@ -17,6 +17,7 @@ define([
         workspaces.getActive();
 
         function setupWorkspace(workspace) {
+            console.log(workspace);
             vm.current = null;
             if (workspace) {
                 // do this async so that it can clean up previous grid
@@ -77,6 +78,18 @@ define([
             var diff = angular.extend({}, this.current);
             diff.widgets = pickWidgets(this.widgets);
             api.save('workspaces', this.current, diff);
+        };
+
+        this.delete = function() {
+            modal.confirm(
+                gettext('Are you sure you want to delete current workspace?')
+            )
+            .then(function() {
+                return api.remove(vm.current);
+            })
+            .then(function(result) {
+                console.log(result);
+            });
         };
     }
 
