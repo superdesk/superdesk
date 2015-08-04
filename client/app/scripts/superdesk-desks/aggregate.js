@@ -247,18 +247,6 @@
             return this.allDesks;
         };
 
-        /**
-         * Handling Highlights
-         */
-        this.getHighlightsGroups = function() {
-            if (!this.allDesks) {
-                this.allDesks = Object.keys(this.deskLookup).map(function(key) {
-                    return {_id: key, type: 'highlights'};
-                });
-            }
-            return this.allDesks;
-        };
-
         this.getGroups = function() {
             if (this.groups.length > 0) {
                 return this.groups;

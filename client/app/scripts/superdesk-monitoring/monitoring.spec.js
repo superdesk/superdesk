@@ -76,6 +76,15 @@ describe('monitoring', function() {
             });
         }));
 
+        it('can get criteria for highlight', inject(function(cards) {
+            var card = {type: 'highlights'};
+            var queryParam = {highlight: '123'};
+            var criteria = cards.criteria(card, null, queryParam);
+            expect(criteria.source.query.filtered.filter.and).toContain({
+                and: [{term: {'highlights': queryParam.highlight}}]
+            });
+        }));
+
         it('can get criteria for stage with search', inject(function(cards) {
             var card = {_id: '123', query: 'test'};
             var criteria = cards.criteria(card);
@@ -101,6 +110,12 @@ describe('monitoring', function() {
             expect(criteria.source.post_filter.and).toContain({
                 terms: {type: ['text']}
             });
+
+        it('can get criteria for highlight with search', inject(function(cards) {
+            var card = {type: 'highlights', query: 'test'};
+            var queryParam = {highlight: '123'};
+            var criteria = cards.criteria(card, null, queryParam);
+            expect(criteria.source.query.filtered.query.query_string.query).toBe('test');
         }));
 
         it('can get criteria for multiple file type filter', inject(function(cards) {

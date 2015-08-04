@@ -134,8 +134,6 @@
 
         var vm = this;
 
-        this.queryParam = $location.search().data ? JSON.parse($location.search().data) : null;
-
         function preview(item) {
             vm.previewItem = item;
             vm.state['with-preview'] = !!item;
@@ -153,6 +151,7 @@
         function viewSingleGroup(group) {
             vm.singleGroup = group;
         }
+
     }
 
     /**
@@ -178,8 +177,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout', '$location', 'highlightsService'];
-    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout, $location, highlightsService) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'superdesk', 'desks', '$timeout'];
+    function MonitoringGroupDirective(cards, api, superdesk, desks, $timeout) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -208,7 +207,7 @@
                 scope.fetching = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
-                scope.limited = monitoring.singleGroup ? false : true;
+                scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
 
                 scope.uuid = uuid;
                 scope.edit = edit;
