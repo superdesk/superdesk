@@ -2109,37 +2109,7 @@ Feature: Content Publishing
       """
       [{"name": "Sports"}]
       """
-      And "filter_conditions"
-      """
-      [{"name": "sport", "field": "headline", "operator": "like", "value": "soccer"}]
-      """
-      And "publish_filters"
-      """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
-      """
-      When we post to "/subscribers" with "First_Wire_Subscriber" and success
-      """
-      [{
-        "name":"Soccer Client1","media_type":"media", "subscriber_type": "wire",
-        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
-        "destinations":[
-            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
-          ]
-      }]
-      """
-      And we post to "/subscribers" with "Digital_Subscriber" and success
-      """
-      [{
-        "name":"Soccer Client Digital","media_type":"media", "subscriber_type": "digital",
-        "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
-        "destinations":[
-            {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
-          ]
-      }]
-      """
-      And we post to "archive" with success
+      When we post to "archive" with success
       """
       [{
           "guid": "123",

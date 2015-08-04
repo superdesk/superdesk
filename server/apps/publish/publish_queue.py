@@ -74,7 +74,7 @@ class PublishQueueResource(Resource):
         'field': 'item_id'
     }
 
-    datasource = {'default_sort': [('_created', 1)]}
+    datasource = {'default_sort': [('_created', -1)]}
     privileges = {'POST': 'publish_queue', 'PATCH': 'publish_queue'}
 
 

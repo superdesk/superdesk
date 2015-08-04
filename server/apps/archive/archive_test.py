@@ -14,9 +14,8 @@ from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent
 from apps.archive.archive import SOURCE as ARCHIVE
-from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
-from datetime import datetime, timedelta
+from datetime import timedelta
 from apps.archive.common import validate_schedule
 
 
@@ -156,13 +155,10 @@ class ArchiveTestCase(TestCase):
         super().setUp()
 
     def test_validate_schedule(self):
-        date_without_time = datetime.strptime('Jun 1 2005', '%b %d %Y')
-        time_without_date = datetime.strptime('1:33PM', '%I:%M%p')
-        date_in_past = utcnow() + timedelta(hours=-2)
-        date_in_future = utcnow() + timedelta(hours=2)
+        validate_schedule(utcnow() + timedelta(hours=2))
 
-        validate_schedule(date_in_future)
+    def test_validate_schedule_date_with_datetime_as_string_raises_superdeskApiError(self):
         self.assertRaises(SuperdeskApiError, validate_schedule, "2015-04-27T10:53:48+00:00")
-        self.assertRaises(SuperdeskApiError, validate_schedule, date_without_time)
-        self.assertRaises(SuperdeskApiError, validate_schedule, time_without_date)
-        self.assertRaises(SuperdeskApiError, validate_schedule, date_in_past)
+
+    def test_validate_schedule_date_with_datetime_in_past_raises_superdeskApiError(self):
+        self.assertRaises(SuperdeskApiError, validate_schedule, utcnow() + timedelta(hours=-2))

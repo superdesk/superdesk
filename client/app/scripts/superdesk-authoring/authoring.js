@@ -901,7 +901,7 @@
                 };
 
                 $scope.deschedule = function() {
-                    $scope.item.publish_schedule = false;
+                    $scope.item.publish_schedule = null;
                     return $scope.save();
                 };
 

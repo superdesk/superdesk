@@ -196,7 +196,7 @@ class ArchiveService(BaseService):
 
         if updates.get('publish_schedule'):
 
-            if datetime.datetime.fromtimestamp(False).date() == updates.get('publish_schedule').date():
+            if datetime.datetime.fromtimestamp(0).date() == updates.get('publish_schedule').date():
                 # publish_schedule field will be cleared
                 updates['publish_schedule'] = None
             else:

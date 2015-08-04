@@ -146,7 +146,6 @@
         function fetchPublishQueue () {
             var criteria = criteria || {};
             criteria.max_results = 200;
-            criteria.sort = '[(\'published_seq_num\',-1)]';
 
             if ($scope.selectedFilterSubscriber !== null) {
                 criteria.where = {'subscriber_id': $scope.selectedFilterSubscriber._id};

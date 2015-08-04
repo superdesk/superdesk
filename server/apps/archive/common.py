@@ -385,10 +385,6 @@ def validate_schedule(schedule, package_sequence=1):
     if schedule:
         if not isinstance(schedule, datetime):
             raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
-        if not schedule.date() or schedule.date().year <= 1970:
-            raise SuperdeskApiError.badRequestError("Schedule date is not recognized")
-        if not schedule.time():
-            raise SuperdeskApiError.badRequestError("Schedule time is not recognized")
         if schedule < utcnow():
             raise SuperdeskApiError.badRequestError("Schedule cannot be earlier than now")
         if package_sequence > 1:
