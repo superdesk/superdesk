@@ -121,7 +121,8 @@ function Authoring() {
     };
 
     this.markForHighlights = function() {
-        element(by.className('svg-icon-add-to-list')).click();
+        element(by.className('icon-dots-vertical')).click();
+        browser.actions().mouseMove(element(by.css('.highlights-toggle .dropdown-toggle'))).perform();
     };
 
     this.getSubnav = function() {

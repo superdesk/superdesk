@@ -78,14 +78,14 @@
                     </li>
                 </ul>
 
-                <ul ng-if="item.task && item.task.desk && itemActions.mark_item"
+                <ul ng-if="item.task.desk && itemActions.mark_item"
                      title="{{ :: 'Mark item' | translate }}">
                     <li class="divider"></li>
-                    <li><span class="menu-label">Highlights</span></li>
+                    <li><span class="menu-label" translate>Highlights</span></li>
                     <li>
-                        <div class="dropdown" dropdown>
+                        <div class="dropdown highlights-toggle" dropdown>
                             <button class="dropdown-toggle" dropdown-toggle>
-                                Mark item
+                                {{ :: 'Mark item' | translate }}
                             </button>
                             <ul class="dropdown-menu right-submenu" sd-mark-highlights-dropdown></ul>
                         </div>
