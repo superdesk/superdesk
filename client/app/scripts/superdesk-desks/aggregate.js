@@ -83,7 +83,6 @@
          * param {string} fileType
          */
         this.setFileType = function(fileType) {
-            console.log('set filter: ', fileType);
             this.selectedFileType = fileType;
             var value = (fileType === 'all') ? null: JSON.stringify([fileType]);
 
