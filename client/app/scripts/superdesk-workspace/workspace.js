@@ -12,8 +12,8 @@
     function WorkspaceService(api, desks, session, preferences, $q) {
 
         this.active = null;
-        this.create = create;
         this.save = save;
+        this.delete = _delete;
         this.setActive = setActiveWorkspace;
         this.setActiveDesk = setActiveDesk;
         this.getActive = getActiveWorkspace;
@@ -25,17 +25,26 @@
             self = this;
 
         function save(workspace) {
+            workspace.user = workspace.user || session.identity._id;
             return api.save(RESOURCE, workspace).then(updateActive);
         }
 
-        /**
-         * Start editing of new custom workspace
-         *
-         * @return {Promise}
-         */
-        function create() {
-            var workspace = {user: session.identity._id};
-            return workspace;
+        function _delete(workspace) {
+            return api.remove(workspace)
+            .then(function() {
+                if (self.active && self.active._id === workspace._id) {
+                    return self.queryUserWorkspaces()
+                    .then(function(items) {
+                        if (items && items.length) {
+                            self.setActive(items[0]);
+                        } else {
+                            self.setActive(null);
+                        }
+                        self.getActive();
+                    });
+                }
+                return $q.when();
+            });
         }
 
         /**
@@ -187,7 +196,7 @@
                 };
 
                 scope.createWorkspace = function() {
-                    scope.edited = workspaces.create();
+                    scope.edited = {};
                 };
 
                 function reset() {

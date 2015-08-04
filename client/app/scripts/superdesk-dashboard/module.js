@@ -85,18 +85,7 @@ define([
                 gettext('Are you sure you want to delete current workspace?')
             )
             .then(function() {
-                return api.remove(vm.current);
-            })
-            .then(function(result) {
-                workspaces.queryUserWorkspaces()
-                .then(function(items) {
-                    if (items && items.length) {
-                        workspaces.setActive(items[0]);
-                    } else {
-                        workspaces.setActive(null);
-                    }
-                    workspaces.getActive();
-                })
+                return workspaces.delete(vm.current);
             });
         };
 
