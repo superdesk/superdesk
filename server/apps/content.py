@@ -229,7 +229,7 @@ metadata_schema = {
             'date': {'type': 'datetime'},
             'source': {'type': 'string'},
             'text': {'type': 'string'}
-        }
+        },
     },
     'expiry': {
         'type': 'datetime'

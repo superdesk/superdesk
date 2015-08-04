@@ -9,8 +9,10 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from .tests import TestCase
 import superdesk
+from bson import ObjectId
+from .tests import TestCase
+from .datalayer import SuperdeskJSONEncoder
 
 
 class DatalayerTestCase(TestCase):
@@ -20,3 +22,11 @@ class DatalayerTestCase(TestCase):
         with self.app.app_context():
             superdesk.get_resource_service('activity').post([data])
             self.assertEquals(1, superdesk.get_resource_service('activity').get(req=None, lookup={}).count())
+
+    def test_json_encoder(self):
+        _id = ObjectId()
+        encoder = SuperdeskJSONEncoder()
+        text = encoder.dumps({'_id': _id, 'name': 'foo', 'group': None})
+        self.assertIn('"name": "foo"', text)
+        self.assertIn('"group": null', text)
+        self.assertIn('"_id": "%s"' % (_id, ), text)

@@ -10,25 +10,31 @@
 
 import superdesk
 from eve.io.base import DataLayer
-from eve.io.mongo import Mongo
+from eve.io.mongo import Mongo, MongoJSONEncoder
 from eve.utils import config, ParsedRequest
-from eve_elastic import Elastic
+from eve_elastic import Elastic, ElasticJSONSerializer
 from flask import current_app as app
 from superdesk.aap_mm_datalayer import AAPMMDatalayer
+
+
+class SuperdeskJSONEncoder(MongoJSONEncoder, ElasticJSONSerializer):
+    """Custom JSON encoder for elastic that can handle `bson.ObjectId`s."""
+    pass
 
 
 class SuperdeskDataLayer(DataLayer):
     """Superdesk Data Layer"""
 
-    serializers = Mongo.serializers
+    serializers = {}
+    serializers.update(Mongo.serializers)
     serializers.update(Elastic.serializers)
 
     def init_app(self, app):
         self.mongo = Mongo(app)
-        self.elastic = Elastic(app)
-        self.aapmm = AAPMMDatalayer(app)
         self.driver = self.mongo.driver
         self.storage = self.driver
+        self.aapmm = AAPMMDatalayer(app)
+        self.elastic = Elastic(app, serializer=SuperdeskJSONEncoder())
 
     def find(self, resource, req, lookup):
         return superdesk.get_resource_service(resource).get(req=req, lookup=lookup)
