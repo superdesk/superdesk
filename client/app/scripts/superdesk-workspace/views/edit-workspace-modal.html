@@ -1,6 +1,7 @@
-<div sd-modal data-model="workspaces.edited">
+<div sd-modal data-model="workspace">
     <div class="modal-header">
-        <h3 translate>Create new Workspace</h3>
+        <h3 ng-hide="workspace._id" translate>Create new Workspace</h3>
+        <h3 ng-show="workspace._id" translate>Rename Workspace</h3>
     </div>
 
     <div class="modal-body">
@@ -8,16 +9,16 @@
             <div class="field">
                 <label translate>Workspace name</label>
                 <input type="text" class="fullwidth-input" ng-class="{error: errors.name}"
-                    ng-model="workspaces.edited.name" required>
-                <div class="error" ng-show="errors.name" translate>sorry, given workspace name is in use</div>
+                    ng-model="workspace.name" required>
+                <div class="error" ng-show="errors.name" translate>Sorry, given workspace name is in use</div>
             </div>
         </fieldset>
     </div>
 
     <div class="modal-footer">
-        <button class="btn pull-left" ng-click="workspaces.cancelEdit()" translate>Cancel</button>
+        <button class="btn pull-left" ng-click="cancel()" translate>Cancel</button>
         <button class="btn btn-primary"
-            ng-disabled="!workspaces.edited.name"
+            ng-disabled="!workspace.name"
             ng-click="save()" translate>Save</button>
     </div>
 </div>

@@ -8,10 +8,11 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces'];
-    function DashboardController($scope, desks, widgets, api, session, workspaces) {
+    DashboardController.$inject = ['$scope', 'desks', 'widgets', 'api', 'session', 'workspaces', 'modal', 'gettext'];
+    function DashboardController($scope, desks, widgets, api, session, workspaces, modal, gettext) {
         var vm = this;
 
+        $scope.edited = null;
         $scope.workspaces = workspaces;
         $scope.$watch('workspaces.active', setupWorkspace);
         workspaces.getActive();
@@ -77,6 +78,34 @@ define([
             var diff = angular.extend({}, this.current);
             diff.widgets = pickWidgets(this.widgets);
             api.save('workspaces', this.current, diff);
+        };
+
+        this.delete = function() {
+            modal.confirm(
+                gettext('Are you sure you want to delete current workspace?')
+            )
+            .then(function() {
+                return api.remove(vm.current);
+            })
+            .then(function(result) {
+                workspaces.queryUserWorkspaces()
+                .then(function(items) {
+                    if (items && items.length) {
+                        workspaces.setActive(items[0]);
+                    } else {
+                        workspaces.setActive(null);
+                    }
+                    workspaces.getActive();
+                })
+            });
+        };
+
+        this.rename = function() {
+            $scope.edited = angular.copy(vm.current);
+        };
+
+        this.afterRename = function() {
+            workspaces.getActive();
         };
     }
 
