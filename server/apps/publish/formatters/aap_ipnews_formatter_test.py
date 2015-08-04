@@ -135,31 +135,3 @@ class AapIpNewsFormatterTest(TestCase):
                     codes = set(doc['selector_codes'].split(' '))
                     expected_codes = set('cxx 0fh axx az and pxx 0ah 0ir 0px 0hw pnd pxd cnd cxd 0nl axd'.split(' '))
                     self.assertSetEqual(codes, expected_codes)
-
-    def Test_is_in_subject(self):
-        article = {
-            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
-        }
-        f = AAPIpNewsFormatter()
-        self.assertTrue(f._is_in_subject(article, '150'))
-        self.assertFalse(f._is_in_subject(article, '151'))
-        self.assertTrue(f._is_in_subject(article, '04001'))
-
-    def Test_join_selector_codes(self):
-        f = AAPIpNewsFormatter()
-        result = f._join_selector_codes('ipnewS', 'newsi', 'cnewsi', 'cnewsi')
-        result_list = result.split()
-        self.assertEqual(len(result_list), 12)
-
-    def Test_set_selector_codes(self):
-        article = {
-            'task': {'desk': 1},
-            'slugline': 'Test',
-            'urgency': 3
-        }
-        f = AAPIpNewsFormatter()
-        odbc_item = {}
-        with self.app.app_context():
-            f._set_selector_codes(article, 'ipnews', odbc_item, 'A')
-            self.assertSetEqual(set(odbc_item['selector_codes'].split()),
-                                set('and axd pnd cxd 0fh 0ir 0px 0ah 0hw cxx axx cnd 0nl az pxd pxx'.split()))
