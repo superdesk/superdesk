@@ -1,6 +1,7 @@
-<div sd-modal data-model="workspaces.edited">
+<div class="modal-body-grey" sd-modal data-model="workspaces.edited">
     <div class="modal-header">
-        <h3 translate>Create new Workspace</h3>
+        <h3 class="pull-left" translate>Create new Workspace</h3>
+        <button class="close" ng-click="workspaces.cancelEdit()"><i class="icon-close-small"></i></button>
     </div>
 
     <div class="modal-body">
@@ -15,7 +16,7 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn pull-left" ng-click="workspaces.cancelEdit()" translate>Cancel</button>
+        <button class="btn" ng-click="workspaces.cancelEdit()" translate>Cancel</button>
         <button class="btn btn-primary"
             ng-disabled="!workspaces.edited.name"
             ng-click="save()" translate>Save</button>

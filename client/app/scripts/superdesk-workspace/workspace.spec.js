@@ -140,4 +140,55 @@ describe('workspace', function() {
             expect(workspaces.active.user).toBe('foo');
         }));
     });
+    describe('sdDeskDropdown directive', function() {
+        var scope, workspaces;
+
+        beforeEach(inject(function (desks, _workspaces_, $rootScope, $compile) {
+            workspaces = _workspaces_;
+            spyOn(desks, 'setCurrentDeskId');
+            spyOn(workspaces, 'setActive');
+            spyOn(workspaces, 'setActiveDesk');
+
+            scope = $rootScope.$new();
+            $compile('<div sd-desk-dropdown></div>')(scope);
+            scope.$digest();
+        }));
+
+        describe('selectDesk() scope method', function() {
+            it('can set workspace type', inject(function () {
+                var desk = {_id: 'foo'};
+
+                scope.workspaceType = null;
+                scope.selectDesk(desk);
+
+                expect(scope.workspaceType).toEqual('desk');
+            }));
+        });
+
+        describe('selectWorkspace() scope method', function() {
+            it('can set workspace type', inject(function () {
+                var workspace = {name: 'foo', widgets: [{_id: 'foo'}]};
+
+                scope.workspaceType = null;
+                scope.selectWorkspace(workspace);
+
+                expect(scope.workspaceType).toEqual('workspace');
+            }));
+        });
+
+        describe('createWorkspace() scope method', function() {
+            it('can set workspace type', inject(function ($q) {
+                spyOn(workspaces, 'create').and.returnValue($q.when(null));
+
+                var workspace = {name: 'foo', widgets: [{_id: 'foo'}]};
+
+                scope.workspaces = [];
+                scope.workspaceType = null;
+                scope.createWorkspace(workspace);
+                scope.$digest();
+
+                expect(scope.workspaceType).toEqual('workspace');
+            }));
+        });
+    });
 });
