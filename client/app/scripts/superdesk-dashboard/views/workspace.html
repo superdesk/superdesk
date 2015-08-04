@@ -11,6 +11,25 @@
         </button>
 
         <button class="navbtn sd-create-btn" ng-disabled="dashboard.edit" ng-click="dashboard.add = true"></button>
+        <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
+        <div class="navbtn dropdown pull-left" dropdown>
+            <button class="dropdown-toggle" dropdown-toggle>
+                <i class="icon-dots-vertical"></i>
+            </button>
+            <div class="dropdown-menu pull-right">
+                <ul>
+                    <li>
+                        <span class="menu-label" translate>Workspace</span>
+                    </li>
+                    <li>
+                        <button type="button" ng-click="dashboard.delete()">
+                            <i class="icon-trash"></i>
+                            <span translate>Delete workspace</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
