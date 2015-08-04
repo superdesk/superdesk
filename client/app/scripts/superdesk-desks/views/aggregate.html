@@ -21,7 +21,7 @@
         </div>
 
         <div class="content-list" ng-if="!agg.state.solo">
-            <div class="desk" ng-repeat="group in agg.cards">
+            <div class="desk" ng-repeat="group in agg.cards track by group._id">
                 <div class="stage" ng-show="total">
                     <div sd-stage-header></div>
                     <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getExpandedState(group._id)"
