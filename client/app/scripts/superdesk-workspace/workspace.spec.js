@@ -158,20 +158,5 @@ describe('workspace', function() {
                 expect(scope.workspaceType).toEqual('workspace');
             }));
         });
-
-        describe('createWorkspace() scope method', function() {
-            it('can set workspace type', inject(function ($q) {
-                spyOn(workspaces, 'create').and.returnValue($q.when(null));
-
-                var workspace = {name: 'foo', widgets: [{_id: 'foo'}]};
-
-                scope.workspaces = [];
-                scope.workspaceType = null;
-                scope.createWorkspace(workspace);
-                scope.$digest();
-
-                expect(scope.workspaceType).toEqual('workspace');
-            }));
-        });
     });
 });

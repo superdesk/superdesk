@@ -19,6 +19,9 @@
             ng-if="workspace._id && workspace._id !== selected._id">
             <button ng-click="selectWorkspace(workspace)">{{ :: workspace.name }}</button>
         </li>
+        <li>
+            <button class="btn" ng-click="createWorkspace()" translate>CREATE NEW WORKSPACE</button>
+        </li>
     </ul>
 </div>
 
