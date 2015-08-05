@@ -1339,7 +1339,7 @@ define([
             })
             .activity('fetchAs', {
                 label: gettext('Fetch As'),
-                icon: 'archive',
+                icon: 'fetch-as',
                 controller: ['data', 'send', function(data, send) {
                     send.allAs([data.item]);
                 }],
