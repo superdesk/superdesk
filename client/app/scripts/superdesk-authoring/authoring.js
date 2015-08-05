@@ -1517,14 +1517,15 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks', 'templates'];
-    function ContentCreateDirective(api, desks, templates) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'ContentCtrl'];
+    function ContentCreateDirective(api, desks, templates, ContentCtrl) {
         var NUM_ITEMS = 5;
 
         return {
             templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
             link: function(scope) {
                 scope.contentTemplates = null;
+                scope.content = new ContentCtrl(scope);
 
                 scope.$watch(function() {
                     return desks.activeDeskId;
