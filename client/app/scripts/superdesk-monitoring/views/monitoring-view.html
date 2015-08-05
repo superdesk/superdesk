@@ -6,7 +6,7 @@
         </span>
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: aggregate.monitoringSearch}">
             <div class="search-handler">
-                <label for="search-input" class="trigger-icon" ng-click="aggregate.monitoringSearch = !aggregate.monitoringSearch"></label>
+                <label for="search-input" class="trigger-icon" ng-click="aggregate.monitoringSearch = !aggregate.monitoringSearch || (query != null && aggregate.search(query = null))"></label>
                 <input id="search-input" type="text" placeholder="{{ :: 'Search' | translate }}" ng-model="query" ng-model-options="{debounce: 500}" ng-change="aggregate.search(query)">
                 <button class="search-close" ng-click="aggregate.search(query = null)" ng-class="{visible: query}"><i class="icon-close-small"></i></button>
             </div>
@@ -45,7 +45,8 @@
         <div class="subnav">
             <ul class="filtertype-icon-list">
                 <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" ng-class="{active: aggregate.hasFileType(fileType)}">
-                   <i class="filetype-icon-{{fileType}}"></i>
+                    <a href="" ng-if="fileType=='all'" class="filetype-icon-{{fileType}}" translate>all</a>
+                    <i ng-if="fileType!='all'" class="filetype-icon-{{fileType}}"></i>
                 </li>
             </ul>
         </div>
