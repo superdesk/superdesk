@@ -1010,13 +1010,13 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>"
+                  "body_html": "Take-1"
               }
           ]
       }
       """
 
-    @auth
+    @auth @test
     Scenario: Publish the second take after the first
       Given the "validators"
       """
@@ -1103,7 +1103,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>"
+                  "body_html": "Take-1<br>Take-2"
               },
               {
                   "_current_version": 4,
@@ -1331,7 +1331,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "body_html": "Take-1<br>Take-2<br>Take-3",
                   "last_published_version": true
               },
               {
@@ -1371,7 +1371,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>",
+                  "body_html": "Take-1",
                   "last_published_version": false
               },
               {
@@ -1380,7 +1380,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>",
+                  "body_html": "Take-1<br>Take-2",
                   "last_published_version": false
               },
               {
@@ -1389,7 +1389,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "body_html": "Take-1<br>Take-2<br>Take-3",
                   "last_published_version": false
               },
               {
@@ -1430,7 +1430,7 @@ Feature: Content Publishing
                   "state": "killed",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-2<br>",
+                  "body_html": "Take-2",
                   "last_published_version": true
               }
           ]
@@ -1745,7 +1745,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>"
+                  "body_html": "Take-1<br>Take-2"
               },
               {
                   "_current_version": 4,
@@ -2175,4 +2175,3 @@ Feature: Content Publishing
       """
       {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
       """
-

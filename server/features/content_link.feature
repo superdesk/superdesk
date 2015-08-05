@@ -173,7 +173,7 @@ Feature: Link content in takes
         """
 
 
-    @auth
+    @auth @test
     Scenario: Metadata is copied from published takes
         Given the "validators"
         """

@@ -9,7 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-from eve.utils import config
+import json
+from eve.utils import config, ParsedRequest
 from eve.versioning import resolve_document_version
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
@@ -175,7 +176,7 @@ class TakesPackageService():
             spike_service = get_resource_service('archive_spike')
             groups = takes_package.get('groups', [])
             if groups:
-                refs = next(group.get('refs') for group in groups if group['id'] == 'main')
+                refs = next(group.get('refs') for group in groups if group['id'] == MAIN_GROUP)
                 for sequence in range(takes_package.get(SEQUENCE, 0), 0, -1):
                     try:
                         ref = next(ref for ref in refs if ref.get(SEQUENCE) == sequence)
@@ -199,8 +200,7 @@ class TakesPackageService():
         """
         package = self.get_take_package(item)
         if package:
-            groups = package.get('groups', [])
-            refs = next((group.get('refs') for group in groups if group['id'] == 'main'), None)
+            refs = self.__get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
                             and ref.get(ITEM_REF, '') != item.get(config.ID_FIELD, '')), None)
@@ -208,3 +208,53 @@ class TakesPackageService():
                     return ref.get(ITEM_REF, None)
 
         return None
+
+    def __get_package_refs(self, package):
+        """
+        Get refs from the takes package
+        :param dict package: takes package
+        :return: return refs from the takes package. If not takes package or no refs found then None
+        """
+        refs = None
+        if package:
+            groups = package.get('groups', [])
+            refs = next((group.get('refs') for group in groups if group['id'] == MAIN_GROUP), None)
+
+        return refs
+
+    def can_publish_take(self, package, sequence):
+        """
+        Takes can be published only in ascending order. This function check that if there are any
+        unpublished takes before the current take.
+        :param dict package: takes packages
+        :param int sequence: take sequence of the published take
+        :return: True if takes are published in correct order else false.
+        """
+        refs = self.__get_package_refs(package)
+        if refs:
+            takes = [ref.get(ITEM_REF) for ref in refs if ref.get(SEQUENCE) < sequence]
+            # elastic filter for the archive resource filters out the published items
+            archive_service = get_resource_service('archive')
+            query = {'query': {'filtered': {'filter': {'terms': {'_id': takes}}}}}
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            items = archive_service.get(req=request, lookup=None)
+            return items.count() == 0
+
+        return True
+
+    def get_takes_in_take_package(self, takes_package_id):
+        """
+        Get all the published takes in the takes packages.
+        :param takes_package_id:
+        :return: List of publishes takes.
+        """
+        query = {'$and':
+                 [
+                     {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id},
+                     {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE_TYPE): TAKES_PACKAGE},
+                     {config.CONTENT_STATE: {'$in': ['published', 'corrected']}}
+                 ]}
+        request = ParsedRequest()
+        request.sort = SEQUENCE
+        return get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query)
