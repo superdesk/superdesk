@@ -69,7 +69,7 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
                 $scope.item.publish_schedule = datetimeHelper.mergeDateTime($scope.item.publish_schedule_date,
                     $scope.item.publish_schedule_time).format();
             } else {
-                $scope.item.publish_schedule = false;
+                $scope.item.publish_schedule = null;
             }
 
             $scope.autosave($scope.item);

@@ -26,6 +26,7 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
+from apps.archive.common import validate_schedule
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
@@ -87,8 +88,13 @@ class BasePublishService(BaseService):
             raise InvalidStateTransitionError()
 
         updated = original.copy()
-        updates.update(updates)
+        updated.update(updates)
         validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updated}
+
+        # validate the publish schedule
+        package = TakesPackageService().get_take_package(original) or {}
+        validate_schedule(updated.get('publish_schedule'),
+                          package.get(SEQUENCE, 1))
         validation_errors = get_resource_service('validate').post([validate_item])
 
         if validation_errors[0]:
@@ -496,7 +502,7 @@ class BasePublishService(BaseService):
                         for pub_seq_num, formatted_doc in formatted_docs:
                             publish_queue_item = dict()
                             publish_queue_item['item_id'] = doc['_id']
-                            publish_queue_item['item_version'] = doc[config.VERSION] + 1
+                            publish_queue_item['item_version'] = doc[config.VERSION]
                             publish_queue_item['formatted_item'] = formatted_doc
                             publish_queue_item['subscriber_id'] = subscriber['_id']
                             publish_queue_item['destination'] = destination

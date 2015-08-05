@@ -901,7 +901,7 @@
                 };
 
                 $scope.deschedule = function() {
-                    $scope.item.publish_schedule = false;
+                    $scope.item.publish_schedule = null;
                     return $scope.save();
                 };
 
@@ -1334,7 +1334,17 @@
                     return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
                 };
 
+                /**
+                 * Send the current item (take) to different desk or stage and create a new take.
+                 * If publish_schedule is set then the user cannot schedule the take.
+                 */
                 scope.sendAndContinue = function () {
+                    // cannot schedule takes.
+                    if (scope.item && scope.item.publish_schedule) {
+                        notify.error(gettext('Takes cannot be scheduled.'));
+                        return;
+                    }
+
                     var spellcheckErrors = spellcheck.countErrors();
                     if (spellcheckErrors > 0) {
                         confirm.confirmSpellcheck(spellcheckErrors)
@@ -1352,6 +1362,7 @@
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
                     var activeDeskId = desks.getCurrentDeskId();
+
                     scope.item.more_coming = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
@@ -1361,7 +1372,7 @@
                             notify.success(gettext('New take created.'));
                             $location.url('/authoring/' + item._id);
                         }, function(err) {
-                            notify.error('Failed to send and continue.');
+                            notify.error(gettext('Failed to send and continue.'));
                         });
                 }
 

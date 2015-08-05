@@ -421,7 +421,7 @@ Feature: Content Publishing
 
               },
               {
-                  "_current_version": 3,
+                  "_current_version": 2,
                   "state": "in_progress",
                   "type": "composite"
               }
@@ -1006,7 +1006,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 3,
+                  "_current_version": 2,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1099,7 +1099,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1327,7 +1327,7 @@ Feature: Content Publishing
                   "last_published_version": true
               },
               {
-                  "_current_version": 6,
+                  "_current_version": 5,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1367,7 +1367,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 4,
+                  "_current_version": 3,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1376,7 +1376,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 5,
+                  "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1385,7 +1385,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 6,
+                  "_current_version": 5,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1426,7 +1426,7 @@ Feature: Content Publishing
               },
               {
                   "_id": "#archive.123.take_package#",
-                  "_current_version": 7,
+                  "_current_version": 6,
                   "state": "killed",
                   "type": "composite",
                   "package_type": "takes",
@@ -1543,7 +1543,7 @@ Feature: Content Publishing
               "state" : "pending",
               "subscriber_id" : "#First_Wire_Subscriber#",
               "headline" : "Take-1 soccer headline",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
@@ -1552,7 +1552,7 @@ Feature: Content Publishing
               "state" : "pending",
               "subscriber_id" : "#Digital_Subscriber#",
               "headline" : "Take-1 soccer headline",
-              "item_version": 4
+              "item_version": 2
             }
           ]
       }
@@ -1580,28 +1580,28 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 4
+              "item_version": 3
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 4
+              "item_version": 2
             },
             {
               "item_id" : "#TAKE2#",
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 5
+              "item_version": 4
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 5
+              "item_version": 3
             }
           ]
       }
@@ -1618,6 +1618,20 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 3
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "published",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 2
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "published",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
               "item_version": 4
             },
             {
@@ -1625,35 +1639,21 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "composite",
               "subscriber_id" : "#Digital_Subscriber#",
+              "item_version": 3
+            },
+            {
+              "item_id" : "#TAKE2#",
+              "publishing_action" : "corrected",
+              "content_type" : "text",
+              "subscriber_id" : "#First_Wire_Subscriber#",
+              "item_version": 5
+            },
+            {
+              "item_id" : "#archive.123.take_package#",
+              "publishing_action" : "corrected",
+              "content_type" : "composite",
+              "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 4
-            },
-            {
-              "item_id" : "#TAKE2#",
-              "publishing_action" : "published",
-              "content_type" : "text",
-              "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 5
-            },
-            {
-              "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "published",
-              "content_type" : "composite",
-              "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 5
-            },
-            {
-              "item_id" : "#TAKE2#",
-              "publishing_action" : "corrected",
-              "content_type" : "text",
-              "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 6
-            },
-            {
-              "item_id" : "#archive.123.take_package#",
-              "publishing_action" : "corrected",
-              "content_type" : "composite",
-              "subscriber_id" : "#Digital_Subscriber#",
-              "item_version": 6
             }
           ]
       }
@@ -1741,7 +1741,7 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
-                  "_current_version": 5,
+                  "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
@@ -1798,7 +1798,7 @@ Feature: Content Publishing
       {"_issues": {"validator exception": "[['DATELINE is a required field']]"}, "_status": "ERR"}
       """
 
-   @auth
+    @auth
     @notification
     Scenario: Publish a composite item with a locked story
       Given empty "archive"
@@ -2096,3 +2096,83 @@ Feature: Content Publishing
       """
         {"_issues": {"validator exception": "[['ABSTRACT is a required field']]"}, "_status": "ERR"}
       """
+
+    @auth @vocabulary
+    Scenario: Takes cannot be scheduled.
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we get "/archive"
+      Then we get list with 3 items
+      When we patch "/archive/123"
+      """
+      {"publish_schedule": "2016-05-30T10:00:00+00:00"}
+      """
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"publish_schedule": "2016-05-30T10:00:00+00:00"}
+      """
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
+      """
+
