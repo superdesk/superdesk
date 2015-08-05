@@ -47,8 +47,9 @@
                 </div>
 
                 <div class="filter-tags" ng-repeat="filterRow in publishFilter.publish_filter">
-                    <div class="header">
-                        <label translate>Filter Statement <span>{{$index+1}}</span></label>
+                    <div class="flex-header">
+                        <div class="flex-header-name" translate>Filter Statement <span class="lighten-text">{{$index+1}}</span></div>
+                        <div class="flex-space"></div>
                         <a href="" class="close" ng-click="removeStatement($index)"><i class="icon-close-small"></i></a>
                     </div>
 
@@ -59,7 +60,7 @@
                                 <option value=""></option>
                                 <option value="{{filter._id}}" ng-repeat="filter in filterConditions track by filter._id">{{:: filter.name}}</option>
                             </select>
-                            <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'fc')"  translate>Add</button>
+                            <button class="btn" type="button" ng-click="addFilter(filterRow, 'fc')"  translate>Add</button>
                         </div>
                         <div class="row-50">
                             <label translate>Publish Filters</label>
@@ -67,21 +68,21 @@
                                 <option value=""></option>
                                 <option ng-if="filter._id!==publishFilter._id" value="{{filter._id}}" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
                             </select>
-                            <button class="btn btn-primary" type="button" ng-click="addFilter(filterRow, 'pf')" translate>Add</button>
+                            <button class="btn" type="button" ng-click="addFilter(filterRow, 'pf')" translate>Add</button>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="search-tags">
+                        <div class="inline-tag-list">
                             <ul>
                                 <li ng-repeat="filter in filterRow.expression.fc">
-                                    <div>
-                                        <span>FC:</span>{{filterConditionLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'fc')"><i class="icon-close-small icon-white"></i></button>
+                                    <div class="inline-tag">
+                                        <span>FC:</span>{{filterConditionLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'fc')"><i class="icon-close-small"></i></button>
                                     </div>
                                 </li>
                                 <li ng-repeat="filter in filterRow.expression.pf">
-                                    <div>
-                                        <span>PF:</span>{{publishFiltersLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'pf')"><i class="icon-close-small icon-white"></i></button>
+                                    <div class="inline-tag tag-darker">
+                                        <span>PF:</span>{{publishFiltersLookup[filter].name}}<button type="button" ng-click="removeFilter(filterRow, filter, 'pf')"><i class="icon-close-small"></i></button>
                                     </div>
                                 </li>
                             </ul>

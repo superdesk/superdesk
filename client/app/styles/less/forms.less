@@ -105,7 +105,7 @@ input[type="radio"] {
   width: auto;
   height: auto;
   padding: 0;
-  margin: 3px 0;
+  margin: 2px 0;
   display: inline-block;
   line-height: normal;
   cursor: pointer;
@@ -552,6 +552,14 @@ form, ng-form {
                       margin-left: 10px;
                   }
               }
+              &.inline-label {
+                color: #333;
+                text-transform: none;
+                font-size: 13px;
+                display: inline-block;
+                margin-right: 20px;
+                font-weight: 400;
+              }
         }
         .multiple {
             display: flex;
@@ -814,5 +822,67 @@ form.flat, .form-flat {
                 border-right: 1px solid #d1d1d1;
             }
         }
+    }
+}
+
+.flex-header {
+    display: flex;
+    height: 20px;
+    margin-bottom: 8px;
+    .line {
+        height: 1px;
+        margin: auto 4px auto 0;
+        background: #dcdcdc;
+        flex: 1;
+    }
+    .flex-space {
+        height: 1px;
+        margin: auto 4px auto 0;
+        background: transparent;
+        flex: 1;
+    }
+    .flex-header-toggle {
+        border: 0;
+        padding: 0;
+        margin: 0 5px 0;
+        display: flex;
+        background: transparent;
+        i {
+            -webkit-transition: all 0.2s ease;
+            -o-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+        &.closed {
+            i {
+              .rotate(-90deg);
+              margin: auto;
+            }
+        }
+    }
+    .flex-header-name {
+        padding: 0 8px 0 0;
+        margin: auto 0;
+        font-size: 12px;
+        line-height: 100%;
+        .text-semibold();
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        .lighten-text {
+            color: @gray;
+            .text-normal();
+        }
+    }
+    .flex-header-label {
+        box-sizing: border-box;
+        height: 16px;
+        margin: auto 0;
+        padding: 3px 6px 0;
+        .border-radius(8px);
+        color: @white;
+        background:#bbb;
+        font-size: 10px;
+        line-height: 100%;
+        letter-spacing: 0.06em;
+        .text-normal();
     }
 }

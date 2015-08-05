@@ -30,3 +30,53 @@
 .label-info { 
   background-color: darken(@sd-blue, 10%); 
 }
+
+// Tags
+.inline-tag-list {
+  .clearfix();
+  padding: 10px 0 0 0;
+  li {
+    float: left;
+    .inline-tag {
+      line-height: 26px;
+      .border-radius(2px);
+      padding: 0px 0px 0px 8px;
+      background: @label-light;
+      color: @grayDark;
+      margin: 0 5px 5px 0;
+      float: left;
+      &.tag-prime {
+        background: @sd-blue;
+        color: @white;
+      }
+      &.tag-darker {
+        background: @label-medium;
+      }
+      span {
+        font-weight: 500;
+        margin-right: 5px;
+        text-transform: uppercase;
+        .opacity(50);
+        }
+        button {
+          background: none;
+          border: 0;
+          float: right;
+          height: 26px;
+          margin-left: 5px; 
+          padding-left: 2px;
+          .border-radius(0 3px 3px 0);
+          i {
+            .opacity(30);
+            margin-top: -4px;
+            }
+          &:hover {
+            background: rgba(0, 0, 0, 0.1);
+            i {
+              .opacity(100);
+              }
+            }
+        }
+    }
+  }
+}
