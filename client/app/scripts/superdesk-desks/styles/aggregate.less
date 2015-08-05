@@ -59,9 +59,7 @@
         position: absolute;
         width: @search-widget-width;
         top: 0; left: 0; bottom: 0;
-
         .search-box {
-            position: absolute;
             display: flex;
             box-sizing: border-box;
             left: 0; right: 0; top: 0;
@@ -355,6 +353,9 @@
     }
 }
 .sd-widget.aggregate {
+    .content-list-holder .content-list {
+        padding: 0 5px;
+    }
     .preview.preview-widget {
         ul.nav {
             height: 35px;
