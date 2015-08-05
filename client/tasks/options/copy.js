@@ -8,7 +8,7 @@ module.exports = {
             src: [
                 'images/**/*',
                 'styles/css/*.css',
-                'scripts/**/*.{html,css,jpg,jpeg,png,gif,json}',
+                'scripts/**/*.{html,css,jpg,jpeg,png,gif,svg,json}',
                 'scripts/bower_components/requirejs/require.js'
             ]
         }]
@@ -20,7 +20,7 @@ module.exports = {
             cwd: '<%= appDir %>/docs',
             dest: '<%= distDir %>',
             src: [
-                'views/**/*.{html,css,jpg,jpeg,png,gif,json}'
+                'views/**/*.{html,css,jpg,jpeg,png,gif,svg,json}'
             ]
         },
         {
@@ -29,7 +29,7 @@ module.exports = {
             cwd: '<%= appDir %>',
             dest: '<%= distDir %>',
             src: [
-                'docs/images/**/*.{jpg,jpeg,png,gif}'
+                'docs/images/**/*.{jpg,jpeg,png,gif,svg}'
             ]
         }]
     },
