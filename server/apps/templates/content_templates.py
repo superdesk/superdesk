@@ -11,7 +11,7 @@
 import re
 from superdesk import Resource, Service
 from superdesk.errors import SuperdeskApiError
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
 

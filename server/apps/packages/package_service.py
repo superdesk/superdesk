@@ -17,7 +17,7 @@ from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE
+from superdesk.metadata.item import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE
 from apps.archive.common import ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, \
     ROOT_GROUP, insert_into_versions, SEQUENCE
 from apps.archive.archive import SOURCE as ARCHIVE

@@ -22,13 +22,12 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import SERVER_DOMAIN, OrganizationNameAbbreviation
 from superdesk import get_resource_service
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
+from superdesk.metadata.item import PACKAGE_TYPE, TAKES_PACKAGE, not_analyzed
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
-from apps.content import not_analyzed
 
 GUID_TAG = 'tag'
 GUID_FIELD = 'guid'

@@ -10,7 +10,7 @@
 
 
 import datetime
-from apps.content import ITEM_TYPE
+from superdesk.metadata.item import ITEM_TYPE
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging

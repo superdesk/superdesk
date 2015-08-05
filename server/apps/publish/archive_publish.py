@@ -16,7 +16,7 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
-from apps.content import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE
+from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk

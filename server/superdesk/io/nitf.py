@@ -15,7 +15,7 @@ from superdesk.io import Parser
 import xml.etree.ElementTree as etree
 from superdesk.errors import ParserError
 from superdesk.utc import utc
-from apps.content import CONTENT_TYPE, ITEM_TYPE
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE
 from superdesk.etree import get_word_count
 
 subject_fields = ('tobject.subject.type', 'tobject.subject.matter', 'tobject.subject.detail')

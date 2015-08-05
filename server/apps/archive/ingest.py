@@ -13,7 +13,7 @@ from superdesk.celery_app import update_key, set_key
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.workflow import set_default_state
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 from .common import extra_response_fields, item_url, aggregations, on_create_item, handle_existing_data
 from eve.defaults import resolve_default_values
 from eve.methods.common import resolve_document_etag
