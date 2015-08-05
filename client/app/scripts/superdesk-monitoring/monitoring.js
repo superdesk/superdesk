@@ -10,8 +10,7 @@
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
-        .config(configureSpikeMonitoring)
-        .config(configureHighlightsView);
+        .config(configureSpikeMonitoring);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {
@@ -32,18 +31,6 @@
                 label: gettext('Spike Monitoring'),
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/spike-monitoring.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
-            });
-    }
-
-    configureHighlightsView.$inject = ['superdeskProvider'];
-    function configureHighlightsView(superdesk) {
-        superdesk
-            .activity('/workspace/highlights-view', {
-                label: gettext('Highlights View'),
-                priority: 100,
-                templateUrl: 'scripts/superdesk-monitoring/views/highlights-view.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
             });
@@ -96,7 +83,7 @@
 
                 case 'highlights':
                     query.filter({and: [
-                        {term: {'highlights': queryParam.highlightId}}
+                        {term: {'highlights': queryParam.highlight}}
                     ]});
                     break;
 
@@ -127,7 +114,7 @@
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
 
-        this.queryParam = $location.search().data ? JSON.parse($location.search().data) : null;
+        this.queryParam = $location.search();
 
         this.edit = edit;
         this.editItem = null;

@@ -1,4 +1,4 @@
-<div id="highlightPackage" ng-if="hasHighlights" tooltip="{{ :: 'Create highlight' | translate }}" tooltip-placement="left"> 
+<div id="highlightPackage" ng-if="hasHighlights" tooltip="{{ :: 'Highlights' | translate }}" tooltip-placement="right"> 
     <button class="dropdown-toggle" dropdown-toggle><i class="svg-icon-create-list"></i></button>
     <ul class="dropdown-menu pull-left">
 		<li ng-repeat="h in highlights">
@@ -6,3 +6,4 @@
 		</li>
 	</ul>
 </div>
+<i ng-if="!hasHighlights" class="svg-icon-create-list" tooltip="{{ :: 'No highlights' | translate }}" tooltip-placement="right"></i>

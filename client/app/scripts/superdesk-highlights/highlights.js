@@ -270,10 +270,23 @@
                 });
 
                 scope.listHighlight = function(highlight) {
-                    var data = {highlightId: highlight._id, name: highlight.name};
-                    $location.url('workspace/highlights-view?data=' + encodeURIComponent(JSON.stringify(data)));
+                    $location.url('workspace/highlights?highlight=' + highlight._id);
                     $route.reload();
                 };
+            }
+        };
+    }
+
+    HighlightLabelDirective.$inject = ['desks', 'highlightsService'];
+    function HighlightLabelDirective(desks, highlightsService) {
+        return {
+            scope: {highlight_id: '=highlight'},
+            template: '<span translate>{{ highlightItem.name }}</span>',
+            replate: true,
+            link: function(scope) {
+                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                    scope.highlightItem =  _.find(result._items, {_id: scope.highlight_id});
+                });
             }
         };
     }
@@ -479,6 +492,7 @@
             }
         };
     })
+    .directive('sdHighlightLabel', HighlightLabelDirective)
     .config(['superdeskProvider', function(superdesk) {
         superdesk
         .activity('mark.item', {
@@ -501,6 +515,13 @@
             category: superdesk.MENU_SETTINGS,
             priority: -800,
             privileges: {highlights: 1}
+        }).
+        activity('/workspace/highlights', {
+            label: gettext('Highlights View'),
+            priority: 100,
+            templateUrl: 'scripts/superdesk-monitoring/views/highlights-view.html',
+            topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+            sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
         });
     }])
     .config(['apiProvider', function(apiProvider) {
