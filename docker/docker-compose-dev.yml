@@ -21,6 +21,8 @@ kibana:
     service: kibana
   links:
   - elastic
+  ports:
+  - "5601:5601"
 
 elastic:
   extends:
@@ -48,6 +50,7 @@ backend:
    - SUPERDESK_CLIENT_URL=http://localhost:9000
   volumes:
    - ../server:/opt/superdesk/
+   - ./Procfile:/opt/superdesk/Procfile
   ports:
    - "5000:5000"
    - "5100:5100"
