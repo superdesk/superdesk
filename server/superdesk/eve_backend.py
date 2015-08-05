@@ -12,10 +12,9 @@
 from flask import current_app as app
 from eve.utils import document_etag, config, ParsedRequest
 from superdesk.utc import utcnow
+from superdesk.logging import logger, item_msg
 from eve.methods.common import resolve_document_etag
-import logging
-
-logger = logging.getLogger(__name__)
+from elasticsearch.exceptions import RequestError
 
 
 class EveBackend():
@@ -25,10 +24,16 @@ class EveBackend():
         search_backend = self._lookup_backend(endpoint_name, fallback=True)
         if search_backend:
             item_search = search_backend.find_one(endpoint_name, req=req, **lookup)
-            if item is None:
+            if item is None and item_search:
                 item = item_search
-            elif item_search is None:
-                search_backend.insert(endpoint_name, [item])
+                logger.warn(item_msg('item is only in elastic', item))
+            elif item_search is None and item:
+                logger.warn(item_msg('item is only in mongo', item))
+                try:
+                    logger.info(item_msg('trying to add item to elastic', item))
+                    search_backend.insert(endpoint_name, [item])
+                except RequestError as e:
+                    logger.error(item_msg('failed to add item into elastic error={}'.format(str(e)), item))
         return item
 
     def get(self, endpoint_name, req, lookup):

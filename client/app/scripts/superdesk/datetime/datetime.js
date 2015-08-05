@@ -9,21 +9,21 @@ define([
     'use strict';
 
     function DateTimeDirective() {
-
-        function renderDate(date, elem) {
-            var momentDate = moment(date);
-            elem.html(momentDate.fromNow());
-            elem.attr('title', momentDate.format('LLLL'));
-        }
-
         return {
             scope: {date: '='},
             link: function datetimeLink(scope, elem) {
-                scope.$watch('date', function watchDate(date) {
-                    if (date) {
-                        renderDate(date, elem);
-                    }
-                });
+                scope.$watch('date', renderDate);
+
+                /**
+                 * Render relative date within given directive
+                 *
+                 * @param {string} date iso date
+                 */
+                function renderDate(date) {
+                    var momentDate = moment(date);
+                    elem.text(momentDate.fromNow());
+                    elem.attr('title', momentDate.format('LLLL'));
+                }
             }
         };
     }

@@ -1189,7 +1189,7 @@ define([
                         '$and': where
                     });
 
-                    api.activity.query(criteria).then(function (result) {
+                    api.query('activity', criteria).then(function (result) {
                         scope.log_messages = result._items;
                     });
                 }

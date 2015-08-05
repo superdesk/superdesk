@@ -1,23 +1,23 @@
 <div class="activity-log">
 	<ul class="activity-list card-list">
-		<li class="activity" ng-class="{'with-date': showDateHeader(activity)}" ng-repeat="activity in activities._items">
-			<div class="date" ng-show="showDateHeader(activity)"><span>{{ activity._created | reldate }}</span></div>
+		<li class="activity" ng-class="{'with-date': showDateHeader(activity)}" ng-repeat="activity in activities._items track by activity._id">
+			<div class="date" ng-show="showDateHeader(activity)"><span sd-datetime data-date="activity._created"></span></div>
             <div>
                 <figure class="avatar">
                     <img sd-user-avatar data-src="activity.user.picture_url">
                 </figure>
                 <span ng-if="activity.name != 'notify'">
                    	<div class="activity-content">
-                        <p><b>{{ activity.user.display_name || 'System' }} </b><span sd-activity-message data-activity="activity"></span></p>
+                        <p><b>{{ :: activity.user.display_name || activity.user.username || 'System' }}</b> <span sd-activity-message data-activity="activity"></span></p>
                     </div>
-                	<div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
+                	<div class="activity-date"><time sd-datetime data-date="activity._created"></time></div>
                 </span>
                 <span ng-if="activity.name == 'notify'">
                    	<div class="activity-content">
-                        <p><b>{{ activity.user.display_name }} </b>
-    			<span translate>commented on</span> <i><a ng-href="#/authoring/{{ activity.item.guid }}?_id={{ activity.item.guid }}&comments={{ activity.data.comment_id }}" title="{{ activity.item.headline }}">{{ activity.item.slugline || activity.item.headline }}</a></i>:<br>{{ activity.data.comment }}</p>		                        
+                        <p><b>{{ :: activity.user.display_name || activity.user.username }}</b>
+    		                <span translate>commented on</span> <i><a ng-href="#/authoring/{{ :: activity.item.guid }}?_id={{ :: activity.item.guid }}&comments={{ :: activity.data.comment_id }}" title="{{ :: activity.item.headline }}">{{ :: activity.item.slugline || activity.item.headline }}</a></i>:<br>{{ :: activity.data.comment }}</p>		                        
                     </div>
-                	<div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
+                	<div class="activity-date"><time sd-datetime date-date="activity._created"></time></div>
                 </span>
             </div>
         </li>
