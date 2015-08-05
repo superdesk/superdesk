@@ -12,16 +12,16 @@ from collections import namedtuple
 
 import superdesk
 from superdesk.resource import Resource
-
-LINKED_IN_PACKAGES = 'linked_in_packages'
-PACKAGE = 'package'
-PACKAGE_TYPE = 'package_type'
-TAKES_PACKAGE = 'takes'
-ITEM_TYPE = 'type'
-LAST_TAKE = 'last_take'
+from .packages import PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES, PACKAGE
 
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
-
+ITEM_TYPE = 'type'
+GUID_TAG = 'tag'
+GUID_FIELD = 'guid'
+GUID_NEWSML = 'newsml'
+INGEST_ID = 'ingest_id'
+FAMILY_ID = 'family_id'
+PUBLISH_STATES = ['published', 'killed', 'corrected', 'scheduled']
 pub_status = ['usable', 'withhold', 'canceled']
 PUB_STATUS = namedtuple('PUBSTATUS', ['USABLE', 'HOLD', 'CANCELED'])(*pub_status)
 content_type = ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', 'composite']

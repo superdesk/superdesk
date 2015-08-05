@@ -16,7 +16,8 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
-from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE
+from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD
+from superdesk.metadata.packages import SEQUENCE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
@@ -33,7 +34,7 @@ from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
-    set_sign_off, SEQUENCE, GUID_FIELD, item_operations, ITEM_OPERATION
+    set_sign_off, item_operations, ITEM_OPERATION
 from apps.packages import TakesPackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 

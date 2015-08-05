@@ -29,7 +29,8 @@ from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.media.renditions import generate_renditions
 from superdesk.io.iptc import subject_codes
-from apps.archive.common import generate_guid, GUID_NEWSML, GUID_FIELD, FAMILY_ID
+from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, FAMILY_ID
+from superdesk.metadata.utils import generate_guid
 from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
 
 

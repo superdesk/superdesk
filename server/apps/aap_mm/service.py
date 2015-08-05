@@ -14,7 +14,10 @@ import logging
 from eve.utils import config
 from flask import json
 from superdesk.errors import SuperdeskApiError, ProviderError
-from apps.archive.common import generate_guid, generate_unique_id_and_name, GUID_TAG, FAMILY_ID, INGEST_ID
+from apps.archive.common import generate_unique_id_and_name
+
+from superdesk.metadata.utils import generate_guid
+from superdesk.metadata.item import GUID_TAG, FAMILY_ID, INGEST_ID
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
 from apps.archive.archive import SOURCE as ARCHIVE

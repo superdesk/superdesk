@@ -4,8 +4,9 @@ from superdesk import get_resource_service
 from flask import current_app as app
 from apps.tasks import send_to
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.archive.common import generate_guid, GUID_TAG, generate_unique_id_and_name, FAMILY_ID, \
-    remove_unwanted, insert_into_versions
+from apps.archive.common import generate_unique_id_and_name, remove_unwanted, insert_into_versions
+from superdesk.metadata.item import GUID_TAG, FAMILY_ID
+from superdesk.metadata.utils import generate_guid
 
 
 class AppScaffoldDataCommand(superdesk.Command):
