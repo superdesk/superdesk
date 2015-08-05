@@ -86,15 +86,16 @@
 	z-index: @zindexDropdown;
 	float: left;
 	display: none; // none by default, but block on "open" of the menu
-	min-width: 160px;
-	padding: 10px;
+	min-width: 180px;
+	padding: 10px 0;
 	margin: 13px 0 0 0; // override default ul
 	list-style: none;
 	background-color: @dropdownBackground;
-	border: @dropdownBorder;
-	.box-shadow(0 3px 5px rgba(0,0,0,.2));
-	.border-radius(3px);
+	border: none;
+	box-shadow: 0 2px 10px rgba(0,0,0,.4),0 3px 1px -2px rgba(0,0,0,.1);
+	.border-radius(2px);
 	text-align: left;
+	box-sizing: border-box;
 
 	// Aligns the dropdown menu to right
 	&.pull-right {
@@ -125,10 +126,15 @@
 		> a, > button, > span {
 			color: @dropdownLinkColor;
 			background: none;
-			padding: 5px 7px;
+			padding: 6px 16px;
+			margin-bottom: 2px;
 			> i[class^="icon-"], i[class*=" icon-"] {
-				margin-right: 10px;
-				margin-top: -2px;
+				margin-right: 8px;
+				margin-top: -3px;
+				min-width: 19px;
+			}
+			i.icon-round {
+				min-width: 16px;
 			}
 			&.disabled, &[disabled] {
 				.opacity(50);
@@ -137,6 +143,8 @@
 		> a, > button {
 			&:hover {
 				background: @dropdownLinkBackgroundHover;
+				text-decoration: none;
+				cursor: pointer;
 			}
 			&.disabled:hover, &[disabled]:hover {
 				background: none;
@@ -167,7 +175,15 @@
 	.menu-label {
 		text-transform: uppercase;
 		font-size: 11px;
-		color: @gray;
+		color: @grayLight;
+		font-weight: 500;
+		padding-left: 16px;
+	}
+	.menu-header {
+		font-weight: 300;
+		font-size: 15px;
+		color: @grayLight;
+		padding-left: 16px;
 	}
 }
 
