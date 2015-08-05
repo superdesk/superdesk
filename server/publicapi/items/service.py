@@ -50,7 +50,7 @@ class ItemsService(BaseService):
         if req is None:
             req = ParsedRequest()
 
-        allowed_params = ('include_fields', 'exclude_fields')
+        allowed_params = {'include_fields', 'exclude_fields'}
         self._check_for_unknown_params(
             req, whitelist=allowed_params, allow_filtering=False)
 
@@ -72,10 +72,10 @@ class ItemsService(BaseService):
         if req is None:
             req = ParsedRequest()
 
-        allowed_params = (
-            'q', 'start_date', 'end_date', 'filter',
+        allowed_params = {
+            'q', 'start_date', 'end_date',
             'include_fields', 'exclude_fields'
-        )
+        }
         self._check_for_unknown_params(req, whitelist=allowed_params)
 
         request_params = req.args or {}
@@ -85,11 +85,6 @@ class ItemsService(BaseService):
         if 'q' in request_params:
             req.args['q'] = request_params['q']
             req.args['default_operator'] = 'OR'
-
-        # TODO: add validation for the "filter" parameter when we define its
-        # format and implement the corresponding actions
-        if 'filter' in request_params:
-            req.args['filters'] = [{'term': json.loads(request_params['filter'])}]
 
         # set the date range filter
         start_date, end_date = self._get_date_range(request_params)

@@ -162,8 +162,7 @@ class GetMethodTestCase(ItemsServiceTestCase):
 
         expected_whitelist = sorted([
             'start_date', 'end_date',
-            'exclude_fields', 'include_fields',
-            'q', 'filter'
+            'exclude_fields', 'include_fields', 'q',
         ])
 
         whitelist_arg = kwargs.get('whitelist')
@@ -216,21 +215,6 @@ class GetMethodTestCase(ItemsServiceTestCase):
         args, _ = fake_super_get.call_args
         self.assertEqual(len(args), 2)
         self.assertIsInstance(args[0], ParsedRequest)
-
-    def test_sets_query_filter_on_request_object_if_present(self):
-        request = MagicMock()
-        request.args = MultiDict([('filter', '{"language": "de"}')])
-        lookup = {}
-
-        instance = self._make_one()
-        instance.get(request, lookup)
-
-        self.assertTrue(fake_super_get.called)
-        args, _ = fake_super_get.call_args
-        self.assertGreater(len(args), 0)
-
-        query_filter = args[0].args['filters'][0]
-        self.assertEqual(query_filter.get('term', {}).get('language'), 'de')
 
     def test_raises_correct_error_on_invalid_start_date_parameter(self):
         request = MagicMock()
