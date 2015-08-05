@@ -32,7 +32,7 @@ class PublicAPIPublishService(PublishService):
         try:
             item = json.loads(queue_item['formatted_item'])
             self._fix_dates(item)
-            self._process_renditions(item)
+            self._copy_published_media_files(item)
 
             if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 public_api_service = get_resource_service('publish_packages')
@@ -57,18 +57,12 @@ class PublicAPIPublishService(PublishService):
                 except:
                     pass
 
-    def _process_renditions(self, item):
-        if 'renditions' in item:
-            # Original source is used when we want to deliver links from external systems
-            original_source = {k: v for k, v in item['renditions'].items()
-                               if k == 'original_source'}
-            if any(original_source.keys()):
-                item['renditions'] = original_source
-            else:
-                self._copy_published_media_files(item)
-
     def _copy_published_media_files(self, item):
-        for k, v in item['renditions'].items():
+        for k, v in item.get('renditions', {}).items():
+            if k == 'original_source':
+                # if the source is AAP Multimedia then don't copy
+                continue
+
             del v['href']
             if not app.media.exists(v['media'], resource='publish_items'):
                 img = app.media.get(v['media'], resource='upload')
