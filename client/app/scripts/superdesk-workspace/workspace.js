@@ -32,18 +32,18 @@
         function _delete(workspace) {
             return api.remove(workspace)
             .then(function() {
-                if (self.active && self.active._id === workspace._id) {
-                    return self.queryUserWorkspaces()
-                    .then(function(items) {
-                        if (items && items.length) {
-                            self.setActive(items[0]);
-                        } else {
-                            self.setActive(null);
-                        }
-                        self.getActive();
-                    });
+                if (!self.active || self.active._id !== workspace._id) {
+                    return $q.when();
                 }
-                return $q.when();
+                return self.queryUserWorkspaces();
+            })
+            .then(function(items) {
+                if (items && items.length) {
+                    self.setActive(items[0]);
+                } else {
+                    self.setActive(null);
+                }
+                self.getActive();
             });
         }
 
@@ -173,6 +173,7 @@
             templateUrl: 'scripts/superdesk-workspace/views/workspace-dropdown.html',
             link: function(scope) {
                 scope.workspaces = workspaces;
+                scope.wsList = null;
                 scope.edited = null;
 
                 scope.afterSave = function(workspace) {
@@ -207,26 +208,28 @@
 
                 // init
                 function initialize() {
-                    workspaces.getActiveId().then(function(activeId) {
-                        desks.initialize().then(function() {
-                            desks.fetchCurrentUserDesks().then(function(userDesks) {
-                                scope.desks = userDesks._items;
-                                if (!activeId) {
-                                    scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
-                                }
-                            });
-                        });
-
-                        workspaces.queryUserWorkspaces().then(function(_workspaces) {
-                            scope.workspaces = _workspaces;
-                            if (activeId) {
-                                scope.selected = _.find(scope.workspaces, {_id: activeId});
-                            }
-                        });
+                    var activeId = null;
+                    workspaces.getActiveId()
+                    .then(function(id) {
+                        activeId = id;
+                    })
+                    .then(angular.bind(desks, desks.initialize))
+                    .then(angular.bind(desks, desks.fetchCurrentUserDesks))
+                    .then(function(userDesks) {
+                        scope.desks = userDesks._items;
+                        if (!activeId) {
+                            scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
+                        }
+                    })
+                    .then(workspaces.queryUserWorkspaces)
+                    .then(function(_workspaces) {
+                        scope.wsList = _workspaces;
+                        if (activeId) {
+                            scope.selected = _.find(scope.workspaces, {_id: activeId});
+                        }
                     });
                 }
 
-                //initialize();
                 scope.$watch(function() {
                     return workspaces.active;
                 }, initialize, true);

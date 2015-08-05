@@ -73,6 +73,9 @@ define([
             });
         }
 
+        /*
+         * Saves current workspace
+         */
         this.save = function() {
             this.edit = false;
             var diff = angular.extend({}, this.current);
@@ -80,6 +83,9 @@ define([
             api.save('workspaces', this.current, diff);
         };
 
+        /*
+         * Confirms and deletes current workspace
+         */
         this.delete = function() {
             modal.confirm(
                 gettext('Are you sure you want to delete current workspace?')
@@ -89,10 +95,16 @@ define([
             });
         };
 
+        /*
+         * Enables editing current workspace
+         */
         this.rename = function() {
             $scope.edited = angular.copy(vm.current);
         };
 
+        /*
+         * Updates workspaces after editing
+         */
         this.afterRename = function() {
             workspaces.getActive();
         };

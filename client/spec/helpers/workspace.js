@@ -56,7 +56,7 @@ function Workspace() {
             .then(clickFiltered);
 
         // then try to open custom workspace
-        dropdownMenu.all(by.repeater('workspace in workspaces'))
+        dropdownMenu.all(by.repeater('workspace in wsList'))
             .filter(textFilter)
             .then(clickFiltered);
 
