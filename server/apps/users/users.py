@@ -130,9 +130,8 @@ class UsersResource(Resource):
     etag_ignore_fields = ['session_preferences', '_etag']
 
     datasource = {
-        'projection': {
-            'password': 0
-        }
+        'projection': {'password': 0},
+        'default_sort': [('username', 1)],
     }
 
     privileges = {'POST': 'users', 'DELETE': 'users', 'PATCH': 'users'}

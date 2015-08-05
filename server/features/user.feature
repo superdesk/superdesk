@@ -72,6 +72,10 @@ Feature: User Resource
         """
         When we get "/users"
         Then we get list with +2 items
+        And we get users
+        """
+        ["bar", "foo"]
+        """
 
     @auth @test
     Scenario: Fetch single user
