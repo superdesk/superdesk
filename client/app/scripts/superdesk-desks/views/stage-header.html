@@ -1,15 +1,19 @@
-
-<div class="stage-header">
-    <button class="toggle" ng-class="{closed: !agg.getExpendedState(group._id)}" ng-click="agg.switchExpandedState(group._id)">
+<div class="stage-header clearfix">
+    <span class="stage-name pull-left">
+        <a href="" ng-show="agg.state.solo._id !== group._id" ng-click="agg.setSoloGroup(group)">
+            {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} {{ :: group.type}}</span>
+        </a>
+        <a href="" ng-click="agg.setSoloGroup()" ng-show="agg.state.solo._id === group._id">
+            <i class="backlink"></i>
+            {{ :: group.header }} <span ng-show="group.subheader">/ {{ :: group.subheader }} {{ :: group.type}}</span>
+        </a>
+    </span>
+    <span class="label label-total">{{ total}}</span>
+    <div class="line" ng-if="agg.state.solo._id !== group._id"></div>
+    <button class="toggle pull-right" 
+            ng-if="agg.state.solo._id !== group._id"
+            ng-class="{closed: !agg.getExpandedState(group._id)}" 
+            ng-click="agg.switchExpandedState(group._id)">
         <i class="icon-chevron-down-thin"></i>
     </button>
-    <div class="stage-name">
-        {{ :: group.header }} <span ng-if="group.subheader"> / {{ :: group.subheader }} {{ :: group.type }}</span>
-    </div>
-    <div class="line"></div>
-    <span class="label">{{ total }}</span>
-    <span>
-        <a href="" ng-show="agg.state.solo._id !== group._id" ng-click="agg.setSoloGroup(group)" translate>Solo</a>
-        <a href="" ng-show="agg.state.solo._id === group._id" ng-click="agg.setSoloGroup()" translate>Back</a>
-    </span>
 </div>

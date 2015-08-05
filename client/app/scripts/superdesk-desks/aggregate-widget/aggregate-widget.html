@@ -7,39 +7,44 @@
                    ng-change="agg.search(query)">
         </div>
         
-        <div class="content-list" ng-if="!agg.state.solo">
-            <div class="desk" ng-repeat="group in agg.cards track by group._id">
-                <div class="stage" ng-show="total">
-                    <div sd-stage-header></div>
-                    <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" ng-show="agg.getExpandedState(group._id)"
-                        sd-stage-items
-                        data-stage="group"
-                        data-total="total"
-                        data-allowed="true"
-                        data-show-empty="false"
-                        data-max-items="group.max_items"
-                        data-action="agg.preview(item)"
-                        data-selected="agg.selected"
-                        data-filter="agg.query">
+        <div class="content-list-holder">
+            <div sd-shadow>
+                <div class="content-list" ng-if="!agg.state.solo">
+                    <div class="desk" ng-repeat="group in agg.cards track by group._id">
+                        <div class="stage" ng-show="total">
+                            <div sd-stage-header></div>
+                            <div class="stage-content" ng-style="agg.getMaxHeightStyle(group.max_items)" 
+                                 ng-show="agg.getExpandedState(group._id) || agg.state.solo"
+                                 sd-stage-items
+                                 data-stage="group"
+                                 data-total="total"
+                                 data-allowed="true"
+                                 data-show-empty="false"
+                                 data-max-items="group.max_items"
+                                 data-action="agg.preview(item)"
+                                 data-selected="agg.selected"
+                                 data-filter="agg.query">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="content-list" ng-if="agg.state.solo">
-            <div class="desk" ng-init="group = agg.state.solo">
-                <div class="stage" ng-show="total">
-                    <div sd-stage-header></div>
-                    <div class="stage-content" ng-show="agg.getExpandedState(group._id)"
-                        sd-stage-items
-                        data-stage="group"
-                        data-total="total"
-                        data-allowed="true"
-                        data-show-empty="false"
-                        data-max-items="100"
-                        data-action="agg.preview(item)"
-                        data-selected="agg.selected"
-                        data-filter="agg.query">
+                <div class="content-list" ng-if="agg.state.solo">
+                    <div class="desk" ng-init="group = agg.state.solo">
+                        <div class="stage" ng-show="total">
+                            <div sd-stage-header></div>
+                            <div class="stage-content" ng-show="agg.getExpandedState(group._id) || agg.state.solo"
+                                 sd-stage-items
+                                 data-stage="group"
+                                 data-total="total"
+                                 data-allowed="true"
+                                 data-show-empty="false"
+                                 data-max-items="100"
+                                 data-action="agg.preview(item)"
+                                 data-selected="agg.selected"
+                                 data-filter="agg.query">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
