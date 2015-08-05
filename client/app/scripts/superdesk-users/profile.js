@@ -4,6 +4,16 @@
     ProfileService.$inject = ['api'];
     function ProfileService(api) {
 
+        var RESOURCE = 'activity';
+
+        /**
+         * Get all activity of single user, being it content related or not
+         *
+         * @param {Object} user
+         * @param {number} maxResults
+         * @param {number} page
+         * @return {Promise}
+         */
         this.getUserActivity = function(user, maxResults, page) {
             var q = {
                 where: {user: user._id},
@@ -19,12 +29,22 @@
                 q.page = page;
             }
 
-            return api.activity.query(q);
+            return api.query(RESOURCE, q);
         };
 
-        this.getUserActivityFiltered = function(maxResults, page) {
+        /**
+         * Get activity of all users related to content
+         *
+         * This will return activity like item created/updated, but not user.updated.
+         *
+         * @param {number} maxResults
+         * @param {number} page
+         * @return {Promise}
+         */
+        this.getAllUsersActivity = function(maxResults, page) {
             var q = {
                 sort: '[(\'_created\',-1)]',
+                where: {user: {$exists: true}, item: {$exists: true}},
                 embedded: {user: 1, item: 1}
             };
 
@@ -36,20 +56,13 @@
                 q.page = page;
             }
 
-            return api.activity.query(q);
+            return api.query(RESOURCE, q);
         };
     }
 
     angular.module('superdesk.users.profile', ['superdesk.api', 'superdesk.users'])
 
         .service('profileService', ProfileService)
-
-        .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('activity', {
-                type: 'http',
-                backend: {rel: 'activity'}
-            });
-        }])
 
         .config(['superdeskProvider', 'assetProvider', function(superdeskProvider, asset) {
             superdeskProvider.activity('/profile/', {

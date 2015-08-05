@@ -25,14 +25,14 @@
 
             function refresh(config) {
                 current_config = config;
-                profileService.getUserActivityFiltered(config.maxItems).then(function(list) {
+                profileService.getAllUsersActivity(config.maxItems).then(function(list) {
                     $scope.activityFeed = list;
                     $scope.max_results = parseInt(config.maxItems, 10);
                 });
 
                 $scope.loadMore = function() {
                     page++;
-                    profileService.getUserActivityFiltered(config.maxItems, page).then(function(next) {
+                    profileService.getAllUsersActivity(config.maxItems, page).then(function(next) {
                         Array.prototype.push.apply($scope.activityFeed._items, next._items);
                         $scope.activityFeed._links = next._links;
                         $scope.max_results += parseInt(config.maxItems, 10);
