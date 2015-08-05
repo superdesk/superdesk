@@ -15,9 +15,11 @@ from apps.tasks import send_to
 import superdesk
 
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.archive.common import item_url, generate_guid, GUID_TAG, generate_unique_id_and_name, INGEST_ID, FAMILY_ID, \
-    remove_unwanted, set_original_creator, insert_into_versions, ITEM_OPERATION,\
-    item_operations
+from apps.archive.common import item_url, generate_unique_id_and_name, remove_unwanted, \
+    set_original_creator, insert_into_versions, ITEM_OPERATION, item_operations
+
+from superdesk.metadata.utils import generate_guid
+from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.resource import Resource, build_custom_hateoas

@@ -19,7 +19,7 @@ from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 import superdesk
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from apps.archive.archive import get_subject

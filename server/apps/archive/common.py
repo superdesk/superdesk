@@ -10,7 +10,6 @@
 
 
 from datetime import datetime
-from uuid import uuid4
 
 from eve.utils import config
 import flask
@@ -20,28 +19,17 @@ from pytz import timezone
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
-from settings import SERVER_DOMAIN, OrganizationNameAbbreviation
+from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.content import PACKAGE_TYPE, TAKES_PACKAGE
+from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, GUID_TAG, not_analyzed
+from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, SEQUENCE
+from superdesk.metadata.utils import generate_guid
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
-from apps.content import not_analyzed
 
-GUID_TAG = 'tag'
-GUID_FIELD = 'guid'
-GUID_NEWSML = 'newsml'
-FAMILY_ID = 'family_id'
-INGEST_ID = 'ingest_id'
-ASSOCIATIONS = 'refs'
-ITEM_REF = 'residRef'
-ID_REF = 'idRef'
-MAIN_GROUP = 'main'
-ROOT_GROUP = 'root'
-SEQUENCE = 'sequence'
-PUBLISH_STATES = ['published', 'killed', 'corrected', 'scheduled']
 CUSTOM_HATEOAS = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
 ITEM_OPERATION = 'operation'
 ITEM_CREATE = 'create'
@@ -131,23 +119,6 @@ def on_duplicate_item(doc):
 def update_dates_for(doc):
     for item in ['firstcreated', 'versioncreated']:
         doc.setdefault(item, utcnow())
-
-
-def generate_guid(**hints):
-    """Generate a GUID based on given hints"""
-    newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
-    tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
-
-    if not hints.get('id'):
-        hints['id'] = str(uuid4())
-
-    t = datetime.today()
-
-    if hints['type'].lower() == GUID_TAG:
-        return tag_guid_format % {'domain': SERVER_DOMAIN, 'year': t.year, 'identifier': hints['id']}
-    elif hints['type'].lower() == GUID_NEWSML:
-        return newsml_guid_format % {'domain': SERVER_DOMAIN, 'timestamp': t.isoformat(), 'identifier': hints['id']}
-    return None
 
 
 def get_user(required=False):

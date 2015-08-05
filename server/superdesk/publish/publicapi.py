@@ -10,7 +10,7 @@
 
 import json
 
-from apps.content import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk import get_resource_service, config, app
 from superdesk.errors import PublishPublicAPIError
 from superdesk.publish import register_transmitter

@@ -12,7 +12,7 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
-from apps.content import metadata_schema
+from superdesk.metadata.item import metadata_schema
 
 
 def init_app(app):

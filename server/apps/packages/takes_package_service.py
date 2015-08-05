@@ -14,9 +14,10 @@ from eve.versioning import resolve_document_version
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.content import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, ITEM_TYPE, \
-    PACKAGE, LAST_TAKE, CONTENT_TYPE
-from apps.archive.common import ASSOCIATIONS, MAIN_GROUP, SEQUENCE, PUBLISH_STATES, ITEM_REF, insert_into_versions
+from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
+    LAST_TAKE, ASSOCIATIONS, MAIN_GROUP, SEQUENCE, ITEM_REF
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES
+from apps.archive.common import insert_into_versions
 from .package_service import get_item_ref, create_root_group
 
 logger = logging.getLogger(__name__)

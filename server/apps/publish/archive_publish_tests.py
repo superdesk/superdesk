@@ -28,7 +28,7 @@ from superdesk import get_resource_service
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from settings import URL_PREFIX
-from apps.content import TAKES_PACKAGE, PACKAGE_TYPE
+from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 
