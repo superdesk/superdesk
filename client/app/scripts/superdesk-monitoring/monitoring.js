@@ -142,7 +142,8 @@
             controller: 'Monitoring',
             controllerAs: 'monitoring',
             scope: {
-                type: '='
+                type: '=',
+                state: '='
             }
         };
     }
