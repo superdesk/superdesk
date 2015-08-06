@@ -9,23 +9,22 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-import superdesk
 import logging
+
 from eve.utils import config
 from flask import json
+
+import superdesk
 from superdesk.errors import SuperdeskApiError, ProviderError
 from apps.archive.common import generate_unique_id_and_name
-
 from superdesk.metadata.utils import generate_guid
-from superdesk.metadata.item import GUID_TAG, FAMILY_ID, INGEST_ID
+from superdesk.metadata.item import GUID_TAG, FAMILY_ID, INGEST_ID, ITEM_STATE, CONTENT_STATE
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk import get_resource_service
 
 logger = logging.getLogger(__name__)
-
-STATE_FETCHED = 'fetched'
 
 
 class AapMMService(superdesk.Service):
@@ -55,7 +54,7 @@ class AapMMService(superdesk.Service):
 
             dest_doc[config.VERSION] = 1
             send_to(doc=dest_doc, update=None, desk_id=doc.get('desk'), stage_id=doc.get('stage'))
-            dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
+            dest_doc[ITEM_STATE] = doc.get(ITEM_STATE, CONTENT_STATE.FETCHED)
             dest_doc[INGEST_ID] = archived_doc['_id']
             dest_doc[FAMILY_ID] = archived_doc['_id']
             remove_unwanted(dest_doc)

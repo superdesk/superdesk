@@ -47,7 +47,6 @@ def get_app(config=None):
         config = {}
 
     config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
-    config['CONTENT_STATE'] = 'state'
 
     for key in dir(settings):
         if key.isupper():

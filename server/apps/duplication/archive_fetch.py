@@ -10,16 +10,14 @@
 
 from eve.utils import config
 from flask import request
+
 from apps.tasks import send_to
-
 import superdesk
-
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.archive.common import item_url, generate_unique_id_and_name, remove_unwanted, \
     set_original_creator, insert_into_versions, ITEM_OPERATION, item_operations
-
 from superdesk.metadata.utils import generate_guid
-from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID
+from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID, ITEM_STATE, CONTENT_STATE
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.resource import Resource, build_custom_hateoas
@@ -73,7 +71,7 @@ class FetchService(BaseService):
                 raise SuperdeskApiError.notFoundError('Fail to found ingest item with _id: %s' %
                                                       id_of_item_to_be_fetched)
 
-            if not is_workflow_state_transition_valid('fetch_from_ingest', ingest_doc[config.CONTENT_STATE]):
+            if not is_workflow_state_transition_valid('fetch_from_ingest', ingest_doc[ITEM_STATE]):
                 raise InvalidStateTransitionError()
 
             if doc.get('macro'):  # there is a macro so transform it
@@ -91,14 +89,14 @@ class FetchService(BaseService):
 
             dest_doc[config.VERSION] = 1
             send_to(doc=dest_doc, desk_id=desk_id, stage_id=stage_id)
-            dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
+            dest_doc[ITEM_STATE] = doc.get(ITEM_STATE, CONTENT_STATE.FETCHED)
             dest_doc[INGEST_ID] = dest_doc[FAMILY_ID] = ingest_doc['_id']
             dest_doc[ITEM_OPERATION] = ITEM_FETCH
 
             remove_unwanted(dest_doc)
             set_original_creator(dest_doc)
             self.__fetch_items_in_package(dest_doc, desk_id, stage_id,
-                                          doc.get('state', STATE_FETCHED))
+                                          doc.get(ITEM_STATE, CONTENT_STATE.FETCHED))
 
             get_resource_service(ARCHIVE).post([dest_doc])
             insert_into_versions(doc=dest_doc)

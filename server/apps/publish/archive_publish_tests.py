@@ -15,10 +15,10 @@ import json
 
 from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
+
 from apps.archive.common import insert_into_versions
 from apps.publish.archive_publish import ArchivePublishService
 from apps.publish.subscribers import SUBSCRIBER_TYPES
-
 from apps.validators import ValidatorsPopulateCommand
 from superdesk.tests import TestCase
 from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
@@ -28,7 +28,7 @@ from superdesk import get_resource_service
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from settings import URL_PREFIX
-from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE
+from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 
@@ -384,7 +384,7 @@ class ArchivePublishTestCase(TestCase):
             published_doc = get_resource_service('archive').find_one(req=None, _id=doc['_id'])
             self.assertIsNotNone(published_doc)
             self.assertEqual(published_doc[config.VERSION], doc[config.VERSION] + 1)
-            self.assertEqual(published_doc[config.CONTENT_STATE], ArchivePublishService().published_state)
+            self.assertEqual(published_doc[ITEM_STATE], ArchivePublishService().published_state)
 
     def test_queue_transmission(self):
         with self.app.app_context():
@@ -509,7 +509,7 @@ class ArchivePublishTestCase(TestCase):
         with self.app.app_context():
             published_service = get_resource_service('published')
             original = self.articles[1].copy()
-            original[config.CONTENT_STATE] = 'scheduled'
+            original[ITEM_STATE] = CONTENT_STATE.SCHEDULED
 
             published_service.post([original])
             published_items = published_service.get_other_published_items(original['item_id'])
@@ -548,7 +548,7 @@ class ArchivePublishTestCase(TestCase):
             text_archive = get_resource_service('text_archive')
 
             published = self.articles[2].copy()
-            published[config.CONTENT_STATE] = 'published'
+            published[ITEM_STATE] = CONTENT_STATE.PUBLISHED
 
             get_resource_service('archive_publish').queue_transmission(published, self.subscribers)
             published_service.post([published])
@@ -586,7 +586,7 @@ class ArchivePublishTestCase(TestCase):
 
             published_version_number = original[config.VERSION] + 1
             get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD],
-                                                          updates={config.CONTENT_STATE: 'published',
+                                                          updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
                                                                    config.VERSION: published_version_number})
 
             published_items = published_service.get_other_published_items(original[config.ID_FIELD])
@@ -594,7 +594,7 @@ class ArchivePublishTestCase(TestCase):
 
             article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
             self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[config.CONTENT_STATE], 'published')
+            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
             self.assertEqual(article_in_production[config.VERSION], published_version_number)
             insert_into_versions(doc=article_in_production)
 
@@ -606,7 +606,7 @@ class ArchivePublishTestCase(TestCase):
             # service directly
             published_version_number += 1
             get_resource_service('archive_kill').patch(id=doc['_id'],
-                                                       updates={config.CONTENT_STATE: 'killed',
+                                                       updates={ITEM_STATE: CONTENT_STATE.KILLED,
                                                                 config.VERSION: published_version_number})
 
             # Executing the Expiry Job for the Published Article and asserting the collections
@@ -620,7 +620,7 @@ class ArchivePublishTestCase(TestCase):
 
             article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
             self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[config.CONTENT_STATE], 'killed')
+            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.KILLED)
             self.assertEqual(article_in_production[config.VERSION], published_version_number)
             insert_into_versions(doc=article_in_production)
 
@@ -629,7 +629,7 @@ class ArchivePublishTestCase(TestCase):
                 self._get_legal_archive_details(original[config.ID_FIELD])
 
             self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
-            self.assertEqual(article_in_legal_archive[config.CONTENT_STATE], 'published')
+            self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.PUBLISHED)
 
             self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
             self.assertEqual(article_versions_in_legal_archive.count(), 5)
@@ -831,12 +831,12 @@ class ArchivePublishTestCase(TestCase):
 
             published_version_number = original[config.VERSION] + 1
             get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD],
-                                                          updates={config.CONTENT_STATE: 'published',
+                                                          updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
                                                                    config.VERSION: published_version_number})
 
             article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
             self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[config.CONTENT_STATE], 'published')
+            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
             self.assertEqual(article_in_production[config.VERSION], published_version_number)
 
             lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
