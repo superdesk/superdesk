@@ -468,21 +468,8 @@
     }
 
     angular.module('superdesk.aggregate', ['superdesk.authoring.widgets', 'superdesk.desks'])
-    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-        authoringWidgetsProvider
-        .widget('aggregate', {
-            icon: 'view',
-            label: gettext('Aggregate'),
-            template: 'scripts/superdesk-desks/views/aggregate.html',
-            order: 1,
-            side: 'left',
-            extended: true,
-            display: {authoring: true, packages: false}
-        });
-    }])
     .controller('AggregateCtrl', AggregateCtrl)
     .directive('sdAggregateSettings', AggregateSettingsDirective)
-    .directive('sdSortGroups', SortGroupsDirective)
-    ;
+    .directive('sdSortGroups', SortGroupsDirective);
 
 })();

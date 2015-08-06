@@ -25,16 +25,6 @@ define([
                 description: 'Ingest widget'
             });
         }])
-        .config(['authoringWidgetsProvider', function(authoringWidgets) {
-            authoringWidgets.widget('ingest', {
-                label: gettext('Ingest'),
-                icon: 'ingest',
-                template: require.toUrl('./widget-ingest.html'),
-                order: 2,
-                side: 'left',
-                display: {authoring: true, packages: false}
-            });
-        }])
         .controller('IngestController', ['$scope', 'api', 'BaseWidgetController',
         function ($scope, api, BaseWidgetController) {
             $scope.type = 'ingestWidget';
