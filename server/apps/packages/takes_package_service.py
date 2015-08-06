@@ -130,6 +130,12 @@ class TakesPackageService():
         archive_service = get_resource_service(ARCHIVE)
         takes_package = archive_service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
 
+        if not takes_package:
+            # setting the sequence to 1 for target.
+            updates = {SEQUENCE: 1}
+            resolve_document_version(updates, ARCHIVE, 'PATCH', target)
+            archive_service.patch(target.get(config.ID_FIELD), updates)
+
         if not link.get('_id'):
             self.__copy_metadata__(target, link, takes_package)
             archive_service.post([link])
@@ -155,13 +161,11 @@ class TakesPackageService():
         if the item is not the last item then raise exception
         :param dict doc: take of a package
         """
-        if doc and doc.get(LINKED_IN_PACKAGES):
-            package_id = self.get_take_package_id(doc)
-            if package_id:
-                takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
-                if LAST_TAKE not in takes_package:
-                    return True
-                return takes_package[LAST_TAKE] == doc['_id']
+        takes_package = self.get_take_package(doc)
+        if takes_package:
+            if LAST_TAKE not in takes_package:
+                return True
+            return takes_package[LAST_TAKE] == doc['_id']
 
         return True
 
@@ -243,18 +247,23 @@ class TakesPackageService():
 
         return True
 
-    def get_takes_in_take_package(self, takes_package_id):
+    def get_takes_in_take_package(self, takes_package):
         """
         Get all the published takes in the takes packages.
-        :param takes_package_id:
+        :param takes_package: takes package
         :return: List of publishes takes.
         """
+        refs = self.__get_package_refs(takes_package)
+        if not refs:
+            return []
+
+        takes = [ref.get(ITEM_REF) for ref in refs]
+
         query = {'$and':
                  [
-                     {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE): takes_package_id},
-                     {'{}.{}'.format(LINKED_IN_PACKAGES, PACKAGE_TYPE): TAKES_PACKAGE},
+                     {config.ID_FIELD: {'$in': takes}},
                      {config.CONTENT_STATE: {'$in': ['published', 'corrected']}}
                  ]}
         request = ParsedRequest()
         request.sort = SEQUENCE
-        return get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query)
+        return list(get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query))

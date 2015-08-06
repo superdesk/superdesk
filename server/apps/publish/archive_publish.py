@@ -288,7 +288,7 @@ class BasePublishService(BaseService):
         """
 
         package = super().find_one(req=None, _id=package_id)
-        takes = list(self.takes_package_service.get_takes_in_take_package(package_id))
+        takes = self.takes_package_service.get_takes_in_take_package(package)
         body_html = updates_of_take_to_be_published.get('body_html', original_of_take_to_be_published['body_html'])
         package_updates = {}
 
