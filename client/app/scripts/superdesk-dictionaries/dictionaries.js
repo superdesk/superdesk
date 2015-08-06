@@ -142,7 +142,7 @@
         function addWordToUserDictionary(word, lang) {
             return getUserDictionary(lang).then(function(userDict) {
                 var words = userDict.content || {};
-                words[word] = words[word] ? words[word] + 1 : 1;
+                words[word.toLowerCase()] = words[word.toLowerCase()] ? words[word.toLowerCase()] + 1 : 1;
                 userDict.content = words;
                 return api.save('dictionaries', userDict);
             });
