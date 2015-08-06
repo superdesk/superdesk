@@ -254,16 +254,17 @@
         };
     }
 
-    PackageHighlightsDropdownDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location', '$route'];
-    function PackageHighlightsDropdownDirective(superdesk, desks, highlightsService, $location, $route) {
+    PackageHighlightsDropdownDirective.$inject = ['desks', 'highlightsService', '$location', '$route'];
+    function PackageHighlightsDropdownDirective(desks, highlightsService, $location, $route) {
         return {
+            scope: true,
             templateUrl: 'scripts/superdesk-highlights/views/package_highlights_dropdown_directive.html',
             link: function(scope) {
                 scope.$watch(function() {
                     return desks.active;
                 }, function(active) {
                     scope.selected = active;
-                    highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                    highlightsService.get(active.desk).then(function(result) {
                         scope.highlights = result._items;
                         scope.hasHighlights = _.size(scope.highlights) > 0;
                     });
@@ -301,15 +302,16 @@
                 var authoring = ctrls[0];
 
                 scope.createHighlight = function(highlight) {
-                    highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
-                    scope.highlights = _.find(result._items, {_id: scope.highlight_id});
-                    scope.hasHighlights = _.size(scope.highlight) > 0;
-                }).then(function() {
-                    highlightsService.createEmptyHighlight(scope.highlights)
-                    .then(function(new_package) {
-                        authoring.edit(new_package);
+                    var promise = highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                        scope.highlights = _.find(result._items, {_id: scope.highlight_id});
+                        scope.hasHighlights = _.size(scope.highlights) > 0;
                     });
-                });
+
+                    promise = promise.then(function() {
+                        highlightsService.createEmptyHighlight(scope.highlights).then(function(new_package) {
+                            authoring.edit(new_package);
+                        });
+                    });
                 };
             }
         };

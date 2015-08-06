@@ -812,7 +812,7 @@
                 };
 
                 /**
-                 * Export Highlight related
+                 * Export the list of highlights as a text item.
                  */
                 $scope.exportHighlight = function(item) {
                     if ($scope.save_enabled()) {
