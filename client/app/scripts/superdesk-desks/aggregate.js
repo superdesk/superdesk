@@ -27,7 +27,7 @@
         this.deskLookup = {};
         this.stageLookup = {};
         this.fileTypes = ['all', 'text', 'photo', 'composite', 'video', 'audio'];
-        this.selectedFileType = 'all';
+        this.selectedFileType = [];
         this.monitoringSearch = false;
 
         desks.initialize()
@@ -75,7 +75,10 @@
          * @return boolean
          */
         this.hasFileType = function(fileType) {
-            return this.selectedFileType === fileType;
+            if (fileType === 'all') {
+                return this.selectedFileType.length === 0;
+            }
+            return this.selectedFileType.indexOf(fileType) > -1;
         };
 
         /**
@@ -83,8 +86,18 @@
          * param {string} fileType
          */
         this.setFileType = function(fileType) {
-            this.selectedFileType = fileType;
-            var value = (fileType === 'all') ? null: JSON.stringify([fileType]);
+            if (fileType === 'all') {
+                this.selectedFileType = [];
+            } else {
+                var index = this.selectedFileType.indexOf(fileType);
+                if (index > -1) {
+                    this.selectedFileType.splice(index, 1);
+                } else {
+                    this.selectedFileType.push(fileType);
+                }
+            }
+
+            var value = (this.selectedFileType.length === 0) ? null: JSON.stringify(this.selectedFileType);
 
             _.each(this.groups, function(item) {
                 item.fileType = value;
