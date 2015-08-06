@@ -9,8 +9,10 @@ function Content() {
 
     this.send = send;
 
-    this.setListView = function() {
-        nav('workspace/content');
+    this.setListView = function(noNavigate) {
+        if (noNavigate === undefined || !noNavigate) {
+            nav('workspace/content');
+        }
 
         var list = element(by.css('i.icon-th-list'));
         return list.isDisplayed()

@@ -4,7 +4,8 @@
 module.exports = new Workspace();
 
 var content = require('./content'),
-    nav = require('./utils').nav;
+    nav = require('./utils').nav,
+    authoring = require('./authoring');
 
 function Workspace() {
     function openContent() {
@@ -74,11 +75,43 @@ function Workspace() {
         });
     };
 
+    this.selectStage = function(stage) {
+        var stages = element(by.css('.desk-stages'));
+        return stages.element(by.cssContainingText('.stage-label', stage)).click();
+    };
+
     this.editItem = function(item, desk) {
         return this.switchToDesk(desk || 'PERSONAL')
         .then(content.setListView)
         .then(function() {
             return content.actionOnItem('Edit item', item);
         });
+    };
+
+    this.actionOnItem = function(action, item, desk, stage) {
+        if (desk !== undefined) {
+            this.switchToDesk(desk || 'PERSONAL');
+        }
+        if (stage !== undefined) {
+            this.selectStage(stage);
+        }
+        return content.setListView(desk !== undefined).then(function() {
+            return content.actionOnItem(action, item);
+        });
+    };
+
+    this.duplicateItem = function(item, desk, stage) {
+        return this.switchToDesk(desk || 'PERSONAL')
+        .then(content.setListView)
+        .then(function() {
+            return content.actionOnItem('Duplicate', item);
+        }).then(function() {
+            return authoring.sendToSidebarOpened(desk, stage);
+        });
+    };
+
+    this.filterItems = function(type) {
+        element(by.css('.filter-trigger')).click();
+        element(by.repeater('aggregations.type')).element(by.css('.filetype-icon-' + type)).click();
     };
 }

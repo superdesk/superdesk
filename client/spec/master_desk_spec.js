@@ -30,7 +30,7 @@ describe('Master Desk', function() {
     it('show content view - edit item', function() {
         masterDesks.switchToTab('content');
         masterDesks.editItem(0, 1, 0);
-        expect(authoring.publish.isDisplayed()).toBe(true);
+        expect(authoring.publish_button.isDisplayed()).toBe(true);
     });
 
     it('content view - show desk', function() {

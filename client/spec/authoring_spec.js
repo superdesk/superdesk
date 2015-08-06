@@ -102,4 +102,80 @@ describe('authoring', function() {
         });
 
     });
+
+    it('view item history create-fetch operation', function() {
+        workspace.open();
+        workspace.editItem('item6', 'Politic');
+
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(1);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Fetched as \d+ to Politic Desk\/two by.*/);
+    });
+
+    it('view item history create-update operations', function() {
+        workspace.open();
+        authoring.createTextItem();
+        authoring.writeTextToHeadline('new item');
+        authoring.writeText('some text');
+        authoring.save();
+
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ Created by.*/);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Updated by.*/);
+        authoring.close();
+
+        workspace.editItem('item5', 'Politic');
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(1);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ \(Politic Desk\/one\) Created by.*/);
+    });
+
+    it('view item history spike-unspike operations', function() {
+        workspace.open();
+        workspace.actionOnItem('Spike', 'item5', 'Politic');
+        workspace.actionOnItem('Unspike Item', 0, 'Politic', 'Spiked');
+        workspace.editItem('item5', 'Politic');
+
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/one by .*/);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/one by .*/);
+    });
+
+    it('view item history move operation', function() {
+        workspace.open();
+        workspace.editItem('item5', 'Politic');
+        authoring.sendTo('Politic Desk', 'two');
+        workspace.selectStage('two');
+        workspace.editItem('item5', 'Politic');
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
+    });
+
+    it('view item history duplicate operation', function() {
+        workspace.open();
+        workspace.duplicateItem('item5', 'Politic Desk', 'two');
+        workspace.selectStage('two');
+        workspace.editItem('item5', 'Politic');
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
+    });
+
+    it('view item history publish operation', function() {
+        workspace.open();
+        workspace.editItem('item5', 'Politic');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.publish();
+        workspace.selectStage('Published');
+        workspace.filterItems('composite');
+        workspace.actionOnItem('View item', 'item5', 'Politic', 'Published');
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(1);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
+    });
 });

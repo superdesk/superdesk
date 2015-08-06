@@ -20,7 +20,6 @@ define(['moment'], function(moment) {
             require: 'ngModel',
             template: '<time datetime="{{ datetime }}">' +
                 '<span>{{ rday }}{{ rdate }}</span></time>',
-            replate: true,
             link: function(scope, element, attrs, ngModel) {
                 ngModel.$render = function() {
                     var date = moment.utc(ngModel.$viewValue);
