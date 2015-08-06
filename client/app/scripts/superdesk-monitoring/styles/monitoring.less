@@ -7,7 +7,7 @@
     top: @nav-height;
     left: 0;
     right: 0;
-    bottom: 30px;
+    bottom: 0;
 
     .subnav {
         top: 0;
@@ -38,6 +38,13 @@
 
             .stage-content {
                 overflow-y: scroll;
+                box-shadow: @block-shadow-depth-2;
+                .compact-view, .mlist-view {
+                    box-shadow: none;
+                }
+                .inline-content-items {
+                    margin-bottom: 0;
+                }
                 &.limited {
                     max-height: 285px;
                 }

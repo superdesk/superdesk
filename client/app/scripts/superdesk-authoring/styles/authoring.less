@@ -31,6 +31,10 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
+		box-sizing: border-box;
+		border-right: 3px solid #444;
+    	z-index:100;
+    	box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
 	}
 
 	.embedded-auth-view {
@@ -39,22 +43,47 @@
 		bottom: 0;
 		right: 0;
 		width: 0;
+		box-sizing: border-box;
+			.subnav {
+				z-index: 99;
+				background-color: @subnav-authoring;
+			}
+			.sd-widget.comments .notification-list-box,
+			.sd-widget.versions .article-versions {
+				bottom: 0;
+			}
 	}
 
 	&.opened {
 		.embedded-list-view {
-			right: 41%;
+			right: 44%;
 		}
-
 		.embedded-auth-view {
-			width: 41%;
+			width: 44%;
+		}
+	}
+	.page-content-container {
+		left:0;
+		right:50px;
+	}
+
+	.widget-wrapper {
+		&.active-right {
+			&.right-extended {
+				.page-content-container {
+				right: 50px;
+				}
+			}
+			.page-content-container {
+				right: 50px;
+			}
 		}
 	}
 }
 
 .subnav {
 	.button-stack > .btn {
-		padding: 8px 25px;
+		padding: 8px 20px;
 		height: 28px;
 	}
 	.authoring-topbar {
@@ -78,19 +107,18 @@
 			}
 		}
 		.stage {
-			height: 25px;
-			line-height: 24px;
-			background: #fff;
-			border: 1px solid #505050;
-			border-radius: 2px;
-			box-sizing: border-box;
-			padding: 0 10px;
+			font-size: 10px;
+			.text-light();
+			letter-spacing: 0.035em;
+			line-height: 29px;
+			color: @gray;
+			border: 0;
+			background-color: transparent;
 			text-transform: uppercase;
-			font-size: 11px;
-			margin-right: 10px;
-			&:hover {
-				background: #505050;
-				color: #fff;
+			margin-left: -10px;
+			b {
+				color: @grayDark;
+				.text-semibold();
 			}
 		}
 		.state-label {
