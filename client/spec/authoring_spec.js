@@ -178,4 +178,29 @@ describe('authoring', function() {
         expect(authoring.getHistoryItems().count()).toBe(1);
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
     });
+
+    describe('subnavigation menu', function () {
+        it('allows to create a new empty package', function () {
+            // 1. Navigate to the authoring main page.
+            //
+            // 2. Open the "plus icon" menu in subnav bar and click the
+            //    "Empty Package" link in the menu.
+            //
+            // 3. Get the newly created item's info box and check if it
+            //    contains an icon indicating that the item's type is indeed
+            //    "composite".
+            //
+            authoring.openAuthoringHome().then(function () {
+                browser.sleep(300);
+                return authoring.navbarMenuBtn.click();
+            }).then(function () {
+                return authoring.newEmptyPackageLink.click();
+            }).then(function () {
+                return authoring.findItemTypeIcons('composite');
+            }).then(function(matchedElements) {
+                expect(matchedElements.length).toBeGreaterThan(0);
+            });
+
+        });
+    });
 });
