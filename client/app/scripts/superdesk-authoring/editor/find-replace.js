@@ -21,33 +21,49 @@ function FindReplaceDirective($timeout, $rootScope, editor) {
             scope.to = '';
             scope.from = '';
 
+            /**
+             * Highlight next matching string
+             */
             scope.next = function() {
-                editor.command.next();
+                editor.selectNext();
             };
 
+            /**
+             * Highlight previous matching string
+             */
             scope.prev = function() {
-                editor.command.prev();
+                editor.selectPrev();
             };
 
+            /**
+             * Replace currently highlighted matching string with text
+             */
             scope.replace = function() {
-                editor.command.replace(scope.to || '');
+                editor.replace(scope.to || '');
+                editor.selectNext();
             };
 
+            /**
+             * Replace all matching string with text
+             */
             scope.replaceAll = function() {
-                editor.command.replaceAll(scope.to || '');
+                editor.replaceAll(scope.to || '');
             };
 
             scope.$watch('from', function(needle) {
-                var input = document.getElementById('find-replace-what'),
-                    selectionStart = input.selectionStart,
-                    selectionEnd = input.selectionEnd;
-                editor.command.find(needle);
+                var input = document.getElementById('find-replace-what');
+                var selectionStart = input.selectionStart;
+                var selectionEnd = input.selectionEnd;
+
+                editor.setSettings({findreplace: {needle: needle}});
+                editor.render();
+                editor.selectNext();
                 input.setSelectionRange(selectionStart, selectionEnd);
             });
 
-            editor.startCommand();
             scope.$on('$destroy', function() {
-                editor.stopCommand();
+                editor.setSettings({findreplace: null});
+                editor.render();
             });
         }
     };

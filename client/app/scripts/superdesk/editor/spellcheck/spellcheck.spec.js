@@ -17,7 +17,6 @@ describe('spellcheck', function() {
                 baz: 1
             }
         },
-        TEXT = 'wha is foo, f1, 4k and 3d?',
         LANG = 'en',
         errors = [];
 
@@ -43,33 +42,6 @@ describe('spellcheck', function() {
         expect(errors).toContain({word: 'test', index: 0});
         expect(errors).toContain({word: 'if', index: 10});
         expect(dictionaries.getActive).toHaveBeenCalledWith(LANG);
-    }));
-
-    it('can render errors in given node', inject(function(spellcheck, $rootScope) {
-        var p = createParagraph(TEXT);
-
-        spellcheck.render(p);
-        $rootScope.$digest();
-
-        expect(p.innerHTML)
-            .toBe('<span class="sderror">wha</span> is foo, f1, <span class="sderror">4k</span> and 3d?');
-
-        expect(spellcheck.clean(p)).toBe(TEXT);
-    }));
-
-    it('can render errors at the end of text', inject(function(spellcheck, $rootScope) {
-        var p = createParagraph('what is buz');
-
-        spellcheck.render(p);
-        $rootScope.$digest();
-
-        expect(p.innerHTML)
-            .toBe('what is <span class="sderror">buz</span>');
-    }));
-
-    it('can remove errors and keep the marker', inject(function(spellcheck) {
-        var p = createParagraph('what is <span class="sderror">b<span class="mark"></span>uz</span>');
-        expect(spellcheck.clean(p)).toBe('what is b<span class="mark"></span>uz');
     }));
 
     it('can add words to user dictionary', inject(function(spellcheck, api, $rootScope) {
@@ -120,23 +92,16 @@ describe('spellcheck', function() {
             var ctrl = $controller('SpellcheckMenu');
             expect(ctrl.isAuto).toBe(true);
 
-            var scope = $rootScope.$new(),
-                settingsHandle = jasmine.createSpy('handle');
-
-            scope.$on('editor:settings', settingsHandle);
-
             ctrl.pushSettings();
-            expect(settingsHandle).toHaveBeenCalled();
             expect(editor.settings.spellcheck).toBe(true);
 
             ctrl.isAuto = false;
             ctrl.pushSettings();
             expect(editor.settings.spellcheck).toBe(false);
 
-            var spellcheckHandle = jasmine.createSpy('handle');
-            scope.$on('spellcheck:run', spellcheckHandle);
+            spyOn(editor, 'render');
             ctrl.spellcheck();
-            expect(spellcheckHandle).toHaveBeenCalled();
+            expect(editor.render).toHaveBeenCalled();
         }));
     });
 });
