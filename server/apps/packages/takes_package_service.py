@@ -25,6 +25,9 @@ logger = logging.getLogger(__name__)
 
 
 class TakesPackageService():
+    # metadata field of take
+    fields_for_creating_take = ['anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline']
+
     def get_take_package_id(self, item):
         """
         Checks if the item is in a 'takes' package and returns the package id
@@ -91,7 +94,7 @@ class TakesPackageService():
         to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
 
         copy_from = package if (package.get(config.CONTENT_STATE) in PUBLISH_STATES) else target
-        for field in ['anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline']:
+        for field in self.fields_for_creating_take:
             to[field] = copy_from.get(field)
 
     def package_story_as_a_take(self, target, takes_package, link):
@@ -106,9 +109,10 @@ class TakesPackageService():
         """
         takes_package[ITEM_TYPE] = CONTENT_TYPE.COMPOSITE
         takes_package[PACKAGE_TYPE] = TAKES_PACKAGE
-        for field in ['anpa_category', 'pubstatus', 'slugline', 'headline',
-                      'urgency', 'subject', 'dateline', 'abstract',
-                      'publish_schedule', 'event_id', 'rewrite_of', 'task']:
+        fields_for_creating_takes_package = self.fields_for_creating_take.copy()
+        fields_for_creating_takes_package.extend(['abstract', 'publish_schedule', 'event_id', 'rewrite_of', 'task'])
+
+        for field in fields_for_creating_takes_package:
             takes_package[field] = target.get(field)
         takes_package.setdefault(config.VERSION, 1)
 
@@ -204,7 +208,7 @@ class TakesPackageService():
         """
         package = self.get_take_package(item)
         if package:
-            refs = self.__get_package_refs(package)
+            refs = self._get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
                             and ref.get(ITEM_REF, '') != item.get(config.ID_FIELD, '')), None)
@@ -213,7 +217,7 @@ class TakesPackageService():
 
         return None
 
-    def __get_package_refs(self, package):
+    def _get_package_refs(self, package):
         """
         Get refs from the takes package
         :param dict package: takes package
@@ -234,7 +238,7 @@ class TakesPackageService():
         :param int sequence: take sequence of the published take
         :return: True if takes are published in correct order else false.
         """
-        refs = self.__get_package_refs(package)
+        refs = self._get_package_refs(package)
         if refs:
             takes = [ref.get(ITEM_REF) for ref in refs if ref.get(SEQUENCE) < sequence]
             # elastic filter for the archive resource filters out the published items
@@ -247,13 +251,13 @@ class TakesPackageService():
 
         return True
 
-    def get_takes_in_take_package(self, takes_package):
+    def get_published_takes(self, takes_package):
         """
         Get all the published takes in the takes packages.
         :param takes_package: takes package
         :return: List of publishes takes.
         """
-        refs = self.__get_package_refs(takes_package)
+        refs = self._get_package_refs(takes_package)
         if not refs:
             return []
 
