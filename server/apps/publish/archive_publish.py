@@ -97,7 +97,7 @@ class BasePublishService(BaseService):
         # validate if take can be published
         if self.publish_type == 'publish' and takes_package \
             and not self.takes_package_service.can_publish_take(takes_package,
-                                                            updates.get(SEQUENCE, original.get(SEQUENCE, 1))):
+                                                                updates.get(SEQUENCE, original.get(SEQUENCE, 1))):
             raise PublishQueueError.previous_take_not_published_error(
                 Exception("Previous takes are not published."))
 
@@ -143,17 +143,16 @@ class BasePublishService(BaseService):
 
             set_sign_off(updates, original)
             queued_digital = False
-            package_id = None
+            package = None
 
             if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE:
                 # if target_for is set the we don't to digital client.
                 if not updates.get('targeted_for', original.get('targeted_for')):
                     # check if item is in a digital package
-                    package_id = self.takes_package_service.get_take_package_id(original)
+                    package = self.takes_package_service.get_take_package(original)
 
-                    if package_id:
-                        queued_digital, takes_package = self._publish_takes_package(package_id, updates,
-                                                                                    original, last_updated)
+                    if package:
+                        queued_digital = self._publish_takes_package(package, updates, original, last_updated)
                     else:
                         # if text or preformatted item is going to be sent to digital subscribers, package it as a take
                         if self.sending_to_digital_subscribers(original):
@@ -163,13 +162,13 @@ class BasePublishService(BaseService):
                                 updated.update(updates)
                                 # create a takes package
                                 package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
-                                original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
-                                queued_digital, takes_package = self._publish_takes_package(package_id, updates,
-                                                                                            original, last_updated)
+                                package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+                                queued_digital = self._publish_takes_package(package, updates,
+                                                                             original, last_updated)
 
                 # queue only text items
                 queued_wire = \
-                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package_id else None)
+                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package else None)
 
                 queued = queued_digital or queued_wire
                 if not queued:
@@ -188,20 +187,19 @@ class BasePublishService(BaseService):
             logger.exception("Something bad happened while publishing %s".format(id))
             raise SuperdeskApiError.internalError(message="Failed to publish the item: {}".format(str(e)))
 
-    def _publish_takes_package(self, package_id, updates, original, last_updated):
+    def _publish_takes_package(self, package, updates, original, last_updated):
         """
         Process the takes to form digital master file content and publish.
-        :param str package_id: Takes package id
-        :param dict updates: updates for the takes packages
-        :param dict original: original takes packages document
+        :param dict package: Takes package
+        :param dict updates: updates for the take
+        :param dict original: original takes
         :param datetime.datetime last_updated: datetime for the updates
-        :return: (bool, dict) boolean flag indicating takes package is queued or not,
-                dict containing takes package
+        :return bool: boolean flag indicating takes package is queued or not
         """
 
-        package, package_updates = self.process_takes(updates_of_take_to_be_published=updates,
-                                                      original_of_take_to_be_published=original,
-                                                      package_id=package_id)
+        package_updates = self.process_takes(updates_of_take_to_be_published=updates,
+                                             original_of_take_to_be_published=original,
+                                             package=package)
 
         self._set_version_last_modified_and_state(package, package_updates, last_updated)
         self._update_archive(package, package_updates)
@@ -211,7 +209,7 @@ class BasePublishService(BaseService):
         queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
-        return queued_digital, package
+        return queued_digital
 
     def _publish_package_items(self, package, updates, last_updated):
         """
@@ -275,7 +273,7 @@ class BasePublishService(BaseService):
         updates['publish_schedule'] = None
         updates[config.CONTENT_STATE] = self.published_state
 
-    def process_takes(self, updates_of_take_to_be_published, package_id, original_of_take_to_be_published=None):
+    def process_takes(self, updates_of_take_to_be_published, package, original_of_take_to_be_published=None):
         """
         Primary rule for publishing a Take in Takes Package is: all previous takes must be published before a take
         can be published.
@@ -283,11 +281,12 @@ class BasePublishService(BaseService):
         Also, generates body_html of the takes package and make sure the metadata for the package is the same as the
         metadata of the take to be published.
 
-        :param updates_of_take_to_be_published: The take to be published
-        :return: Takes Package document and body_html of the Takes Package
+        :param dict updates_of_take_to_be_published: updates for the take to be published
+        :param dict package: Takes package to publish
+        :param dict original_of_take_to_be_published: original of the take to be published
+        :return: Takes Package Updates
         """
 
-        package = super().find_one(req=None, _id=package_id)
         takes = self.takes_package_service.get_takes_in_take_package(package)
         body_html = updates_of_take_to_be_published.get('body_html', original_of_take_to_be_published['body_html'])
         package_updates = {}
@@ -329,7 +328,7 @@ class BasePublishService(BaseService):
             for metadata in metadata_tobe_copied:
                 package_updates[metadata] = metadata_from.get(metadata)
 
-        return package, package_updates
+        return package_updates
 
     def publish(self, doc, updates, target_media_type=None):
         """

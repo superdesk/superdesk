@@ -33,7 +33,7 @@ class TakesPackageService():
         takes_package = [package.get(PACKAGE) for package in item.get(LINKED_IN_PACKAGES, [])
                          if package.get(PACKAGE_TYPE)]
         if len(takes_package) > 1:
-            message = 'Multiple takes found for item: {0}'.format(item['_id'])
+            message = 'Multiple takes found for item: {0}'.format(item[config.ID_FIELD])
             logger.error(message)
             raise SuperdeskApiError.forbiddenError(message=message)
         return takes_package[0] if takes_package else None
@@ -58,7 +58,7 @@ class TakesPackageService():
             sequence = self.__next_sequence__(sequence)
             target_ref[SEQUENCE] = sequence
             takes_package[SEQUENCE] = target_ref[SEQUENCE]
-            takes_package[LAST_TAKE] = target['_id']
+            takes_package[LAST_TAKE] = target[config.ID_FIELD]
             main_group[ASSOCIATIONS].append(target_ref)
 
         if link is not None:
@@ -66,7 +66,7 @@ class TakesPackageService():
             link_ref[SEQUENCE] = self.__next_sequence__(sequence)
             main_group[ASSOCIATIONS].append(link_ref)
             takes_package[SEQUENCE] = link_ref[SEQUENCE]
-            takes_package[LAST_TAKE] = link['_id']
+            takes_package[LAST_TAKE] = link[config.ID_FIELD]
             link[SEQUENCE] = link_ref[SEQUENCE]
 
     def __next_sequence__(self, seq):
@@ -136,7 +136,7 @@ class TakesPackageService():
             resolve_document_version(updates, ARCHIVE, 'PATCH', target)
             archive_service.patch(target.get(config.ID_FIELD), updates)
 
-        if not link.get('_id'):
+        if not link.get(config.ID_FIELD):
             self.__copy_metadata__(target, link, takes_package)
             archive_service.post([link])
 
@@ -144,7 +144,7 @@ class TakesPackageService():
             takes_package_id = self.package_story_as_a_take(target, takes_package, link)
         else:
             self.__link_items__(takes_package, target, link)
-            del takes_package['_id']
+            del takes_package[config.ID_FIELD]
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
 
@@ -165,7 +165,7 @@ class TakesPackageService():
         if takes_package:
             if LAST_TAKE not in takes_package:
                 return True
-            return takes_package[LAST_TAKE] == doc['_id']
+            return takes_package[LAST_TAKE] == doc[config.ID_FIELD]
 
         return True
 
@@ -238,7 +238,7 @@ class TakesPackageService():
         if refs:
             takes = [ref.get(ITEM_REF) for ref in refs if ref.get(SEQUENCE) < sequence]
             # elastic filter for the archive resource filters out the published items
-            archive_service = get_resource_service('archive')
+            archive_service = get_resource_service(ARCHIVE)
             query = {'query': {'filtered': {'filter': {'terms': {'_id': takes}}}}}
             request = ParsedRequest()
             request.args = {'source': json.dumps(query)}
