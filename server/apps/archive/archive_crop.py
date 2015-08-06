@@ -17,6 +17,8 @@ from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import crop_image, process_file_from_stream
 from superdesk.upload import UploadService, url_for_media
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE
+from apps.archive.archive import SOURCE as ARCHIVE
 
 
 class ArchiveCropResource(Resource):
@@ -29,6 +31,7 @@ class ArchiveCropResource(Resource):
         'CropBottom': {'type': 'integer'}
     }
     datasource = {'source': 'archive'}
+    item_methods = []
     resource_methods = ['GET', 'POST', 'DELETE']
     resource_title = endpoint_name
     privileges = {'POST': 'archive', 'DELETE': 'archive'}
@@ -39,7 +42,7 @@ class ArchiveCropService(BaseService):
     def create(self, docs, **kwargs):
         item_id = request.view_args['item_id']
         crop_name = request.view_args['crop_name'].lower()
-        archive_service = get_resource_service('archive')
+        archive_service = get_resource_service(ARCHIVE)
         original = archive_service.find_one(req=None, _id=item_id)
         self._validate_crop(original, crop_name, docs[0])
         self._add_crop(original, crop_name, docs[0])
@@ -48,13 +51,13 @@ class ArchiveCropService(BaseService):
     def delete(self, lookup):
         item_id = request.view_args['item_id']
         crop_name = request.view_args['crop_name'].lower()
-        archive_service = get_resource_service('archive')
+        archive_service = get_resource_service(ARCHIVE)
         original = archive_service.find_one(req=None, _id=item_id)
         self._delete_crop(original, crop_name)
 
     def _validate_crop(self, original, crop_name, doc):
         # Check if type is picture
-        if original.get('type') != 'picture':
+        if original[ITEM_TYPE] != CONTENT_TYPE.PICTURE:
             raise SuperdeskApiError.badRequestError(message='Only images can be cropped!')
 
         # Check if the renditions exists
@@ -66,7 +69,10 @@ class ArchiveCropService(BaseService):
             raise SuperdeskApiError.badRequestError(message='Missing original rendition!')
 
         # Check if the crop name is valid
-        crops = get_resource_service('vocabularies').find_one(req=None, _id='crop_sizes')['items']
+        crops = get_resource_service('vocabularies').find_one(req=None, _id='crop_sizes').get('items')
+        if not crops:
+            raise SuperdeskApiError.badRequestError(message='Crops couldn\'t be loaded!')
+
         crop = self._get_crop_by_name(crops, crop_name)
         if not crop:
             raise SuperdeskApiError.badRequestError(message='Unknown crop name!')
@@ -94,19 +100,13 @@ class ArchiveCropService(BaseService):
         :param crop_name: Crop name
         :return: Matching crop or None
         """
-        try:
-            matching_crops = list(filter(lambda crop: crop.get('name', '').lower() == crop_name.lower(), crops))
-            if len(matching_crops) > 0:
-                return matching_crops[0]
-            return None
-        except:
-            return None
+        return next((c for c in crops if c.get('name', '').lower() == crop_name.lower()), None)
 
     def _delete_crop(self, original, crop_name):
         """ Deletes an existing crop with the given name """
         renditions = original.get('renditions')
         renditions.pop(crop_name, None)
-        get_resource_service('archive').patch(original['_id'], {'renditions': renditions})
+        get_resource_service(ARCHIVE).patch(original['_id'], {'renditions': renditions})
 
     def _add_crop(self, original, crop_name, doc):
         """
@@ -120,15 +120,15 @@ class ArchiveCropService(BaseService):
         renditions = original.get('renditions')
         crop_data = UploadService().get_cropping_data(doc)
         original_image = original.get('renditions').get('original')
-        file = superdesk.app.media.fs(None).find_one(original_image.get('media'))
-        if not file:
+        original_file = superdesk.app.media.get(original_image.get('media'), 'upload')
+        if not original_file:
             raise SuperdeskApiError.badRequestError('Original file couldn\'t be found')
 
         try:
-            cropped, out = crop_image(file, file.filename, crop_data)
+            cropped, out = crop_image(original_file, original_file.filename, crop_data)
             if cropped:
-                renditions[crop_name] = self._save_cropped_image(out, file)
-                get_resource_service('archive').patch(original['_id'], {'renditions': renditions})
+                renditions[crop_name] = self._save_cropped_image(out, original_file)
+                get_resource_service(ARCHIVE).patch(original['_id'], {'renditions': renditions})
             else:
                 raise SuperdeskApiError.badRequestError('Saving crop failed: {}'.format(str(out)))
         except SuperdeskApiError:
