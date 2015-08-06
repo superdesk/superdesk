@@ -20,6 +20,7 @@ from .ingest import IngestResource, IngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
+from .archive_crop import ArchiveCropService, ArchiveCropResource
 from .archive_spike import ArchiveUnspikeResource, ArchiveSpikeService, ArchiveSpikeResource, ArchiveUnspikeService
 import superdesk
 from apps.common.components.utils import register_component
@@ -63,6 +64,10 @@ def init_app(app):
     endpoint_name = 'archive_lock'
     service = ArchiveLockService(endpoint_name, backend=superdesk.get_backend())
     ArchiveLockResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'archive_crop'
+    service = ArchiveCropService(endpoint_name, backend=superdesk.get_backend())
+    ArchiveCropResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive_unlock'
     service = ArchiveUnlockService(endpoint_name, backend=superdesk.get_backend())

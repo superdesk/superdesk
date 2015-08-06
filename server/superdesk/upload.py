@@ -111,9 +111,9 @@ class UploadService(BaseService):
             elif doc.get('URL'):
                 content, filename, content_type = self.download_file(doc)
 
-            self.store_file(doc, content, filename, content_type)
+            self.crop_and_store_file(doc, content, filename, content_type)
 
-    def store_file(self, doc, content, filename, content_type):
+    def crop_and_store_file(self, doc, content, filename, content_type):
         # retrieve file name and metadata from file
         file_name, content_type, metadata = process_file_from_stream(content, content_type=content_type)
         # crop the file if needed, can change the image size

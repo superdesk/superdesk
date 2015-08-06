@@ -169,5 +169,12 @@
             {"is_active": true, "name": "VIC", "qcode": "VIC"},
             {"is_active": true, "name": "WA", "qcode": "WA"}
         ]
+    },
+    {
+        "_id": "crop_sizes",
+        "items": [
+            {"is_active": true, "name": "4-3", "width": 800, "height": 600},
+            {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+        ]
     }
 ]

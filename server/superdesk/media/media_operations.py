@@ -119,7 +119,7 @@ def process_image(content, type):
 def crop_image(content, file_name, cropping_data):
     if cropping_data:
         file_ext = os.path.splitext(file_name)[1][1:]
-        if file_ext in ('JPG', 'jpg'):
+        if not file_ext or file_ext in ('JPG', 'jpg'):
             file_ext = 'jpeg'
         logger.debug('Opened image from stream, going to crop it s')
         content.seek(0)
@@ -130,7 +130,8 @@ def crop_image(content, file_name, cropping_data):
             out = BytesIO()
             cropped.save(out, file_ext)
             out.seek(0)
-            return (True, out)
+            return True, out
         except Exception as io:
             logger.exception(io)
-    return (False, content)
+            return False, io
+    return False, content
