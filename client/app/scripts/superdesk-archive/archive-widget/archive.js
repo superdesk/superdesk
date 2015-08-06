@@ -25,16 +25,6 @@ define([
                 description: 'Content widget'
             });
         }])
-        .config(['authoringWidgetsProvider', function(authoringWidgets) {
-            authoringWidgets.widget('archive', {
-                label: gettext('Content'),
-                icon: 'archive',
-                template: require.toUrl('./widget-archive.html'),
-                order: 3,
-                side: 'left',
-                display: {authoring: true, packages: false}
-            });
-        }])
         .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', '$location',
         function ($scope, api, BaseWidgetController, $location) {
             $scope.type = 'archiveWidget';
