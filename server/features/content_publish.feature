@@ -1001,7 +1001,7 @@ Feature: Content Publishing
       {
           "_items": [
               {
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "published",
                   "body_html": "Take-1"
               },
@@ -1010,7 +1010,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>"
+                  "body_html": "Take-1"
               }
           ]
       }
@@ -1094,7 +1094,7 @@ Feature: Content Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "published",
                   "body_html": "Take-1"
               },
@@ -1103,7 +1103,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>"
+                  "body_html": "Take-1<br>Take-2"
               },
               {
                   "_current_version": 4,
@@ -1321,7 +1321,7 @@ Feature: Content Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "published",
                   "body_html": "Take-1",
                   "last_published_version": true
@@ -1331,7 +1331,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "body_html": "Take-1<br>Take-2<br>Take-3",
                   "last_published_version": true
               },
               {
@@ -1352,6 +1352,9 @@ Feature: Content Publishing
       }
       """
       When we publish "#TAKE2#" with "kill" type and "killed" state
+      """
+      {"body_html": "Killed", "headline": "Story is Killed", "slugline": "killed"}
+      """
       Then we get OK response
       When we get "/published"
       Then we get existing resource
@@ -1360,7 +1363,7 @@ Feature: Content Publishing
           "_items": [
               {
                   "_id": "123",
-                  "_current_version": 3,
+                  "_current_version": 4,
                   "state": "published",
                   "body_html": "Take-1",
                   "last_published_version": false
@@ -1371,7 +1374,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>",
+                  "body_html": "Take-1",
                   "last_published_version": false
               },
               {
@@ -1380,7 +1383,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>",
+                  "body_html": "Take-1<br>Take-2",
                   "last_published_version": false
               },
               {
@@ -1389,7 +1392,7 @@ Feature: Content Publishing
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>Take-3<br>",
+                  "body_html": "Take-1<br>Take-2<br>Take-3",
                   "last_published_version": false
               },
               {
@@ -1410,19 +1413,28 @@ Feature: Content Publishing
                   "_id": "123",
                   "_current_version": 5,
                   "state": "killed",
-                  "last_published_version": true
+                  "last_published_version": true,
+                  "body_html": "Killed",
+                  "headline": "Story is Killed",
+                  "slugline": "killed"
               },
               {
                   "_id": "#TAKE2#",
                   "_current_version": 5,
                   "state": "killed",
-                  "last_published_version": true
+                  "last_published_version": true,
+                  "body_html": "Killed",
+                  "headline": "Story is Killed",
+                  "slugline": "killed"
               },
               {
                   "_id": "#TAKE3#",
                   "_current_version": 5,
                   "state": "killed",
-                  "last_published_version": true
+                  "last_published_version": true,
+                  "body_html": "Killed",
+                  "headline": "Story is Killed",
+                  "slugline": "killed"
               },
               {
                   "_id": "#archive.123.take_package#",
@@ -1430,7 +1442,9 @@ Feature: Content Publishing
                   "state": "killed",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-2<br>",
+                  "body_html": "Killed",
+                  "headline": "Story is Killed",
+                  "slugline": "killed",
                   "last_published_version": true
               }
           ]
@@ -1542,8 +1556,8 @@ Feature: Content Publishing
               "content_type" : "text",
               "state" : "pending",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "headline" : "Take-1 soccer headline",
-              "item_version": 3
+              "headline" : "Take-1 soccer headline=1",
+              "item_version": 4
             },
             {
               "item_id" : "#archive.123.take_package#",
@@ -1580,12 +1594,13 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 3
+              "item_version": 4
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
+              "headline" : "Take-1 soccer headline",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 2
             },
@@ -1600,6 +1615,7 @@ Feature: Content Publishing
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
+              "headline" : "Take-1 soccer headline",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 3
             }
@@ -1618,12 +1634,14 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
-              "item_version": 3
+              "headline" : "Take-1 soccer headline=1",
+              "item_version": 4
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
+              "headline" : "Take-1 soccer headline",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 2
             },
@@ -1632,12 +1650,14 @@ Feature: Content Publishing
               "publishing_action" : "published",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
+              "headline" : "Take-1 soccer headline=2",
               "item_version": 4
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "published",
               "content_type" : "composite",
+              "headline" : "Take-1 soccer headline",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 3
             },
@@ -1646,12 +1666,14 @@ Feature: Content Publishing
               "publishing_action" : "corrected",
               "content_type" : "text",
               "subscriber_id" : "#First_Wire_Subscriber#",
+              "headline" : "Take-1 soccer headline=2",
               "item_version": 5
             },
             {
               "item_id" : "#archive.123.take_package#",
               "publishing_action" : "corrected",
               "content_type" : "composite",
+              "headline" : "Take-1 soccer headline",
               "subscriber_id" : "#Digital_Subscriber#",
               "item_version": 4
             }
@@ -1741,11 +1763,18 @@ Feature: Content Publishing
                   "body_html": "Take-1"
               },
               {
+                  "_current_version": 2,
+                  "state": "published",
+                  "type": "composite",
+                  "package_type": "takes",
+                  "body_html": "Take-1"
+              },
+              {
                   "_current_version": 4,
                   "state": "published",
                   "type": "composite",
                   "package_type": "takes",
-                  "body_html": "Take-1<br>Take-2<br>"
+                  "body_html": "Take-1<br>Take-2"
               },
               {
                   "_current_version": 4,
@@ -2176,3 +2205,210 @@ Feature: Content Publishing
       {"_issues": {"validator exception": "400: Takes cannot be scheduled."}, "_status": "ERR"}
       """
 
+    @auth @vocabulary
+    Scenario: Correct a Take so that body is from corrected take and other metadata is from last published take
+      Given the "validators"
+      """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+       When we post to "/subscribers" with success
+      """
+      [{
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }, {
+        "name":"Channel 4","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      And we post to "archive" with success
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "abstract": "Take-1 abstract",
+          "task": {
+              "user": "#CONTEXT_USER_ID#"
+          },
+          "body_html": "Take-1",
+          "state": "draft",
+          "slugline": "Take-1 slugline",
+          "urgency": "4",
+          "pubstatus": "usable",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [{"qcode": "A", "name": "Sport"}],
+          "anpa_take_key": "Take"
+      }]
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "archive/123/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE2"
+      """
+      {
+          "type": "text",
+          "headline": "Take-1 soccer headline",
+          "slugline": "Take-1 slugline",
+          "anpa_take_key": "Take=2",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE2#"
+      """
+      {"body_html": "Take-2", "abstract": "Take-2 Abstract",
+      "headline": "Take-2 soccer headline", "slugline": "Take-2 slugline"}
+      """
+      And we post to "/archive/#TAKE2#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we get "/archive"
+      Then we get list with 3 items
+      When we post to "archive/#TAKE2#/link"
+      """
+      [{}]
+      """
+      Then we get next take as "TAKE3"
+      """
+      {
+          "type": "text",
+          "headline": "Take-2 soccer headline",
+          "slugline": "Take-2 slugline",
+          "anpa_take_key": "Take=3",
+          "state": "draft",
+          "original_creator": "#CONTEXT_USER_ID#"
+      }
+      """
+      When we patch "/archive/#TAKE3#"
+      """
+      {"body_html": "Take-3", "abstract": "Take-3 Abstract",
+      "headline": "Take-3 soccer headline", "slugline": "Take-3 slugline"}
+      """
+      And we post to "/archive/#TAKE3#/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we get "/archive"
+      Then we get list with 4 items
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "#TAKE2#" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "#TAKE3#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 6 items
+      """
+      {
+        "_items": [
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1",
+                    "_current_version": 3,
+                    "slugline": "Take-1 slugline",
+                    "headline": "Take-1 soccer headline",
+                    "last_published_version": false
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1<br>Take-2",
+                    "_current_version": 4,
+                    "slugline": "Take-2 slugline",
+                    "headline": "Take-2 soccer headline",
+                    "last_published_version": false
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1<br>Take-2<br>Take-3",
+                    "_current_version": 5,
+                    "slugline": "Take-3 slugline",
+                    "headline": "Take-3 soccer headline",
+                    "last_published_version": true
+                }
+        ]
+      }
+      """
+      When we publish "#TAKE2#" with "correct" type and "corrected" state
+      """
+      {
+        "body_html": "corrected"
+      }
+      """
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 8 items
+      """
+      {
+        "_items": [
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1",
+                    "_current_version": 3,
+                    "slugline": "Take-1 slugline",
+                    "headline": "Take-1 soccer headline",
+                    "last_published_version": false
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1<br>Take-2",
+                    "_current_version": 4,
+                    "slugline": "Take-2 slugline",
+                    "headline": "Take-2 soccer headline",
+                    "last_published_version": false
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1<br>Take-2<br>Take-3",
+                    "_current_version": 5,
+                    "slugline": "Take-3 slugline",
+                    "headline": "Take-3 soccer headline",
+                    "last_published_version": false
+                },
+                {
+                    "type": "composite",
+                    "package_type": "takes",
+                    "sequence": 3,
+                    "_id": "#archive.123.take_package#",
+                    "body_html": "Take-1<br>corrected<br>Take-3",
+                    "_current_version": 6,
+                    "slugline": "Take-3 slugline",
+                    "headline": "Take-3 soccer headline",
+                    "last_published_version": true
+                }
+        ]
+      }
+      """

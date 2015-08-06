@@ -170,7 +170,7 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'published',
+                          'state': 'in_progress',
                           'expiry': utcnow() + timedelta(minutes=20),
                           'type': 'text',
                           'unique_name': '#5'},
@@ -665,28 +665,6 @@ class ArchivePublishTestCase(TestCase):
                 self.assertEqual(queue_item['item_version'], published_version_number)
 
             self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
-
-    def test_processing_very_first_take(self):
-        with self.app.app_context():
-            doc = self.articles[4].copy()
-            original_package, updated_package = get_resource_service('archive_publish').process_takes(
-                doc, self.articles[6]['_id'], doc)
-
-            self.assertIsNotNone(original_package)
-            self.assertIsNotNone(updated_package)
-            self.assertEqual(updated_package['body_html'], 'Take-2 body<br>')
-            self.assertEqual(updated_package['headline'], 'Take-2 headline')
-
-    def test_processing_second_take_where_first_take_published(self):
-        with self.app.app_context():
-            doc = self.articles[3].copy()
-            original_package, updated_package = get_resource_service('archive_publish').process_takes(
-                doc, self.articles[6]['_id'], doc)
-
-            self.assertIsNotNone(original_package)
-            self.assertIsNotNone(updated_package)
-            self.assertEqual(updated_package['body_html'], 'Take-2 body<br>Take-1 body<br>')
-            self.assertEqual(updated_package['headline'], 'Take-1 headline')
 
     def test_can_publish_article(self):
         with self.app.test_request_context(URL_PREFIX):
