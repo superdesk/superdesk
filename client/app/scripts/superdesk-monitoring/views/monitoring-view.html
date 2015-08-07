@@ -48,7 +48,7 @@
 
         <div class="subnav">
             <ul class="filtertype-icon-list">
-                <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" ng-class="{active: aggregate.hasFileType(fileType)}">
+                <li ng-repeat="fileType in aggregate.fileTypes" ng-click="aggregate.setFileType(fileType)" ng-class="{active: aggregate.hasFileType(fileType)}" title="{{fileType}}">
                     <a href="" ng-if="fileType=='all'" class="filetype-icon-{{fileType}}" translate>all</a>
                     <i ng-if="fileType!='all'" class="filetype-icon-{{fileType}}"></i>
                 </li>
