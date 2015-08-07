@@ -180,18 +180,27 @@ describe('authoring', function() {
     });
 
     describe('subnavigation menu', function () {
-        it('allows to create a new empty package', function () {
-            // 1. Navigate to the authoring main page.
-            //
-            // 2. Open the "plus icon" menu in subnav bar and click the
+        fit('allows to create a new empty package', function () {
+            // 1. Open the "plus icon" menu in subnav bar and click the
             //    "Empty Package" link in the menu.
             //
-            // 3. Get the newly created item's info box and check if it
+            // 2. Get the newly created item's info box and check if it
             //    contains an icon indicating that the item's type is indeed
             //    "composite".
             //
             authoring.openAuthoringHome().then(function () {
-                browser.sleep(300);
+                ///////////////////  DEBUG
+                browser.getLocationAbsUrl().then(function (absUrl) {
+                    console.log('******* current URL:', absUrl);
+                });
+
+                var item = $('.page-nav-title');
+                item.getText().then(function (text) {
+                    console.log('---- item teeext:', text);
+                    // should be "Authoring - opened articles"!!!
+                });
+                ///////// END DEBUG
+
                 return authoring.navbarMenuBtn.click();
             }).then(function () {
                 return authoring.newEmptyPackageLink.click();
