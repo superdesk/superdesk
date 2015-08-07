@@ -77,6 +77,14 @@ function Content() {
         return element.all(by.repeater('items._items')).count();
     };
 
+    this.getItemCount = function () {
+        browser.wait(function() {
+            // make sure list is there before counting
+            return element(by.css('.list-view')).isPresent();
+        });
+        return element.all(by.repeater('item in items track by uuid(item)')).count();
+    };
+
     /**
      * @alias this.getCount
      */

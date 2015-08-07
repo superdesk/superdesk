@@ -180,12 +180,14 @@ describe('HIGHLIGHTS', function() {
             content.setListView();
             highlights.mark('Highlight two', 0);
             highlights.createHighlightsPackage('HIGHLIGHT TWO');
+            authoring.edit();
             authoring.showSearch();
             authoring.addToGroup(0, 'ONE');
             expect(authoring.getGroupItems('ONE').count()).toBe(1);
+            authoring.showSearch();
             authoring.save();
+            expect(content.getItemCount()).toBe(1);
             authoring.close();
-            expect(content.getCount()).toBe(3);
         });
 
         it('filter by highlights in highlight package', function() {
@@ -212,6 +214,7 @@ describe('HIGHLIGHTS', function() {
             highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('HIGHLIGHT TWO');
+            authoring.edit();
             authoring.showSearch();
             expect(authoring.getSearchItemCount()).toBe(2);
 

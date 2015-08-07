@@ -41,6 +41,10 @@ function Authoring() {
         });
     };
 
+    this.edit = function() {
+        return element(by.id('Edit')).click();
+    };
+
     this.showSearch = function() {
         return element(by.id('Search')).click();
     };
@@ -82,7 +86,8 @@ function Authoring() {
     };
 
     this.getGroupItems = function(group) {
-        return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
+        return element(by.css('[data-title="' + group.toLowerCase() + '"]'))
+            .all(by.repeater('child in item.childData'));
     };
 
     this.getGroupItem = function(group, item) {
