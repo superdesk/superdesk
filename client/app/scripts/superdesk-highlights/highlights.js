@@ -217,8 +217,12 @@
                     }
                 });
 
+                /*
+                 * Removing higghlight from an item
+                 * @param {string} highlight
+                 */
                 function unmarkHighlight(highlight) {
-                    highlightsService.mark_item(highlight, scope.item._id).then(function() {
+                    highlightsService.markItem(highlight, scope.item._id).then(function() {
                         scope.item.highlights = _.without(scope.item.highlights, highlight);
                     });
                 }
