@@ -495,7 +495,7 @@ angular.module('superdesk.editor', [])
                     editor.elements.forEach(function (checkElem) {
                         var editorElem = checkElem.find(scope.type === 'preformatted' ? '.editor-type-text' : '.editor-type-html');
                         editorElem.trigger('input');
-                    })
+                    });
                 };
 
                 scope.$on('editor:settings', function() {

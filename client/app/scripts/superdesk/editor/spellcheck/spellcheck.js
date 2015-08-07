@@ -256,7 +256,7 @@ function SpellcheckService($q, api, dictionaries, editor) {
      * Add word to user dictionary
      */
     this.addWordToUserDictionary = function(word) {
-        word = word.toLowerCase()
+        word = word.toLowerCase();
         dictionaries.addWordToUserDictionary(word, lang);
         dict.content[word] = dict.content[word] ? dict.content[word] + 1 : 1;
     };
