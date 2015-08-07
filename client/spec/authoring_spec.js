@@ -2,6 +2,7 @@
 'use strict';
 
 var workspace = require('./helpers/workspace'),
+    monitoring = require('./helpers/monitoring'),
     authoring = require('./helpers/authoring');
 
 describe('authoring', function() {
@@ -178,6 +179,12 @@ describe('authoring', function() {
         expect(authoring.getHistoryItems().count()).toBe(1);
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
     });
+
+    it('allows to create a new empty package', function () {
+        monitoring.openMonitoring();
+        browser.sleep(500);
+        monitoring.createItemAction('create_package');
+        expect(authoring.findItemTypeIcons('composite').count()).toBeGreaterThan(0);
+    });
+
 });
-
-
