@@ -136,6 +136,6 @@ function waitForSuperdesk() {
  */
 function nav(location) {
     return login().then(function() {
-        browser.setLocation(location);
+        return browser.setLocation(location);
     });
 }
