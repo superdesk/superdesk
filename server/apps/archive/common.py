@@ -21,7 +21,7 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
-from superdesk.metadata.item import metadata_schema
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -303,8 +303,8 @@ def update_state(original, updates):
     is changed to 'in-progress'.
     """
 
-    original_state = original.get(config.CONTENT_STATE)
-    if original_state not in ['ingested', 'in_progress', 'scheduled']:
+    original_state = original.get(ITEM_STATE)
+    if original_state not in {CONTENT_STATE.INGESTED, CONTENT_STATE.PROGRESS, CONTENT_STATE.SCHEDULED}:
         if original.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             # skip any state transition validation for takes packages
             # also don't change the stage of the package
@@ -312,9 +312,9 @@ def update_state(original, updates):
         if not is_workflow_state_transition_valid('save', original_state):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
-            updates[config.CONTENT_STATE] = 'in_progress'
+            updates[ITEM_STATE] = CONTENT_STATE.PROGRESS
         elif not is_assigned_to_a_desk(original):
-            updates[config.CONTENT_STATE] = 'draft'
+            updates[ITEM_STATE] = CONTENT_STATE.DRAFT
 
 
 def is_update_allowed(archive_doc):
@@ -323,8 +323,7 @@ def is_update_allowed(archive_doc):
     For instance, a published item shouldn't be allowed to update.
     """
 
-    state = archive_doc.get(config.CONTENT_STATE)
-    if state in ['killed']:
+    if archive_doc.get(ITEM_STATE) == CONTENT_STATE.KILLED:
         raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
 
 

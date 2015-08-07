@@ -27,7 +27,7 @@ from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, A
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.users.services import is_admin
-from superdesk.metadata.item import metadata_schema
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -379,7 +379,7 @@ class ArchiveService(BaseService):
         on_duplicate_item(new_doc)
         resolve_document_version(new_doc, 'archive', 'PATCH', new_doc)
         if original_doc.get('task', {}).get('desk') is not None and new_doc.get('state') != 'submitted':
-            new_doc[config.CONTENT_STATE] = 'submitted'
+            new_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED
         item_model.create([new_doc])
         self._duplicate_versions(original_doc['guid'], new_doc)
 
@@ -466,8 +466,8 @@ class ArchiveService(BaseService):
         Removes the article from production if the state is spiked
         """
 
-        assert doc[config.CONTENT_STATE] == 'spiked', \
-            "Article state is %s. Only Spiked Articles can be removed" % doc[config.CONTENT_STATE]
+        assert doc[ITEM_STATE] == CONTENT_STATE.SPIKED, \
+            "Article state is %s. Only Spiked Articles can be removed" % doc[ITEM_STATE]
 
         doc_id = str(doc[config.ID_FIELD])
         super().delete_action({config.ID_FIELD: doc_id})

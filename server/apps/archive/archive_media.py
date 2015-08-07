@@ -15,6 +15,7 @@ from eve.utils import config
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
 from .common import update_dates_for, generate_guid, GUID_TAG, set_original_creator, \
@@ -61,7 +62,7 @@ class ArchiveMediaService():
                 if not doc.get('_import', None):
                     set_original_creator(doc)
 
-                doc.setdefault(config.CONTENT_STATE, 'draft')
+                doc.setdefault(ITEM_STATE, CONTENT_STATE.DRAFT)
 
                 if not doc.get('ingest_provider'):
                     doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES

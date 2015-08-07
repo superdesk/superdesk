@@ -17,7 +17,7 @@ from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
     LAST_TAKE, ASSOCIATIONS, MAIN_GROUP, SEQUENCE, ITEM_REF
-from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE
 from apps.archive.common import insert_into_versions
 from .package_service import get_item_ref, create_root_group
 
@@ -88,12 +88,12 @@ class TakesPackageService():
         to['event_id'] = target.get('event_id')
         to['headline'] = headline
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
-        if target.get(config.CONTENT_STATE) in PUBLISH_STATES:
+        if target.get(ITEM_STATE) in PUBLISH_STATES:
             to['anpa_take_key'] = '{} (reopens)'.format(take_key)
         to[config.VERSION] = 1
-        to[config.CONTENT_STATE] = 'in_progress' if to.get('task', {}).get('desk', None) else 'draft'
+        to[ITEM_STATE] = CONTENT_STATE.PROGRESS if to.get('task', {}).get('desk', None) else CONTENT_STATE.DRAFT
 
-        copy_from = package if (package.get(config.CONTENT_STATE) in PUBLISH_STATES) else target
+        copy_from = package if (package.get(ITEM_STATE) in PUBLISH_STATES) else target
         for field in self.fields_for_creating_take:
             to[field] = copy_from.get(field)
 
@@ -188,7 +188,7 @@ class TakesPackageService():
                 for sequence in range(takes_package.get(SEQUENCE, 0), 0, -1):
                     try:
                         ref = next(ref for ref in refs if ref.get(SEQUENCE) == sequence)
-                        updates = {config.CONTENT_STATE: 'spiked'}
+                        updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
                         spike_service.patch(ref[ITEM_REF], updates)
                     except InvalidStateTransitionError:
                         # for published items it will InvalidStateTransitionError
@@ -266,7 +266,7 @@ class TakesPackageService():
         query = {'$and':
                  [
                      {config.ID_FIELD: {'$in': takes}},
-                     {config.CONTENT_STATE: {'$in': ['published', 'corrected']}}
+                     {ITEM_STATE: {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}
                  ]}
         request = ParsedRequest()
         request.sort = SEQUENCE

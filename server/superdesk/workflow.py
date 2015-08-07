@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from eve.utils import config
+from superdesk.metadata.item import ITEM_STATE
 
 states = []
 actions = []
@@ -110,4 +110,4 @@ def set_default_state(doc, state):
     :param doc: item
     :param state: state to be set as default
     """
-    doc.setdefault(config.CONTENT_STATE, state)
+    doc.setdefault(ITEM_STATE, state)

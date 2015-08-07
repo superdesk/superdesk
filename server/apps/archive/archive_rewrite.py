@@ -8,17 +8,18 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import logging
+
 from flask import request
 
 from superdesk import get_resource_service, Service
+from superdesk.metadata.item import ITEM_STATE
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.archive.common import item_url, CUSTOM_HATEOAS
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from apps.packages.takes_package_service import TakesPackageService
 from apps.tasks import send_to
-from eve.utils import config
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +65,7 @@ class ArchiveRewriteService(Service):
         if get_resource_service('published').is_rewritten_before(original['_id']):
             raise SuperdeskApiError.badRequestError(message='Article has been rewritten before !')
 
-        if not is_workflow_state_transition_valid('rewrite', original[config.CONTENT_STATE]):
+        if not is_workflow_state_transition_valid('rewrite', original[ITEM_STATE]):
             raise InvalidStateTransitionError()
 
         if not TakesPackageService().is_last_takes_package_item(original):

@@ -16,7 +16,7 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
-from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD
+from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE
 from superdesk.metadata.packages import SEQUENCE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
@@ -86,7 +86,7 @@ class BasePublishService(BaseService):
             raise SuperdeskApiError.badRequestError(
                 message='Cannot publish an item which is marked as Not for Publication')
 
-        if not is_workflow_state_transition_valid(self.publish_type, original[config.CONTENT_STATE]):
+        if not is_workflow_state_transition_valid(self.publish_type, original[ITEM_STATE]):
             raise InvalidStateTransitionError()
 
         updated = original.copy()
@@ -234,7 +234,7 @@ class BasePublishService(BaseService):
 
     def _set_version_last_modified_and_state(self, original, updates, last_updated):
         """
-        Sets config.VERSION, config.LAST_UPDATED, config.CONTENT_STATE in updates document.
+        Sets config.VERSION, config.LAST_UPDATED, ITEM_STATE in updates document.
         :param dict original: original document
         :param dict updates: updates related to the original document
         :param datetime last_updated: datetime of the updates.
@@ -271,7 +271,7 @@ class BasePublishService(BaseService):
         :param dict updates: updates related to document
         """
         updates['publish_schedule'] = None
-        updates[config.CONTENT_STATE] = self.published_state
+        updates[ITEM_STATE] = self.published_state
 
     def process_takes(self, updates_of_take_to_be_published, package, original_of_take_to_be_published=None):
         """
@@ -515,9 +515,9 @@ class BasePublishService(BaseService):
                             publish_queue_item['headline'] = doc.get('headline', None)
 
                             self.set_state(doc, publish_queue_item)
-                            if publish_queue_item.get(config.CONTENT_STATE):
-                                publish_queue_item['publishing_action'] = publish_queue_item.get(config.CONTENT_STATE)
-                                del publish_queue_item[config.CONTENT_STATE]
+                            if publish_queue_item.get(ITEM_STATE):
+                                publish_queue_item['publishing_action'] = publish_queue_item.get(ITEM_STATE)
+                                del publish_queue_item[ITEM_STATE]
                             else:
                                 publish_queue_item['publishing_action'] = self.published_state
 
@@ -612,7 +612,7 @@ class ArchivePublishService(BasePublishService):
         """
         updates[ITEM_OPERATION] = ITEM_PUBLISH
         if original.get('publish_schedule') or updates.get('publish_schedule'):
-            updates[config.CONTENT_STATE] = 'scheduled'
+            updates[ITEM_STATE] = CONTENT_STATE.SCHEDULED
         else:
             super().set_state(original, updates)
 

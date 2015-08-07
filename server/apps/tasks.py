@@ -9,23 +9,25 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+from copy import copy
+
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
+
 from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry,\
     item_operations, ITEM_OPERATION, update_version
+
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
-from superdesk.metadata.item import metadata_schema
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 import superdesk
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from apps.archive.archive import get_subject
 from superdesk.workflow import is_workflow_state_transition_valid
-from copy import copy
-from eve.utils import config
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk import get_resource_service
 
@@ -133,7 +135,7 @@ class TaskResource(Resource):
         'filter': {'task': {'$exists': True}},
         'elastic_filter': {'bool': {
             'must': {'exists': {'field': 'task'}},
-            'must_not': {'term': {'state': 'spiked'}},
+            'must_not': {'term': {ITEM_STATE: 'spiked'}},
         }}
     }
 
@@ -195,11 +197,12 @@ class TasksService(BaseService):
     def __update_state(self, updates, original):
         if self.__is_content_assigned_to_new_desk(original, updates):
             # check if the preconditions for the action are in place
-            original_state = original[config.CONTENT_STATE]
+            original_state = original[ITEM_STATE]
             if not is_workflow_state_transition_valid('move', original_state):
                 raise InvalidStateTransitionError()
 
-            updates[config.CONTENT_STATE] = 'draft' if self.__is_content_moved_from_desk(updates) else 'submitted'
+            updates[ITEM_STATE] = CONTENT_STATE.DRAFT if self.__is_content_moved_from_desk(updates) \
+                else CONTENT_STATE.SUBMITTED
             resolve_document_version(updates, ARCHIVE, 'PATCH', original)
 
     def update_stage(self, doc):
