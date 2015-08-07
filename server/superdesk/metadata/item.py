@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from collections import namedtuple
-
+from superdesk.workflow import *  # noqa
 from superdesk.resource import Resource
 from .packages import PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES, PACKAGE
 
@@ -185,12 +185,14 @@ metadata_schema = {
     ITEM_STATE: {
         'type': 'string',
         'allowed': content_state,
+        'allowed': allowed_workflow_states,
         'mapping': not_analyzed,
     },
     # The previous state the item was in before for example being spiked, when un-spiked it will revert to this state
     'revert_state': {
         'type': 'string',
         'allowed': content_state,
+        'allowed': allowed_workflow_states,
         'mapping': not_analyzed,
     },
     'pubstatus': {

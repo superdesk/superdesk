@@ -28,7 +28,7 @@ from superdesk import get_resource_service
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from settings import URL_PREFIX
-from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 
@@ -402,7 +402,7 @@ class ArchivePublishTestCase(TestCase):
             self.assertEqual(0, queue_items.count())
             archive_publish = get_resource_service('archive_publish')
             doc = copy(self.articles[0])
-            doc['type'] = 'image'
+            doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
             subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'digital')
             no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
             queue_items = self.app.data.find('publish_queue', None, None)

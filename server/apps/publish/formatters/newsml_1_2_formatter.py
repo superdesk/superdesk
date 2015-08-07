@@ -14,6 +14,7 @@ from xml.etree.ElementTree import SubElement
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 from settings import NEWSML_PROVIDER_ID
 
@@ -155,4 +156,5 @@ class NewsML12Formatter(Formatter):
         SubElement(content_item, 'DataContent').text = article.get('body_html', '')
 
     def can_format(self, format_type, article):
-        return format_type == 'newsml12' and article['type'] in ['text', 'preformatted', 'composite']
+        return format_type == 'newsml12' and \
+            article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE]

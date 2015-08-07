@@ -20,6 +20,7 @@ from superdesk.errors import FormatterError
 from superdesk.io.iptc import subject_codes
 from apps.publish.formatters.field_mappers.selectorcode_mapper import SelectorcodeMapper
 from apps.publish.formatters.field_mappers.locator_mapper import LocatorMapper
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 
 class AAPIpNewsFormatter(Formatter):
@@ -86,9 +87,9 @@ class AAPIpNewsFormatter(Formatter):
 
                 odbc_item['take_key'] = article.get('anpa_take_key', None)  # @take_key
                 odbc_item['usn'] = article.get('unique_id', None)  # @usn
-                if article['type'] == 'preformatted':
+                if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     odbc_item['article_text'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
-                elif article['type'] == 'text':
+                elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
                     soup = BeautifulSoup(article.get('body_html', ''))
                     text = StringIO()
                     for p in soup.findAll('p'):
@@ -105,9 +106,9 @@ class AAPIpNewsFormatter(Formatter):
                     odbc_item['genre'] = article['genre'][0].get('name', None)
                 else:
                     odbc_item['genre'] = 'Current'  # @genre
-                if article.get('type', 'text') == 'text':
+                if article.get(ITEM_TYPE, CONTENT_TYPE.TEXT) == CONTENT_TYPE.TEXT:
                     odbc_item['texttab'] = 'x'
-                elif article.get('type', None) == 'preformatted':
+                elif article.get(ITEM_TYPE, None) == CONTENT_TYPE.PREFORMATTED:
                     odbc_item['texttab'] = 't'
                 odbc_item['wordcount'] = article.get('word_count', None)  # @wordcount
                 odbc_item['news_item_type'] = 'News'
@@ -129,4 +130,4 @@ class AAPIpNewsFormatter(Formatter):
             raise FormatterError.AAPIpNewsFormatterError(ex, subscriber)
 
     def can_format(self, format_type, article):
-        return format_type == 'AAP IPNEWS' and article['type'] in ['text', 'preformatted']
+        return format_type == 'AAP IPNEWS' and article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]

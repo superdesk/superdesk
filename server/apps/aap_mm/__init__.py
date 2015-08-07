@@ -8,7 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-
 from apps.aap_mm.service import AapMMService
 from apps.aap_mm.resource import AapMMResource
 from superdesk import intrinsic_privilege

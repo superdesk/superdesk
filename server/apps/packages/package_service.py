@@ -17,6 +17,7 @@ from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE, \
     ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP
 from apps.archive.common import insert_into_versions
@@ -212,7 +213,7 @@ class PackageService():
         :return: articles of type composite
         """
 
-        query = {'$and': [{'type': 'composite'}, {'groups.refs.guid': doc_id}]}
+        query = {'$and': [{ITEM_TYPE: CONTENT_TYPE.COMPOSITE}, {'groups.refs.guid': doc_id}]}
 
         request = ParsedRequest()
         request.max_results = 100
@@ -232,7 +233,8 @@ class PackageService():
         if processed_packages is None:
             processed_packages = []
 
-        sub_package_ids = [ref['guid'] for group in groups for ref in group['refs'] if ref.get('type') == 'composite']
+        sub_package_ids = [ref['guid'] for group in groups
+                           for ref in group['refs'] if ref.get('type') == CONTENT_TYPE.COMPOSITE]
         for sub_package_id in sub_package_ids:
             if sub_package_id not in processed_packages:
                 sub_package = self.find_one(req=None, _id=sub_package_id)

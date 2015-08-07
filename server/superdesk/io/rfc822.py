@@ -12,6 +12,7 @@
 import superdesk
 from superdesk.io import Parser
 import datetime
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 from pytz import timezone
 from superdesk.media.media_operations import process_file_from_stream
@@ -57,7 +58,7 @@ class rfc822Parser(Parser):
             # create an item for the body text of the email
             # either text or html
             item = dict()
-            item['type'] = 'text'
+            item[ITEM_TYPE] = CONTENT_TYPE.TEXT
             item['versioncreated'] = utcnow()
 
             comp_item = None
@@ -147,7 +148,7 @@ class rfc822Parser(Parser):
                             # if we have not got a composite item then create one
                             if not comp_item:
                                 comp_item = dict()
-                                comp_item['type'] = 'composite'
+                                comp_item[ITEM_TYPE] = CONTENT_TYPE.COMPOSITE
                                 comp_item['guid'] = generate_guid(type=GUID_TAG)
                                 comp_item['versioncreated'] = utcnow()
                                 comp_item['groups'] = []
@@ -172,7 +173,7 @@ class rfc822Parser(Parser):
                             media_item = dict()
                             media_item['guid'] = generate_guid(type=GUID_TAG)
                             media_item['versioncreated'] = utcnow()
-                            media_item['type'] = 'picture'
+                            media_item[ITEM_TYPE] = CONTENT_TYPE.PICTURE
                             media_item['renditions'] = renditions
                             media_item['mimetype'] = content_type
                             media_item['filemeta'] = metadata
@@ -201,7 +202,7 @@ class rfc822Parser(Parser):
                 item['body_html'] = html_body
             else:
                 item['body_html'] = text_body
-                item['type'] = 'preformatted'
+                item[ITEM_TYPE] = CONTENT_TYPE.PREFORMATTED
 
             # if there is composite item then add the main group and references
             if comp_item:

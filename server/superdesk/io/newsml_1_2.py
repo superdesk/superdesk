@@ -13,6 +13,8 @@ from ..etree import etree
 from superdesk.io import Parser
 from superdesk.io.iptc import subject_codes
 from superdesk.errors import ParserError
+from superdesk.metadata.item import ITEM_TYPE
+from superdesk.metadata.item import CONTENT_TYPE
 from superdesk.utc import utc
 
 
@@ -121,7 +123,7 @@ class NewsMLOneParser(Parser):
             return datetime.datetime.strptime(string, '%Y%m%dT%H%M%SZ').replace(tzinfo=utc)
 
     def populate_fields(self, item):
-        item['type'] = 'text'
+        item[ITEM_TYPE] = CONTENT_TYPE.TEXT
         return item
 
     def parse_news_identifier(self, item, tree):

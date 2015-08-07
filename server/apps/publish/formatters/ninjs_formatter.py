@@ -12,6 +12,7 @@ import json
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utils import json_serialize_datetime_objectId
 
 
@@ -48,7 +49,7 @@ class NINJSFormatter(Formatter):
             if 'description' in article:
                 ninjs['description_text'] = article['description']
 
-            if article['type'] == 'composite':
+            if article[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 ninjs['associations'] = self._get_associations(article)
 
             return [(pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId))]
@@ -67,9 +68,9 @@ class NINJSFormatter(Formatter):
         raise Exception('User not found')
 
     def _get_type(self, article):
-        if article['type'] == 'preformatted':
-            return 'text'
-        return article['type']
+        if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
+            return CONTENT_TYPE.TEXT
+        return article[ITEM_TYPE]
 
     def _get_associations(self, article):
         associations = dict()

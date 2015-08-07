@@ -12,6 +12,7 @@
 import datetime
 from superdesk.io import Parser
 from superdesk.errors import ParserError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utc
 
 
@@ -45,7 +46,7 @@ class WENNParser(Parser):
             raise ParserError.wennParserError(ex, provider)
 
     def set_item_defaults(self, item):
-        item['type'] = 'text'
+        item[ITEM_TYPE] = CONTENT_TYPE.TEXT
         item['urgency'] = 5
         item['pubstatus'] = 'usable'
         item['anpa_category'] = [{'qcode': 'e'}]
