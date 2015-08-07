@@ -16,7 +16,8 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
-from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
+    PUBLISH_STATES
 from superdesk.metadata.packages import SEQUENCE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
@@ -36,6 +37,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.archive.common import item_url, get_user, insert_into_versions, \
     set_sign_off, item_operations, ITEM_OPERATION
 from apps.packages import TakesPackageService
+from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 logger = logging.getLogger(__name__)
@@ -80,6 +82,7 @@ class BasePublishService(BaseService):
     non_digital = partial(filter, lambda s: s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL)
     digital = partial(filter, lambda s: s.get('subscriber_type', '') == SUBSCRIBER_TYPES.DIGITAL)
     takes_package_service = TakesPackageService()
+    package_service = PackageService()
 
     def on_update(self, updates, original):
         if original.get('marked_for_not_publication', False):
@@ -87,7 +90,9 @@ class BasePublishService(BaseService):
                 message='Cannot publish an item which is marked as Not for Publication')
 
         if not is_workflow_state_transition_valid(self.publish_type, original[ITEM_STATE]):
-            raise InvalidStateTransitionError()
+            error_message = "Can't {} as item state is {}" if original[ITEM_TYPE] == CONTENT_TYPE.TEXT else \
+                "Can't {} as either package state or one of the items state is {}"
+            raise InvalidStateTransitionError(error_message.format(self.publish_type, original[ITEM_STATE]))
 
         updated = original.copy()
         updated.update(updates)
@@ -206,17 +211,18 @@ class BasePublishService(BaseService):
         :param: package to publish
         :param datetime last_updated: datetime of the updates.
         """
-        items = [ref.get('residRef') for group in package.get('groups', [])
-                 for ref in group.get('refs', []) if 'residRef' in ref]
+
+        items = self.package_service.get_residrefs(package)
 
         if items:
             archive_publish = get_resource_service('archive_publish')
             for guid in items:
                 doc = super().find_one(req=None, _id=guid)
                 try:
-                    if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                        self._publish_package_items(doc)
-                    archive_publish.patch(id=doc.pop('_id'), updates=doc)
+                    if doc[ITEM_STATE] not in PUBLISH_STATES:
+                        if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                            self._publish_package_items(doc)
+                        archive_publish.patch(id=doc.pop('_id'), updates=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
             self.publish(package, updates, target_media_type=DIGITAL)
@@ -593,8 +599,8 @@ class BasePublishService(BaseService):
         """
         # Ensure it is the sort of thing we need to validate
         if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == ITEM_PUBLISH:
-            items = [ref.get('residRef') for group in package.get('groups', [])
-                     for ref in group.get('refs', []) if 'residRef' in ref]
+            items = self.package_service.get_residrefs(package)
+
             if items:
                 for guid in items:
                     doc = super().find_one(req=None, _id=guid)

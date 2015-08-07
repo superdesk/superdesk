@@ -8,12 +8,11 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-'''
+"""
 Created on May 29, 2014
 
 @author: ioan
-'''
-
+"""
 
 import redis
 import arrow

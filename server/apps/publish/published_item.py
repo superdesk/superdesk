@@ -21,9 +21,10 @@ from apps.packages.package_service import PackageService
 import superdesk
 from apps.packages import TakesPackageService
 from apps.users.services import get_display_name
+from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed, ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import not_analyzed, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.archive.common import aggregations, handle_existing_data, item_schema
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow, get_expiry_date
@@ -37,7 +38,9 @@ class PublishedItemResource(Resource):
     datasource = {
         'search_backend': 'elastic',
         'aggregations': aggregations,
-        'elastic_filter': {'terms': {'state': ['scheduled', 'published', 'killed', 'corrected']}},
+        'elastic_filter': {'and': [{'term': {'allow_post_publish_actions': True}},
+                                   {'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED, CONTENT_STATE.PUBLISHED,
+                                                           CONTENT_STATE.KILLED, CONTENT_STATE.CORRECTED]}}]},
         'default_sort': [('_updated', -1)],
         'projection': {
             'old_version': 0,
@@ -62,6 +65,20 @@ class PublishedItemResource(Resource):
             'type': 'string',
             'mapping': not_analyzed,
             'nullable': True
+        },
+
+        # This field is set to False if the item is expired and is not killed after publishing/correcting.
+        'allow_post_publish_actions': {
+            'type': 'boolean',
+            'default': True
+        },
+
+        # This field is set to True, when user uses "delete from archived" option.
+        # When the article is expired, 'can be removed' flag is True and 'allow post publish actions' flag is False
+        # then the article will be removed from published collection.
+        'can_be_removed': {
+            'type': 'boolean',
+            'default': False
         }
     }
 
@@ -130,13 +147,9 @@ class PublishedItemService(BaseService):
                     takes_service.enhance_with_package_info(item)
 
             for item in items:
-                try:
-                    archive_item = [i for i in archive_items if i.get(config.ID_FIELD) == item.get('item_id')][0]
-                except IndexError:
-                    logger.exception(('Data inconsistency found for the published item {}. '
-                                      'Cannot find item {} in the archive collection.')
-                                     .format(item.get(config.ID_FIELD), item.get('item_id')))
-                    archive_item = {}
+                archive_item = [i for i in archive_items if i.get(config.ID_FIELD) == item.get('item_id')]
+                archive_item = archive_item[0] if len(archive_item) > 0 else \
+                    {config.VERSION: item.get(config.VERSION, 1)}
 
                 updates = {
                     config.ID_FIELD: item.get('item_id'),
@@ -274,13 +287,13 @@ class PublishedItemService(BaseService):
     def remove_expired(self, doc):
         """
         Removes the expired published article from 'published' collection. Below is the workflow:
-            1.  If type of the article is either text or pre-formatted then a copy is inserted into Text Archive
+            1.  Update allow_post_publish_actions, can_be_removed flags.
             2.  Inserts/updates the article in Legal Archive repository
                 (a) All references to master data like users, desks ... is de-normalized and then
                     inserted into Legal Archive. Same is done to each version of the article.
                 (b) Inserts Formatted Items
                 (c) Inserts Transmission Details (fetched from publish_queue collection)
-            3.  Removes the item from publish_queue and published collections
+            3.  Removes the item from publish_queue and published collections, if can_be_removed is True
             4.  Remove the article and its versions from archive collection if all of the below conditions are met:
                 (a) Article hasn't been published/corrected/killed again
                 (b) Article isn't part of a package
@@ -290,43 +303,48 @@ class PublishedItemService(BaseService):
 
         logging.info("Starting the workflow for removing the expired publish item with id: %s" % doc['item_id'])
 
-        # Step 1
-        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
-            self._insert_into_or_remove_from_text_archive(doc)
+        can_be_removed = doc['can_be_removed']
 
-        # Step 2
-        publish_queue_items = self._upsert_into_legal_archive(doc)
-        for publish_queue_item in publish_queue_items:
-            get_resource_service('publish_queue').delete_action(
-                lookup={config.ID_FIELD: publish_queue_item[config.ID_FIELD]})
+        if not can_be_removed:
+            # Step 1
+            updates = self._update_flags(doc)
+            doc.update(updates)
+            can_be_removed = updates.get('can_be_removed', can_be_removed)
 
-        # Step 3
-        self.delete_by_article_id(_id=doc['item_id'], doc=doc)
+            # Step 2
+            publish_queue_items = self._upsert_into_legal_archive(doc)
+            for publish_queue_item in publish_queue_items:
+                get_resource_service('publish_queue').delete_action(
+                    lookup={config.ID_FIELD: publish_queue_item[config.ID_FIELD]})
 
-        # Step 4
-        items = self.get_other_published_items(doc['item_id'])
-        if items.count() == 0 and self.__is_orphan(doc):
-            lookup = {'$and': [{versioned_id_field(): doc['item_id']}, {config.VERSION: {'$lte': doc[config.VERSION]}}]}
-            get_resource_service('archive_versions').delete(lookup)
+            # Step 4
+            if self.can_remove_from_production(doc):
+                lookup = {'$and': [{versioned_id_field(): doc['item_id']},
+                                   {config.VERSION: {'$lte': doc[config.VERSION]}}]}
+                get_resource_service('archive_versions').delete(lookup)
 
-            get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: doc['item_id']})
+                get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: doc['item_id']})
+
+        if can_be_removed:
+            # Step 3
+            self.delete_by_article_id(_id=doc['item_id'], doc=doc)
 
         logging.info("Completed the workflow for removing the expired publish item with id: %s" % doc['item_id'])
 
-    def _insert_into_or_remove_from_text_archive(self, doc):
+    def _update_flags(self, doc):
         """
-        If the state of the article is published, check if it's been killed after publishing. If article has been killed
-        then return otherwise insert into text_archive.
+        Update allow_post_publish_actions to False. Also, update can_be_removed to True if item is killed.
 
-        If the state of the article is killed then delete the article if the article is available in text_archive.
+        :param doc: expired item from published collection.
+        :return: updated flag values as dict
         """
 
-        text_archive_service = get_resource_service('text_archive')
+        flag_updates = {'allow_post_publish_actions': False, '_updated': utcnow()}
+        super().patch(doc[config.ID_FIELD], flag_updates)
+        push_notification('item:published:no_post_publish_actions', item=str(doc[config.ID_FIELD]))
 
-        if text_archive_service is None:
-            return
-
-        if doc.get('state') in ['published', 'corrected']:
+        update_can_be_removed = (doc[ITEM_STATE] == CONTENT_STATE.KILLED)
+        if doc.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
             # query to check if the item is killed the future versions or not
             query = {
                 'query': {
@@ -334,7 +352,7 @@ class PublishedItemService(BaseService):
                         'filter': {
                             'and': [
                                 {'term': {'item_id': doc['item_id']}},
-                                {'term': {'state': 'killed'}}
+                                {'term': {ITEM_STATE: CONTENT_STATE.KILLED}}
                             ]
                         }
                     }
@@ -345,15 +363,16 @@ class PublishedItemService(BaseService):
             request.args = {'source': json.dumps(query)}
             items = super().get(req=request, lookup=None)
 
-            if items.count() == 0:
-                text_archive_service.post([doc.copy()])
-                logger.info('Inserted published item {} with headline {} and version {} and expiry {}.'.
-                            format(doc['item_id'], doc.get('headline'), doc.get(config.VERSION), doc.get('expiry')))
-        elif doc.get('state') == 'killed':
-            text_archive_service.delete_action({config.ID_FIELD: doc[config.ID_FIELD]})
-            logger.info('Deleted published item {} with headline {} and version {} and expiry {} '
-                        'as the state of an article is killed.'.format(doc['item_id'], doc.get('headline'),
-                                                                       doc.get(config.VERSION), doc.get('expiry')))
+            update_can_be_removed = (items.count() > 0)
+
+        if update_can_be_removed:
+            get_resource_service('archived').delete_action({config.ID_FIELD: doc[config.ID_FIELD]})
+            flag_updates['can_be_removed'] = True
+
+        logger.info('Updated flags for the published item {} with headline {} and version {} and expiry {}.'.format(
+            doc['item_id'], doc.get('headline'), doc[config.VERSION], doc['expiry']))
+
+        return flag_updates
 
     def _upsert_into_legal_archive(self, doc):
         """
@@ -425,7 +444,8 @@ class PublishedItemService(BaseService):
         # Step 5 - Upserting Legal Archive
         logging.info('Upserting Legal Archive Repo with article %s' % legal_archive_doc.get('unique_name'))
 
-        article_in_legal_archive = legal_archive_service.find_one(_id=legal_archive_doc[config.ID_FIELD], req=None)
+        article_in_legal_archive = legal_archive_service.find_one(_id=legal_archive_doc[config.ID_FIELD],
+                                                                  req=ParsedRequest())
         if article_in_legal_archive:
             legal_archive_service.put(legal_archive_doc[config.ID_FIELD], legal_archive_doc)
         else:
@@ -472,17 +492,52 @@ class PublishedItemService(BaseService):
         Retrieves display_name of the user identified by user_id
         """
 
-        if user_id == '':
+        if not user_id:
             return ''
 
         user = get_resource_service('users').find_one(req=None, _id=user_id)
         return get_display_name(user)
 
-    def __is_orphan(self, doc):
+    def can_remove_from_production(self, doc):
         """
-        Checks if the doc in published collection is orphan in archive collection or not.
+        Returns true if the doc in published collection can be removed from production, otherwise returns false.
+        1. Returns false if item is published more than once
+        2. Returns false if item is referenced by a package
+        3. Returns false if the item is package and all items in the package are not found in archived collection.
+
         :param doc: article in published collection
-        :return: True if orphan in archive collection, False otherwise.
+        :return: True if item can be removed from production, False otherwise.
         """
 
-        return PackageService().get_packages(doc['item_id']).count() == 0
+        items = self.get_other_published_items(doc['item_id'])
+        is_removable = (items.count() == 0)
+
+        if is_removable:
+            is_removable = (PackageService().get_packages(doc['item_id']).count() == 0)
+
+            if is_removable and doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                return self._can_remove_package_from_production(doc)
+
+        return is_removable
+
+    def _can_remove_package_from_production(self, package):
+        """
+        Recursively checks if the package can be removed from production.
+
+        :param package:
+        :return: True if item can be removed from production, False otherwise.
+        """
+
+        item_refs = PackageService().get_residrefs(package)
+        archived_items = list(get_resource_service('archived').find_by_item_ids(item_refs))
+        is_removable = (len(item_refs) == len(archived_items))
+
+        if is_removable:
+            packages_in_archived_items = (p for p in archived_items if p[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE)
+
+            for package in packages_in_archived_items:
+                is_removable = self._can_remove_package_from_production(package)
+                if not is_removable:
+                    break
+
+        return is_removable

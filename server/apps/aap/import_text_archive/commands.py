@@ -15,7 +15,7 @@ import urllib
 import xml.etree.ElementTree as etree
 from superdesk.io.iptc import subject_codes
 from datetime import datetime
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, ITEM_STATE, CONTENT_STATE
 from superdesk.utc import utc
 from superdesk.io.commands.update_ingest import process_iptc_codes
 from superdesk.etree import get_text_word_count
@@ -144,9 +144,9 @@ class AppImportTextArchiveCommand(superdesk.Command):
             # if the item has been modified in the archive then it is due to a kill
             # there is an argument that this item should not be imported at all
             if doc.find('dcdossier').get('created') != doc.find('dcdossier').get('modified'):
-                item['state'] = 'killed'
+                item[ITEM_STATE] = CONTENT_STATE.KILLED
             else:
-                item['state'] = 'published'
+                item[ITEM_STATE] = CONTENT_STATE.PUBLISHED
 
             value = datetime.strptime(self._get_head_value(doc, 'PublicationDate'), '%Y%m%d%H%M%S')
             item['firstcreated'] = utc.normalize(value) if value.tzinfo else value
@@ -239,8 +239,9 @@ class AppImportTextArchiveCommand(superdesk.Command):
                     pass
 
             item['pubstatus'] = 'usable'
+            item['allow_post_publish_actions'] = False
 
-            res = superdesk.get_resource_service('text_archive')
+            res = superdesk.get_resource_service('published')
             original = res.find_one(req=None, guid=item['guid'])
             if not original:
                 res.post([item])

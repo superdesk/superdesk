@@ -9,50 +9,82 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from eve.utils import ParsedRequest, date_to_str
-import superdesk
-from superdesk.utc import utcnow
 import logging
 
+from eve.utils import ParsedRequest, date_to_str
+
+from superdesk.celery_app import celery
+import superdesk
+from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
+from superdesk.utc import utcnow
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+
 logger = logging.getLogger(__name__)
+
+UPDATE_SCHEDULE_DEFAULT = {'minutes': 30}
 
 
 class RemoveExpiredPublishContent(superdesk.Command):
     """
     Remove expired items from published.
     """
+
     def run(self):
-        self.remove_expired_content()
+        remove_expired_content.apply_async(expires=1800)
 
-    def remove_expired_content(self):
-        logger.info('Removing expired content from published')
+
+@celery.task(soft_time_limit=1800)
+def remove_expired_content():
+    """
+    Celery Task which removes the expired content from published collection.
+    """
+
+    logger.info('Removing expired content from published')
+
+    if is_task_running("publish", "remove_expired", UPDATE_SCHEDULE_DEFAULT):
+        return
+
+    try:
         now = date_to_str(utcnow())
-        items = self.get_expired_items(now)
+        items = get_expired_items(now)
 
-        while items.count() > 0:
-            for item in items:
-                logger.info('deleting article of type {} with id {} and headline {} -- expired on: {} now: {}'.
-                            format(item['type'], item['_id'], item['headline'], item['expiry'], now))
+        for item in items:
+            logger.info('deleting article of type {} with id {} and headline {} -- expired on: {} now: {}'.
+                        format(item['type'], item['_id'], item['headline'], item['expiry'], now))
 
-                superdesk.get_resource_service('published').remove_expired(item)
+            superdesk.get_resource_service('published').remove_expired(item)
+    finally:
+        mark_task_as_not_running("publish", "remove_expired")
 
-            items = self.get_expired_items(now)
 
-    def get_expired_items(self, now):
-        logger.info('Get expired content from published')
-        query_filter = self.get_query_for_expired_items(now)
-        req = ParsedRequest()
-        req.sort = '_created'
-        req.max_results = 100
-        return superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=query_filter)
+def get_expired_items(expired_date_time, limit=100):
+    """
+    Fetches the expired articles from published collection. Expiry Conditions:
+        1.  can_be_removed flag is True
+        2.  Item Expiry is less than or equal to expired_date_time, State of the Item is not SCHEDULED and
+            allow_post_publish_actions flag is True
 
-    def get_query_for_expired_items(self, now):
-        query = {
-            '$and': [
-                {'expiry': {'$lte': now}},
-                {'state': {'$ne': 'scheduled'}}
-            ]
-        }
-        return query
+    :param expired_date_time:
+    :param limit:
+    :return: expired articles from published collection
+    """
+
+    logger.info('Get expired content from published')
+    query = {
+        '$or': [
+            {'can_be_removed': True},
+            {'$and': [
+                {'expiry': {'$lte': expired_date_time}},
+                {ITEM_STATE: {'$ne': CONTENT_STATE.SCHEDULED}},
+                {'allow_post_publish_actions': True}
+            ]}
+        ]
+    }
+
+    req = ParsedRequest()
+    req.sort = '_created'
+    req.max_results = limit
+
+    return superdesk.get_resource_service('published').get_from_mongo(req=req, lookup=query)
 
 superdesk.command('publish:remove_expired', RemoveExpiredPublishContent())

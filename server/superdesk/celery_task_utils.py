@@ -33,13 +33,11 @@ def is_task_running(name, id, update_schedule):
             last_updated = get_date(str(last_updated))
             delta = last_updated + update_schedule
             if delta < now:
-                logger.warn('Overwritting running key for {}:{}'.
-                            format(name, id))
+                logger.warn('Overwriting running key for {}:{}'.format(name, id))
                 pipe.set(key, date_to_str(now))
                 return True
             else:
-                logger.warn('Update ingest already running for {}:{}, last_updated={}'.
-                            format(name, id, last_updated))
+                logger.warn('Task {}:{} is already running. last_updated={}'.format(name, id, last_updated))
                 return False
         else:
             pipe.set(key, date_to_str(now))

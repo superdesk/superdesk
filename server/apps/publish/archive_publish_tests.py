@@ -17,9 +17,11 @@ from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
 
 from apps.archive.common import insert_into_versions
-from apps.publish.archive_publish import ArchivePublishService
+from apps.packages.takes_package_service import TakesPackageService
+from apps.publish.archive_publish import ArchivePublishService, DIGITAL, WIRE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
+from superdesk.metadata.packages import ITEM_REF
 from superdesk.tests import TestCase
 from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
 from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME
@@ -30,6 +32,14 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from settings import URL_PREFIX
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+
+
+ARCHIVE_PUBLISH = 'archive_publish'
+ARCHIVE_CORRECT = 'archive_correct'
+ARCHIVE_KILL = 'archive_kill'
+
+PUBLISH_QUEUE = 'publish_queue'
+PUBLISHED = 'published'
 
 
 class ArchivePublishTestCase(TestCase):
@@ -71,7 +81,7 @@ class ArchivePublishTestCase(TestCase):
 
         self.articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                           '_id': '1',
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'last_version': 3,
                           config.VERSION: 4,
                           'body_html': 'Test body',
@@ -86,7 +96,7 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'published',
+                          ITEM_STATE: CONTENT_STATE.PUBLISHED,
                           'expiry': utcnow() + timedelta(minutes=20),
                           'unique_name': '#1'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a974-xy4532fe33f9',
@@ -106,9 +116,9 @@ class ArchivePublishTestCase(TestCase):
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'state': 'in_progress',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'publish_schedule': "2016-05-30T10:00:00+0000",
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#2'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fa',
                           '_id': '3',
@@ -126,9 +136,9 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'killed',
+                          ITEM_STATE: CONTENT_STATE.KILLED,
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#3'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fb',
                           '_id': '4',
@@ -147,9 +157,9 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'in_progress',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'linked_in_packages': [{"package": "7", "package_type": "takes"}],
                           'unique_name': '#4'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fg',
@@ -170,55 +180,58 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'in_progress',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#5'},
                          {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
                           '_id': '6',
                           'last_version': 2,
                           config.VERSION: 3,
-                          'type': 'composite',
+                          ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {
                                          'id': 'main',
                                          'refs': [
                                              {
-                                                 'location': 'archive',
+                                                 'location': ARCHIVE,
                                                  'guid': '5',
-                                                 'type': 'text'
+                                                 ITEM_TYPE: CONTENT_TYPE.TEXT,
+                                                 ITEM_REF: '5'
                                              },
                                              {
-                                                 'location': 'archive',
+                                                 'location': ARCHIVE,
                                                  'guid': '4',
-                                                 'type': 'text'
+                                                 ITEM_TYPE: CONTENT_TYPE.TEXT,
+                                                 ITEM_REF: '4'
                                              }
                                          ],
                                          'role': 'grpRole:main'}],
                           'firstcreated': utcnow(),
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'unique_name': '#6'},
+                          'unique_name': '#6',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS},
                          {'guid': 'tag:localhost:2015:ab-69b961-2816-4b8a-a584-a7b402fed4fc',
                           '_id': '7',
                           'last_version': 2,
                           config.VERSION: 3,
-                          'type': 'composite',
+                          ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
                           'package_type': 'takes',
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {
                                          'id': 'main',
                                          'refs': [
                                              {
-                                                 'location': 'archive',
+                                                 'location': ARCHIVE,
                                                  'guid': '5',
                                                  'sequence': 1,
-                                                 'type': 'text'
+
                                              },
                                              {
-                                                 'location': 'archive',
+                                                 'location': ARCHIVE,
                                                  'guid': '4',
                                                  'sequence': 2,
-                                                 'type': 'text'
+                                                 ITEM_TYPE: CONTENT_TYPE.TEXT
                                              }
                                          ],
                                          'role': 'grpRole:main'}],
@@ -244,11 +257,11 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'in_progress',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS,
                           'expiry': utcnow() + timedelta(minutes=20),
-                          'type': 'text',
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
                           'unique_name': '#8'},
-                         {'_id': '9', 'urgency': 3, 'headline': 'creator', 'state': 'fetched'},
+                         {'_id': '9', 'urgency': 3, 'headline': 'creator', ITEM_STATE: CONTENT_STATE.FETCHED},
                          {'guid': 'tag:localhost:2015:69b961ab-a7b402fed4fb',
                           'last_version': 3,
                           config.VERSION: 4,
@@ -265,9 +278,21 @@ class ArchivePublishTestCase(TestCase):
                           'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                           'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                                       {'qcode': '04001002', 'name': 'Weather'}],
-                          'state': 'in_progress',
-                          'type': 'text',
-                          'unique_name': '#9'}]
+                          ITEM_STATE: CONTENT_STATE.PROGRESS,
+                          ITEM_TYPE: CONTENT_TYPE.TEXT,
+                          'unique_name': '#9'},
+                         {'guid': 'tag:localhost:10:10:10:2015:69b961ab-2816-4b8a-a584-a7b402fed4fc',
+                          '_id': '100',
+                          config.VERSION: 3,
+                          ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
+                          'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
+                                     {'id': 'main',
+                                      'refs': [{'location': ARCHIVE, ITEM_TYPE: CONTENT_TYPE.COMPOSITE, ITEM_REF: '6'}],
+                                      'role': 'grpRole:main'}],
+                          'firstcreated': utcnow(),
+                          'expiry': utcnow() + timedelta(minutes=20),
+                          'unique_name': '#100',
+                          ITEM_STATE: CONTENT_STATE.PROGRESS}]
 
     def setUp(self):
         super().setUp()
@@ -275,15 +300,16 @@ class ArchivePublishTestCase(TestCase):
             self.init_data()
 
             self.app.data.insert('subscribers', self.subscribers)
-            self.app.data.insert('archive', self.articles)
+            self.app.data.insert(ARCHIVE, self.articles)
 
             self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "validators.json")
             self.json_data = [
                 {"_id": "kill_text", "act": "kill", "type": "text", "schema": {"headline": {"type": "string"}}},
                 {"_id": "publish_text", "act": "publish", "type": "text", "schema": {}},
-                {"_id": "correct_text", "act": "correct", "type": "text", "schema": {}}
+                {"_id": "correct_text", "act": "correct", "type": "text", "schema": {}},
+                {"_id": "publish_composite", "act": "publish", "type": "composite", "schema": {}},
             ]
-            self.article_versions = self.__init_article_versions()
+            self.article_versions = self._init_article_versions()
 
             with open(self.filename, "w+") as file:
                 json.dump(self.json_data, file)
@@ -295,10 +321,10 @@ class ArchivePublishTestCase(TestCase):
         if self.filename and os.path.exists(self.filename):
             os.remove(self.filename)
 
-    def __init_article_versions(self):
+    def _init_article_versions(self):
         return [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '8',
-                 'type': 'text',
+                 ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 1,
                  'urgency': 4,
                  'pubstatus': 'usable',
@@ -308,12 +334,12 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                              {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'draft',
+                 ITEM_STATE: CONTENT_STATE.DRAFT,
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '8',
-                 'type': 'text',
+                 ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 2,
                  'urgency': 4,
                  'headline': 'Two students missing',
@@ -324,12 +350,12 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                              {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'submitted',
+                 ITEM_STATE: CONTENT_STATE.SUBMITTED,
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '8',
-                 'type': 'text',
+                 ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 3,
                  'urgency': 4,
                  'headline': 'Two students missing',
@@ -341,12 +367,12 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                              {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'in_progress',
+                 ITEM_STATE: CONTENT_STATE.PROGRESS,
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  versioned_id_field(): '8',
-                 'type': 'text',
+                 ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 4,
                  'body_html': 'Test body',
                  'urgency': 4,
@@ -359,7 +385,7 @@ class ArchivePublishTestCase(TestCase):
                  'keywords': ['Student', 'Crime', 'Police', 'Missing'],
                  'subject': [{'qcode': '17004000', 'name': 'Statistics'},
                              {'qcode': '04001002', 'name': 'Weather'}],
-                 'state': 'in_progress',
+                 ITEM_STATE: CONTENT_STATE.PROGRESS,
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'}]
 
@@ -377,137 +403,164 @@ class ArchivePublishTestCase(TestCase):
 
         return article, article_versions, queue_items
 
+    def _is_publish_queue_empty(self):
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(0, queue_items.count())
+
+    def _add_publish_filters(self, subscriber, is_global=False):
+        subscriber['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
+        self.app.data.insert('filter_conditions',
+                             [{'_id': 1,
+                               'field': 'headline',
+                               'operator': 'like',
+                               'value': 'tor',
+                               'name': 'test-1'}])
+        self.app.data.insert('filter_conditions',
+                             [{'_id': 2,
+                               'field': 'urgency',
+                               'operator': 'in',
+                               'value': '2',
+                               'name': 'test-2'}])
+        self.app.data.insert('filter_conditions',
+                             [{'_id': 3,
+                               'field': 'headline',
+                               'operator': 'endswith',
+                               'value': 'tor',
+                               'name': 'test-3'}])
+        self.app.data.insert('filter_conditions',
+                             [{'_id': 4,
+                               'field': 'urgency',
+                               'operator': 'in',
+                               'value': '2,3,4',
+                               'name': 'test-4'}])
+
+        get_resource_service('publish_filters').post([{'_id': 1, 'name': 'pf-1', 'is_global': is_global,
+                                                       'publish_filter': [{"expression": {"fc": [4, 3]}},
+                                                                          {"expression": {"fc": [1, 2]}}]
+                                                       }])
+
     def test_publish(self):
         with self.app.app_context():
             doc = self.articles[3].copy()
-            get_resource_service('archive_publish').patch(id=doc['_id'], updates={'state': 'published'})
-            published_doc = get_resource_service('archive').find_one(req=None, _id=doc['_id'])
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+            published_doc = get_resource_service(ARCHIVE).find_one(req=None, _id=doc['_id'])
             self.assertIsNotNone(published_doc)
             self.assertEqual(published_doc[config.VERSION], doc[config.VERSION] + 1)
             self.assertEqual(published_doc[ITEM_STATE], ArchivePublishService().published_state)
 
+    def test_versions_across_collections_after_publish(self):
+        with self.app.app_context():
+            self.app.data.insert('archive_versions', self.article_versions)
+
+            # Publishing an Article
+            doc = self.articles[7]
+            original = doc.copy()
+
+            published_version_number = original[config.VERSION] + 1
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                                 config.VERSION: published_version_number})
+
+            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
+            self.assertIsNotNone(article_in_production)
+            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
+            self.assertEqual(article_in_production[config.VERSION], published_version_number)
+
+            lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
+            queue_items = list(get_resource_service(PUBLISH_QUEUE).get(req=None, lookup=lookup))
+            assert len(queue_items) > 0, \
+                "Transmission Details are empty for published item %s" % original[config.ID_FIELD]
+
+            lookup = {'item_id': original[config.ID_FIELD], config.VERSION: published_version_number}
+            items_in_published_collection = list(get_resource_service(PUBLISHED).get(req=None, lookup=lookup))
+            assert len(items_in_published_collection) > 0, \
+                "Item not found in published collection %s" % original[config.ID_FIELD]
+
     def test_queue_transmission(self):
         with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
+            self._is_publish_queue_empty()
+
             doc = copy(self.articles[9])
-            archive_publish.patch(id=doc['_id'], updates={'state': 'published', 'task': {}})
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(5, queue_items.count())
-
-    def test_queue_transmission_wrong_article_type_fails(self):
-        with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
-            doc = copy(self.articles[0])
-            doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'digital')
-            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            self.assertEqual(1, len(no_formatters))
-            self.assertFalse(queued)
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'wire')
-            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            self.assertEqual(4, len(no_formatters))
-            self.assertFalse(queued)
-
-    def test_queue_transmission_for_scheduled_publish(self):
-        with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
-            doc = copy(self.articles[1])
-            archive = get_resource_service('archive')
             schedule_date = utcnow() + timedelta(hours=2)
-            archive.patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
-            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
-            queue_items = self.app.data.find('publish_queue', None, None)
+            get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED,
+                                                                                'task': {}})
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(5, queue_items.count())
+
             for item in queue_items:
                 self.assertEqual(schedule_date, item["publish_schedule"])
 
     def test_queue_transmission_for_digital_channels(self):
         with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
+            self._is_publish_queue_empty()
+
+            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
             doc = copy(self.articles[1])
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'digital')
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
             archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find('publish_queue', None, None)
+
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(1, queue_items.count())
             self.assertEqual('3', queue_items[0]["subscriber_id"])
 
     def test_queue_transmission_for_wire_channels(self):
         with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
+            self._is_publish_queue_empty()
+
+            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
             doc = copy(self.articles[1])
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, 'wire')
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
             archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find('publish_queue', None, None)
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+
             self.assertEqual(4, queue_items.count())
             expected_subscribers = ['1', '2']
             self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
             self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
             self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
 
+    def test_queue_transmission_wrong_article_type_fails(self):
+        with self.app.app_context():
+            self._is_publish_queue_empty()
+
+            doc = copy(self.articles[0])
+            doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
+
+            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
+            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+            self.assertEqual(0, queue_items.count())
+            self.assertEqual(1, len(no_formatters))
+            self.assertFalse(queued)
+
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
+            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+            self.assertEqual(0, queue_items.count())
+            self.assertEqual(4, len(no_formatters))
+            self.assertFalse(queued)
+
     def test_delete_from_queue_by_article_id(self):
         with self.app.app_context():
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-            archive_publish = get_resource_service('archive_publish')
+            self._is_publish_queue_empty()
+
             doc = copy(self.articles[7])
-            archive_publish.patch(id=doc['_id'], updates={'state': 'published'})
-            queue_items = self.app.data.find('publish_queue', None, None)
+
+            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+            archive_publish.patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(4, queue_items.count())
+
             # this will delete queue transmission for the wire article not the takes package.
-            publish_queue.PublishQueueService('publish_queue', superdesk.get_backend()).delete_by_article_id(doc['_id'])
-            queue_items = self.app.data.find('publish_queue', None, None)
-            self.assertEqual(0, queue_items.count())
-
-    def test_remove_published_expired_content(self):
-        with self.app.app_context():
-            self.app.data.insert('archive_versions', self.article_versions)
-
-            published_service = get_resource_service('published')
-            text_archive = get_resource_service('text_archive')
-            archive_publish = get_resource_service('archive_publish')
-            original = self.articles[0].copy()
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, 'wire')
-            archive_publish.queue_transmission(original, subscribers)
-            published_service.post([original])
-
-            published_items = published_service.get_other_published_items(original['item_id'])
-            self.assertEqual(1, published_items.count())
-
-            published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
-            RemoveExpiredPublishContent().run()
-            published_items = published_service.get_other_published_items(str(original['item_id']))
-            self.assertEqual(0, published_items.count())
-
-            item = text_archive.find_one(req=None, _id=str(original['_id']))
-            self.assertEqual(item['item_id'], self.articles[0]['_id'])
-
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(original['item_id'])
-
-            self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
-
-            self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
-            for queue_item in queue_items:
-                self.assertEqual(queue_item['item_id'], self.articles[0]['_id'])
-                self.assertEqual(queue_item['item_version'], original[config.VERSION])
+            publish_queue.PublishQueueService(PUBLISH_QUEUE, superdesk.get_backend()).delete_by_article_id(doc['_id'])
+            self._is_publish_queue_empty()
 
     def test_cannot_remove_scheduled_content(self):
         with self.app.app_context():
-            published_service = get_resource_service('published')
+            published_service = get_resource_service(PUBLISHED)
             original = self.articles[1].copy()
             original[ITEM_STATE] = CONTENT_STATE.SCHEDULED
 
@@ -519,75 +572,55 @@ class ArchivePublishTestCase(TestCase):
             published_items = published_service.get_other_published_items(original['item_id'])
             self.assertEqual(1, published_items.count())
 
-    def test_remove_killed_expired_content(self):
+    def test_remove_published_expired_content(self):
         with self.app.app_context():
-            published_service = get_resource_service('published')
-            text_archive = get_resource_service('text_archive')
-            archive_publish = get_resource_service('archive_publish')
-            original = self.articles[2].copy()
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, 'wire')
-            archive_publish.queue_transmission(original, subscribers)
+            self.app.data.insert('archive_versions', self.article_versions)
 
+            published_service = get_resource_service(PUBLISHED)
+            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+
+            original = self.articles[0].copy()
+            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, WIRE)
+            archive_publish.queue_transmission(original, subscribers)
             published_service.post([original])
 
             published_items = published_service.get_other_published_items(original['item_id'])
             self.assertEqual(1, published_items.count())
 
             published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
-
             RemoveExpiredPublishContent().run()
             published_items = published_service.get_other_published_items(str(original['item_id']))
             self.assertEqual(0, published_items.count())
 
-            item = text_archive.find_one(req=None, _id=str(original['_id']))
-            self.assertIsNone(item)
+            archived_item = get_resource_service('archived').find_one(req=None, _id=str(original['_id']))
+            self.assertEqual(archived_item['item_id'], self.articles[0]['_id'])
+            self.assertFalse(archived_item['allow_post_publish_actions'])
+            self.assertFalse(archived_item['can_be_removed'])
 
-    def test_remove_published_and_killed_expired_content(self):
-        with self.app.app_context():
-            published_service = get_resource_service('published')
-            text_archive = get_resource_service('text_archive')
+            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+                self._get_legal_archive_details(original['item_id'])
 
-            published = self.articles[2].copy()
-            published[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+            self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
 
-            get_resource_service('archive_publish').queue_transmission(published, self.subscribers)
-            published_service.post([published])
-
-            published_items = published_service.get_other_published_items(published['item_id'])
-            self.assertEqual(1, published_items.count())
-
-            killed = self.articles[2].copy()
-            killed[config.VERSION] += 1
-            get_resource_service('archive_publish').queue_transmission(killed, self.subscribers)
-            published_service.post([killed])
-
-            published_items = published_service.get_other_published_items(published['item_id'])
-            self.assertEqual(2, published_items.count())
-
-            published_service.update_published_items(killed['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
-            RemoveExpiredPublishContent().run()
-
-            published_items = published_service.get_other_published_items(killed['item_id'])
-            self.assertEqual(0, published_items.count())
-
-            articles_in_text_archive = text_archive.get(req=None, lookup={'item_id': self.articles[2]['_id']})
-            self.assertEqual(articles_in_text_archive.count(), 0)
+            self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
+            for queue_item in queue_items:
+                self.assertEqual(queue_item['item_id'], self.articles[0]['_id'])
+                self.assertEqual(queue_item['item_version'], original[config.VERSION])
 
     def test_remove_published_and_killed_content_separately(self):
         with self.app.app_context():
             self.app.data.insert('archive_versions', self.article_versions)
 
-            published_service = get_resource_service('published')
-            text_archive = get_resource_service('text_archive')
+            published_service = get_resource_service(PUBLISHED)
 
             # Publishing an Article
             doc = self.articles[7]
             original = doc.copy()
 
             published_version_number = original[config.VERSION] + 1
-            get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD],
-                                                          updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                   config.VERSION: published_version_number})
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                                 config.VERSION: published_version_number})
 
             published_items = published_service.get_other_published_items(original[config.ID_FIELD])
             self.assertEqual(1, published_items.count())
@@ -605,15 +638,12 @@ class ArchivePublishTestCase(TestCase):
             # Killing the published article and manually inserting the version of the article as unittests use
             # service directly
             published_version_number += 1
-            get_resource_service('archive_kill').patch(id=doc['_id'],
-                                                       updates={ITEM_STATE: CONTENT_STATE.KILLED,
-                                                                config.VERSION: published_version_number})
+            get_resource_service(ARCHIVE_KILL).patch(id=doc['_id'],
+                                                     updates={ITEM_STATE: CONTENT_STATE.KILLED,
+                                                              config.VERSION: published_version_number})
 
             # Executing the Expiry Job for the Published Article and asserting the collections
             RemoveExpiredPublishContent().run()
-
-            articles_in_text_archive = text_archive.get(req=None, lookup={'item_id': original[config.ID_FIELD]})
-            self.assertEqual(articles_in_text_archive.count(), 0)
 
             published_items = published_service.get_other_published_items(str(original[config.ID_FIELD]))
             self.assertEqual(1, published_items.count())
@@ -641,9 +671,6 @@ class ArchivePublishTestCase(TestCase):
                 original[config.ID_FIELD], 'expiry', utcnow() + timedelta(minutes=-60))
             RemoveExpiredPublishContent().run()
 
-            articles_in_text_archive = text_archive.get(req=None, lookup={'item_id': original[config.ID_FIELD]})
-            self.assertEqual(articles_in_text_archive.count(), 0)
-
             published_items = published_service.get_other_published_items(str(original[config.ID_FIELD]))
             self.assertEqual(0, published_items.count())
 
@@ -655,7 +682,7 @@ class ArchivePublishTestCase(TestCase):
                 self._get_legal_archive_details(original[config.ID_FIELD], publishing_action='killed')
 
             self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
-            self.assertEqual(article_in_legal_archive['state'], 'killed')
+            self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.KILLED)
 
             self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
             self.assertEqual(article_versions_in_legal_archive.count(), 6)
@@ -668,114 +695,48 @@ class ArchivePublishTestCase(TestCase):
 
     def test_can_publish_article(self):
         with self.app.test_request_context(URL_PREFIX):
-            self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 1,
-                                   'field': 'headline',
-                                   'operator': 'like',
-                                   'value': 'tor',
-                                   'name': 'test-1'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 2,
-                                   'field': 'urgency',
-                                   'operator': 'in',
-                                   'value': '2',
-                                   'name': 'test-2'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 3,
-                                   'field': 'headline',
-                                   'operator': 'endswith',
-                                   'value': 'tor',
-                                   'name': 'test-3'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 4,
-                                   'field': 'urgency',
-                                   'operator': 'in',
-                                   'value': '2,3,4',
-                                   'name': 'test-4'}])
+            subscriber = self.subscribers[0]
+            self._add_publish_filters(subscriber, is_global=False)
 
-            get_resource_service('publish_filters').\
-                post([{'_id': 1,
-                       'publish_filter': [{"expression": {"fc": [4, 3]}}, {"expression": {"fc": [1, 2]}}],
-                       'name': 'pf-1'}])
-
-            can_it = get_resource_service('archive_publish').\
-                conforms_publish_filter(self.subscribers[0], self.articles[8])
-
+            archive_publish_service = get_resource_service(ARCHIVE_PUBLISH)
+            can_it = archive_publish_service.conforms_publish_filter(subscriber, self.articles[8])
             self.assertFalse(can_it)
+            subscriber['publish_filter']['filter_type'] = 'permitting'
 
-            self.subscribers[0]['publish_filter']['filter_type'] = 'permitting'
-
-            can_it = get_resource_service('archive_publish').\
-                conforms_publish_filter(self.subscribers[0], self.articles[8])
-
+            can_it = archive_publish_service.conforms_publish_filter(subscriber, self.articles[8])
             self.assertTrue(can_it)
-
-            self.subscribers[0].pop('publish_filter')
+            subscriber.pop('publish_filter')
 
     def test_can_publish_article_with_global_filters(self):
         with self.app.test_request_context(URL_PREFIX):
-            self.subscribers[0]['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 1,
-                                   'field': 'headline',
-                                   'operator': 'like',
-                                   'value': 'tor',
-                                   'name': 'test-1'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 2,
-                                   'field': 'urgency',
-                                   'operator': 'in',
-                                   'value': '2',
-                                   'name': 'test-2'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 3,
-                                   'field': 'headline',
-                                   'operator': 'endswith',
-                                   'value': 'tor',
-                                   'name': 'test-3'}])
-            self.app.data.insert('filter_conditions',
-                                 [{'_id': 4,
-                                   'field': 'urgency',
-                                   'operator': 'in',
-                                   'value': '2,3,4',
-                                   'name': 'test-4'}])
-
-            get_resource_service('publish_filters').\
-                post([{'_id': 1,
-                       'publish_filter': [{"expression": {"fc": [4, 3]}}, {"expression": {"fc": [1, 2]}}],
-                       'name': 'pf-1',
-                       'is_global': True}])
+            subscriber = self.subscribers[0]
+            self._add_publish_filters(subscriber, is_global=True)
 
             service = get_resource_service('publish_filters')
             req = ParsedRequest()
             req.args = {'is_global': True}
             global_filters = service.get(req=req, lookup=None)
 
-            can_it = get_resource_service('archive_publish').\
-                conforms_global_filter(self.subscribers[0], global_filters, self.articles[8])
-
+            publish_service = get_resource_service(ARCHIVE_PUBLISH)
+            can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
             self.assertFalse(can_it)
 
-            self.subscribers[0]['global_filters'] = {'1': False}
-
-            can_it = get_resource_service('archive_publish').\
-                conforms_global_filter(self.subscribers[0], global_filters, self.articles[8])
-
+            subscriber['global_filters'] = {'1': False}
+            can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
             self.assertTrue(can_it)
 
-            self.subscribers[0].pop('publish_filter')
+            subscriber.pop('publish_filter')
 
     def test_targeted_for_excludes_digital_subscribers(self):
         with self.app.app_context():
             ValidatorsPopulateCommand().run(self.filename)
             updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
             doc_id = self.articles[9][config.ID_FIELD]
-            get_resource_service('archive').patch(id=doc_id, updates=updates)
+            get_resource_service(ARCHIVE).patch(id=doc_id, updates=updates)
 
-            get_resource_service('archive_publish').patch(id=doc_id, updates={'state': 'published'})
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc_id, updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
-            queue_items = self.app.data.find('publish_queue', None, None)
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(4, queue_items.count())
             expected_subscribers = ['1', '2']
             self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
@@ -791,18 +752,19 @@ class ArchivePublishTestCase(TestCase):
                 ]}}}}
                 request = ParsedRequest()
                 request.args = {'source': json.dumps(query)}
-                return self.app.data.find('published', req=request, lookup=None)
+                return self.app.data.find(PUBLISHED, req=request, lookup=None)
 
             ValidatorsPopulateCommand().run(self.filename)
-            get_resource_service('archive').patch(id=self.articles[1][config.ID_FIELD],
-                                                  updates={'publish_schedule': None, 'task': {}})
+            get_resource_service(ARCHIVE).patch(id=self.articles[1][config.ID_FIELD],
+                                                updates={'publish_schedule': None, 'task': {}})
 
-            doc = get_resource_service('archive').find_one(req=None, _id=self.articles[1][config.ID_FIELD])
-            get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD], updates={'state': 'published'})
+            doc = get_resource_service(ARCHIVE).find_one(req=None, _id=self.articles[1][config.ID_FIELD])
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
-            queue_items = self.app.data.find('publish_queue', None, None)
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(5, queue_items.count())
-            published_items = self.app.data.find('published', None, None)
+            published_items = self.app.data.find(PUBLISHED, None, None)
             self.assertEqual(2, published_items.count())
             published_digital_doc = next((item for item in published_items
                                           if item.get(PACKAGE_TYPE) == TAKES_PACKAGE), None)
@@ -811,40 +773,109 @@ class ArchivePublishTestCase(TestCase):
             self.assertEqual(published_doc[LAST_PUBLISHED_VERSION], True)
             self.assertEqual(published_digital_doc[LAST_PUBLISHED_VERSION], True)
 
-            get_resource_service('archive_correct').patch(id=doc[config.ID_FIELD], updates={'state': 'corrected'})
-            queue_items = self.app.data.find('publish_queue', None, None)
+            get_resource_service(ARCHIVE_CORRECT).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.CORRECTED})
+            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(10, queue_items.count())
-            published_items = self.app.data.find('published', None, None)
+            published_items = self.app.data.find(PUBLISHED, None, None)
             self.assertEqual(4, published_items.count())
             last_published_digital = get_publish_items(published_digital_doc['item_id'], True)
             self.assertEqual(1, last_published_digital.count())
             last_published = get_publish_items(published_doc['item_id'], True)
             self.assertEqual(1, last_published.count())
 
-    def test_versions_across_collections_after_publish(self):
-        with self.app.app_context():
-            self.app.data.insert('archive_versions', self.article_versions)
+    def _move_to_archived_and_assert_can_remove_from_production(self, item_id, assert_function, item_to_assert=None):
+        published_service = get_resource_service(PUBLISHED)
+        published_item = list(published_service.get_from_mongo(req=None, lookup={'item_id': item_id}))
+        self.assertEqual(len(published_item), 1)
 
-            # Publishing an Article
+        # Moving to archived explicitly
+        published_item = published_item[0]
+        published_service.patch(id=published_item[config.ID_FIELD], updates={'allow_post_publish_actions': False})
+
+        assert_function(published_service.can_remove_from_production(
+            item_to_assert if item_to_assert else published_item))
+
+        return published_item
+
+    def test_can_remove_from_production_succeeds_when_published_once(self):
+        """
+        Tests if can_remove_production() returns true if the item is published only once.
+        """
+
+        with self.app.app_context():
             doc = self.articles[7]
             original = doc.copy()
 
             published_version_number = original[config.VERSION] + 1
-            get_resource_service('archive_publish').patch(id=doc[config.ID_FIELD],
-                                                          updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                   config.VERSION: published_version_number})
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                                 config.VERSION: published_version_number})
 
-            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
-            self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
-            self.assertEqual(article_in_production[config.VERSION], published_version_number)
+            self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertTrue)
 
-            lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
-            queue_items = list(get_resource_service('publish_queue').get(req=None, lookup=lookup))
-            assert len(queue_items) > 0, \
-                "Transmission Details are empty for published item %s" % original[config.ID_FIELD]
+    def test_can_remove_from_production_fails_when_published_and_then_killed(self):
+        """
+        Tests if can_remove_production() returns false if the item is published more than once.
+        """
 
-            lookup = {'item_id': original[config.ID_FIELD], config.VERSION: published_version_number}
-            items_in_published_collection = list(get_resource_service('published').get(req=None, lookup=lookup))
-            assert len(items_in_published_collection) > 0, \
-                "Item not found in published collection %s" % original[config.ID_FIELD]
+        with self.app.app_context():
+            doc = self.articles[7]
+            original = doc.copy()
+
+            published_version_number = original[config.VERSION] + 1
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                                 config.VERSION: published_version_number})
+
+            published_item = self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD],
+                                                                                          self.assertTrue)
+
+            published_version_number += 1
+            get_resource_service(ARCHIVE_KILL).patch(id=doc['_id'],
+                                                     updates={ITEM_STATE: CONTENT_STATE.KILLED,
+                                                              config.VERSION: published_version_number})
+            self.assertFalse(get_resource_service(PUBLISHED).can_remove_from_production(published_item))
+
+    def test_can_remove_from_production_second_rule(self):
+        """
+        Test if can_remove_production() returns false when the expired published item is part of a package.
+        """
+
+        with self.app.app_context():
+            doc = self.articles[3].copy()
+
+            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                                 config.VERSION: doc[config.VERSION] + 1})
+
+            item_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=doc[config.ID_FIELD])
+            self.assertIsNotNone(TakesPackageService().get_take_package_id(item_in_production))
+
+            self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertFalse)
+
+    def test_can_remove_from_production_third_rule(self):
+        """
+        Test if can_remove_production() returns false when the expired published item is a package.
+        """
+
+        with self.app.app_context():
+            published_articles = [self.articles[3].copy(), self.articles[4].copy(), self.articles[5].copy(),
+                                  self.articles[10].copy()]
+
+            for published_article in published_articles:
+                published_article[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+
+            published_service = get_resource_service(PUBLISHED)
+            published_service.post(published_articles)
+
+            published_package = self._move_to_archived_and_assert_can_remove_from_production(
+                self.articles[10][config.ID_FIELD], self.assertFalse)
+
+            self._move_to_archived_and_assert_can_remove_from_production(self.articles[5][config.ID_FIELD],
+                                                                         self.assertFalse, published_package)
+
+            self._move_to_archived_and_assert_can_remove_from_production(self.articles[3][config.ID_FIELD],
+                                                                         self.assertFalse, published_package)
+            self._move_to_archived_and_assert_can_remove_from_production(self.articles[4][config.ID_FIELD],
+                                                                         self.assertTrue, published_package)

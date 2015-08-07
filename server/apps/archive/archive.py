@@ -110,7 +110,7 @@ class ArchiveResource(Resource):
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'PUT']
     versioning = True
-    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive'}
+    privileges = {'POST': SOURCE, 'PATCH': SOURCE, 'PUT': SOURCE}
 
 
 def update_word_count(doc):

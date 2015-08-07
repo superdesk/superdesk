@@ -118,8 +118,10 @@ class TakesPackageService():
 
         create_root_group([takes_package])
         self.__link_items__(takes_package, target, link)
-        archive_service = get_resource_service(ARCHIVE)
-        ids = archive_service.post([takes_package])
+
+        ids = get_resource_service(ARCHIVE).post([takes_package])
+        insert_into_versions(id_=ids[0])
+
         return ids[0]
 
     def link_as_next_take(self, target, link):

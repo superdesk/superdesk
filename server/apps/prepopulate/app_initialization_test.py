@@ -29,14 +29,15 @@ class AppInitializeWithDataCommandTestCase(TestCase):
             result = command.run()
             self.assertEquals(result, 0)
 
-            service = get_resource_service('text_archive')
             docs = [{
+                '_id': str(x),
                 'type': 'text',
                 'abstract': 'test abstract {}'.format(x),
                 'headline': 'test headline {}'.format(x),
-                'body_html': 'test long story body {}'.format(x)
+                'body_html': 'test long story body {}'.format(x),
+                'allow_post_publish_actions': True
             } for x in range(0, 40)]
-            service.post(docs)
+            get_resource_service('published').post(docs)
 
             stories_per_desk = 2
             existing_desks = 18

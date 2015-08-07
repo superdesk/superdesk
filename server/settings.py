@@ -64,8 +64,10 @@ X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 MONGO_DBNAME = env('MONGO_DBNAME', 'superdesk')
 MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
+
 LEGAL_ARCHIVE_DBNAME = env('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
-LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI')
+LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI', 'mongodb://localhost/%s' % LEGAL_ARCHIVE_DBNAME)
+
 PUBLICAPI_MONGO_URI = env('PUBLICAPI_MONGO_URI')
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
@@ -166,7 +168,7 @@ INSTALLED_APPS = [
     'apps.aap_mm',
     'apps.spellcheck',
     'apps.templates',
-    'apps.text_archive',
+    'apps.archived',
     'apps.validators',
     'apps.validate',
     'apps.publicapi_publish',

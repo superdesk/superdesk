@@ -1387,23 +1387,24 @@ define([
                 filters: [{action: 'list', type: 'externalsource'}],
                 privileges: {fetch: 1}
             })
-            .activity('text_archive', {
-                label: gettext('Delete from text archive'),
+            .activity('archived', {
+                label: gettext('Delete from Archived'),
                 icon: 'remove',
                 monitor: true,
                 controller: ['api', 'data', function(api, data) {
+                    var itemToDelete = {'_id': data.item.item_id, '_etag': data.item._etag};
                     api
-                        .remove(data.item, {}, 'text_archive')
+                        .remove(itemToDelete, {}, 'archived')
                         .then(
                             function(response) {
                                 data.item.error = response;
                             })
                     ['finally'](function() {
-                        data.item.actioning.text_archive = false;
+                        data.item.actioning.archived = false;
                     });
                 }],
-                filters: [{action: 'list', type: 'text_archive'}],
-                privileges: {textarchive: 1}
+                filters: [{action: 'list', type: 'archived'}],
+                privileges: {archived: 1}
             });
     }]);
 

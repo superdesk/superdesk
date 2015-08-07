@@ -104,7 +104,7 @@ class CompareRepositories(superdesk.Command):
         """
         Compares the records in mongo and elastic for a given collection
         Saves the results to "consistency" collection
-        :param resource_name: Name of the collection i.e. ingest, archive, published, text_archive
+        :param resource_name: Name of the collection i.e. ingest, archive, published
         :param elasticsearch_url: url of the elasticsearch
         :param elasticsearch_index: name of the index
         :return: dictionary of findings
