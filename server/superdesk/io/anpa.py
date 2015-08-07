@@ -11,6 +11,7 @@
 
 import re
 from datetime import datetime
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utc
 from superdesk.errors import ParserError
 from superdesk.io import Parser
@@ -25,7 +26,7 @@ class ANPAFileParser(Parser):
         :param filename
         """
         try:
-            item = {'type': 'text'}
+            item = {ITEM_TYPE: CONTENT_TYPE.TEXT}
 
             with open(filename, 'rb') as f:
                 lines = [line for line in f]
@@ -45,7 +46,7 @@ class ANPAFileParser(Parser):
                 item['anpa_category'] = [{'qcode': m.group(2).decode()}]
                 item['word_count'] = int(m.group(10).decode())
                 if m.group(4) == b'\x12':
-                    item['type'] = 'preformatted'
+                    item[ITEM_TYPE] = CONTENT_TYPE.PREFORMATTED
 
             # parse created date at the end of file
             m = re.search(b'\x03([a-z]+)-([a-z]+)-([0-9]+-[0-9]+-[0-9]+ [0-9]{2}[0-9]{2})GMT', lines[-4], flags=re.I)

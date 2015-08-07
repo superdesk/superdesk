@@ -1,6 +1,7 @@
 
 import superdesk
 from bs4 import BeautifulSoup
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 
 def join_html(pieces):
@@ -40,7 +41,7 @@ class GenerateHighlightsService(superdesk.Service):
                 superdesk.abort(404)
 
             doc.clear()
-            doc['type'] = 'text'
+            doc[ITEM_TYPE] = CONTENT_TYPE.TEXT
             doc['headline'] = package.get('headline')
             doc['slugline'] = package.get('slugline')
             doc['byline'] = package.get('byline')

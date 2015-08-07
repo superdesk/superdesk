@@ -23,7 +23,7 @@ from apps.packages import TakesPackageService
 from apps.users.services import get_display_name
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.metadata.item import not_analyzed
+from superdesk.metadata.item import not_analyzed, ITEM_TYPE, CONTENT_TYPE
 from apps.archive.common import aggregations, handle_existing_data, item_schema
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow, get_expiry_date
@@ -291,7 +291,7 @@ class PublishedItemService(BaseService):
         logging.info("Starting the workflow for removing the expired publish item with id: %s" % doc['item_id'])
 
         # Step 1
-        if 'type' in doc and doc['type'] in ['text', 'preformatted']:
+        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             self._insert_into_or_remove_from_text_archive(doc)
 
         # Step 2

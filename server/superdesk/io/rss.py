@@ -21,6 +21,7 @@ from datetime import datetime
 
 from superdesk.errors import IngestApiError, ParserError
 from superdesk.io.ingest_service import IngestService
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utils import merge_dicts
 
 from urllib.parse import quote as urlquote, urlsplit, urlunsplit
@@ -249,7 +250,7 @@ class RssIngestService(IngestService):
         else:
             field_aliases = merge_dicts(field_aliases)
 
-        item = dict(type='text')
+        item = dict(type=CONTENT_TYPE.TEXT)
 
         for field in self.item_fields:
             data_field_name = field_aliases.get(
@@ -281,7 +282,7 @@ class RssIngestService(IngestService):
         for image_url in image_links:
             img_item = {
                 'guid': generate_guid(type=GUID_TAG),
-                'type': 'picture',
+                ITEM_TYPE: CONTENT_TYPE.PICTURE,
                 'firstcreated': text_item.get('firstcreated'),
                 'versioncreated': text_item.get('versioncreated'),
                 'renditions': {
@@ -311,7 +312,7 @@ class RssIngestService(IngestService):
         :rtype: dict
         """
         package = {
-            'type': 'composite',
+            ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
             'guid': generate_guid(type=GUID_TAG),
             'firstcreated': text_item['firstcreated'],
             'versioncreated': text_item['versioncreated'],

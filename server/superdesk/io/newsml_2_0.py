@@ -10,7 +10,7 @@
 
 
 import datetime
-from superdesk.metadata.item import ITEM_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging
@@ -18,7 +18,6 @@ from superdesk.errors import ParserError
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
 XHTML = 'http://www.w3.org/1999/xhtml'
-CLASS_PACKAGE = 'composite'
 
 logger = logging.getLogger("NewsMLTwoParser")
 
@@ -222,4 +221,4 @@ class NewsMLTwoParser(Parser):
         return name.text if name is not None else item.attrib.get('literal')
 
     def is_package(self, item):
-        return item['type'] == CLASS_PACKAGE
+        return item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE

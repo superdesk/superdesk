@@ -12,6 +12,7 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
 from apps.publish.formatters import Formatter
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 import superdesk
 from superdesk.errors import FormatterError
@@ -41,7 +42,7 @@ class NewsMLG2Formatter(Formatter):
             newsMessage = etree.Element('newsMessage', attrib=self._message_attrib)
             self._format_header(article, newsMessage, pub_seq_num)
             itemSet = self._format_item(newsMessage)
-            if article['type'] == 'text' or article['type'] == 'preformatted':
+            if article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
                 self._format_newsitem(article, itemSet, nitf)
 
             return [(pub_seq_num, self.XML_ROOT + etree.tostring(newsMessage).decode('utf-8'))]
@@ -90,10 +91,10 @@ class NewsMLG2Formatter(Formatter):
         self._format_headline(article, contentMeta)
 
         contentSet = SubElement(newsItem, 'contentSet')
-        if article['type'] == 'preformatted':
+        if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
             inline = SubElement(contentSet, 'inlineData',
                                 attrib={'contenttype': 'text/plain'}).text = article.get('body_html')
-        elif article['type'] == 'text' or article['type'] == 'composite':
+        elif article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.COMPOSITE]:
             inline = SubElement(contentSet, 'inlineXML',
                                 attrib={'contenttype': 'application/nitf+xml'})
             inline.append(nitf)
@@ -111,7 +112,7 @@ class NewsMLG2Formatter(Formatter):
 
     # itemClass elements
     def _format_itemClass(self, article, itemMeta):
-        if article['type'] == 'text' or article['type'] == 'preformatted' or article['type'] == 'composite':
+        if article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE]:
             SubElement(itemMeta, 'itemClass', attrib={'qcode': 'ninat:text'})
 
     def _format_provider(self, itemMeta):
@@ -168,4 +169,5 @@ class NewsMLG2Formatter(Formatter):
         SubElement(contentMeta, 'headline').text = article.get('headline', '')
 
     def can_format(self, format_type, article):
-        return format_type == 'newsmlg2' and article['type'] in ['text', 'preformatted', 'composite']
+        return format_type == 'newsmlg2' and \
+            article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE]

@@ -14,6 +14,7 @@ from xml.etree.ElementTree import SubElement
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 
 class NITFFormatter(Formatter):
@@ -93,7 +94,8 @@ class NITFFormatter(Formatter):
             tagline.text = article['ednote']
 
     def can_format(self, format_type, article):
-        return format_type == 'nitf' and article['type'] in ['text', 'preformatted', 'composite']
+        return format_type == 'nitf' and \
+            article[ITEM_TYPE] in (CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE)
 
     def __append_meta(self, article, head, destination, pub_seq_num):
         """

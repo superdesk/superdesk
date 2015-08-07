@@ -12,6 +12,7 @@ from apps.publish.formatters import Formatter
 import superdesk
 from bs4 import BeautifulSoup
 from superdesk.errors import FormatterError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 
 class AAPSMSFormatter(Formatter):
@@ -26,9 +27,9 @@ class AAPSMSFormatter(Formatter):
             odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa_category', [{}])[0].get('qcode'),
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': article.get('priority', 'r')}
-            if article['type'] == 'preformatted':
+            if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                 odbc_item['StoryText'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
-            elif article['type'] == 'text':
+            elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
                 soup = BeautifulSoup(article.get('body_html', ''))
                 odbc_item['StoryText'] = soup.text.replace('\'', '\'\'')
 
@@ -44,4 +45,4 @@ class AAPSMSFormatter(Formatter):
         published = superdesk.get_resource_service('publish_queue').get(req=None, lookup=lookup)
         if published and published.count():
             return False
-        return format_type == 'AAP SMS' and article['type'] in ['text', 'preformatted']
+        return format_type == 'AAP SMS' and article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]

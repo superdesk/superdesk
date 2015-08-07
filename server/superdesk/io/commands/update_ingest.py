@@ -29,7 +29,7 @@ from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.media.renditions import generate_renditions
 from superdesk.io.iptc import subject_codes
-from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, FAMILY_ID
+from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, FAMILY_ID, ITEM_TYPE, CONTENT_TYPE
 from superdesk.metadata.utils import generate_guid
 from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
 
@@ -286,17 +286,17 @@ def ingest_items(items, provider, rule_set=None, routing_scheme=None):
     items_in_package = []
     failed_items = set()
 
-    for item in [doc for doc in all_items if doc.get('type') == 'composite']:
+    for item in [doc for doc in all_items if doc.get(ITEM_TYPE) == CONTENT_TYPE.COMPOSITE]:
         items_in_package = [ref['residRef'] for group in item.get('groups', [])
                             for ref in group.get('refs', []) if 'residRef' in ref]
 
-    for item in [doc for doc in all_items if doc.get('type') != 'composite']:
+    for item in [doc for doc in all_items if doc.get(ITEM_TYPE) != CONTENT_TYPE.COMPOSITE]:
         ingested = ingest_item(item, provider, rule_set,
                                routing_scheme=routing_scheme if not item[GUID_FIELD] in items_in_package else None)
         if not ingested:
             failed_items.add(item[GUID_FIELD])
 
-    for item in [doc for doc in all_items if doc.get('type') == 'composite']:
+    for item in [doc for doc in all_items if doc.get(ITEM_TYPE) == CONTENT_TYPE.COMPOSITE]:
         for ref in [ref for group in item.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
             if ref['residRef'] in failed_items:

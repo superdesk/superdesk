@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from collections import namedtuple
-
 from superdesk.resource import Resource
 from .packages import PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES, PACKAGE
 

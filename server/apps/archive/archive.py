@@ -27,7 +27,7 @@ from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, A
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.users.services import is_admin
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -150,7 +150,7 @@ class ArchiveService(BaseService):
             update_word_count(doc)
             set_item_expiry({}, doc)
 
-            if doc['type'] == 'composite':
+            if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self.packageService.on_create([doc])
 
             if doc.get('media'):
@@ -164,7 +164,7 @@ class ArchiveService(BaseService):
                 doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
     def on_created(self, docs):
-        packages = [doc for doc in docs if doc['type'] == 'composite']
+        packages = [doc for doc in docs if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE]
         if packages:
             self.packageService.on_created(packages)
 
@@ -176,7 +176,7 @@ class ArchiveService(BaseService):
             else:
                 msg = 'added new {{ type }} item with empty header/title'
             add_activity(ACTIVITY_CREATE, msg,
-                         self.datasource, item=doc, type=doc['type'], subject=subject)
+                         self.datasource, item=doc, type=doc[ITEM_TYPE], subject=subject)
             push_notification('item:created', item=str(doc['_id']), user=str(user.get('_id')))
 
     def on_update(self, updates, original):
@@ -231,7 +231,7 @@ class ArchiveService(BaseService):
         if force_unlock:
             del updates['force_unlock']
 
-        if original['type'] == 'composite':
+        if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_update(updates, original)
 
         update_version(updates, original)
@@ -239,7 +239,7 @@ class ArchiveService(BaseService):
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
 
-        if original['type'] == 'composite':
+        if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_updated(updates, original)
 
         user = get_user()
@@ -250,7 +250,7 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          self.datasource, item=updated,
                          version=updates[config.VERSION], subject=get_subject(updates, original),
-                         type=updated['type'])
+                         type=updated[ITEM_TYPE])
 
         push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
 
@@ -288,11 +288,11 @@ class ArchiveService(BaseService):
                     pass
 
     def on_deleted(self, doc):
-        if doc['type'] == 'composite':
+        if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_deleted(doc)
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}',
                      self.datasource, item=doc,
-                     type=doc['type'], subject=get_subject(doc))
+                     type=doc[ITEM_TYPE], subject=get_subject(doc))
         user = get_user()
         push_notification('item:deleted', item=str(doc['_id']), user=str(user.get('_id')))
 
@@ -350,7 +350,7 @@ class ArchiveService(BaseService):
         :return: guid of the duplicated article
         """
 
-        if original_doc.get('type', '') == 'composite':
+        if original_doc.get(ITEM_TYPE, '') == CONTENT_TYPE.COMPOSITE:
             for groups in original_doc.get('groups'):
                 if groups.get('id') != 'root':
                     associations = groups.get('refs', [])

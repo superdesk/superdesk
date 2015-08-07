@@ -23,7 +23,7 @@ from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE
 import superdesk
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from apps.archive.archive import get_subject
@@ -226,7 +226,7 @@ class TasksService(BaseService):
             if is_assigned_to_a_desk(doc):
                 add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}',
                              self.datasource, item=doc,
-                             subject=get_subject(doc), type=doc['type'])
+                             subject=get_subject(doc), type=doc[ITEM_TYPE])
 
     def on_update(self, updates, original):
         self.update_times(updates)

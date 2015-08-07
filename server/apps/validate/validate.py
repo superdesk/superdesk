@@ -11,6 +11,7 @@
 import logging
 import superdesk
 from cerberus import Validator
+from superdesk.metadata.item import ITEM_TYPE
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class ValidateService(superdesk.Service):
         return [doc['errors'] for doc in docs]
 
     def _validate(self, doc):
-        lookup = {'act': doc['act'], 'type': doc['type']}
+        lookup = {'act': doc['act'], 'type': doc[ITEM_TYPE]}
         validators = superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
         for validator in validators:
             v = Validator()

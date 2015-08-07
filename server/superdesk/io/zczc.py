@@ -11,6 +11,7 @@
 from superdesk.io import Parser
 from superdesk.errors import ParserError
 from .iptc import subject_codes
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utcnow
 import uuid
 
@@ -71,10 +72,10 @@ class ZCZCParser(Parser):
                             continue
                         if line[0] == self.FORMAT:
                             if line[1] == self.TEXT:
-                                item['type'] = 'text'
+                                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
                                 continue
                             if line[1] == self.TABULAR:
-                                item['type'] = 'preformatted'
+                                item[ITEM_TYPE] = CONTENT_TYPE.PREFORMATTED
                                 continue
                             continue
                         if line[0] == self.IPTC:
@@ -93,7 +94,7 @@ class ZCZCParser(Parser):
             raise ParserError.ZCZCParserError(ex, provider)
 
     def set_item_defaults(self, item):
-        item['type'] = 'text'
+        item[ITEM_TYPE] = CONTENT_TYPE.TEXT
         item['urgency'] = 5
         item['pubstatus'] = 'usable'
         item['versioncreated'] = utcnow()

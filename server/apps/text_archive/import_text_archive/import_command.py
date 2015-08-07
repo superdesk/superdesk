@@ -15,6 +15,7 @@ import urllib
 import xml.etree.ElementTree as etree
 from superdesk.io.iptc import subject_codes
 from datetime import datetime
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utc
 from superdesk.io.commands.update_ingest import process_iptc_codes
 from superdesk.etree import get_text_word_count
@@ -182,11 +183,11 @@ class AppImportTextArchiveCommand(superdesk.Command):
 
             type = self._get_head_value(doc, 'Format')
             if type == 'x':
-                item['type'] = 'text'
+                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
             elif type == 't':
-                item['type'] = 'preformatted'
+                item[ITEM_TYPE] = CONTENT_TYPE.PREFORMATTED
             else:
-                item['type'] = 'text'
+                item[ITEM_TYPE] = CONTENT_TYPE.TEXT
 
             item['keyword'] = self._get_head_value(doc, 'Keyword')
             item['ingest_provider_sequence'] = self._get_head_value(doc, 'Sequence')
@@ -226,7 +227,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
             el = doc.find('dcdossier/document/body/BodyText')
             if el is not None:
                 story = el.text
-                if item['type'] == 'text':
+                if item[ITEM_TYPE] == CONTENT_TYPE.TEXT:
                     story = story.replace('\n   ', '<br><br>')
                     story = story.replace('\n', '<br>')
                     item['body_html'] = story

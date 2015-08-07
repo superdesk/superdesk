@@ -3,6 +3,7 @@ from io import BytesIO
 import urllib3
 import json
 import datetime
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utc, utcnow
 from eve_elastic.elastic import ElasticCursor
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
@@ -77,13 +78,13 @@ class AAPMMDatalayer(DataLayer):
         # entry that the client can use to identify the fetch endpoint
         new_doc['fetch_endpoint'] = 'aapmm'
         if doc['AssetType'] == 'VIDEO':
-            new_doc['type'] = 'video'
+            new_doc[ITEM_TYPE] = CONTENT_TYPE.VIDEO
             purl = '{}?assetType=VIDEO&'.format(self._app.config['AAP_MM_CDN_URL'])
             purl += 'path=/rest/aap/archives/imagearc/dossiers/{}'.format(doc['AssetId'])
             purl += '/files/ipod&assetId={}&mimeType=video/mp4&dummy.mp4'.format(doc['AssetId'])
             new_doc['renditions'] = {'original': {'href': purl, 'mimetype': 'video/mp4'}}
         else:
-            new_doc['type'] = 'picture'
+            new_doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
             new_doc['renditions'] = {
                 'viewImage': {'href': doc.get('Preview', doc.get('Layout'))['Href']},
                 'thumbnail': {'href': doc.get('Thumbnail', doc.get('Layout'))['Href']},
@@ -139,14 +140,14 @@ class AAPMMDatalayer(DataLayer):
         # Only if we have credentials can we download the original if the account has that privilege
         if self._username is not None and self._password is not None:
             resolutions = self._get_resolutions(_id)
-            if doc['type'] == 'picture':
+            if doc[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
                 if any(i['Name'] == 'Original' for i in resolutions['Image']):
                     url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Original/download'.format(_id)
                     mime_type = 'image/jpeg'
                     source_ref = {'href': url, 'mimetype': mime_type}
                 else:
                     raise FileNotFoundError
-            elif doc['type'] == 'video':
+            elif doc[ITEM_TYPE] == CONTENT_TYPE.VIDEO:
                 if any(v['Name'] == 'Ipod' for v in resolutions['Video']):
                     url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Ipod/download'.format(_id)
                     mime_type = doc.get('renditions').get('original').get('mimetype')
@@ -161,7 +162,7 @@ class AAPMMDatalayer(DataLayer):
             else:
                 raise NotImplementedError
         else:
-            if doc['type'] == 'video':
+            if doc[ITEM_TYPE] == CONTENT_TYPE.VIDEO:
                 mime_type = doc.get('renditions').get('original').get('mimetype')
             else:
                 mime_type = 'image/jpeg'

@@ -13,6 +13,7 @@ import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 import datetime
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 
 class AAPAnpaFormatter(Formatter):
@@ -39,7 +40,7 @@ class AAPAnpaFormatter(Formatter):
 
                 anpa.append(b'\x13')
                 # format identifier
-                if article['type'] == 'preformatted':
+                if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(b'\x12')
                 else:
                     anpa.append(b'\x11')
@@ -76,7 +77,7 @@ class AAPAnpaFormatter(Formatter):
                 anpa.append((b'\x20' + take_key) if len(take_key) > 0 else b'')
                 anpa.append(b'\x0D\x0A')
 
-                if article['type'] == 'preformatted':
+                if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(article.get('body_html', '').encode('ascii', 'replace'))
                 else:
                     anpa.append(BeautifulSoup(article.get('body_html', '')).text.encode('ascii', 'replace'))
@@ -118,4 +119,4 @@ class AAPAnpaFormatter(Formatter):
         anpa.append(b'\x0D\x0A')
 
     def can_format(self, format_type, article):
-        return format_type == 'AAP ANPA' and article['type'] in ['text', 'preformatted']
+        return format_type == 'AAP ANPA' and article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]

@@ -115,7 +115,7 @@ class BasePublishService(BaseService):
             if items:
                 for guid in items:
                     doc = super().find_one(req=None, _id=guid)
-                    validate_item = {'act': self.publish_type, 'type': doc['type'], 'validate': doc}
+                    validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
                     validation_errors = get_resource_service('validate').post([validate_item])
                     if validation_errors[0]:
                         raise ValidationError(validation_errors)
@@ -124,11 +124,11 @@ class BasePublishService(BaseService):
                         raise ValidationError(['A packaged item is locked'])
 
     def on_updated(self, updates, original):
-        self.update_published_collection(published_item_id=original['_id'])
-        original = get_resource_service('archive').find_one(req=None, _id=original['_id'])
+        self.update_published_collection(published_item_id=original[config.ID_FIELD])
+        original = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
         updates.update(original)
         user = get_user()
-        push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
+        push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
 
     def update(self, id, updates, original):
         """
@@ -157,7 +157,7 @@ class BasePublishService(BaseService):
                         # if text or preformatted item is going to be sent to digital subscribers, package it as a take
                         if self.sending_to_digital_subscribers(original):
                             # takes packages are only created for these types
-                            if original['type'] in (CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED):
+                            if original[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
                                 updated = copy(original)
                                 updated.update(updates)
                                 # create a takes package
@@ -177,7 +177,8 @@ class BasePublishService(BaseService):
             self._set_version_last_modified_and_state(original, updates, last_updated)
             self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
-                              desk=str(original.get('task', {}).get('desk', '')), user=str(user.get('_id', '')))
+                              desk=str(original.get('task', {}).get('desk', '')),
+                              user=str(user.get(config.ID_FIELD, '')))
         except SuperdeskApiError as e:
             raise e
         except KeyError as e:
@@ -640,7 +641,7 @@ class ArchivePublishService(BasePublishService):
             subscribers = list(self.non_digital(subscribers))
 
         # Step 3
-        if doc.get(ITEM_TYPE) == CONTENT_TYPE.TEXT or doc.get(ITEM_TYPE) == CONTENT_TYPE.PREFORMATTED:
+        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             first_take = self.takes_package_service.get_first_take_in_takes_package(doc)
             if first_take:
                 # if first take is published then subsequent takes should to same subscribers.
