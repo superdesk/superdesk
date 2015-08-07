@@ -3,7 +3,7 @@
 
 module.exports = new Authoring();
 
-var nav = require('./utils').nav;
+var openUrl = require('./utils').open;
 
 function Authoring() {
 
@@ -11,7 +11,7 @@ function Authoring() {
     this.publish_button = element(by.css('[ng-click="publish()"]'));
     this.close_button = element(by.css('[ng-click="close()"]'));
 
-    this.navbarMenuBtn = $('.navbtn .sd-create-btn');
+    this.navbarMenuBtn = $('.sd-create-btn');
     this.newEmptyPackageLink = element(by.id('create_package'));
     this.infoIconsBox = $('.info-icons');
 
@@ -21,7 +21,7 @@ function Authoring() {
      * @return {Object} a promise
      */
     this.openAuthoringHome = function () {
-        return nav('authoring');
+        return openUrl('/#/authoring');  //authoring main page;
     };
 
     /**

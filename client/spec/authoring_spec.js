@@ -179,3 +179,5 @@ describe('authoring', function() {
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
     });
 });
+
+
