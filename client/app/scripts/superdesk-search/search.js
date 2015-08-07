@@ -907,11 +907,12 @@
                     };
 
                     scope.search = function() {
-                        $location.search('q', input[0].value || null);
+                        $location.search('q', scope.query || null);
                     };
 
                     scope.cancel = function() {
                         scope.query = null;
+                        scope.search();
                         input.focus();
                         //to be implemented
                     };
