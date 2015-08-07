@@ -492,11 +492,10 @@ angular.module('superdesk.editor', [])
                     var word = scope.replaceTarget.textContent;
                     spellcheck.addWordToUserDictionary(word);
 
-                    for (var i = 0; i < editor.elements.length; i++){
-                        var editorElem = editor.elements[i].find(
-                            scope.type === 'preformatted' ? '.editor-type-text' : '.editor-type-html');
+                    editor.elements.forEach(function (checkElem) {
+                        var editorElem = checkElem.find(scope.type === 'preformatted' ? '.editor-type-text' : '.editor-type-html');
                         editorElem.trigger('input');
-                    }
+                    })
                 };
 
                 scope.$on('editor:settings', function() {
