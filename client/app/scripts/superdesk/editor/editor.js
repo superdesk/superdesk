@@ -20,6 +20,7 @@ function EditorService() {
     this.stopEvents = false;
     this.addEventListeners = addEventListeners;
     this.removeEventListeners = removeEventListeners;
+    this.elements = [];
 
     this.KEY_CODES = Object.freeze({
         Y: 89,
@@ -425,6 +426,7 @@ angular.module('superdesk.editor', [])
                     var editorConfig = angular.extend({}, config, scope.config || {});
                     editor.editor = new window.MediumEditor(editor.elem, editorConfig);
 
+                    editor.elements.push(elem);
                     editorElem.on('input', function(event) {
                         $timeout.cancel(updateTimeout);
                         updateTimeout = $timeout(function() { updateModel(event); }, 500, false);
@@ -487,10 +489,13 @@ angular.module('superdesk.editor', [])
                 };
 
                 scope.addWordToDictionary = function() {
-                    var editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
                     var word = scope.replaceTarget.textContent;
                     spellcheck.addWordToUserDictionary(word);
-                    editorElem.trigger('input');
+
+                    editor.elements.forEach(function (checkElem) {
+                        var editorElem = checkElem.find(scope.type === 'preformatted' ? '.editor-type-text' : '.editor-type-html');
+                        editorElem.trigger('input');
+                    });
                 };
 
                 scope.$on('editor:settings', function() {
@@ -529,23 +534,20 @@ angular.module('superdesk.editor', [])
                     // get model value in text
                     var div = document.createElement('div');
                     div.innerHTML = ngModel.$viewValue != null ? ngModel.$viewValue : '';
-                    var modelTextValue = div.innerText || div.textContent || '';
                     // Compare model changes and apply
                     if (event.type === 'input' && !_.isEqual(event.currentTarget.textContent.trim(), '')) {
                         if (editor.fieldStack[key] != null) {
                             if (!_.isEqual(event.currentTarget.innerHTML,
                                 editor.fieldStack[key].stack[editor.fieldStack[key].stack.length - 1])) {
-                                if (!_.isEqual(event.currentTarget.innerText, modelTextValue)) {
-                                    // Invalidate items higher on the stack, if we are here after having undo called.
-                                    var html = removeSpellcheck(editorElem[0]);
-                                    editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
-                                        editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
-                                    editor.fieldStack[key].stack.push(html);
-                                    editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
-                                    scope.$applyAsync(function() {
-                                        ngModel.$setViewValue(html);
-                                    });
-                                }
+                                // Invalidate items higher on the stack, if we are here after having undo called.
+                                var html = removeSpellcheck(editorElem[0]);
+                                editor.fieldStack[key].stack.splice(editor.fieldStack[key].index + 1,
+                                    editor.fieldStack[key].stack.length - editor.fieldStack[key].index);
+                                editor.fieldStack[key].stack.push(html);
+                                editor.fieldStack[key].index = editor.fieldStack[key].stack.length - 1;
+                                scope.$applyAsync(function() {
+                                    ngModel.$setViewValue(html);
+                                });
                             }
                         }
                     }
