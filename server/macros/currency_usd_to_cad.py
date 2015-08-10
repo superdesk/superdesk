@@ -44,4 +44,3 @@ name = 'usd_to_cad'
 label = 'Convert USD to CAD'
 shortcut = 'd'
 callback = usd_to_cad
-desks = ['SPORTS DESK', 'POLITICS']
