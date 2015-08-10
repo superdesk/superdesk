@@ -8,8 +8,9 @@
             title="{{ :: 'Monitoring' | translate }}"></a>
     </li>
     <li>
-        <a href="" class="big-icon-dynamic-list"
-            title="{{ :: 'Highlights' | translate }}"></a>
+        <div class="navbtn dropdown strict highlights-dropdown"  
+            dropdown sd-package-highlights-dropdown>
+        </div>
     </li>
     <li ng-class="{active: currentRoute.href == '/workspace/tasks'}" ng-if="privileges.tasks">
         <a href="#/workspace/tasks" class="big-icon-tasks"

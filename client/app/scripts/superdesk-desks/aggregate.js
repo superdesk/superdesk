@@ -241,7 +241,7 @@
 
             if (!this.allDesks) {
                 this.allDesks = Object.keys(this.deskLookup).map(function(key) {
-                    return {_id: key, type: 'spike'};
+                    return {_id: key, type: 'spike', header: self.deskLookup[key].name};
                 });
             }
             return this.allDesks;

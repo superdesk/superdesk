@@ -15,7 +15,6 @@ define([
             self = this;
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
-
         $scope.currentModule = 'archive';
         $scope.stages = new StagesCtrl($scope);
         $scope.content = new ContentCtrl($scope);

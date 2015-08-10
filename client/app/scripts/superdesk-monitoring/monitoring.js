@@ -49,7 +49,7 @@
          * @param {Object} card
          * @param {string} queryString
          */
-        function getCriteria(card, queryString) {
+        function getCriteria(card, queryString, queryParam) {
             var params = (card.type === 'search') ? JSON.parse(JSON.stringify(card.search.filter.query)): {};
             params.spike = (card.type === 'spike');
             if (card.fileType) {
@@ -81,6 +81,12 @@
                     query.filter({term: {'task.desk': card._id}});
                     break;
 
+                case 'highlights':
+                    query.filter({and: [
+                        {term: {'highlights': queryParam.highlight}}
+                    ]});
+                    break;
+
                 default:
                     query.filter({term: {'task.stage': card._id}});
                     break;
@@ -97,7 +103,8 @@
         }
     }
 
-    function MonitoringController() {
+    MonitoringController.$inject = ['$location'];
+    function MonitoringController($location) {
         this.state = {};
 
         this.preview = preview;
@@ -106,6 +113,8 @@
 
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
+
+        this.queryParam = $location.search();
 
         this.edit = edit;
         this.editItem = null;
@@ -129,6 +138,7 @@
         function viewSingleGroup(group) {
             vm.singleGroup = group;
         }
+
     }
 
     /**
@@ -184,7 +194,7 @@
                 scope.fetching = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
-                scope.limited = monitoring.singleGroup ? false : true;
+                scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
 
                 scope.uuid = uuid;
                 scope.edit = edit;
@@ -232,7 +242,7 @@
                 }
 
                 function queryItems() {
-                    criteria = cards.criteria(scope.group);
+                    criteria = cards.criteria(scope.group, null, monitoring.queryParam);
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;

@@ -475,7 +475,8 @@
                         current_item.task && current_item.task.desk &&
                         user_privileges.publish;
 
-                action.edit = current_item.type !== 'composite' && current_item.state !== 'spiked' && lockedByMe;
+                action.edit = !(current_item.type === 'composite' && current_item.package_type === 'takes') &&
+                                current_item.state !== 'spiked' && lockedByMe;
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
                 action.spike = current_item.state !== 'spiked' && user_privileges.spike &&
                     (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id);
@@ -700,10 +701,11 @@
         'macros',
         '$timeout',
         '$q',
-        '$window'
+        '$window',
+        'modal'
     ];
     function AuthoringDirective(superdesk, notify, gettext, desks, authoring, api, session, lock, privileges,
-                                ContentCtrl, $location, referrer, macros, $timeout, $q, $window) {
+                                ContentCtrl, $location, referrer, macros, $timeout, $q, $window, modal) {
         return {
             link: function($scope) {
                 var _closing;
@@ -716,6 +718,7 @@
                 $scope.isMediaType = _.contains(['audio', 'video', 'picture'], $scope.origItem.type);
                 $scope.action = $scope.action || ($scope._editable ? 'edit' : 'view');
                 $scope.itemActions = authoring.itemActions($scope.origItem);
+                $scope.highlight = !!$scope.origItem.highlight;
 
                 $scope.$watch('origItem', function(new_value, old_value) {
                     $scope.itemActions = null;
@@ -807,6 +810,30 @@
                         }
                     });
                 };
+
+                /**
+                 * Export the list of highlights as a text item.
+                 */
+                $scope.exportHighlight = function(item) {
+                    if ($scope.save_enabled()) {
+                        modal.confirm(gettext('You have unsaved changes, do you want to continue.'))
+                            .then(function() {
+                                _exportHighlight(item._id);
+                            }
+                        );
+                    } else {
+                        _exportHighlight(item._id);
+                    }
+                };
+
+                function _exportHighlight(_id) {
+                    api.generate_highlights.save({}, {'package': _id})
+                    .then(function(item) {
+                        superdesk.intent('author', 'article', item);
+                    }, function(response) {
+                        notify.error(gettext('Error creating highlight.'));
+                    });
+                }
 
                 function validatePublishSchedule(item) {
                     if (_.contains(['published', 'killed', 'corrected'], item.state)) {

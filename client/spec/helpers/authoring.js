@@ -41,6 +41,10 @@ function Authoring() {
         });
     };
 
+    this.edit = function() {
+        return element(by.id('Edit')).click();
+    };
+
     this.showSearch = function() {
         return element(by.id('Search')).click();
     };
@@ -79,6 +83,11 @@ function Authoring() {
                 return groups.all(by.css('[option="' + group.toUpperCase() + '"]'))
                     .click();
             });
+    };
+
+    this.getGroupedItems = function(group) {
+        return element(by.css('[data-title="' + group.toLowerCase() + '"]'))
+            .all(by.repeater('child in item.childData'));
     };
 
     this.getGroupItems = function(group) {

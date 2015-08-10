@@ -254,23 +254,65 @@
         };
     }
 
-    PackageHighlightsDropdownDirective.$inject = ['superdesk', 'desks', 'highlightsService'];
-    function PackageHighlightsDropdownDirective(superdesk, desks, highlightsService) {
+    PackageHighlightsDropdownDirective.$inject = ['desks', 'highlightsService', '$location', '$route'];
+    function PackageHighlightsDropdownDirective(desks, highlightsService, $location, $route) {
         return {
+            scope: true,
             templateUrl: 'scripts/superdesk-highlights/views/package_highlights_dropdown_directive.html',
             link: function(scope) {
+                scope.$watch(function() {
+                    return desks.active;
+                }, function(active) {
+                    scope.selected = active;
+                    highlightsService.get(active.desk).then(function(result) {
+                        scope.highlights = result._items;
+                        scope.hasHighlights = _.size(scope.highlights) > 0;
+                    });
+                });
+
+                scope.listHighlight = function(highlight) {
+                    $location.url('workspace/highlights?highlight=' + highlight._id);
+                    $route.reload();
+                };
+            }
+        };
+    }
+
+    HighlightLabelDirective.$inject = ['desks', 'highlightsService'];
+    function HighlightLabelDirective(desks, highlightsService) {
+        return {
+            scope: {highlight_id: '=highlight'},
+            template: '<span translate>{{ highlightItem.name }}</span>',
+            replate: true,
+            link: function(scope) {
+                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                    scope.highlightItem =  _.find(result._items, {_id: scope.highlight_id});
+                });
+            }
+        };
+    }
+
+    CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location'];
+    function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, $location) {
+        return {
+            require: ['^sdAuthoringContainer'],
+            scope: {highlight_id: '=highlight'},
+            templateUrl: 'scripts/superdesk-highlights/views/create_highlights_button_directive.html',
+            link: function(scope, elem, attrs, ctrls) {
+                var authoring = ctrls[0];
 
                 scope.createHighlight = function(highlight) {
-                    highlightsService.createEmptyHighlight(highlight)
-                    .then(function(new_package) {
-                        superdesk.intent('author', 'package', new_package);
+                    var promise = highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
+                        scope.highlights = _.find(result._items, {_id: scope.highlight_id});
+                        scope.hasHighlights = _.size(scope.highlights) > 0;
+                    });
+
+                    promise = promise.then(function() {
+                        highlightsService.createEmptyHighlight(scope.highlights).then(function(new_package) {
+                            authoring.edit(new_package);
+                        });
                     });
                 };
-
-                highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
-                    scope.highlights = result._items;
-                    scope.hasHighlights = _.size(scope.highlights) > 0;
-                });
             }
         };
     }
@@ -432,6 +474,7 @@
 
     app
     .service('highlightsService', HighlightsService)
+    .directive('sdCreateHighlightsButton', CreateHighlightsButtonDirective)
     .directive('sdMarkHighlightsDropdown', MarkHighlightsDropdownDirective)
     .directive('sdMultiMarkHighlightsDropdown', MultiMarkHighlightsDropdownDirective)
     .directive('sdPackageHighlightsDropdown', PackageHighlightsDropdownDirective)
@@ -451,6 +494,7 @@
             }
         };
     })
+    .directive('sdHighlightLabel', HighlightLabelDirective)
     .config(['superdeskProvider', function(superdesk) {
         superdesk
         .activity('mark.item', {
@@ -462,7 +506,6 @@
             filters: [
                 {action: 'list', type: 'archive'}
             ],
-            group: 'highlights',
             additionalCondition:['authoring', 'item', function(authoring, item) {
                 return authoring.itemActions(item).mark_item;
             }]
@@ -474,6 +517,13 @@
             category: superdesk.MENU_SETTINGS,
             priority: -800,
             privileges: {highlights: 1}
+        }).
+        activity('/workspace/highlights', {
+            label: gettext('Highlights View'),
+            priority: 100,
+            templateUrl: 'scripts/superdesk-monitoring/views/highlights-view.html',
+            topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+            sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
         });
     }])
     .config(['apiProvider', function(apiProvider) {

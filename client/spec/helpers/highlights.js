@@ -137,6 +137,7 @@ function Highlights() {
     this.createHighlightsPackage = function(highlight) {
         element(by.className('svg-icon-create-list')).click();
         this.selectHighlight(element(by.id('highlightPackage')), highlight);
+        element(by.id('create')).click();
     };
 
     this.switchHighlightFilter = function(name) {
