@@ -55,6 +55,7 @@ describe('Reload Service', function() {
                         user_ids: ['1']
                     }
         };
+        reloadService.activeDesk = '5567ff31102454c7bac47644';
 
         var reload = spyOn(reloadService, 'reload');
         rootScope.$broadcast('reload', msg);
