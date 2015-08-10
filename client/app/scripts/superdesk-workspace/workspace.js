@@ -198,6 +198,7 @@
                     scope.workspaceType = 'desk';
                     desks.setCurrentDeskId(desk._id);
                     workspaces.setActiveDesk(desk);
+                    reloadService.activeDesk = desks.active.desk;
                 };
 
                 scope.selectWorkspace = function(workspace) {

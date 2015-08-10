@@ -50,9 +50,12 @@
         var _this = this;
         _this.userDesks = [];
         _this.result = null;
+        _this.activeDesk = null;
         desks.fetchCurrentUserDesks().then(function (desk_list) {
             _this.userDesks = desk_list._items;
+            _this.activeDesk = desks.active.desk;
         });
+
         var userEvents = {
             'user_disabled': 'User is disabled',
             'user_inactivated': 'User is inactivated',
@@ -129,7 +132,7 @@
                             result.reload = true;
                         }
                     } else if (msg.event === 'stage') {
-                        if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) != null) {
+                        if (_.find(_this.userDesks, {_id: msg.extra.desk_id}) != null && _this.activeDesk === msg.extra.desk_id) {
                             result.message = stageEvents[msg.event];
                             result.reload = true;
                         }
