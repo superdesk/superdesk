@@ -85,9 +85,13 @@ function Authoring() {
             });
     };
 
-    this.getGroupItems = function(group) {
+    this.getGroupedItems = function(group) {
         return element(by.css('[data-title="' + group.toLowerCase() + '"]'))
             .all(by.repeater('child in item.childData'));
+    };
+
+    this.getGroupItems = function(group) {
+        return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
     };
 
     this.getGroupItem = function(group, item) {

@@ -183,7 +183,7 @@ describe('HIGHLIGHTS', function() {
             authoring.edit();
             authoring.showSearch();
             authoring.addToGroup(0, 'ONE');
-            expect(authoring.getGroupItems('ONE').count()).toBe(1);
+            expect(authoring.getGroupedItems('ONE').count()).toBe(1);
             authoring.showSearch();
             authoring.save();
             expect(content.getItemCount()).toBe(1);
@@ -220,8 +220,8 @@ describe('HIGHLIGHTS', function() {
 
             authoring.addToGroup(0, 'ONE');
             authoring.addToGroup(1, 'TWO');
-            expect(authoring.getGroupItems('ONE').count()).toBe(1);
-            expect(authoring.getGroupItems('TWO').count()).toBe(1);
+            expect(authoring.getGroupedItems('ONE').count()).toBe(1);
+            expect(authoring.getGroupedItems('TWO').count()).toBe(1);
             authoring.save();
             highlights.exportHighlights();
             authoring.save();
