@@ -9,6 +9,23 @@ function Authoring() {
     this.publish_button = element(by.css('[ng-click="publish()"]'));
     this.close_button = element(by.css('[ng-click="close()"]'));
 
+    this.navbarMenuBtn = $('.dropdown-toggle.sd-create-btn');
+    this.newEmptyPackageLink = element(by.id('create_package'));
+    this.infoIconsBox = $('.info-icons');
+
+    /**
+     * Find all file type icons in the item's info icons box matching the
+     * given file type.
+     *
+     * @param {string} itemType - the item type of interest, e.g. 'text',
+     *   'composite', 'picture', etc.
+     * @return {Object} a promise that is resolved with all DOM elements found
+     */
+    this.findItemTypeIcons = function (itemType) {
+        var selector = '.filetype-icon-' + itemType;
+        return this.infoIconsBox.all(by.css(selector));
+    };
+
     /**
      * Send item to given desk
      *

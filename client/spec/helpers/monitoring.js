@@ -12,6 +12,18 @@ function Monitoring() {
         openUrl('/#/workspace/monitoring');
     };
 
+    /**
+     * On monitoring view create a new item
+     *
+     * @param {string} action - the create item action can be: create_text_article,
+     * create_preformatted_article and create_package
+     */
+    this.createItemAction = function(action) {
+        element(by.className('svg-icon-plus')).click();
+        element(by.id(action)).click();
+        browser.sleep(500);
+    };
+
     this.getGroup = function(group) {
         return element.all(by.repeater('group in aggregate.getGroups()')).get(group);
     };

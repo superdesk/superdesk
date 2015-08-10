@@ -24,19 +24,25 @@
 
         <div sd-multi-action-bar></div>
 
-        <div class="dropdown more-actions" dropdown >
-            <button class="dropdown-toggle dropdown-monitoring-settings pull-right" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-            <div class="dropdown-menu dropdown-monitoring-menu pull-right">
-                <ul>
-                    <li>
-                        <button ng-click="aggregate.edit()">
-                            <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
-                        </button>
-                    </li>
-                </ul>
+        <div class="button-stack right-stack">
+            <div class="dropdown navbtn strict" dropdown>
+                <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
+                <div class="dropdown-menu pull-right">
+                    <ul>
+                        <li>
+                            <button ng-click="aggregate.edit()">
+                                <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
+            <div class="dropdown navbtn strict" ng-if="!state.opened" title="{{ :: 'Create' | translate }}" dropdown>
+                <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+                <ul class="dropdown-menu pull-right" sd-content-create></ul> 
+            </div>
+        </div>          
     </div>
 
     <section class="main-section search-page-container"
