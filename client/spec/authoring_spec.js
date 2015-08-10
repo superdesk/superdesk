@@ -2,7 +2,8 @@
 'use strict';
 
 var workspace = require('./helpers/workspace'),
-    authoring = require('./helpers/authoring');
+    authoring = require('./helpers/authoring'),  // TODO: still needed?
+    monitoring = require('./helpers/monitoring');
 
 describe('authoring', function() {
     it('can open item stage', function() {
@@ -177,5 +178,51 @@ describe('authoring', function() {
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(1);
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
+    });
+
+    describe('subnavigation menu', function () {
+        fit('allows to create a new empty package', function () {
+            // 1. Open the "plus icon" menu in subnav bar and click the
+            //    "Empty Package" link in the menu.
+            //
+            // 2. Get the newly created item's info box and check if it
+            //    contains an icon indicating that the item's type is indeed
+            //    "composite".
+            //
+            monitoring.openMonitoring();
+
+            ///////////////////  DEBUG
+            browser.getLocationAbsUrl().then(function (absUrl) {
+                console.log('******* current URL:', absUrl);
+            });
+
+            var item = $('.page-nav-title');
+            item.getText().then(function (text) {
+                console.log('---- item teeext:', text);
+                // should be "Authoring - opened articles"!!!
+            });
+
+            authoring.openAuthoringHome();
+            ///////////////////  DEBUG
+            browser.getLocationAbsUrl().then(function (absUrl) {
+                console.log('******* current URL2:', absUrl);
+            });
+
+            var item = $('.page-nav-title');
+            item.getText().then(function (text) {
+                console.log('---- item teeext:', text);
+                // should be "Authoring - opened articles"!!!
+            });
+            ///////// END DEBUG
+
+            authoring.navbarMenuBtn.click().then(function () {
+                return authoring.newEmptyPackageLink.click();
+            }).then(function () {
+                return authoring.findItemTypeIcons('composite');
+            }).then(function(matchedElements) {
+                expect(matchedElements.length).toBeGreaterThan(0);
+            });
+
+        });
     });
 });
