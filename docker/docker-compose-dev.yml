@@ -53,6 +53,7 @@ backend:
    - ./Procfile:/opt/superdesk/Procfile
   ports:
    - "5000:5000"
+   - "5050:5050"
    - "5100:5100"
 
 frontend:
