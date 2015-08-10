@@ -249,10 +249,11 @@ class RssIngestService(IngestService):
             field_aliases = {}
         else:
             field_aliases = merge_dicts(field_aliases)
+        aliased_fields = set(field_aliases.values())
 
         item = dict(type=CONTENT_TYPE.TEXT)
 
-        for field in self.item_fields:
+        for field in (f for f in self.item_fields if f.name_in_data not in aliased_fields):
             data_field_name = field_aliases.get(
                 field.name_in_data, field.name_in_data
             )
