@@ -81,28 +81,11 @@ describe('workspace', function() {
         it('can create workspace', inject(function(workspaces, session, api, $q, $rootScope) {
             spyOn(api, 'save').and.returnValue($q.when({_id: 'w1'}));
             session.testUser('foo');
-            var created = jasmine.createSpy('created');
-            workspaces.create().then(created);
-            expect(workspaces.edited.user).toBe('foo');
+            var workspace = {name: 'test'};
+            workspaces.save(workspace);
             $rootScope.$digest();
-            expect(created).not.toHaveBeenCalled();
-            workspaces.edited.name = 'test';
-
-            workspaces.save();
-            $rootScope.$digest();
-            expect(created).toHaveBeenCalled();
-            expect(workspaces.edited).toBe(null);
             expect(workspaces.active._id).toBe('w1');
             expect(api.save).toHaveBeenCalledWith('workspaces', {user: 'foo', name: 'test'});
-        }));
-
-        it('can cancel workspace editing', inject(function(workspaces, $rootScope) {
-            var canceled = jasmine.createSpy('canceled');
-            workspaces.create().then(null, canceled);
-            workspaces.cancelEdit();
-            $rootScope.$digest();
-            expect(canceled).toHaveBeenCalled();
-            expect(workspaces.edited).toBe(null);
         }));
 
         it('can use last active workspace',
@@ -171,21 +154,6 @@ describe('workspace', function() {
 
                 scope.workspaceType = null;
                 scope.selectWorkspace(workspace);
-
-                expect(scope.workspaceType).toEqual('workspace');
-            }));
-        });
-
-        describe('createWorkspace() scope method', function() {
-            it('can set workspace type', inject(function ($q) {
-                spyOn(workspaces, 'create').and.returnValue($q.when(null));
-
-                var workspace = {name: 'foo', widgets: [{_id: 'foo'}]};
-
-                scope.workspaces = [];
-                scope.workspaceType = null;
-                scope.createWorkspace(workspace);
-                scope.$digest();
 
                 expect(scope.workspaceType).toEqual('workspace');
             }));
