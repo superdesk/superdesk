@@ -86,6 +86,9 @@ define([
                     }
                 }, function(response) {
                     item.error = response;
+                    if (angular.isDefined(response.data._issues['validator exception'])) {
+                        notify.error(gettext(response.data._issues['validator exception'].replace(/\[/g, '').replace(/\]/g, '')));
+                    }
                 })
                 ['finally'](function() {
                     item.actioning.spike = false;

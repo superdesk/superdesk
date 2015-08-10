@@ -16,7 +16,8 @@ from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 
-from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
+    LINKED_IN_PACKAGES, PACKAGE_TYPE
 from superdesk.metadata.packages import SEQUENCE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
@@ -670,6 +671,11 @@ class KillPublishService(BasePublishService):
         super().__init__(datasource=datasource, backend=backend)
 
     def on_update(self, updates, original):
+        # check if we are trying to kill and item that is contained in normal non takes package
+        if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE and original.get(LINKED_IN_PACKAGES, None) \
+                and len([x for x in original.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '']):
+            raise ValidationError(['This item is in a package' +
+                                   ' it needs to be removed before the item can be killed'])
         updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
         self.takes_package_service.process_killed_takes_package(original)
