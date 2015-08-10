@@ -547,6 +547,30 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
         self.assertEqual(item.get('abstract'), 'Something happened...')
         self.assertEqual(item.get('body_html'), 'This is body text.')
 
+    def test_aliases_fields_are_skipped(self):
+        data = dict(
+            guid='http://news.com/rss/1234abcd',
+            published_parsed=struct_time([2015, 2, 25, 16, 45, 23, 2, 56, 0]),
+            updated_parsed=struct_time([2015, 2, 25, 17, 52, 11, 2, 56, 0]),
+            title='Breaking News!',
+            summary='This is body text.',
+        )
+
+        field_aliases = [{'body_text': 'summary'}]
+
+        item = self.instance._create_item(data, field_aliases)
+
+        self.assertEqual(item.get('guid'), 'http://news.com/rss/1234abcd')
+        self.assertEqual(item.get('uri'), 'http://news.com/rss/1234abcd')
+        self.assertEqual(item.get('type'), 'text')
+        self.assertEqual(
+            item.get('firstcreated'), datetime(2015, 2, 25, 16, 45, 23))
+        self.assertEqual(
+            item.get('versioncreated'), datetime(2015, 2, 25, 17, 52, 11))
+        self.assertEqual(item.get('headline'), 'Breaking News!')
+        self.assertEqual(item.get('body_html'), 'This is body text.')
+        self.assertIsNone(item.get('abstract'))
+
 
 class CreateImageItemsMethodTestCase(RssIngestServiceTest):
     """Tests for the _create_image_items() method."""
