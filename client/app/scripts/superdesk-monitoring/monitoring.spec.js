@@ -104,10 +104,10 @@ describe('monitoring', function() {
         }));
 
         it('can get criteria for multiple file type filter', inject(function(cards) {
-            var card = {_id: '123', fileType: JSON.stringify(['text, photo'])};
+            var card = {_id: '123', fileType: JSON.stringify(['text, picture'])};
             var criteria = cards.criteria(card);
             expect(criteria.source.post_filter.and).toContain({
-                terms: {type: ['text, photo']}
+                terms: {type: ['text, picture']}
             });
         }));
     });
