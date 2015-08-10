@@ -1854,11 +1854,7 @@
             },
             link: function(scope, elem, attrs, authoringCtrl) {
                 scope.$watch('listItem', function(item) {
-                    scope.origItem = null;
-                    scope.$applyAsync(function() {
-                        scope.origItem = item;
-                        scope.action = 'view';
-                    });
+                    scope.lock();
                 });
 
                 scope.lock = function() {
