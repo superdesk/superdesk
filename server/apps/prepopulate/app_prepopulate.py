@@ -20,6 +20,7 @@ from superdesk.tests import drop_elastic, drop_mongo
 from superdesk.utc import utcnow
 from eve.utils import date_to_str
 from flask import current_app as app
+from eve.versioning import insert_versioning_documents
 
 
 def apply_placeholders(placeholders, text):
@@ -54,20 +55,23 @@ def prepopulate_data(file_name, default_user=get_default_user()):
     with open(file, 'rt', encoding='utf8') as app_prepopulation:
         json_data = json.load(app_prepopulation)
         for item in json_data:
-            service = get_resource_service(item.get('resource', None))
+            resource = item.get('resource', None)
+            service = get_resource_service(resource)
             username = item.get('username', None) or default_username
             set_logged_user(username, users[username])
             id_name = item.get('id_name', None)
             text = json.dumps(item.get('data', None))
             text = apply_placeholders(placeholders, text)
             data = json.loads(text)
-            if item.get('resource'):
-                app.data.mongo._mongotize(data, item.get('resource'))
-            if item.get('resource', None) == 'users':
+            if resource:
+                app.data.mongo._mongotize(data, resource)
+            if resource == 'users':
                 users.update({data['username']: data['password']})
             ids = service.post([data])
             if not ids:
                 raise Exception()
+            if app.config['VERSION'] in data:
+                insert_versioning_documents(resource, data)
             if id_name:
                 placeholders[id_name] = str(ids[0])
 

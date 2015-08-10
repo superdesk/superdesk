@@ -2,18 +2,23 @@
 
 'use strict';
 
-VersioningController.$inject = ['$scope', 'authoring', 'api', 'notify', 'lock', 'desks'];
-function VersioningController($scope, authoring, api, notify, lock, desks) {
-
+HistoryController.$inject = ['$scope', 'authoring', 'api', 'notify', 'desks'];
+function HistoryController($scope, authoring, api, notify, desks) {
     $scope.last = null;
     $scope.versions = null;
     $scope.selected = null;
     $scope.users = null;
-    $scope.canRevert = false;
     $scope.desks = null;
     $scope.stages = null;
 
-    function fetchVersions() {
+    function typeName(itemType) {
+        if (itemType === 'text') {
+            return 'Story';
+        }
+        return _.capitalize(itemType);
+    }
+
+    function fetchHistory() {
         desks.initialize()
             .then(function() {
                 $scope.desks = desks.desks;
@@ -37,8 +42,9 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
                             var versioncreator = desks.userLookup[version.version_creator || version.original_creator];
                             version.creator = versioncreator && versioncreator.display_name;
                         }
+                        version.typeName = typeName(version.type);
                     });
-                    $scope.versions = _.sortBy(_.reject(result._items, {version: 0}), '_current_version').reverse();
+                    $scope.versions = _.sortBy(result._items, '_current_version');
                     $scope.last = lastVersion();
 
                     if ($scope.item._autosave) {
@@ -64,14 +70,6 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
     }
 
     /**
-     * Open autosaved version
-     */
-    $scope.openAutosave = function() {
-        $scope.selected = $scope.item._autosave;
-        $scope.closePreview();
-    };
-
-    /**
      * Open given version for preview
      *
      * If there is no autosave then last one will make item editable
@@ -85,31 +83,17 @@ function VersioningController($scope, authoring, api, notify, lock, desks) {
         }
     };
 
-    /**
-     * Revert to given version
-     *
-     * If the version is the last one and there is an autosave - drop autosave
-     */
-    $scope.revert = function(version) {
-        $scope.$parent.revert(version).then(fetchVersions);
-    };
-
-    $scope.$watchGroup(['item._id', 'item._latest_version'], fetchVersions);
+    $scope.$watchGroup(['item._id', 'item._latest_version'], fetchHistory);
 }
 
-angular.module('superdesk.authoring.versions', [])
-    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-        authoringWidgetsProvider
-            .widget('versions', {
-                icon: 'revision',
-                label: gettext('Versions'),
-                template: 'scripts/superdesk-authoring/versioning/views/versions.html',
-                order: 4,
-                side: 'right',
-                display: {authoring: true, packages: true}
-            });
-    }])
+versioningHistoryDirective.$inject = [];
+function versioningHistoryDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/versioning/history/views/history.html'
+    };
+}
 
-    .controller('VersioningWidgetCtrl', VersioningController);
-
+angular.module('superdesk.authoring.versioning.history', [])
+    .directive('sdVersioningHistory', versioningHistoryDirective)
+    .controller('HistoryWidgetCtrl', HistoryController);
 })();

@@ -218,8 +218,7 @@
 		            "type" : "string",
 		            "required" : "true",
 		            "allowed" : [ 
-		                "X", 
-		                "T"
+		                "text"
 		            ]
 		        },
 		        "pubstatus" : {
@@ -248,7 +247,7 @@
     		"name" : "Public API",
     		"subscriber_type": "digital",
     		"is_active" : true,
-    		"destinations" : [ { "delivery_type" : "PublicArchive", "name" : "Public" } ]
+    		"destinations" : [ { "delivery_type" : "PublicArchive", "format": "ninjs", "name" : "Public" } ]
     	},
     	"resource": "subscribers",
     	"username": "admin",
@@ -355,11 +354,12 @@
             "guid": "item5",
             "version": "1",
             "versioncreated": "2015-01-01T10:10:10+0000",
-            "_current_version" : 1,
+            "_current_version" : 0,
             "original_creator": "-id user admin-",
             "state": "in_progress",
             "pubstatus": "usable",
             "urgency": 1,
+            "operation": "create",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
@@ -380,11 +380,12 @@
             "guid": "item6",
             "version": "1",
             "versioncreated": "2015-01-01T10:10:10+0000",
-            "_current_version" : 1,
+            "_current_version" : 0,
             "original_creator": "-id user admin-",
             "state": "in_progress",
             "pubstatus": "usable",
             "urgency": 1,
+            "operation": "fetch",
             "subject": [{"name": "university", "parent": "05000000", "qcode": "05007000"}],
             "task" : {
 		        "desk" : "-id desk Politic Desks-",
