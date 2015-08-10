@@ -13,6 +13,7 @@ RUN npm -g install grunt-cli bower
 
 # setup the environment
 WORKDIR	/opt/superdesk-client/
+COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./superdesk_vhost.conf /etc/nginx/sites-enabled/superdesk.conf
 EXPOSE	9000
 EXPOSE	80
