@@ -2,7 +2,8 @@
 'use strict';
 
 var workspace = require('./helpers/workspace'),
-    authoring = require('./helpers/authoring');
+    authoring = require('./helpers/authoring'),  // TODO: still needed?
+    monitoring = require('./helpers/monitoring');
 
 describe('authoring', function() {
     it('can open item stage', function() {
@@ -188,21 +189,33 @@ describe('authoring', function() {
             //    contains an icon indicating that the item's type is indeed
             //    "composite".
             //
-            authoring.openAuthoringHome().then(function () {
-                ///////////////////  DEBUG
-                browser.getLocationAbsUrl().then(function (absUrl) {
-                    console.log('******* current URL:', absUrl);
-                });
+            monitoring.openMonitoring();
 
-                var item = $('.page-nav-title');
-                item.getText().then(function (text) {
-                    console.log('---- item teeext:', text);
-                    // should be "Authoring - opened articles"!!!
-                });
-                ///////// END DEBUG
+            ///////////////////  DEBUG
+            browser.getLocationAbsUrl().then(function (absUrl) {
+                console.log('******* current URL:', absUrl);
+            });
 
-                return authoring.navbarMenuBtn.click();
-            }).then(function () {
+            var item = $('.page-nav-title');
+            item.getText().then(function (text) {
+                console.log('---- item teeext:', text);
+                // should be "Authoring - opened articles"!!!
+            });
+
+            authoring.openAuthoringHome();
+            ///////////////////  DEBUG
+            browser.getLocationAbsUrl().then(function (absUrl) {
+                console.log('******* current URL2:', absUrl);
+            });
+
+            var item = $('.page-nav-title');
+            item.getText().then(function (text) {
+                console.log('---- item teeext:', text);
+                // should be "Authoring - opened articles"!!!
+            });
+            ///////// END DEBUG
+
+            authoring.navbarMenuBtn.click().then(function () {
                 return authoring.newEmptyPackageLink.click();
             }).then(function () {
                 return authoring.findItemTypeIcons('composite');
