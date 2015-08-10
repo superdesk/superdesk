@@ -135,6 +135,7 @@
                 $scope.types = templates.types;
 
                 $scope.save = function() {
+                    delete $scope.template._datelinedate;
                     api.content_templates.save($scope.origTemplate, $scope.template)
                         .then(
                             function() {
