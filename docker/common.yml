@@ -9,7 +9,7 @@ redis:
    - ../data/redis:/data
 
 logstash:
-  image: logstash:1.5
+  image: logstash
   command: logstash -f /usr/share/logstash/logstash.conf
   volumes:
   - logstash:/usr/share/logstash
