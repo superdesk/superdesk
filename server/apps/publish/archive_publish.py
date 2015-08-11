@@ -672,8 +672,8 @@ class KillPublishService(BasePublishService):
     def on_update(self, updates, original):
         # check if we are trying to kill and item that is contained in normal non takes package
         if is_item_in_package(original):
-            raise ValidationError(['This item is in a package' +
-                                   ' it needs to be removed before the item can be killed'])
+            raise SuperdeskApiError.badRequestError(message='This item is in a package' +
+                                                            ' it needs to be removed before the item can be killed')
         updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
         self.takes_package_service.process_killed_takes_package(original)

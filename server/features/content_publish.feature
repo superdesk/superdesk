@@ -2555,5 +2555,5 @@ Feature: Content Publishing
       When we publish "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916" with "kill" type and "killed" state
       Then we get error 400
       """
-      {"_issues": {"validator exception": "['This item is in a package it needs to be removed before the item can be killed']"}, "_status": "ERR"}
+      {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be killed"}, "_status": "ERR"}
       """
