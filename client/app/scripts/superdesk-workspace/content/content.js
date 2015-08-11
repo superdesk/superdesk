@@ -19,15 +19,16 @@
             ];
 
             var scope = $scope;
+            var self = this;
 
             /**
              * Create an item and start editing it
              */
             this.create = function(type) {
                 if (scope && scope.dirty){
-                    scope.closeOpenNew(this.createItem, type);
+                    scope.closeOpenNew(self.createItem, type);
                 } else {
-                    this.createItem(type);
+                    self.createItem(type);
                 }
             };
 
@@ -41,9 +42,9 @@
 
             this.createPackage = function (current_item) {
                 if (scope && scope.dirty){
-                    scope.closeOpenNew(this.createPackageItem, current_item);
+                    scope.closeOpenNew(self.createPackageItem, current_item);
                 } else {
-                    this.createItem(current_item);
+                    self.createItem(current_item);
                 }
             };
 
@@ -57,9 +58,9 @@
 
             this.createFromTemplate = function(template) {
                 if (scope && scope.dirty){
-                    scope.closeOpenNew(this.createFromTemplateItem, template);
+                    scope.closeOpenNew(self.createFromTemplateItem, template);
                 } else {
-                    this.createFromTemplateItem(template);
+                    self.createFromTemplateItem(template);
                 }
             };
 
