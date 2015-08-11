@@ -192,16 +192,28 @@
 
         $scope.groupList = packages.groupList;
 
+        fetchContentItems();
+
         function fetchContentItems() {
             if (!init) {
                 return;
             }
-            var query = search.query($scope.query);
+
+            var params = {};
+            params.q = $scope.query;
+            params.ignoreKilled = true;
+            params.ignoreDigital = true;
+
+            var query = search.query(params);
             query.size(25);
             if ($scope.highlight) {
                 query.filter({term: {'highlights': $scope.highlight.toString()}});
             }
-            api.archive.query(query.getCriteria(true))
+
+            var criteria = query.getCriteria(true);
+            criteria.repo = 'archive,published';
+
+            api.query('search', criteria)
             .then(function(result) {
                 $scope.contentItems = result._items;
             });

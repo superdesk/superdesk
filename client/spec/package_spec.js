@@ -76,6 +76,19 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
     });
 
+    it('create package from published item', function() {
+        workspace.open();
+        workspace.editItem('item5', 'Politic');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.publish();
+        browser.sleep(500);
+        workspace.selectStage('Published');
+        content.setListView();
+        content.actionOnItem('Package item', 1);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
+    });
+
     function addItemsToPackage() {
         workspace.switchToDesk('Personal').then(
             content.setListView

@@ -877,4 +877,49 @@ describe('authoring actions', function() {
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['view', 'deschedule']);
         }));
+
+    it('Can only package if the item is not a take package',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'published',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 8,
+                'archive_item': {
+                    '_id': 'test',
+                    'state': 'published',
+                    'marked_for_not_publication': false,
+                    'type': 'text',
+                    'task': {
+                        'desk': 'desk1'
+                    },
+                    'more_coming': false,
+                    '_current_version': 8
+                }
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': false
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write',
+                'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit']);
+        }));
 });

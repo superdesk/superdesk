@@ -27,6 +27,7 @@
                         <span ng-if="!itemInPackage(pitem)" ng-click="addToSelected(pitem)" class="select" sd-check ng-model="pitem.multi"></span>
                     </div>
 
+                    <div class="state-label state-{{pitem.state}}">{{pitem.state}}</div>
                     <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
                     <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">  
                     <li class="dropdown group-select" dropdown>

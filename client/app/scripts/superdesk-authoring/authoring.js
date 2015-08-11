@@ -428,13 +428,14 @@
             // takes packages are readonly.
             // killed item and item that have last publish action are readonly
             if ((angular.isUndefined(current_item) || angular.isUndefined(user_privileges)) ||
-                (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes') ||
                 (current_item.state === 'killed') ||
                 (angular.isDefined(current_item.takes) && current_item.takes.state === 'killed')) {
                 return action;
             }
 
-            var is_read_only_state = _.contains(['spiked', 'scheduled', 'killed'], current_item.state);
+            var is_read_only_state = _.contains(['spiked', 'scheduled', 'killed'], current_item.state) ||
+            (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes');
+
             var lockedByMe = !lock.isLocked(current_item);
 
             // new take should be on the text item that are closed or last take but not killed.
@@ -452,8 +453,8 @@
                 if (current_item.state === 'scheduled') {
                     action.deschedule = true;
                 } else if (current_item.state === 'published' || current_item.state === 'corrected') {
-                    action.kill = user_privileges.kill && lockedByMe;
-                    action.correct = user_privileges.correct && lockedByMe;
+                    action.kill = user_privileges.kill && lockedByMe && !is_read_only_state;
+                    action.correct = user_privileges.correct && lockedByMe && !is_read_only_state;
                 }
 
                 action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
@@ -487,7 +488,9 @@
                 !is_read_only_state && current_item.package_type !== 'takes' &&
                  user_privileges.mark_for_highlights);
 
-            action.package_item = !is_read_only_state && item.package_type !== 'takes';
+            // allow all stories to be packaged
+            action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
+            current_item.package_type !== 'takes' && current_item.state !== 'killed';
             action.multi_edit = _.contains(['text', 'preformatted'], item.type) && !is_read_only_state;
 
             //check for desk membership for edit rights.
