@@ -17,21 +17,9 @@ def find_and_replace(item, **kwargs):
 
     aud = 'AUD '
 
-    # replacements
-    if item.get('body_html', None):
-        item['body_html'] = re.sub('[$]', aud, item['body_html'])
-
-    if item.get('body_text', None):
-        item['body_text'] = re.sub('[$]', aud, item['body_text'])
-
-    if item.get('abstract', None):
-        item['abstract'] = re.sub('[$]', aud, item['abstract'])
-
-    if item.get('headline', None):
-        item['headline'] = re.sub('[$]', aud, item['headline'])
-
-    if item.get('slugline', None):
-        item['slugline'] = re.sub('[$]', aud, item['slugline'])
+    for field in ['body_html', 'body_text', 'abstract', 'headline', 'slugline']:
+        if item.get(field, None):
+            item[field] = re.sub('[$]', aud, item[field])
 
     return item
 
