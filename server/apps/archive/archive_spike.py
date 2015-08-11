@@ -16,7 +16,7 @@ from flask import current_app as app
 import superdesk
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
-from superdesk.metadata.item import ITEM_STATE, ITEM_TYPE, CONTENT_TYPE, LINKED_IN_PACKAGES, PACKAGE_TYPE
+from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
@@ -26,8 +26,7 @@ from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
-from apps.archive.common import item_operations, ITEM_OPERATION
-from eve.validation import ValidationError
+from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package
 
 logger = logging.getLogger(__name__)
 
@@ -75,11 +74,15 @@ class ArchiveSpikeService(BaseService):
         self._update_rewrite(original)
 
     def _validate_item(self, original):
-        # only allow an item to be spiked if it is not a member of a package
-        if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE and original.get(LINKED_IN_PACKAGES, None) \
-                and len([x for x in original.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '']):
-            raise ValidationError(['This item is in a package' +
-                                   ' it needs to be removed before the item can be spiked'])
+        '''
+        Raises an exception if the item is linked in a non-take package, the idea being that you don't whant to
+        inadvertently remove thing from packages, this force that to be done as a conscious action.
+        :param original:
+        :return: An excetption or nothing
+        '''
+        if is_item_in_package(original):
+            raise SuperdeskApiError.badRequestError(message="This item is in a package" +
+                                                            " it needs to be removed before the item can be spiked")
 
     def _validate_take(self, original):
         takes_service = TakesPackageService()

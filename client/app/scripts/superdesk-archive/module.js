@@ -86,8 +86,9 @@ define([
                     }
                 }, function(response) {
                     item.error = response;
-                    if (angular.isDefined(response.data._issues['validator exception'])) {
-                        notify.error(gettext(response.data._issues['validator exception'].replace(/\[/g, '').replace(/\]/g, '')));
+                    if (angular.isDefined(response.data._issues) &&
+                        angular.isDefined(response.data._issues['validator exception'])) {
+                        notify.error(gettext(response.data._issues['validator exception']));
                     }
                 })
                 ['finally'](function() {
