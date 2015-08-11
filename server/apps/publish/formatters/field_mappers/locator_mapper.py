@@ -87,19 +87,33 @@ class LocatorMapper(FieldMapper):
     }
 
     def map(self, article, category, **kwargs):
-        """ Returns the mapping iptc_locator or the locator/place of article"""
+        """
+        Based on the category and subject code it returns the locator
+        :param dict article: original article
+        :param str category: category of the article
+        :param dict kwargs: keyword args
+        :return: if found then the locator as string else None
+        """
         if category == 'S':
-            mapped_value = self._map_subject_code(article, category, self.iptc_sports_locators)
+            mapped_value = self._map_locator_code(article, category, self.iptc_sports_locators)
         else:
-            mapped_value = self._map_subject_code(article, category, self.iptc_locators)
+            mapped_value = self._map_locator_code(article, category, self.iptc_locators)
 
         # If no mapping is found then use the first place value
         if not mapped_value:
             for place in article.get('place', []):
                 return place.get('qcode')
 
-    def _map_subject_code(self, article, category, locators):
-        """ Returns the prefix from igiven list of locators """
+        return mapped_value
+
+    def _map_locator_code(self, article, category, locators):
+        """
+        Based on the category and subject code it returns the locator
+        :param dict article: original article
+        :param str category: category of the article
+        :param dict locators: subject code locator mapping dictionary
+        :return: if found then the locator as string else None
+        """
         subjects = article.get('subject', [])
         for subject in subjects:
             qcode = subject.get('qcode', '')

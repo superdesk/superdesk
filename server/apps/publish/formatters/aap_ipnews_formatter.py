@@ -120,9 +120,9 @@ class AAPIpNewsFormatter(Formatter):
                 SelectorcodeMapper().map(article, category.get('qcode').upper(),
                                          subscriber=subscriber,
                                          formatted_item=odbc_item)
-                headline_prefix = LocatorMapper().map(article, category)
+                headline_prefix = LocatorMapper().map(article, category.get('qcode').upper())
                 if headline_prefix:
-                    odbc_item['headline'] = '{}: {}'.format(headline_prefix, odbc_item['headline'])
+                    odbc_item['headline'] = '{}:{}'.format(headline_prefix, odbc_item['headline'])
                 docs.append((pub_seq_num, odbc_item))
 
             return docs

@@ -36,7 +36,7 @@ class AapBulletinBuilderFormatterTest(TestCase):
     def TestBulletinBuilderFormatter(self):
         article = {
             'source': 'AAP',
-            'anpa-category': {'qcode': 'a'},
+            'anpa_category': [{'qcode': 'a'}],
             'headline': 'This is a test headline',
             'byline': 'joe',
             'slugline': 'slugline',
@@ -81,3 +81,39 @@ class AapBulletinBuilderFormatterTest(TestCase):
             self.assertGreater(int(seq), 0)
             test_article = json.loads(item)
             self.assertEqual(test_article['body_text'], body_text)
+
+    def TestLocator(self):
+        article = {
+            'source': 'AAP',
+            'anpa_category': [{'qcode': 's'}],
+            'headline': 'This is a test headline',
+            'byline': 'joe',
+            'slugline': 'slugline',
+            'subject': [{'qcode': '15017000'}],
+            'anpa_take_key': 'take_key',
+            'unique_id': '1',
+            'type': 'preformatted',
+            'body_html': 'The story body',
+            'word_count': '1',
+            'priority': '1',
+            'firstcreated': utcnow(),
+            'versioncreated': utcnow(),
+            'lock_user': ObjectId(),
+            'place': [{'qcode': 'VIC', 'name': 'VIC'}]
+        }
+
+        with self.app.app_context():
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+            f = AAPBulletinBuilderFormatter()
+            seq, item = f.format(article, subscriber)[0]
+            self.assertGreater(int(seq), 0)
+            test_article = json.loads(item)
+            self.assertEqual(test_article['headline'], 'This is a test headline')
+            self.assertEqual(test_article['place'][0]['qcode'], 'CRIK')
+            article['anpa_category'] = [{'qcode': 'a'}]
+            article['place'] = [{'qcode': 'VIC', 'name': 'VIC'}]
+            seq, item = f.format(article, subscriber)[0]
+            self.assertGreater(int(seq), 0)
+            test_article = json.loads(item)
+            self.assertEqual(test_article['headline'], 'This is a test headline')
+            self.assertEqual(test_article['place'][0]['qcode'], 'VIC')

@@ -39,7 +39,8 @@ class AapIpNewsFormatterTest(TestCase):
         'type': 'preformatted',
         'body_html': 'The story body',
         'word_count': '1',
-        'priority': '1'
+        'priority': '1',
+        'place': [{'qcode': 'VIC', 'name': 'VIC'}]
     }
 
     vocab = [{'_id': 'categories', 'items': [
@@ -67,7 +68,7 @@ class AapIpNewsFormatterTest(TestCase):
             item.pop('sequence')
             self.assertDictEqual(item,
                                  {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
-                                  'headline': 'This is a test headline', 'service_level': 'a', 'originator': 'AAP',
+                                  'headline': 'VIC:This is a test headline', 'service_level': 'a', 'originator': 'AAP',
                                   'take_key': 'take_key', 'article_text': 'The story body', 'priority': '1', 'usn': '1',
                                   'subject_matter': 'international law', 'news_item_type': 'News',
                                   'subject_reference': '02011001', 'subject': 'crime, law and justice',
@@ -116,7 +117,8 @@ class AapIpNewsFormatterTest(TestCase):
             'body_html': 'body',
             'word_count': '1',
             'priority': '1',
-            'task': {'desk': 1}
+            'task': {'desk': 1},
+            'place': [{'qcode': 'VIC', 'name': 'VIC'}]
         }
 
         with self.app.app_context():
@@ -129,9 +131,11 @@ class AapIpNewsFormatterTest(TestCase):
                 if doc['category'] == 'S':
                     self.assertEqual(doc['subject_reference'], '15011002')
                     self.assertEqual(doc['subject_detail'], 'four-man sled')
+                    self.assertEqual(doc['headline'], 'VIC:This is a test headline')
                 if doc['category'] == 'F':
                     self.assertEqual(doc['subject_reference'], '04001005')
                     self.assertEqual(doc['subject_detail'], 'viniculture')
+                    self.assertEqual(doc['headline'], 'VIC:This is a test headline')
                     codes = set(doc['selector_codes'].split(' '))
                     expected_codes = set('cxx 0fh axx az and pxx 0ah 0ir 0px 0hw pnd pxd cnd cxd 0nl axd'.split(' '))
                     self.assertSetEqual(codes, expected_codes)
