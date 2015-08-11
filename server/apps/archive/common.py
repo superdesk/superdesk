@@ -21,7 +21,8 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, \
+    LINKED_IN_PACKAGES
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -415,3 +416,13 @@ def item_schema(extra=None):
     if extra:
         schema.update(extra)
     return schema
+
+
+def is_item_in_package(item):
+    """
+    Determins if the passed item is a member of a non-takes package
+    :param item:
+    :return: True if the item belongs to a non-takes package
+    """
+    return item[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE and item.get(LINKED_IN_PACKAGES, None) \
+        and sum(1 for x in item.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '')

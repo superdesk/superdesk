@@ -27,7 +27,7 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule
+from apps.archive.common import validate_schedule, is_item_in_package
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
@@ -670,6 +670,10 @@ class KillPublishService(BasePublishService):
         super().__init__(datasource=datasource, backend=backend)
 
     def on_update(self, updates, original):
+        # check if we are trying to kill and item that is contained in normal non takes package
+        if is_item_in_package(original):
+            raise SuperdeskApiError.badRequestError(message='This item is in a package' +
+                                                            ' it needs to be removed before the item can be killed')
         updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
         self.takes_package_service.process_killed_takes_package(original)

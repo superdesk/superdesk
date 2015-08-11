@@ -26,7 +26,7 @@ from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
-from apps.archive.common import item_operations, ITEM_OPERATION
+from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +69,20 @@ class ArchiveSpikeService(BaseService):
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_SPIKE
+        self._validate_item(original)
         self._validate_take(original)
         self._update_rewrite(original)
+
+    def _validate_item(self, original):
+        """
+        Raises an exception if the item is linked in a non-take package, the idea being that you don't whant to
+        inadvertently remove thing from packages, this force that to be done as a conscious action.
+        :param original:
+        :raise: An exception or nothing
+        """
+        if is_item_in_package(original):
+            raise SuperdeskApiError.badRequestError(message="This item is in a package" +
+                                                            " it needs to be removed before the item can be spiked")
 
     def _validate_take(self, original):
         takes_service = TakesPackageService()

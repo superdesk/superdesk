@@ -766,3 +766,37 @@ Feature: Packages
         """
         {"_items": [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test", "linked_in_packages": [], "type": "text"}]}
         """
+
+    @auth
+    Scenario: Can not spike an item in a package
+        Given empty "archive"
+        When we post to "archive" with success
+        """
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
+        """
+        When we post to "archive" with success
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite"
+        }
+        """
+        When we spike "tag:example.com,0000:newsml_BRE9A606"
+        Then we get error 400
+        """
+        {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be spiked"}, "_status": "ERR"}
+        """
