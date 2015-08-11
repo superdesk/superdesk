@@ -522,7 +522,7 @@
 /* ====================================== */
   // media box list view
 
-@rightfield-width:150px;
+@rightfield-width:60px;
 
 .mlist-view, .compact-view {
 	box-shadow: @block-shadow-depth-2;
@@ -555,7 +555,7 @@
 		}
 
 		.list-field {
-			border-left: 1px solid #f4f4f4;
+			border-left: 1px solid rgba(0,0,0,0.06);
 			float: left;
 			padding: 10px;
 			height: 36px;
@@ -575,8 +575,9 @@
 
 		.type-icon {
 			text-align: center;
-			width: 44px;
+			width: 36px;
 			height: 56px;
+			padding: 10px 5px;
 			.box-sizing(border-box);
 
 			i {
@@ -613,15 +614,17 @@
 
 		.word-count-box {
 			width: 50px;
+			display: flex;
 			span {
 				display: block;
 			}
 			.word-count {
 				height: 18px;
 				.text-semibold();
+				flex-grow: 1;
 			}
 			.signal {
-				background: #e7e7e7;
+				background: rgba(0,0,0,0.1);
 				padding: 2px 4px;
 				.border-radius(2px);
 				text-transform: uppercase;
@@ -630,6 +633,9 @@
 				.text-semibold();
 				line-height: 12px;
 				margin-top: 1px;
+			}
+			.highlights-title {
+				top: -2px;
 			}
 		}
 
@@ -666,12 +672,12 @@
 				color: @sd-keyword;
 				text-transform: uppercase;
 				font-size: 12px;
-				margin-right: 20px;
+				margin-right: 10px;
 			}
 			.container {
 				.text-semibold();
 				color: #444;
-				margin-left: 20px;
+				margin-left: 10px;
 			}
 			.takekey {
 				color: #333;
