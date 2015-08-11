@@ -14,7 +14,7 @@
             </button>
         </li>
 
-        <li><div class="menu-label" translate>CUSTOM WORKSPACES</div></li>
+        <li class="menu-label" translate><div>CUSTOM WORKSPACES</div></li>
         <li ng-repeat="workspace in wsList track by workspace._id"
             ng-if="workspace._id && workspace._id !== selected._id">
             <button ng-click="selectWorkspace(workspace)">{{ :: workspace.name }}</button>
