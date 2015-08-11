@@ -40,7 +40,7 @@ cd $SCRIPT_DIR
 
 set +e
 docker-compose kill
-#docker-compose rm -fv
+docker-compose rm -fv
 
 sudo rm -r $BAMBOO_DIR/data/
 mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
