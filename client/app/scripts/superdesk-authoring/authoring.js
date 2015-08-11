@@ -1832,6 +1832,7 @@
 
             this.edit = function(item) {
                 this.item = item || null;
+                this.item.lockIt = true;
                 this.state.opened = !!this.item;
             };
         }
@@ -1854,7 +1855,15 @@
             },
             link: function(scope, elem, attrs, authoringCtrl) {
                 scope.$watch('listItem', function(item) {
-                    scope.lock();
+                    if (item && item.lockIt){
+                        scope.lock();
+                    } else {
+                        scope.origItem = null;
+                        scope.$applyAsync(function() {
+                            scope.origItem = item;
+                            scope.action = 'view';
+                        });
+                    }
                 });
 
                 scope.lock = function() {
