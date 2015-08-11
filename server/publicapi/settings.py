@@ -52,6 +52,7 @@ SUPERDESK_PUBLICAPI_TESTING = False
 # NOTE: no trailing slash for the PUBLICAPI_URL setting!
 PUBLICAPI_URL = env('PUBLICAPI_URL', 'http://localhost:5050')
 server_url = urlparse(PUBLICAPI_URL)
+URL_PREFIX = server_url.path.strip('/')
 SERVER_NAME = server_url.netloc or None
 URL_PROTOCOL = server_url.scheme or None
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'

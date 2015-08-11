@@ -172,10 +172,12 @@ describe('authoring', function() {
         authoring.writeText('some text');
         authoring.save();
         authoring.publish();
+        browser.sleep(500);
         workspace.selectStage('Published');
         workspace.filterItems('composite');
         workspace.actionOnItem('View item', 'item5', 'Politic', 'Published');
         authoring.showHistory();
+        browser.sleep(500);
         expect(authoring.getHistoryItems().count()).toBe(1);
         expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
     });
