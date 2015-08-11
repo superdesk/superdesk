@@ -37,21 +37,9 @@ def usd_to_cad(item, **kwargs):
         cad = rate * usd
         return 'CAD %d' % cad
 
-    # replacements
-    if item.get('body_html', None):
-        item['body_html'] = re.sub('\$([0-9]+)', convert, item['body_html'])
-
-    if item.get('body_text', None):
-        item['body_text'] = re.sub('\$([0-9]+)', convert, item['body_text'])
-
-    if item.get('abstract', None):
-        item['abstract'] = re.sub('\$([0-9]+)', convert, item['abstract'])
-
-    if item.get('headline', None):
-        item['headline'] = re.sub('\$([0-9]+)', convert, item['headline'])
-
-    if item.get('slugline', None):
-        item['slugline'] = re.sub('\$([0-9]+)', convert, item['slugline'])
+    for field in ['body_html', 'body_text', 'abstract', 'headline', 'slugline']:
+        if item.get(field, None):
+            item[field] = re.sub('\$([0-9]+)', convert, item[field])
 
     return item
 
