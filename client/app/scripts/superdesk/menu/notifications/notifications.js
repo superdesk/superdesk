@@ -10,10 +10,25 @@
         this._items = null;
         this.unread = 0;
 
+        /**
+         * Get notifications filter for current user based on his type
+         *
+         * for type 'user' it will only get content notifications,
+         * for administrators it will get all notifications (eg. ingest).
+         *
+         * @return {Object}
+         */
         function getFilter() {
-            var filter = {},
-                user_key = 'read.' + session.identity._id || 'all';
+            var filter = {};
+            var user_key = 'read.' + session.identity._id || 'all';
             filter[user_key] = {$exists: true};
+
+            // filter out system messages for non-admin users
+            if (session.identity.user_type === 'user') {
+                filter.user = {$exists: true};
+                filter.item = {$exists: true};
+            }
+
             return filter;
         }
 
@@ -31,8 +46,7 @@
                 max_results: 8
             };
 
-            return api('activity')
-                .query(criteria)
+            return api.query('activity', criteria)
                 .then(angular.bind(this, function(response) {
                     this._items = response._items;
                     this.unread = 0;
