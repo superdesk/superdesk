@@ -158,7 +158,7 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
 
-        monitoring.previewAction(0, 0);
+        monitoring.openAction(0, 0);
         expect(monitoring.getPreviewTitle()).toBe('item6');
     });
 
