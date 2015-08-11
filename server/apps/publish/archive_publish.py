@@ -592,7 +592,7 @@ class BasePublishService(BaseService):
         :raises: Validation exceptions if the validation fails
         """
         # Ensure it is the sort of thing we need to validate
-        if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == 'publish':
+        if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == ITEM_PUBLISH:
             items = [ref.get('residRef') for group in package.get('groups', [])
                      for ref in group.get('refs', []) if 'residRef' in ref]
             if items:
