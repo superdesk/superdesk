@@ -78,16 +78,19 @@
                 return _.trunc(val, {'length': val.length - 3, 'omission': ''}) + '00';
             }
 
+            var hasId = false;
+
             _.forEach(search, function(n, key) {
                 var val = _.trim(n);
                 if (val) {
                     var clause = {};
-                    if (key === 'published_after')
-                    {
+                    if (key === 'published_after') {
                         clause.versioncreated = {'$gte': prepareDate(val)};
-                    } else if (key === 'published_before')
-                    {
+                    } else if (key === 'published_before') {
                         clause.versioncreated = {'$lte': prepareDate(val)};
+                    } else if (key === '_id') {
+                        clause._id = val;
+                        hasId = true;
                     } else {
                         clause[key] = {'$regex': val, '$options': '-i'};
                     }
@@ -97,13 +100,14 @@
 
             var where_clause = null;
 
-            if (where.length === 1) {
+            if (hasId && where.length === 1) {
                 where_clause = JSON.stringify(where[0]);
-            } else if (where.length > 1) {
+            } else if (where.length > 0) {
                 where_clause = JSON.stringify({
                     '$and': where
                 });
             }
+
             $location.search('q', where_clause);
             return where_clause;
         };

@@ -147,9 +147,9 @@ class SubscribersService(BaseService):
 
         filter_condition_service = get_resource_service('filter_conditions')
         publish_filter_service = get_resource_service('publish_filters')
-        existing_filter_conditions = filter_condition_service._check_similar(filter_condition)
+        existing_filter_conditions = filter_condition_service.check_similar(filter_condition)
         for fc in existing_filter_conditions:
-            existing_publish_filters = publish_filter_service._get_publish_filters_by_filter_condition(fc['_id'])
+            existing_publish_filters = publish_filter_service.get_publish_filters_by_filter_condition(fc['_id'])
             for pf in existing_publish_filters:
                 if pf.get('is_global', False):
                     for s in all_subscribers:
