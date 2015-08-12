@@ -11,8 +11,8 @@
         </button>
 
         <button class="navbtn sd-create-btn" ng-disabled="dashboard.edit" ng-click="dashboard.add = true"></button>
-        <div class="dropdown-menu pull-right" sd-multiedit-dropdown ng-if="!dashboard.current.desk"></div>
-        <div class="navbtn dropdown pull-left" dropdown ng-if="!dashboard.current.desk">
+        <div class="dropdown-menu pull-right" sd-multiedit-dropdown ng-if="dashboard.current.name !== 'personal' && dashboard.current._id && !dashboard.current.desk"></div>
+        <div class="navbtn dropdown pull-left" dropdown ng-if="dashboard.current.name !== 'personal' && dashboard.current._id && !dashboard.current.desk">
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="icon-dots-vertical"></i>
             </button>
