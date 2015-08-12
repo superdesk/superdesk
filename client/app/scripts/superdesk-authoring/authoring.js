@@ -1831,9 +1831,11 @@
             this.state = {};
 
             this.edit = function(item) {
-                this.item = item || null;
-                this.item.lockIt = true;
                 this.state.opened = !!this.item;
+                this.item = item || null;
+                if (this.item) {
+                    this.item.lockIt = true;
+                }
             };
         }
 
