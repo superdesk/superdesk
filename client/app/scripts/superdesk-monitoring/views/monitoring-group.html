@@ -7,7 +7,7 @@
                 tabindex="0">
                 <div sd-media-box
                     ng-class="{active: item === selected, archived: item.archived || item.created, locked: lock.isLocked}"
-                    ng-dblclick="edit(item)"
+                    ng-dblclick="edit(item, true)"
                     ng-click="select(item)"></div>
             </li>
         </ul>

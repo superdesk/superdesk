@@ -1830,10 +1830,10 @@
         function AuthoringContainerController() {
             this.state = {};
 
-            this.edit = function(item) {
+            this.edit = function(item, lock) {
                 this.state.opened = !!this.item;
                 this.item = item || null;
-                if (this.item) {
+                if (this.item && lock) {
                     this.item.lockIt = true;
                 }
             };
