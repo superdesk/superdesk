@@ -82,6 +82,14 @@
         };
 
         /**
+         * Return selected file types if the 'fileType' filter(s) is selected
+         * @return [{string}] fileType
+         */
+        this.getSelectedFileTypes = function() {
+            return (this.selectedFileType.length === 0) ? null: JSON.stringify(this.selectedFileType);
+        };
+
+        /**
          * Set the current 'fileType' filter
          * param {string} fileType
          */
