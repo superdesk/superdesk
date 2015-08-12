@@ -45,7 +45,7 @@ class SelectorcodeMapperTest(TestCase):
         category1 = 'I'
         category2 = 'D'
         f = LocatorMapper()
-        self.assertEqual(f._map_subject_code(article1, category1, f.iptc_locators), 'TRAVI')
-        self.assertEqual(f._map_subject_code(article2, category2, f.iptc_locators), 'TRAVD')
-        self.assertEqual(f._map_subject_code(article3, category2, f.iptc_sports_locators), 'TTEN')
-        self.assertIsNone(f._map_subject_code(article4, category2, f.iptc_sports_locators))
+        self.assertEqual(f.map(article1, category1), 'TRAVI')
+        self.assertEqual(f.map(article2, category2), 'TRAVD')
+        self.assertEqual(f.map(article3, 'S'), 'TTEN')
+        self.assertIsNone(f.map(article4, category2))
