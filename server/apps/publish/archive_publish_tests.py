@@ -539,7 +539,7 @@ class ArchivePublishTestCase(TestCase):
             no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
             queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
             self.assertEqual(0, queue_items.count())
-            self.assertEqual(4, len(no_formatters))
+            self.assertEqual(0, len(no_formatters))
             self.assertFalse(queued)
 
     def test_delete_from_queue_by_article_id(self):

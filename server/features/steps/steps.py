@@ -665,9 +665,32 @@ def step_impl_then_get_list(context, total_count):
 @then('we get "{value}" in formatted output')
 def step_impl_then_get_formatted_output(context, value):
     assert_200(context.response)
+    value = apply_placeholders(context, value)
     data = get_json_data(context.response)
     for item in data['_items']:
         if value in item['formatted_item']:
+            return
+    assert False
+
+
+@then('we get "{value}" in formatted output as "{group}" story')
+def step_impl_then_get_formatted_output(context, value, group):
+    assert_200(context.response)
+    value = apply_placeholders(context, value)
+    data = get_json_data(context.response)
+    for item in data['_items']:
+        if '"' + group + '": [{"_id": "' + value + '"' in item['formatted_item']:
+            return
+    assert False
+
+
+@then('we get "{value}" in formatted output as "{group}" newsml12 story')
+def step_impl_then_get_formatted_output_newsml(context, value, group):
+    assert_200(context.response)
+    value = apply_placeholders(context, value)
+    data = get_json_data(context.response)
+    for item in data['_items']:
+        if '<' + group + '>' + value + '</' + group + '>' in item['formatted_item']:
             return
     assert False
 
@@ -1461,6 +1484,19 @@ def step_impl_when_publish_url(context, item_id, pub_type, state):
     if linked_packages:
         take_package = linked_packages[0].get('package', '')
         set_placeholder(context, 'archive.{}.take_package'.format(item_id), take_package)
+
+
+@when('we get digital item of "{item_id}"')
+def step_impl_when_we_get_digital(context, item_id):
+    item_id = apply_placeholders(context, item_id)
+    context.response = context.client.get(get_prefixed_url(context.app, '/archive/{}'.format(item_id)),
+                                          headers=context.headers)
+    resp = parse_json_response(context.response)
+    linked_packages = resp.get('linked_in_packages', [])
+    for lp in linked_packages:
+        if lp.get('package_type', '') == 'takes':
+            take_package = lp.get('package', '')
+            set_placeholder(context, 'archive.{}.take_package'.format(item_id), take_package)
 
 
 @then('the ingest item is routed based on routing scheme and rule "{rule_name}"')

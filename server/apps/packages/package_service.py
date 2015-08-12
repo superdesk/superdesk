@@ -82,11 +82,11 @@ class PackageService():
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
-        toAdd = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
-        toRemove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in toAdd]
-        for assoc in toRemove:
+        to_add = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
+        to_remove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in to_add]
+        for assoc in to_remove:
             self.update_link(original, assoc, delete=True)
-        for assoc in toAdd.values():
+        for assoc in to_add.values():
             self.update_link(original, assoc)
 
     def on_deleted(self, doc):
@@ -221,6 +221,50 @@ class PackageService():
         request.max_results = 100
 
         return get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query)
+
+    def remove_ref_from_inmem_package(self, package, ref_id):
+        """
+        Removes the reference with ref_id from non-root groups. If there is nothing left
+        in that group then the group and its reference in root group is also removed.
+        If the removed item was the last item then returns
+        :param package: Package
+        :param ref_id: Id of the reference to be removed
+        :return: True if there are still references in the package, False otherwise
+        """
+        groups_to_be_removed = []
+        non_root_groups = [group for group in package.get('groups', []) if group.get('id') != 'root']
+        for non_rg in non_root_groups:
+            refs = [r for r in non_rg.get('refs', []) if r.get('residRef', '') != ref_id]
+            if len(refs) == 0:
+                groups_to_be_removed.append(non_rg.get('id'))
+            non_rg['refs'] = refs
+
+        if len(groups_to_be_removed) > 0:
+            root_group = [group for group in package.get('groups', []) if group.get('id') == 'root'][0]
+            refs = [r for r in root_group.get('refs', []) if r.get('idRef') not in groups_to_be_removed]
+            root_group['refs'] = refs
+            removed_groups = [group for group in package.get('groups', [])
+                              if group.get('id') not in groups_to_be_removed]
+            package['groups'] = removed_groups
+
+            # return if the package has any items left in it
+            return len(refs) > 0
+
+        # still has items in the package
+        return True
+
+    def replace_ref_in_package(self, package, old_ref_id, new_ref_id):
+        """
+        Locates the reference with the old_ref_id and replaces with the new_ref_id
+        :param package: Package
+        :param old_ref_id: Old reference id
+        :param new_ref_id: New reference id
+        """
+        non_root_groups = [group for group in package.get('groups', []) if group.get('id') != 'root']
+        for g in (ref for group in non_root_groups for ref in group.get('refs', [])):
+            if g.get('residRef', '') == old_ref_id:
+                g['residRef'] = new_ref_id
+                g['guid'] = new_ref_id
 
     def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
         """
