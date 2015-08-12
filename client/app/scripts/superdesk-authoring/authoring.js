@@ -1831,8 +1831,8 @@
             this.state = {};
 
             this.edit = function(item, lock) {
-                this.state.opened = !!this.item;
                 this.item = item || null;
+                this.state.opened = !!this.item;
                 if (this.item && lock) {
                     this.item.lockIt = true;
                 }
