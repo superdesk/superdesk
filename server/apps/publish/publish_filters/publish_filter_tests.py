@@ -372,9 +372,9 @@ class PublishFilterTests(TestCase):
 
     def test_if_fc_is_used(self):
         with self.app.app_context():
-            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(1)) == 2)
-            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(3)) == 2)
-            self.assertTrue(len(self.f._get_publish_filters_by_filter_condition(2)) == 1)
+            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(1)) == 2)
+            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(3)) == 2)
+            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(2)) == 1)
 
     def test_get_subscribers_by_filter_condition(self):
         filter_condition1 = {'field': 'urgency', 'operator': 'in', 'value': '2'}

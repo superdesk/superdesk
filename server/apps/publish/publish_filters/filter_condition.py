@@ -122,7 +122,7 @@ class FilterConditionService(BaseService):
                     raise SuperdeskApiError.badRequestError(
                         'Filter condition:{} has identical settings'.format(existing_doc['name']))
 
-    def _check_similar(self, filter_condition):
+    def check_similar(self, filter_condition):
         """
         Checks if the given filter condition already exists (for text fields like headline) or
         if there's any other filter condition that contains the given filter
