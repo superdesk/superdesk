@@ -125,7 +125,7 @@ angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', '
                 template: 'scripts/superdesk-authoring/comments/views/comments-widget.html',
                 order: 3,
                 side: 'right',
-                display: {authoring: true, packages: true}
+                display: {authoring: true, packages: true, legalArchive: false}
             });
     }])
 

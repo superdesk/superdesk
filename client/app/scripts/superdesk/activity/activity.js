@@ -304,7 +304,14 @@ define([
                         matchAll = matchAll && locals[key];
                         return locals[key] ? locals[key] : match;
                     });
-                return matchAll ? path : null;
+
+                path = matchAll ? path : null;
+
+                if (activity.href.indexOf('_type') !== -1 && !_.isNull(path)) {
+                    path = path.replace(':_type', locals._type ? locals._type : 'archive');
+                }
+
+                return path;
             }
         }
 

@@ -80,7 +80,7 @@ angular.module('superdesk.authoring.find-replace', ['superdesk.editor', 'superde
                 order: 2,
                 side: 'right',
                 needUnlock: true,
-                display: {authoring: true, packages: false}
+                display: {authoring: true, packages: false, legalArchive: false}
             });
     }]);
 

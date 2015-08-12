@@ -12,7 +12,7 @@ angular.module('superdesk.authoring.versioning', [])
                 template: 'scripts/superdesk-authoring/versioning/views/versioning.html',
                 order: 4,
                 side: 'right',
-                display: {authoring: true, packages: true}
+                display: {authoring: true, packages: true, legalArchive: true}
             });
     }]);
 

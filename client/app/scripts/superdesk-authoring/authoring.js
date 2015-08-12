@@ -188,13 +188,20 @@
          * @param {string} _id Item _id.
          * @param {boolean} read_only
          */
-        this.open = function openAuthoring(_id, read_only) {
-            return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
-                item._editable = !read_only;
-                return lock.lock(item);
-            }).then(function _autosave(item) {
-                return autosave.open(item);
-            });
+        this.open = function openAuthoring(_id, read_only, itemType) {
+            if (angular.isDefined(itemType) && itemType === 'legal_archive') {
+                return api.find('legal_archive', _id).then(function(item) {
+                    item._editable = false;
+                    return item;
+                });
+            } else {
+                return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
+                    item._editable = !read_only;
+                    return lock.lock(item);
+                }).then(function _autosave(item) {
+                    return autosave.open(item);
+                });
+            }
         };
 
         /**
@@ -1796,15 +1803,15 @@
                     controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
                     }],
-                    filters: [{action: 'list', type: 'archive'}],
+                    filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
                     condition: function(item) {
                         return item.type !== 'composite';
                     }
                 })
                 .activity('read_only.content_article', {
                     category: '/authoring',
-                    href: '/authoring/:_id/view',
-                    when: '/authoring/:_id/view',
+                    href: '/authoring/:_id/view/:_type',
+                    when: '/authoring/:_id/view/:_type',
                     label: gettext('Authoring Read Only'),
                     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
@@ -1813,7 +1820,7 @@
                     filters: [{action: 'read_only', type: 'content_article'}],
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
-                            return authoring.open($route.current.params._id, true);
+                            return authoring.open($route.current.params._id, true, $route.current.params._type);
                         }],
                         action: [function() {return 'view';}]
                     },
@@ -1882,8 +1889,8 @@
         };
     }
 
-    headerInfoDirective.$inject = ['familyService', 'authoringWidgets', 'authoring'];
-    function headerInfoDirective(familyService, authoringWidgets, authoring) {
+    headerInfoDirective.$inject = ['familyService', 'authoringWidgets', 'authoring', 'archiveService'];
+    function headerInfoDirective(familyService, authoringWidgets, authoring, archiveService) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             require: '^sdAuthoringWidgets',
@@ -1895,38 +1902,38 @@
 
                     scope.loaded = true;
 
-                    /*
-                     * Related items
-                     */
-                    familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
-                        .then(function (items) {
-                            scope.relatedItems = items;
+                    if (!archiveService.isLegal(scope.item)) {
+                        // Related items
+                        familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
+                            .then(function (items) {
+                                scope.relatedItems = items;
+                            });
+
+                        var relatedItemWidget = _.filter(authoringWidgets, function (widget) {
+                            return widget._id === 'related-item';
                         });
 
-                    var relatedItemWidget = _.filter(authoringWidgets, function (widget) {
-                        return widget._id === 'related-item';
-                    });
+                        scope.activateWidget = function () {
+                            WidgetsManagerCtrl.activate(relatedItemWidget[0]);
+                        };
 
-                    scope.activateWidget = function () {
-                        WidgetsManagerCtrl.activate(relatedItemWidget[0]);
-                    };
+                        /*
+                         * Slider for Urgency and News Value
+                         */
+                        scope.sliderUpdate = function(item, field) {
 
-                    /*
-                     * Slider for Urgency and News Value
-                     */
-                    scope.sliderUpdate = function(item, field) {
+                            var o = {};
 
-                        var o = {};
+                            if (angular.isDefined(item)) {
+                                o[field] = item.name;
+                            } else {
+                                o[field] = null;
+                            }
 
-                        if (angular.isDefined(item)) {
-                            o[field] = item.name;
-                        } else {
-                            o[field] = null;
-                        }
-
-                        _.extend(scope.item, o);
-                        authoring.autosave(scope.item);
-                    };
+                            _.extend(scope.item, o);
+                            authoring.autosave(scope.item);
+                        };
+                    }
 
                 });
             }

@@ -134,13 +134,144 @@ define([
         };
     }
 
-    ArchiveService.$inject = ['desks', 'session'];
-    function ArchiveService(desks, session) {
+    ArchiveService.$inject = ['desks', 'session', 'api', '$q'];
+    function ArchiveService(desks, session, api, $q) {
+        /**
+         * Adds 'task' property to the article represented by item.
+         *
+         * @param {Object} item
+         */
         this.addTaskToArticle = function (item) {
             if ((!item.task || !item.task.desk) && desks.activeDeskId && desks.userDesks) {
                 var currentDesk = _.find(desks.userDesks._items, {_id: desks.activeDeskId});
                 item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': session.identity._id};
             }
+        };
+
+        /**
+         * Returns the type of the item.
+         *
+         * @param {Object} item
+         */
+        this.getType = function(item) {
+            var itemType;
+
+            if (this.isLegal(item)) {
+                itemType = item._type;
+            } else if (item.state === 'spiked') {
+                itemType = 'spike';
+            } else if (item.state === 'ingested') {
+                itemType = 'ingest';
+            } else {
+                var isPublished = this.isPublished(item);
+
+                if (!isPublished || (isPublished && item.allow_post_publish_actions === true)) {
+                    itemType = 'archive';
+                } else if (isPublished && item.allow_post_publish_actions === false) {
+                    itemType = 'archived';
+                }
+            }
+
+            return itemType;
+        };
+
+        /**
+         * Returns true if the item is fetched from Legal Archive
+         *
+         * @param {Object} item
+         */
+        this.isLegal = function(item) {
+            return (angular.isDefined(item._type) && !_.isNull(item._type) && item._type === 'legal_archive');
+        };
+
+        /**
+         * Returns true if the state of the item is in one of the published states - Scheduled, Published, Corrected
+         * and Killed.
+         *
+         * @param {Object} item
+         */
+        this.isPublished = function(item) {
+            return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
+        };
+
+        /***
+         * Returns version history of the item.
+         *
+         * @param {Object} item
+         * @param {Object} desks deskService
+         * @param {String} historyType one of versions, operations
+         */
+        this.getVersionHistory = function(item, desks, historyType) {
+            if (this.isLegal(item)) {
+                return api.legal_archive_versions.getByUrl(item._links.collection.href + '_versions?_id=' + item._id)
+                    .then(function(result) {
+                        _.each(result._items, function(version) {
+                            version.desk = version.task.desk;
+                            version.stage = version.task.stage;
+                            version.creator = version.version_creator || version.original_creator;
+
+                            if (version.type === 'text' || version.type === 'preformatted') {
+                                version.typeName = 'Story';
+                            } else {
+                                version.typeName = _.capitalize(item.type);
+                            }
+                        });
+
+                        if (historyType === 'versions') {
+                            return $q.when(_.sortBy(_.reject(result._items, {version: 0}), '_current_version').reverse());
+                        } else if (historyType === 'operations') {
+                            return $q.when(_.sortBy(result._items, '_current_version'));
+                        }
+                    });
+            } else {
+                return api.archive.getByUrl(item._links.self.href + '?version=all&embedded={"user":1}')
+                    .then(function(result) {
+                        _.each(result._items, function(version) {
+                            if (version.task) {
+                                if (version.task.desk) {
+                                    var versiondesk = desks.deskLookup[version.task.desk];
+                                    version.desk = versiondesk && versiondesk.name;
+                                }
+                                if (version.task.stage) {
+                                    var versionstage = desks.stageLookup[version.task.stage];
+                                    version.stage = versionstage && versionstage.name;
+                                }
+                            }
+                            if (version.version_creator || version.original_creator) {
+                                var versioncreator = desks.userLookup[version.version_creator || version.original_creator];
+                                version.creator = versioncreator && versioncreator.display_name;
+                            }
+
+                            if (version.type === 'text' || version.type === 'preformatted') {
+                                version.typeName = 'Story';
+                            } else {
+                                version.typeName = _.capitalize(item.type);
+                            }
+                        });
+
+                        if (historyType === 'versions') {
+                            return $q.when(_.sortBy(_.reject(result._items, {version: 0}), '_current_version').reverse());
+                        } else if (historyType === 'operations') {
+                            return $q.when(_.sortBy(result._items, '_current_version'));
+                        }
+                    });
+            }
+        };
+
+        /**
+         * Get latest version from the list
+         *
+         * @param {Object} item
+         * @param {Object} versions
+         */
+        this.lastVersion = function(item, versions) {
+            if (item._latest_version) {
+                return _.find(versions, {_current_version: item._latest_version});
+            }
+
+            return _.max(versions, function(version) {
+                return version._current_version || version.version || version._updated;
+            });
         };
     }
 
@@ -341,6 +472,12 @@ define([
                 type: 'http',
                 backend: {
                     rel: 'archive_rewrite'
+                }
+            });
+            apiProvider.api('legal_archive_versions', {
+                type: 'http',
+                backend: {
+                    rel: 'legal_archive_versions'
                 }
             });
         }]);

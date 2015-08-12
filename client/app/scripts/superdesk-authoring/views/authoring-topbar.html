@@ -11,7 +11,7 @@
     <div class="button-stack right-stack">
         <button class="btn btn-medium pull-left" ng-if="action === 'view' && item._locked && can_unlock() && itemActions.save" ng-click="unlock()" ng-disabled="unlockClicked" translate>Unlock</button>
 
-        <button id="Edit" class="btn btn-medium pull-left"
+        <button id="Edit" class="btn btn-medium pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.edit"
             ng-click="lock()"
             translate>Edit</button>
@@ -21,12 +21,12 @@
             ng-click="deschedule()"
             translate>Deschedule</button>
 
-        <button class="btn btn-medium btn-info pull-left"
+        <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.correct"
             ng-click="openAction('correct')"
             translate>Correct</button>
 
-        <button class="btn btn-medium btn-info pull-left"
+        <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.kill"
             ng-click="openAction('kill')"
             translate>Kill</button>
@@ -48,23 +48,23 @@
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="publish()"
-            ng-if = "(itemActions.publish || itemActions.kill || itemActions.correct) && action !== 'view'"
+            ng-if = "action !== 'view' && (itemActions.publish || itemActions.kill || itemActions.correct)"
             ng-show="_editable"
             translate>{{action === "edit" ? "Publish": action}}</button>
 
-        <div class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
+        <div ng-if="item._type !== 'legal_archive'" class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
-        <div ng-if="itemActions.multi_edit" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
+        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
             <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
         </div>
 
-        <div class="navbtn dropdown pull-left" dropdown>
+        <div ng-if="item._type !== 'legal_archive'" class="navbtn dropdown pull-left" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="icon-dots-vertical"></i>
             </button>

@@ -90,7 +90,7 @@ class PublishFilterService(BaseService):
         publish_filters = get_resource_service('publish_filters').get(req=None, lookup=lookup)
         return publish_filters
 
-    def _get_publish_filters_by_filter_condition(self, filter_condition_id):
+    def get_publish_filters_by_filter_condition(self, filter_condition_id):
         lookup = {'publish_filter.expression.fc': {'$in': [filter_condition_id]}}
         publish_filters = super().get(req=None, lookup=lookup)
         all_publish_filters = self._get_referenced_publish_filters(list(publish_filters), None)

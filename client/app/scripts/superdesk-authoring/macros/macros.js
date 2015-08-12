@@ -83,7 +83,7 @@ angular.module('superdesk.authoring.macros', [])
                 template: 'scripts/superdesk-authoring/macros/views/macros-widget.html',
                 order: 6,
                 side: 'right',
-                display: {authoring: true, packages: true}
+                display: {authoring: true, packages: true, legalArchive: false}
             });
     }]);
 })();

@@ -16,8 +16,8 @@ function AuthoringWidgetsProvider() {
     };
 }
 
-WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets'];
-function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
+WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService'];
+function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService) {
     $scope.active = null;
 
     $scope.$watch('item', function(item) {
@@ -26,7 +26,14 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
             return;
         }
 
-        var display = item.type === 'composite' ? 'packages' : 'authoring';
+        var display;
+
+        if (archiveService.isLegal(item)) {
+            display = 'legalArchive';
+        } else {
+            display = item.type === 'composite' ? 'packages' : 'authoring';
+        }
+
         $scope.widgets = authoringWidgets.filter(function(widget) {
             return !!widget.display[display];
         });
