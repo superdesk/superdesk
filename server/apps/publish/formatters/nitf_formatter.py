@@ -38,7 +38,7 @@ class NITFFormatter(Formatter):
         body = SubElement(nitf, "body")
         body_head = SubElement(body, "body.head")
         body_content = SubElement(body, "body.content")
-        body_content.text = article['body_html']
+        body_content.text = article.get('body_html', '')
         body_end = SubElement(body, "body.end")
 
         etree.Element('doc-id', attrib={'id-string': article['guid']})

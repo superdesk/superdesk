@@ -178,8 +178,8 @@ describe('authoring', function() {
         workspace.actionOnItem('View item', 'item5', 'Politic', 'Published');
         authoring.showHistory();
         browser.sleep(500);
-        expect(authoring.getHistoryItems().count()).toBe(1);
-        expect(authoring.getHistoryItem(0).getText()).toMatch(/Published by.*/);
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Published by.*/);
     });
 
     it('allows to create a new empty package', function () {

@@ -55,7 +55,7 @@
     <ul ng-if="extras.activity" class="item-functions"
         sd-activity-list
         data-item="item"
-        data-type="{{ spike ? 'spike' : ((type || item._type) === 'published'? 'archive': (type || item._type))}}"
+        data-type="{{getType(item)}}"
         data-action="{{extras.activity.action}}">
     </ul>
 </div>

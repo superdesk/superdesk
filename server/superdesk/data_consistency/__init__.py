@@ -35,12 +35,10 @@ def compare_repos():
     kwargs_ingest = {'resource': 'ingest'}
     kwargs_archive = {'resource': 'archive'}
     kwargs_published = {'resource': 'published'}
-    kwargs_text_archive = {'resource': 'text_archive'}
 
     compare_repo.apply_async(kwargs=kwargs_ingest)
     compare_repo.apply_async(kwargs=kwargs_archive)
     compare_repo.apply_async(kwargs=kwargs_published)
-    compare_repo.apply_async(kwargs=kwargs_text_archive)
 
 
 @celery.task(soft_time_limit=600)

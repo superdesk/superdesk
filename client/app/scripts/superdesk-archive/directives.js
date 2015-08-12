@@ -349,6 +349,24 @@
                     scope.toggleSelected = function(item) {
                         multi.toggle(item);
                     };
+
+                    /**
+                     * Get actions type based on item state. Used with activity filter.
+                     *
+                     * @param {Object} item
+                     * @returns {string}
+                     */
+                    scope.getType = function(item) {
+                        if (item.state === 'spiked') {
+                            return 'spike';
+                        } else if (item._type === 'published' && item.allow_post_publish_actions === true) {
+                            return 'archive';
+                        } else if (item._type === 'published' && item.allow_post_publish_actions === false) {
+                            return 'archived';
+                        }
+
+                        return item._type;
+                    };
                 }
             };
         }])

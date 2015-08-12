@@ -18,7 +18,6 @@ GUID_FIELD = 'guid'
 GUID_NEWSML = 'newsml'
 INGEST_ID = 'ingest_id'
 FAMILY_ID = 'family_id'
-PUBLISH_STATES = ['published', 'killed', 'corrected', 'scheduled']
 
 pub_status = ['usable', 'withhold', 'canceled']
 PUB_STATUS = namedtuple('PUBSTATUS', ['USABLE', 'HOLD', 'CANCELED'])(*pub_status)
@@ -35,6 +34,7 @@ content_state = ['draft', 'ingested', 'routed', 'fetched', 'submitted', 'in_prog
 CONTENT_STATE = namedtuple('CONTENT_STATE', ['DRAFT', 'INGESTED', 'ROUTED', 'FETCHED', 'SUBMITTED', 'PROGRESS',
                                              'SPIKED', 'PUBLISHED', 'KILLED', 'CORRECTED',
                                              'SCHEDULED', 'HOLD'])(*content_state)
+PUBLISH_STATES = {CONTENT_STATE.PUBLISHED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED}
 
 metadata_schema = {
     # Identifiers

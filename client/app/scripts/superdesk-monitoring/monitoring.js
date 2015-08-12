@@ -459,13 +459,17 @@
                 function getType(item) {
                     if (item.state === 'spiked') {
                         return 'spike';
-                    }
-
-                    if (item.state === 'ingested') {
+                    } else if (item.state === 'ingested') {
                         return 'ingest';
-                    }
+                    } else {
+                        var isPublished = _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
 
-                    return 'archive';
+                        if (!isPublished || (isPublished === true && item.allow_post_publish_actions === true)) {
+                            return 'archive';
+                        } else if (isPublished && item.allow_post_publish_actions === false) {
+                            return 'archived';
+                        }
+                    }
                 }
             }
         };

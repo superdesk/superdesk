@@ -209,7 +209,9 @@ class PackageService():
 
     def get_packages(self, doc_id):
         """
-        Retrieves if an article identified by doc_id is referenced in a package.
+        Retrieves package(s) if an article identified by doc_id is referenced in a package.
+
+        :param: doc_id identifier of the item in the package
         :return: articles of type composite
         """
 
@@ -291,3 +293,17 @@ class PackageService():
                 if str(package[config.ID_FIELD]) not in processed_packages:
                     processed_packages.extend(
                         self.remove_refs_in_package(package, doc_id, processed_packages))
+
+    def get_residrefs(self, package):
+        """
+        Returns all residref in the package.
+
+        :param package:
+        :return: list of residref
+        """
+
+        assert package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE, \
+            "Passed object isn't a package %s" % package[config.ID_FIELD]
+
+        return [ref.get(ITEM_REF) for group in package.get('groups', [])
+                for ref in group.get('refs', []) if ITEM_REF in ref]

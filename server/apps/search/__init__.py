@@ -8,34 +8,41 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from flask import current_app as app, json, g
+from eve_elastic.elastic import set_filters
 
 import superdesk
-from flask import current_app as app, json, g
 from apps.archive.common import aggregations
-from eve_elastic.elastic import set_filters
+from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
+from apps.archive.archive import SOURCE as ARCHIVE
 
 
 class SearchService(superdesk.Service):
-    """Federated search service.
+    """
+    Federated search service.
 
-    It can search ingest/content/archive/spike at the same time.
+    It can search against different collections like Ingest, Production, Archived etc.. at the same time.
     """
 
-    available_repos = ('ingest', 'archive', 'text_archive', 'published')
-    default_repos = ['ingest', 'archive', 'text_archive', 'published']
+    def __init__(self, datasource, backend):
+        super().__init__(datasource=datasource, backend=backend)
+        self._default_repos = ['ingest', 'archive', 'published', 'archived']
 
-    private_filters = [{
-        'or': [
-            {'and': [{'exists': {'field': 'task.desk'}},
-                     {'terms': {'state': ['fetched', 'routed', 'draft', 'in_progress', 'submitted']}}]},
-            {'not': {'term': {'_type': 'archive'}}},
-            {'and': [{'term': {'_type': 'published'}},
-                     {'terms': {'state': ['published', 'killed']}}]}
-        ]
-    }]
-
-    def get_private_filter(self):
-        pass
+        self._private_filters = [{
+            'or': [
+                {'and': [{'term': {'_type': 'ingest'}}]},
+                {'and': [{'exists': {'field': 'task.desk'}},
+                         {'terms': {ITEM_STATE: [CONTENT_STATE.FETCHED, CONTENT_STATE.ROUTED, CONTENT_STATE.DRAFT,
+                                                 CONTENT_STATE.PROGRESS, CONTENT_STATE.SUBMITTED]}}]},
+                {'and': [{'term': {'_type': 'published'}},
+                         {'term': {'allow_post_publish_actions': True}},
+                         {'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED, CONTENT_STATE.PUBLISHED, CONTENT_STATE.KILLED,
+                                                 CONTENT_STATE.CORRECTED]}}]},
+                {'and': [{'term': {'_type': 'published'}},
+                         {'term': {'allow_post_publish_actions': False}},
+                         {'term': {'can_be_removed': False}}]}
+            ]
+        }]
 
     def _get_query(self, req):
         """Get elastic query."""
@@ -47,29 +54,42 @@ class SearchService(superdesk.Service):
     def _get_types(self, req):
         """Get document types for the given query."""
         args = getattr(req, 'args', {})
-        repos = args.get('repo', ','.join(self.default_repos)).split(',')
-        return [repo for repo in repos if repo in self.available_repos]
+        repos = args.get('repo')
+
+        if repos is None:
+            return self._default_repos
+        else:
+            repos = repos.split(',')
+            return [repo for repo in repos if repo in self._default_repos]
 
     def get(self, req, lookup):
-        """Run elastic search agains on multiple doc types."""
+        """
+        Runs elastic search on multiple doc types.
+        """
+
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
         query['aggs'] = aggregations
+
         stages = superdesk.get_resource_service('users').get_invisible_stages_ids(g.get('user', {}).get('_id'))
         if stages:
-            self.private_filters.append({'and': [{'not': {'terms': {'task.stage': stages}}}]})
+            self._private_filters.append({'and': [{'not': {'terms': {'task.stage': stages}}}]})
+
         # if the system has a setting value for the maximum search depth then apply the filter
         if not app.settings['MAX_SEARCH_DEPTH'] == -1:
-            set_filters(query, self.private_filters + [{'limit': {'value': app.settings['MAX_SEARCH_DEPTH']}}])
+            set_filters(query, self._private_filters + [{'limit': {'value': app.settings['MAX_SEARCH_DEPTH']}}])
         else:
-            set_filters(query, self.private_filters)
+            set_filters(query, self._private_filters)
+
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
         docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
+
         for resource in types:
             response = {app.config['ITEMS']: [doc for doc in docs if doc['_type'] == resource]}
             getattr(app, 'on_fetched_resource')(resource, response)
             getattr(app, 'on_fetched_resource_%s' % resource)(response)
+
         return docs
 
 
@@ -79,5 +99,5 @@ class SearchResource(superdesk.Resource):
 
 
 def init_app(app):
-    search_service = SearchService('archive', backend=superdesk.get_backend())
+    search_service = SearchService(ARCHIVE, backend=superdesk.get_backend())
     SearchResource('search', app=app, service=search_service)

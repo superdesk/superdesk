@@ -7,7 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 
 from superdesk.tests import TestCase
 from eve.utils import ParsedRequest
@@ -30,10 +30,13 @@ class SearchServiceTestCase(TestCase):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, 'state': 'in_progress'}])
-            self.app.data.insert('archive', [{'_id': '123', 'task': {'desk': 1}, 'state': 'published'}])
-            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, 'state': 'published'}])
-            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, 'state': 'killed'}])
+            self.app.data.insert('archive', [{'_id': '456', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PROGRESS}])
+            self.app.data.insert('archive', [{'_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.PUBLISHED}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1},
+                                                ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                'allow_post_publish_actions': True}])
+            self.app.data.insert('published', [{'item_id': '123', 'task': {'desk': 1}, ITEM_STATE: CONTENT_STATE.KILLED,
+                                                'allow_post_publish_actions': True}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener

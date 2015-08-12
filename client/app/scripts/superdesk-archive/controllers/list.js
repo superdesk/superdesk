@@ -135,13 +135,7 @@ define([
         $scope.$on('item:mark', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', reset);
-
-        $scope.$on('item:publish:closed:channels', function(_e, data) {
-            if (desks.activeDeskId && desks.activeDeskId === data.desk) {
-                notify.error(gettext('Item having story name ' + data.unique_name + ' published to closed Output Channel(s).'));
-                refreshItems();
-            }
-        });
+        $scope.$on('item:published:no_post_publish_actions', refreshItems);
 
         desks.fetchCurrentUserDesks().then(function() {
             // only watch desk/stage after we get current user desk
