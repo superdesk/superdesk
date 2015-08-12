@@ -410,7 +410,7 @@ def step_impl_when_put_url(context, url):
 
 @when('we get "{url}"')
 def when_we_get_url(context, url):
-    url = apply_placeholders(context, url)
+    url = apply_placeholders(context, url).encode('ascii').decode('unicode-escape')
     headers = []
     if context.text:
         for line in context.text.split('\n'):

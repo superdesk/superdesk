@@ -24,6 +24,7 @@ from urllib.parse import urljoin, urlparse, quote
 from werkzeug.datastructures import MultiDict
 from publicapi.assets import url_for_media
 from publicapi.settings import ELASTIC_DATE_FORMAT
+from superdesk.datalayer import InvalidSearchString
 
 
 logger = logging.getLogger(__name__)
@@ -93,7 +94,10 @@ class ItemsService(BaseService):
         req.args['filter'] = json.dumps(date_filter)
         self._set_fields_filter(req)  # Eve's "projection"
 
-        return super().get(req, lookup)
+        try:
+            return super().get(req, lookup)
+        except InvalidSearchString:
+            raise BadParameterValueError('invalid search text')
 
     def on_fetched_item(self, document):
         """Event handler when a single item is retrieved from database.
