@@ -20,11 +20,11 @@
                 {{monitoring.singleGroup.header}} / {{monitoring.singleGroup.subheader}} {{monitoring.singleGroup.type}}
             </span>
         </h3>
-        <div ng-if="type === 'highlights'" sd-create-highlights-button data-highlight="monitoring.queryParam.highlight"></div>
 
         <div sd-multi-action-bar></div>
 
         <div class="button-stack right-stack">
+            <div class="pull-left-10x" ng-if="type === 'highlights'" sd-create-highlights-button data-highlight="monitoring.queryParam.highlight"></div>
             <div class="dropdown navbtn strict" dropdown>
                 <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
                 <div class="dropdown-menu pull-right">
@@ -71,7 +71,7 @@
                     <div sd-monitoring-group data-group="monitoring.singleGroup" data-num-items="10"></div>
                 </div>
                 <div ng-if="!monitoring.singleGroup && type === 'highlights'">
-                    <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query}"></div>
+                    <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"></div>
                 </div>
             </div>
 
