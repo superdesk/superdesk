@@ -1,5 +1,5 @@
 var openUrl = require('./helpers/utils').open,
-    workspace = require('./helpers/pages').workspace,
+    workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
     authoring = require('./helpers/pages').authoring;
 
@@ -74,6 +74,20 @@ describe('Package', function() {
         content.selectItem(1);
         content.createPackageFromItems();
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
+    });
+
+    it('create package from published item', function() {
+        workspace.open();
+        workspace.editItem('item5', 'Politic');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.publish();
+        browser.sleep(500);
+        workspace.selectStage('Published');
+        browser.sleep(500);
+        workspace.filterItems('text');
+        content.actionOnItem('Package item', 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
     function addItemsToPackage() {
