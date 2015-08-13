@@ -1,5 +1,5 @@
 var openUrl = require('./helpers/utils').open,
-    workspace = require('./helpers/pages').workspace,
+    workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
     authoring = require('./helpers/pages').authoring;
 
@@ -84,8 +84,9 @@ describe('Package', function() {
         authoring.publish();
         browser.sleep(500);
         workspace.selectStage('Published');
-        content.setListView();
-        content.actionOnItem('Package item', 1);
+        browser.sleep(500);
+        workspace.filterItems('text');
+        content.actionOnItem('Package item', 0);
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 

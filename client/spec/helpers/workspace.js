@@ -112,6 +112,6 @@ function Workspace() {
 
     this.filterItems = function(type) {
         element(by.css('.filter-trigger')).click();
-        element(by.repeater('aggregations.type')).element(by.css('.filetype-icon-' + type)).click();
+        element(by.css('.content-type-filters')).element(by.css('.filetype-icon-' + type)).click();
     };
 }

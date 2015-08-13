@@ -3,6 +3,7 @@
 
 var workspace = require('./helpers/workspace'),
     monitoring = require('./helpers/monitoring'),
+    content = require('./helpers/content'),
     authoring = require('./helpers/authoring');
 
 describe('authoring', function() {
@@ -175,7 +176,7 @@ describe('authoring', function() {
         browser.sleep(500);
         workspace.selectStage('Published');
         workspace.filterItems('composite');
-        workspace.actionOnItem('View item', 'item5', 'Politic', 'Published');
+        content.actionOnItem('View item', 0);
         authoring.showHistory();
         browser.sleep(500);
         expect(authoring.getHistoryItems().count()).toBe(2);
