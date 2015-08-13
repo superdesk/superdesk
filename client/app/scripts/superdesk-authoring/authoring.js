@@ -1833,9 +1833,12 @@
         function AuthoringContainerController() {
             this.state = {};
 
-            this.edit = function(item) {
+            this.edit = function(item, lock) {
                 this.item = item || null;
                 this.state.opened = !!this.item;
+                if (this.item && lock) {
+                    this.item.lockIt = true;
+                }
             };
         }
 
@@ -1857,11 +1860,15 @@
             },
             link: function(scope, elem, attrs, authoringCtrl) {
                 scope.$watch('listItem', function(item) {
-                    scope.origItem = null;
-                    scope.$applyAsync(function() {
-                        scope.origItem = item;
-                        scope.action = 'view';
-                    });
+                    if (item && item.lockIt){
+                        scope.lock();
+                    } else {
+                        scope.origItem = null;
+                        scope.$applyAsync(function() {
+                            scope.origItem = item;
+                            scope.action = 'view';
+                        });
+                    }
                 });
 
                 scope.lock = function() {

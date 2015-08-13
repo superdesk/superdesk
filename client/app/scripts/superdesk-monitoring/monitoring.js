@@ -228,8 +228,8 @@
                     }
                 }
 
-                function edit(item) {
-                    authoring.edit(item);
+                function edit(item, lock) {
+                    authoring.edit(item, lock);
                 }
 
                 function select(item) {
