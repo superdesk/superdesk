@@ -173,7 +173,7 @@ describe('monitoring view', function() {
         monitoring.saveSettings();
 
         monitoring.openAction(0, 0);
-        expect(authoring.close_button.isDisplayed()).toBe(true);
+        expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
 });
