@@ -132,10 +132,6 @@ define([
 
                         sdGrid.resizeWidget(element, widget.sizex, widget.sizey);
                     };
-
-                    scope.$on('$destroy', function() {
-                        scope.removeWidget();
-                    });
                 }
             };
         });

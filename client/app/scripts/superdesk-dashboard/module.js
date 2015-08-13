@@ -57,7 +57,7 @@ define([
          * @returns {boolean}
          */
         this.isSelected = function (widget) {
-            return !_.find(getAvailableWidgets(this.widgets), widget);
+            return widget && !_.find(getAvailableWidgets(this.widgets), widget);
         };
 
         function extendWidgets(currentWidgets) {
