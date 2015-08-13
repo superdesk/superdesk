@@ -1,29 +1,116 @@
+'use strict';
 
 describe('text editor', function() {
-    'use strict';
+
     beforeEach(module('superdesk.editor'));
-    it('can prevent input events on elem', inject(function(editor) {
-        var p = document.createElement('p'),
-            handler = jasmine.createSpy('test');
+    beforeEach(module('superdesk.editor.spellcheck'));
 
-        document.body.appendChild(p);
-        p.contentEditable = true;
-        p.textContent = 'foo';
-        p.focus();
+    beforeEach(function() {
+        // remove all elements from body
+        document.body = document.createElement('body');
+    });
 
-        editor.addEventListeners(p);
-        p.addEventListener('input', handler);
+    function createScope(text, $rootScope) {
+        var scope = $rootScope.$new();
+        scope.node = document.createElement('p');
+        scope.node.innerHTML = text;
+        scope.model = {
+            $viewValue: text,
+            $setViewValue: function(value) {
+                this.$viewValue = value;
+            }
+        };
+        document.body.appendChild(scope.node);
+        spyOn(scope.model, '$setViewValue').and.callThrough();
+        return scope;
+    }
 
-        editor.stopEvents = true;
-        expect(document.execCommand('insertHTML', false, 'bar')).toBeTruthy();
-        expect(handler).not.toHaveBeenCalled();
+    it('can spellcheck', inject(function(editor, spellcheck, $q, $rootScope) {
+        spyOn(spellcheck, 'errors').and.returnValue($q.when([{word: 'test', index: 0}]));
+        var scope = createScope('test', $rootScope);
+        editor.registerScope(scope);
+        editor.renderScope(scope);
+        $rootScope.$digest();
 
-        editor.stopEvents = false;
-        expect(document.execCommand('insertHTML', false, 'baz')).toBeTruthy();
-        expect(handler).toHaveBeenCalled();
+        expect(scope.node.innerHTML).toBe('<span class="sderror sdhilite">test</span>');
+    }));
 
-        editor.removeEventListeners(p);
-        expect(document.execCommand('insertHTML', false, 'baz')).toBeTruthy();
-        expect(handler.calls.count()).toBe(2);
+    it('can remove highlights but keep marker', inject(function(editor, $q, $rootScope) {
+        var content = 'test <b>foo</b> <span class="sderror sdhilite">error</span> it';
+        var scope = createScope(content, $rootScope);
+        var html = editor.cleanScope(scope);
+        expect(html).toBe('test <b>foo</b> error it');
+    }));
+
+    it('can findreplace', inject(function(editor, spellcheck, $q, $rootScope) {
+        spyOn(spellcheck, 'errors').and.returnValue($q.when([{word: 'test', index: 0}]));
+        var scope = createScope('test foo and foo', $rootScope);
+        editor.registerScope(scope);
+
+        editor.setSettings({findreplace: {needle: 'foo'}});
+        editor.render();
+
+        $rootScope.$digest();
+        var foo = '<span class="sdfindreplace sdhilite">foo</span>';
+        var fooActive = '<span class="sdfindreplace sdhilite sdactive">foo</span>';
+        expect(scope.node.innerHTML).toBe('test ' + foo + ' and ' + foo);
+
+        editor.selectNext();
+        expect(scope.node.innerHTML).toBe('test ' + fooActive + ' and ' + foo);
+
+        editor.selectNext();
+        expect(scope.node.innerHTML).toBe('test ' + foo + ' and ' + fooActive);
+
+        editor.selectPrev();
+        expect(scope.node.innerHTML).toBe('test ' + fooActive + ' and ' + foo);
+
+        editor.replace('test');
+        expect(scope.node.innerHTML).toBe('test test and ' + foo);
+
+        editor.setSettings({findreplace: {needle: 'test'}});
+        editor.render();
+        editor.replaceAll('bar');
+        expect(scope.node.innerHTML).toBe('bar bar and foo');
+
+        editor.setSettings({findreplace: null});
+        editor.render();
+        $rootScope.$digest();
+        expect(scope.node.innerHTML).toContain('sderror');
+        expect(scope.node.innerHTML).not.toContain('active');
+    }));
+
+    it('can save model value', inject(function(editor, $rootScope) {
+        var scope = createScope('foo', $rootScope);
+        editor.registerScope(scope);
+
+        scope.node.innerHTML = 'foo';
+        editor.commit();
+        expect(scope.model.$setViewValue).not.toHaveBeenCalled();
+
+        scope.node.innerHTML = 'bar';
+        editor.commit();
+        expect(scope.model.$setViewValue).toHaveBeenCalledWith('bar');
+
+        scope.node.innerHTML = 'baz';
+        editor.commit();
+
+        editor.undo(scope);
+        editor.undo(scope);
+        expect(scope.node.innerHTML).toBe('foo');
+
+        editor.redo(scope);
+        expect(scope.node.innerHTML).toBe('bar');
+
+        editor.redo(scope);
+        expect(scope.node.innerHTML).toBe('baz');
+
+        editor.undo(scope);
+        editor.undo(scope);
+
+        scope.node.innerHTML = 'test';
+        editor.commit();
+
+        editor.redo(scope);
+        expect(scope.node.innerHTML).toBe('test');
     }));
 });

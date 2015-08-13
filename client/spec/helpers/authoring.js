@@ -196,14 +196,27 @@ function Authoring() {
             .toContain(highlight);
     };
 
+    var bodyHtml = element(by.model('item.body_html')).all(by.className('editor-type-html')).first();
+    var headline = element(by.model('item.headline')).all(by.className('editor-type-html')).first();
+    var abstract = element(by.model('item.abstract')).all(by.className('editor-type-html')).first();
+
     this.writeText = function (text) {
-        element(by.model('item.body_html')).all(by.className('editor-type-html')).sendKeys(text);
-    };
-    this.writeTextToHeadline = function (text) {
-        element(by.model('item.headline')).all(by.className('editor-type-html')).sendKeys(text);
-    };
-    this.writeTextToAbstract = function (text) {
-        element(by.model('item.abstract')).all(by.className('editor-type-html')).sendKeys(text);
+        bodyHtml.sendKeys(text);
     };
 
+    this.writeTextToHeadline = function (text) {
+        headline.sendKeys(text);
+    };
+
+    this.writeTextToAbstract = function (text) {
+        abstract.sendKeys(text);
+    };
+
+    this.getBodyText = function() {
+        return bodyHtml.getText();
+    };
+
+    this.getHeadlineText = function() {
+        return headline.getText();
+    };
 }
