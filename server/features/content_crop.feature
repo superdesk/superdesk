@@ -11,7 +11,7 @@ Feature: Cropping the Image Articles
       When we get "/archive/123"
       Then we get existing resource
       """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg"}}}
+      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropBottom":30}}}
       """
 
     @auth
@@ -33,7 +33,7 @@ Feature: Cropping the Image Articles
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":50,"CropTop":0,"CropBottom":30}
+      {"CropLeft":0,"CropRight":50,"CropTop":0,"CropBottom": 30}
       """
       Then we get error 400
       """
@@ -51,7 +51,7 @@ Feature: Cropping the Image Articles
       When we get "/archive/123"
       Then we get existing resource
       """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg"}}}
+      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropRight": 40}}}
       """
       When we delete "/archive/123/crop/4-3"
       Then we get response code 204
