@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from apps.archive.common import item_url
+
 from superdesk.resource import Resource
 from superdesk.metadata.item import metadata_schema
 
@@ -30,6 +32,7 @@ class LegalArchiveResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_NAME
     resource_title = endpoint_name
     schema = dict(metadata_schema)
+    item_url = item_url
 
 
 class LegalArchiveVersionsResource(LegalResource):

@@ -115,6 +115,7 @@ class BasePublishService(BaseService):
 
         # validate the package if it is one
         self._validate_package_contents(original, takes_package)
+        self._set_version_last_modified_and_state(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original[config.ID_FIELD])
@@ -167,7 +168,6 @@ class BasePublishService(BaseService):
                 if not queued:
                     raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
 
-            self._set_version_last_modified_and_state(original, updates, last_updated)
             self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
                               desk=str(original.get('task', {}).get('desk', '')),
@@ -236,7 +236,7 @@ class BasePublishService(BaseService):
         """
 
         self.set_state(original, updates)
-        updates[config.LAST_UPDATED] = last_updated
+        updates.setdefault(config.LAST_UPDATED, last_updated)
 
         if original[config.VERSION] == updates.get(config.VERSION, original[config.VERSION]):
             resolve_document_version(document=updates, resource=ARCHIVE, method='PATCH', latest_doc=original)

@@ -13,7 +13,7 @@
             <span sd-item-container data-item="item" class="container"></span>
         </span>
 
-        <div class="selectbox" ng-show="hover || item.selected">
+        <div class="selectbox" ng-if="item._type !== 'legal_archive'" ng-show="hover || item.selected">
             <span sd-check ng-model="item.selected" ng-change="toggleSelected(item)"></span>
         </div>
     </div>

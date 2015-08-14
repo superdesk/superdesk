@@ -9,11 +9,16 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from eve.versioning import versioned_id_field
 
 from flask import g
 
+from eve.utils import config, ParsedRequest
+from .resource import LEGAL_ARCHIVE_NAME
+
 from superdesk import Service, get_resource_privileges
 from superdesk.errors import SuperdeskApiError
+from superdesk.utils import ListCursor
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +28,10 @@ class LegalService(Service):
     def get(self, req, lookup):
         self.check_get_access_privilege()
         return super().get(req, lookup)
+
+    def find_one(self, req, **lookup):
+        self.check_get_access_privilege()
+        return super().find_one(req, **lookup)
 
     def check_get_access_privilege(self):
         if not hasattr(g, 'user'):
@@ -35,7 +44,28 @@ class LegalService(Service):
 
 
 class LegalArchiveService(LegalService):
-    pass
+    def on_fetched(self, docs):
+        """
+        Overriding this to enhance the published article with the one in archive collection
+        """
+
+        self._enhance(docs[config.ITEMS])
+
+    def on_fetched_item(self, doc):
+        """
+        Overriding this to enhance the published article with the one in archive collection
+        """
+
+        self._enhance([doc])
+
+    def _enhance(self, legal_archive_docs):
+        """
+        Enhances the item in Legal Archive Service
+        :param legal_archive_docs:
+        """
+
+        for legal_archive_doc in legal_archive_docs:
+            legal_archive_doc['_type'] = LEGAL_ARCHIVE_NAME
 
 
 class LegalPublishQueueService(LegalService):
@@ -51,3 +81,22 @@ class LegalArchiveVersionsService(LegalService):
                 ids.extend(super().create([doc]))
 
         return ids
+
+    def get(self, req, lookup):
+        """
+        Version of an article in Legal Archive isn't maintained by Eve. Overriding this to fetch the version history.
+        """
+
+        id_field = versioned_id_field()
+
+        if req and req.args and req.args.get(config.ID_FIELD):
+            version_history = list(super().get_from_mongo(req=ParsedRequest(),
+                                                          lookup={id_field: req.args.get(config.ID_FIELD)}))
+        else:
+            version_history = list(super().get_from_mongo(req=req, lookup=lookup))
+
+        for doc in version_history:
+            doc[config.ID_FIELD] = doc[id_field]
+            del doc[id_field]
+
+        return ListCursor(version_history)

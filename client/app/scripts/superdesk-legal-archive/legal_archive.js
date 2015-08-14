@@ -78,16 +78,19 @@
                 return _.trunc(val, {'length': val.length - 3, 'omission': ''}) + '00';
             }
 
+            var hasId = false;
+
             _.forEach(search, function(n, key) {
                 var val = _.trim(n);
                 if (val) {
                     var clause = {};
-                    if (key === 'published_after')
-                    {
+                    if (key === 'published_after') {
                         clause.versioncreated = {'$gte': prepareDate(val)};
-                    } else if (key === 'published_before')
-                    {
+                    } else if (key === 'published_before') {
                         clause.versioncreated = {'$lte': prepareDate(val)};
+                    } else if (key === '_id') {
+                        clause._id = val;
+                        hasId = true;
                     } else {
                         clause[key] = {'$regex': val, '$options': '-i'};
                     }
@@ -97,13 +100,14 @@
 
             var where_clause = null;
 
-            if (where.length === 1) {
+            if (hasId && where.length === 1) {
                 where_clause = JSON.stringify(where[0]);
-            } else if (where.length > 1) {
+            } else if (where.length > 0) {
                 where_clause = JSON.stringify({
                     '$and': where
                 });
             }
+
             $location.search('q', where_clause);
             return where_clause;
         };
@@ -115,12 +119,23 @@
         };
     }
 
-    LegalArchiveController.$inject = ['$scope', '$location', 'legal'];
-    function LegalArchiveController($scope, $location, legal) {
+    LegalArchiveController.$inject = ['$scope', '$location', 'legal', 'preferencesService'];
+    function LegalArchiveController($scope, $location, legal, preferencesService) {
+        var viewUpdate = {'archive:view': {
+                            'allowed': ['mgrid', 'compact'],
+                            'category': 'archive',
+                            'view': 'mgrid',
+                            'default': 'mgrid',
+                            'label': 'Users archive view format',
+                            'type': 'string'}};
         $scope.criteria = {};
         $scope.items = legal.default_items;
         $scope.loading = false;
         $scope.selected = {};
+        $scope.openAdvanceSearch = false;
+
+        // Required to display action icons in grid view
+        $scope.extras = {'activity':{'action':'list'}};
 
         $scope.search = function () {
             legal.updateSearchQuery($scope.criteria);
@@ -149,14 +164,25 @@
 
         $scope.clear = function () {
             legal.criteria = $scope.criteria = {};
-            $scope.items = legal.default_items;
+            $scope.search();
         };
 
         $scope.$watch(function getSearchParams() {
             return _.omit($location.search(), '_id');
         }, refresh, true);
 
+        $scope.setview = function(view) {
+            $scope.view = view || 'mgrid';
+            viewUpdate['archive:view'].view = view || 'mgrid';
+            preferencesService.update(viewUpdate, 'archive:view');
+        };
+
         $scope.search();
+
+        preferencesService.get('archive:view').then(function(result) {
+            var savedView = result.view;
+            $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+        });
     }
 
     var app = angular.module('superdesk.legal_archive', [

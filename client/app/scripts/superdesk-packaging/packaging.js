@@ -662,15 +662,15 @@
                 controller: ['data', 'superdesk', function(data, superdesk) {
                     superdesk.intent('read_only', 'content_package', data.item);
                 }],
-                filters: [{action: 'list', type: 'archive'}],
+                filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
                 condition: function(item) {
                     return item.type === 'composite';
                 }
             })
             .activity('read_only.content_package', {
                 category: '/packaging',
-                href: '/packaging/:_id/view',
-                when: '/packaging/:_id/view',
+                href: '/packaging/:_id/view/:_type',
+                when: '/packaging/:_id/view/:_type',
                 label: gettext('Packaging Read Only'),
                 templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
@@ -679,7 +679,7 @@
                 filters: [{action: 'read_only', type: 'content_package'}],
                 resolve: {
                     item: ['$route', 'authoring', function($route, authoring) {
-                        return authoring.open($route.current.params._id, true);
+                        return authoring.open($route.current.params._id, true, $route.current.params._type);
                     }]
                 },
                 authoring: true
@@ -744,7 +744,7 @@
                 order: 4,
                 side: 'left',
                 extended: true,
-                display: {authoring: false, packages: true}
+                display: {authoring: false, packages: true, legalArchive: false}
             });
     }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);

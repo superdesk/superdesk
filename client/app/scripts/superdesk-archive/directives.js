@@ -178,7 +178,7 @@
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['userList', function(userList) {
+        .directive('sdMediaMetadata', ['userList', 'archiveService', function(userList, archiveService) {
             return {
                 scope: {
                     item: '='
@@ -189,20 +189,22 @@
                     scope.$watch('item', reloadData);
 
                     function reloadData() {
-                        scope.originalCreator = null;
-                        scope.versionCreator = null;
+                        scope.originalCreator = scope.item.original_creator;
+                        scope.versionCreator = scope.item.version_creator;
 
-                        if (scope.item.original_creator) {
-                            userList.getUser(scope.item.original_creator)
-                            .then(function(user) {
-                                scope.originalCreator = user.display_name;
-                            });
-                        }
-                        if (scope.item.version_creator) {
-                            userList.getUser(scope.item.version_creator)
-                            .then(function(user) {
-                                scope.versionCreator = user.display_name;
-                            });
+                        if (!archiveService.isLegal(scope.item)) {
+                            if (scope.item.original_creator) {
+                                userList.getUser(scope.item.original_creator)
+                                    .then(function(user) {
+                                        scope.originalCreator = user.display_name;
+                                    });
+                            }
+                            if (scope.item.version_creator) {
+                                userList.getUser(scope.item.version_creator)
+                                    .then(function(user) {
+                                        scope.versionCreator = user.display_name;
+                                    });
+                            }
                         }
                     }
                 }
@@ -285,7 +287,7 @@
                 }
             };
         }])
-        .directive('sdMediaBox', ['$location', 'lock', 'multi', function($location, lock, multi) {
+        .directive('sdMediaBox', ['$location', 'lock', 'multi', 'archiveService', function($location, lock, multi, archiveService) {
             return {
                 restrict: 'A',
                 templateUrl: 'scripts/superdesk-archive/views/media-box.html',
@@ -357,15 +359,7 @@
                      * @returns {string}
                      */
                     scope.getType = function(item) {
-                        if (item.state === 'spiked') {
-                            return 'spike';
-                        } else if (item._type === 'published' && item.allow_post_publish_actions === true) {
-                            return 'archive';
-                        } else if (item._type === 'published' && item.allow_post_publish_actions === false) {
-                            return 'archived';
-                        }
-
-                        return item._type;
+                        return archiveService.getType(item);
                     };
                 }
             };

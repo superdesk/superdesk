@@ -396,8 +396,8 @@
         }
     }
 
-    ItemActionsMenu.$inject = ['superdesk', 'activityService', 'workflowService'];
-    function ItemActionsMenu(superdesk, activityService, workflowService) {
+    ItemActionsMenu.$inject = ['superdesk', 'activityService', 'workflowService', 'archiveService'];
+    function ItemActionsMenu(superdesk, activityService, workflowService, archiveService) {
         return {
             scope: {
                 item: '=',
@@ -457,19 +457,7 @@
                  * @return {string}
                  */
                 function getType(item) {
-                    if (item.state === 'spiked') {
-                        return 'spike';
-                    } else if (item.state === 'ingested') {
-                        return 'ingest';
-                    } else {
-                        var isPublished = _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
-
-                        if (!isPublished || (isPublished === true && item.allow_post_publish_actions === true)) {
-                            return 'archive';
-                        } else if (isPublished && item.allow_post_publish_actions === false) {
-                            return 'archived';
-                        }
-                    }
+                    return archiveService.getType(item);
                 }
             }
         };
