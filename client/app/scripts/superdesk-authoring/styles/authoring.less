@@ -903,3 +903,53 @@ header.header-info {
         }
     }
 }
+
+.item-detail-info {
+        height: 0px;
+        /*margin: -60px -60px 20px -60px;
+        padding: 22px 40px;*/
+        overflow: hidden;
+        .box-sizing(border-box);
+        /*.box-shadow(0px 1px 2px 1px #e9e9e9);*/
+        &.active {
+            height: auto;
+            /*overflow: visible;*/
+        }
+        + button {
+            position: absolute;
+            width: 23px;
+            height: 23px;
+            border: 0;
+            padding: 0 5px;
+            font-size: 0;
+            left: 98%;
+            margin-left: -11.5px;
+            margin-top: -13px;
+            background-color: @white;
+            .border-radius(23px);
+            /*.box-shadow(0px 0px 5px 0px @grayLight);*/
+            .transition(transform 0.5s);
+            &.active {
+                .rotate(180deg);
+            }
+        }
+
+        .edit-photo {
+			display: none	;
+			/*background-color: rgba(55,152,180,0.6);*/
+			color: #fff;
+			text-transform: uppercase;
+			font-size: 9px;
+			text-decoration: none;
+			text-align: center;
+			position: relative;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		&:hover {
+			.edit-photo {
+			display: block;
+			}
+		}
+	}

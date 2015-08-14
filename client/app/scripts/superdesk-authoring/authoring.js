@@ -687,6 +687,68 @@
         };
     }
 
+    ChangeImageController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
+    function ChangeImageController($scope, upload, session, urls, beta) {
+
+        $scope.data = $scope.locals.data;
+        /*$scope.methods = [
+            {id: 'upload', label: gettext('Upload from computer')},
+            {id: 'camera', label: gettext('Take a picture'), beta: true},
+            {id: 'web', label: gettext('Use a Web URL'), beta: true}
+        ];
+
+        beta.isBeta().then(function(beta) {
+            if (!beta) {
+                $scope.methods = _.reject($scope.methods, {beta: true});
+            }
+        });
+
+        $scope.activate = function(method) {
+            $scope.active = method;
+            $scope.preview = {};
+            $scope.progress = {width: 0};
+        };
+
+        $scope.activate($scope.methods[0]);*/
+
+        /*$scope.upload = function(config) {
+            var form = {};
+            form.CropLeft = Math.round(Math.min(config.cords.x, config.cords.x2));
+            form.CropRight = Math.round(Math.max(config.cords.x, config.cords.x2));
+            form.CropTop = Math.round(Math.min(config.cords.y, config.cords.y2));
+            form.CropBottom = Math.round(Math.max(config.cords.y, config.cords.y2));
+
+            if (config.img) {
+                form.media = config.img;
+            } else if (config.url) {
+                form.URL = config.url;
+            } else {
+                return;
+            }
+
+            return urls.resource('upload').then(function(uploadUrl) {
+                return upload.start({
+                    url: uploadUrl,
+                    method: 'POST',
+                    data: form
+                }).then(function(response) {
+
+                    if (response.data._status === 'ERR'){
+                        return;
+                    }
+
+                    var picture_url = response.data.renditions.viewImage.href;
+                    $scope.locals.data.picture_url = picture_url;
+                    $scope.locals.data.avatar = response.data._id;
+
+                    return $scope.resolve(picture_url);
+                }, null, function(update) {
+                    $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                });
+            });
+        };*/
+    }
+
     AuthoringController.$inject = ['$scope', 'item', 'action', 'superdesk'];
     function AuthoringController($scope, item, action, superdesk) {
         $scope.origItem = item;
@@ -1564,12 +1626,21 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout'];
-    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout', 'superdesk'];
+    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout, superdesk) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
+
+                scope.toggleDetails = true;
+                scope.editCrop = function() {
+                    console.log('toggle=' + scope.toggleDetails);
+                    scope.toggleDetails = !scope.toggleDetails;
+                    superdesk.intent('edit', 'crop',  scope.item).then(function(cropped) {
+                        scope.picture_url = cropped;
+                    });
+                };
 
                 scope.$watch('item', function(item) {
                     if (angular.isDefined(item)) {
@@ -1768,6 +1839,14 @@
                         action: [function() {return 'view';}]
                     },
                     authoring: true
+                })
+                .activity('edit.crop', {
+                    label: gettext('EDIT CROP'),
+                    modal: true,
+                    cssClass: 'modal-responsive',
+                    controller: ChangeImageController,
+                    templateUrl: 'scripts/superdesk-authoring/views/change-image.html',
+                    filters: [{action: 'edit', type: 'crop'}]
                 });
         }])
         .config(['apiProvider', function(apiProvider) {
