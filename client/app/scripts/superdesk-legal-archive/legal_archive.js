@@ -171,6 +171,9 @@
             return _.omit($location.search(), '_id');
         }, refresh, true);
 
+        /**
+         * Sets the item view to either grid or compact. Also, saves the same in loggedInUser's preference.
+         */
         $scope.setview = function(view) {
             $scope.view = view || 'mgrid';
             viewUpdate['archive:view'].view = view || 'mgrid';

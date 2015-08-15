@@ -152,6 +152,11 @@ define([
          * Returns the type of the item.
          *
          * @param {Object} item
+         * @return String
+         *      'ingest' if the state of the item is Ingested
+         *      'spike' if the state of the item is Spiked
+         *      'archived' if the state of the item is Published and allow_post_publish_actions is false
+         *      'archive' if none of the above is returned
          */
         this.getType = function(item) {
             var itemType;
@@ -179,6 +184,7 @@ define([
          * Returns true if the item is fetched from Legal Archive
          *
          * @param {Object} item
+         * @return boolean if the item is fetched from Legal Archive, false otherwise.
          */
         this.isLegal = function(item) {
             return (angular.isDefined(item._type) && !_.isNull(item._type) && item._type === 'legal_archive');
@@ -189,6 +195,7 @@ define([
          * and Killed.
          *
          * @param {Object} item
+         * @return true if the state of the item is in one of the published states, false otherwise.
          */
         this.isPublished = function(item) {
             return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
@@ -200,6 +207,7 @@ define([
          * @param {Object} item
          * @param {Object} desks deskService
          * @param {String} historyType one of versions, operations
+         * @return list of object where each object is a version of the item
          */
         this.getVersionHistory = function(item, desks, historyType) {
             if (this.isLegal(item)) {
@@ -263,6 +271,7 @@ define([
          *
          * @param {Object} item
          * @param {Object} versions
+         * @return last version of the item
          */
         this.lastVersion = function(item, versions) {
             if (item._latest_version) {
