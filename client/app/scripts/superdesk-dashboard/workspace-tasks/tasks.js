@@ -1,4 +1,4 @@
-(function() {
+define(['moment'], function(moment) {
 
 'use strict';
 
@@ -277,7 +277,7 @@ function DeskStagesDirective() {
     };
 }
 
-angular.module('superdesk.workspace.tasks', [])
+return angular.module('superdesk.workspace.tasks', [])
 
 .factory('StagesCtrl', StagesCtrlFactory)
 
@@ -311,4 +311,4 @@ angular.module('superdesk.workspace.tasks', [])
     });
 }]);
 
-})();
+});

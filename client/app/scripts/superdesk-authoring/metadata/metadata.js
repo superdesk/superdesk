@@ -1,5 +1,5 @@
 
-(function() {
+define(['moment'], function(moment) {
 
 'use strict';
 
@@ -413,7 +413,7 @@ function MetadataService(api, $q) {
     return service;
 }
 
-angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
+return angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('metadata', {
@@ -432,4 +432,4 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
     .directive('sdMetaDropdown', MetadataDropdownDirective)
     .directive('sdMetaWordsList', MetadataWordsListEditingDirective)
     .directive('sdMetaLocators', MetadataLocatorsDirective);
-})();
+});

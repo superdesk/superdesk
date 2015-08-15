@@ -49,7 +49,6 @@
     <script src="scripts/superdesk/menu/notifications/notifications.js"></script>
 
     <script src="scripts/superdesk-workspace/content/content.js"></script>
-    <script src="scripts/superdesk-dashboard/workspace-tasks/tasks.js"></script>
 
     <script src="scripts/superdesk-users/users.js"></script>
     <script src="scripts/superdesk-users/profile.js"></script>
@@ -72,7 +71,6 @@
     <script src="scripts/superdesk-authoring/versioning/versioning.js"></script>
     <script src="scripts/superdesk-authoring/versioning/versions/versions.js"></script>
     <script src="scripts/superdesk-authoring/versioning/history/history.js"></script>
-    <script src="scripts/superdesk-authoring/metadata/metadata.js"></script>
     <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
     <script src="scripts/superdesk-authoring/packages/packages.js"></script>
     <script src="scripts/superdesk-authoring/editor/find-replace.js"></script>
@@ -137,7 +135,9 @@
             'superdesk-dashboard/module',
             'superdesk-planning/module',
             'superdesk-archive/module',
-            'superdesk-ingest/module'
+            'superdesk-ingest/module',
+            'superdesk-authoring/metadata/metadata',
+            'superdesk-dashboard/workspace-tasks/tasks',
             //'superdesk-scratchpad/module',
         ], function(bootstrap) {
             bootstrap(config, modules);
