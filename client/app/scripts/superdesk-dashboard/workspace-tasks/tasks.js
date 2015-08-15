@@ -66,8 +66,8 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
     };
 }
 
-TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks'];
-function TasksController($scope, $timeout, api, notify, desks, tasks) {
+TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter'];
+function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
 
     var KANBAN_VIEW = 'kanban',
         timeout;
@@ -100,11 +100,12 @@ function TasksController($scope, $timeout, api, notify, desks, tasks) {
     };
 
     $scope.create = function() {
+        var task_date = new Date();
         $scope.newTask = {
             task: {
                 desk: desks.getCurrentDeskId(),
-                due_date: moment().utc().format(),
-                due_time: moment().utc().format('HH:mm:ss')
+                due_date: $filter('formatDateTimeString')(task_date),
+                due_time: $filter('formatDateTimeString')(task_date, 'HH:mm:ss')
             }
         };
     };
@@ -146,8 +147,8 @@ function TasksController($scope, $timeout, api, notify, desks, tasks) {
     });
 }
 
-TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
-function TaskPreviewDirective(tasks, desks, notify) {
+TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify', '$filter'];
+function TaskPreviewDirective(tasks, desks, notify, $filter) {
     var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
@@ -189,8 +190,8 @@ function TaskPreviewDirective(tasks, desks, notify) {
                 scope.editmode = false;
                 scope.task = _.create(scope.item);
                 scope.task_details = _.extend({}, scope.item.task);
-                scope.task_details.due_date = moment(scope.item.task.due_date).utc().format();
-                scope.task_details.due_time = moment(scope.item.task.due_date).utc().format('HH:mm:ss');
+                scope.task_details.due_date = $filter('formatDateTimeString')(scope.item.task.due_date);
+                scope.task_details.due_time = $filter('formatDateTimeString')(scope.item.task.due_date, 'HH:mm:ss');
                 _orig = scope.item;
             };
         }
@@ -285,7 +286,7 @@ angular.module('superdesk.workspace.tasks', [])
 .directive('sdAssigneeView', AssigneeViewDirective)
 .directive('sdDeskStages', DeskStagesDirective)
 .directive('sdTaskKanbanBoard', TaskKanbanBoardDirective)
-
+.controller('TasksController', TasksController)
 .service('tasks', TasksService)
 
 .config(['superdeskProvider', function(superdesk) {

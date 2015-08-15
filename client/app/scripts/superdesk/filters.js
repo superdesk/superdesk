@@ -77,11 +77,10 @@ define([
                 return _.trunc(inputString, {'length': limit, 'omission': postfix || '...'});
             };
         })
-        .filter('dateString', ['$filter', function($filter) {
-            return function(input) {
-                if (input !== null) {
-                    return $filter('date')(input, 'dd.MM.yyyy');
-                }
+        .filter('formatDateTimeString', [function() {
+            return function(input, format_string) {
+                var moment_timestamp = angular.isDefined(input)? moment(input).utc() : moment.utc();
+                return angular.isDefined(format_string) ? moment_timestamp.format(format_string) : moment_timestamp.format();
             };
         }])
         .filter('dateTimeString', ['$filter', function($filter) {
