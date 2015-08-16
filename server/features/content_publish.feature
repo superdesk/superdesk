@@ -617,6 +617,67 @@ Feature: Content Publishing
       Then we get OK response
 
     @auth
+    Scenario: We can lock a published content and then correct it and then kill the article
+      Given the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+      {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+      {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "headline": "test", "_current_version": 0, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+      """
+      {}
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 2, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we post to "/archive/#archive._id#/unlock"
+      """
+      {}
+      """
+      Then we get OK response
+      When we post to "/archive/#archive._id#/lock"
+      """
+      {}
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "kill" type and "killed" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 3, "state": "killed", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we post to "/archive/#archive._id#/unlock"
+      """
+      {}
+      """
+      Then we get OK response
+
+    @auth
     Scenario: Correcting an already corrected published story fails
       Given the "validators"
       """
