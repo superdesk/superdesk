@@ -79,8 +79,8 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
     function resolvePublishScheduleDate() {
         if ($scope.item.publish_schedule) {
             var publishSchedule = new Date(Date.parse($scope.item.publish_schedule));
-            $scope.item.publish_schedule_date = moment(publishSchedule).utc().format('MM/DD/YYYY');
-            $scope.item.publish_schedule_time = moment(publishSchedule).utc().format('HH:mm:ss');
+            $scope.item.publish_schedule_date = $filter('formatDateTimeString')(publishSchedule, 'MM/DD/YYYY');
+            $scope.item.publish_schedule_time = $filter('formatDateTimeString')(publishSchedule, 'HH:mm:ss');
         }
     }
 
