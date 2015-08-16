@@ -20,6 +20,76 @@ describe('content', function() {
         expect(api.update).toHaveBeenCalledWith('archive_unspike', item, {});
     }));
 
+    describe('archive service', function() {
+        beforeEach(inject(function (desks, session) {
+            session.identity = {_id: 'user:1'};
+
+            desks.userDesks = {_items: [{_id: '1', name: 'sport', incoming_stage: '2'},
+                                        {_id: '2', name: 'news', incoming_stage: '1'}]};
+            desks.setCurrentDeskId('2');
+
+            item = {'_id': '123'};
+        }));
+
+        it('can add an item to a desk', inject(function(archiveService) {
+            archiveService.addTaskToArticle(item);
+
+            expect(item.task.desk).toBe('2');
+            expect(item.task.stage).toBe('1');
+        }));
+
+        it('verifies if item is from Legal Archive or not', inject(function(archiveService) {
+            expect(archiveService.isLegal(item)).toBe(false);
+
+            item._type = 'legal_archive';
+            expect(archiveService.isLegal(item)).toBe(true);
+        }));
+
+        it('can verify if the item is published or not', inject(function(archiveService) {
+            item.state = 'submitted';
+            expect(archiveService.isPublished(item)).toBe(false);
+
+            item.state = 'corrected';
+            expect(archiveService.isPublished(item)).toBe(true);
+        }));
+
+        it('return type based on state and repository', inject(function(archiveService) {
+            item.state = 'spiked';
+            expect(archiveService.getType(item)).toBe('spike');
+
+            item.state = 'ingested';
+            expect(archiveService.getType(item)).toBe('ingest');
+
+            item.state = 'submitted';
+            expect(archiveService.getType(item)).toBe('archive');
+
+            item.state = 'published';
+            item.allow_post_publish_actions = true;
+            expect(archiveService.getType(item)).toBe('archive');
+
+            item.allow_post_publish_actions = false;
+            expect(archiveService.getType(item)).toBe('archived');
+
+            item._type = 'legal_archive';
+            expect(archiveService.getType(item)).toBe('legal_archive');
+        }));
+
+        it('can fetch version history', inject(function(archiveService, api, $q) {
+            spyOn(api.archive, 'getByUrl').and.returnValue($q.when());
+            spyOn(api.legal_archive_versions, 'getByUrl').and.returnValue($q.when());
+
+            item._links = {self: {href: '/archive/123'}};
+            archiveService.getVersionHistory(item, {}, 'versions');
+            expect(api.archive.getByUrl).toHaveBeenCalledWith('/archive/123?version=all&embedded={"user":1}');
+
+            item._type = 'legal_archive';
+            item._links = {collection: {href: '/legal_archive'}};
+            archiveService.getVersionHistory(item, {}, 'versions');
+            expect(api.legal_archive_versions.getByUrl)
+                .toHaveBeenCalledWith('/legal_archive_versions?_id=123');
+        }));
+    });
+
     describe('multi service', function() {
         it('can reset on route change', inject(function(multi, $rootScope) {
             multi.toggle({_id: 1, selected: true});
