@@ -44,6 +44,298 @@ class NewsMLG2FormatterTest(TestCase):
         'place': 'Australia'
     }
 
+    package = {
+        '_id': 'urn:newsml:localhost:2015-08-12T11:59:58.457029:7e90d257-92f6-406d-9186-95653b211701',
+        'type': 'composite',
+        '_current_version': 1,
+        'groups': [
+            {
+                'role': 'grpRole:NEP',
+                'id': 'root',
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ]
+            },
+            {
+                'role': 'grpRole:main',
+                'id': 'main',
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police'
+                    }
+                ]
+            }
+        ],
+        'pubstatus': 'usable',
+        'state': 'published',
+        'marked_for_not_publication': False,
+        'guid': 'urn:newsml:localhost:2015-08-12T11:59:58.457029:7e90d257-92f6-406d-9186-95653b211701',
+        'dateline': {
+            'located': {
+                'alt_name': '',
+                'state': 'California',
+                'city_code': 'Los Angeles',
+                'city': 'Los Angeles',
+                'dateline': 'city',
+                'country_code': 'US',
+                'country': 'USA',
+                'tz': 'America/Los_Angeles',
+                'state_code': 'CA'
+            },
+            'date': '2015-08-12T01:59:58.000Z',
+            'source': 'AAP',
+            'text': 'Los Angeles, Aug 11 AAP -'
+        },
+        'language': 'en',
+        'headline': 'Cop sacked over student shooting',
+        'source': 'AAP',
+        'slugline': 'US Police',
+        'anpa_category': [
+            {
+                'name': 'International News',
+                'qcode': 'I'
+            }
+        ],
+        'subject': [
+            {
+                'name': 'police',
+                'parent': '02000000',
+                'qcode': '02003000'
+            }
+        ]
+    }
+
+    picture_package = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original_source': {
+                                'mimetype': 'image/jpeg',
+                                'href': 'http://one-cdn.aap.com.au/Preview/20150813001165688150?assetType=IMAGE&path=/aap_dev17/device/imagearc/2015/08-13/ad/36/ef/aapimage-6lscjhydkmhwztrg1t6_minihighres.jpg'  # noqa
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture'
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
+    picture = {
+        '_id': 'tag:localhost:2015:cf15b059-b997-4e34-a103-85b8d7ea4ba3',
+        'dateline': {
+            'source': 'AAP',
+            'date': '2015-08-14T04:45:53.000Z'
+        },
+        'renditions': {
+            'original_source': {
+                'href': 'https://one-api.aap.com.au/api/v3/Assets/20150731001161435160/Original/download',
+                'mimetype': 'image/jpeg'
+            },
+            'viewImage': {
+                'height': 415,
+                'href': 'http://localhost:5000/api/upload/55cd72811d41c828e1773786/raw?_schema=http',
+                'media': '55cd72811d41c828e1773786',
+                'mimetype': 'image/jpeg',
+                'width': 640
+            },
+            'baseImage': {
+                'height': 909,
+                'href': 'http://localhost:5000/api/upload/55cd72811d41c828e1773782/raw?_schema=http',
+                'media': '55cd72811d41c828e1773782',
+                'mimetype': 'image/jpeg',
+                'width': 1400
+            },
+            'thumbnail': {
+                'height': 120,
+                'href': 'http://localhost:5000/api/upload/55cd72811d41c828e1773784/raw?_schema=http',
+                'media': '55cd72811d41c828e1773784',
+                'mimetype': 'image/jpeg',
+                'width': 184
+            },
+            'original': {
+                'height': 2455,
+                'href': 'http://localhost:5000/api/upload/55cd72801d41c828e1773762/raw?_schema=http',
+                'media': '55cd72801d41c828e1773762',
+                'mimetype': 'image/jpeg',
+                'width': 3777
+            }
+        },
+        'state': 'published',
+        'guid': '20150731001161435160',
+        'source': 'AAP Image',
+        '_current_version': 1,
+        'original_source': 'AAP Image/AAP',
+        'description': 'Federal Education Minister Christopher Pyne launches his new book NO ARCHIVING',
+        'type': 'picture',
+        'slugline': 'NUS CHRISTOPHER PYNE PROTEST',
+        'headline': 'NUS CHRISTOPHER PYNE PROTEST',
+        'pubstatus': 'usable',
+        'ednote': '',
+        'byline': 'TRACEY NEARMY',
+        'filemeta': {
+            'yresolution': [
+                300,
+                1
+            ],
+            'exposuretime': [
+                1,
+                200
+            ],
+            'copyright': '                                                      ',
+            'scenecapturetype': 0,
+            'sensingmethod': 2,
+            'fnumber': [
+                14,
+                5
+            ],
+            'flashpixversion': '0100',
+            'xresolution': [
+                300,
+                1
+            ],
+            'resolutionunit': 2,
+            'subsectimedigitized': '20',
+            'exposureprogram': 1,
+            'subsectimeoriginal': '20',
+            'make': 'NIKON CORPORATION',
+            'focallengthin35mmfilm': 200,
+            'scenetype': 1,
+            'exifimageheight': 2455,
+            'saturation': 0,
+            'colorspace': 1,
+            'subjectdistancerange': 0,
+            'datetime': '2015:07:31 18:55:37',
+            'software': 'Photogene for iPad v4.3',
+            'flash': 16,
+            'focallength': [
+                200,
+                1
+            ],
+            'componentsconfiguration': '\u0001\u0002\u0003\u0000',
+            'lightsource': 3,
+            'artist': '                                    ',
+            'isospeedratings': 2000,
+            'whitepoint': [
+                313,
+                1000
+            ],
+            'sharpness': 2,
+            'exposuremode': 1,
+            'meteringmode': 3,
+            'compressedbitsperpixel': [
+                4,
+                1
+            ],
+            'model': 'NIKON D800E',
+            'subsectime': '20',
+            'datetimedigitized': '2015:07:31 18:55:37',
+            'exifoffset': 406,
+            'contrast': 0,
+            'whitebalance': 1,
+            'exifimagewidth': 3777,
+            'datetimeoriginal': '2015:07:31 18:55:37',
+            'customrendered': 0,
+            'maxaperturevalue': [
+                3,
+                1
+            ],
+            'digitalzoomratio': [
+                1,
+                1
+            ],
+            'primarychromaticities': [
+                16,
+                25
+            ],
+            'length': 8009209,
+            'exifversion': '0230',
+            'gaincontrol': 2,
+            'gamma': [
+                11,
+                5
+            ],
+            'filesource': 3
+        },
+        'language': 'en',
+        'mimetype': 'image/jpeg',
+        'sign_off': 'mar',
+        'unique_id': 573
+    }
+
     vocab = [{'_id': 'rightsinfo', 'items': [{'name': 'AAP',
                                               'copyrightHolder': 'copy right holder',
                                               'copyrightNotice': 'copy right notice',
@@ -117,3 +409,42 @@ class NewsMLG2FormatterTest(TestCase):
                 '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
                 '{http://iptc.org/std/nar/2006-10-01/}rightsInfo/{http://iptc.org/std/nar/2006-10-01/}usageTerms').text,
                 'default terms')
+
+    def testPackagePublish(self):
+        with self.app.app_context():
+            article = dict(self.package)
+            article['firstcreated'] = self.now
+            article['versioncreated'] = self.now
+            seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+            xml = etree.fromstring(doc)
+            self.assertEqual(xml.find(
+                '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
+                '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
+                '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
+                'US Police')
+
+    def testPicturePackagePublish(self):
+        with self.app.app_context():
+            article = dict(self.picture_package)
+            article['firstcreated'] = self.now
+            article['versioncreated'] = self.now
+            seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+            xml = etree.fromstring(doc)
+            self.assertEqual(xml.find(
+                '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
+                '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
+                '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
+                'Prison Riot')
+
+    def testPicturePublish(self):
+        with self.app.app_context():
+            article = dict(self.picture)
+            article['firstcreated'] = self.now
+            article['versioncreated'] = self.now
+            seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+            xml = etree.fromstring(doc)
+            self.assertEqual(xml.find(
+                '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+                '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+                '{http://iptc.org/std/nar/2006-10-01/}creditline').text,
+                'AAP Image/AAP')
