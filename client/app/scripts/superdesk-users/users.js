@@ -1044,6 +1044,10 @@
                             });
                     };
 
+                    /**
+                     * Invoked by the directive after updating the property in item. This method is responsible for updating
+                     * the properties dependent on dateline.
+                     */
                     scope.changeDatelinePreview = function(datelinePreference, city) {
                         if (city === '') {
                             datelinePreference.located = null;

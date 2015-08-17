@@ -311,6 +311,12 @@ function MetadataLocatorsDirective() {
                 }
             });
 
+            /**
+             * sdTypeahead directive invokes this method and is responsible for searching located object(s) where the
+             * city name matches locator_to_find.
+             *
+             * @return {Array} list of located object(s)
+             */
             scope.searchLocator = function(locator_to_find) {
                 if (!locator_to_find) {
                     scope.locators = scope.list;
@@ -327,6 +333,13 @@ function MetadataLocatorsDirective() {
                 return scope.locators;
             };
 
+            /**
+             * sdTypeahead directive invokes this method and is responsible for updating the item with user selected
+             * located object.
+             *
+             * @param {Object} locator user selected located object
+             * @param {boolean} propogateChangeEvent when true invokes the method specified in change attribute.
+             */
             scope.selectLocator = function(locator, propogateChangeEvent) {
                 var updates = {};
 
