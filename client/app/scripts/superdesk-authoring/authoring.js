@@ -1629,7 +1629,7 @@
                     if (angular.isDefined(item)) {
                         item._datelinedate = '';
 
-                        if (angular.isDefined(item.dateline) && angular.isDefined(item.dateline.date)) {
+                        if (angular.isDefined(item.dateline.located) && !_.isNull(item.dateline.located)) {
                             item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
                         }
                     }
@@ -1640,22 +1640,13 @@
                 });
 
                 scope.updateDateline = function(item, city) {
-                    if (angular.isUndefined(item.dateline.located) ||
-                        (angular.isDefined(item.dateline.located) && item.dateline.located.city !== city)) {
-                        if (city === '') {
-                            item.dateline.located = null;
-                            item.dateline.text = '';
-                        } else {
-                            item.dateline.located = {'city': city, 'city_code': city, 'tz': 'UTC',
-                                'dateline': 'city', 'country': '', 'country_code': '', 'state_code': '', 'state': ''};
-                        }
-                    }
-
-                    if (angular.isDefined(item.dateline.located)) {
+                    if (city === '') {
+                        item.dateline.located = null;
+                        item.dateline.text = '';
+                        item._datelinedate = '';
+                    } else {
                         item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
                         item.dateline.text = $filter('previewDateline')(item.dateline.located, item.dateline.source, item.dateline.date);
-                    } else {
-                        item._datelinedate = '';
                     }
                 };
             }

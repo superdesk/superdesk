@@ -231,7 +231,7 @@ metadata_schema = {
         'type': 'dict',
         'nullable': True,
         'schema': {
-            'located': {'type': 'dict'},
+            'located': {'type': 'dict', 'nullable': True},
             'date': {'type': 'datetime'},
             'source': {'type': 'string'},
             'text': {'type': 'string'}

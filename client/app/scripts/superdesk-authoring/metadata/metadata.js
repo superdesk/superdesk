@@ -302,10 +302,10 @@ function MetadataLocatorsDirective() {
 
             scope.$watch('item', function(item) {
                 if (angular.isDefined(item)) {
-                    if (angular.isDefined(scope.fieldprefix) && angular.isDefined(item[scope.fieldprefix]) &&
-                        angular.isDefined(item[scope.fieldprefix][scope.field])) {
+                    if (angular.isDefined(scope.fieldprefix) && angular.isDefined(item[scope.fieldprefix][scope.field]) &&
+                            !_.isNull(item[scope.fieldprefix][scope.field])) {
                         scope.selectedTerm = item[scope.fieldprefix][scope.field].city;
-                    } else if (angular.isDefined(item[scope.field])) {
+                    } else if (angular.isDefined(item[scope.field]) && !_.isNull(item[scope.field])) {
                         scope.selectedTerm = item[scope.field].city;
                     }
                 }
@@ -319,28 +319,39 @@ function MetadataLocatorsDirective() {
                         return ((t.city.toLowerCase().indexOf(locator_to_find.toLowerCase()) !== -1));
                     });
                 }
+
+                // Since blur is disabled explicitly on "sdTypeahead" need to do this
+                scope.selectedTerm = locator_to_find;
+                scope.selectLocator(null, false);
+
                 return scope.locators;
             };
 
-            scope.selectLocator = function(locator) {
-                if (locator) {
-                    if (angular.isDefined(scope.fieldprefix)) {
-                        if (angular.isUndefined(scope.item[scope.fieldprefix])) {
-                            scope.item[scope.fieldprefix] = {};
-                        }
+            scope.selectLocator = function(locator, propogateChangeEvent) {
+                var updates = {};
 
-                        scope.item[scope.fieldprefix][scope.field] = locator;
-                    } else {
-                        scope.item[scope.field] = locator;
-                    }
-
+                if (!locator) {
+                    locator = {'city': scope.selectedTerm, 'city_code': scope.selectedTerm, 'tz': 'UTC',
+                        'dateline': 'city', 'country': '', 'country_code': '', 'state_code': '', 'state': ''};
+                } else {
                     scope.selectedTerm = locator.city;
                 }
 
+                if (angular.isDefined(scope.fieldprefix)) {
+                    updates[scope.fieldprefix] = {};
+                    updates[scope.fieldprefix][scope.field] = locator;
+                } else {
+                    updates[scope.field] = locator;
+                }
+
+                _.extend(scope.item, updates);
                 var selectedLocator = {item: scope.item, city: scope.selectedTerm};
 
                 scope.postprocessing(selectedLocator);
-                scope.change(selectedLocator);
+
+                if (angular.isUndefined(propogateChangeEvent) || propogateChangeEvent) {
+                    scope.change(selectedLocator);
+                }
             };
         }
     };
