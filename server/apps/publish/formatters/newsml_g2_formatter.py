@@ -18,6 +18,7 @@ import superdesk
 from superdesk.errors import FormatterError
 from settings import NEWSML_PROVIDER_ID
 from apps.publish.formatters.nitf_formatter import NITFFormatter
+from superdesk.metadata.packages import PACKAGE_TYPE
 
 
 class NewsMLG2Formatter(Formatter):
@@ -34,20 +35,34 @@ class NewsMLG2Formatter(Formatter):
     def format(self, article, subscriber):
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
-
-            nitfFormater = NITFFormatter()
-            nitf = nitfFormater.get_nitf(article, subscriber, pub_seq_num)
-
+            is_package = self._is_package(article)
             self._message_attrib.update(self._debug_message_extra)
             newsMessage = etree.Element('newsMessage', attrib=self._message_attrib)
             self._format_header(article, newsMessage, pub_seq_num)
             itemSet = self._format_item(newsMessage)
-            if article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
-                self._format_newsitem(article, itemSet, nitf)
+            if is_package:
+                item = self._format_item_set(article, itemSet, 'packageItem')
+                self._format_groupset(article, item)
+            elif article[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
+                item = self._format_item_set(article, itemSet, 'newsItem')
+                self._format_contentset(article, item)
+            else:
+                nitfFormater = NITFFormatter()
+                nitf = nitfFormater.get_nitf(article, subscriber, pub_seq_num)
+                newsItem = self._format_item_set(article, itemSet, 'newsItem')
+                self._format_content(article, newsItem, nitf)
 
             return [(pub_seq_num, self.XML_ROOT + etree.tostring(newsMessage).decode('utf-8'))]
         except Exception as ex:
             raise FormatterError.newmsmlG2FormatterError(ex, subscriber)
+
+    def _is_package(self, article):
+        """
+        Given an article returns if it is a none takes package or not
+        :param artcile:
+        :return: True is package
+        """
+        return article[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and article.get(PACKAGE_TYPE, '') == ''
 
     def _format_header(self, article, newsMessage, pub_seq_num):
         header = SubElement(newsMessage, 'header')
@@ -60,16 +75,23 @@ class NewsMLG2Formatter(Formatter):
     def _format_item(self, newsMessage):
         return SubElement(newsMessage, 'itemSet')
 
-    def _format_newsitem(self, article, itemSet, nitf):
-        newsItem = SubElement(itemSet, 'newsItem', attrib={'standard': 'NewsML-G2', 'standardversion': '2.18',
-                                                           'guid': article['guid'],
-                                                           'version': str(article[superdesk.config.VERSION]),
-                                                           'xml:lang': article.get('language', 'en'),
-                                                           'conformance': 'power'})
-        SubElement(newsItem, 'catalogRef',
+    def _format_item_set(self, article, itemSet, item_type):
+        """
+        Construct the item element (newsItem or packageItem) and append the itemMeta and contentMeta entities
+        :param article:
+        :param itemSet:
+        :param item_type:
+        :return:
+        """
+        item = SubElement(itemSet, item_type, attrib={'standard': 'NewsML-G2', 'standardversion': '2.18',
+                                                      'guid': article['guid'],
+                                                      'version': str(article[superdesk.config.VERSION]),
+                                                      'xml:lang': article.get('language', 'en'),
+                                                      'conformance': 'power'})
+        SubElement(item, 'catalogRef',
                    attrib={'href': 'http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml”'})
-        self._format_rights(newsItem, article)
-        itemMeta = SubElement(newsItem, 'itemMeta')
+        self._format_rights(item, article)
+        itemMeta = SubElement(item, 'itemMeta')
         self._format_itemClass(article, itemMeta)
         self._format_provider(itemMeta)
         self._format_versioncreated(article, itemMeta)
@@ -81,7 +103,7 @@ class NewsMLG2Formatter(Formatter):
         self._format_ednote(article, itemMeta)
         self._format_signal(article, itemMeta)
 
-        contentMeta = SubElement(newsItem, 'contentMeta')
+        contentMeta = SubElement(item, 'contentMeta')
         self._format_timestamps(article, contentMeta)
         # TODO located or locator codes are not yet defined
         self._format_creator(article, contentMeta)
@@ -89,7 +111,19 @@ class NewsMLG2Formatter(Formatter):
         self._format_genre(article, contentMeta)
         self._format_slugline(article, contentMeta)
         self._format_headline(article, contentMeta)
+        if article[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
+            self._format_description(article, contentMeta)
+            self._format_creditline(article, contentMeta)
+        return item
 
+    def _format_content(self, article, newsItem, nitf):
+        """
+        Adds the content set to the xml
+        :param article:
+        :param newsItem:
+        :param nitf:
+        :return: xml with the nitf content appended
+        """
         contentSet = SubElement(newsItem, 'contentSet')
         if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
             inline = SubElement(contentSet, 'inlineData',
@@ -112,8 +146,19 @@ class NewsMLG2Formatter(Formatter):
 
     # itemClass elements
     def _format_itemClass(self, article, itemMeta):
+        """
+        Append the item class to the itemMeta data element
+        :param article:
+        :param itemMeta:
+        :return:
+        """
+        if CONTENT_TYPE.COMPOSITE and self._is_package(article):
+            SubElement(itemMeta, 'itemClass', attrib={'qcode': 'ninat:composite'})
+            return
         if article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE]:
             SubElement(itemMeta, 'itemClass', attrib={'qcode': 'ninat:text'})
+        elif article[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
+            SubElement(itemMeta, 'itemClass', attrib={'qcode': 'ninat:picture'})
 
     def _format_provider(self, itemMeta):
         provider = SubElement(itemMeta, 'provider')
@@ -168,6 +213,70 @@ class NewsMLG2Formatter(Formatter):
     def _format_headline(self, article, contentMeta):
         SubElement(contentMeta, 'headline').text = article.get('headline', '')
 
+    def _format_description(self, article, contentMeta):
+        """
+        Appends the image description to the contentMeta element
+        :param article:
+        :param contentMeta:
+        :return:
+        """
+        SubElement(contentMeta, 'description', attrib={'role': 'drol:caption'}).text = article.get('description', '')
+
+    def _format_creditline(self, article, contentMeta):
+        """
+        Append the creditLine to the contentMeta for a picture
+        :param article:
+        :param contentMeta:
+        :return: contentMeta element with a creditline element appended
+        """
+        SubElement(contentMeta, 'creditline').text = article.get('original_source', '')
+
+    def _format_groupset(self, article, item):
+        """
+        Constructs the groupSet element of a packageItem
+        :param article:
+        :param item:
+        :return: groupSet appended to the item
+        """
+        groupSet = SubElement(item, 'groupSet', attrib={'root': 'root'})
+        for group in article.get('groups', []):
+            group_Elem = SubElement(groupSet, 'group', attrib={'id': group.get('id'), 'role': group.get('role')})
+            for ref in group.get('refs', {}):
+                if 'idRef' in ref:
+                    SubElement(group_Elem, 'groupRef', attrib={'idref': ref.get('idRef')})
+                else:
+                    if 'residRef' in ref:
+                        itemRef = SubElement(group_Elem, 'itemRef',
+                                             attrib={'residref': ref.get('guid'),
+                                                     'contenttype': 'application/vnd.iptc.g2.newsitem+xml'})
+                        SubElement(itemRef, 'itemClass', attrib={'qcode': 'ninat:' + ref.get('type', 'text')})
+                        self._format_pubstatus(ref, itemRef)
+                        self._format_headline(ref, itemRef)
+                        self._format_slugline(ref, itemRef)
+
+    def _format_contentset(self, article, item):
+        """
+        Constructs the contentSet element in a picture newsItem.
+        :param article:
+        :param item:
+        :return: contentSet Element added to the item
+        """
+        content_set = SubElement(item, 'contentSet')
+        for rendition, value in article.get('renditions', {}).items():
+            attrib = {'href': value.get('href'),
+                      'contenttype': value.get('mimetype'),
+                      'rendition': 'rendition:' + rendition
+                      }
+            if 'height' in value:
+                attrib['height'] = str(value.get('height'))
+            if 'width' in value:
+                attrib['width'] = str(value.get('width'))
+            if rendition == 'original' and 'filemeta' in article and 'length' in article['filemeta']:
+                attrib['size'] = str(article.get('filemeta').get('length'))
+            SubElement(content_set, 'remoteContent',
+                       attrib=attrib)
+
     def can_format(self, format_type, article):
         return format_type == 'newsmlg2' and \
-            article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE]
+            article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE,
+                                   CONTENT_TYPE.PICTURE]
