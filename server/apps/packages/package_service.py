@@ -19,7 +19,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE, \
-    ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP, ROOT_ROLE, MAIN_ROLE
+    ASSOCIATIONS, ITEM_REF, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP, ROLE, ROOT_ROLE, MAIN_ROLE
 from apps.archive.common import insert_into_versions
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
@@ -37,8 +37,8 @@ def create_root_group(docs):
         if len(doc.get('groups', [])):
             continue
         doc['groups'] = [
-            {'id': ROOT_GROUP, 'role': ROOT_ROLE, ASSOCIATIONS: [{ID_REF: MAIN_GROUP}]},
-            {'id': MAIN_GROUP, 'role': MAIN_ROLE, ASSOCIATIONS: []}
+            {'id': ROOT_GROUP, ROLE: ROOT_ROLE, ASSOCIATIONS: [{ID_REF: MAIN_GROUP}]},
+            {'id': MAIN_GROUP, ROLE: MAIN_ROLE, ASSOCIATIONS: []}
         ]
 
 
