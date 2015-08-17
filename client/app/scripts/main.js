@@ -30,6 +30,13 @@ define('main', [
 
     return function bootstrap(config, apps) {
 
+        var spec = window.location.search ? window.location.search.substr(1) : null;
+        if (spec) {
+            spec = spec.replace('/', '');
+            config.server.url = config.server.url.replace('api', spec + '/api');
+            config.app = spec;
+        }
+
         apps.unshift(superdesk.name);
         superdesk.constant('config', config);
         superdesk.constant('lodash', _);

@@ -4,7 +4,7 @@
 var workspace = require('./helpers/workspace'),
     authoring = require('./helpers/authoring');
 
-describe('Send To', function() {
+describe('send', function() {
     it('can submit item to a desk', function() {
         workspace.open();
         workspace.editItem(1);

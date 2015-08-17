@@ -1,13 +1,13 @@
 
-var openUrl = require('./helpers/utils').open,
+var nav = require('./helpers/utils').nav,
     dictionaries = require('./helpers/dictionaries');
 
-describe('DICTIONARIES', function() {
+describe('dictionaries', function() {
     'use strict';
 
     describe('add dictionary', function() {
         beforeEach(function() {
-            openUrl('/#/settings/dictionaries');
+            nav('/settings/dictionaries');
         });
 
         it('add dictionary', function() {
@@ -28,7 +28,7 @@ describe('DICTIONARIES', function() {
 
     describe('edit dictionary', function() {
         beforeEach(function() {
-            openUrl('/#/settings/dictionaries');
+            nav('/settings/dictionaries');
         });
 
         it('change dictionary name', function() {
@@ -52,7 +52,7 @@ describe('DICTIONARIES', function() {
 
     describe('delete dictionary', function() {
         beforeEach(function() {
-            openUrl('/#/settings/dictionaries');
+            nav('/settings/dictionaries');
         });
 
         it('delete dictionary', function() {

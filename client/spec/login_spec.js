@@ -2,7 +2,7 @@
 var waitForSuperdesk = require('./helpers/utils').waitForSuperdesk;
 var Login = require('./helpers/pages').login;
 
-describe('Login', function() {
+describe('login', function() {
     'use strict';
 
     var modal;
@@ -19,7 +19,7 @@ describe('Login', function() {
         modal.login('admin', 'admin');
         waitForSuperdesk();
         expect(modal.btn.isDisplayed()).toBe(false);
-        expect(browser.getCurrentUrl()).toBe(browser.baseUrl + '/#/workspace');
+        expect(browser.getCurrentUrl()).toMatch('workspace');
         element(by.css('button.current-user')).click();
         expect(
             element(by.css('.user-info .displayname'))
@@ -50,7 +50,6 @@ describe('Login', function() {
     it('unknown user can\'t log in', function() {
         modal.login('foo', 'bar');
         expect(modal.btn.isDisplayed()).toBe(true);
-        expect(browser.getCurrentUrl()).not.toBe(browser.baseUrl + '/#/workspace');
         expect(modal.error.isDisplayed()).toBe(true);
     });
 });

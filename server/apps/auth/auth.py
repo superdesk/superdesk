@@ -138,5 +138,5 @@ class SuperdeskTokenAuth(TokenAuth):
         return super(SuperdeskTokenAuth, self).authorized(allowed_roles, resource, method)
 
     def authenticate(self):
-        """ Returns 401 response with CORS headers."""
+        """Returns 401 response with CORS headers."""
         raise SuperdeskApiError.unauthorizedError()

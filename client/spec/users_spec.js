@@ -1,27 +1,13 @@
 
-var post = require('./helpers/fixtures').post;
-var openUrl = require('./helpers/utils').open;
+var nav = require('./helpers/utils').nav;
 
-describe('Users', function() {
+describe('users', function() {
     'use strict';
-
-    beforeEach(function(done) {
-        post({
-            uri: '/users',
-            json: {
-                'first_name': 'foo',
-                'last_name': 'bar',
-                'username': 'spam',
-                'email': 'foo@bar.com',
-                'sign_off': 'foobar'
-            }
-        }, done);
-    });
 
     describe('profile:', function() {
 
-        beforeEach(function(done) {
-            openUrl('/#/profile').then(done);
+        beforeEach(function() {
+            nav('/profile');
         });
 
         it('can render user profile', function() {
@@ -35,7 +21,7 @@ describe('Users', function() {
 
     describe('users list:', function() {
         beforeEach(function() {
-            openUrl('/#/users');
+            nav('/users');
         });
 
         it('can list users', function() {
@@ -105,8 +91,8 @@ describe('Users', function() {
     });
 
     describe('user detail:', function() {
-        beforeEach(function(done) {
-            openUrl('/#/users').then(done);
+        beforeEach(function() {
+            nav('/users');
         });
 
         it('can open user detail', function() {
@@ -132,17 +118,10 @@ describe('Users', function() {
     });
 
     describe('user edit:', function() {
-        beforeEach(function(done) {
-            openUrl('/#/users').then(function() {
-                return element(by.repeater('user in users').row(0).column('username'))
-                    .waitReady();
-            }).then(function(elem) {
-                return elem.click();
-            }).then(function() {
-                return $('#open-user-profile').waitReady();
-            }).then(function(elem) {
-                return elem.click();
-            }).then(done);
+        beforeEach(function() {
+            nav('/users');
+            element(by.repeater('user in users').row(0).column('username')).click();
+            $('#open-user-profile').click();
         });
 
         it('can enable/disable buttons based on form status', function() {
@@ -173,8 +152,8 @@ describe('Users', function() {
     });
 
     describe('default desk field should not be visible', function() {
-        beforeEach(function(done) {
-            openUrl('/#/users').then(done);
+        beforeEach(function() {
+            nav('/users');
         });
 
         it('while creating a new user', function() {

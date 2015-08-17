@@ -7,6 +7,5 @@ ELASTICSEARCH_INDEX=superdesk_e2e
 REDIS_URL=redis://localhost:6379/2
 EOF
 
-honcho -e /tmp/testenv run python manage.py users:create -u admin -p admin -e admin@localhost --admin=true
-honcho -e /tmp/testenv start
+honcho -e /tmp/testenv start rest wamp
 rm -f /tmp/testenv

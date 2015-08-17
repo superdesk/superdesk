@@ -10,7 +10,7 @@ exports.backendRequest = backendRequest;
 exports.backendRequestAuth = backendRequestAuth;
 
 function getBackendUrl(uri) {
-    return constructUrl(browser.params.baseBackendUrl, uri);
+    return constructUrl(browser.params.backendUrl, uri);
 }
 
 function backendRequest(params, callback) {
@@ -19,6 +19,7 @@ function backendRequest(params, callback) {
         params.url = getBackendUrl(params.uri);
         delete params.uri;
     }
+
     params.rejectUnauthorized = false;
     request(
         params,
@@ -36,6 +37,7 @@ function backendRequest(params, callback) {
                 console.log(body);
                 throw new Error('Status code: ' + response.statusCode);
             }
+
             callback(error, response, body);
         }
     );

@@ -144,14 +144,14 @@ class PreferencesService(BaseService):
     def set_session_based_prefs(self, session_id, user_id):
         service = get_resource_service('users')
         user_doc = service.find_one(req=None, _id=user_id)
+        if user_doc:
+            session_prefs = user_doc.get(_session_preferences_key, {})
+            available = dict(superdesk.default_session_preferences)
+            if available.get('desk:last_worked') == '' and user_doc.get('desk'):
+                available['desk:last_worked'] = user_doc.get('desk')
 
-        session_prefs = user_doc.get(_session_preferences_key, {})
-        available = dict(superdesk.default_session_preferences)
-        if available.get('desk:last_worked') == '' and user_doc.get('desk'):
-            available['desk:last_worked'] = user_doc.get('desk')
-
-        session_prefs.setdefault(str(session_id), available)
-        service.system_update(user_id, {_session_preferences_key: session_prefs}, user_doc)
+            session_prefs.setdefault(str(session_id), available)
+            service.system_update(user_id, {_session_preferences_key: session_prefs}, user_doc)
 
     def set_user_initial_prefs(self, user_doc):
         if _user_preferences_key not in user_doc:

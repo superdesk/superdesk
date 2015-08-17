@@ -34,6 +34,9 @@ class SuperdeskDataLayer(DataLayer):
         self.driver = self.mongo.driver
         self.storage = self.driver
         self.aapmm = AAPMMDatalayer(app)
+        self.init_elastic(app)
+
+    def init_elastic(self, app):
         self.elastic = Elastic(app, serializer=SuperdeskJSONEncoder())
 
     def find(self, resource, req, lookup):

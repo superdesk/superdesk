@@ -16,9 +16,8 @@ from .app_scaffold_data import AppScaffoldDataCommand  # NOQA
 
 
 def init_app(app):
-    if superdesk.app.config.get('SUPERDESK_TESTING', False):
+    if app.config.get('SUPERDESK_TESTING', False):
         endpoint_name = 'prepopulate'
         service = PrepopulateService(endpoint_name, backend=superdesk.get_backend())
         PrepopulateResource(endpoint_name, app=app, service=service)
-
         superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['POST'])

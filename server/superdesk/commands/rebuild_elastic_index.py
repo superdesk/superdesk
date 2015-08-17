@@ -12,6 +12,7 @@
 from superdesk.utils import get_random_string
 from elasticsearch.helpers import reindex
 from eve_elastic import get_es, get_indices
+from flask import current_app as app
 import elasticsearch
 import superdesk
 
@@ -22,15 +23,15 @@ class RebuildElasticIndex(superdesk.Command):
     the same alias as the configured index, puts the new mapping and delete the old index.
     """
     def run(self):
-        index_name = superdesk.app.config['ELASTICSEARCH_INDEX']
+        index_name = app.config['ELASTICSEARCH_INDEX']
         print('Starting index rebuilding for index: ', index_name)
         try:
-            es = get_es(superdesk.app.config['ELASTICSEARCH_URL'])
+            es = get_es(app.config['ELASTICSEARCH_URL'])
             clone_name = index_name + '-' + get_random_string()
             print('Creating index: ', clone_name)
             get_indices(es).create(clone_name)
             print('Putting mapping for index: ', clone_name)
-            superdesk.app.data.elastic.put_mapping(superdesk.app, clone_name)
+            app.data.elastic.put_mapping(app, clone_name)
             print('Starting index rebuilding.')
             reindex(es, index_name, clone_name)
             print('Finished index rebuilding.')

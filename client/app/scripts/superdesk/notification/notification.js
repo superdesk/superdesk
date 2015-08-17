@@ -34,6 +34,12 @@
 
         ws.onmessage = function(event) {
             var msg = angular.fromJson(event.data);
+
+            // ignore messages for different app
+            if (msg.extra && msg.extra.app && config.app && config.app !== msg.extra.app) {
+                return;
+            }
+
             $rootScope.$broadcast(msg.event, msg.extra);
             if (_.contains(ReloadEvents, msg.event)) {
                 $rootScope.$broadcast('reload', msg);

@@ -1,5 +1,7 @@
 'use strict';
 
+var maxInstances = process.env.SUPERDESK_TESTING_INSTANCES || 2;
+
 function getChromeOptions() {
     var chromeOptions = {
         args: ['no-sandbox']
@@ -13,7 +15,7 @@ function getChromeOptions() {
 }
 
 exports.config = {
-    baseUrl: 'http://localhost:9090',
+    baseUrl: 'http://localhost:9090?',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
         username: 'admin',
@@ -21,6 +23,7 @@ exports.config = {
     },
 
     specs: ['spec/**/*[Ss]pec.js'],
+    exclude: ['spec/highlights_spec.js'],
 
     framework: 'jasmine2',
     jasmineNodeOpts: {
@@ -29,8 +32,12 @@ exports.config = {
 
     capabilities: {
         browserName: 'chrome',
-        chromeOptions: getChromeOptions()
+        chromeOptions: getChromeOptions(),
+        shardTestFiles: true,
+        maxInstances: maxInstances
     },
+
+    directConnect: true,
 
     onPrepare: function() {
         require('./spec/helpers/setup')({fixture_profile: 'app_prepopulate_data'});

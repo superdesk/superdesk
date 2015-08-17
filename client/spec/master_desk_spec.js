@@ -1,12 +1,12 @@
 
 'use strict';
-var openUrl = require('./helpers/utils').open,
+var nav = require('./helpers/utils').nav,
     masterDesks = require('./helpers/master_desks'),
     authoring = require('./helpers/authoring');
 
-describe('Master Desk', function() {
-    beforeEach(function(done) {
-        openUrl('/#/desks/').then(done);
+describe('masterdesk', function() {
+    beforeEach(function() {
+        nav('/desks/');
     });
 
     function itemHeadline(x, y, z) {

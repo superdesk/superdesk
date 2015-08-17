@@ -24,19 +24,19 @@ from logging import Formatter
 
 
 beat_delay = 30
-debug_log_format = ('%(levelname)s:%(module)s:%(message)s\n')
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+debug_log_format = ('%(levelname)s:%(module)s:%(message)s\n')
 handler = SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))
 handler.setFormatter(Formatter(debug_log_format))
+
+logger = logging.getLogger('superdesk.ws')
+logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.addHandler(logging.StreamHandler())
 
 
 def log(log_msg):
     logger.info(log_msg)
-    print(log_msg)
 
 
 class BroadcastProtocol(WebSocketServerProtocol):

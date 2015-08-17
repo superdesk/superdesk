@@ -2,31 +2,41 @@
 
 /* global beforeEach */
 
-var getToken = require('./auth').getToken;
 var resetApp = require('./fixtures').resetApp;
-var waitForSuperdesk = require('./utils').waitForSuperdesk;
 
 function clearStorage() {
     return browser.driver.executeScript('sessionStorage.clear();localStorage.clear();');
 }
 
-function openBaseUrl() {
-    return browser.driver.get(browser.baseUrl);
+function setBrowserSize() {
+    var BROWSER_WIDTH = 1366;
+    var BROWSER_HEIGHT = 768;
+
+    return browser.driver.manage().window().getSize().then(function(size) {
+        if (size.width !== BROWSER_WIDTH || size.height !== BROWSER_HEIGHT) {
+            return browser.driver.manage().window().setSize(BROWSER_WIDTH, BROWSER_HEIGHT);
+        }
+    });
 }
 
 module.exports = function(params) {
+
     // runs before every spec
     beforeEach(function(done) {
-        require('./waitReady');
-        browser.driver.manage().window().setSize(1280, 800);
-        getToken(function() {
-            resetApp(params.fixture_profile, function() {
-                openBaseUrl()
-                    .then(clearStorage)
-                    .then(openBaseUrl)
-                    .then(waitForSuperdesk)
-                    .then(done);
-            });
+
+        var top = jasmine.getEnv().topSuite();
+        var spec = top.children[0].description;
+        var specUrl = '?' + spec;
+        browser.params.specUrl = specUrl;
+
+        browser.params.backendUrl = browser.params.baseBackendUrl.replace('api', spec + '/api');
+        browser.baseUrl = browser.baseUrl.split('?')[0] + specUrl;
+
+        resetApp(params.fixture_profile, function() {
+            browser.get(specUrl)
+                .then(setBrowserSize)
+                .then(clearStorage)
+                .then(done);
         });
     });
 };

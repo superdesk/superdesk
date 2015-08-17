@@ -425,6 +425,7 @@
                  */
                 scope.stopEvent = function(event) {
                     event.stopPropagation();
+                    return false;
                 };
 
                 scope.run = function(activity) {

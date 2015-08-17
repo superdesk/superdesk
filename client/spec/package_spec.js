@@ -1,13 +1,13 @@
-var openUrl = require('./helpers/utils').open,
+var nav = require('./helpers/utils').nav,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
     authoring = require('./helpers/pages').authoring;
 
-describe('Package', function() {
+describe('package', function() {
     'use strict';
 
-    beforeEach(function(done) {
-        openUrl('/#/workspace/content').then(done);
+    beforeEach(function() {
+        nav('/workspace/content');
     });
 
     it('increment package version', function() {
@@ -48,13 +48,13 @@ describe('Package', function() {
         addItemsToPackage();
 
         // package existing package
-        workspace.openContent('/#/workspace/content');
+        workspace.openContent();
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Package item', 0);
 
         // select package
-        workspace.openContent('/#/workspace/content');
+        workspace.openContent();
         workspace.switchToDesk('Personal');
         element.all(by.repeater('item in items')).first().click();
 

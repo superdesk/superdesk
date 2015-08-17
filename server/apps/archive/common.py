@@ -181,7 +181,7 @@ def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
 
     try:
-        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if superdesk.app.config.get('SUPERDESK_TESTING', False) \
+        key_name = 'TEST_{}_SEQ'.format(repo_type.upper()) if app.config.get('SUPERDESK_TESTING', False) \
             else '{}_SEQ'.format(repo_type.upper())
 
         unique_id = update_key(key_name, flag=True)

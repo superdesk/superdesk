@@ -68,11 +68,7 @@ function Workspace() {
             }
         });
 
-        openContent();
-
-        return browser.wait(function() {
-            return element(by.className('list-view')).isPresent();
-        });
+        return openContent();
     };
 
     this.selectStage = function(stage) {

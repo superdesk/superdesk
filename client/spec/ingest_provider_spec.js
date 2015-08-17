@@ -1,11 +1,11 @@
 'use strict';
-var openUrl = require('./helpers/utils').open,
+var nav = require('./helpers/utils').nav,
     ingestDashboard = require('./helpers/pages').ingestDashboard;
 
-describe('Ingest Provider Dashboard Maintenance', function() {
+describe('ingestdashboard', function() {
 
-    beforeEach(function(done) {
-        openUrl('/#/ingest_dashboard').then(done);
+    beforeEach(function() {
+        nav('/ingest_dashboard');
     });
 
     function addProvider() {
