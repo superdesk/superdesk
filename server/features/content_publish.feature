@@ -630,7 +630,7 @@ Feature: Content Publishing
       """
       And "archive"
       """
-      [{"guid": "123", "headline": "test", "_current_version": 0, "state": "fetched",
+      [{"guid": "123", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
         "body_html": "Test Document body"}]
@@ -653,7 +653,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 2, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 3, "state": "corrected", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
@@ -669,7 +669,7 @@ Feature: Content Publishing
       Then we get OK response
       And we get existing resource
       """
-      {"_current_version": 3, "state": "killed", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      {"_current_version": 4, "state": "killed", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
       When we post to "/archive/#archive._id#/unlock"
       """
