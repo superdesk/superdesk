@@ -238,6 +238,9 @@
                 {term: {package_type: 'takes'}},
                 {term: {last_published_version: false}}]}});
 
+            //remove the digital package from production view.
+            this.filter({not: {and: [{term: {package_type: 'takes'}}, {term: {_type: 'archive'}}]}});
+
             buildFilters(params, this);
         }
 
