@@ -427,6 +427,7 @@
                         $scope.subscriber.destinations = $scope.subscriber.destinations || [];
                         $scope.subscriber.global_filters =  $scope.origSubscriber.global_filters || {};
                         $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
+                        $scope.subscriberType = $scope.subscriber.subscriber_type || '';
                         initGlobalFilters();
                     }, function() {
                         notify.error(gettext('Subscriber could not be initialized!'));
@@ -454,6 +455,30 @@
                     $scope.origSubscriber = null;
                     $scope.subscriber = null;
                     $scope.newDestination = null;
+                };
+
+                /**
+                 * Invoked when Subscriber Type is changed. Responsible for populating $scope.formats variable.
+                 * The $scope.formats variable is used to display format field in destination. The new value is changed.
+                 */
+                $scope.changeFormats = function(newSubscriberType) {
+                    var formats = _.result(_.find($scope.subTypes, {value: newSubscriberType}), 'formats');
+
+                    if ($scope.subscriber.destinations.length > 0 && $scope.subscriberType !== '') {
+                        var oldFormats = _.result(_.find($scope.subTypes, {value: $scope.subscriberType}), 'formats');
+
+                        if (!_.isEqual(oldFormats, formats)) {
+                            notify.error(gettext('Error: The changed subscriber type has formats which are not ' +
+                                'supported by existing destination(s)'));
+                            $scope.subscriber.subscriber_type = $scope.subscriberType;
+                        } else {
+                            $scope.subscriberType = $scope.subscriber.subscriber_type;
+                            $scope.formats = formats;
+                        }
+                    } else {
+                        $scope.subscriberType = $scope.subscriber.subscriber_type;
+                        $scope.formats = formats;
+                    }
                 };
 
                 fetchSubscribers();
