@@ -51,7 +51,7 @@
 
                         <div class="field">
                             <label for="subType" translate>Subscriber Type</label>
-                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes" required>
+                            <select id="subType" ng-model="subscriber.subscriber_type" ng-options="s.value as s.name for s in subTypes" ng-change="changeFormats(subscriber.subscriber_type)" required>
                                 <option value=""></option>
                             </select>
                         </div>

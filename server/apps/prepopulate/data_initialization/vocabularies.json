@@ -136,9 +136,15 @@
     {
         "_id": "subscriber_types",
         "items": [
-            {"is_active": true, "name": "Digital/Internet", "value": "digital"},
-            {"is_active": true, "name": "Wire/Paper", "value": "wire"},
-            {"is_active": true, "name": "Broadcast", "value": "broadcast"}
+            {"is_active": true, "name": "Digital/Internet", "value": "digital",
+                "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
+                            {"name": "AAP Bulletin Builder", "value": "AAP BULLETIN BUILDER"}]},
+            {"is_active": true, "name": "Wire/Paper", "value": "wire",
+                "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                            {"name": "AAP SMS", "value": "AAP SMS"}]},
+            {"is_active": true, "name": "Broadcast", "value": "broadcast",
+                "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                            {"name": "AAP SMS", "value": "AAP SMS"}]}
         ]
     },
     {

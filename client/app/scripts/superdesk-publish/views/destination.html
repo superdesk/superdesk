@@ -7,15 +7,8 @@
 
         <div class="field">
             <label for="destination-format" translate>Format</label>
-            <select id="destination-format" class="input" required ng-model="destination.format">
-                <option value="nitf" translate>NITF</option>
-                <option value="newsml12" translate>AAP NewsML 1.2</option>
-                <option value="AAP IPNEWS" translate>AAP IPNEWS</option>
-                <option value="AAP ANPA" translate>AAP ANPA</option>
-                <option value="ninjs" translate>NINJS</option>
-                <option value="newsmlg2" translate>NewsML G2</option>
-                <option value="AAP BULLETIN BUILDER" translate>AAP Bulletin Builder</option>
-                <option value="AAP SMS" translate>AAP SMS</option>
+            <select id="destination-format" class="input" required ng-model="destination.format" ng-options="f.value as f.name for f in $parent.formats">
+                <option value=""></option>
             </select>
         </div>
 
