@@ -9,6 +9,10 @@ describe('search service', function() {
         var criteria = query.getCriteria();
         var filters = criteria.query.filtered.filter.and;
         expect(filters).toContain({not: {term: {state: 'spiked'}}});
+        expect(filters).toContain({not: {and: [{term: {package_type: 'takes'}}, {term: {_type: 'archive'}}]}});
+        expect(filters).toContain({not: {and: [{term: {_type: 'published'}},
+                {term: {package_type: 'takes'}},
+                {term: {last_published_version: false}}]}});
         expect(criteria.sort).toEqual([{versioncreated: 'desc'}]);
         expect(criteria.size).toBe(25);
     }));
