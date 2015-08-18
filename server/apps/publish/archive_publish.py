@@ -96,7 +96,16 @@ class BasePublishService(BaseService):
 
         updated = original.copy()
         updated.update(updates)
-        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updated}
+
+        '''
+        Since update() overwrites the keys in updated with the keys in updates, the updated looses mandatory keys
+        in dateline dict and publish validators fail.
+        '''
+        if 'dateline' in updates:
+            updated['dateline']['date'] = original['dateline']['date']
+            updated['dateline']['source'] = original['dateline']['source']
+
+        validate_item = {'act': self.publish_type, ITEM_TYPE: original[ITEM_TYPE], 'validate': updated}
 
         takes_package = self.takes_package_service.get_take_package(original) or {}
         # validate if take can be published
