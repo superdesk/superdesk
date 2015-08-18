@@ -208,6 +208,8 @@
                 scope.$watch('group.fileType', queryItems);
                 scope.$on('task:stage', handleStage);
                 scope.$on('ingest:update', update);
+                scope.$on('item:spike', update);
+                scope.$on('item:unspike', update);
 
                 var list = elem[0].getElementsByClassName('inline-content-items')[0],
                     scrollElem = elem.find('.stage-content').first();

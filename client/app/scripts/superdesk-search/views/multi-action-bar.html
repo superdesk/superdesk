@@ -27,7 +27,7 @@
         	ng-if="!spike && !publish && action.canSpikeItems()">
         	<i class="icon-remove"></i>
         </button>
-        <button class="navbtn" ng-click="action.unspikeItems()" tooltip="{{ :: 'Unspike' | translate }}" tooltip-placement="bottom" ng-if="spike">
+        <button class="navbtn" ng-click="action.unspikeItems()" tooltip="{{ :: 'Unspike' | translate }}" tooltip-placement="bottom" ng-if="state === 'spiked'">
         	<i class="icon-revert"></i>
         </button>
 	</div>
