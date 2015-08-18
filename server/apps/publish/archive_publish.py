@@ -663,7 +663,7 @@ class ArchivePublishService(BasePublishService):
         if doc.get(ITEM_TYPE) in [CONTENT_TYPE.COMPOSITE] and doc.get(PACKAGE_TYPE) == TAKES_PACKAGE:
             # Step 1a
             query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                              {'publishing_action': {'$in': ['published', 'corrected']}}]}
+                              {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
             takes_subscribers = self._get_subscribers_for_previously_sent_items(query)
 
         # Step 2
@@ -676,7 +676,7 @@ class ArchivePublishService(BasePublishService):
             if first_take:
                 # if first take is published then subsequent takes should to same subscribers.
                 query = {'$and': [{'item_id': first_take},
-                                  {'publishing_action': {'$in': ['published']}}]}
+                                  {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED]}}]}
                 subscribers = self._get_subscribers_for_previously_sent_items(query)
 
         # Step 4
@@ -773,7 +773,7 @@ class KillPublishService(BasePublishService):
 
         subscribers, subscribers_yet_to_receive = [], []
         query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                          {'publishing_action': {'$in': ['published', 'corrected']}}]}
+                          {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
         subscribers = self._get_subscribers_for_previously_sent_items(query)
 
         return subscribers, subscribers_yet_to_receive
@@ -812,7 +812,7 @@ class CorrectPublishService(BasePublishService):
         subscribers, subscribers_yet_to_receive = [], []
         # step 1
         query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                          {'publishing_action': {'$in': ['published', 'corrected']}}]}
+                          {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
 
         subscribers = self._get_subscribers_for_previously_sent_items(query)
 
