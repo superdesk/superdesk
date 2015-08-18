@@ -1113,3 +1113,261 @@ Feature: Take Package Publishing
         ]
       }
       """
+
+    @auth @test @vocabulary
+    Scenario: Publishing of Takes with different metadata should go to atleast subscribers that received first take
+        Given the "validators"
+        """
+        [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+         {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+        """
+        And "desks"
+        """
+        [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+        """
+        And empty "filter_conditions"
+        When we post to "/filter_conditions" with "DomesticSport" and success
+        """
+        [{"field" : "anpa_category", "name" : "Domestic Sport Content", "value" : "T", "operator" : "in"}]
+        """
+        Then we get OK response
+        When we post to "/filter_conditions" with "OverseasSport" and success
+        """
+        [{"field" : "anpa_category", "name" : "Overseas Sport Content", "value" : "S", "operator" : "in"}]
+        """
+        Then we get OK response
+        Given empty "publish_filters"
+        When we post to "/publish_filters" with "DomesticSportFilter" and success
+        """
+        [{"publish_filter": [{"expression": {"fc": ["#DomesticSport#"]}}], "name": "domestic-sport"}]
+        """
+        Then we get OK response
+        When we post to "/publish_filters" with "OverseasSportFilter" and success
+        """
+        [{"publish_filter": [{"expression": {"fc": ["#OverseasSport#"]}}], "name": "overseas-sport"}]
+        """
+        Then we get OK response
+        When we post to "/subscribers" with "DomesticSportSubscriber" and success
+        """
+        {
+          "name":"DomesticSportSubscriber","media_type":"media", "subscriber_type": "digital",
+          "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+          "publish_filter" : {
+            "filter_type" : "permitting",
+            "filter_id" : "#DomesticSportFilter#"
+          },
+          "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP",
+          "config":{"ip":"144.122.244.55","password":"xyz"}}]
+        }
+        """
+        Then we get OK response
+        When we post to "/subscribers" with "OverseasSportSubscriber" and success
+        """
+        {
+          "name":"OverseasSportSubscriber","media_type":"media", "subscriber_type": "digital",
+          "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+          "publish_filter" : {
+            "filter_type" : "permitting",
+            "filter_id" : "#OverseasSportFilter#"
+          },
+          "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP",
+          "config":{"ip":"144.122.244.55","password":"xyz"}}]
+        }
+        """
+        Then we get OK response
+        When we post to "archive" with success
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "Domestic Sport headline",
+            "abstract": "Take-1 abstract",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "body_html": "Take-1",
+            "state": "draft",
+            "slugline": "comics",
+            "urgency": "4",
+            "pubstatus": "usable",
+            "subject":[{"qcode": "17004000", "name": "Statistics"}],
+            "anpa_category": [{"qcode": "T", "name": "Domestic Sport"}],
+            "anpa_take_key": "Take"
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{}]
+        """
+        Then we get next take as "TAKE2"
+        """
+        {
+            "_id": "#TAKE2#",
+            "type": "text",
+            "headline": "Domestic Sport headline",
+            "slugline": "comics",
+            "anpa_take_key": "Take=2",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+        }
+        """
+        When we patch "/archive/#TAKE2#"
+        """
+        {"headline": "Overseas Sport headline",
+         "body_html": "Take-2",
+         "anpa_category": [{"qcode": "S", "name": "Overseas Sport"}]}
+        """
+        Then we get OK response
+        When we post to "/archive/#TAKE2#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we publish "123" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/publish_queue"
+        Then we get list with 1 items
+        """
+        {
+        "_items": [
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 2,
+                      "headline": "Domestic Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  }
+           ]
+        }
+        """
+        When we publish "#TAKE2#" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/publish_queue"
+        Then we get list with 3 items
+        """
+        {
+        "_items": [
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 2,
+                      "headline": "Domestic Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 3,
+                      "headline": "Overseas Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 3,
+                      "headline": "Overseas Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#OverseasSportSubscriber#"
+                  }
+           ]
+        }
+        """
+        When we post to "archive/#TAKE2#/link"
+        """
+        [{}]
+        """
+        Then we get next take as "TAKE3"
+        """
+        {
+            "_id": "#TAKE3#",
+            "type": "text",
+            "headline": "Overseas Sport headline",
+            "slugline": "comics",
+            "anpa_take_key": "Take (reopens)",
+            "state": "draft",
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+        }
+        """
+        When we patch "/archive/#TAKE3#"
+        """
+        {"headline": "International headline",
+         "body_html": "Take-3",
+         "anpa_category": [{"qcode": "I", "name": "International News"}]}
+        """
+        Then we get OK response
+        When we post to "/archive/#TAKE3#/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we publish "#TAKE3#" with "publish" type and "published" state
+        Then we get OK response
+        When we get "/publish_queue"
+        Then we get list with 5 items
+        """
+        {
+        "_items": [
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 2,
+                      "headline": "Domestic Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 3,
+                      "headline": "Overseas Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 3,
+                      "headline": "Overseas Sport headline",
+                      "state": "pending",
+                      "subscriber_id": "#OverseasSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 5,
+                      "headline": "International headline",
+                      "state": "pending",
+                      "subscriber_id": "#DomesticSportSubscriber#"
+                  },
+                  {
+                      "content_type": "composite",
+                      "item_id": "#archive.123.take_package#",
+                      "item_version": 5,
+                      "headline": "International headline",
+                      "state": "pending",
+                      "subscriber_id": "#OverseasSportSubscriber#"
+                  }
+
+           ]
+        }
+        """
