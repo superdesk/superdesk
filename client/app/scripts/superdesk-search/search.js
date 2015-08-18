@@ -1258,12 +1258,15 @@
                      */
                     function detectType(items) {
                         var types = {};
+                        var states = [];
                         angular.forEach(items, function(item) {
                             types[item._type] = 1;
+                            states.push(item.state);
                         });
 
                         var typesList = Object.keys(types);
                         scope.type = typesList.length === 1 ? typesList[0] : null;
+                        scope.state = typesList.length === 1 ? states[0] : null;
                     }
                 }
             };

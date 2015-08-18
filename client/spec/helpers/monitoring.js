@@ -12,6 +12,10 @@ function Monitoring() {
         openUrl('/#/workspace/monitoring');
     };
 
+    this.openSpiked = function() {
+        element(by.className('big-icon-spiked')).click();
+    };
+
     /**
      * On monitoring view create a new item
      *
@@ -25,11 +29,31 @@ function Monitoring() {
     };
 
     this.getGroup = function(group) {
-        return element.all(by.repeater('group in aggregate.getGroups()')).get(group);
+        return this.getGroups().get(group);
+    };
+
+    this.getGroups = function() {
+        return element.all(by.repeater('group in aggregate.getGroups()'));
     };
 
     this.getItem = function(group, item) {
         return this.getGroup(group).all(by.repeater('item in items')).get(item);
+    };
+
+    this.getGroupItems = function(group) {
+        return this.getGroup(group).all(by.repeater('item in items'));
+    };
+
+    this.getSpikedItems = function() {
+        return element.all(by.repeater('item in items'));
+    };
+
+    this.getSpikedItem = function(item) {
+        return this.getSpikedItems().get(item);
+    };
+
+    this.getItemText = function(item) {
+        return item.element(by.id('title')).getText();
     };
 
     this.getTextItem = function(group, item) {
@@ -55,6 +79,48 @@ function Monitoring() {
         browser.actions().doubleClick(
                 this.getItem(group, item)
         ).perform();
+    };
+
+    this.actionOnItem = function(action, group, item) {
+        var menu = this.openItemMenu(group, item);
+        return menu.element(by.partialLinkText(action)).click();
+    };
+
+    this.selectItem = function(group, item) {
+        return this.selectGivenItem(this.getItem(group, item));
+    };
+
+    this.selectSpikedItem = function(item) {
+        return this.selectGivenItem(this.getSpikedItem(item));
+    };
+
+    this.selectGivenItem = function(item) {
+        var itemTypeIcon = item.element(by.css('.filetype-icon-text'));
+        browser.actions().mouseMove(itemTypeIcon).perform();
+        return item.element(by.model('item.selected')).click();
+    };
+
+    this.spikeMultipleItems = function() {
+        return element(by.css('[ng-click="action.spikeItems()"]')).click();
+    };
+
+    this.unspikeMultipleItems = function() {
+        return element(by.css('[ng-click="action.unspikeItems()"]')).click();
+    };
+
+    this.unspikeItem = function(item) {
+        var itemElem = this.getSpikedItem(item);
+        browser.actions().mouseMove(itemElem).perform();
+        itemElem.element(by.className('icon-dots-vertical')).click();
+        var menu = element(by.css('.dropdown-menu.active'));
+        return menu.element(by.partialLinkText('Unspike')).click();
+    };
+
+    this.openItemMenu = function(group, item) {
+        var itemElem = this.getItem(group, item);
+        browser.actions().mouseMove(itemElem).perform();
+        itemElem.element(by.className('icon-dots-vertical')).click();
+        return element(by.css('.dropdown-menu.active'));
     };
 
     this.showMonitoringSettings = function() {
