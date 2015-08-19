@@ -1517,3 +1517,132 @@ Feature: Package Publishing
       When we get "/publish_queue"
       Then we get list with 4 items
       Then we get "#archive.123.take_package#" in formatted output as "main" story
+
+
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Publish a package with a text and an image with only one wire subscriber
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+          """
+          When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 picture",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "picture",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "item-1 slugline",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "item-2 slugline",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "picture",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite",
+              "urgency": "4",
+              "anpa_category": [{"qcode": "A", "name": "Sport"}]
+          }]
+          """
+      Given "subscribers"
+          """
+          [{
+            "_id": "sub-1",
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "wire",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "nitf", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }]
+          """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get error 200
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "item-1 headline", "_current_version": 2, "state": "published"},
+                   {"_id": "456", "guid": "456", "headline": "item-2 picture", "_current_version": 2, "state": "published"},
+                   {"headline": "test package", "state": "published", "type": "composite"}
+                  ]
+      }
+      """
+      When we get digital item of "123"
+      When we get "/publish_queue"
+      Then we get list with 1 items
+      """
+      {"_items" : [{"item_id": "123", "content_type": "text", "state": "pending"}]
+      }
+      """

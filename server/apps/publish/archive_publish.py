@@ -166,7 +166,8 @@ class BasePublishService(BaseService):
 
                 queued = queued_digital or queued_wire
                 if not queued:
-                    raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+                    logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
+                                     format(original[config.ID_FIELD], self.publish_type))
 
             self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
@@ -470,7 +471,8 @@ class BasePublishService(BaseService):
 
         # Step 7
         if not target_media_type and not queued:
-            raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+            logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
+                             format(doc[config.ID_FIELD], self.publish_type))
 
         return queued
 
@@ -844,8 +846,8 @@ class KillPublishService(BasePublishService):
                     self.update_published_collection(published_item_id=original_data['_id'])
 
                     if not queued:
-                        logger.warn("Could not publish the kill for take {} with headline {}".
-                                    format(original_data.get(config.ID_FIELD), original_data.get('headline')))
+                        logger.exception("Could not publish the kill for take {} with headline {}".
+                                         format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
     def get_subscribers(self, doc, target_media_type):
         """

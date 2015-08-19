@@ -148,7 +148,7 @@ Feature: Content Publishing
 
       Then we get latest
       When we publish "#archive._id#" with "publish" type and "published" state
-      Then we get response code 400
+      Then we get OK response
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -195,7 +195,7 @@ Feature: Content Publishing
 
       Then we get latest
       When we publish "#archive._id#" with "publish" type and "published" state
-      Then we get response code 400
+      Then we get OK response
       When we get "/publish_queue"
       Then we get list with 0 items
 
@@ -940,10 +940,9 @@ Feature: Content Publishing
       """
 
       And we publish "122" with "publish" type and "published" state
-      Then we get response code 400
-      """
-      {"_issues": {"validator exception": "500: Failed to publish the item: PublishQueueError Error 9009 - Item could not be queued"}}
-      """
+      Then we get OK response
+      When we get "/publish_queue"
+      Then we get list with 0 items
 
 
 
