@@ -42,11 +42,24 @@ Feature: Cropping the Image Articles
 
     @auth
     @vocabulary
-    Scenario: Create a new crop of an Image Story with wrong aspect ratio fails
+    Scenario: Create a new crop of an Image Story with wrong width
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":400,"CropTop":0,"CropBottom": 300}
+      {"CropLeft":0,"CropRight":400,"CropTop":0,"CropBottom": 700}
+      """
+      Then we get error 400
+      """
+      {"_message": "Wrong crop size. Minimum crop size is 800x600.", "_status": "ERR"}
+      """
+
+    @auth
+    @vocabulary
+    Scenario: Create a new crop of an Image Story with wrong height
+      When upload a file "bike.jpg" to "archive" with "123"
+      When we post to "/archive/123/crop/4-3"
+      """
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom": 500}
       """
       Then we get error 400
       """
