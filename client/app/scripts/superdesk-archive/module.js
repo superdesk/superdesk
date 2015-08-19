@@ -160,9 +160,10 @@ define([
          */
         this.getType = function(item) {
             var itemType;
-
             if (this.isLegal(item)) {
                 itemType = item._type;
+            } else if (item._type === 'externalsource') {
+                itemType = 'externalsource';
             } else if (item.state === 'spiked') {
                 itemType = 'spike';
             } else if (item.state === 'ingested') {

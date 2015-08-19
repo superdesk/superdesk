@@ -72,6 +72,9 @@ describe('content', function() {
 
             item._type = 'legal_archive';
             expect(archiveService.getType(item)).toBe('legal_archive');
+
+            item._type = 'externalsource';
+            expect(archiveService.getType(item)).toBe('externalsource');
         }));
 
         it('can fetch version history', inject(function(archiveService, api, $q) {
