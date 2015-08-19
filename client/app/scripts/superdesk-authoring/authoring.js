@@ -1649,8 +1649,9 @@
                         item.dateline.text = '';
                         item._datelinedate = '';
                     } else {
-                        item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
-                        item.dateline.text = $filter('previewDateline')(item.dateline.located, item.dateline.source, item.dateline.date);
+                        item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, scope.origItem.dateline.date);
+                        item.dateline.text = $filter('previewDateline')(item.dateline.located,
+                            scope.origItem.dateline.source, scope.origItem.dateline.date);
                     }
                 };
             }
