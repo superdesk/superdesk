@@ -693,6 +693,29 @@ def step_impl_then_get_formatted_output(context, value, group, sub):
     assert False
 
 
+@then('we get "{value}" as "{group}" story for subscriber "{sub}" in package "{pck}"')
+def step_impl_then_get_formatted_output_pck(context, value, group, sub, pck):
+    assert_200(context.response)
+    value = apply_placeholders(context, value)
+    data = get_json_data(context.response)
+    for item in data['_items']:
+        if item['item_id'] != pck:
+            continue
+
+        if item['subscriber_id'] != sub:
+            continue
+
+        try:
+            formatted_data = json.loads(item['formatted_item'])
+        except:
+            continue
+
+        for group_item in formatted_data.get('associations', {}).get(group, []):
+            if group_item.get('_id', '') == value:
+                return
+    assert False
+
+
 @then('we get "{value}" in formatted output as "{group}" newsml12 story')
 def step_impl_then_get_formatted_output_newsml(context, value, group):
     assert_200(context.response)

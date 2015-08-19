@@ -781,7 +781,7 @@ Feature: Package Publishing
           }
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1049,7 +1049,7 @@ Feature: Package Publishing
           }]
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1211,7 +1211,7 @@ Feature: Package Publishing
           }]
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1368,7 +1368,7 @@ Feature: Package Publishing
           }]
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1502,7 +1502,7 @@ Feature: Package Publishing
           }]
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1629,7 +1629,7 @@ Feature: Package Publishing
           }]
           """
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1646,6 +1646,8 @@ Feature: Package Publishing
       {"_items" : [{"item_id": "123", "content_type": "text", "state": "pending"}]
       }
       """
+
+
 
       @auth
       @notification
@@ -1777,7 +1779,7 @@ Feature: Package Publishing
           """
 
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -1799,6 +1801,9 @@ Feature: Package Publishing
       """
       Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
       Then we get "#archive.456.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
+
+
+
 
       @auth
       @notification
@@ -2005,7 +2010,7 @@ Feature: Package Publishing
           """
 
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -2232,7 +2237,7 @@ Feature: Package Publishing
           """
 
       When we publish "compositeitem" with "publish" type and "published" state
-      Then we get error 200
+      Then we get OK response
       When we get "/published"
       Then we get existing resource
       """
@@ -2252,3 +2257,642 @@ Feature: Package Publishing
       {"headline": "item-3 headline", "content_type": "text", "subscriber_id": "sub-1"}
       ]}
       """
+
+
+
+      @auth
+      @notification
+      Scenario: Publish a nested package with two text stories and one digital subscriber
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      Given "subscribers"
+      """
+      [{
+        "_id": "sub-2",
+        "name":"Channel 3","media_type":"media",
+        "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem",
+                          "headline": "test package",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "outercompositeitem",
+              "headline" : "outer test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "outercompositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "item-1 headline", "_current_version": 2, "state": "published"},
+                   {"_id": "456", "guid": "456", "headline": "item-2 headline", "_current_version": 2, "state": "published"},
+                   {"headline": "item-1 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "item-2 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "test package", "state": "published", "type": "composite"},
+                   {"headline": "outer test package", "state": "published", "type": "composite"}
+                  ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 4 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "item-2 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "outer test package", "content_type": "composite", "subscriber_id": "sub-2"}]
+      }
+      """
+      When we get digital item of "123"
+      When we get "/publish_queue"
+      Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
+      When we get digital item of "456"
+      When we get "/publish_queue"
+      Then we get "#archive.456.take_package#" as "sidebars" story for subscriber "sub-2" in package "compositeitem"
+      Then we get "compositeitem" in formatted output as "main" story for subscriber "sub-2"
+
+
+
+
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Publish a nested package with three inner packages and three digital subscribers
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "11",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "22",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": 1,
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-3 headline",
+              "guid" : "33",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+          When we post to "archive" with success
+        """
+        [{
+              "original_source" : "AAP Image/AAP",
+              "description" : "A test picture",
+              "state" : "submitted",
+              "headline" : "ABC-4",
+              "byline" : "PAUL MILLER",
+              "source" : "AAP Image",
+              "mimetype" : "image/jpeg",
+              "type" : "picture",
+              "urgency":1,
+              "pubstatus" : "usable",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "44",
+              "renditions" : {
+                  "baseImage" : {
+                      "height" : 1400,
+                      "media" : "55b078b31d41c8e974d17ecf",
+                      "href" : "http://localhost:5000/api/upload/55b078b31d41c8e974d17ecf/raw?_schema=http",
+                      "mimetype" : "image/jpeg",
+                      "width" : 933
+                  }
+              },
+              "slugline" : "ABC SHOP CLOSURES"
+        }, {
+              "original_source" : "AAP Image/AAP",
+              "description" : "A test picture",
+              "state" : "submitted",
+              "headline" : "ABC-5",
+              "byline" : "PAUL MILLER",
+              "source" : "AAP Image",
+              "mimetype" : "image/jpeg",
+              "type" : "picture",
+              "pubstatus" : "usable",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "55",
+              "renditions" : {
+                  "baseImage" : {
+                      "height" : 1400,
+                      "media" : "55b078b31d41c8e974d17ecf",
+                      "href" : "http://localhost:5000/api/upload/55b078b31d41c8e974d17ecf/raw?_schema=http",
+                      "mimetype" : "image/jpeg",
+                      "width" : 933
+                  }
+              },
+              "slugline" : "ABC SHOP CLOSURES"
+        }, {
+              "original_source" : "AAP Image/AAP",
+              "description" : "A test picture",
+              "state" : "submitted",
+              "headline" : "ABC-6",
+              "byline" : "PAUL MILLER",
+              "source" : "AAP Image",
+              "mimetype" : "image/jpeg",
+              "type" : "picture",
+              "pubstatus" : "usable",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "66",
+              "renditions" : {
+                  "baseImage" : {
+                      "height" : 1400,
+                      "media" : "55b078b31d41c8e974d17ecf",
+                      "href" : "http://localhost:5000/api/upload/55b078b31d41c8e974d17ecf/raw?_schema=http",
+                      "mimetype" : "image/jpeg",
+                      "width" : 933
+                  }
+              },
+              "slugline" : "ABC SHOP CLOSURES"
+        }]
+        """
+        When we post to "/filter_conditions" with success
+        """
+        [{"name": "sport", "field": "urgency", "operator": "in", "value": "1"}]
+        """
+        Then we get latest
+        When we post to "/publish_filters" with success
+        """
+        [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+        """
+        Then we get latest
+        Given "subscribers"
+        """
+        [{
+              "_id": "sub-1",
+              "name":"Channel 3","media_type":"media",
+              "subscriber_type": "digital",
+              "sequence_num_settings":{"min" : 1, "max" : 10},
+              "email": "test@test.com",
+              "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+            }, {
+              "_id": "sub-2",
+              "name":"Channel 4","media_type":"media",
+              "subscriber_type": "digital",
+              "sequence_num_settings":{"min" : 1, "max" : 10},
+              "email": "test@test.com",
+              "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+              "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+            }, {
+              "_id": "sub-3",
+              "name":"Channel 5","media_type":"media",
+              "subscriber_type": "digital",
+              "sequence_num_settings":{"min" : 1, "max" : 10},
+              "email": "test@test.com",
+              "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+              "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+            }]
+        """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "11",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "11"
+                      }, {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "44",
+                          "headline": "item-1 image",
+                          "location": "archive",
+                          "type": "picture",
+                          "itemClass": "icls:picture",
+                          "residRef": "44"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem1",
+              "headline" : "test package 1",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      And we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "22",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "22"
+                      }, {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "55",
+                          "headline": "item-2 image",
+                          "location": "archive",
+                          "type": "picture",
+                          "itemClass": "icls:picture",
+                          "residRef": "55"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem2",
+              "headline" : "test package 2",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "33",
+                          "headline": "item-3 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "33"
+                      }, {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "66",
+                          "headline": "item-3 image",
+                          "location": "archive",
+                          "type": "picture",
+                          "itemClass": "icls:picture",
+                          "residRef": "66"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem3",
+              "headline" : "test package 3",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem1",
+                          "headline": "test package 1",
+                          "location": "archive",
+                          "type": "composite",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem1"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem2",
+                          "headline": "test package 2",
+                          "location": "archive",
+                          "type": "composite",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem2"
+                      },{
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem3",
+                          "headline": "test package 3",
+                          "location": "archive",
+                          "type": "composite",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem3"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "outercompositeitem",
+              "headline" : "outer test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "outercompositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 13 items
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "11", "headline": "item-1 headline", "state": "published"},
+                   {"_id": "22", "headline": "item-2 headline", "state": "published"},
+                   {"_id": "33", "headline": "item-3 headline", "state": "published"},
+                   {"_id": "44", "type": "picture", "state": "published"},
+                   {"_id": "55", "type": "picture", "state": "published"},
+                   {"_id": "66", "type": "picture", "state": "published"},
+                   {"_id": "compositeitem1", "type": "composite", "state": "published"},
+                   {"_id": "compositeitem2", "type": "composite", "state": "published"},
+                   {"_id": "compositeitem3", "type": "composite", "state": "published"},
+                   {"_id": "compositeitem3", "type": "composite", "state": "published"},
+                   {"headline": "item-1 headline", "package_type": "takes"},
+                   {"headline": "item-2 headline", "package_type": "takes"},
+                   {"headline": "item-3 headline", "package_type": "takes"},
+                   {"headline": "outer test package", "state": "published", "type": "composite"}
+                  ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 26 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "ABC-4", "content_type": "picture", "subscriber_id": "sub-1"},
+                   {"headline": "test package 1", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "item-2 headline", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "ABC-5", "content_type": "picture", "subscriber_id": "sub-1"},
+                   {"headline": "test package 2", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "item-3 headline", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "ABC-6", "content_type": "picture", "subscriber_id": "sub-1"},
+                   {"headline": "test package 3", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "outer test package", "content_type": "composite", "subscriber_id": "sub-1"},
+                   {"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "test package 1", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "ABC-5", "content_type": "picture", "subscriber_id": "sub-2"},
+                   {"headline": "test package 2", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "item-3 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "ABC-6", "content_type": "picture", "subscriber_id": "sub-2"},
+                   {"headline": "test package 3", "content_type": "composite", "subscriber_id": "sub-2"},
+                   {"headline": "outer test package", "content_type": "composite", "subscriber_id": "sub-2"}]
+      }
+      """
+      When we get digital item of "11"
+      When we get "/publish_queue"
+      Then we get "#archive.11.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem1"
+      Then we get "compositeitem1" as "main" story for subscriber "sub-2" in package "outercompositeitem"
+      Then we get "compositeitem2" as "main" story for subscriber "sub-2" in package "outercompositeitem"
+      Then we get "compositeitem3" as "main" story for subscriber "sub-2" in package "outercompositeitem"

@@ -134,7 +134,7 @@ class BasePublishService(BaseService):
             last_updated = updates.get(config.LAST_UPDATED, utcnow())
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                self._publish_package_items(original)
+                self._publish_package_items(original, updates)
 
             queued_digital = False
             package = None
@@ -207,7 +207,7 @@ class BasePublishService(BaseService):
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
         return queued_digital
 
-    def _publish_package_items(self, package):
+    def _publish_package_items(self, package, updates):
         """
         Publishes all items of a package recursively then publishes the package itself
         :param: package to publish
@@ -228,10 +228,13 @@ class BasePublishService(BaseService):
 
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         # if the item is a package do recursion to publish
-                        self._publish_package_items(package_item)
+                        self._publish_package_items(package_item, updates)
+                        self._update_archive(original=package_item, updates=updates, should_insert_into_versions=False)
+                        self.update_published_collection(published_item_id=package_item[config.ID_FIELD])
+                    else:
+                        # publish the item
+                        archive_publish.patch(id=package_item.pop(config.ID_FIELD), updates=package_item)
 
-                    # publish the item
-                    archive_publish.patch(id=package_item.pop(config.ID_FIELD), updates=package_item)
                     package_item = super().find_one(req=None, _id=guid)
 
                 subscribers, digital_item_id = self._get_subscribers_for_package_item(package_item)
