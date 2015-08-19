@@ -37,12 +37,6 @@ define([
                         controller: ConfigController,
                         scope: scope
                     });
-                    /*
-                     * If other type of modal is opened, close it
-                     */
-                    $(document).on('shown.bs.modal', '.modal', function () {
-                        $(this).modal('hide');
-                    });
                 };
             }
         };
