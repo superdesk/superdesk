@@ -88,6 +88,11 @@ class ArchiveCropService(BaseService):
         """
         width = doc['CropRight'] - doc['CropLeft']
         height = doc['CropBottom'] - doc['CropTop']
+
+        if width < crop['width'] or width < crop['height']:
+            raise SuperdeskApiError.badRequestError(
+                message='Wrong crop size. Minimum crop size is {}x{}.'.format(crop['width'], crop['height']))
+
         doc_ratio = round(width / height, 1)
         spec_ratio = round(crop['width'] / crop['height'], 1)
         if doc_ratio != spec_ratio:

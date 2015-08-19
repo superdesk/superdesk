@@ -26,9 +26,20 @@ class ArchiveCropTestCase(TestCase):
         with assert_raises(SuperdeskApiError):
             self.service._validate_aspect_ratio(crop, doc)
 
-    def test_validate_aspect_ratio_succeeds(self):
+    def test_validate_aspect_ratio_fails_with_cropsize_less(self):
         doc = {'CropLeft': 0, 'CropRight': 80, 'CropTop': 0, 'CropBottom': 60}
-        crop = {'height': 300, 'width': 400}
+        crop = {'height': 600, 'width': 800}
+        with assert_raises(SuperdeskApiError):
+            self.service._validate_aspect_ratio(crop, doc)
+
+    def test_validate_aspect_ratio_succeeds(self):
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        crop = {'height': 600, 'width': 800}
+        self.assertIsNone(self.service._validate_aspect_ratio(crop, doc))
+
+    def test_validate_aspect_ratio_succeeds(self):
+        doc = {'CropLeft': 0, 'CropRight': 1600, 'CropTop': 0, 'CropBottom': 1200}
+        crop = {'height': 600, 'width': 800}
         self.assertIsNone(self.service._validate_aspect_ratio(crop, doc))
 
     def test_get_crop_by_name(self):
