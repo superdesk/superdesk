@@ -57,8 +57,6 @@
                 "required": true,
                 "schema": {
                     "located": {"type": "dict", "required": true},
-                    "date": {"type": "datetime", "required": true},
-                    "source": {"type": "string", "required": true},
                     "text": {"type": "string", "required": true}
                 }
             }
@@ -122,8 +120,6 @@
                 "required": true,
                 "schema": {
                     "located": {"type": "dict", "required": true},
-                    "date": {"type": "datetime", "required": true},
-                    "source": {"type": "string", "required": true},
                     "text": {"type": "string", "required": true}
                 }
             }
@@ -145,16 +141,64 @@
         }
     },
     {
+        "_id": "correct_text",
+        "act": "correct",
+        "type": "text",
+        "schema": {
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
+            }
+        }
+    },
+    {
+        "_id": "correct_preformatted",
+        "act": "correct",
+        "type": "preformatted",
+        "schema": {
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
+            }
+        }
+    },
+    {
         "_id": "kill_text",
         "act": "kill",
         "type": "text",
-        "schema": {}
+        "schema": {
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
+            }
+        }
     },
     {
-        "_id": "publish_correct",
-        "act": "correct",
-        "type": "text",
-        "schema": {}
+        "_id": "kill_preformatted",
+        "act": "kill",
+        "type": "preformatted",
+        "schema": {
+            "dateline": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "located": {"type": "dict", "required": true},
+                    "text": {"type": "string", "required": true}
+                }
+            }
+        }
     },
     {
         "_id": "publish_video",
