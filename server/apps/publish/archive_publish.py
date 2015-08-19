@@ -887,6 +887,26 @@ class CorrectPublishService(BasePublishService):
         super().on_update(updates, original)
         set_sign_off(updates, original)
 
+    def on_updated(self, updates, original):
+        """
+        Locates the published or corrected non-take packages containing the corrected item
+        and corrects them
+        :param updates: correction
+        :param original: original story
+        """
+        original_updates = dict(updates)
+        super().on_updated(updates, original)
+        packages = PackageService().get_packages(original[config.ID_FIELD])
+        if packages and packages.count() > 0:
+            archive_correct = get_resource_service('archive_correct')
+            processed_packages = []
+            for package in packages:
+                if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED] and \
+                        package.get(PACKAGE_TYPE, '') == '' and \
+                        str(package[config.ID_FIELD]) not in processed_packages:
+                    archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
+                    processed_packages.append(package[config.ID_FIELD])
+
     def get_subscribers(self, doc, target_media_type):
         """
         Get the subscribers for this document based on the target_media_type
