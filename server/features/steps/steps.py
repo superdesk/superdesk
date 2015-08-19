@@ -673,14 +673,23 @@ def step_impl_then_get_formatted_output(context, value):
     assert False
 
 
-@then('we get "{value}" in formatted output as "{group}" story')
-def step_impl_then_get_formatted_output(context, value, group):
+@then('we get "{value}" in formatted output as "{group}" story for subscriber "{sub}"')
+def step_impl_then_get_formatted_output(context, value, group, sub):
     assert_200(context.response)
     value = apply_placeholders(context, value)
     data = get_json_data(context.response)
     for item in data['_items']:
-        if '"' + group + '": [{"_id": "' + value + '"' in item['formatted_item']:
-            return
+        if item['subscriber_id'] != sub:
+            continue
+
+        try:
+            formatted_data = json.loads(item['formatted_item'])
+        except:
+            continue
+
+        for group_item in formatted_data.get('associations', {}).get(group, []):
+            if group_item.get('_id', '') == value:
+                return
     assert False
 
 

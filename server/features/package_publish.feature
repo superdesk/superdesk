@@ -1064,7 +1064,7 @@ Feature: Package Publishing
         When we get digital item of "123"
         When we get "/publish_queue"
         Then we get list with 5 items
-        Then we get "#archive.123.take_package#" in formatted output as "main" story
+        Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
 
 
 
@@ -1226,8 +1226,8 @@ Feature: Package Publishing
       When we get digital item of "123"
       When we get "/publish_queue"
       Then we get list with 5 items
-      Then we get "#archive.123.take_package#" in formatted output as "main" story
-      Then we get "#archive.123.take_package#" in formatted output as "sidebars" story
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+      Then we get "#archive.123.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
 
 
 
@@ -1516,7 +1516,7 @@ Feature: Package Publishing
       When we get digital item of "123"
       When we get "/publish_queue"
       Then we get list with 4 items
-      Then we get "#archive.123.take_package#" in formatted output as "main" story
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
 
 
 
@@ -1646,3 +1646,388 @@ Feature: Package Publishing
       {"_items" : [{"item_id": "123", "content_type": "text", "state": "pending"}]
       }
       """
+
+      @auth
+      @notification
+      Scenario: Publish a package with two already published text stories and one digital subscriber
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      Given "subscribers"
+      """
+      [{
+        "_id": "sub-2",
+        "name":"Channel 3","media_type":"media",
+        "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_id": "123", "state": "published"}
+      """
+      When we publish "456" with "publish" type and "published" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_id": "456", "state": "published"}
+      """
+      When we get "/publish_queue"
+      Then we get list with 2 items
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get error 200
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "item-1 headline", "_current_version": 2, "state": "published"},
+                   {"_id": "456", "guid": "456", "headline": "item-2 headline", "_current_version": 2, "state": "published"},
+                   {"headline": "item-1 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "item-2 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "test package", "state": "published", "type": "composite"}
+                  ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 3 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "content_type": "composite", "state": "pending"},
+                   {"headline": "item-2 headline", "content_type": "composite", "state": "pending"},
+                   {"headline": "test package", "content_type": "composite", "state": "pending"}]
+      }
+      """
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+      Then we get "#archive.456.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Publish a package with three already published text stories being sent different subscribers
+      Given empty "filter_conditions"
+      Given empty "publish_filters"
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+                  }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "1",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+                  }
+          }, {
+              "headline" : "item-3 headline",
+              "guid" : "789",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-3 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+                  }
+          }]
+          """
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "urgency", "operator": "in", "value": "1"}]
+      """
+      Then we get latest
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      Then we get latest
+      Given "subscribers"
+      """
+      [{
+            "_id": "sub-1",
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "wire",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "nitf", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-2",
+            "name":"Channel 4","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-3",
+            "name":"Channel 5","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }]
+      """
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "state": "published", "type": "text"},
+      {"state": "published", "type": "composite", "headline": "item-1 headline"}]}
+      """
+      When we publish "456" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "456", "state": "published", "type": "text"},
+      {"state": "published", "type": "composite", "headline": "item-2 headline"}]}
+      """
+      When we publish "789" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "789", "state": "published", "type": "text"},
+      {"state": "published", "type": "composite", "headline": "item-3 headline"}]}
+      """
+      When we get "/publish_queue"
+      Then we get list with 8 items
+      """
+      {"_items" : [
+      {"headline": "item-1 headline", "content_type": "text", "subscriber_id": "sub-1"},
+      {"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+      {"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-3"},
+      {"headline": "item-2 headline", "content_type": "text", "subscriber_id": "sub-1"},
+      {"headline": "item-2 headline", "content_type": "composite", "subscriber_id": "sub-3"},
+      {"headline": "item-3 headline", "content_type": "text", "subscriber_id": "sub-1"},
+      {"headline": "item-3 headline", "content_type": "composite", "subscriber_id": "sub-2"},
+      {"headline": "item-3 headline", "content_type": "composite", "subscriber_id": "sub-3"}
+      ]}
+      """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "789",
+                          "headline": "item-3 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "789"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get error 200
+      When we get "/published"
+      Then we get existing resource
+      """
+      {"_items" : [{"_id": "123", "guid": "123", "headline": "item-1 headline", "_current_version": 2, "state": "published"},
+                   {"_id": "456", "guid": "456", "headline": "item-2 headline", "_current_version": 2, "state": "published"},
+                   {"headline": "item-1 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "item-2 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
+                   {"headline": "test package", "state": "published", "type": "composite"}
+                  ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 10 items
+      """
+      {"_items" : [
+      {"headline": "test package", "content_type": "composite", "subscriber_id": "sub-2"},
+      {"headline": "test package", "content_type": "composite", "subscriber_id": "sub-3"}
+      ]}
+      """
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-2"
+      Then we get "#archive.789.take_package#" in formatted output as "sidebars" story for subscriber "sub-2"
+      Then we get "#archive.123.take_package#" in formatted output as "main" story for subscriber "sub-3"
+      Then we get "#archive.456.take_package#" in formatted output as "sidebars" story for subscriber "sub-3"
+      Then we get "#archive.789.take_package#" in formatted output as "sidebars" story for subscriber "sub-3"
+

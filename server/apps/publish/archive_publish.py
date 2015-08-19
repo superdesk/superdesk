@@ -11,6 +11,7 @@
 from copy import copy
 from functools import partial
 import logging
+from copy import deepcopy
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
@@ -390,7 +391,7 @@ class BasePublishService(BaseService):
         self._process_publish_updates(package, updates)
         all_items = PackageService().get_residrefs(package)
         for items in target_subscribers.values():
-            updated = package.copy()
+            updated = deepcopy(package)
             updated.update(updates)
             subscriber = items['subscriber']
             wanted_items = items['items']
