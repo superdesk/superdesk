@@ -6,12 +6,12 @@ Feature: Cropping the Image Articles
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":40,"CropTop":0,"CropBottom":30}
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
       """
       When we get "/archive/123"
       Then we get existing resource
       """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropBottom":30}}}
+      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropBottom":600}}}
       """
 
     @auth
@@ -33,7 +33,7 @@ Feature: Cropping the Image Articles
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":50,"CropTop":0,"CropBottom": 30}
+      {"CropLeft":0,"CropRight":850,"CropTop":0,"CropBottom": 900}
       """
       Then we get error 400
       """
@@ -42,16 +42,42 @@ Feature: Cropping the Image Articles
 
     @auth
     @vocabulary
+    Scenario: Create a new crop of an Image Story with wrong width
+      When upload a file "bike.jpg" to "archive" with "123"
+      When we post to "/archive/123/crop/4-3"
+      """
+      {"CropLeft":0,"CropRight":400,"CropTop":0,"CropBottom": 700}
+      """
+      Then we get error 400
+      """
+      {"_message": "Wrong crop size. Minimum crop size is 800x600.", "_status": "ERR"}
+      """
+
+    @auth
+    @vocabulary
+    Scenario: Create a new crop of an Image Story with wrong height
+      When upload a file "bike.jpg" to "archive" with "123"
+      When we post to "/archive/123/crop/4-3"
+      """
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom": 500}
+      """
+      Then we get error 400
+      """
+      {"_message": "Wrong crop size. Minimum crop size is 800x600.", "_status": "ERR"}
+      """
+
+    @auth
+    @vocabulary
     Scenario: Delete an existing crop of an Image Story succeeds
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":40,"CropTop":0,"CropBottom":30}
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
       """
       When we get "/archive/123"
       Then we get existing resource
       """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropRight": 40}}}
+      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropRight": 800}}}
       """
       When we delete "/archive/123/crop/4-3"
       Then we get response code 204
@@ -136,11 +162,11 @@ Feature: Cropping the Image Articles
       """
       When we post to "/archive/123/crop/4-3"
       """
-      {"CropLeft":0,"CropRight":40,"CropTop":0,"CropBottom":30}
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
       """
       When we post to "/archive/123/crop/16-9"
       """
-      {"CropLeft":0,"CropRight":160,"CropTop":0,"CropBottom":90}
+      {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
       """
       When we post to "/subscribers" with success
       """
