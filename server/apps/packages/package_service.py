@@ -206,6 +206,13 @@ class PackageService():
             message = 'Trying to create a circular reference to: ' + item_id
             logger.error(message)
             raise ValidationError(message)
+        else:
+            # keep checking in the hierarchy
+            for d in package.get(LINKED_IN_PACKAGES, []):
+                if 'package' in d:
+                    linked_package = get_resource_service(ARCHIVE).find_one(req=None, _id=d['package'])
+                    if linked_package:
+                        self.check_for_circular_reference(linked_package, item_id)
 
     def get_packages(self, doc_id):
         """
