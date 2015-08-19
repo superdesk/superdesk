@@ -75,9 +75,10 @@ def on_create_item(docs, repo_type=ARCHIVE):
 
 def set_dateline(doc, repo_type):
     """
-    If repo_type is ARCHIVE then sets dateline property for the article represented by doc. Dateline has 3 parts:
-    Located, Date (Format: Month Day) and Source. Dateline can either be simple: Sydney, July 30 AAP - or can be
-    complex: Surat,Gujarat,IN, July 30 AAP -. Date in the dateline should be timezone sensitive to the Located.
+    If repo_type is ARCHIVE and dateline isn't available then this method sets dateline property for the article
+    represented by doc. Dateline has 3 parts: Located, Date (Format: Month Day) and Source.
+    Dateline can either be simple: Sydney, July 30 AAP - or can be complex: Surat,Gujarat,IN, July 30 AAP -.
+    Date in the dateline should be timezone sensitive to the Located.
 
     Located is set on the article based on user preferences if available. If located is not available in
     user preferences then dateline in full will not be set.
@@ -86,7 +87,7 @@ def set_dateline(doc, repo_type):
     :param repo_type: collection name where the doc will be persisted
     """
 
-    if repo_type == ARCHIVE:
+    if repo_type == ARCHIVE and 'dateline' not in doc:
         current_date_time = dateline_ts = utcnow()
         doc['dateline'] = {'date': current_date_time, 'source': OrganizationNameAbbreviation}
 
