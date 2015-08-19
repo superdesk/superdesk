@@ -3492,3 +3492,131 @@ Feature: Package Publishing
                    {"headline": "outer test package", "publishing_action": "corrected", "subscriber_id": "sub-2"}]
       }
       """
+
+      @auth
+      @notification
+      Scenario: Killing a text story exists in a unpublished package fails
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "correct_composite", "act": "correct", "type": "composite", "schema":{}},
+          {"_id": "correct_picture", "act": "correct", "type": "picture", "schema":{}},
+          {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "/subscribers" with success
+          """
+          {
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "123" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 2 items
+      When we get "/publish_queue"
+      Then we get list with 1 items
+      When we publish "123" with "kill" type and "killed" state
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be killed"}, "_status": "ERR"}
+      """
