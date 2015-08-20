@@ -70,6 +70,11 @@
                   <i ng-show="userForm.sign_off.$error.required" class="required-asteriks">*</i>
                 </div>
 
+                <div sd-info-item>
+                  <label for="byline" translate>byline</label>
+                  <input type="text" name="byline" id="byline" ng-model="user.byline">
+                </div>
+
                 <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && user.is_enabled && _active" id="password-reset-trigger">
                   <label translate>password</label>
                   <i class="change-btn sd-blue" ng-click="show.reset_password = !show.reset_password" ng-show="!show.reset_password">reset password</i>
