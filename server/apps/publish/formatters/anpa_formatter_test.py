@@ -18,7 +18,7 @@ import io
 
 
 class ANPAFormatterTest(TestCase):
-    subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
+    subscribers = [{"_id": "1", "name": "notes", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "ANPA", "delivery_type": "email", "format": "ANPA",
                                       "config": {"recipients": "test@sourcefabric.org"}
@@ -34,23 +34,64 @@ class ANPAFormatterTest(TestCase):
         'slugline': 'slugline',
         'subject': [{'qcode': '02011001'}],
         'anpa_take_key': 'take_key',
+        'urgency': 5,
         'unique_id': '1',
         'type': 'preformatted',
         'body_html': 'The story body',
         'type': 'text',
         'word_count': '1',
-        'priority': '1'
+        'priority': '1',
+        'task': {'desk': 1}
     }
+
+    desks = [{'_id': 1, 'name': 'National'},
+             {'_id': 2, 'name': 'Sports'},
+             {'_id': 3, 'name': 'Finance'}]
+
 
     def setUp(self):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('subscribers', self.subscribers)
+            self.app.data.insert('desks', self.desks)
             init_app(self.app)
 
-    def TestANPAFormatter(self):
+    def testANPAFormatter(self):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
+
+            f = AAPAnpaFormatter()
+            seq, item = f.format(self.article, subscriber)[0]
+
+            self.assertGreater(int(seq), 0)
+
+            lines = io.StringIO(item.decode())
+
+            line = lines.readline()
+            self.assertTrue('axx' in line[1:])
+
+            line = lines.readline()
+            self.assertEqual(line[:3], '')  # Skip the sequence
+
+            line = lines.readline()
+            self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'This is a test headline')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'slugline take_key')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'The story body')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'AAP')
+
+    def testANPAWithNoSelectorsFormatter(self):
+        with self.app.app_context():
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+            subscriber['name'] = 'not notes'
 
             f = AAPAnpaFormatter()
             seq, item = f.format(self.article, subscriber)[0]
@@ -77,7 +118,8 @@ class ANPAFormatterTest(TestCase):
             line = lines.readline()
             self.assertEqual(line.strip(), 'AAP')
 
-    def TestMultipleCategoryFormatter(self):
+
+    def testMultipleCategoryFormatter(self):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
             multi_article = dict(self.article)
@@ -91,6 +133,7 @@ class ANPAFormatterTest(TestCase):
                 lines = io.StringIO(doc.decode())
                 line = lines.readline()
                 line = lines.readline()
+                line = lines.readline()
                 self.assertEqual(line[2:3], cat)  # skip the date
                 cat = 'b'
 
@@ -98,30 +141,37 @@ class ANPAFormatterTest(TestCase):
         f = AAPAnpaFormatter()
         article = {'headline': '1234567890' * 5}
         anpa = []
-        f._process_headline(anpa, article)
+        f._process_headline(anpa, article, 'a')
         self.assertEqual(anpa[0], b'12345678901234567890123456789012345678901234567890')
 
     def test_process_headline_empty_sequence_long_headline(self):
         f = AAPAnpaFormatter()
         article = {'headline': '1234567890' * 7}
         anpa = []
-        f._process_headline(anpa, article)
+        f._process_headline(anpa, article, 'a')
         self.assertEqual(anpa[0], b'1234567890123456789012345678901234567890123456789012345678901234')
 
     def test_process_headline_with_sequence_short_headline(self):
         f = AAPAnpaFormatter()
         article = {'headline': '1234567890=7', 'sequence': 7}
         anpa = []
-        f._process_headline(anpa, article)
+        f._process_headline(anpa, article, 'a')
         self.assertEqual(anpa[0], b'1234567890=7')
 
     def test_process_headline_with_sequence_long_headline(self):
         f = AAPAnpaFormatter()
         article1 = {'headline': '1234567890' * 7 + '=7', 'sequence': 7}
         anpa = []
-        f._process_headline(anpa, article1)
+        f._process_headline(anpa, article1, 'a')
         self.assertEqual(anpa[0], b'12345678901234567890123456789012345678901234567890123456789012=7')
         article2 = {'headline': '1234567890' * 7 + '=7', 'sequence': 17}
         anpa = []
-        f._process_headline(anpa, article2)
+        f._process_headline(anpa, article2, 'a')
         self.assertEqual(anpa[0], b'1234567890123456789012345678901234567890123456789012345678901=17')
+
+    def test_process_headline_locator_inject(self):
+        f = AAPAnpaFormatter()
+        article3 = {'headline': '1234567890' * 3, 'place': [{'qcode': 'VIC', 'name': 'VIC'}]}
+        anpa = []
+        f._process_headline(anpa, article3, 'a')
+        self.assertEqual(anpa[0], b'VIC:123456789012345678901234567890')

@@ -169,12 +169,12 @@ class SelectorcodeMapper(FieldMapper):
                 for dg in dist_groups:
                     if geo_block.get('allow'):
                         geo_value = dg + self._get_geo_abbreviation(geo_block.get('name')).lower()
-                        if geo_value in self.SELECTOR_CODES and subscriber_name in self.SELECTOR_CODES[geo_value]:
+                        if geo_value in self.SELECTOR_CODES and subscriber_name.lower() in self.SELECTOR_CODES[geo_value]:
                             selector_set = selector_set | \
                                 set(self.SELECTOR_CODES[geo_value][subscriber_name].split(' '))
                     else:
                         geo_value = dg + 'not' + self._get_geo_abbreviation(geo_block.get('name')).lower()
-                        if geo_value in self.SELECTOR_CODES and subscriber_name in self.SELECTOR_CODES[geo_value]:
+                        if geo_value in self.SELECTOR_CODES and subscriber_name.lower() in self.SELECTOR_CODES[geo_value]:
                             if selector_set:
                                 selector_set = selector_set & \
                                     set(self.SELECTOR_CODES[geo_value][subscriber_name].split(' '))
@@ -284,7 +284,8 @@ class SelectorcodeMapper(FieldMapper):
     def _join_selector_codes(self, subscriber_name, *args):
         codes = []
         for arg in args:
-            codes.extend(self.SELECTOR_CODES[arg][subscriber_name.lower()].split())
+            if arg in self.SELECTOR_CODES and subscriber_name.lower() in self.SELECTOR_CODES[arg]:
+                codes.extend(self.SELECTOR_CODES[arg][subscriber_name.lower()].split())
         return ' '.join(list(set(codes)))
 
     def _is_in_subject(self, article, qcode):
