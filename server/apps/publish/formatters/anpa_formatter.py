@@ -17,6 +17,7 @@ from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from .field_mappers.selectorcode_mapper import SelectorcodeMapper
 from .field_mappers.locator_mapper import LocatorMapper
 
+
 class AAPAnpaFormatter(Formatter):
     def format(self, article, subscriber):
         try:

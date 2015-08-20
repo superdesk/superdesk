@@ -48,7 +48,6 @@ class ANPAFormatterTest(TestCase):
              {'_id': 2, 'name': 'Sports'},
              {'_id': 3, 'name': 'Finance'}]
 
-
     def setUp(self):
         super().setUp()
         with self.app.app_context():
@@ -117,7 +116,6 @@ class ANPAFormatterTest(TestCase):
 
             line = lines.readline()
             self.assertEqual(line.strip(), 'AAP')
-
 
     def testMultipleCategoryFormatter(self):
         with self.app.app_context():
