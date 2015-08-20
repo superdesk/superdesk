@@ -57,7 +57,7 @@ class AapIpNewsFormatterTest(TestCase):
             self.app.data.insert('desks', self.desks)
             init_app(self.app)
 
-    def TestIPNewsFormatter(self):
+    def testIPNewsFormatter(self):
         with self.app.app_context():
             subscriber = self.app.data.find('subscribers', None, None)[0]
 
@@ -76,7 +76,7 @@ class AapIpNewsFormatterTest(TestCase):
                                   'wordcount': '1', 'subject_detail': 'international court or tribunal',
                                   'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
 
-    def TestIPNewsHtmlToText(self):
+    def testIPNewsHtmlToText(self):
         article = {
             'source': 'AAP',
             'anpa_category': [{'qcode': 'a'}],
@@ -103,7 +103,7 @@ class AapIpNewsFormatterTest(TestCase):
                        'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
             self.assertEqual(item['article_text'], expected)
 
-    def TestMultipleCategories(self):
+    def testMultipleCategories(self):
         article = {
             'source': 'AAP',
             'anpa_category': [{'name': 'Finance', 'qcode': 'F'},
@@ -141,7 +141,7 @@ class AapIpNewsFormatterTest(TestCase):
                     expected_codes = set('cxx 0fh axx az and pxx 0ah 0ir 0px 0hw pnd pxd cnd cxd 0nl axd'.split(' '))
                     self.assertSetEqual(codes, expected_codes)
 
-    def TestGeoBlock(self):
+    def testGeoBlock(self):
         article = {
             'source': 'AAP',
             'anpa_category': [{'qcode': 'a'}],
@@ -172,7 +172,7 @@ class AapIpNewsFormatterTest(TestCase):
             expected_codes = set(expected_codes_str.split(' '))
             self.assertSetEqual(codes, expected_codes)
 
-    def TestGeoBlockNotTwoStates(self):
+    def testGeoBlockNotTwoStates(self):
         article = {
             'source': 'AAP',
             'anpa_category': [{'qcode': 'a'}],

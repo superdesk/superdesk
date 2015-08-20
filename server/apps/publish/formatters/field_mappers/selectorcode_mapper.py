@@ -148,7 +148,7 @@ class SelectorcodeMapper(FieldMapper):
         """
         geo_resource = superdesk.get_resource_service('vocabularies').find_one(req=None,
                                                                                _id='geographical_restrictions')
-        item = [i for i in geo_resource.get('items') if i['name'] == name][0]
+        item = next((i for i in geo_resource.get('items') if i['name'] == name), None)
         if item:
             return item.get('value')
 
