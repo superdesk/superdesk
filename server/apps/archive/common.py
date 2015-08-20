@@ -22,7 +22,7 @@ from superdesk.utc import utcnow, get_expiry_date
 from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, \
-    LINKED_IN_PACKAGES
+    LINKED_IN_PACKAGES, BYLINE
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -49,6 +49,7 @@ def update_version(updates, original):
 
 def on_create_item(docs, repo_type=ARCHIVE):
     """Make sure item has basic fields populated."""
+
     for doc in docs:
         update_dates_for(doc)
         set_original_creator(doc)
@@ -65,9 +66,10 @@ def on_create_item(docs, repo_type=ARCHIVE):
         if 'event_id' not in doc:
             doc['event_id'] = generate_guid(type=GUID_TAG)
 
-        set_default_state(doc, 'draft')
-        doc.setdefault('_id', doc[GUID_FIELD])
+        set_default_state(doc, CONTENT_STATE.DRAFT)
+        doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
         set_dateline(doc, repo_type)
+        set_byline(doc, repo_type)
 
         if not doc.get(ITEM_OPERATION):
             doc[ITEM_OPERATION] = ITEM_CREATE
@@ -108,6 +110,18 @@ def set_dateline(doc, repo_type):
                 doc['dateline']['located'] = located
                 doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
                                                                OrganizationNameAbbreviation)
+
+
+def set_byline(doc, repo_type):
+    """
+    Sets byline property on the doc if it's from ARCHIVE repo. If user creating the article has byline set in the
+    profile then doc['byline'] = user_profile['byline']. Otherwise it's not set.
+    """
+
+    if repo_type == ARCHIVE:
+        user = get_user()
+        if user and user.get(BYLINE):
+            doc[BYLINE] = user[BYLINE]
 
 
 def on_duplicate_item(doc):

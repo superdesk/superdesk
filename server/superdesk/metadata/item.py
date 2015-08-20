@@ -36,6 +36,8 @@ CONTENT_STATE = namedtuple('CONTENT_STATE', ['DRAFT', 'INGESTED', 'ROUTED', 'FET
                                              'SCHEDULED', 'HOLD'])(*content_state)
 PUBLISH_STATES = {CONTENT_STATE.PUBLISHED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED}
 
+BYLINE = 'byline'
+
 metadata_schema = {
     # Identifiers
     'guid': {
@@ -203,7 +205,7 @@ metadata_schema = {
         'mapping': not_analyzed
     },
 
-    'byline': {
+    BYLINE: {
         'type': 'string',
         'nullable': True,
     },

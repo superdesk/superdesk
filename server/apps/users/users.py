@@ -9,7 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 """Superdesk Users"""
+
 from settings import LDAP_SERVER
+from superdesk.metadata.item import BYLINE
 from superdesk.resource import Resource
 
 
@@ -75,7 +77,8 @@ class UsersResource(Resource):
         },
         'phone': {
             'type': 'phone_number',
-            'readonly': readonly
+            'readonly': readonly,
+            'nullable': True
         },
         'user_info': {
             'type': 'dict'
@@ -107,10 +110,14 @@ class UsersResource(Resource):
             'default': True
         },
         'desk': Resource.rel('desks'),  # Default desk of the user, which would be selected when logged-in.
-        # Used for putting a sign-off on published content
-        'sign_off': {
+        'sign_off': {  # Used for putting a sign-off on the content when it's created/updated except kill
             'type': 'string',
             'required': True
+        },
+        BYLINE: {
+            'type': 'string',
+            'required': False,
+            'nullable': True
         }
     }
 

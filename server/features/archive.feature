@@ -427,3 +427,34 @@ Feature: News Items Archive
       """
       {"dateline": {"located": {"city": "Sydney"}}}
       """
+
+    @auth
+    Scenario: Byline is populated from user profile for new articles
+      Given empty "archive"
+      When we post to "/archive"
+      """
+      [{"guid": "123", "type": "text"}]
+      """
+      And we get "/archive/123"
+      Then we get latest
+      """
+      {"guid": "123", "type": "text", "byline": ""}
+      """
+      When we patch "/users/#CONTEXT_USER_ID#"
+      """
+      {"byline": "by Context User"}
+      """
+      When we get "/users/#CONTEXT_USER_ID#"
+      Then we get latest
+      """
+      {"byline": "by Context User"}
+      """
+      When we post to "/archive"
+      """
+      [{"guid": "321", "type": "text"}]
+      """
+      And we get "/archive/123"
+      Then we get latest
+      """
+      {"guid": "321", "type": "text", "byline": "by Context User"}
+      """
