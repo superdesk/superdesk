@@ -15,12 +15,18 @@
         </li>
 
         <li class="menu-label" translate><div>CUSTOM WORKSPACES</div></li>
-        <li ng-repeat="workspace in wsList track by workspace._id"
-            ng-if="workspace._id && workspace._id !== selected._id">
-            <button ng-click="selectWorkspace(workspace)">{{ :: workspace.name }}</button>
+        <li class="workspace-item" ng-repeat="workspace in wsList track by workspace._id">
+            <button ng-click="selectWorkspace(workspace)"
+                    ng-disabled="workspace._id === selected._id">
+                {{ :: workspace.name }}
+            </button>
         </li>
         <li>
-            <button class="btn" ng-click="createWorkspace()" translate>CREATE NEW WORKSPACE</button>
+            <button class="action-btn" ng-click="createWorkspace()" translate>
+                <i class="icon-plus-small icon-round icon-white"></i>
+                <span class="circle"></span>
+                CREATE NEW WORKSPACE
+            </button>
         </li>
     </ul>
 </div>
