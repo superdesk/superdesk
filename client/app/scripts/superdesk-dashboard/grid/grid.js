@@ -34,6 +34,7 @@ define([
                 templateUrl: require.toUrl('./views/grid.html'),
                 controller: ['$scope', function($scope) {
                     this.addWidget = function(widget, element) {
+                        widget.active = true;
                         widget.el = $scope.gridster.add_widget(
                             element,
                             widget.sizex,
@@ -45,7 +46,8 @@ define([
 
                     this.removeWidget = function(widget, element) {
                         $scope.gridster.remove_widget(element);
-                        $scope.widgets.splice(_.indexOf($scope.widgets, widget), 1);
+                        widget.active = false;
+                        $scope.syncWidgets();
                     };
 
                     this.resizeWidget = function(element, sizex, sizey) {
