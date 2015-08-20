@@ -213,6 +213,11 @@ class BasePublishService(BaseService):
         :param: package to publish
         """
         items = self.package_service.get_residrefs(package)
+        removed_items = []
+        if self.publish_type == 'correct':
+            removed_items, added_items = self._get_changed_items(items, updates)
+            items.extend(added_items)
+
         subscriber_items = {}
         if items:
             archive_publish = get_resource_service('archive_publish')
@@ -237,10 +242,16 @@ class BasePublishService(BaseService):
 
                     package_item = super().find_one(req=None, _id=guid)
 
-                subscribers, digital_item_id = self._get_subscribers_for_package_item(package_item)
+                subscribers = self._get_subscribers_for_package_item(package_item)
+
+                if package_item[config.ID_FIELD] in removed_items:
+                    digital_item_id = None
+                else:
+                    digital_item_id = self._get_digital_id_for_package_item(package_item)
+
                 self._extend_subscriber_items(subscriber_items, subscribers, package_item, digital_item_id)
 
-            self.publish_package(package, target_subscribers=subscriber_items)
+            self.publish_package(package, updates, target_subscribers=subscriber_items)
             return subscribers
 
     def _extend_subscriber_items(self, subscriber_items, subscribers, item, digital_item_id):
@@ -258,9 +269,32 @@ class BasePublishService(BaseService):
             item_list[item_id] = digital_item_id
             subscriber_items[sid] = {'subscriber': subscriber, 'items': item_list}
 
+    def _get_changed_items(self, existing_items, updates):
+        if 'groups' in updates:
+            new_items = self.package_service.get_residrefs(updates)
+            removed_items = list(set(existing_items) - set(new_items))
+            added_items = list(set(new_items) - set(existing_items))
+            return removed_items, added_items
+        else:
+            return [], []
+
+    def _get_digital_id_for_package_item(self, package_item):
+        """
+        Finds the digital item id for a given item in a package
+        :param package_item: item in a package
+        :return string: Digital item id if there's one otherwise id of package_item
+        """
+        if package_item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
+            return package_item[config.ID_FIELD]
+        else:
+            package_item_takes_package = self.takes_package_service.get_take_package(package_item)
+            if not package_item_takes_package:
+                return package_item[config.ID_FIELD]
+            return package_item_takes_package[config.ID_FIELD]
+
     def _get_subscribers_for_package_item(self, package_item):
         """
-        Finds the list of subscribers and the digital item id for a given item in a package
+        Finds the list of subscribers for a given item in a package
         :param package_item: item in a package
         :return list: List of subscribers
         :return string: Digital item id if there's one otherwise None
@@ -268,20 +302,17 @@ class BasePublishService(BaseService):
         if package_item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             query = {'$and': [{'item_id': package_item[config.ID_FIELD]},
                               {'publishing_action': package_item[ITEM_STATE]}]}
-            package_item_takes_package = None
         else:
             package_item_takes_package = self.takes_package_service.get_take_package(package_item)
             if not package_item_takes_package:
                 # this item has not been published to digital subscribers so
                 # the list of subscribers are empty
-                return [], package_item['_id']
+                return []
 
             query = {'$and': [{'item_id': package_item_takes_package[config.ID_FIELD]},
                               {'publishing_action': package_item_takes_package[ITEM_STATE]}]}
 
-        subscribers = self._get_subscribers_for_previously_sent_items(query)
-        return subscribers, (package_item_takes_package[config.ID_FIELD]
-                             if package_item_takes_package else package_item[config.ID_FIELD])
+        return self._get_subscribers_for_previously_sent_items(query)
 
     def _set_version_last_modified_and_state(self, original, updates, last_updated):
         """
@@ -372,8 +403,8 @@ class BasePublishService(BaseService):
             updated_take = original_of_take_to_be_published.copy()
             updated_take.update(updates_of_take_to_be_published)
             metadata_from = updated_take
-            if self.published_state == 'corrected':
-                # get the last take metadata
+            if self.published_state == 'corrected' and len(takes) > 1:
+                # get the last take metadata only if there are more than one takes
                 metadata_from = takes[-1]
 
             for metadata in metadata_tobe_copied:
@@ -381,31 +412,33 @@ class BasePublishService(BaseService):
 
         return package_updates
 
-    def publish_package(self, package, target_subscribers):
+    def publish_package(self, package, updates, target_subscribers):
         """
         Publishes a given non-take package to given subscribers.
         For each subscriber updates the package definition with the wanted_items for that subscriber
         and removes unwanted_items that doesn't supposed to go that subscriber.
         Text stories are replaced by the digital versions.
         :param package: Package to be published
+        :param updates: Updates to the package
         :param target_subscribers: List of subscriber and items-per-subscriber
         """
-        updates = dict()
         self._process_publish_updates(package, updates)
         all_items = PackageService().get_residrefs(package)
         for items in target_subscribers.values():
             updated = deepcopy(package)
-            updated.update(updates)
+            updates_copy = deepcopy(updates)
+            updated.update(updates_copy)
             subscriber = items['subscriber']
-            wanted_items = items['items']
-            unwanted_items = (item for item in all_items if item not in wanted_items)
+            wanted_items = [item for item in items['items'] if items['items'].get(item, None)]
+            unwanted_items = [item for item in all_items if item not in wanted_items]
             for i in unwanted_items:
                 still_items_left = PackageService().remove_ref_from_inmem_package(updated, i)
-                if not still_items_left:
-                    # there's nothing left in the package to be published
+                if not still_items_left and self.publish_type != 'correct':
+                    # if nothing left in the package to be published and
+                    # if not correcting then don't send the package
                     return
-            for key in wanted_items.keys():
-                PackageService().replace_ref_in_package(updated, key, wanted_items[key])
+            for key in wanted_items:
+                PackageService().replace_ref_in_package(updated, key, items['items'][key])
             self.queue_transmission(updated, [subscriber])
 
     def _process_publish_updates(self, doc, updates):
@@ -894,7 +927,9 @@ class CorrectPublishService(BasePublishService):
         :param updates: correction
         :param original: original story
         """
-        original_updates = dict(updates)
+        original_updates = dict()
+        original_updates['operation'] = updates['operation']
+        original_updates[ITEM_STATE] = updates[ITEM_STATE]
         super().on_updated(updates, original)
         packages = PackageService().get_packages(original[config.ID_FIELD])
         if packages and packages.count() > 0:

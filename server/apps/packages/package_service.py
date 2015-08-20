@@ -352,9 +352,5 @@ class PackageService():
         :param package:
         :return: list of residref
         """
-
-        assert package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE, \
-            "Passed object isn't a package %s" % package[config.ID_FIELD]
-
         return [ref.get(ITEM_REF) for group in package.get('groups', [])
                 for ref in group.get('refs', []) if ITEM_REF in ref]

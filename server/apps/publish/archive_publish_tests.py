@@ -17,6 +17,7 @@ from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
 
 from apps.archive.common import insert_into_versions
+from apps.packages.package_service import PackageService
 from apps.packages.takes_package_service import TakesPackageService
 from apps.publish.archive_publish import ArchivePublishService, DIGITAL, WIRE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
@@ -879,3 +880,94 @@ class ArchivePublishTestCase(TestCase):
                                                                          self.assertFalse, published_package)
             self._move_to_archived_and_assert_can_remove_from_production(self.articles[4][config.ID_FIELD],
                                                                          self.assertTrue, published_package)
+
+    def test_added_removed_in_a_package(self):
+        package = {"groups": [{"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                              {"id": "main", "refs": [
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "123",
+                                      "headline": "item-1 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "123"
+                                  },
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "456",
+                                      "headline": "item-2 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "456"
+                                  },
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "789",
+                                      "headline": "item-3 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "789"
+                                  }], "role": "grpRole:main"}],
+                   "task": {
+                       "user": "#CONTEXT_USER_ID#",
+                       "status": "todo",
+                       "stage": "#desks.incoming_stage#",
+                       "desk": "#desks._id#"},
+                   "guid": "compositeitem",
+                   "headline": "test package",
+                   "state": "submitted",
+                   "type": "composite"}
+
+        updates = {"groups": [{"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                              {"id": "main", "refs": [
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "123",
+                                      "headline": "item-1 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "123"
+                                  },
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "555",
+                                      "headline": "item-2 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "555"
+                                  },
+                                  {
+                                      "renditions": {},
+                                      "slugline": "Boat",
+                                      "guid": "456",
+                                      "headline": "item-2 headline",
+                                      "location": "archive",
+                                      "type": "text",
+                                      "itemClass": "icls:text",
+                                      "residRef": "456"
+                                  }], "role": "grpRole:main"}],
+                   "task": {
+                       "user": "#CONTEXT_USER_ID#",
+                       "status": "todo",
+                       "stage": "#desks.incoming_stage#",
+                       "desk": "#desks._id#"},
+                   "guid": "compositeitem",
+                   "headline": "test package",
+                   "state": "submitted",
+                   "type": "composite"}
+
+        with self.app.app_context():
+            items = PackageService().get_residrefs(package)
+            removed_items, added_items = ArchivePublishService()._get_changed_items(items, updates)
+            self.assertEqual(len(removed_items), 1)
+            self.assertEqual(len(added_items), 1)

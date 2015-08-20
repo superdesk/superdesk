@@ -2456,6 +2456,12 @@ Feature: Package Publishing
       @vocabulary
       Scenario: Publish a nested package with three inner packages and three digital subscribers
       Given empty "archive"
+      Given empty "desks"
+      Given empty "published"
+      Given empty "publish_queue"
+      Given empty "filter_conditions"
+      Given empty "publish_filters"
+      Given empty "subscribers"
       Given "desks"
           """
           [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
@@ -2867,7 +2873,7 @@ Feature: Package Publishing
                   ]
       }
       """
-      When we get "/publish_queue"
+      When we get "/publish_queue?max_results=100"
       Then we get list with 26 items
       """
       {"_items" : [{"headline": "item-1 headline", "content_type": "composite", "subscriber_id": "sub-1"},
@@ -3021,19 +3027,22 @@ Feature: Package Publishing
       When we get "/publish_queue"
       Then we get list with 3 items
       When we publish "123" with "correct" type and "corrected" state
+        """
+        {"headline": "item-1.2 headline"}
+        """
       Then we get OK response
       When we get "/published"
       Then we get list with 8 items
       """
-      {"_items" : [{"_id": "123", "headline": "item-1 headline", "state": "corrected"},
-                   {"headline": "item-1 headline", "package_type": "takes", "state": "corrected"},
+      {"_items" : [{"headline": "item-1.2 headline", "type": "text", "state": "corrected"},
+                   {"headline": "item-1.2 headline", "package_type": "takes", "state": "corrected"},
                    {"headline": "test package", "state": "corrected", "type": "composite"}]
       }
       """
       When we get "/publish_queue"
       Then we get list with 5 items
       """
-      {"_items" : [{"headline": "item-1 headline", "publishing_action": "corrected"},
+      {"_items" : [{"headline": "item-1.2 headline", "publishing_action": "corrected"},
                    {"headline": "test package", "publishing_action": "corrected"}]
       }
       """
@@ -3620,3 +3629,534 @@ Feature: Package Publishing
       """
       {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be killed"}, "_status": "ERR"}
       """
+
+
+
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Correct a published package by removing a story
+      Given empty "archive"
+      Given empty "desks"
+      Given empty "published"
+      Given empty "publish_queue"
+      Given empty "filter_conditions"
+      Given empty "publish_filters"
+      Given empty "subscribers"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "correct_composite", "act": "correct", "type": "composite", "schema":{}},
+          {"_id": "correct_picture", "act": "correct", "type": "picture", "schema":{}},
+          {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-3 headline",
+              "guid" : "789",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-3 content",
+              "urgency": "1",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "789",
+                          "headline": "item-3 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "789"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
+      """
+      Then we get latest
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      Then we get latest
+      Given "subscribers"
+      """
+      [{
+            "_id": "sub-1",
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-2",
+            "name":"Channel 4","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-3",
+            "name":"Channel 5","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }]
+      """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 7 items
+      """
+      {"_items" : [{"_id": "123", "headline": "item-1 headline", "state": "published"},
+                   {"_id": "456", "headline": "item-2 headline", "state": "published"},
+                   {"_id": "789", "headline": "item-3 headline", "state": "published"},
+                   {"headline": "item-1 headline", "package_type": "takes", "state": "published"},
+                   {"headline": "item-2 headline", "package_type": "takes", "state": "published"},
+                   {"headline": "item-3 headline", "package_type": "takes", "state": "published"},
+                   {"_id": "compositeitem", "headline": "test package", "state": "published", "type": "composite"}]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 9 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "subscriber_id": "sub-1"},
+                   {"headline": "item-2 headline", "subscriber_id": "sub-1"},
+                   {"headline": "item-1 headline", "subscriber_id": "sub-2"},
+                   {"headline": "item-2 headline", "subscriber_id": "sub-2"},
+                   {"headline": "item-3 headline", "subscriber_id": "sub-2"},
+                   {"headline": "item-3 headline", "subscriber_id": "sub-3"},
+                   {"headline": "test package", "subscriber_id": "sub-1"},
+                   {"headline": "test package", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "subscriber_id": "sub-3"}]
+      }
+      """
+      When we publish "compositeitem" with "correct" type and "corrected" state
+        """
+          {
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }
+          """
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 8 items
+      """
+      {"_items" : [{"headline": "test package", "state": "corrected", "type": "composite"}]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 12 items
+      """
+      {"_items" : [{"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-1"},
+                   {"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-3"}]
+      }
+      """
+      When we get digital item of "789"
+      When we get "/publish_queue"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-1" not in package "compositeitem" version "3"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-2" not in package "compositeitem" version "3"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
+
+
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Correct a published package by adding a story
+      Given empty "archive"
+      Given empty "subscribers"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "correct_composite", "act": "correct", "type": "composite", "schema":{}},
+          {"_id": "correct_picture", "act": "correct", "type": "picture", "schema":{}},
+          {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-3 headline",
+              "guid" : "789",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-3 content",
+              "urgency": "1",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
+      """
+      Then we get latest
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      Then we get latest
+      Given "subscribers"
+      """
+      [{
+            "_id": "sub-1",
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-2",
+            "name":"Channel 4","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-3",
+            "name":"Channel 5","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }]
+      """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 5 items
+      """
+      {"_items" : [{"_id": "123", "headline": "item-1 headline", "state": "published"},
+                   {"_id": "456", "headline": "item-2 headline", "state": "published"},
+                   {"headline": "item-1 headline", "package_type": "takes", "state": "published"},
+                   {"headline": "item-2 headline", "package_type": "takes", "state": "published"},
+                   {"_id": "compositeitem", "headline": "test package", "state": "published", "type": "composite"}]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 6 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "subscriber_id": "sub-1"},
+                   {"headline": "item-2 headline", "subscriber_id": "sub-1"},
+                   {"headline": "item-1 headline", "subscriber_id": "sub-2"},
+                   {"headline": "item-2 headline", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "subscriber_id": "sub-1"},
+                   {"headline": "test package", "subscriber_id": "sub-2"}]
+      }
+      """
+      When we publish "compositeitem" with "correct" type and "corrected" state
+        """
+          {
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "789",
+                          "headline": "item-3 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "789"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }
+          """
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 8 items
+      """
+      {"_items" : [{"_id": "789", "headline": "item-3 headline", "state": "published"},
+                   {"headline": "item-3 headline", "package_type": "takes", "state": "published"},
+                   {"_id": "compositeitem", "headline": "test package", "state": "corrected", "type": "composite"}]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 11 items
+      """
+      {"_items" : [{"headline": "item-3 headline", "publishing_action": "published", "subscriber_id": "sub-3"},
+                   {"headline": "item-3 headline", "publishing_action": "published", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-1"},
+                   {"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-2"},
+                   {"headline": "test package", "publishing_action": "corrected", "subscriber_id": "sub-3"}]
+      }
+      """
+      When we get digital item of "789"
+      When we get "/publish_queue"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-3" in package "compositeitem"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
+      Then we get "#archive.789.take_package#" as "main" story for subscriber "sub-1" not in package "compositeitem" version "3"
+      When we get digital item of "123"
+      When we get "/publish_queue"
+      Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
+      Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
+      Then we get "#archive.123.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem"
+      When we get digital item of "456"
+      When we get "/publish_queue"
+      Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
+      Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
+      Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem"
