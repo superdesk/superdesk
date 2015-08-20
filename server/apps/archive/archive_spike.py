@@ -26,7 +26,7 @@ from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
-from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package
+from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package, set_sign_off
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +72,7 @@ class ArchiveSpikeService(BaseService):
         self._validate_item(original)
         self._validate_take(original)
         self._update_rewrite(original)
+        set_sign_off(updates, original=original)
 
     def _validate_item(self, original):
         """
@@ -147,6 +148,7 @@ class ArchiveUnspikeService(BaseService):
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_UNSPIKE
+        set_sign_off(updates, original=original)
 
     def update(self, id, updates, original):
         original_state = original[ITEM_STATE]

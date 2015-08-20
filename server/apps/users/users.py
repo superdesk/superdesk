@@ -11,7 +11,7 @@
 """Superdesk Users"""
 
 from settings import LDAP_SERVER
-from superdesk.metadata.item import BYLINE
+from superdesk.metadata.item import BYLINE, SIGN_OFF
 from superdesk.resource import Resource
 
 
@@ -110,9 +110,10 @@ class UsersResource(Resource):
             'default': True
         },
         'desk': Resource.rel('desks'),  # Default desk of the user, which would be selected when logged-in.
-        'sign_off': {  # Used for putting a sign-off on the content when it's created/updated except kill
+        SIGN_OFF: {  # Used for putting a sign-off on the content when it's created/updated except kill
             'type': 'string',
-            'required': True
+            'required': True,
+            'regex': '^[a-zA-Z0-9]+$'
         },
         BYLINE: {
             'type': 'string',

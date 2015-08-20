@@ -16,13 +16,14 @@ import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 from pytz import timezone
+from apps.users.services import get_sign_off
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, \
-    LINKED_IN_PACKAGES, BYLINE
+    LINKED_IN_PACKAGES, BYLINE, SIGN_OFF
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -70,6 +71,7 @@ def on_create_item(docs, repo_type=ARCHIVE):
         doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
         set_dateline(doc, repo_type)
         set_byline(doc, repo_type)
+        set_sign_off(doc, repo_type=repo_type)
 
         if not doc.get(ITEM_OPERATION):
             doc[ITEM_OPERATION] = ITEM_CREATE
@@ -112,7 +114,7 @@ def set_dateline(doc, repo_type):
                                                                OrganizationNameAbbreviation)
 
 
-def set_byline(doc, repo_type):
+def set_byline(doc, repo_type=ARCHIVE):
     """
     Sets byline property on the doc if it's from ARCHIVE repo. If user creating the article has byline set in the
     profile then doc['byline'] = user_profile['byline']. Otherwise it's not set.
@@ -130,6 +132,7 @@ def on_duplicate_item(doc):
     doc[GUID_FIELD] = generate_guid(type=GUID_NEWSML)
     generate_unique_id_and_name(doc)
     doc.setdefault('_id', doc[GUID_FIELD])
+    set_sign_off(doc)
 
 
 def update_dates_for(doc):
@@ -153,22 +156,30 @@ def set_original_creator(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
     doc['original_creator'] = user
-    doc['sign_off'] = usr.get('sign_off', usr.get('username', ''))[:3]
 
 
-def set_sign_off(updates, original):
-    usr = get_user()
-    if not usr:
+def set_sign_off(updates, original=None, repo_type=ARCHIVE):
+    """
+    Set sign_off on updates object. Rules:
+        1. updates['sign_off'] = original['sign_off'] + sign_off of the user performing operation.
+        2. If the last modified user and the user performing operation are same then sign_off shouldn't change
+    """
+
+    if repo_type != ARCHIVE:
         return
 
-    sign_off = usr.get('sign_off', usr['username'][:3])
-    current_sign_off = original.get('sign_off', '')
+    user = get_user()
+    if not user:
+        return
+
+    sign_off = get_sign_off(user)
+    current_sign_off = '' if original is None else original.get(SIGN_OFF, '')
 
     if current_sign_off.endswith(sign_off):
         return
 
     updated_sign_off = '{}/{}'.format(current_sign_off, sign_off)
-    updates['sign_off'] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
+    updates[SIGN_OFF] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
 
 
 item_url = 'regex("[\w,.:_-]+")'

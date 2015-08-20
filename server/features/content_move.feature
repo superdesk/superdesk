@@ -25,7 +25,7 @@ Feature: Move or Send Content to another desk
         """
 
     @auth
-    Scenario: Send Content from one desk to another desk
+    Scenario: Send Content from one desk to another desk and validate metadata set by API
         Given "desks"
         """
         [{"name": "Sports"}]
@@ -35,10 +35,16 @@ Feature: Move or Send Content to another desk
         [{  "type":"text", "headline": "test1", "guid": "123", "state": "submitted",
             "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
         """
-        And we post to "/desks"
+        And we get "/archive/123"
+        Then we get existing resource
+        """
+        {"headline": "test1", "sign_off": "abc"}
+        """
+        When we post to "/desks"
         """
         [{"name": "Finance"}]
         """
+        And we switch user
         And we post to "/archive/123/move"
         """
         [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
@@ -47,8 +53,8 @@ Feature: Move or Send Content to another desk
         When we get "/archive/123"
         Then we get existing resource
         """
-        { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
-          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+        { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2, "sign_off": "abc/foo",
+          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
         """
 
     @auth

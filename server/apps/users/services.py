@@ -14,6 +14,7 @@ from flask import current_app as app
 from eve.utils import config
 from settings import OrganizationNameAbbreviation
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
+from superdesk.metadata.item import SIGN_OFF
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
 from superdesk import get_resource_service
@@ -102,6 +103,29 @@ def compare_preferences(original, updates):
     return added, removed, modified
 
 
+def set_sign_off(user):
+    """
+    Set sign_off property on user if it's not set already.
+    """
+
+    if SIGN_OFF not in user:
+        if 'first_name' not in user or 'last_name' not in user:
+            user[SIGN_OFF] = user['username'][:3].upper()
+        else:
+            user[SIGN_OFF] = '{first_name[0]}{last_name[0]}'.format(**user)
+
+
+def get_sign_off(user):
+    """
+    Gets sign_off property on user if it's not set already.
+    """
+
+    if SIGN_OFF not in user:
+        set_sign_off(user)
+
+    return user[SIGN_OFF]
+
+
 class UsersService(BaseService):
 
     def __is_invalid_operation(self, user, updates, method):
@@ -187,8 +211,9 @@ class UsersService(BaseService):
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
-            if not user_doc.get('role', None):
-                user_doc['role'] = get_resource_service('roles').get_default_role_id()
+            user_doc.setdefault(SIGN_OFF, set_sign_off(user_doc))
+            user_doc.setdefault('role', get_resource_service('roles').get_default_role_id())
+
             get_resource_service('preferences').set_user_initial_prefs(user_doc)
 
     def on_created(self, docs):
@@ -199,10 +224,12 @@ class UsersService(BaseService):
 
     def on_update(self, updates, original):
         """
-        Overriding the method to prevent user from the below:
-            1. Check if the user is updating his/her own status.
-            2. Check if the user is changing the status of other logged-in users.
-            3. A user without 'User Management' privilege is changing role/user_type/privileges
+        Overriding the method to
+            1. Prevent user from the below:
+                a. Check if the user is updating his/her own status.
+                b. Check if the user is changing the status of other logged-in users.
+                c. A user without 'User Management' privilege is changing role/user_type/privileges
+            2. Set Sign Off property if it's not been set already
         """
         error_message = self.__is_invalid_operation(original, updates, 'PATCH')
         if error_message:
@@ -210,6 +237,9 @@ class UsersService(BaseService):
 
         if updates.get('is_enabled', False):
             updates['is_active'] = True
+
+        if SIGN_OFF not in original:
+            set_sign_off(updates)
 
     def on_updated(self, updates, user):
         if 'role' in updates or 'privileges' in updates:
@@ -276,9 +306,11 @@ class UsersService(BaseService):
 
     def __update_user_defaults(self, doc):
         """Set default fields for users"""
-        doc.setdefault('display_name', get_display_name(doc))
         doc.pop('password', None)
+
+        doc.setdefault('display_name', get_display_name(doc))
         doc.setdefault('is_enabled', doc.get('is_active'))
+        doc.setdefault(SIGN_OFF, set_sign_off(doc))
         doc['dateline_source'] = OrganizationNameAbbreviation
 
     def user_is_waiting_activation(self, doc):

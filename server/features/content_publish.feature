@@ -989,6 +989,49 @@ Feature: Content Publishing
       {"_issues": {"validator exception": "[['DATELINE is a required field']]"}, "_status": "ERR"}
       """
 
-
-
-
+    @auth
+    Scenario: Sign Off is updated when published and corrected but not when killed
+      Given the "validators"
+      """
+      [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+       {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}},
+       {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+      """
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      When we post to "/archive" with success
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "state": "fetched", "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "body_html": "Test Document body", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      And we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we publish "#archive._id#" with "publish" type and "published" state
+      Then we get existing resource
+      """
+      {"_current_version": 2, "state": "published", "sign_off": "abc", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we switch user
+      And we publish "#archive._id#" with "correct" type and "corrected" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 3, "state": "corrected", "sign_off": "abc/foo", "operation": "correct", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """
+      When we login as user "bar" with password "foobar" and user type "admin"
+      """
+      {"sign_off": "bar"}
+      """
+      And we publish "#archive._id#" with "kill" type and "killed" state
+      Then we get OK response
+      And we get existing resource
+      """
+      {"_current_version": 4, "state": "killed", "sign_off": "abc/foo", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """

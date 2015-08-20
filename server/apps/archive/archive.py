@@ -10,6 +10,7 @@
 
 from apps.users.services import current_user_has_privilege
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
+from superdesk.metadata.packages import ITEM_REF
 
 SOURCE = 'archive'
 
@@ -225,7 +226,7 @@ class ArchiveService(BaseService):
         updates['versioncreated'] = utcnow()
         set_item_expiry(updates, original)
         updates['version_creator'] = str_user_id
-        set_sign_off(updates, original)
+        set_sign_off(updates, original=original)
         update_word_count(updates)
 
         if force_unlock:
@@ -327,15 +328,17 @@ class ArchiveService(BaseService):
 
         if curr[config.VERSION] != last_version:
             raise SuperdeskApiError.preconditionFailedError('Invalid last version %s' % last_version)
+
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
         set_item_expiry(old, doc)
         del old['_id_document']
         old[ITEM_OPERATION] = ITEM_RESTORE
 
-        resolve_document_version(old, 'archive', 'PATCH', curr)
-
+        resolve_document_version(old, SOURCE, 'PATCH', curr)
         remove_unwanted(old)
+        set_sign_off(updates=old, original=curr)
+
         super().replace(id=item_id, document=old, original=curr)
 
         del doc['old_version']
@@ -355,9 +358,9 @@ class ArchiveService(BaseService):
                 if groups.get('id') != 'root':
                     associations = groups.get('refs', [])
                     for assoc in associations:
-                        if assoc.get('residRef'):
+                        if assoc.get(ITEM_REF):
                             item, _item_id, _endpoint = self.packageService.get_associated_item(assoc)
-                            assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
+                            assoc[ITEM_REF] = assoc['guid'] = self.duplicate_content(item)
 
         return self._duplicate_item(original_doc)
 
@@ -377,7 +380,7 @@ class ArchiveService(BaseService):
         item_model = get_model(ItemModel)
 
         on_duplicate_item(new_doc)
-        resolve_document_version(new_doc, 'archive', 'PATCH', new_doc)
+        resolve_document_version(new_doc, SOURCE, 'PATCH', new_doc)
         if original_doc.get('task', {}).get('desk') is not None and new_doc.get('state') != 'submitted':
             new_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED
         item_model.create([new_doc])

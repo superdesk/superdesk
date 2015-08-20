@@ -7,6 +7,8 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
+from eve.utils import config
 from eve.versioning import resolve_document_version
 from flask import request
 
@@ -18,7 +20,7 @@ from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.archive.common import item_url, insert_into_versions, item_operations,\
-    ITEM_OPERATION
+    ITEM_OPERATION, set_sign_off
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 
@@ -81,12 +83,13 @@ class MoveService(BaseService):
             archived_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED
         archived_doc[ITEM_OPERATION] = ITEM_MOVE
 
+        set_sign_off(archived_doc, original=original)
         resolve_document_version(archived_doc, ARCHIVE, 'PATCH', original)
 
-        del archived_doc['_id']
-        archive_service.update(original['_id'], archived_doc, original)
+        del archived_doc[config.ID_FIELD]
+        archive_service.update(original[config.ID_FIELD], archived_doc, original)
 
-        insert_into_versions(id_=original['_id'])
+        insert_into_versions(id_=original[config.ID_FIELD])
 
         return archived_doc
 

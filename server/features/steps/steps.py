@@ -1174,6 +1174,7 @@ def step_impl_when_spike_fetched_item(context):
 
 @when('we unspike "{item_id}"')
 def step_impl_when_unspike_url(context, item_id):
+    item_id = apply_placeholders(context, item_id)
     res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
     context.response = context.client.patch(get_prefixed_url(context.app, '/archive/unspike/' + item_id),
