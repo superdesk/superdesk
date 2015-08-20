@@ -687,66 +687,49 @@
         };
     }
 
-    ChangeImageController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
-    function ChangeImageController($scope, upload, session, urls, beta) {
+    ChangeImageController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', '$http'];
+    function ChangeImageController($scope, upload, session, urls, beta, $http) {
 
         $scope.data = $scope.locals.data;
-        /*$scope.methods = [
-            {id: 'upload', label: gettext('Upload from computer')},
-            {id: 'camera', label: gettext('Take a picture'), beta: true},
-            {id: 'web', label: gettext('Use a Web URL'), beta: true}
-        ];
+        $scope.preview = {};
 
-        beta.isBeta().then(function(beta) {
-            if (!beta) {
-                $scope.methods = _.reject($scope.methods, {beta: true});
-            }
-        });
-
-        $scope.activate = function(method) {
-            $scope.active = method;
-            $scope.preview = {};
-            $scope.progress = {width: 0};
-        };
-
-        $scope.activate($scope.methods[0]);*/
-
-        /*$scope.upload = function(config) {
-            var form = {};
-            form.CropLeft = Math.round(Math.min(config.cords.x, config.cords.x2));
-            form.CropRight = Math.round(Math.max(config.cords.x, config.cords.x2));
-            form.CropTop = Math.round(Math.min(config.cords.y, config.cords.y2));
-            form.CropBottom = Math.round(Math.max(config.cords.y, config.cords.y2));
-
-            if (config.img) {
-                form.media = config.img;
-            } else if (config.url) {
-                form.URL = config.url;
-            } else {
-                return;
-            }
-
-            return urls.resource('upload').then(function(uploadUrl) {
-                return upload.start({
-                    url: uploadUrl,
-                    method: 'POST',
-                    data: form
+        function saveCrop(form) {
+            var promise = urls.resource('archive').then(function(url) {
+                url = url + '/' + $scope.data._id + '/crop/' + $scope.data.cropsize.name;
+                console.log('url>>> ' + url);
+                return $http.post(url, {
+                    'CropLeft': form.CropLeft,
+                    'CropRight': form.CropRight,
+                    'CropTop': form.CropTop,
+                    'CropBottom': form.CropBottom
                 }).then(function(response) {
-
-                    if (response.data._status === 'ERR'){
-                        return;
-                    }
-
-                    var picture_url = response.data.renditions.viewImage.href;
-                    $scope.locals.data.picture_url = picture_url;
-                    $scope.locals.data.avatar = response.data._id;
-
-                    return $scope.resolve(picture_url);
-                }, null, function(update) {
-                    $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                    return response.data;
+                }, function(err) {
+                    console.log(err);
                 });
             });
-        };*/
+            return promise;
+        }
+
+        $scope.done = function() {
+            var form = {};
+            form.CropLeft = Math.round(Math.min($scope.preview.cords.x, $scope.preview.cords.x2));
+            form.CropRight = Math.round(Math.max($scope.preview.cords.x, $scope.preview.cords.x2));
+            form.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
+            form.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
+
+            //call crop Api
+            var result = saveCrop(form);
+            result.then(function(result) {
+                var picture_url = result._id.renditions[$scope.data.cropsize.name].href;
+                $scope.locals.data.picture_url = picture_url;
+                //return $scope.resolve(picture_url);
+            }, function(response) {
+                if (response._status === 'ERR'){
+                    return;
+                }
+            });
+        };
     }
 
     AuthoringController.$inject = ['$scope', 'item', 'action', 'superdesk'];
@@ -804,6 +787,9 @@
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
+
+                /*console.log('width==' + $scope.origItem.renditions.original.width);
+                console.log('height==' + $scope.origItem.renditions.original.height);*/
 
                 if ($scope.action === 'kill') {
                     api('content_templates').getById('kill').then(function(template) {
@@ -1634,13 +1620,6 @@
                 scope.limits = authoring.limits;
 
                 scope.toggleDetails = true;
-                scope.editCrop = function() {
-                    console.log('toggle=' + scope.toggleDetails);
-                    scope.toggleDetails = !scope.toggleDetails;
-                    superdesk.intent('edit', 'crop',  scope.item).then(function(cropped) {
-                        scope.picture_url = cropped;
-                    });
-                };
 
                 scope.$watch('item', function(item) {
                     if (angular.isDefined(item)) {
@@ -1670,6 +1649,22 @@
                         item.dateline.text = $filter('previewDateline')(item.dateline.located,
                             scope.origItem.dateline.source, scope.origItem.dateline.date);
                     }
+                };
+
+                scope.evalAspectRatio = function(ar) {
+                    ar = ar.replace('-', '/');
+                    var Fn = Function, val = new Fn('return ' + ar)();
+                    return val;
+                };
+
+                scope.editCrop = function(cropsize) {
+                    scope.toggleDetails = !scope.toggleDetails;
+                    scope.item.cropsize = cropsize;
+                    scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
+                    //scope.item.crop_sizes
+                    superdesk.intent('edit', 'crop',  scope.item).then(function(cropped) {
+                        scope.picture_url = cropped;
+                    });
                 };
             }
         };
@@ -1843,7 +1838,7 @@
                 .activity('edit.crop', {
                     label: gettext('EDIT CROP'),
                     modal: true,
-                    cssClass: 'modal-responsive',
+                    cssClass: 'upload-avatar modal-static modal-responsive',
                     controller: ChangeImageController,
                     templateUrl: 'scripts/superdesk-authoring/views/change-image.html',
                     filters: [{action: 'edit', type: 'crop'}]
