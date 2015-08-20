@@ -1,9 +1,9 @@
-<div id="highlightPackage" ng-if="hasHighlights" tooltip="{{ :: 'Highlights' | translate }}" tooltip-placement="right"> 
-    <button class="dropdown-toggle" dropdown-toggle><i class="svg-icon-create-list"></i></button>
+<div id="highlightPackage" ng-if="hasHighlights" title="{{ :: 'Highlights' | translate }}"> 
+    <button class="dropdown-toggle" dropdown-toggle><i class="big-icon-marked-star"></i></button>
     <ul class="dropdown-menu pull-left">
-		<li ng-repeat="h in highlights track by h._id">
-		    <button option="{{ h.name | uppercase  }}" ng-click="listHighlight(h);">{{ h.name | uppercase  }}</button>
-		</li>
-	</ul>
+        <li ng-repeat="h in highlights track by h._id">
+            <button option="{{ h.name }}" ng-click="listHighlight(h);">{{ h.name }}</button>
+        </li>
+    </ul>
 </div>
-<i ng-if="!hasHighlights" class="svg-icon-create-list" tooltip="{{ :: 'No highlights' | translate }}" tooltip-placement="right"></i>
+<i ng-if="!hasHighlights" class="big-icon-marked-star" tooltip="{{ :: 'No highlights' | translate }}" tooltip-placement="right"></i>

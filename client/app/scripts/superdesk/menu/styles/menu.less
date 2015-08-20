@@ -222,15 +222,25 @@
     li {
         text-align: center;
         line-height: @sidebar-width;
-        a {
+        a, i {
             opacity: .5;
             &.big-icon-view {
                 background-size: 24px;
             }
         }
         &.active {
-            a {
+            a, i {
                 opacity: 1;
+            }
+        }
+        .dropleft {
+            .dropdown-menu {
+                top: -10px;
+            }
+            &.open {
+                i {
+                    opacity: 1;
+                }
             }
         }
     }

@@ -7,8 +7,8 @@
         <a href="#/workspace/monitoring" class="big-icon-view"
             title="{{ :: 'Monitoring' | translate }}"></a>
     </li>
-    <li>
-        <div class="navbtn dropdown strict highlights-dropdown"  
+    <li ng-class="{active: currentRoute.href == '/workspace/highlights'}">
+        <div class="dropdown dropleft highlights-dropdown"  
             dropdown sd-package-highlights-dropdown>
         </div>
     </li>
