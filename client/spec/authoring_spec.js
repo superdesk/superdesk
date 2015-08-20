@@ -92,7 +92,7 @@ describe('authoring', function() {
         authoring.save();
         expect(authoring.sendToButton.isDisplayed()).toBe(true);
         authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);        
+        expect(authoring.getHistoryItems().count()).toBe(2);
         authoring.sendTo('Politic Desk', 'two');
         workspace.selectStage('two');
         workspace.editItem('item5', 'Politic');

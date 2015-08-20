@@ -39,7 +39,6 @@ function Authoring() {
         this.sendToSidebarOpened(desk, stage);
     };
 
-   
     this.confirmSendTo = function() {
         element(by.className('modal-content')).all(by.css('[ng-click="ok()"]')).click();
     };
