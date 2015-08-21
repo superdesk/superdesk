@@ -30,7 +30,6 @@ class ANPAFormatterTest(TestCase):
         '_updated': datetime.strptime('2015-05-29 05:46', '%Y-%m-%d %H:%M'),
         'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
-        'byline': 'joe',
         'slugline': 'slugline',
         'subject': [{'qcode': '02011001'}],
         'anpa_take_key': 'take_key',
@@ -110,6 +109,41 @@ class ANPAFormatterTest(TestCase):
 
             line = lines.readline()
             self.assertEqual(line.strip(), 'slugline take_key')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'The story body')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'AAP')
+
+    def testANPAWithBylineFormatter(self):
+        with self.app.app_context():
+            subscriber = self.app.data.find('subscribers', None, None)[0]
+            subscriber['name'] = 'not notes'
+            byline_article = dict(self.article)
+            byline_article['byline'] = 'Joe Blogs'
+
+            f = AAPAnpaFormatter()
+            seq, item = f.format(byline_article, subscriber)[0]
+
+            self.assertGreater(int(seq), 0)
+
+            lines = io.StringIO(item.decode())
+
+            line = lines.readline()
+            self.assertEqual(line[:3], '')  # Skip the sequence
+
+            line = lines.readline()
+            self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'This is a test headline')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'slugline take_key')
+
+            line = lines.readline()
+            self.assertEqual(line.strip(), 'Joe Blogs')
 
             line = lines.readline()
             self.assertEqual(line.strip(), 'The story body')

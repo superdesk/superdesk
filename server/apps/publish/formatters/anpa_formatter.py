@@ -13,7 +13,7 @@ import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 import datetime
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, BYLINE
 from .field_mappers.selectorcode_mapper import SelectorcodeMapper
 from .field_mappers.locator_mapper import LocatorMapper
 
@@ -26,14 +26,15 @@ class AAPAnpaFormatter(Formatter):
                 pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
                 anpa = []
 
+                # selector codes are only injected for those subscribers that are defined
+                # in the mapper
                 selectors = dict()
                 SelectorcodeMapper().map(article, category.get('qcode').upper(),
                                          subscriber=subscriber,
                                          formatted_item=selectors)
                 if 'selector_codes' in selectors and selectors['selector_codes']:
                     anpa.append(b'\x05')
-                    sel_codes = selectors['selector_codes']
-                    anpa.append(sel_codes.lower().encode('ascii'))
+                    anpa.append(selectors['selector_codes'].encode('ascii'))
                     anpa.append(b'\x0D\x0A')
 
                 # start of message header (syn syn soh)
@@ -89,8 +90,13 @@ class AAPAnpaFormatter(Formatter):
                 anpa.append((b'\x20' + take_key) if len(take_key) > 0 else b'')
                 anpa.append(b'\x0D\x0A')
 
+                if BYLINE in article:
+                    anpa.append(article.get(BYLINE).encode('ascii', 'ignore'))
+                    anpa.append(b'\x0D\x0A')
+
                 if 'dateline' in article and 'text' in article['dateline']:
                     anpa.append(article.get('dateline').get('text').encode('ascii', 'ignore'))
+
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(article.get('body_html', '').encode('ascii', 'replace'))
                 else:
