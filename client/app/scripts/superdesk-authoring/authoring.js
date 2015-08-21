@@ -687,8 +687,8 @@
         };
     }
 
-    ChangeImageController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService', '$http'];
-    function ChangeImageController($scope, upload, session, urls, beta, $http) {
+    ChangeImageController.$inject = ['$scope', 'urls', '$http', 'gettext', 'notify'];
+    function ChangeImageController($scope, urls, $http, gettext, notify) {
 
         $scope.data = $scope.locals.data;
         $scope.preview = {};
@@ -696,7 +696,6 @@
         function saveCrop(form) {
             var promise = urls.resource('archive').then(function(url) {
                 url = url + '/' + $scope.data._id + '/crop/' + $scope.data.cropsize.name;
-                console.log('url>>> ' + url);
                 return $http.post(url, {
                     'CropLeft': form.CropLeft,
                     'CropRight': form.CropRight,
@@ -704,8 +703,6 @@
                     'CropBottom': form.CropBottom
                 }).then(function(response) {
                     return response.data;
-                }, function(err) {
-                    console.log(err);
                 });
             });
             return promise;
@@ -723,9 +720,10 @@
             result.then(function(result) {
                 var picture_url = result._id.renditions[$scope.data.cropsize.name].href;
                 $scope.locals.data.picture_url = picture_url;
-                //return $scope.resolve(picture_url);
+                notify.success(gettext('Image Cropped.'));
             }, function(response) {
-                if (response._status === 'ERR'){
+                if (response.data._status === 'ERR'){
+                    notify.error(gettext('Error: ' + response.data._error.message));
                     return;
                 }
             });
@@ -787,9 +785,6 @@
 
                 $scope._isInProductionStates = !authoring.isPublished($scope.origItem);
                 $scope.origItem.sign_off = $scope.origItem.sign_off || $scope.origItem.version_creator;
-
-                /*console.log('width==' + $scope.origItem.renditions.original.width);
-                console.log('height==' + $scope.origItem.renditions.original.height);*/
 
                 if ($scope.action === 'kill') {
                     api('content_templates').getById('kill').then(function(template) {
@@ -1661,7 +1656,6 @@
                     scope.toggleDetails = !scope.toggleDetails;
                     scope.item.cropsize = cropsize;
                     scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
-                    //scope.item.crop_sizes
                     superdesk.intent('edit', 'crop',  scope.item).then(function(cropped) {
                         scope.picture_url = cropped;
                     });

@@ -4,7 +4,7 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['notify', 'gettext', function(notify, gettext) {
+    return ['notify', 'gettext', '$timeout', function(notify, gettext, $timeout) {
         return {
             scope: {
                 src: '=',
@@ -14,19 +14,36 @@ define([
                 boxHeight: '=',
                 aspectRatio: '=',
                 minimumSize: '=',
+                cropSelect: '=',
                 showMinSizeError: '='
             },
             link: function(scope, elem) {
 
                 var bounds, boundx, boundy;
                 var rwidth, rheight;
-                var jcrop_api;
-                var minimumSize;
+                var minimumSize, updateTimeout;
+                var cropSelect = [];
 
                 minimumSize = scope.minimumSize ? scope.minimumSize : [200, 200];
+                cropSelect = scope.cropSelect ? getCropSelect(scope.cropSelect) : [0, 0, scope.boxWidth, scope.boxHeight];
+
+                /**
+                * Push value in clockwise sequence from Left, Top, Right then Bottom (L-T-R-B).
+                */
+                function getCropSelect(cropImage) {
+                    cropSelect.length = 0;
+
+                    cropSelect.push(cropImage.CropLeft);
+                    cropSelect.push(cropImage.CropTop);
+                    cropSelect.push(cropImage.CropRight);
+                    cropSelect.push(cropImage.CropBottom);
+
+                    return cropSelect;
+                }
 
                 console.log('eval=' + scope.aspectRatio);
-                console.log('minSize=' + scope.minimumSize);
+                console.log('minSize=' + minimumSize);
+                console.log('cropSelect=' + cropSelect);
 
                 // To adjust preview box as per aspect ratio
                 if (scope.aspectRatio.toFixed(2) === '1.33') {
@@ -37,15 +54,23 @@ define([
                     rwidth = 300; rheight = 300;
                 }
 
-                var updateScope = _.throttle(function(c) {
+                var updateFunc = function(c) {
+                    cancelTimeout(c);
+                    updateTimeout = $timeout(updateScope(c), 300, false);
+                };
+
+                function cancelTimeout(event) {
+                    $timeout.cancel(updateTimeout);
+                }
+
+                function updateScope(c) {
                     scope.$apply(function() {
                         scope.cords = c;
                         var rx = rwidth / scope.cords.w;
                         var ry = rheight / scope.cords.h;
                         showPreview('.preview-target-1', rx, ry, boundx, boundy, scope.cords.x, scope.cords.y);
-                        //showPreview('.preview-target-2', rx / 2, ry / 2, boundx, boundy, scope.cords.x, scope.cords.y);
                     });
-                }, 300);
+                }
 
                 function showPreview(e, rx, ry, boundx, boundy, cordx, cordy) {
                     $(e).css({
@@ -77,8 +102,6 @@ define([
                             scope.progressWidth = 80;
                             scope.$parent.preview.progress = true;
                             var size = [this.width, this.height];
-                            /*console.log('size=' + size);
-                            console.log('scope.boxWidth=' + scope.boxWidth);*/
 
                             if (scope.showMinSizeError) {
                                 validateConstraints(this);
@@ -91,14 +114,12 @@ define([
                                 trueSize: size,
                                 boxWidth: scope.boxWidth,
                                 boxHeight: scope.boxHeight,
-                                //setSelect: [0, 0, Math.min.apply(size), Math.min.apply(size)],
-                                setSelect: [0, 0, scope.boxWidth, scope.boxHeight],
+                                //setSelect: [0, 0, scope.boxWidth, scope.boxHeight],
+                                setSelect: cropSelect,
                                 allowSelect: false,
-                                bgColor: 'white',
-                                bgOpacity: 0.9,
-                                onChange: updateScope
+                                addClass: 'jcrop-dark',
+                                onChange: updateFunc
                             }, function() {
-                                jcrop_api = this;
                                 bounds = this.getBounds();
                                 boundx = bounds[0];
                                 boundy = bounds[1];

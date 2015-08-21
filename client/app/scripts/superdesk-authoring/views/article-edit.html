@@ -81,16 +81,10 @@
         <ul>
           <li ng-repeat="cropsize in metadata.crop_sizes track by cropsize.name">
            {{ cropsize.name }}
-           <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-progress-width="progress.width"></div>
+           <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-crop-select="item.renditions[cropsize.name]" data-progress-width="progress.width"></div>
           </li>
         </ul>
-        <!-- <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(4/3)" data-src="item.renditions.original.href" data-box-width="800" data-box-height="600" data-aspect-ratio="4/3" data-progress-width="progress.width"></div> -->
-
-       <!--  <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(16/9)" data-src="item.renditions.original.href"
-            data-box-width="1280" data-box-height="720" data-aspect-ratio="16/9" data-progress-width="progress.width"></div> -->
-            
-
-            <!-- <button class="edit-photo"><i class="icon-pencil"></i> {{ 'Edit crop' | translate }}</button> -->
+        <!-- <button class="edit-photo"><i class="icon-pencil"></i> {{ 'Edit crop' | translate }}</button> -->
       </div>
     </div>
 
