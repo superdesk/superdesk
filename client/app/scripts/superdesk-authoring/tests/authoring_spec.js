@@ -922,4 +922,109 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write',
                 'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit']);
         }));
+
+    it('Cannot send item if the version is zero',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'in_progress',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 0
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': false,
+                'move': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+                    'mark_item', 'package_item', 'multi_edit', 'publish']);
+        }));
+
+    it('Cannot send item if the no move privileges',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'in_progress',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 1
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': false,
+                'move': false
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+                    'mark_item', 'package_item', 'multi_edit', 'publish']);
+        }));
+
+    it('Can send item if the version greater then zero',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'in_progress',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 1
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': false,
+                'move': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+                    'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
+        }));
 });

@@ -87,12 +87,18 @@ describe('authoring', function() {
     it('view item history move operation', function() {
         workspace.open();
         workspace.editItem('item5', 'Politic');
+        expect(authoring.sendToButton.isDisplayed()).toBe(false);
+        authoring.writeText(' ');
+        authoring.save();
+        expect(authoring.sendToButton.isDisplayed()).toBe(true);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
         authoring.sendTo('Politic Desk', 'two');
         workspace.selectStage('two');
         workspace.editItem('item5', 'Politic');
         authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
+        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
     });
 
     it('view item history duplicate operation', function() {

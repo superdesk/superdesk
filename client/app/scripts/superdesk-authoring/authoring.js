@@ -47,7 +47,8 @@
         spike: false,
         unspike: false,
         package_item: false,
-        multi_edit: false
+        multi_edit: false,
+        send: false
     });
 
     /**
@@ -488,6 +489,7 @@
                 action.unspike = current_item.state === 'spiked' && user_privileges.unspike;
                 action.spike = current_item.state !== 'spiked' && user_privileges.spike &&
                     (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id);
+                action.send = current_item._current_version > 0 && user_privileges.move;
             }
 
             //mark item for highlights
@@ -967,9 +969,21 @@
                     });
                 };
 
+                /**
+                 * Called by the sendItem directive before send.
+                 * If the $scope is dirty then save the item and then unlock the item.
+                 * If the $scope is not dirty then unlock the item.
+                 */
                 $scope.beforeSend = function() {
                     $scope.sending = true;
-                    return lock.unlock($scope.origItem);
+                    if ($scope.dirty) {
+                        return $scope.save()
+                            .then(function() {
+                               return lock.unlock($scope.origItem);
+                           });
+                    } else {
+                        return lock.unlock($scope.origItem);
+                    }
                 };
 
                 /**

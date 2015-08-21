@@ -13,6 +13,7 @@ function Authoring() {
     this.navbarMenuBtn = $('.dropdown-toggle.sd-create-btn');
     this.newEmptyPackageLink = element(by.id('create_package'));
     this.infoIconsBox = $('.info-icons');
+    this.sendToButton = element(by.id('send-to-btn'));
 
     /**
      * Find all file type icons in the item's info icons box matching the
@@ -34,7 +35,7 @@ function Authoring() {
      * @param {string} stage Stage name
      */
     this.sendTo = function(desk, stage) {
-        element(by.id('send-to-btn')).click();
+        this.sendToButton.click();
         this.sendToSidebarOpened(desk, stage);
     };
 
