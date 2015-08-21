@@ -450,5 +450,5 @@ def is_item_in_package(item):
     :param item:
     :return: True if the item belongs to a non-takes package
     """
-    return item[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE and item.get(LINKED_IN_PACKAGES, None) \
+    return item.get(LINKED_IN_PACKAGES, None) \
         and sum(1 for x in item.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '')

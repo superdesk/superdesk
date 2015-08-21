@@ -210,12 +210,19 @@ class BasePublishService(BaseService):
     def _publish_package_items(self, package, updates):
         """
         Publishes all items of a package recursively then publishes the package itself
-        :param: package to publish
+        :param package: package to publish
+        :param updates: payload
         """
         items = self.package_service.get_residrefs(package)
+
+        if len(items) == 0 and self.publish_type == ITEM_PUBLISH:
+            raise SuperdeskApiError.badRequestError("Empty package cannot be published!")
+
         removed_items = []
-        if self.publish_type == 'correct':
+        if self.publish_type == ITEM_CORRECT:
             removed_items, added_items = self._get_changed_items(items, updates)
+            if len(removed_items) == len(items) and len(added_items) == 0:
+                raise SuperdeskApiError.badRequestError("Corrected package cannot be empty!")
             items.extend(added_items)
 
         subscriber_items = {}
@@ -270,6 +277,12 @@ class BasePublishService(BaseService):
             subscriber_items[sid] = {'subscriber': subscriber, 'items': item_list}
 
     def _get_changed_items(self, existing_items, updates):
+        """
+        Returns the added and removed items from existing_items
+        :param existing_items: Existing list
+        :param updates: Changes
+        :return: list of removed items and list of added items
+        """
         if 'groups' in updates:
             new_items = self.package_service.get_residrefs(updates)
             removed_items = list(set(existing_items) - set(new_items))
@@ -449,7 +462,7 @@ class BasePublishService(BaseService):
         if not doc.get('ingest_provider'):
             updates['source'] = desk['source'] if desk and desk.get('source', '') \
                 else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
-        updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'killed' else PUB_STATUS.USABLE
+        updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'kill' else PUB_STATUS.USABLE
 
     def publish(self, doc, updates, target_media_type=None):
         """

@@ -82,12 +82,12 @@ class PackageService():
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
-        to_add = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
-        to_remove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in to_add]
+        to_add = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates) if assoc.get(ITEM_REF)}
+        to_remove = (assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in to_add)
         for assoc in to_remove:
             self.update_link(original, assoc, delete=True)
-        for assoc in to_add.values():
-            self.update_link(original, assoc)
+        for assoc in to_add.keys():
+            self.update_link(original, to_add[assoc])
 
     def on_deleted(self, doc):
         for assoc in self._get_associations(doc):

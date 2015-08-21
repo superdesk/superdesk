@@ -4160,3 +4160,580 @@ Feature: Package Publishing
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem"
+
+      @auth
+      @notification
+      Scenario: Kill a published package
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "correct_composite", "act": "kill", "type": "composite", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "/subscribers" with success
+          """
+          {
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }
+          """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 5 items
+      When we get "/publish_queue"
+      Then we get list with 3 items
+      When we publish "compositeitem" with "kill" type and "killed" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 6 items
+      """
+      {"_items" : [{"headline": "item-1 headline", "type": "text", "state": "published"},
+                   {"headline": "item-1 headline", "package_type": "takes", "state": "published"},
+                   {"headline": "test package", "state": "published", "type": "composite"},
+                   {"headline": "test package", "state": "killed", "type": "composite", "pubstatus": "canceled"}]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 4 items
+      """
+      {"_items" : [{"headline": "test package", "publishing_action": "killed"}]
+      }
+      """
+
+
+      @auth
+      @notification
+      Scenario: Killing the nested package fails
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "kill_composite", "act": "kill", "type": "composite", "schema":{}},
+          {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      Given "subscribers"
+      """
+      [{
+        "_id": "sub-2",
+        "name":"Channel 3","media_type":"media",
+        "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem",
+                          "headline": "test package",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "outercompositeitem",
+              "headline" : "outer test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "outercompositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/published"
+      Then we get list with 6 items
+      When we get "/publish_queue"
+      Then we get list with 4 items
+      When we publish "compositeitem" with "kill" type and "killed" state
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be killed"}, "_status": "ERR"}
+      """
+
+
+      @auth
+      @notification
+      Scenario: Publishing an empty package fails
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "kill_composite", "act": "kill", "type": "composite", "schema":{}},
+          {"_id": "kill_text", "act": "kill", "type": "text", "schema":{}}]
+          """
+      Given "subscribers"
+      """
+      [{
+        "_id": "sub-2",
+        "name":"Channel 3","media_type":"media",
+        "subscriber_type": "digital",
+        "sequence_num_settings":{"min" : 1, "max" : 10},
+        "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+      }]
+      """
+      When we post to "archive" with success
+          """
+          [{
+              "groups" : [
+                  {
+                      "role" : "grpRole:NEP",
+                      "id" : "root",
+                      "refs" : [
+                          {
+                              "idRef" : "main"
+                          }
+                      ]
+                  },
+                  {
+                      "role" : "grpRole:main",
+                      "id" : "main",
+                      "refs" : []
+                  }
+              ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Empty package cannot be published!"}, "_status": "ERR"}
+      """
+
+
+
+      @auth
+      @notification
+      @vocabulary
+      Scenario: Correct a published package by removing all stories fails
+      Given empty "archive"
+      Given empty "desks"
+      Given empty "published"
+      Given empty "publish_queue"
+      Given empty "filter_conditions"
+      Given empty "publish_filters"
+      Given empty "subscribers"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{}},
+          {"_id": "correct_composite", "act": "correct", "type": "composite", "schema":{}},
+          {"_id": "correct_picture", "act": "correct", "type": "picture", "schema":{}},
+          {"_id": "correct_text", "act": "correct", "type": "text", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "urgency": "2",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-3 headline",
+              "guid" : "789",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-3 content",
+              "urgency": "1",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "789",
+                          "headline": "item-3 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "789"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "/filter_conditions" with success
+      """
+      [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
+      """
+      Then we get latest
+      When we post to "/publish_filters" with success
+      """
+      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      """
+      Then we get latest
+      Given "subscribers"
+      """
+      [{
+            "_id": "sub-1",
+            "name":"Channel 3","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-2",
+            "name":"Channel 4","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }, {
+            "_id": "sub-3",
+            "name":"Channel 5","media_type":"media",
+            "subscriber_type": "digital",
+            "sequence_num_settings":{"min" : 1, "max" : 10},
+            "email": "test@test.com",
+            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
+          }]
+      """
+      When we publish "compositeitem" with "publish" type and "published" state
+      Then we get OK response
+      When we publish "compositeitem" with "correct" type and "corrected" state
+        """
+          {
+              "groups" : [
+                  {
+                      "role" : "grpRole:NEP",
+                      "id" : "root",
+                      "refs" : [
+                          {
+                              "idRef" : "main"
+                          }
+                      ]
+                  },
+                  {
+                      "role" : "grpRole:main",
+                      "id" : "main",
+                      "refs" : []
+                  }
+              ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }
+          """
+      Then we get error 400
+      """
+      {"_issues": {"validator exception": "400: Corrected package cannot be empty!"}, "_status": "ERR"}
+      """
