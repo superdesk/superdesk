@@ -38,10 +38,6 @@
 				<span class="state-label for-publication" ng-show="!item.marked_for_not_publication" translate>For Publication</span>
 			</label>
 		</li>
-		<li ng-if="item.sign_off">
-			<label translate>Sign-off</label>
-			<div class="data">{{item.sign_off}}</div>
-		</li>
 		<li ng-if="item.expiry">
 			<label translate>Expiry</label>
 			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>

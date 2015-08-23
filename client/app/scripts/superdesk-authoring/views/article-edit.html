@@ -88,3 +88,8 @@
 <div class="composite-preview" ng-if="item.type === 'composite'">
     <div sd-package data-item="item"></div>
 </div>
+
+<div class="field pull-left" ng-if="item.sign_off">
+    <label translate>Sign-Off</label>
+    <div>{{item.sign_off}}</div>
+</div>
