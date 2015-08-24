@@ -16,7 +16,26 @@ module.exports = function (grunt) {
         tasksDir: 'tasks',
         bowerDir: 'bower',
         poDir: 'po',
-        livereloadPort: 35729
+        livereloadPort: 35729,
+        ngtemplates: {
+            app: {
+                cwd: 'app',
+                src: 'scripts/superdesk*/**/*.html',
+                dest: 'app/scripts/templates.js',
+                options: {
+                    htmlmin: {
+                        collapseWhitespace: true,
+                        collapseBooleanAttributes: true
+                    },
+                    bootstrap:  function(module, script) {
+                        return '"use strict";' +
+                            'var templates = angular.module("templates", []);' +
+                            'templates.run([\'$templateCache\', function($templateCache) {' +
+                            script + ' }]);';
+                    }
+                }
+            }
+        }
     };
 
     grunt.initConfig(config);
@@ -26,6 +45,9 @@ module.exports = function (grunt) {
         config: config,
         configPath: require('path').join(process.cwd(), 'tasks', 'options')
     });
+
+    // automatically minify and cache HTML templates into $templateCache
+    grunt.loadNpmTasks('grunt-angular-templates');
 
     grunt.registerTask('style', ['less:dev', 'cssmin']);
 
@@ -43,11 +65,27 @@ module.exports = function (grunt) {
         'template:docs',
         'connect:test',
         'open:docs',
+        'ngtemplates',
         'watch'
     ]);
 
-    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
+    grunt.registerTask('server', [
+        'clean',
+        'style',
+        'template:test',
+        'connect:test',
+        'open:test',
+        'ngtemplates',
+        'watch'
+    ]);
+    grunt.registerTask('server:e2e', [
+        'clean',
+        'style',
+        'template:mock',
+        'connect:mock',
+        'ngtemplates',
+        'watch'
+    ]);
     grunt.registerTask('server:travis', ['clean', 'style', 'template:travis', 'connect:travis']);
 
     grunt.registerTask('bower', [
@@ -67,6 +105,7 @@ module.exports = function (grunt) {
         'copy:docs',
         'template:test',
         'nggettext_compile',
+        'ngtemplates',
         'filerev',
         'usemin'
     ]);
