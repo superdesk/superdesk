@@ -32,7 +32,16 @@
             "password": "admin",
             "user_type": "administrator",
             "username": "admin",
-            "role": "-id Editor role-"
+            "role": "-id Editor role-",
+            "user_preferences": {
+                "feature:preview" : {
+                    "label" : "Enable Feature Preview",
+                    "category" : "feature",
+                    "default" : false,
+                    "type" : "bool",
+                    "enabled" : true
+                }
+            }
         },
         "id_name": "-id user admin-",
         "resource": "users"
@@ -241,12 +250,32 @@
 		"resource": "validators",
 		"id_name": "-id validator publish-"
 	},
-    
+    {
+        "data": {
+            "_id": "subscriber_types",
+            "items": [
+                {"is_active": true, "name": "Digital/Internet", "value": "digital",
+                    "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
+                                {"name": "AAP Bulletin Builder", "value": "AAP BULLETIN BUILDER"}]},
+                {"is_active": true, "name": "Wire/Paper", "value": "wire",
+                    "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                                {"name": "AAP SMS", "value": "AAP SMS"}]},
+                {"is_active": true, "name": "Broadcast", "value": "broadcast",
+                    "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
+                                {"name": "AAP SMS", "value": "AAP SMS"}]}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies subscriber_types-"
+    },
+
     {
     	"data": {
     		"name" : "Public API",
     		"subscriber_type": "digital",
+            "email": "public_api@test.com",
     		"is_active" : true,
+            "sequence_num_settings":{"min" : 1, "max" : 10},
     		"destinations" : [ { "delivery_type" : "PublicArchive", "format": "ninjs", "name" : "Public" } ]
     	},
     	"resource": "subscribers",
