@@ -43,7 +43,6 @@ Feature: Duplication of Content within Desk
       """
       {"operation": "duplicate"}
       """
-
       When we get "/archive?q=#desks._id#"
       Then we get list with 2 items
 
@@ -160,3 +159,33 @@ Feature: Duplication of Content within Desk
         [{"desk": "#desks._id#"}]
         """
         Then we get response code 403
+
+    @auth
+    Scenario: Sign off is changed when item is duplicated by another person
+      Given "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And "archive"
+      """
+      [{  "type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "submitted",
+          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+      """
+      When we patch given
+      """
+      {"headline": "test2"}
+      """
+      Then we get updated response
+      """
+      {"headline": "test2", "state": "in_progress", "sign_off": "abc", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
+      """
+      When we switch user
+      And we post to "/archive/123/duplicate"
+      """
+      {"desk": "#desks._id#"}
+      """
+      And we get "/archive/#duplicate._id#"
+      Then we get existing resource
+      """
+      {"state": "submitted", "sign_off": "foo", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+      """

@@ -135,7 +135,6 @@ class BasePublishService(BaseService):
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates, last_updated)
 
-            set_sign_off(updates, original)
             queued_digital = False
             package = None
 
@@ -627,6 +626,10 @@ class ArchivePublishService(BasePublishService):
     publish_type = 'publish'
     published_state = 'published'
 
+    def on_update(self, updates, original):
+        super().on_update(updates, original)
+        set_sign_off(updates, original)
+
     def set_state(self, original, updates):
         """
         Set the state of the document to schedule if the publish_schedule is specified.
@@ -791,6 +794,7 @@ class CorrectPublishService(BasePublishService):
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_CORRECT
         super().on_update(updates, original)
+        set_sign_off(updates, original)
 
     def get_subscribers(self, doc, target_media_type):
         """

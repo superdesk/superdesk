@@ -2,7 +2,7 @@ Feature: Fetch Items from Ingest
 
     @auth
     @provider
-    Scenario: Fetch an item
+    Scenario: Fetch an item and validate metadata set by API
       Given empty "archive"
       And "desks"
       """
@@ -24,14 +24,15 @@ Feature: Fetch Items from Ingest
       	{
       		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", 
       		"ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
-      		"operation": "fetch"
+      		"operation": "fetch",
+      		"sign_off": "abc"
       	}
       ]}
       """
 
     @auth
     @provider
-    Scenario: Fetch an item of type Media
+    Scenario: Fetch an item of type Media and validate metadata set by API
       Given empty "archive"
       And "desks"
       """
@@ -48,7 +49,7 @@ Feature: Fetch Items from Ingest
       When we get "/archive/#_id#"
       Then we get existing resource
       """
-      {
+      {   "sign_off": "abc",
           "renditions": {
               "baseImage": {"height": 845, "mimetype": "image/jpeg", "width": 1400},
               "original": {"height": 2113, "mimetype": "image/jpeg", "width": 3500},
@@ -61,7 +62,7 @@ Feature: Fetch Items from Ingest
     @auth
     @provider
     @test
-    Scenario: Fetch a package
+    Scenario: Fetch a package and validate metadata set by API
       Given empty "ingest"
       And "desks"
       """
@@ -83,7 +84,8 @@ Feature: Fetch Items from Ingest
                   "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
                   "_current_version": 1,
@@ -99,31 +101,36 @@ Feature: Fetch Items from Ingest
                       {"refs": [{"itemClass": "icls:text"}]}
                   ],
                   "state": "fetched",
-                  "type": "composite"
+                  "type": "composite",
+                  "sign_off": "abc"
               },
               {
                   "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
                   "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "text"
+                  "type": "text",
+                  "sign_off": "abc"
               },
               {
                   "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "picture"
+                  "type": "picture",
+                  "sign_off": "abc"
               },
               {
                   "_current_version": 1,
                   "linked_in_packages": [{}],
                   "state": "fetched",
-                  "type": "text"
+                  "type": "text",
+                  "sign_off": "abc"
               }
           ]
       }

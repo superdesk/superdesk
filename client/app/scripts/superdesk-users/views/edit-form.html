@@ -66,8 +66,13 @@
 
                 <div sd-info-item>
                   <label for="sign_off" translate>sign off</label>
-                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" required>
+                  <input type="text" name="sign_off" id="sign_off" ng-model="user.sign_off" ng-pattern="signOffPattern" required>
+
                   <i ng-show="userForm.sign_off.$error.required" class="required-asteriks">*</i>
+                  <div ng-show="userForm.sign_off.$error.pattern || error.sign_off.format" sd-valid-info>
+                    <i class="icon-info-sign-warning"></i>
+                    <span translate>Invalid format. Only Alphanumerics are allowed.</span>
+                  </div>
                 </div>
 
                 <div sd-info-item>
@@ -126,7 +131,7 @@
 
                 <div sd-info-item ng-show="user._id">
                   <label for="created" translate>member since</label>
-                  <span class="info-value" sd-reldate ng-model="user._created"></span>
+                  <span id="created" class="info-value" sd-reldate ng-model="user._created"></span>
                 </div>
 
                 <div sd-info-item ng-show="">

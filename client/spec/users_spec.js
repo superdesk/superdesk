@@ -29,7 +29,7 @@ describe('Users', function() {
             expect(modelValue('user.first_name')).toBe('first name');
             expect(modelValue('user.last_name')).toBe('last name');
             expect(modelValue('user.email')).toBe('a@a.com');
-            expect(modelValue('user.sign_off')).toBe('');
+            expect(modelValue('user.sign_off')).toBe('fl');
         });
     });
 
@@ -154,6 +154,7 @@ describe('Users', function() {
             expect(buttonSave.isEnabled()).toBe(false);
             expect(buttonCancel.isEnabled()).toBe(false);
 
+            inputSignOff.clear();
             inputSignOff.sendKeys('X');
             expect(inputSignOff.getAttribute('value')).toBe('X');
 
@@ -168,7 +169,7 @@ describe('Users', function() {
 
             browser.sleep(200);
             expect(buttonSave.isEnabled()).toBe(false);
-            expect(buttonCancel.isEnabled()).toBe(false);
+            expect(buttonCancel.isEnabled()).toBe(true);
         });
     });
 
