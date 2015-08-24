@@ -27,7 +27,7 @@ module.exports = function (grunt) {
                         collapseWhitespace: true,
                         collapseBooleanAttributes: true
                     },
-                    bootstrap:  function(module, script) {
+                    bootstrap: function(module, script) {
                         return '"use strict";' +
                             'var templates = angular.module("templates", []);' +
                             'templates.run([\'$templateCache\', function($templateCache) {' +
