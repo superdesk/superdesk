@@ -220,9 +220,9 @@ class ninjsFormatterTest(TestCase):
             "_id": "urn:newsml:localhost:2015-07-24T15:05:00.116047:435c93c2-492c-4668-ab47-ae6e2b9b1c2c", \
             "_updated": "2015-07-24T05:05:25.000Z", \
             "associations": {"main": \
-            {"_id": "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916", "type": "text"}, \
+            [{"_id": "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916", "type": "text"}], \
             "sidebars": \
-            {"_id": "urn:newsml:localhost:2015-07-24T15:04:29.589984:af3bef9a-5002-492b-a15a-8b460e69b164", \
-            "type": "picture"}}, "description_text": "", "versioncreated": "2015-07-24T05:05:14.000Z", "type": \
+            [{"_id": "urn:newsml:localhost:2015-07-24T15:04:29.589984:af3bef9a-5002-492b-a15a-8b460e69b164", \
+            "type": "picture"}]}, "description_text": "", "versioncreated": "2015-07-24T05:05:14.000Z", "type": \
             "composite", "pubstatus": "usable", "language": "en"}')
             self.assertEqual(json.loads(doc), expected)

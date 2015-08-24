@@ -121,6 +121,8 @@ class TakesPackageService():
 
         ids = get_resource_service(ARCHIVE).post([takes_package])
         insert_into_versions(id_=ids[0])
+        original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target['_id'])
+        target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
 
         return ids[0]
 

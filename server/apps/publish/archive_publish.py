@@ -11,6 +11,7 @@
 from copy import copy
 from functools import partial
 import logging
+from copy import deepcopy
 
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
@@ -18,7 +19,7 @@ from eve.validation import ValidationError
 
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES
-from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE, TAKES_PACKAGE
+from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
@@ -133,7 +134,7 @@ class BasePublishService(BaseService):
             last_updated = updates.get(config.LAST_UPDATED, utcnow())
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                self._publish_package_items(original, updates, last_updated)
+                self._publish_package_items(original, updates)
 
             queued_digital = False
             package = None
@@ -155,6 +156,7 @@ class BasePublishService(BaseService):
                                 updated.update(updates)
                                 # create a takes package
                                 package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
+                                updates[LINKED_IN_PACKAGES] = updated[LINKED_IN_PACKAGES]
                                 package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
                                 queued_digital = self._publish_takes_package(package, updates,
                                                                              original, last_updated)
@@ -165,7 +167,8 @@ class BasePublishService(BaseService):
 
                 queued = queued_digital or queued_wire
                 if not queued:
-                    raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+                    logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
+                                     format(original[config.ID_FIELD], self.publish_type))
 
             self._update_archive(original=original, updates=updates, should_insert_into_versions=False)
             push_notification('item:publish', item=str(id), unique_name=original['unique_name'],
@@ -204,27 +207,125 @@ class BasePublishService(BaseService):
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
         return queued_digital
 
-    def _publish_package_items(self, package, updates, last_updated):
+    def _publish_package_items(self, package, updates):
         """
-        Publishes items of a package recursively
-        :param: package to publish
-        :param datetime last_updated: datetime of the updates.
+        Publishes all items of a package recursively then publishes the package itself
+        :param package: package to publish
+        :param updates: payload
         """
-
         items = self.package_service.get_residrefs(package)
 
+        if len(items) == 0 and self.publish_type == ITEM_PUBLISH:
+            raise SuperdeskApiError.badRequestError("Empty package cannot be published!")
+
+        removed_items = []
+        if self.publish_type == ITEM_CORRECT:
+            removed_items, added_items = self._get_changed_items(items, updates)
+            if len(removed_items) == len(items) and len(added_items) == 0:
+                raise SuperdeskApiError.badRequestError("Corrected package cannot be empty!")
+            items.extend(added_items)
+
+        subscriber_items = {}
         if items:
             archive_publish = get_resource_service('archive_publish')
             for guid in items:
-                doc = super().find_one(req=None, _id=guid)
-                try:
-                    if doc[ITEM_STATE] not in PUBLISH_STATES:
-                        if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                            self._publish_package_items(doc)
-                        archive_publish.patch(id=doc.pop('_id'), updates=doc)
-                except KeyError:
-                    raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
-            self.publish(package, updates, target_media_type=DIGITAL)
+                package_item = super().find_one(req=None, _id=guid)
+
+                if not package_item:
+                    raise SuperdeskApiError.badRequestError(
+                        "Package item with id: {} does not exist.".format(guid))
+
+                if package_item[ITEM_STATE] not in PUBLISH_STATES:
+                    # if the item is not published then publish it
+
+                    if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                        # if the item is a package do recursion to publish
+                        self._publish_package_items(package_item, updates)
+                        self._update_archive(original=package_item, updates=updates, should_insert_into_versions=False)
+                        self.update_published_collection(published_item_id=package_item[config.ID_FIELD])
+                    else:
+                        # publish the item
+                        archive_publish.patch(id=package_item.pop(config.ID_FIELD), updates=package_item)
+
+                    package_item = super().find_one(req=None, _id=guid)
+
+                subscribers = self._get_subscribers_for_package_item(package_item)
+
+                if package_item[config.ID_FIELD] in removed_items:
+                    digital_item_id = None
+                else:
+                    digital_item_id = self._get_digital_id_for_package_item(package_item)
+
+                self._extend_subscriber_items(subscriber_items, subscribers, package_item, digital_item_id)
+
+            self.publish_package(package, updates, target_subscribers=subscriber_items)
+            return subscribers
+
+    def _extend_subscriber_items(self, subscriber_items, subscribers, item, digital_item_id):
+        """
+        Extends the subscriber_items with the given list of subscribers for the item
+        :param subscriber_items: The existing list of subscribers
+        :param subscribers: New subscribers that item has been published to - to be added
+        :param item: item that has been published
+        :param digital_item_id: digital_item_id
+        """
+        item_id = item[config.ID_FIELD]
+        for subscriber in subscribers:
+            sid = subscriber[config.ID_FIELD]
+            item_list = subscriber_items.get(sid, {}).get('items', {})
+            item_list[item_id] = digital_item_id
+            subscriber_items[sid] = {'subscriber': subscriber, 'items': item_list}
+
+    def _get_changed_items(self, existing_items, updates):
+        """
+        Returns the added and removed items from existing_items
+        :param existing_items: Existing list
+        :param updates: Changes
+        :return: list of removed items and list of added items
+        """
+        if 'groups' in updates:
+            new_items = self.package_service.get_residrefs(updates)
+            removed_items = list(set(existing_items) - set(new_items))
+            added_items = list(set(new_items) - set(existing_items))
+            return removed_items, added_items
+        else:
+            return [], []
+
+    def _get_digital_id_for_package_item(self, package_item):
+        """
+        Finds the digital item id for a given item in a package
+        :param package_item: item in a package
+        :return string: Digital item id if there's one otherwise id of package_item
+        """
+        if package_item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
+            return package_item[config.ID_FIELD]
+        else:
+            package_item_takes_package_id = self.takes_package_service.get_take_package_id(package_item)
+            if not package_item_takes_package_id:
+                return package_item[config.ID_FIELD]
+            return package_item_takes_package_id
+
+    def _get_subscribers_for_package_item(self, package_item):
+        """
+        Finds the list of subscribers for a given item in a package
+        :param package_item: item in a package
+        :return list: List of subscribers
+        :return string: Digital item id if there's one otherwise None
+        """
+        if package_item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
+            query = {'$and': [{'item_id': package_item[config.ID_FIELD]},
+                              {'publishing_action': package_item[ITEM_STATE]}]}
+        else:
+            package_item_takes_package = self.takes_package_service.get_take_package(package_item)
+            if not package_item_takes_package:
+                # this item has not been published to digital subscribers so
+                # the list of subscribers are empty
+                return []
+
+            query = {'$and': [{'item_id': package_item_takes_package[config.ID_FIELD]},
+                              {'publishing_action': package_item_takes_package[ITEM_STATE]}]}
+
+        return self._get_subscribers_for_previously_sent_items(query)
 
     def _set_version_last_modified_and_state(self, original, updates, last_updated):
         """
@@ -315,14 +416,53 @@ class BasePublishService(BaseService):
             updated_take = original_of_take_to_be_published.copy()
             updated_take.update(updates_of_take_to_be_published)
             metadata_from = updated_take
-            if self.published_state == 'corrected':
-                # get the last take metadata
+            if self.published_state == 'corrected' and len(takes) > 1:
+                # get the last take metadata only if there are more than one takes
                 metadata_from = takes[-1]
 
             for metadata in metadata_tobe_copied:
                 package_updates[metadata] = metadata_from.get(metadata)
 
         return package_updates
+
+    def publish_package(self, package, updates, target_subscribers):
+        """
+        Publishes a given non-take package to given subscribers.
+        For each subscriber updates the package definition with the wanted_items for that subscriber
+        and removes unwanted_items that doesn't supposed to go that subscriber.
+        Text stories are replaced by the digital versions.
+        :param package: Package to be published
+        :param updates: Updates to the package
+        :param target_subscribers: List of subscriber and items-per-subscriber
+        """
+        self._process_publish_updates(package, updates)
+        all_items = PackageService().get_residrefs(package)
+        for items in target_subscribers.values():
+            updated = deepcopy(package)
+            updates_copy = deepcopy(updates)
+            updated.update(updates_copy)
+            subscriber = items['subscriber']
+            wanted_items = [item for item in items['items'] if items['items'].get(item, None)]
+            unwanted_items = [item for item in all_items if item not in wanted_items]
+            for i in unwanted_items:
+                still_items_left = PackageService().remove_ref_from_inmem_package(updated, i)
+                if not still_items_left and self.publish_type != 'correct':
+                    # if nothing left in the package to be published and
+                    # if not correcting then don't send the package
+                    return
+            for key in wanted_items:
+                PackageService().replace_ref_in_package(updated, key, items['items'][key])
+            self.queue_transmission(updated, [subscriber])
+
+    def _process_publish_updates(self, doc, updates):
+        """ Common updates for published items """
+        desk = None
+        if doc.get('task', {}).get('desk'):
+            desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
+        if not doc.get('ingest_provider'):
+            updates['source'] = desk['source'] if desk and desk.get('source', '') \
+                else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
+        updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'kill' else PUB_STATUS.USABLE
 
     def publish(self, doc, updates, target_media_type=None):
         """
@@ -339,6 +479,7 @@ class BasePublishService(BaseService):
         :param str target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
                 Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
                 then the doc being queues is an Individual Article.
+        :param dict target_subscribers: list of subscribers that document needs to get sent
         :return bool: if content is queued then True else False
         :raises PublishQueueError.item_not_queued_error:
                 If the nothing is queued.
@@ -350,17 +491,7 @@ class BasePublishService(BaseService):
 
         # Step 1
         if updates:
-            desk = None
-
-            if doc.get('task', {}).get('desk'):
-                desk = get_resource_service('desks').find_one(req=None, _id=doc['task']['desk'])
-
-            if not doc.get('ingest_provider'):
-                updates['source'] = desk['source'] if desk and desk.get('source', '') \
-                    else DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
-
-            updates['pubstatus'] = PUB_STATUS.CANCELED if self.publish_type == 'killed' else PUB_STATUS.USABLE
-
+            self._process_publish_updates(doc, updates)
             updated.update(updates)
 
         # Step 2
@@ -390,7 +521,8 @@ class BasePublishService(BaseService):
 
         # Step 7
         if not target_media_type and not queued:
-            raise PublishQueueError.item_not_queued_error(Exception('Nothing is saved to publish queue'), None)
+            logger.exception('Nothing is saved to publish queue for story: {} for action: {}'.
+                             format(doc[config.ID_FIELD], self.publish_type))
 
         return queued
 
@@ -485,6 +617,11 @@ class BasePublishService(BaseService):
             no_formatters = []
             for subscriber in subscribers:
                 try:
+                    if doc[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED] and \
+                            subscriber.get('subscriber_type', '') == SUBSCRIBER_TYPES.WIRE:
+                        # wire subscribers can get only text and preformatted stories
+                        continue
+
                     for destination in subscriber['destinations']:
                         # Step 2(a)
                         formatter = get_formatter(destination['format'], doc)
@@ -607,7 +744,7 @@ class BasePublishService(BaseService):
                     if doc[ITEM_STATE] in (CONTENT_STATE.KILLED, CONTENT_STATE.SPIKED):
                         raise ValidationError(['Package contains killed or spike item'])
                     # don't validate items that already have published
-                    if doc[ITEM_STATE] != CONTENT_STATE.PUBLISHED:
+                    if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
                         validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
                         validation_errors = get_resource_service('validate').post([validate_item])
                         if validation_errors[0]:
@@ -759,8 +896,8 @@ class KillPublishService(BasePublishService):
                     self.update_published_collection(published_item_id=original_data['_id'])
 
                     if not queued:
-                        logger.warn("Could not publish the kill for take {} with headline {}".
-                                    format(original_data.get(config.ID_FIELD), original_data.get('headline')))
+                        logger.exception("Could not publish the kill for take {} with headline {}".
+                                         format(original_data.get(config.ID_FIELD), original_data.get('headline')))
 
     def get_subscribers(self, doc, target_media_type):
         """
@@ -795,6 +932,28 @@ class CorrectPublishService(BasePublishService):
         updates[ITEM_OPERATION] = ITEM_CORRECT
         super().on_update(updates, original)
         set_sign_off(updates, original)
+
+    def on_updated(self, updates, original):
+        """
+        Locates the published or corrected non-take packages containing the corrected item
+        and corrects them
+        :param updates: correction
+        :param original: original story
+        """
+        original_updates = dict()
+        original_updates['operation'] = updates['operation']
+        original_updates[ITEM_STATE] = updates[ITEM_STATE]
+        super().on_updated(updates, original)
+        packages = PackageService().get_packages(original[config.ID_FIELD])
+        if packages and packages.count() > 0:
+            archive_correct = get_resource_service('archive_correct')
+            processed_packages = []
+            for package in packages:
+                if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED] and \
+                        package.get(PACKAGE_TYPE, '') == '' and \
+                        str(package[config.ID_FIELD]) not in processed_packages:
+                    archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
+                    processed_packages.append(package[config.ID_FIELD])
 
     def get_subscribers(self, doc, target_media_type):
         """
