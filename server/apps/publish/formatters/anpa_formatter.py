@@ -13,7 +13,9 @@ import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 import datetime
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, BYLINE
+from .field_mappers.selectorcode_mapper import SelectorcodeMapper
+from .field_mappers.locator_mapper import LocatorMapper
 
 
 class AAPAnpaFormatter(Formatter):
@@ -23,6 +25,17 @@ class AAPAnpaFormatter(Formatter):
             for category in article.get('anpa_category'):
                 pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
                 anpa = []
+
+                # selector codes are only injected for those subscribers that are defined
+                # in the mapper
+                selectors = dict()
+                SelectorcodeMapper().map(article, category.get('qcode').upper(),
+                                         subscriber=subscriber,
+                                         formatted_item=selectors)
+                if 'selector_codes' in selectors and selectors['selector_codes']:
+                    anpa.append(b'\x05')
+                    anpa.append(selectors['selector_codes'].encode('ascii'))
+                    anpa.append(b'\x0D\x0A')
 
                 # start of message header (syn syn soh)
                 anpa.append(b'\x16\x16\x01')
@@ -69,13 +82,20 @@ class AAPAnpaFormatter(Formatter):
 
                 anpa.append(b'\x02')  # STX
 
-                self._process_headline(anpa, article)
+                self._process_headline(anpa, article, category['qcode'].encode('ascii'))
 
                 keyword = article.get('slugline', '').encode('ascii', 'ignore')
                 anpa.append(keyword)
                 take_key = article.get('anpa_take_key', '').encode('ascii', 'ignore')
                 anpa.append((b'\x20' + take_key) if len(take_key) > 0 else b'')
                 anpa.append(b'\x0D\x0A')
+
+                if BYLINE in article:
+                    anpa.append(article.get(BYLINE).encode('ascii', 'ignore'))
+                    anpa.append(b'\x0D\x0A')
+
+                if 'dateline' in article and 'text' in article['dateline']:
+                    anpa.append(article.get('dateline').get('text').encode('ascii', 'ignore'))
 
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(article.get('body_html', '').encode('ascii', 'replace'))
@@ -105,17 +125,24 @@ class AAPAnpaFormatter(Formatter):
         except Exception as ex:
             raise FormatterError.AnpaFormatterError(ex, subscriber)
 
-    def _process_headline(self, anpa, article):
+    def _process_headline(self, anpa, article, category):
+        # prepend the locator to the headline if required
+        headline_prefix = LocatorMapper().map(article, category.upper())
+        if headline_prefix:
+            headline = '{}:{}'.format(headline_prefix, article['headline'])
+        else:
+            headline = article.get('headline', '')
+
         # Set the maximum size to 64 including the sequence number if any
-        if len(article.get('headline', '')) > 64:
+        if len(headline) > 64:
             if article.get('sequence'):
                 digits = len(str(article['sequence'])) + 1
-                shortened_headline = '{}={}'.format(article['headline'][:-digits][:(64 - digits)], article['sequence'])
+                shortened_headline = '{}={}'.format(headline[:-digits][:(64 - digits)], article['sequence'])
                 anpa.append(shortened_headline.encode('ascii', 'replace'))
             else:
-                anpa.append(article['headline'][:64].encode('ascii', 'replace'))
+                anpa.append(headline[:64].encode('ascii', 'replace'))
         else:
-            anpa.append(article['headline'].encode('ascii', 'replace'))
+            anpa.append(headline.encode('ascii', 'replace'))
         anpa.append(b'\x0D\x0A')
 
     def can_format(self, format_type, article):
