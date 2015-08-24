@@ -737,6 +737,7 @@ class BasePublishService(BaseService):
         if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == ITEM_PUBLISH:
             items = self.package_service.get_residrefs(package)
 
+            validation_errors = []
             if items:
                 for guid in items:
                     doc = super().find_one(req=None, _id=guid)
@@ -746,12 +747,14 @@ class BasePublishService(BaseService):
                     # don't validate items that already have published
                     if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
                         validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
-                        validation_errors = get_resource_service('validate').post([validate_item])
-                        if validation_errors[0]:
-                            raise ValidationError(validation_errors)
+                        errors = get_resource_service('validate').post([validate_item], headline=True)
+                        if errors[0]:
+                            validation_errors.extend(errors[0])
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
-                        raise ValidationError(['A packaged item is locked'])
+                        validation_errors.extend(['{}: packaged item is locked'.format(doc['headline'])])
+                if len(validation_errors) > 0:
+                    raise ValidationError(validation_errors)
 
 
 class ArchivePublishResource(BasePublishResource):
