@@ -744,7 +744,7 @@ class BasePublishService(BaseService):
                     if doc[ITEM_STATE] in (CONTENT_STATE.KILLED, CONTENT_STATE.SPIKED):
                         raise ValidationError(['Package contains killed or spike item'])
                     # don't validate items that already have published
-                    if doc[ITEM_STATE] != CONTENT_STATE.PUBLISHED:
+                    if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
                         validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
                         validation_errors = get_resource_service('validate').post([validate_item])
                         if validation_errors[0]:
