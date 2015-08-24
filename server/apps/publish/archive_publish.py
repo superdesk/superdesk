@@ -265,7 +265,7 @@ class BasePublishService(BaseService):
         """
         Extends the subscriber_items with the given list of subscribers for the item
         :param subscriber_items: The existing list of subscribers
-        :param subscribers: New subscribers that item hasbeen published to - to be added
+        :param subscribers: New subscribers that item has been published to - to be added
         :param item: item that has been published
         :param digital_item_id: digital_item_id
         """
@@ -300,10 +300,10 @@ class BasePublishService(BaseService):
         if package_item[ITEM_TYPE] not in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             return package_item[config.ID_FIELD]
         else:
-            package_item_takes_package = self.takes_package_service.get_take_package(package_item)
-            if not package_item_takes_package:
+            package_item_takes_package_id = self.takes_package_service.get_take_package_id(package_item)
+            if not package_item_takes_package_id:
                 return package_item[config.ID_FIELD]
-            return package_item_takes_package[config.ID_FIELD]
+            return package_item_takes_package_id
 
     def _get_subscribers_for_package_item(self, package_item):
         """
