@@ -508,7 +508,8 @@
             ],
             additionalCondition:['authoring', 'item', function(authoring, item) {
                 return authoring.itemActions(item).mark_item;
-            }]
+            }],
+            group: 'highlights'
         })
         .activity('/settings/highlights', {
             label: gettext('Highlights'),

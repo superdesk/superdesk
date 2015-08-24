@@ -342,7 +342,7 @@ define([
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
-                    icon: 'revert',
+                    icon: 'unspike',
                     monitor: true,
                     controller: ['spike', 'data', '$rootScope', function unspikeActivity(spike, data, $rootScope) {
                         return spike.unspike(data.item).then(function(item) {
