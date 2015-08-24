@@ -141,6 +141,36 @@
         }
     },
     {
+        "_id": "correct_picture",
+        "act": "correct",
+        "type": "picture",
+        "schema": {
+            "renditions": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "4-3": {"type": "dict", "required": true},
+                    "16-9": {"type": "dict", "required": true}
+                }
+            }
+        }
+    },
+    {
+        "_id": "kill_picture",
+        "act": "kill",
+        "type": "picture",
+        "schema": {
+            "renditions": {
+                "type": "dict",
+                "required": true,
+                "schema": {
+                    "4-3": {"type": "dict", "required": true},
+                    "16-9": {"type": "dict", "required": true}
+                }
+            }
+        }
+    },
+    {
         "_id": "correct_text",
         "act": "correct",
         "type": "text",

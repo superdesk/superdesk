@@ -8,10 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import os
 from superdesk.tests import TestCase
 from apps.archive.archive_crop import ArchiveCropService
 from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
+from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
 class ArchiveCropTestCase(TestCase):
@@ -19,6 +21,8 @@ class ArchiveCropTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.service = ArchiveCropService()
+        with self.app.app_context():
+            VocabulariesPopulateCommand().run(os.path.abspath('apps/prepopulate/data_initialization/vocabularies.json'))
 
     def test_validate_aspect_ratio_fails(self):
         doc = {'CropLeft': 0, 'CropRight': 80, 'CropTop': 0, 'CropBottom': 60}
@@ -43,8 +47,7 @@ class ArchiveCropTestCase(TestCase):
         self.assertIsNone(self.service._validate_aspect_ratio(crop, doc))
 
     def test_get_crop_by_name(self):
-        crops = [{'name': 'acrop'}, {'name': '4-9'}, {'name': 'Second'}, {'name': 'c'}]
-        self.assertIsNotNone(self.service._get_crop_by_name(crops, 'second'))
-        self.assertIsNotNone(self.service._get_crop_by_name(crops, '4-9'))
-        self.assertIsNone(self.service._get_crop_by_name(crops, 'd'))
-        self.assertIsNotNone(self.service._get_crop_by_name(crops, 'ACROP'))
+        with self.app.app_context():
+            self.assertIsNotNone(self.service.get_crop_by_name('16-9'))
+            self.assertIsNotNone(self.service.get_crop_by_name('4-3'))
+            self.assertIsNone(self.service.get_crop_by_name('d'))

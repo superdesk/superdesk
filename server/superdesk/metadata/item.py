@@ -324,3 +324,10 @@ metadata_schema = {
 
 metadata_schema['lock_user']['versioned'] = False
 metadata_schema['lock_session']['versioned'] = False
+
+crop_schema = {
+    'CropLeft': {'type': 'integer'},
+    'CropRight': {'type': 'integer'},
+    'CropTop': {'type': 'integer'},
+    'CropBottom': {'type': 'integer'}
+}
