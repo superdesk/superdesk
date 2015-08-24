@@ -57,11 +57,31 @@ function Content() {
         return menu.element(by.partialLinkText(action)).click();
     };
 
-    this.openItemMenu = function(item) {
+    this.openItemMenu = function(item, pause) {
         var itemElem = this.getItem(item);
-        browser.actions().mouseMove(itemElem).perform();
-        itemElem.element(by.className('icon-dots-vertical')).click();
-        return element(by.css('.dropdown-menu.active'));
+        itemElem.click();
+
+        var preview = element(by.id('item-preview'));
+        browser.wait(function() {
+            return preview.isDisplayed();
+        }, 300);
+
+        var toggle = preview.element(by.className('more-activity-toggle'));
+        var menu = element(by.css('.more-activity-menu.active'));
+
+        browser.wait(function() {
+            return toggle.isDisplayed();
+        }, 300);
+
+        expect(toggle.isDisplayed()).toBe(true);
+
+        toggle.click();
+
+        browser.wait(function() {
+            return menu.isDisplayed();
+        }, 300);
+
+        return menu;
     };
 
     this.checkMarkedForHighlight = function(highlight, item) {

@@ -59,6 +59,8 @@ def push_notification(name, **kwargs):
         logger.info('Notification server is not initialized. Try to reinitialize the connection again')
         init_app(app)
 
+    kwargs['app'] = app.config.get('APP_NAME')
+
     if app.notification_client is not None:
         try:
             app.notification_client.notify(event=name, extra=kwargs)

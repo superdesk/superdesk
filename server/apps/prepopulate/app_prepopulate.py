@@ -51,7 +51,7 @@ def prepopulate_data(file_name, default_user=get_default_user()):
     placeholders = {'NOW()': date_to_str(utcnow())}
     users = {default_user['username']: default_user['password']}
     default_username = default_user['username']
-    file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', file_name)
+    file = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', file_name)
     with open(file, 'rt', encoding='utf8') as app_prepopulation:
         json_data = json.load(app_prepopulation)
         for item in json_data:
@@ -101,8 +101,10 @@ class PrepopulateService(BaseService):
     def create(self, docs, **kwargs):
         for doc in docs:
             if doc.get('remove_first'):
-                drop_elastic(superdesk.app)
-                drop_mongo(superdesk.app)
+                drop_elastic(app)
+                drop_mongo(app)
+                app.data.init_elastic(app)  # create elastic indexes again
+
             user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
             if not user:
                 get_resource_service('users').post([get_default_user()])

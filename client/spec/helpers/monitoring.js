@@ -1,7 +1,8 @@
 
 'use strict';
 
-var openUrl = require('./utils').open;
+var nav = require('./utils').nav;
+
 module.exports = new Monitoring();
 
 function Monitoring() {
@@ -9,7 +10,7 @@ function Monitoring() {
     var config = element(by.className('aggregate-settings'));
 
     this.openMonitoring = function() {
-        openUrl('/#/workspace/monitoring');
+        nav('/workspace/monitoring');
     };
 
     this.openSpiked = function() {
@@ -128,11 +129,13 @@ function Monitoring() {
         browser.wait(function() {
             return element(by.css('.icon-settings')).isDisplayed();
         });
+
         element(by.css('.icon-settings')).click();
         browser.wait(function() {
             return element.all(by.css('.aggregate-widget-config')).isDisplayed();
         });
-        element(by.css('[ng-click="goTo(step)"]')).click();
+
+        element.all(by.repeater('step in steps')).first().element(by.buttonText('Desks')).click();
     };
 
     this.nextStages = function() {

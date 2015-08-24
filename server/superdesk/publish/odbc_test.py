@@ -71,7 +71,7 @@ class ODBCTests(TestCase):
             init_app(self.app)
 
     def test_transmit(self):
-        if superdesk.app.config['ODBC_PUBLISH']:
+        if self.app.config['ODBC_PUBLISH']:
             with self.app.app_context():
                 subscriber = self.app.data.find('subscribers', None, None)[0]
 

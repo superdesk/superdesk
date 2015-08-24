@@ -1,14 +1,14 @@
 
 'use strict';
 
-var openUrl = require('./helpers/utils').open,
+var nav = require('./helpers/utils').nav,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content;
 
-describe('Spike', function() {
+describe('spike', function() {
 
-    beforeEach(function(done) {
-        openUrl('/#/workspace/content').then(done);
+    beforeEach(function() {
+        nav('/workspace/content');
     });
 
     it('can spike item', function() {

@@ -30,8 +30,8 @@
             "last_name": "last name",
             "needs_activation": false,
             "password": "admin",
-            "user_type": "administrator",
             "username": "admin",
+            "user_type": "administrator",
             "role": "-id Editor role-"
         },
         "id_name": "-id user admin-",

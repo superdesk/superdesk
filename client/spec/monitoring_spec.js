@@ -4,13 +4,13 @@
 var authoring = require('./helpers/authoring'),
     monitoring = require('./helpers/monitoring');
 
-describe('monitoring view', function() {
+describe('monitoring', function() {
 
     beforeEach(function() {
         monitoring.openMonitoring();
     });
 
-    it('configure a stage and show it on monitoring view', function() {
+    it('renders all content', function() {
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         expect(monitoring.getTextItem(2, 0)).toBe('item6');
         expect(monitoring.getTextItem(5, 0)).toBe('item3');

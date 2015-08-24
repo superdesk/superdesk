@@ -37,7 +37,7 @@ logger.setLevel(logging.INFO)
 sentry = Sentry(register_signal=False, wrap_wsgi=False)
 
 
-def get_app(config=None):
+def get_app(config=None, prefix=None):
     """App factory.
 
     :param config: configuration that can override config from `settings.py`
@@ -59,6 +59,16 @@ def get_app(config=None):
         media_storage = AmazonMediaStorage
 
     config['DOMAIN'] = {}
+
+    if prefix:
+        config['APP_NAME'] = prefix
+        config['ELASTICSEARCH_INDEX'] = '{}_{}'.format(prefix, config['ELASTICSEARCH_INDEX'])
+        for db in ['MONGO', 'LEGAL_ARCHIVE']:
+            uri_key = '{}_URI'.format(db)
+            dbname_key = '{}_DBNAME'.format(db)
+            mongo_dbname = '{}_{}'.format(prefix, config[dbname_key])
+            config[uri_key] = config[uri_key].replace(config[dbname_key], mongo_dbname)
+            config[dbname_key] = mongo_dbname
 
     app = eve.Eve(
         data=superdesk.SuperdeskDataLayer,

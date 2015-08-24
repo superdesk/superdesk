@@ -1,17 +1,15 @@
 
-var openUrl = require('./helpers/utils').open,
+var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/content'),
     authoring = require('./helpers/authoring'),
     highlights = require('./helpers/highlights');
 
-describe('HIGHLIGHTS', function() {
+describe('highlights', function() {
     'use strict';
 
     describe('add highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('add highlights configuration with one desk', function() {
             highlights.add();
@@ -59,9 +57,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('edit highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('change the name of highlight configuration', function() {
             highlights.edit('highlight one');
@@ -137,9 +133,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('delete highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('delete highlight configuration', function() {
             expect(highlights.getRow('highlight one').count()).toBe(1);
@@ -149,9 +143,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('mark for highlights in a desk:', function() {
-        beforeEach(function() {
-            openUrl('/#/workspace/content');
-        });
+        beforeEach(route('/workspace/content'));
 
         it('mark for highlights in list view', function() {
             workspace.switchToDesk('SPORTS DESK');
@@ -179,6 +171,7 @@ describe('HIGHLIGHTS', function() {
             workspace.switchToDesk('SPORTS DESK');
             content.setListView();
             highlights.mark('Highlight two', 0);
+
             highlights.createHighlightsPackage('HIGHLIGHT TWO');
             authoring.edit();
             authoring.showSearch();
@@ -234,9 +227,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('multi mark for highlights:', function() {
-        beforeEach(function() {
-            openUrl('/#/workspace/content');
-        });
+        beforeEach(route('/workspace/content'));
 
         it('multi mark for highlights', function() {
             workspace.switchToDesk('SPORTS DESK');

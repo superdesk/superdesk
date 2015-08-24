@@ -9,6 +9,40 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+import os
+import threading
+from werkzeug.wsgi import pop_path_info, peek_path_info
 from app import get_app
+from superdesk.logging import logger
 
-application = get_app()
+
+class PathDispatcher(object):
+
+    def __init__(self, create_app):
+        self.create_app = create_app
+        self.lock = threading.Lock()
+        self.instances = {}
+
+    def get_application(self, prefix):
+        if prefix == 'api':
+            raise ValueError(prefix)
+        with self.lock:
+            app = self.instances.get(prefix)
+            if app is None:
+                app = self.create_app(prefix=prefix)
+                self.instances[prefix] = app
+            return app
+
+    def __call__(self, environ, start_response):
+        try:
+            app = self.get_application(peek_path_info(environ))
+            pop_path_info(environ)
+            return app(environ, start_response)
+        except ValueError:
+            logger.error('api req: %s' % (environ, ))
+            raise
+
+if os.environ.get('SUPERDESK_TESTING'):
+    application = PathDispatcher(get_app)
+else:
+    application = get_app()

@@ -1,5 +1,6 @@
 'use strict';
 
+exports.route = route;
 exports.login = login;
 exports.open = openUrl;
 exports.changeUrl = changeUrl;
@@ -49,7 +50,9 @@ function changeUrl(url) {
 
 // open url and authenticate
 function openUrl(url) {
-    return browser.get(url)
+    var prefix = browser.params.specUrl || '';
+    var appUrl = url.split('#')[1];
+    return browser.get('/' + prefix + '#' + appUrl)
         .then(login)
         .then(waitForSuperdesk);
 }
@@ -124,6 +127,21 @@ function waitForSuperdesk() {
             return webdriver.promise.rejected(err);
         }
     );
+}
+
+/**
+ * Open route
+ *
+ * It returns a function which when called will open given route, so you can use it like:
+ * `beforeEach(route('workspace'));`
+ *
+ * @param {string} url
+ * @return {function}
+ */
+function route(url) {
+    return function() {
+        return nav(url);
+    };
 }
 
 /**

@@ -1,20 +1,20 @@
 language: python
 
+python:
+    - "3.4"
+
 sudo: false
 
 env:
+  global:
+    - SUPERDESK_TESTING=true
+    - SUPERDESK_TESTING_INSTANCES=2
+    - SUPERDESK_URL='http://localhost:5000/api'
+  matrix:
     - TARGET=unit
     - TARGET=server_ldap
     - TARGET=server_public_api
     - TARGET=e2e_chrome
-#    - TARGET=e2e_firefox
-
-python:
-    - "3.4"
-
-matrix:
-    allow_failures:
-        - env: TARGET=e2e_firefox
 
 services:
     - mongodb
@@ -28,9 +28,7 @@ cache:
     - $HOME/.cache/bower
 
 before_install:
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        npm install -g grunt-cli bower ;
-      fi
+    - npm install -g grunt-cli bower ;
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         pip install requests &&
         export DISPLAY=:99.0 &&
@@ -41,16 +39,10 @@ before_install:
       fi
 
 install:
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/server/}" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd server &&
-        pip install -r requirements.txt &&
-        cd .. ;
-      fi
+    - python server/gunicorn_config.py
+    - cd server && pip install -r requirements.txt && cd .. ;
     - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && npm install && cd .. ;
-      fi
-    - if [ "${TARGET}" = "unit" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd client && bower install && cd .. ;
+        cd client && npm install && bower install && cd .. ;
       fi
     - if [ "${TARGET}" = "unit" ]; then
         cd server && pip install coveralls==1.0a2 && cd .. ;
@@ -59,9 +51,9 @@ install:
 before_script:
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server ;
-        (nohup env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start & );
+        (nohup honcho start rest wamp & ) ;
         cd ../client ;
-        grunt build --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' ;
+        grunt build --server='http://localhost:5000/api' --ws='ws://localhost:5100' ;
         cd dist ;
         while [ ! -f index.html ]; do sleep .5; done ;
         (nohup python3 -m http.server 9000 & );
@@ -86,16 +78,10 @@ script:
         cd .. ;
       fi
     - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
-        cd server &&
-        python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
-        cd ../client &&
+        cd client &&
         ./node_modules/.bin/webdriver-manager update &&
         ./node_modules/.bin/protractor protractor-conf.js
-          --stackTrace --verbose
-          --baseUrl 'http://127.0.0.1:9000'
-          --params.baseBackendUrl 'http://127.0.0.1:5000/api'
-          --params.username 'admin'
-          --params.password 'admin'
+          --baseUrl 'http://localhost:9000?'
           --capabilities.browserName "${TARGET/e2e_/}"
         ;
       fi

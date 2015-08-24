@@ -1,7 +1,7 @@
 
 'use strict';
 
-var openUrl = require('./utils').open;
+var nav = require('./utils').nav;
 var content = require('./content');
 
 module.exports = new Highlights();
@@ -13,7 +13,7 @@ function Highlights() {
     this.groups = element.all(by.repeater('group in configEdit.groups'));
 
     this.get = function() {
-        openUrl('/#/settings/highlights');
+        nav('/settings/highlights');
     };
 
     this.getRow = function(name) {

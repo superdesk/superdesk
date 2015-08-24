@@ -1,12 +1,11 @@
 
 'use strict';
 
-var openUrl = require('./helpers/utils').open,
-    workspace = require('./helpers/pages').workspace,
+var workspace = require('./helpers/workspace'),
     content = require('./helpers/content'),
     authoring = require('./helpers/authoring');
 
-describe('Content', function() {
+describe('content', function() {
 
     var body = element(by.tagName('body'));
 
@@ -15,7 +14,7 @@ describe('Content', function() {
     }
 
     beforeEach(function() {
-        openUrl('/#/workspace');
+        workspace.open();
         workspace.switchToDesk('PERSONAL');
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
