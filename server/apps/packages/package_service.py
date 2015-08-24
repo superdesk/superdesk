@@ -138,7 +138,7 @@ class PackageService():
             raise SuperdeskApiError.forbiddenError(message=message)
 
     def check_package_associations(self, docs):
-        for (doc, group) in [(doc, group) for doc in docs for group in doc.get(GROUPS, [])]:
+        for (doc, group) in ((doc, group) for doc in docs for group in doc.get(GROUPS, [])):
             associations = group.get(ASSOCIATIONS, [])
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
@@ -208,11 +208,10 @@ class PackageService():
             raise ValidationError(message)
         else:
             # keep checking in the hierarchy
-            for d in package.get(LINKED_IN_PACKAGES, []):
-                if 'package' in d:
-                    linked_package = get_resource_service(ARCHIVE).find_one(req=None, _id=d['package'])
-                    if linked_package:
-                        self.check_for_circular_reference(linked_package, item_id)
+            for d in (d for d in package.get(LINKED_IN_PACKAGES, []) if 'package' in d):
+                linked_package = get_resource_service(ARCHIVE).find_one(req=None, _id=d['package'])
+                if linked_package:
+                    self.check_for_circular_reference(linked_package, item_id)
 
     def get_packages(self, doc_id):
         """
@@ -238,12 +237,12 @@ class PackageService():
         :param ref_id: Id of the reference to be removed
         :return: True if there are still references in the package, False otherwise
         """
-        groups_to_be_removed = []
+        groups_to_be_removed = set()
         non_root_groups = [group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP]
         for non_rg in non_root_groups:
             refs = [r for r in non_rg.get(ASSOCIATIONS, []) if r.get(ITEM_REF, '') != ref_id]
             if len(refs) == 0:
-                groups_to_be_removed.append(non_rg.get(GROUP_ID))
+                groups_to_be_removed.add(non_rg.get(GROUP_ID))
             non_rg[ASSOCIATIONS] = refs
 
         if len(groups_to_be_removed) > 0:
@@ -267,7 +266,7 @@ class PackageService():
         :param old_ref_id: Old reference id
         :param new_ref_id: New reference id
         """
-        non_root_groups = [group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP]
+        non_root_groups = (group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP)
         for g in (ref for group in non_root_groups for ref in group.get(ASSOCIATIONS, [])):
             if g.get(ITEM_REF, '') == old_ref_id:
                 g[ITEM_REF] = new_ref_id

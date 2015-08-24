@@ -22,7 +22,7 @@ from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import OrganizationNameAbbreviation
 from superdesk import get_resource_service
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, \
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
     LINKED_IN_PACKAGES, BYLINE, SIGN_OFF
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
