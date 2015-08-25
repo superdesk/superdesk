@@ -147,10 +147,10 @@
         "schema": {
             "renditions": {
                 "type": "dict",
-                "required": true,
+                "required": false,
                 "schema": {
-                    "4-3": {"type": "dict", "required": true},
-                    "16-9": {"type": "dict", "required": true}
+                    "4-3": {"type": "dict", "required": false},
+                    "16-9": {"type": "dict", "required": false}
                 }
             }
         }
@@ -159,16 +159,7 @@
         "_id": "kill_picture",
         "act": "kill",
         "type": "picture",
-        "schema": {
-            "renditions": {
-                "type": "dict",
-                "required": true,
-                "schema": {
-                    "4-3": {"type": "dict", "required": true},
-                    "16-9": {"type": "dict", "required": true}
-                }
-            }
-        }
+        "schema": {}
     },
     {
         "_id": "correct_text",
