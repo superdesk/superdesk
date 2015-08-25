@@ -1,16 +1,16 @@
 <div class="item {{ :: data.type }}" ng-class="{locked: isLocked, published: isPublished}">
-	<div class="info">
+    <div class="info">
         <figure class="icons-holder" ng-if="data.type === 'composite' || data.type === 'text'">
             <i class="filetype-icon-large-{{ :: data.type }}"></i>
-	    </figure>
+        </figure>
 
-		<div class="holder" ng-if="data.type !== 'composite' && data.type !== 'text'">
-			<div class="loading" ng-show="data == null && error == null"></div>
-			<div class="error-icon" ng-show="error != null"><i class="filetype-icon-large-{{data.type}}"></i></div>
-			<div ng-if="data.type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
-			<audio ng-if="data.type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
-			<div ng-if="data.type === 'video'"><i class="filetype-icon-large-video"></i></div>
-		</div>
+        <div class="holder" ng-if="data.type !== 'composite' && data.type !== 'text'">
+            <div class="loading" ng-show="data == null && error == null"></div>
+            <div class="error-icon" ng-show="error != null"><i class="filetype-icon-large-{{data.type}}"></i></div>
+            <div ng-if="data.type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
+            <audio ng-if="data.type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
+            <div ng-if="data.type === 'video'"><i class="filetype-icon-large-video"></i></div>
+        </div>
 
         <div class="item-headline">
             <div ng-show=":: data.headline || data.slugline || data.description">{{ :: data.headline || data.slugline || data.description}}</div>
@@ -18,9 +18,18 @@
         </div>
 
         <a
-            ng-href="#/{{ data.type !== 'composite' ? 'authoring' : 'packaging'}}/{{ data.residRef }}/view?_id={{ data.guid }}"
+            ng-if="(data.type !== 'composite') && data.guid && !error"
+            ng-href="#/authoring/{{ data.guid }}/view/archive?_id={{ data.guid }}"
             title="{{ :: 'Open item' | translate }}"
-            ng-if="data.guid && !error"
+            ng-click="$event.stopPropagation();"
+            class="open-item">
+            <i class="icon-external"></i>
+        </a>
+
+        <a
+            ng-if="(data.type === 'composite') && data.guid && !error"
+            ng-href="#/packaging/{{ data.guid }}/view/packaging?_id={{ data.guid }}"
+            title="{{ :: 'Open item' | translate }}"
             ng-click="$event.stopPropagation();"
             class="open-item">
             <i class="icon-external"></i>
@@ -28,6 +37,6 @@
 
         <div class="package-details" ng-if="data.type === 'composite'"><i class="svg-icon-right"></i></div>
 
-	    <div class="alert-error" ng-show="error" translate>Problems occurred while fetching data.</div>
-	</div>
+        <div class="alert-error" ng-show="error" translate>Problems occurred while fetching data.</div>
+    </div>
 </div>
