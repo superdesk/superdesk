@@ -22,6 +22,15 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
                     $scope.versions = versions;
                     $scope.last = archiveService.lastVersion($scope.item, $scope.versions);
 
+                    _.forEach($scope.versions, function(version) {
+                        if (version.operation === 'publish') {
+                            version.show_sent_to = false;
+                            fetchItemPublishQueue(version).then(function(queue) {
+                                version.queuedItems = queue._items;
+                            });
+                        }
+                    });
+
                     if (archiveService.isLegal($scope.item)) {
                         $scope.canRevert =  false;
                         $scope.openVersion($scope.last);
@@ -36,6 +45,12 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
                     }
                 });
             });
+    }
+
+    function fetchItemPublishQueue (version) {
+        var criteria = {'item_id': version._id, 'item_version': $scope.item._current_version, 'max_results': 20};
+
+        return api.publish_queue.query(criteria);
     }
 
     /**
