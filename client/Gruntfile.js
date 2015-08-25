@@ -16,26 +16,7 @@ module.exports = function (grunt) {
         tasksDir: 'tasks',
         bowerDir: 'bower',
         poDir: 'po',
-        livereloadPort: 35729,
-        ngtemplates: {
-            app: {
-                cwd: 'app',
-                src: 'scripts/superdesk*/**/*.html',
-                dest: 'app/scripts/templates.js',
-                options: {
-                    htmlmin: {
-                        collapseWhitespace: true,
-                        collapseBooleanAttributes: true
-                    },
-                    bootstrap: function(module, script) {
-                        return '"use strict";' +
-                            'var templates = angular.module("templates", []);' +
-                            'templates.run([\'$templateCache\', function($templateCache) {' +
-                            script + ' }]);';
-                    }
-                }
-            }
-        }
+        livereloadPort: 35729
     };
 
     grunt.initConfig(config);
@@ -45,9 +26,6 @@ module.exports = function (grunt) {
         config: config,
         configPath: require('path').join(process.cwd(), 'tasks', 'options')
     });
-
-    // automatically minify and cache HTML templates into $templateCache
-    grunt.loadNpmTasks('grunt-angular-templates');
 
     grunt.registerTask('style', ['less:dev', 'cssmin']);
 
