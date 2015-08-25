@@ -38,7 +38,7 @@ class AAPTestCase(NITFTestCase):
 
     def test_subjects(self):
         self.assertEqual(len(self.item.get('subject')), 2)
-        self.assertIn({'name': 'Justice'}, self.item.get('subject'))
+        self.assertIn({'qcode': '02000000', 'name': 'Justice'}, self.item.get('subject'))
         self.assertIn({'qcode': '02003000', 'name': 'Police'}, self.item.get('subject'))
 
     def test_guid(self):
