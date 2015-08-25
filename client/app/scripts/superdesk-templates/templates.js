@@ -21,6 +21,32 @@
         var PAGE_SIZE = 10;
         var PREFERENCES_KEY = 'templates:recent';
 
+        this.TEMPLATE_METADATA = [
+                'headline',
+                'slugline',
+                'abstract',
+                'dateline',
+                'byline',
+                'subject',
+                'genre',
+                'type',
+                'language',
+                'anpa_category',
+                'anpa_take_key',
+                'keywords',
+                'priority',
+                'urgency',
+                'pubstatus',
+                'description',
+                'body_html',
+                'body_text',
+                'place',
+                'located',
+                'creditline',
+                'ednote',
+                'language'
+            ];
+
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
             {_id: 'create', label: gettext('Create')}
@@ -191,31 +217,7 @@
 
     CreateTemplateController.$inject = ['item', 'templates', 'api', 'desks', '$q'];
     function CreateTemplateController(item, templates, api, desks, $q) {
-        var vm = this,
-            metadata = [
-                'headline',
-                'slugline',
-                'abstract',
-                'dateline',
-                'byline',
-                'usage_terms',
-                'subject',
-                'genre',
-                'type',
-                'language',
-                'anpa_category',
-                'anpa_take_key',
-                'keywords',
-                'priority',
-                'urgency',
-                'pubstatus',
-                'description',
-                'body_html',
-                'body_text',
-                'place',
-                'located',
-                'creditline'
-            ];
+        var vm = this;
 
         this.type = 'create';
         this.name = item.slugline || null;
@@ -237,7 +239,7 @@
                 template_name: vm.name,
                 template_type: vm.type,
                 template_desk: vm.desk
-            }, _.pick(item, metadata));
+            }, _.pick(item, templates.TEMPLATE_METADATA));
             return api.save('content_templates', template).then(function(data) {
                 vm._issues = null;
                 return data;

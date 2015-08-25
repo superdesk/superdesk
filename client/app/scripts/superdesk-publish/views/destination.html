@@ -7,8 +7,9 @@
 
         <div class="field">
             <label for="destination-format" translate>Format</label>
-            <select id="destination-format" class="input" required ng-model="destination.format" ng-options="f.value as f.name for f in $parent.formats">
+            <select id="destination-format" class="input" required ng-model="destination.format">
                 <option value=""></option>
+                <option value="{{format.value}}" ng-selected="format.value === destination.format" ng-repeat="format in $parent.formats track by format.value">{{:: format.name | translate}}</option>
             </select>
         </div>
 

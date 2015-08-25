@@ -102,6 +102,22 @@ function Authoring() {
         return element(by.css('[ng-click="tab = \'history\'"]')).click();
     };
 
+    this.getHistoryItems = function() {
+        return element.all(by.repeater('version in versions'));
+    };
+
+    this.getHistoryItem = function(index) {
+        return this.getHistoryItems().get(index);
+    };
+
+    this.getQueuedItemsSwitch = function(item) {
+        return item.element(by.className('icon-plus-small'));
+    };
+
+    this.getQueuedItems = function() {
+        return element.all(by.repeater('queuedItem in version.queuedItems'));
+    };
+
     this.getSearchItem = function(item) {
         return element.all(by.repeater('pitem in contentItems')).get(item);
     };
@@ -137,14 +153,6 @@ function Authoring() {
 
     this.getGroupItems = function(group) {
         return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
-    };
-
-    this.getHistoryItems = function() {
-        return element.all(by.repeater('version in versions'));
-    };
-
-    this.getHistoryItem = function(index) {
-        return this.getHistoryItems().get(index);
     };
 
     this.getGroupItem = function(group, item) {

@@ -171,3 +171,61 @@ Feature: Fetch From Ingest
             """
         Then we get "unique_id" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
         And we get "unique_name" in "/ingest/tag_example.com_0000_newsml_BRE9A605"
+
+    @auth
+    @provider
+    Scenario: Check if Ingest from AAP populates all subjects with qcode
+    	Given empty "ingest"
+        When we fetch from "AAP" ingest "aap.xml"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "type": "text",
+		    "subject" : [
+              {
+                  "name" : "Justice",
+                  "qcode" : "02000000"
+              },
+              {
+                  "name" : "Police",
+                  "qcode" : "02003000"
+              }
+              ]
+		  }
+		  ]
+		}
+  		"""
+
+    @auth
+    @provider
+    Scenario: Check if Ingest of IPTC sample NITF populates all subjects with qcode
+    	Given empty "ingest"
+        When we fetch from "AAP" ingest "nitf-fishing.xml"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "type": "text",
+		    "subject" : [
+              {
+                  "name" : "Weather",
+                  "qcode" : "17000000"
+              },
+              {
+                  "name" : "Statistics",
+                  "qcode" : "17004000"
+              },
+              {
+                  "name" : "Fishing Industry",
+                  "qcode" : "04001002"
+              }
+              ]
+		  }
+		  ]
+		}
+  		"""

@@ -6,7 +6,7 @@
 			    <button option="NO FILTER" ng-click="selectHighlight();" translate>No Filter</button>
 			</li>
 			<li ng-repeat="h in highlights"> 
-			    <button option="{{ h.name | uppercase }}" ng-click="selectHighlight(h);">{{ h.name | uppercase }}</button>
+			    <button option="{{ h.name }}" ng-click="selectHighlight(h);">{{ h.name }}</button>
 			</li>
 		</ul>
 	</div>	

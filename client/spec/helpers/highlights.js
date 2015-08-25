@@ -131,18 +131,18 @@ function Highlights() {
     };
 
     this.selectHighlight = function(elem, name) {
-        elem.all(by.repeater('h in highlights')).all(by.partialButtonText(name.toUpperCase())).click();
+        elem.all(by.repeater('h in highlights')).all(by.partialButtonText(name)).click();
     };
 
     this.createHighlightsPackage = function(highlight) {
-        element(by.className('svg-icon-create-list')).click();
+        element(by.className('big-icon-marked-star')).click();
         this.selectHighlight(element(by.id('highlightPackage')), highlight);
         element(by.id('create')).click();
     };
 
     this.switchHighlightFilter = function(name) {
         element(by.id('search-highlights')).element(by.className('icon-dots-vertical')).click();
-        element(by.id('search-highlights')).element(by.css('[option="' + name.toUpperCase() + '"]')).click();
+        element(by.id('search-highlights')).element(by.css('[option="' + name + '"]')).click();
     };
 
     this.exportHighlights = function() {
@@ -153,12 +153,12 @@ function Highlights() {
         var elem = element(by.css('[class="multi-action-bar ng-scope"]'));
         elem.element(by.className('big-icon-marked-star')).click();
         browser.sleep(200);
-        elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
+        elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name + '"]')).click();
         browser.sleep(200);
     };
 
     this.mark = function(highlight, item) {
         var menu = content.openItemMenu(item);
-        return menu.element(by.partialButtonText(highlight.toUpperCase())).click();
+        return menu.element(by.partialButtonText(highlight)).click();
     };
 }
