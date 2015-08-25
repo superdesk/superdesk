@@ -18,7 +18,11 @@ from superdesk.utc import utc
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE
 from superdesk.etree import get_word_count
 
-subject_fields = ('tobject.subject.type', 'tobject.subject.matter', 'tobject.subject.detail')
+SUBJECT_TYPE = 'tobject.subject.type'
+SUBJECT_MATTER = 'tobject.subject.matter'
+SUBJECT_DETAIL = 'tobject.subject.detail'
+
+subject_fields = (SUBJECT_TYPE, SUBJECT_MATTER, SUBJECT_DETAIL)
 
 
 def get_places(docdata):
@@ -33,17 +37,27 @@ def get_places(docdata):
 
 
 def get_subjects(tree):
+    """
+    Finds all the subject tags in the passed tree and returns the parsed subjects. All entries will have both the
+    name and qcode populated.
+    :param tree:
+    :return: a list of subject dictionaries
+    """
     subjects = []
     for elem in tree.findall('head/tobject/tobject.subject'):
         qcode = elem.get('tobject.subject.refnum')
         for field in subject_fields:
             if elem.get(field):
+                if field == SUBJECT_TYPE:
+                    field_qcode = qcode[:2] + '000000'
+                elif field == SUBJECT_MATTER:
+                    field_qcode = qcode[:5] + '000'
+                else:
+                    field_qcode = qcode
                 subjects.append({
-                    'name': elem.get(field)
+                    'name': elem.get(field),
+                    'qcode': field_qcode
                 })
-
-        if len(subjects):
-            subjects[-1]['qcode'] = qcode
     return subjects
 
 
