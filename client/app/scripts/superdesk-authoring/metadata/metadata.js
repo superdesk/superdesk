@@ -196,7 +196,10 @@ function MetadataListEditingDirective() {
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
             scope.$watch('list', function(items) {
-                if (!items || !items[0].hasOwnProperty('parent')) {
+                if (
+                    !items || items.length === 0 ||
+                    !items[0].hasOwnProperty('parent')
+                ) {
                     return;
                 }
 
