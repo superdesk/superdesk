@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    AggregateCtrl.$inject = ['$scope', 'api', 'session', 'desks', 'preferencesService', 'storage', 'gettext'];
-    function AggregateCtrl($scope, api, session, desks, preferencesService, storage, gettext) {
+    AggregateCtrl.$inject = ['$scope', 'api', 'session', 'desks', 'workspaces', 'preferencesService', 'storage', 'gettext'];
+    function AggregateCtrl($scope, api, session, desks, workspaces, preferencesService, storage, gettext) {
         var PREFERENCES_KEY = 'agg:view';
         var defaultMaxItems = 10;
         var self = this;
@@ -54,20 +54,75 @@
                }));
         }))
         .then(angular.bind(this, function() {
-            return preferencesService.get(PREFERENCES_KEY)
-                .then(angular.bind(this, function(preference) {
-                    this.groups = preference != null && preference.groups ? preference.groups : [];
-                    this.loading = false;
+            return this.readSettings()
+                .then(angular.bind(this, function(groups) {
+                    if (groups) {
+                        _.each(groups, angular.bind(this, function(item) {
+                            this.groups.push(item);
+                        }));
+                    }
                     setupCards();
+                    this.loading = false;
                 }));
         }));
 
         /**
+         * Read the setting for current selected workspace(desk or custom workspace)
+         * If the current selected workspace is a desk the settings are read from desk
+         * If the current selected workspace is a custom workspace the settings are read from
+         * user preferences
+         * @returns {Object} promise - when resolved return the list of settings
+         */
+        this.readSettings = function() {
+            return workspaces.getActiveId()
+                .then(angular.bind(this, function(activeWorkspaceId) {
+                    if (activeWorkspaceId) {
+                        return preferencesService.get(PREFERENCES_KEY)
+                            .then(angular.bind(this, function(preference) {
+                                if (preference && preference[activeWorkspaceId] && preference[activeWorkspaceId].groups) {
+                                    return preference[activeWorkspaceId].groups;
+                                }
+                            }));
+                    } else {
+                        var desk = this.deskLookup[desks.getCurrentDeskId()];
+                        if (desk && desk.monitoring_settings) {
+                            return desk.monitoring_settings;
+                        }
+                    }
+                    return [];
+                }));
+        };
+
+        /**
          * Refresh view after setup
          */
-        this.refresh = function() {
-            setupCards();
-        };
+        function refresh() {
+            if (self.loading) {
+                return null;
+            }
+            return self.readSettings()
+                .then(function(groups) {
+                    if (self.groups.length) {
+                        self.groups.length = 0;
+                    }
+                    if (groups) {
+                        _.each(groups, function(item) {
+                            self.groups.push(item);
+                        });
+                    }
+                    setupCards();
+                });
+        }
+
+        this.refreshGroups = refresh;
+
+        /**
+         * Read the settings when the current workspace
+         * selection is changed
+         */
+        $scope.$watch(function() {
+            return workspaces.active;
+        }, refresh);
 
         /**
          * Return true if the 'fileType' filter is selected
@@ -128,7 +183,7 @@
         };
 
         function setupCards() {
-            var cards = self.getGroups();
+            var cards = self.groups;
             angular.forEach(cards, setupCard);
             self.cards = cards;
 
@@ -255,18 +310,6 @@
             return this.allDesks;
         };
 
-        this.getGroups = function() {
-            if (this.groups.length > 0) {
-                return this.groups;
-            }
-            if (!this.allStages) {
-                this.allStages = Object.keys(this.stageLookup).map(function(key) {
-                    return {_id: key, type: 'stage'};
-                });
-            }
-            return this.allStages;
-        };
-
         this.state = storage.getItem('agg:state') || {};
         this.state.expanded = this.state.expanded || {};
 
@@ -290,8 +333,8 @@
         };
     }
 
-    AggregateSettingsDirective.$inject = ['desks', 'preferencesService', 'WizardHandler'];
-    function AggregateSettingsDirective(desks, preferencesService, WizardHandler) {
+    AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'preferencesService', 'WizardHandler'];
+    function AggregateSettingsDirective(desks, workspaces, preferencesService, WizardHandler) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/aggregate-settings-configuration.html',
             scope: {
@@ -405,10 +448,10 @@
                 };
 
                 scope.save = function() {
-                    scope.groups.length = 0;
+                    var groups = [];
                     _.each(scope.getValues(), function(item, index) {
                         if (item.selected && item.type !== 'desk') {
-                            scope.groups.push({
+                            groups.push({
                                 _id: item._id,
                                 type: item.type,
                                 max_items: item.max_items
@@ -417,11 +460,27 @@
                     });
 
                     var updates = {};
-                    updates[PREFERENCES_KEY] = {groups: scope.groups};
-                    preferencesService.update(updates, PREFERENCES_KEY)
-                        .then(angular.bind(this, function() {
-                            WizardHandler.wizard('aggregatesettings').finish();
-                        }));
+                    workspaces.getActiveId()
+                    .then(function(activeWorkspaceId) {
+                        if (activeWorkspaceId) {
+                            preferencesService.get(PREFERENCES_KEY)
+                            .then(function(preferences) {
+                                if (preferences) {
+                                    updates[PREFERENCES_KEY] = preferences;
+                                }
+                                updates[PREFERENCES_KEY][activeWorkspaceId] = {groups: groups};
+                                preferencesService.update(updates, PREFERENCES_KEY)
+                                .then(function() {
+                                    WizardHandler.wizard('aggregatesettings').finish();
+                                });
+                            });
+                        } else {
+                            desks.save(scope.deskLookup[desks.getCurrentDeskId()], {monitoring_settings: groups})
+                            .then(function() {
+                                WizardHandler.wizard('aggregatesettings').finish();
+                            });
+                        }
+                    });
 
                     scope.onclose();
                 };
@@ -475,7 +534,7 @@
         };
     }
 
-    angular.module('superdesk.aggregate', ['superdesk.authoring.widgets', 'superdesk.desks'])
+    angular.module('superdesk.aggregate', ['superdesk.authoring.widgets', 'superdesk.desks', 'superdesk.workspace'])
     .controller('AggregateCtrl', AggregateCtrl)
     .directive('sdAggregateSettings', AggregateSettingsDirective)
     .directive('sdSortGroups', SortGroupsDirective);

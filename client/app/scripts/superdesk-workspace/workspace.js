@@ -131,7 +131,7 @@
          * @return {Promise}
          */
         function getDeskWorkspace(deskId) {
-            return api.query(RESOURCE, {where: {desk: deskId}}).then(function(result) {
+            return api.query('desks', {where: {desk: deskId}}).then(function(result) {
                 if (result._items.length === 1) {
                     return result._items[0];
                 } else {
@@ -218,15 +218,14 @@
                     .then(angular.bind(desks, desks.fetchCurrentUserDesks))
                     .then(function(userDesks) {
                         scope.desks = userDesks._items;
-                        if (!activeId) {
-                            scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
-                        }
                     })
                     .then(workspaces.queryUserWorkspaces)
                     .then(function(_workspaces) {
                         scope.wsList = _workspaces;
                         if (activeId) {
-                            scope.selected = _.find(scope.workspaces, {_id: activeId});
+                            scope.selected = _.find(scope.wsList, {_id: activeId});
+                        } else {
+                            scope.selected = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
                         }
                     });
                 }

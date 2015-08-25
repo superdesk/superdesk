@@ -33,7 +33,7 @@ function Monitoring() {
     };
 
     this.getGroups = function() {
-        return element.all(by.repeater('group in aggregate.getGroups()'));
+        return element.all(by.repeater('group in aggregate.groups'));
     };
 
     this.getItem = function(group, item) {

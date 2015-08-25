@@ -1301,8 +1301,9 @@
             });
         }]);
 
-    MultiActionBarController.$inject = ['multi', 'multiEdit', 'send', 'packages', 'superdesk', 'notify', 'spike', 'authoring'];
-    function MultiActionBarController(multi, multiEdit, send, packages, superdesk, notify, spike, authoring) {
+    MultiActionBarController.$inject = ['$rootScope', 'multi', 'multiEdit', 'send',
+                                        'packages', 'superdesk', 'notify', 'spike', 'authoring'];
+    function MultiActionBarController($rootScope, multi, multiEdit, send, packages, superdesk, notify, spike, authoring) {
         this.send  = function() {
             return send.all(multi.getItems());
         };
@@ -1327,13 +1328,21 @@
             });
         };
 
+        /**
+         * Multiple item spike
+         */
         this.spikeItems = function() {
             spike.spikeMultiple(multi.getItems());
+            $rootScope.$broadcast('item:spike');
             multi.reset();
         };
 
+        /**
+         * Multiple item unspike
+         */
         this.unspikeItems = function() {
             spike.unspikeMultiple(multi.getItems());
+            $rootScope.$broadcast('item:unspike');
             multi.reset();
         };
 

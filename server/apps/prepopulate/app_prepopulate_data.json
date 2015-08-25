@@ -506,13 +506,5 @@
             "name": "saved search item3",
             "user": "-id user admin-"
         }
-    },
-    {
-        "resource": "workspaces",
-        "username": "admin",
-        "data": {
-            "user": "-id user admin-",
-            "name": "personal"
-        }
     }
 ]

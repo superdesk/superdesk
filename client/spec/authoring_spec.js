@@ -46,6 +46,7 @@ describe('authoring', function() {
 
     it('view item history create-fetch operation', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item6', 'Politic');
 
         authoring.showHistory();
@@ -66,6 +67,7 @@ describe('authoring', function() {
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Updated by.*/);
         authoring.close();
 
+        workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item5', 'Politic');
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(1);
@@ -74,6 +76,7 @@ describe('authoring', function() {
 
     it('view item history spike-unspike operations', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.actionOnItem('Spike', 'item5', 'Politic');
         workspace.actionOnItem('Unspike Item', 0, 'Politic', 'Spiked');
         workspace.editItem('item5', 'Politic');
@@ -86,6 +89,7 @@ describe('authoring', function() {
 
     it('view item history move operation', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item5', 'Politic');
         expect(authoring.sendToButton.isDisplayed()).toBe(false);
         authoring.writeText(' ');
@@ -103,8 +107,12 @@ describe('authoring', function() {
 
     it('view item history duplicate operation', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.duplicateItem('item5', 'Politic Desk');
-        workspace.editItem(2, 'Politic');
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.switchToDesk('POLITIC DESK');
+        workspace.selectStage('New');
+        workspace.editItem('item5', 'Politic Desk');
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
@@ -112,6 +120,7 @@ describe('authoring', function() {
 
     it('view item history publish operation', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item5', 'Politic');
         authoring.writeText('some text');
         authoring.save();
