@@ -1218,7 +1218,13 @@
                 cssClass: 'natural-theme large-text',
                 label: 'Natural Theme large',
                 key: 'natural-large'
+            },
+            {
+                cssClass: 'dark-theme-mono',
+                label: 'Dark Theme monospace',
+                key: 'dark-mono'
             }
+
         ];
 
         service.save = function(key, theme) {
