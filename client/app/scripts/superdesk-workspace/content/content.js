@@ -4,20 +4,6 @@
     ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks', 'archiveService'];
     function ContentCtrlFactory(api, superdesk, templates, desks, archiveService) {
         return function ContentCtrl($scope) {
-            var templateFields = [
-                'abstract',
-                'anpa_take_key',
-                'body_html',
-                'byline',
-                'dateline',
-                'headline',
-                'language',
-                'more_coming',
-                'pubstatus',
-                'slugline',
-                'type'
-            ];
-
             var scope = $scope;
             var self = this;
 
@@ -65,7 +51,7 @@
             };
 
             this.createFromTemplateItem = function (template) {
-                var item = _.pick(template, templateFields);
+                var item = _.pick(template, templates.TEMPLATE_METADATA);
                 api('archive').save(item).then(function() {
                     return templates.addRecentTemplate(desks.activeDeskId, template._id);
                 })
