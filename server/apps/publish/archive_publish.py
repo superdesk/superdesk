@@ -527,8 +527,15 @@ class BasePublishService(BaseService):
         return queued
 
     def sending_to_digital_subscribers(self, doc):
+        """
+        Checks if there is a digital subscriber either in the previously sent or in yet to be sent subscribers
+        :param doc: document
+        :return bool: True if there's at least one
+        """
         subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, DIGITAL)
-        return len(subscribers) > 0
+        subscribers = list(self.digital(subscribers))
+        subscribers_yet_to_receive = list(self.digital(subscribers_yet_to_receive))
+        return len(subscribers) > 0 or len(subscribers_yet_to_receive) > 0
 
     def get_subscribers(self, doc, target_media_type):
         """
