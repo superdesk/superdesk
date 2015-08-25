@@ -453,8 +453,10 @@
 
             };
         })
+
         /**
-         * Item filters sidebar
+         * A directive that generates the sidebar containing search results
+         * filters (so-called "aggregations" in Elastic's terms).
          */
         .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags', 'asset',
             function($location, desks, privileges, tags, asset) {
@@ -490,65 +492,79 @@
                     scope.$watch('items', function() {
 
                         initAggregations();
+
                         tags.initSelectedFacets().then(function(currentTags) {
 
                             scope.tags = currentTags;
 
-                            if (scope.items && scope.items._aggregations !== undefined) {
-
-                                _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                    scope.aggregations.type[type.key] = type.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                    if (cat.key !== '') {
-                                        scope.aggregations.category[cat.key] = cat.doc_count;
-                                    }
-                                });
-
-                                _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
-                                    scope.aggregations.urgency[urgency.key] = urgency.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                    scope.aggregations.source[source.key] = source.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.state.buckets, function(state) {
-                                    scope.aggregations.state[state.key] = state.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                    scope.aggregations.date['Last Day'] = day.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                    scope.aggregations.date['Last Week'] = week.doc_count;
-                                });
-
-                                _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                    scope.aggregations.date['Last Month'] = month.doc_count;
-                                });
-
-                                if (!scope.desk) {
-                                    _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                        scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
-                                                count: desk.doc_count,
-                                                id: desk.key
-                                            };
-                                    }) ;
-                                }
-
-                                if (scope.desk) {
-                                    _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
-                                        _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
-                                            if (deskStage._id === stage.key) {
-                                                scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
-                                            }
-                                        });
-                                    });
-                                }
+                            if (!scope.items || scope.items._aggregations === undefined) {
+                                return;
                             }
+
+                            _.forEach(scope.items._aggregations.type.buckets, function(type) {
+                                scope.aggregations.type[type.key] = type.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.category.buckets, function(cat) {
+                                if (cat.key !== '') {
+                                    scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
+
+                            _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
+                                scope.aggregations.urgency[urgency.key] = urgency.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.source.buckets, function(source) {
+                                scope.aggregations.source[source.key] = source.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.state.buckets, function(state) {
+                                scope.aggregations.state[state.key] = state.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.day.buckets, function(day) {
+                                scope.aggregations.date['Last Day'] = day.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.week.buckets, function(week) {
+                                scope.aggregations.date['Last Week'] = week.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.month.buckets, function(month) {
+                                scope.aggregations.date['Last Month'] = month.doc_count;
+                            });
+
+                            if (!scope.desk) {
+                                _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
+                                    var lookedUpDesk = desks.deskLookup[desk.key];
+
+                                    if (typeof lookedUpDesk === 'undefined') {
+                                        var msg =  [
+                                            'Desk (key: ', desk.key, ') not found in ',
+                                            'deskLookup, probable storage inconsistency.'
+                                        ].join('');
+                                        console.warn(msg);
+                                        return;
+                                    }
+
+                                    scope.aggregations.desk[lookedUpDesk.name] = {
+                                            count: desk.doc_count,
+                                            id: desk.key
+                                        };
+                                });
+                            }
+
+                            if (scope.desk) {
+                                _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
+                                    _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
+                                        if (deskStage._id === stage.key) {
+                                            scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
+                                        }
+                                    });
+                                });
+                            }
+
                         });
                     });
 
