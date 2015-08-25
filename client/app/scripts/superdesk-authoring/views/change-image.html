@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h3 class="pull-left">{{ activity.label|translate }}</h3>
-    <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
+    <button type="button" class="close" ng-click="close()"><i class="icon-close-small"></i></button>
 </div>
 
 <div class="modal-body">
@@ -17,19 +17,16 @@
                 <div class="preview">
                     <div class="preview-large-4-3-small" ng-if="data.cropsize.name === '4-3'">
                         <img ng-src="{{data.renditions.original.href}}" class="preview-target-1">
-                    </div>  
+                    </div>
                     <div class="preview-large-16-9-small" ng-if="data.cropsize.name === '16-9'">
                         <img ng-src="{{data.renditions.original.href}}" class="preview-target-1">
                     </div>
-                    <!-- <div class="preview-round">
-                        <img ng-src="{{preview.url}}" class="preview-target-2">
-                    </div> -->
                 </div>
             </div>
         </div>
     </section>
 </div>
 <div class="modal-footer">
-    <a href="{{data.picture_url}}" ng-if="data.picture_url" class="pull-left" target="_blank">View Last Cropped Image</a>
+    <a href="{{data.picture_url || data.renditions[data.cropsize.name].href}}" class="pull-left" target="_blank">View Last Cropped Image</a>
     <button type="button" class="btn submit" ng-click="done()" ng-disabled="!preview.cords || !preview.progress" translate>Done</button>
 </div>

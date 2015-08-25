@@ -41,10 +41,6 @@ define([
                     return cropSelect;
                 }
 
-                console.log('eval=' + scope.aspectRatio);
-                console.log('minSize=' + minimumSize);
-                console.log('cropSelect=' + cropSelect);
-
                 // To adjust preview box as per aspect ratio
                 if (scope.aspectRatio.toFixed(2) === '1.33') {
                     rwidth = 300; rheight = 225;
@@ -93,7 +89,6 @@ define([
                         return;
                     }
                 }
-
                 scope.$watch('src', function(src) {
                     elem.empty();
                     if (src) {
@@ -114,7 +109,6 @@ define([
                                 trueSize: size,
                                 boxWidth: scope.boxWidth,
                                 boxHeight: scope.boxHeight,
-                                //setSelect: [0, 0, scope.boxWidth, scope.boxHeight],
                                 setSelect: cropSelect,
                                 allowSelect: false,
                                 addClass: 'jcrop-dark',
@@ -123,6 +117,7 @@ define([
                                 bounds = this.getBounds();
                                 boundx = bounds[0];
                                 boundy = bounds[1];
+                                updateFunc(scope.cords);
                             });
                             scope.progressWidth = 0;
                         };

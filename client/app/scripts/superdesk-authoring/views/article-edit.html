@@ -77,14 +77,12 @@
     <div ng-if="toggleDetails" class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
 
     <div id="dynBoxId1" class="item-detail-info" ng-class="{active: !toggleDetails}">
-      <div class="original">{{item.renditions.original.width}} - {{item.renditions.original.height}}
+      <div class="original">
         <ul>
           <li ng-repeat="cropsize in metadata.crop_sizes track by cropsize.name">
-           {{ cropsize.name }}
            <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-crop-select="item.renditions[cropsize.name]" data-progress-width="progress.width"></div>
           </li>
         </ul>
-        <!-- <button class="edit-photo"><i class="icon-pencil"></i> {{ 'Edit crop' | translate }}</button> -->
       </div>
     </div>
 

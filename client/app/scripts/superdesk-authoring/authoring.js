@@ -687,15 +687,11 @@
         };
     }
 
-    ChangeImageController.$inject = ['$scope', 'urls', '$http', 'gettext', 'notify'];
-    function ChangeImageController($scope, urls, $http, gettext, notify) {
-
-        $scope.data = $scope.locals.data;
-        $scope.preview = {};
-
-        function saveCrop(form) {
-            var promise = urls.resource('archive').then(function(url) {
-                url = url + '/' + $scope.data._id + '/crop/' + $scope.data.cropsize.name;
+    CropImageService.$inject = ['urls', '$http'];
+    function CropImageService(urls, $http) {
+        this.saveCrop = function saveCrop(form, item) {
+            return urls.resource('archive').then(function(url) {
+                url = url + '/' + item._id + '/crop/' + item.cropsize.name;
                 return $http.post(url, {
                     'CropLeft': form.CropLeft,
                     'CropRight': form.CropRight,
@@ -705,7 +701,28 @@
                     return response.data;
                 });
             });
-            return promise;
+        };
+    }
+
+    ChangeImageController.$inject = ['$scope', 'cropImage', 'gettext', 'notify', '$route'];
+    function ChangeImageController($scope, cropImage, gettext, notify, $route) {
+        $scope.data = $scope.locals.data;
+        $scope.preview = {};
+
+        $scope.close = function() {
+            if ($scope.data.state !== 'published') {
+                $scope.reject();
+                $route.reload();
+            } else {
+                return $scope.resolve($scope.data);
+            }
+        };
+
+        function recordCrop(form, cropName) {
+            $scope.data.renditions[cropName].CropLeft = form.CropLeft;
+            $scope.data.renditions[cropName].CropTop = form.CropTop;
+            $scope.data.renditions[cropName].CropRight = form.CropRight;
+            $scope.data.renditions[cropName].CropBottom = form.CropBottom;
         }
 
         $scope.done = function() {
@@ -715,18 +732,27 @@
             form.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
             form.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
 
-            //call crop Api
-            var result = saveCrop(form);
-            result.then(function(result) {
-                var picture_url = result._id.renditions[$scope.data.cropsize.name].href;
-                $scope.locals.data.picture_url = picture_url;
-                notify.success(gettext('Image Cropped.'));
-            }, function(response) {
-                if (response.data._status === 'ERR'){
-                    notify.error(gettext('Error: ' + response.data._error.message));
-                    return;
-                }
-            });
+            var cropName = $scope.data.cropsize.name;
+
+            //Save or overwrite crop if item is not published.
+            if ($scope.data.state !== 'published') {
+                return cropImage.saveCrop(form, $scope.data).then(function(result) {
+                    var picture_url = result._id.renditions[cropName].href;
+                    notify.success(gettext('Image Cropped.'));
+                    $scope.data.picture_url = picture_url;
+                    recordCrop(form, cropName);
+                }, function(response) {
+                    if (response.data._status === 'ERR'){
+                        notify.error(gettext('Error: ' + response.data._error.message));
+                        return;
+                    }
+                });
+            } else {
+                //Hold crop changes if item is already published, so it will be save on correction.
+                recordCrop(form, cropName);
+                notify.success(gettext('Crop changes recorded'));
+            }
+
         };
     }
 
@@ -1656,8 +1682,8 @@
                     scope.toggleDetails = !scope.toggleDetails;
                     scope.item.cropsize = cropsize;
                     scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
-                    superdesk.intent('edit', 'crop',  scope.item).then(function(cropped) {
-                        scope.picture_url = cropped;
+                    superdesk.intent('edit', 'crop',  scope.item).then(function(crop) {
+                        //console.log('cropped=' + crop);
                     });
                 };
             }
@@ -1685,6 +1711,7 @@
         .service('confirm', ConfirmDirtyService)
         .service('lock', LockService)
         .service('authThemes', AuthoringThemesService)
+        .service('cropImage', CropImageService)
 
         .controller('AuthoringWorkspace', AuthoringWorkspaceController)
 
