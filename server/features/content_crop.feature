@@ -67,7 +67,7 @@ Feature: Cropping the Image Articles
       """
 
     @auth
-    @vocabulary @test
+    @vocabulary
     Scenario: Delete an existing crop of an Image Story succeeds
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"

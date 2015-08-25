@@ -10,6 +10,7 @@
 
 import os
 from superdesk.tests import TestCase
+from unittest import mock
 from apps.archive.archive_crop import ArchiveCropService
 from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
@@ -20,9 +21,13 @@ class ArchiveCropTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
+        self.ctx = self.app.app_context()
+        self.ctx.push()
         self.service = ArchiveCropService()
-        with self.app.app_context():
-            VocabulariesPopulateCommand().run(os.path.abspath('apps/prepopulate/data_initialization/vocabularies.json'))
+        VocabulariesPopulateCommand().run(os.path.abspath('apps/prepopulate/data_initialization/vocabularies.json'))
+
+    def tearDown(self):
+        self.ctx.pop()
 
     def test_validate_aspect_ratio_fails(self):
         doc = {'CropLeft': 0, 'CropRight': 80, 'CropTop': 0, 'CropBottom': 60}
@@ -47,7 +52,42 @@ class ArchiveCropTestCase(TestCase):
         self.assertIsNone(self.service._validate_aspect_ratio(crop, doc))
 
     def test_get_crop_by_name(self):
-        with self.app.app_context():
-            self.assertIsNotNone(self.service.get_crop_by_name('16-9'))
-            self.assertIsNotNone(self.service.get_crop_by_name('4-3'))
-            self.assertIsNone(self.service.get_crop_by_name('d'))
+        self.assertIsNotNone(self.service.get_crop_by_name('16-9'))
+        self.assertIsNotNone(self.service.get_crop_by_name('4-3'))
+        self.assertIsNone(self.service.get_crop_by_name('d'))
+
+    def test_add_crop_raises_error_if_original_missing(self):
+        original = {
+            'renditions': {
+                '4-3': {
+                }
+            }
+        }
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        with self.assertRaises(SuperdeskApiError) as context:
+            self.service.add_crop(original, '4-3', doc)
+
+        ex = context.exception
+        self.assertEqual(ex.message, 'Original file couldn\'t be found')
+        self.assertEqual(ex.status_code, 400)
+
+    @mock.patch('apps.archive.archive_crop.crop_image', return_value=(False, 'test'))
+    def test_add_crop_raises_error(self, crop_name):
+        original = {
+            'renditions': {
+                'original': {
+                }
+            }
+        }
+
+        media = mock.MagicMock()
+        media.filename = 'test.jpg'
+
+        with mock.patch('superdesk.app.media.get', return_value=media):
+            doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+            with self.assertRaises(SuperdeskApiError) as context:
+                self.service.add_crop(original, '4-3', doc)
+
+            ex = context.exception
+            self.assertEqual(ex.message, 'Saving crop failed: test')
+            self.assertEqual(ex.status_code, 400)

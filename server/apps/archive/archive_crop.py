@@ -55,7 +55,7 @@ class ArchiveCropService(BaseService):
         crop_name = request.view_args['crop_name'].lower()
         archive_service = get_resource_service(ARCHIVE)
         original = archive_service.find_one(req=None, _id=item_id)
-        self._delete_crop(original, crop_name)
+        self.delete_crop(original, crop_name)
 
     def validate_crop(self, original, crop_name, doc):
         # Check if type is picture
@@ -108,8 +108,12 @@ class ArchiveCropService(BaseService):
 
         return next((c for c in crops if c.get('name', '').lower() == crop_name.lower()), None)
 
-    def _delete_crop(self, original, crop_name):
-        """ Deletes an existing crop with the given name """
+    def delete_crop(self, original, crop_name):
+        """
+        Deletes an existing crop with the given name
+        :param original: Article to add the crop
+        :param crop_name: Name of the crop
+        """
         renditions = original.get('renditions')
         file_id = renditions.get(crop_name, {}).get('media', '')
         renditions.pop(crop_name, None)
@@ -132,7 +136,7 @@ class ArchiveCropService(BaseService):
 
         if any(crop_data[i] != original_crop.get(name) for i, name in enumerate(fields)):
 
-            original_image = original.get('renditions').get('original')
+            original_image = original.get('renditions', {}).get('original', {})
             original_file = superdesk.app.media.get(original_image.get('media'), 'upload')
             if not original_file:
                 raise SuperdeskApiError.badRequestError('Original file couldn\'t be found')
