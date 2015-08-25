@@ -324,6 +324,9 @@
                     });
                 }
 
+                /**
+                 * Fetches all subscribers from backend
+                 */
                 function fetchSubscribers() {
                     adminPublishSettingsService.fetchSubscribers().then(
                         function(result) {
@@ -332,12 +335,20 @@
                     );
                 }
 
+                /**
+                 * Fetches publish filters from backend and returns the same.
+                 *
+                 * @return {*}
+                 */
                 var fetchPublishFilters = function() {
                     return api.query('publish_filters').then(function(filters) {
                         $scope.publishFilters = filters._items;
                     });
                 };
 
+                /**
+                 * Initializes the Global Filters on the selected subscriber.
+                 */
                 var initGlobalFilters = function() {
                     if (!$scope.subscriber) {
                         return;
@@ -354,40 +365,66 @@
                     });
                 };
 
+                /**
+                 * Fetches list of global publish filters and returns the same.
+                 *
+                 * @return {*}
+                 */
                 var fetchGlobalPublishFilters = function() {
                     return filters.getGlobalPublishFilters().then(function(filters) {
                         $scope.globalFilters = filters;
                     });
                 };
 
+                /**
+                 * Fetch list of publish errors from the backend allowing the user to configure for the selected subscriber.
+                 *
+                 * @return {*}
+                 */
                 function fetchPublishErrors() {
                     return adminPublishSettingsService.fetchPublishErrors().then(function(result) {
                         $scope.all_errors = result._items[0].all_errors;
                     });
                 }
 
+                /**
+                 * Initializes the new destination object.
+                 */
                 $scope.addNewDestination = function() {
                     $scope.newDestination = {};
                 };
 
+                /**
+                 * Reverts the changes made to the new destination object
+                 */
                 $scope.cancelNewDestination = function() {
                     $scope.newDestination = null;
                 };
 
+                /**
+                 * Saves the destination and adds it to the destinations list of the selected subscriber
+                 */
                 $scope.saveNewDestination = function() {
-                    $scope.subscriber.destinations.push($scope.newDestination);
+                    $scope.destinations.push($scope.newDestination);
                     $scope.newDestination = null;
                 };
 
+                /**
+                 * Removes the selected destination from the destinations list of the selected subscriber.
+                 */
                 $scope.deleteDestination = function(destination) {
-                    _.remove($scope.subscriber.destinations, destination);
+                    _.remove($scope.destinations, destination);
                 };
 
+                /**
+                 * Upserts the selected subscriber.
+                 */
                 $scope.save = function() {
-
                     if ($scope.subscriber.publish_filter && $scope.subscriber.publish_filter.filter_id === '') {
                         $scope.subscriber.publish_filter = null;
                     }
+
+                    $scope.subscriber.destinations = $scope.destinations;
 
                     api.subscribers.save($scope.origSubscriber, $scope.subscriber)
                         .then(
@@ -413,6 +450,10 @@
                         ).then(fetchSubscribers);
                 };
 
+                /**
+                 * Either initializes a new Subscriber object for adding a new subscriber or initializes the subscriber object with
+                 * the selected subscriber allowing user to update the subscriber details.
+                 */
                 $scope.edit = function(subscriber) {
                     var promises = [];
                     promises.push(fetchPublishErrors());
@@ -424,33 +465,27 @@
                         $scope.subscriber = _.create($scope.origSubscriber);
                         $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
                         $scope.subscriber.publish_filter = $scope.origSubscriber.publish_filter || {};
-                        $scope.subscriber.destinations = $scope.subscriber.destinations || [];
                         $scope.subscriber.global_filters =  $scope.origSubscriber.global_filters || {};
                         $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
+
+                        $scope.destinations = [];
+                        if (angular.isDefined($scope.subscriber.destinations) && !_.isNull($scope.subscriber.destinations) &&
+                            $scope.subscriber.destinations.length > 0) {
+
+                            $scope.destinations = _.clone($scope.subscriber.destinations, true);
+                        }
+
                         $scope.subscriberType = $scope.subscriber.subscriber_type || '';
+                        $scope.changeFormats($scope.subscriberType);
                         initGlobalFilters();
                     }, function() {
                         notify.error(gettext('Subscriber could not be initialized!'));
                     });
                 };
 
-                $scope.remove = function(subscriber) {
-                    modal.confirm(gettext('Are you sure you want to delete subscriber?'))
-                    .then(function() {
-                        return api.subscribers.remove(subscriber);
-                    })
-                    .then(function(result) {
-                        _.remove($scope.subscribers, subscriber);
-                    }, function(response) {
-                        if (angular.isDefined(response.data._message)) {
-                            notify.error(gettext('Error: ' + response.data._message));
-                        } else {
-                            notify.error(gettext('There is an error. Subscriber cannot be deleted.'));
-                        }
-                    })
-                    .then(fetchSubscribers);
-                };
-
+                /**
+                 * Reverts any changes made to the subscriber
+                 */
                 $scope.cancel = function() {
                     $scope.origSubscriber = null;
                     $scope.subscriber = null;
@@ -464,21 +499,22 @@
                 $scope.changeFormats = function(newSubscriberType) {
                     var formats = _.result(_.find($scope.subTypes, {value: newSubscriberType}), 'formats');
 
-                    if ($scope.subscriber.destinations.length > 0 && $scope.subscriberType !== '') {
-                        var oldFormats = _.result(_.find($scope.subTypes, {value: $scope.subscriberType}), 'formats');
+                    if ($scope.destinations.length > 0 && $scope.subscriberType !== '' &&
+                        $scope.subscriberType !== newSubscriberType) {
 
+                        var oldFormats = _.result(_.find($scope.subTypes, {value: $scope.subscriberType}), 'formats');
                         if (!_.isEqual(oldFormats, formats)) {
-                            notify.error(gettext('Error: The changed subscriber type has formats which are not ' +
-                                'supported by existing destination(s)'));
-                            $scope.subscriber.subscriber_type = $scope.subscriberType;
-                        } else {
-                            $scope.subscriberType = $scope.subscriber.subscriber_type;
-                            $scope.formats = formats;
+                            notify.error(gettext('Error: Please re-assign new format for each destination as the changed ' +
+                                'subscriber type has formats which are not supported by existing destination(s).'));
+
+                            _.each($scope.destinations, function(destination) {
+                                destination.format = null;
+                            });
                         }
-                    } else {
-                        $scope.subscriberType = $scope.subscriber.subscriber_type;
-                        $scope.formats = formats;
                     }
+
+                    $scope.subscriberType = $scope.subscriber.subscriber_type;
+                    $scope.formats = formats;
                 };
 
                 fetchSubscribers();
