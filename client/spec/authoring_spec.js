@@ -119,7 +119,12 @@ describe('authoring', function() {
         authoring.showHistory();
         browser.sleep(500);
         expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Published by.*/);
+        var publishItem = authoring.getHistoryItem(1);
+        expect(publishItem.getText()).toMatch(/Published by.*/);
+        var queuedSwitch = authoring.getQueuedItemsSwitch(publishItem);
+        expect(queuedSwitch.isDisplayed()).toBe(true);
+        queuedSwitch.click();
+        expect(authoring.getQueuedItems().count()).toBe(1);
     });
 
     it('allows to create a new empty package', function () {
