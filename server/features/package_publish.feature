@@ -231,7 +231,7 @@ Feature: Package Publishing
       And we publish "compositeitem" with "publish" type and "published" state
       Then we get error 400
       """
-      {"_issues": {"validator exception": "['A packaged item is locked']"}, "_status": "ERR"}
+      {"_issues": {"validator exception": "['WA:Navy steps in with WA asylum-seeker boat: packaged item is locked']"}, "_status": "ERR"}
       """
 
     @auth
@@ -374,7 +374,7 @@ Feature: Package Publishing
       When we publish "compositeitem" with "publish" type and "published" state
       Then we get error 400
       """
-        {"_issues": {"validator exception": "[['ABSTRACT is a required field']]"}, "_status": "ERR"}
+        {"_issues": {"validator exception": "['WA:Navy steps in with WA asylum-seeker boat: ABSTRACT is a required field']"}, "_status": "ERR"}
       """
 
     @auth

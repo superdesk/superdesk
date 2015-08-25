@@ -34,12 +34,13 @@ class ValidateService(superdesk.Service):
 
     def create(self, docs, **kwargs):
         for doc in docs:
-            doc['errors'] = self._validate(doc)
+            doc['errors'] = self._validate(doc, **kwargs)
 
         return [doc['errors'] for doc in docs]
 
-    def _validate(self, doc):
+    def _validate(self, doc, **kwargs):
         lookup = {'act': doc['act'], 'type': doc[ITEM_TYPE]}
+        use_headline = kwargs and 'headline' in kwargs
         validators = superdesk.get_resource_service('validators').get(req=None, lookup=lookup)
         for validator in validators:
             v = Validator()
@@ -49,13 +50,18 @@ class ValidateService(superdesk.Service):
             response = []
             for e in error_list:
                 if error_list[e] == 'required field' or type(error_list[e]) is dict:
-                    response.append('{} is a required field'.format(e.upper()))
+                    message = '{} is a required field'.format(e.upper())
                 elif 'min length is' in error_list[e]:
-                    response.append('{} is too short'.format(e.upper()))
+                    message = '{} is too short'.format(e.upper())
                 elif 'max length is' in error_list[e]:
-                    response.append('{} is too long'.format(e.upper()))
+                    message = '{} is too long'.format(e.upper())
                 else:
-                    response.append('{} {}'.format(e.upper(), error_list[e]))
+                    message = '{} {}'.format(e.upper(), error_list[e])
+
+                if use_headline:
+                    response.append('{}: {}'.format(doc['validate'].get('headline', doc.get('_id')), message))
+                else:
+                    response.append(message)
             return response
         else:
             return ['validator was not found for {}'.format(doc['act'])]
