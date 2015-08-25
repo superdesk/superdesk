@@ -210,6 +210,39 @@
         "_id": "publish_composite",
         "act": "publish",
         "type": "composite",
-        "schema": {}
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "minlength": 1,
+                "maxlength": 55
+            }
+        }
+    },
+    {
+        "_id": "correct_composite",
+        "act": "correct",
+        "type": "composite",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "minlength": 1,
+                "maxlength": 55
+            }
+        }
+    },
+    {
+        "_id": "kill_composite",
+        "act": "kill",
+        "type": "composite",
+        "schema": {
+            "headline": {
+                "type": "string",
+                "required": true,
+                "minlength": 1,
+                "maxlength": 55
+            }
+        }
     }
 ]
