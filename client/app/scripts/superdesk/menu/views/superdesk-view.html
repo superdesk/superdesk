@@ -1,8 +1,13 @@
 <div sd-menu-wrapper></div>
 <div sd-notifications></div>
 
-<div id="main-container" ng-class="flags" ng-view></div>
-<div sd-workqueue ng-if="flags.workspace"></div>
+<div id="main-container" ng-if="superdesk.flags.workspace" ng-class="superdesk.flags" sd-authoring-workspace>
+    <div id="workspace-container" ng-view></div>
+    <div id="authoring-container" sd-authoring-container></div>
+    <div sd-workqueue></div>
+</div>
+
+<div id="main-container" ng-if="!superdesk.flags.workspace" ng-class="superdesk.flags" ng-view></div>
 
 <div sd-activity-modal></div>
 <div sd-login-modal></div>

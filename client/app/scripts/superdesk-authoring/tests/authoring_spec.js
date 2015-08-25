@@ -161,7 +161,7 @@ describe('authoring', function() {
                 item: item,
                 action: action
             });
-            $compile(angular.element('<div sd-authoring></div>'))($scope);
+            $compile(angular.element('<div sd-authoring-workspace><div sd-authoring></div></div>'))($scope);
         });
 
         return $scope;
@@ -1027,4 +1027,30 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
         }));
+
+    describe('authoring workspace controller', function() {
+        var ctrl, scope;
+
+        beforeEach(inject(function($controller, $rootScope) {
+            scope = $rootScope.$new();
+            scope.flags = {};
+            ctrl = $controller('AuthoringWorkspace', {$scope: scope});
+        }));
+
+        it('can edit item', inject(function() {
+            var item = {};
+
+            expect(scope.flags.authoring).toBeFalsy();
+
+            ctrl.edit(item);
+            expect(ctrl.item).toBe(item);
+            expect(ctrl.getItem()).toBe(item);
+            expect(scope.flags.authoring).toBeTruthy();
+
+            ctrl.close();
+            expect(ctrl.item).toBe(null);
+            expect(ctrl.getItem()).toBe(null);
+            expect(scope.flags.authoring).toBeFalsy();
+        }));
+    });
 });

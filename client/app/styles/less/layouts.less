@@ -34,34 +34,58 @@ a:hover {
 // Layouts
 // --------------------------------------------
 
-
-// Main container
+// main container
 // ------------------------------------
 #main-container {
-	position:absolute;
-	top:0; right: 0; left:0;
-	padding-top:@topspace;
-	.box-sizing(border-box);
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
 	bottom: 0;
+	padding-top: @topspace;
+	.box-sizing(border-box);
 	background: @background-main;
-	overflow-y:visible;
-	.transition( all 0.3s ease);
-	overflow-x:hidden; 
+	overflow: hidden;
+	.transition(all 0.3s ease);
 
 	&.menu {
 		left: @sf-main-menu-width;
 	}
 
-	&.workspace {
-    	left: @sidebar-width;
-    	bottom: @authoring-opened-articles;
-	}
+	&.authoring {
+		#workspace-container {
+    		z-index:100;
+    		box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
+			right: 44%;
+			@media only screen and (max-width : 1330px) {
+                right: 54%;
+            }
+		}
 
-	&.menu.workspace {
-		left: @sf-main-menu-width + @sidebar-width;
+		#authoring-container {
+			width: 44%; 
+			@media only screen and (max-width : 1330px) {
+                width: 54%;
+            }
+		}
 	}
 }
 
+// authoring sidebar container
+#workspace-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: @authoring-opened-articles;
+	left: @sidebar-width;
+}
+
+#authoring-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
 
 // Main section
 // ------------------------------------

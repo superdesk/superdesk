@@ -44,9 +44,9 @@ function WorkqueueService(session, api) {
     };
 }
 
-ArticleDashboardCtrl.$inject = ['$scope', 'ContentCtrl'];
-function ArticleDashboardCtrl($scope, ContentCtrl) {
-    $scope.content = new ContentCtrl();
+ArticleDashboardCtrl.$inject = ['$scope', 'content'];
+function ArticleDashboardCtrl($scope, content) {
+    $scope.content = content;
 }
 
 WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
@@ -56,14 +56,13 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     $scope.workqueue = workqueue;
     $scope.multiEdit = multiEdit;
 
-    updateWorkqueue();
-
-    $scope.$on('$routeChangeSuccess', updateWorkqueue);
     $scope.$on('item:lock', updateWorkqueue);
     $scope.$on('item:unlock', updateWorkqueue);
     $scope.$on('media_archive', function(e, data) {
         workqueue.updateItem(data.item);
     });
+
+    updateWorkqueue();
 
     /**
      * Update list of opened items and set one active if its id is in current route path.
@@ -73,8 +72,8 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
             var route = $route.current || {_id: null, params: {}};
             $scope.isMultiedit = route._id === 'multiedit';
             $scope.active = null;
-            if (route.params._id) {
-                $scope.active = _.find(workqueue.items, {_id: route.params._id});
+            if (route.params.edit) {
+                $scope.active = _.find(workqueue.items, {_id: route.params.edit});
             }
         });
     }
@@ -96,10 +95,28 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     };
 }
 
-function WorkqueueListDirective() {
+WorkqueueListDirective.$inject = ['$rootScope'];
+function WorkqueueListDirective($rootScope) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
-        controller: 'Workqueue'
+        controller: 'Workqueue',
+        require: '^sdAuthoringWorkspace',
+        scope: true,
+        link: function(scope, elem, attrs, workspaceCtrl) {
+            scope.edit = function(item, event) {
+                if (!event.ctrlKey) {
+                    scope.active = item;
+                    workspaceCtrl.edit(item);
+                    event.preventDefault();
+                }
+            };
+
+            scope.link = function(item) {
+                if (item) {
+                    return item.type === 'composite' ? $rootScope.link('edit.package', item) : $rootScope.link('edit.text', item);
+                }
+            };
+        }
     };
 }
 

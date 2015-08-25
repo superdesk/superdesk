@@ -707,7 +707,7 @@
         'session',
         'lock',
         'privileges',
-        'ContentCtrl',
+        'content',
         '$location',
         'referrer',
         'macros',
@@ -717,9 +717,10 @@
         'modal'
     ];
     function AuthoringDirective(superdesk, notify, gettext, desks, authoring, api, session, lock, privileges,
-                                ContentCtrl, $location, referrer, macros, $timeout, $q, $window, modal) {
+                                content, $location, referrer, macros, $timeout, $q, $window, modal) {
         return {
-            link: function($scope) {
+            require: '^sdAuthoringWorkspace',
+            link: function($scope, elem, attrs, workspaceCtrl) {
                 var _closing;
 
                 $scope.privileges = privileges.privileges;
@@ -765,8 +766,6 @@
                             }
                         });
                     });
-                } else if ($scope.action === 'kill') {
-                    $scope.origItem.pubstatus = 'Corrected';
                 }
 
                 $scope.$watch('item.marked_for_not_publication', function(newValue, oldValue) {
@@ -948,17 +947,9 @@
                  * Close an item - unlock
                  */
                 $scope.close = function() {
-                    var referrerUrl;
                     _closing = true;
-
                     authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
-                        if (sessionStorage.getItem('previewUrl')) {
-                            referrerUrl = sessionStorage.getItem('previewUrl');
-                            sessionStorage.removeItem('previewUrl');
-                        } else {
-                            referrerUrl = $scope.referrerUrl;
-                        }
-                        $location.url(referrerUrl);
+                        workspaceCtrl.close($scope.item);
                     });
                 };
 
@@ -1054,7 +1045,7 @@
                 }
 
                 // init
-                $scope.content = new ContentCtrl($scope);
+                $scope.content = content;
                 $scope.closePreview();
                 $scope.$on('savework', function(e, msg) {
                     var changeMsg = msg;
@@ -1574,70 +1565,6 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'ContentCtrl'];
-    function ContentCreateDirective(api, desks, templates, ContentCtrl) {
-        var NUM_ITEMS = 5;
-
-        return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html',
-            link: function(scope) {
-                scope.contentTemplates = null;
-                scope.content = new ContentCtrl(scope);
-
-                scope.$watch(function() {
-                    return desks.activeDeskId;
-                }, function() {
-                    templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
-                    .then(function(result) {
-                        scope.contentTemplates = result;
-                    });
-                });
-            }
-        };
-    }
-
-    TemplateSelectDirective.$inject = ['api', 'desks', 'templates'];
-    function TemplateSelectDirective(api, desks, templates) {
-        var PAGE_SIZE = 10;
-
-        return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-template-select.html',
-            scope: {
-                selectAction: '=',
-                open: '='
-            },
-            link: function(scope) {
-                scope.maxPage = 1;
-                scope.options = {
-                    keyword: null,
-                    page: 1
-                };
-                scope.templates = null;
-
-                scope.close = function() {
-                    scope.open = false;
-                };
-
-                scope.select = function(template) {
-                    scope.selectAction(template);
-                };
-
-                var fetchTemplates = function() {
-                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
-                    .then(function(result) {
-                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
-                        scope.templates = result;
-                    });
-                };
-
-                scope.$watchCollection('options', fetchTemplates);
-                scope.$watch(function() {
-                    return desks.activeDeskId;
-                }, fetchTemplates);
-            }
-        };
-    }
-
     ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout'];
     function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout) {
         return {
@@ -1700,18 +1627,19 @@
         .service('lock', LockService)
         .service('authThemes', AuthoringThemesService)
 
+        .controller('AuthoringWorkspace', AuthoringWorkspaceController)
+
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
         .directive('sdCharacterCount', CharacterCount)
         .directive('sdWordCount', WordCount)
         .directive('sdThemeSelect', ThemeSelectDirective)
-        .directive('sdContentCreate', ContentCreateDirective)
-        .directive('sdTemplateSelect', TemplateSelectDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
+        .directive('sdAuthoringWorkspace', AuthoringWorkspaceDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)
 
@@ -1854,13 +1782,15 @@
 
     function AuthoringContainerDirective() {
         function AuthoringContainerController() {
+            var self = this;
+
             this.state = {};
 
             this.edit = function(item, lock) {
-                this.item = item || null;
-                this.state.opened = !!this.item;
-                if (this.item && lock) {
-                    this.item.lockIt = true;
+                self.item = item || null;
+                self.state.opened = !!self.item;
+                if (self.item && lock) {
+                    self.item.lockIt = true;
                 }
             };
         }
@@ -1869,7 +1799,13 @@
             controller: AuthoringContainerController,
             controllerAs: 'authoring',
             templateUrl: 'scripts/superdesk-authoring/views/authoring-container.html',
-            transclude: true
+            require: '^sdAuthoringWorkspace',
+            scope: true,
+            link: function(scope, elem, attrs, workspaceCtrl) {
+                scope.$watch(workspaceCtrl.getItem, function(item) {
+                    scope.authoring.edit(item, true);
+                });
+            }
         };
     }
 
@@ -1953,6 +1889,55 @@
 
                 });
             }
+        };
+    }
+
+    AuthoringWorkspaceController.$inject = ['$scope', '$location', 'api'];
+    function AuthoringWorkspaceController($scope, $location, api) {
+        this.item = null;
+
+        var self = this;
+
+        /**
+         * Set item for editing
+         *
+         * this will change item which is watched by authoring container directive
+         * and set authoring flag
+         *
+         * @param {Object} item
+         */
+        this.edit = function(item) {
+            self.item = item;
+            $scope.flags.authoring = !!item;
+            $location.search('edit', item ? item._id : null);
+        };
+
+        /**
+         * Stop editing
+         */
+        this.close = function() {
+            self.edit(null);
+        };
+
+        /**
+         * Get edited item
+         *
+         * return {Object}
+         */
+        this.getItem = function() {
+            return self.item;
+        };
+
+        // init
+        if ($location.search().edit) {
+            api.find('archive', $location.search().edit).then(this.edit);
+        }
+    }
+
+    function AuthoringWorkspaceDirective() {
+        return {
+            controller: 'AuthoringWorkspace',
+            controllerAs: 'workspace'
         };
     }
 

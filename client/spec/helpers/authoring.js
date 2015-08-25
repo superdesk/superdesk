@@ -6,9 +6,9 @@ module.exports = new Authoring();
 function Authoring() {
 
     this.lock = element(by.css('[ng-click="lock()"]'));
-    this.publish_button = element(by.css('[ng-click="publish()"]'));
-    this.close_button = element(by.css('[ng-click="close()"]'));
-    this.save_button = element(by.css('[ng-click="save(item)"]'));
+    this.publish_button = element(by.buttonText('PUBLISH'));
+    this.close_button = element(by.buttonText('CLOSE'));
+    this.save_button = element(by.buttonText('SAVE'));
 
     this.navbarMenuBtn = $('.dropdown-toggle.sd-create-btn');
     this.newEmptyPackageLink = element(by.id('create_package'));

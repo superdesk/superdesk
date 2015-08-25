@@ -6,9 +6,9 @@ define([
 
     ArchiveListController.$inject = [
         '$scope', '$injector', '$location', '$q', '$timeout', 'superdesk',
-        'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl', 'notify', 'multi'
+        'session', 'api', 'desks', 'content', 'StagesCtrl', 'notify', 'multi'
     ];
-    function ArchiveListController($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, ContentCtrl,
+    function ArchiveListController($scope, $injector, $location, $q, $timeout, superdesk, session, api, desks, content,
         StagesCtrl, notify, multi) {
 
         var resource,
@@ -17,7 +17,7 @@ define([
         $injector.invoke(BaseListController, this, {$scope: $scope});
         $scope.currentModule = 'archive';
         $scope.stages = new StagesCtrl($scope);
-        $scope.content = new ContentCtrl($scope);
+        $scope.content = content;
         $scope.type = 'archive';
         $scope.repo = {
             ingest: false,

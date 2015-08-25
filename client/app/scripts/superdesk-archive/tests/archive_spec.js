@@ -6,7 +6,6 @@ describe('content', function() {
     beforeEach(module('templates'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive'));
-    beforeEach(module('superdesk.workspace.content'));
 
     it('can spike items', inject(function(spike, api, $q) {
         spyOn(api, 'update').and.returnValue($q.when());
@@ -130,61 +129,5 @@ describe('content', function() {
             $rootScope.$digest();
             expect(multi.getItems().length).toBe(0);
         }));
-    });
-
-    describe('creating items', function() {
-        beforeEach(module(function($provide) {
-            $provide.service('api', function($q) {
-                return function() {
-                    return {
-                        save: function() {
-                            return $q.when();
-                        }
-                    };
-                };
-            });
-        }));
-
-        it('can create plain text items', inject(function(superdesk, $rootScope, ContentCtrl) {
-            spyOn(superdesk, 'intent').and.returnValue(null);
-
-            var content = new ContentCtrl();
-            content.createItem();
-            $rootScope.$digest();
-            expect(superdesk.intent).toHaveBeenCalledWith('author', 'article', {type: 'text', version: 0});
-        }));
-
-        it('can create packages', inject(function(superdesk, ContentCtrl) {
-            spyOn(superdesk, 'intent').and.returnValue(null);
-
-            var content = new ContentCtrl();
-            content.createPackageItem();
-            expect(superdesk.intent).toHaveBeenCalledWith('create', 'package');
-        }));
-
-        it('can create packages from items', inject(function(superdesk, ContentCtrl) {
-            spyOn(superdesk, 'intent').and.returnValue(null);
-
-            var content = new ContentCtrl();
-            content.createPackageItem({data: 123});
-            expect(superdesk.intent).toHaveBeenCalledWith('create', 'package', {items: [{data: 123}]});
-        }));
-
-        it('can create items from template', inject(function(superdesk, $rootScope, ContentCtrl) {
-            spyOn(superdesk, 'intent').and.returnValue(null);
-
-            var content = new ContentCtrl();
-            content.createFromTemplateItem({
-                slugline: 'test_slugline',
-                body_html: 'test_body_html',
-                irrelevantData: 'yes'
-            });
-            $rootScope.$digest();
-            expect(superdesk.intent).toHaveBeenCalledWith('author', 'article', {
-                slugline: 'test_slugline',
-                body_html: 'test_body_html'
-            });
-        }));
-
     });
 });
