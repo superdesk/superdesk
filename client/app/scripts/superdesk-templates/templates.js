@@ -44,8 +44,7 @@
                 'located',
                 'creditline',
                 'ednote',
-                'language',
-                'place'
+                'language'
             ];
 
         this.types = [
