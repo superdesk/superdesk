@@ -1,11 +1,11 @@
-<div sd-authoring class="auth-screen">
+<div sd-authoring class="auth-screen" ng-if="origItem">
     <div sd-authoring-topbar></div>
     <div class="packaging-screen main-section" ng-class="{'auth-sendto': views.send}">
         <div sd-authoring-widgets data-item="item">
             <div class="page-content-container"
                 ng-click="views.send = false">
-                <div class="content main-article">                    
-                    <div sd-package-edit></div>
+                <div class="content main-article">
+                    <div ng-if="item" sd-package-edit></div>
                 </div>
             </div>
         </div>

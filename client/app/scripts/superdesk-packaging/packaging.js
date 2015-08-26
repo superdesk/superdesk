@@ -12,14 +12,24 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q', 'archiveService'];
-    function PackagesService(api, $q, archiveService) {
+    PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave'];
+    function PackagesService(api, $q, archiveService, lock, autosave) {
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
         this.fetch = function fetch(_id) {
             return api.find('archive', _id).then(function(result) {
                 return result;
+            });
+        };
+
+        this.open = function open(_id, readOnly) {
+            return api.find('archive', _id, {embedded: {lock_user: 1}})
+            .then(function _lock(item) {
+                item._editable = !readOnly;
+                return lock.lock(item);
+            }).then(function _autosave(item) {
+                return autosave.open(item);
             });
         };
 
@@ -601,6 +611,38 @@
         };
     }
 
+    PackagingEmbeddedDirective.$inject = ['packages'];
+    function PackagingEmbeddedDirective(packages) {
+        return {
+            templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
+            require: '^sdAuthoringContainer',
+            scope: {
+                item: '='
+            },
+            link: function(scope, elem, attrs, authoringCtrl) {
+                scope.$watch('item', function(item) {
+                    if (item && item.lockIt){
+                        scope.lock();
+                    } else {
+                        scope.origItem = null;
+                        scope.$applyAsync(function() {
+                            scope.origItem = item;
+                            scope.action = 'view';
+                        });
+                    }
+                });
+
+                scope.lock = function() {
+                    packages.open(scope.item._id)
+                    .then(function(item) {
+                        scope.origItem = item;
+                        scope.action = 'edit';
+                    });
+                };
+            }
+        };
+    }
+
     var app = angular.module('superdesk.packaging', [
         'superdesk.api',
         'superdesk.activity',
@@ -618,6 +660,7 @@
     .directive('sdPackageRef', PackageRefDirective)
     .directive('sdPackageItemPreview', PackageItemPreviewDirective)
     .directive('sdWidgetPreventPreview', PreventPreviewDirective)
+    .directive('sdPackagingEmbedded', PackagingEmbeddedDirective)
 
     .config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -744,7 +787,6 @@
                 order: 4,
                 side: 'left',
                 extended: true,
-                needEditable: true,
                 display: {authoring: false, packages: true, legalArchive: false}
             });
     }])

@@ -948,7 +948,8 @@
                  */
                 $scope.close = function() {
                     _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
+                    authoring.close($scope.item, $scope.origItem, $scope.save_enabled())
+                    .then(function () {
                         workspaceCtrl.close($scope.item);
                     });
                 };
