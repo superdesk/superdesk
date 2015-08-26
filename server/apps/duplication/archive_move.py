@@ -20,7 +20,7 @@ from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from apps.archive.common import item_url, insert_into_versions, item_operations,\
-    ITEM_OPERATION, set_sign_off
+    ITEM_OPERATION, set_sign_off, get_user
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 
@@ -76,8 +76,10 @@ class MoveService(BaseService):
             raise InvalidStateTransitionError()
 
         original = dict(archived_doc)
+        user = get_user()
 
-        send_to(doc=archived_doc, desk_id=doc.get('task', {}).get('desc'), stage_id=doc.get('task', {}).get('stage'))
+        send_to(doc=archived_doc, desk_id=doc.get('task', {}).get('desc'), stage_id=doc.get('task', {}).get('stage'),
+                user_id=user.get(config.ID_FIELD))
 
         if archived_doc[ITEM_STATE] not in {CONTENT_STATE.PUBLISHED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.KILLED}:
             archived_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED

@@ -1459,9 +1459,7 @@
                             if (result && result._etag) {
                                 scope.task._etag = result._etag;
                             }
-                            return api.save('tasks', scope.task, {
-                                task: _.extend(scope.task.task, {desk: deskId, stage: stageId})
-                            });
+                            return api.save('move', {}, {task: {desk: deskId, stage: stageId}}, scope.item);
                         })
                         .then(function(value) {
                             notify.success(gettext('Item sent.'));

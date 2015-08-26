@@ -4,8 +4,7 @@
 module.exports = new Workspace();
 
 var content = require('./content'),
-    nav = require('./utils').nav,
-    authoring = require('./authoring');
+    nav = require('./utils').nav;
 
 function Workspace() {
     function openContent() {
@@ -100,13 +99,11 @@ function Workspace() {
         });
     };
 
-    this.duplicateItem = function(item, desk, stage) {
+    this.duplicateItem = function(item, desk) {
         return this.switchToDesk(desk || 'PERSONAL')
         .then(content.setListView)
         .then(function() {
             return content.actionOnItem('Duplicate', item);
-        }).then(function() {
-            return authoring.sendToSidebarOpened(desk, stage);
         });
     };
 
