@@ -135,3 +135,34 @@ Feature: Desks
         """
         [{"event": "desk_membership_revoked", "extra": {"updated": 1, "user_ids": ["#users._id#"]}}]
         """
+
+    @auth
+    Scenario: Set the monitoring settings
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
+        """
+        And "desks"
+        """
+        [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
+        """
+        When we patch "/desks/#desks._id#"
+        """
+        { "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+                                  {"_id": "id_saved_search", "type": "search", "max_items": 20},
+                                  {"_id": "id_personal", "type": "personal", "max_items": 15}
+                                 ]
+        }
+        """
+        Then we get updated response
+        When we get "/desks"
+        Then we get list with 1 items
+            """
+            {"_items": [{"name": "Sports Desk", 
+                          "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+                                                  {"_id": "id_saved_search", "type": "search", "max_items": 20},
+                                                  {"_id": "id_personal", "type": "personal", "max_items": 15}
+                                                 ]
+                        }]
+            }
+            """

@@ -133,7 +133,7 @@ define([
         $scope.$on('item:replaced', refreshItems);
         $scope.$on('item:deleted', refreshItems);
         $scope.$on('item:mark', refreshItems);
-        $scope.$on('item:spike', refreshItems);
+        $scope.$on('item:spike', reset);
         $scope.$on('item:unspike', reset);
         $scope.$on('item:published:no_post_publish_actions', refreshItems);
 

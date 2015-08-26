@@ -84,15 +84,13 @@ define([
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
                     }
+                    return item;
                 }, function(response) {
                     item.error = response;
                     if (angular.isDefined(response.data._issues) &&
                         angular.isDefined(response.data._issues['validator exception'])) {
                         notify.error(gettext(response.data._issues['validator exception']));
                     }
-                })
-                ['finally'](function() {
-                    item.actioning.spike = false;
                 });
         };
 
@@ -116,11 +114,9 @@ define([
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
                     }
+                    return item;
                 }, function(response) {
                     item.error = response;
-                })
-                ['finally'](function() {
-                    item.actioning.unspike = false;
                 });
         };
 

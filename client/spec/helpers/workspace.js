@@ -27,12 +27,10 @@ function Workspace() {
      * Open a workspace of given name, can be both desk or custom
      *
      * @param {string} desk Desk or workspace name.
-     * @return {Promise}
      */
-    this.switchToDesk = function(desk) {
-
+    this.selectDesk = function(desk) {
         var dropdownBtn = element(by.id('selected-desk')),
-            dropdownMenu = element(by.id('select-desk-menu'));
+        dropdownMenu = element(by.id('select-desk-menu'));
 
         // open dropdown
         dropdownBtn.click();
@@ -66,6 +64,17 @@ function Workspace() {
                 dropdownBtn.click();
             }
         });
+    };
+
+    /**
+     * Open a workspace of given name, can be both desk or custom and then navigate
+     * to content view
+     *
+     * @param {string} desk Desk or workspace name.
+     * @return {Promise}
+     */
+    this.switchToDesk = function(desk) {
+        this.selectDesk(desk);
 
         openContent();
 

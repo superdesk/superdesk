@@ -44,6 +44,27 @@ desks_schema = {
     },
     'published_item_expiry': {
         'type': 'integer'
+    },
+    'monitoring_settings': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                '_id': {
+                    'type': 'string',
+                    'required': True
+                },
+                'type': {
+                    'type': 'string',
+                    'allowed': ['search', 'stage', 'personal'],
+                    'required': True
+                },
+                'max_items': {
+                    'type': 'integer',
+                    'required': True
+                }
+            }
+        }
     }
 }
 

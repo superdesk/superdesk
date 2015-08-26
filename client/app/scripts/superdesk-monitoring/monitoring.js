@@ -204,13 +204,11 @@
                 scope.renderNew = renderNew;
                 scope.viewSingleGroup = viewSingleGroup;
 
-                scope.$watch('group', queryItems);
-                scope.$watch('group.query', queryItems);
-                scope.$watch('group.fileType', queryItems);
+                scope.$watchCollection('group', queryItems);
                 scope.$on('task:stage', handleStage);
                 scope.$on('ingest:update', update);
-                scope.$on('item:spike', update);
-                scope.$on('item:unspike', update);
+                scope.$on('item:spike', queryItems);
+                scope.$on('item:unspike', queryItems);
 
                 var list = elem[0].getElementsByClassName('inline-content-items')[0],
                     scrollElem = elem.find('.stage-content').first();

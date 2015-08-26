@@ -71,7 +71,7 @@ describe('workspace', function() {
             $rootScope.$digest();
 
             expect(workspaces.active._id).toBe('deskworkspace');
-            expect(api.query).toHaveBeenCalledWith('workspaces', {where: {desk: 'foo'}});
+            expect(api.query).toHaveBeenCalledWith('desks', {where: {desk: 'foo'}});
             expect(preferencesService.update).toHaveBeenCalledWith(
                 {'workspace:active': {workspace: ''}},
                 'workspace:active'
@@ -107,7 +107,7 @@ describe('workspace', function() {
             $rootScope.$digest();
             expect(workspaces.active.desk).toBe(DESK);
             expect(workspaces.active.widgets).toEqual([]);
-            expect(api.query).toHaveBeenCalledWith('workspaces', {where: {desk: DESK}});
+            expect(api.query).toHaveBeenCalledWith('desks', {where: {desk: DESK}});
         }));
 
         it('can create user workspaces if there is no desk and no workspace',

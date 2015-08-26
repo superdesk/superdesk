@@ -78,6 +78,7 @@ describe('Package', function() {
 
     it('create package from published item', function() {
         workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item5', 'Politic');
         authoring.writeText('some text');
         authoring.save();

@@ -11,7 +11,7 @@ describe('Fetch', function() {
         content.setListView();
     });
 
-    it('items in personal should have copy icon and in desk should have duplicate icon',
+    xit('items in personal should have copy icon and in desk should have duplicate icon',
         function() {
             var menu = content.openItemMenu('item4');
 
@@ -51,10 +51,7 @@ describe('Fetch', function() {
         workspace.openIngest();
         content.actionOnItem('Fetch', 0);
         workspace.openContent();
-        workspace.switchToDesk('PERSONAL');
         expect(content.count()).toBe(3);
-        content.actionOnItem('Copy', 'item1');
-        expect(content.count()).toBe(4);
     });
 
     it('can fetch as', function() {
