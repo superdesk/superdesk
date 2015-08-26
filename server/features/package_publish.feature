@@ -4849,3 +4849,154 @@ Feature: Package Publishing
       {"_items" : [{"headline": "item-1.2 headline", "publishing_action": "corrected"}]
       }
       """
+
+
+    @auth
+    @notification
+    Scenario: Publish a nested package where inner package does not validate
+      Given empty "archive"
+      Given "desks"
+          """
+          [{"name": "test_desk1", "members":[{"user":"#CONTEXT_USER_ID#"}]}]
+          """
+      And the "validators"
+          """
+          [{"_id": "publish_composite", "act": "publish", "type": "composite", "schema":{"headline": {"type": "string","required": true, "maxlength": 160}}},
+          {"_id": "publish_text", "act": "publish", "type": "text", "schema":{"abstract": {"type": "string","required": true,"maxlength": 160}}},
+          {"_id": "publish_picture", "act": "publish", "type": "picture", "schema":{}}]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "item-1 headline",
+              "guid" : "123",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-1 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }, {
+              "headline" : "item-2 headline",
+              "guid" : "456",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item-2 content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem",
+                          "headline": "test package",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "outercompositeitem",
+              "headline" : "outer test package",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we publish "outercompositeitem" with "publish" type and "published" state
+      Then we get error 400
+      """
+        {"_issues": {"validator exception": "['item-1 headline: ABSTRACT is a required field', 'item-2 headline: ABSTRACT is a required field', 'compositeitem: HEADLINE is a required field']"}, "_status": "ERR"}
+      """

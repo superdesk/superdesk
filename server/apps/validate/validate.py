@@ -59,7 +59,8 @@ class ValidateService(superdesk.Service):
                     message = '{} {}'.format(e.upper(), error_list[e])
 
                 if use_headline:
-                    response.append('{}: {}'.format(doc['validate'].get('headline', doc.get('_id')), message))
+                    response.append('{}: {}'.format(doc['validate'].get('headline',
+                                                                        doc['validate'].get('_id')), message))
                 else:
                     response.append(message)
             return response
