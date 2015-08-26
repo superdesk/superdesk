@@ -938,6 +938,7 @@ class KillPublishService(BasePublishService):
 
 
 class CorrectPublishResource(BasePublishResource):
+
     def __init__(self, endpoint_name, app, service):
         super().__init__(endpoint_name, app, service, 'correct')
 
@@ -948,6 +949,11 @@ class CorrectPublishService(BasePublishService):
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_CORRECT
+        if updates.get('renditions', []) and original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:
+            crop_service = get_resource_service('archive_crop')
+            for key in updates.get('renditions', {}):
+                crop_service.validate_crop(original, key, updates.get('renditions', {}).get(key, {}))
+
         super().on_update(updates, original)
         set_sign_off(updates, original)
 
@@ -972,6 +978,15 @@ class CorrectPublishService(BasePublishService):
                         str(package[config.ID_FIELD]) not in processed_packages:
                     archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
                     processed_packages.append(package[config.ID_FIELD])
+
+    def update(self, id, updates, original):
+        if updates.get('renditions', []) and original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:
+            crop_service = get_resource_service('archive_crop')
+            for key in updates.get('renditions', {}):
+                if crop_service.get_crop_by_name(key):
+                    crop_service.add_crop(original, key, updates.get('renditions', {}).get(key, {}))
+
+        super().update(id, updates, original)
 
     def get_subscribers(self, doc, target_media_type):
         """

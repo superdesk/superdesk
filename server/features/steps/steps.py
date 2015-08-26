@@ -922,6 +922,7 @@ def step_impl_then_get_rendition_with_mimetype(context, name, mimetype):
     assert isinstance(desc, dict), 'expected dict for rendition description'
     assert 'href' in desc, 'expected href in rendition description'
     we_can_fetch_a_file(context, desc['href'], mimetype)
+    set_placeholder(context, "rendition.{}.href".format(name), desc['href'])
 
 
 @when('we get updated media from archive')
@@ -994,6 +995,14 @@ def step_impl_then_get_cropped_file(context, max_size):
 @then('we can fetch a data_uri')
 def step_impl_we_fetch_data_uri(context):
     we_can_fetch_a_file(context, context.fetched_data['renditions']['original']['href'], 'image/jpeg')
+
+
+@then('we fetch a file "{url}"')
+def step_impl_we_cannot_fetch_file(context, url):
+    url = apply_placeholders(context, url)
+    headers = [('Accept', 'application/json')]
+    headers = unique_headers(headers, context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
 
 
 def we_can_fetch_a_file(context, url, mimetype):
