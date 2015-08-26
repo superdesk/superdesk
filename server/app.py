@@ -11,30 +11,8 @@
 
 
 import os
-import logging
-import importlib
-import jinja2
-import eve
 import settings
-import superdesk
-from flask.ext.mail import Mail
-from eve.io.mongo import MongoJSONEncoder
-from eve.render import send_response
-from superdesk.celery_app import init_celery
-from eve.auth import TokenAuth
-from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
-from superdesk.validator import SuperdeskValidator
-from raven.contrib.flask import Sentry
-from superdesk.errors import SuperdeskError, SuperdeskApiError
-from superdesk.io import providers
-from logging.handlers import SysLogHandler
-from settings import LOG_SERVER_ADDRESS, LOG_SERVER_PORT
-
-
-logging.basicConfig(handlers=[logging.StreamHandler(), SysLogHandler(address=(LOG_SERVER_ADDRESS, LOG_SERVER_PORT))])
-logger = logging.getLogger('superdesk')
-logger.setLevel(logging.INFO)
-sentry = Sentry(register_signal=False, wrap_wsgi=False)
+from superdesk.app import get_app as superdesk_app
 
 
 def get_app(config=None):
@@ -52,74 +30,14 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
-    media_storage = SuperdeskGridFSMediaStorage
-
+    media_storage = None
     if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        from apps.storage.amazon.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
 
     config['DOMAIN'] = {}
 
-    app = eve.Eve(
-        data=superdesk.SuperdeskDataLayer,
-        auth=TokenAuth,
-        media=media_storage,
-        settings=config,
-        json_encoder=MongoJSONEncoder,
-        validator=SuperdeskValidator)
-
-    superdesk.app = app
-
-    custom_loader = jinja2.ChoiceLoader([
-        app.jinja_loader,
-        jinja2.FileSystemLoader(['superdesk/templates'])
-    ])
-    app.jinja_loader = custom_loader
-
-    app.mail = Mail(app)
-
-    @app.errorhandler(SuperdeskError)
-    def client_error_handler(error):
-        """Return json error response.
-
-        :param error: an instance of :attr:`superdesk.SuperdeskError` class
-        """
-        return send_response(None, (error.to_dict(), None, None, error.status_code))
-
-    @app.errorhandler(500)
-    def server_error_handler(error):
-        """Log server errors."""
-        app.sentry.captureException()
-        logger.exception(error)
-        return_error = SuperdeskApiError.internalError()
-        return client_error_handler(return_error)
-
-    init_celery(app)
-
-    for module_name in app.config['INSTALLED_APPS']:
-        app_module = importlib.import_module(module_name)
-        try:
-            app_module.init_app(app)
-        except AttributeError:
-            pass
-
-    for resource in superdesk.DOMAIN:
-        app.register_resource(resource, superdesk.DOMAIN[resource])
-
-    for blueprint in superdesk.BLUEPRINTS:
-        prefix = app.api_prefix or None
-        app.register_blueprint(blueprint, url_prefix=prefix)
-
-    # we can only put mapping when all resources are registered
-    app.data.elastic.put_mapping(app)
-
-    app.sentry = sentry
-    sentry.init_app(app)
-
-    # instantiate registered provider classes (leave non-classes intact)
-    for key, provider in providers.items():
-        providers[key] = provider() if isinstance(provider, type) else provider
-
+    app = superdesk_app(config, media_storage)
     return app
 
 if __name__ == '__main__':
