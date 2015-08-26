@@ -57,6 +57,7 @@ def remove_expired_data(provider):
     items = get_expired_items(provider, expiration_date)
 
     ids = [item['_id'] for item in items]
+    items.rewind()
     file_ids = [rend.get('media')
                 for item in items
                 for rend in item.get('renditions', {}).values()

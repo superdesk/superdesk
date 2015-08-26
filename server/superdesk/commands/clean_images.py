@@ -35,7 +35,7 @@ class CleanImages(superdesk.Command):
             self.__add_existing_files(used_images, upload_items)
 
             print('Number of used files: ', len(used_images))
-            current_files = superdesk.app.media.fs().find({'_id': {'$nin': list(used_images)}})
+            current_files = superdesk.app.media.fs('upload').find({'_id': {'$nin': list(used_images)}})
 
             for file_id in (file._id for file in current_files if str(file._id) not in used_images):
                 print('Removing unused file: ', file_id)
