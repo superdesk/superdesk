@@ -12,11 +12,11 @@
 import os
 import logging
 from datetime import datetime
-from .nitf import NITFParser
+from superdesk.io.nitf import NITFParser
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
-from ..etree import etree, ParseError as etreeParserError
+from superdesk.etree import etree, ParseError as etreeParserError
 from superdesk.utils import get_sorted_files, FileSortAttributes
 from superdesk.errors import ParserError, ProviderError
 

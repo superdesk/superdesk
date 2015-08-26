@@ -13,11 +13,11 @@ import os
 import logging
 
 from datetime import datetime
-from .newsml_1_2 import NewsMLOneParser
+from superdesk.io.newsml_1_2 import NewsMLOneParser
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utils import get_sorted_files, FileSortAttributes
-from ..utc import utc
-from ..etree import etree, ParseError as etreeParserError
+from superdesk.utc import utc
+from superdesk.etree import etree, ParseError as etreeParserError
 from superdesk.notification import push_notification
 from superdesk.errors import ParserError, ProviderError
 

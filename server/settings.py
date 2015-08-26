@@ -21,8 +21,6 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from publicapi.settings import MONGO_DBNAME as PUBLICAPI_MONGO_DBNAME  # noqa @UnusedImport
-
 
 def env(variable, fallback_value=None):
     env_value = os.environ.get(variable, '')
@@ -67,8 +65,6 @@ MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 
 LEGAL_ARCHIVE_DBNAME = env('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
 LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI', 'mongodb://localhost/%s' % LEGAL_ARCHIVE_DBNAME)
-
-PUBLICAPI_MONGO_URI = env('PUBLICAPI_MONGO_URI')
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
@@ -125,23 +121,21 @@ SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = [
     'apps.auth',
-    'apps.users',
+    'superdesk.users',
     'superdesk.upload',
     'superdesk.notification',
     'superdesk.activity',
-    'superdesk.comments',
+    'apps.comments',
 
     'superdesk.io',
     'superdesk.io.subjectcodes',
-    'superdesk.io.reuters',
-    'superdesk.io.aap',
-    'superdesk.io.afp',
+    'apps.io.reuters',
+    'apps.io.aap',
+    'apps.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
     'superdesk.publish',
-    'superdesk.macro_register',
     'superdesk.commands',
-    'superdesk.data_consistency',
     'superdesk.locators.locators',
 
     'apps.archive',

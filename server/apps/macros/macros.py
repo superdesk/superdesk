@@ -12,7 +12,7 @@
 import superdesk
 from superdesk.errors import SuperdeskApiError
 from superdesk.utils import ListCursor
-from superdesk.macro_register import macros
+from .macro_register import macros
 
 
 def get_public_props(item):
@@ -73,7 +73,3 @@ class MacrosResource(superdesk.Resource):
             'default': False,
         },
     }
-
-
-def init_app(app):
-    MacrosResource('macros', app=app, service=MacrosService())
