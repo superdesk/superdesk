@@ -64,8 +64,13 @@ module.exports = function (grunt) {
         'ngtemplates',
         'watch'
     ]);
-    grunt.registerTask('server:travis', ['clean', 'style', 'template:travis', 'connect:travis']);
-
+    grunt.registerTask('server:travis', [
+        'clean',
+        'style',
+        'ngtemplates',
+        'template:travis',
+        'connect:travis'
+    ]);
     grunt.registerTask('bower', [
         'build',
         'copy:bower'
