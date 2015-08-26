@@ -103,13 +103,11 @@ describe('authoring', function() {
 
     it('view item history duplicate operation', function() {
         workspace.open();
-        workspace.duplicateItem('item5', 'Politic Desk', 'two');
-        workspace.selectStage('two');
-        workspace.editItem('item5', 'Politic');
+        workspace.duplicateItem('item5', 'Politic Desk');
+        workspace.editItem(2, 'Politic');
         authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItems().count()).toBe(2);
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
-        expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
     });
 
     it('view item history publish operation', function() {
