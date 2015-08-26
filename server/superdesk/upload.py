@@ -50,10 +50,7 @@ def get_upload_as_data_uri(media_id):
 
 def url_for_media(media_id):
     try:
-        url = app.media.url_for_media(media_id)
-        if url is None:
-            return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
-                           _external=True, _schema=superdesk.config.URL_PROTOCOL)
+        return app.media.url_for_media(media_id)
     except AttributeError:
         return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
                        _external=True, _schema=superdesk.config.URL_PROTOCOL)
