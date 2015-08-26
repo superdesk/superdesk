@@ -115,7 +115,12 @@ class BasePublishService(BaseService):
             raise ValidationError(validation_errors)
 
         # validate the package if it is one
-        self._validate_package_contents(original, takes_package)
+
+        package_validation_errors = []
+        self._validate_package_contents(original, takes_package, package_validation_errors)
+        if len(package_validation_errors) > 0:
+            raise ValidationError(package_validation_errors)
+
         self._set_version_last_modified_and_state(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
 
     def on_updated(self, updates, original):
@@ -732,36 +737,39 @@ class BasePublishService(BaseService):
         if doc.get(SEQUENCE):
             doc['headline'] = '{}={}'.format(doc['headline'], doc.get(SEQUENCE))
 
-    def _validate_package_contents(self, package, takes_package):
+    def _validate_package_contents(self, package, takes_package, validation_errors=[]):
         """
         If the item passed is a package this function will ensure that the unpublished content validates and none of
          the content is locked by other than the publishing session, also do not allow any killed or spiked content
         :param package:
         :param takes_package:
-        :raises: Validation exceptions if the validation fails
+        :param validation_errors: List errors to be populated
         """
         # Ensure it is the sort of thing we need to validate
         if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == ITEM_PUBLISH:
             items = self.package_service.get_residrefs(package)
 
-            validation_errors = []
             if items:
                 for guid in items:
                     doc = super().find_one(req=None, _id=guid)
+                    if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                        digital = self.takes_package_service.get_take_package(doc) or {}
+                        self._validate_package_contents(doc, digital, validation_errors)
+
                     # make sure no items are killed or locked
                     if doc[ITEM_STATE] in (CONTENT_STATE.KILLED, CONTENT_STATE.SPIKED):
                         raise ValidationError(['Package contains killed or spike item'])
+
                     # don't validate items that already have published
                     if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
                         validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
                         errors = get_resource_service('validate').post([validate_item], headline=True)
                         if errors[0]:
                             validation_errors.extend(errors[0])
+
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item is locked'.format(doc['headline'])])
-                if len(validation_errors) > 0:
-                    raise ValidationError(validation_errors)
 
 
 class ArchivePublishResource(BasePublishResource):
