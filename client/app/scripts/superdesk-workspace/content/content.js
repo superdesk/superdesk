@@ -1,68 +1,166 @@
 (function() {
     'use strict';
 
-    ContentCtrlFactory.$inject = ['api', 'superdesk', 'templates', 'desks', 'archiveService'];
-    function ContentCtrlFactory(api, superdesk, templates, desks, archiveService) {
-        return function ContentCtrl($scope) {
-            var scope = $scope;
-            var self = this;
+    angular.module('superdesk.workspace.content', [
+        'superdesk.api',
+        'superdesk.archive',
+        'superdesk.templates',
+        'superdesk.packaging'
+    ])
+        .service('content', ContentService)
+        .directive('sdContentCreate', ContentCreateDirective)
+        .directive('sdTemplateSelect', TemplateSelectDirective)
+        ;
 
-            /**
-             * Create an item and start editing it
-             */
-            this.create = function(type) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(self.createItem, type);
-                } else {
-                    self.createItem(type);
-                }
-            };
+    ContentService.$inject = ['api', 'superdesk', 'templates', 'desks', 'packages', 'archiveService'];
+    function ContentService(api, superdesk, templates, desks, packages, archiveService) {
 
-            this.createItem = function (type) {
-                var item = {type: type || 'text', version: 0};
-                archiveService.addTaskToArticle(item);
-                api('archive').save(item).then(function() {
-                    superdesk.intent('author', 'article', item);
-                });
-            };
+        var TEXT_TYPE = 'text';
 
-            this.createPackage = function (current_item) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(self.createPackageItem, current_item);
-                } else {
-                    self.createItem(current_item);
-                }
-            };
+        /**
+         * Save data to content api
+         *
+         * @param {Object} data
+         * @return {Promise}
+         */
+        function save(data) {
+            return api.save('archive', data);
+        }
 
-            this.createPackageItem = function (current_item) {
-                if (current_item) {
-                    superdesk.intent('create', 'package', {items: [current_item]});
-                } else {
-                    superdesk.intent('create', 'package');
-                }
-            };
+        /**
+         * Create an item of given type
+         *
+         * @param {string} type
+         * @return {Promise}
+         */
+        this.createItem = function(type) {
+            var item = {type: type || TEXT_TYPE, version: 0};
+            archiveService.addTaskToArticle(item);
+            return save(item);
+        };
 
-            this.createFromTemplate = function(template) {
-                if (scope && scope.dirty){
-                    scope.closeOpenNew(self.createFromTemplateItem, template);
-                } else {
-                    self.createFromTemplateItem(template);
-                }
-            };
+        /**
+         * Create a package containing given item
+         *
+         * @param {Object} item
+         * @return {Promise}
+         */
+        this.createPackageItem = function(item) {
+            var data = item ? {items: [item]} : {};
+            return packages.createEmptyPackage(data);
+        };
 
-            this.createFromTemplateItem = function (template) {
-                var item = _.pick(template, templates.TEMPLATE_METADATA);
-                api('archive').save(item).then(function() {
-                    return templates.addRecentTemplate(desks.activeDeskId, template._id);
-                })
-                .then(function() {
-                    superdesk.intent('author', 'article', item);
-                });
-            };
-
+        /**
+         * Create new item using given template
+         *
+         * @param {Object} template
+         * @return {Promise}
+         */
+        this.createItemFromTemplate = function(template) {
+            var item = _.pick(template, templates.TEMPLATE_METADATA);
+            return save(item).then(function(newItem) {
+                templates.addRecentTemplate(desks.activeDeskId, template._id);
+                return newItem;
+            });
         };
     }
 
-    angular.module('superdesk.workspace.content', ['superdesk.templates'])
-        .factory('ContentCtrl', ContentCtrlFactory);
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content'];
+    function ContentCreateDirective(api, desks, templates, content) {
+        return {
+            scope: true,
+            templateUrl: 'scripts/superdesk-workspace/content/views/sd-content-create.html',
+            require: '^sdAuthoringWorkspace',
+            link: function(scope, elem, attrs, workspaceCtrl) {
+                var NUM_ITEMS = 5;
+
+                /**
+                 * Start editing given item in sidebar editor
+                 *
+                 * @param {Object} item
+                 */
+                function edit(item) {
+                    workspaceCtrl.edit(item);
+                }
+
+                /**
+                 * Create and start editing item of given type
+                 *
+                 * @param {string} type
+                 */
+                scope.create = function(type) {
+                    content.createItem(type).then(edit);
+                };
+
+                /**
+                 * Create and start editing a package
+                 */
+                scope.createPackage = function() {
+                    content.createPackageItem().then(edit);
+                };
+
+                /**
+                 * Create and start editing an item based on given package
+                 *
+                 * @param {Object} template
+                 */
+                scope.createFromTemplate = function(template) {
+                    content.createItemFromTemplate(template).then(edit);
+                };
+
+                scope.contentTemplates = null;
+
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, function() {
+                    templates.getRecentTemplates(desks.activeDeskId, NUM_ITEMS)
+                    .then(function(result) {
+                        scope.contentTemplates = result;
+                    });
+                });
+            }
+        };
+    }
+
+    TemplateSelectDirective.$inject = ['api', 'desks', 'templates'];
+    function TemplateSelectDirective(api, desks, templates) {
+        var PAGE_SIZE = 10;
+
+        return {
+            templateUrl: 'scripts/superdesk-workspace/content/views/sd-template-select.html',
+            scope: {
+                selectAction: '=',
+                open: '='
+            },
+            link: function(scope) {
+                scope.maxPage = 1;
+                scope.options = {
+                    keyword: null,
+                    page: 1
+                };
+                scope.templates = null;
+
+                scope.close = function() {
+                    scope.open = false;
+                };
+
+                scope.select = function(template) {
+                    scope.selectAction(template);
+                };
+
+                var fetchTemplates = function() {
+                    templates.fetchTemplates(scope.options.page, PAGE_SIZE, 'create', desks.activeDeskId, scope.options.keyword)
+                    .then(function(result) {
+                        scope.maxPage = Math.ceil(result._meta.total / PAGE_SIZE);
+                        scope.templates = result;
+                    });
+                };
+
+                scope.$watchCollection('options', fetchTemplates);
+                scope.$watch(function() {
+                    return desks.activeDeskId;
+                }, fetchTemplates);
+            }
+        };
+    }
 })();

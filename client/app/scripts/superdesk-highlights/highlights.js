@@ -283,7 +283,6 @@
         return {
             scope: {highlight_id: '=highlight'},
             template: '<span translate>{{ highlightItem.name }}</span>',
-            replate: true,
             link: function(scope) {
                 highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                     scope.highlightItem =  _.find(result._items, {_id: scope.highlight_id});
@@ -295,12 +294,10 @@
     CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location'];
     function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, $location) {
         return {
-            require: ['^sdAuthoringContainer'],
+            require: '^sdAuthoringWorkspace',
             scope: {highlight_id: '=highlight'},
             templateUrl: 'scripts/superdesk-highlights/views/create_highlights_button_directive.html',
-            link: function(scope, elem, attrs, ctrls) {
-                var authoring = ctrls[0];
-
+            link: function(scope, elem, attrs, workspaceCtrl) {
                 scope.createHighlight = function(highlight) {
                     var promise = highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                         scope.highlights = _.find(result._items, {_id: scope.highlight_id});
@@ -309,7 +306,7 @@
 
                     promise = promise.then(function() {
                         highlightsService.createEmptyHighlight(scope.highlights).then(function(new_package) {
-                            authoring.edit(new_package);
+                            workspaceCtrl.edit(new_package);
                         });
                     });
                 };

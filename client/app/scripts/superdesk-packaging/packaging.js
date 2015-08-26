@@ -64,7 +64,7 @@
             };
             new_package = setDefaults(new_package, defaults);
 
-            return api.archive.save(new_package);
+            return api.save('archive', new_package);
 
         };
 
@@ -602,8 +602,8 @@
     }
 
     var app = angular.module('superdesk.packaging', [
-        'superdesk.activity',
         'superdesk.api',
+        'superdesk.activity',
         'superdesk.authoring'
     ]);
 

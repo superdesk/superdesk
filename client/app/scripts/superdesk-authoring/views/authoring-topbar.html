@@ -31,7 +31,7 @@
             ng-click="openAction('kill')"
             translate>Kill</button>
 
-        <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
+        <button class="btn btn-medium pull-left" ng-click="close()" translate>CLOSE</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
             ng-click="save(item)"
@@ -50,7 +50,7 @@
             ng-click="publish()"
             ng-if = "action !== 'view' && (itemActions.publish || itemActions.kill || itemActions.correct)"
             ng-show="_editable"
-            translate>{{action === "edit" ? "Publish": action}}</button>
+            translate>{{action === "edit" ? "PUBLISH": action}}</button>
 
         <div ng-if="item._type !== 'legal_archive'" class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>

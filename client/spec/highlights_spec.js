@@ -180,7 +180,6 @@ describe('HIGHLIGHTS', function() {
             content.setListView();
             highlights.mark('Highlight two', 0);
             highlights.createHighlightsPackage('Highlight two');
-            authoring.edit();
             authoring.showSearch();
             authoring.addToGroup(0, 'ONE');
             expect(authoring.getGroupedItems('ONE').count()).toBe(1);
@@ -199,7 +198,6 @@ describe('HIGHLIGHTS', function() {
             highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('Highlight one');
-            authoring.edit();
             authoring.showSearch();
             expect(authoring.getSearchItemCount()).toBe(2);
 
@@ -215,7 +213,6 @@ describe('HIGHLIGHTS', function() {
             highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('Highlight two');
-            authoring.edit();
             authoring.showSearch();
             expect(authoring.getSearchItemCount()).toBe(2);
 

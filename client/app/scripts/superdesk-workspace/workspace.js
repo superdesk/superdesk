@@ -2,7 +2,7 @@
 (function() {
     'use strict';
 
-    angular.module('superdesk.workspace', [])
+    angular.module('superdesk.workspace', ['superdesk.workspace.content'])
         .service('workspaces', WorkspaceService)
         .directive('sdDeskDropdown', WorkspaceDropdownDirective)
         .directive('sdEditWorkspace', EditWorkspaceDirective)

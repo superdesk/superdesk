@@ -6,7 +6,7 @@ describe('workqueue', function() {
 
     angular.module('mock.route', ['ngRoute'])
         .config(function($routeProvider) {
-            $routeProvider.when('/mock/:_id', {
+            $routeProvider.when('/mock', {
                 template: ''
             });
         });
@@ -47,15 +47,15 @@ describe('workqueue', function() {
         expect(workqueue.items[0]._etag).toBe('xy');
     }));
 
-    it('can watch route change and update active', inject(
+    it('can get active item from url', inject(
     function(api, $location, $controller, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
+        $location.path('/mock');
+        $location.search('edit', 'foo');
+        $rootScope.$digest();
+
         var scope = $rootScope.$new();
         $controller('Workqueue', {$scope: scope});
-        $rootScope.$digest();
-        expect(scope.active).toBe(null);
-
-        $location.path('/mock/foo');
         $rootScope.$digest();
         expect(scope.active._id).toBe('foo');
     }));

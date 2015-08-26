@@ -121,7 +121,6 @@ define([
         'superdesk.dashboard.widgets',
         'superdesk.dashboard.grid',
         'superdesk.dashboard.world-clock',
-        'superdesk.workspace.content',
         'superdesk.workspace.tasks',
         'superdesk.itemList',
         'superdesk.legal_archive',
