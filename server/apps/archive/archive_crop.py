@@ -153,6 +153,7 @@ class ArchiveCropService(BaseService):
                                                                 {'renditions': renditions}, original)
                 else:
                     get_resource_service(ARCHIVE).patch(original[config.ID_FIELD], {'renditions': renditions})
+                    self._delete_crop_file(original_crop.get('media'))
 
             except SuperdeskApiError:
                 raise

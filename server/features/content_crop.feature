@@ -68,6 +68,29 @@ Feature: Cropping the Image Articles
 
     @auth
     @vocabulary
+    Scenario: Update of an existing crop of an unpublished image should delete old crop
+      When upload a file "bike.jpg" to "archive" with "123"
+      When we post to "/archive/123/crop/4-3"
+      """
+      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
+      """
+      Then we get rendition "4-3" with mimetype "image/jpeg"
+      And we fetch a file "#rendition.4-3.href#"
+      And we get OK response
+      When we post to "/archive/123/crop/4-3"
+      """
+      {"CropLeft":10,"CropRight":810,"CropTop":10,"CropBottom":610}
+      """
+      Then we get response code 201
+      And we fetch a file "#rendition.4-3.href#"
+      And we get error 404
+      When we get "/archive/123"
+      Then we get OK response
+      And we get rendition "4-3" with mimetype "image/jpeg"
+      Then we get OK response
+
+    @auth
+    @vocabulary
     Scenario: Delete an existing crop of an Image Story succeeds
       When upload a file "bike.jpg" to "archive" with "123"
       When we post to "/archive/123/crop/4-3"
