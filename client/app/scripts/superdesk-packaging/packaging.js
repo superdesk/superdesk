@@ -744,6 +744,7 @@
                 order: 4,
                 side: 'left',
                 extended: true,
+                needEditable: true,
                 display: {authoring: false, packages: true, legalArchive: false}
             });
     }])

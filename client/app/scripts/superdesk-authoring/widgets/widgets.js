@@ -40,7 +40,8 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
     });
 
     $scope.isLocked = function(widget) {
-        return widget.needUnlock && $scope.item._locked;
+        return (widget.needUnlock && $scope.item._locked) ||
+        (widget.needEditable && !$scope.item._editable);
     };
 
     $scope.activate = function(widget) {

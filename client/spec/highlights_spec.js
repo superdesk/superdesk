@@ -199,6 +199,7 @@ describe('HIGHLIGHTS', function() {
             highlights.mark('Highlight two', 1);
 
             highlights.createHighlightsPackage('Highlight one');
+            authoring.edit();
             authoring.showSearch();
             expect(authoring.getSearchItemCount()).toBe(2);
 
