@@ -331,8 +331,23 @@ define([
                         css.right = Math.max(5, window.innerWidth - pos.left) + 'px';
 
                         dropdown.dropdownMenu.css({opacity: '0'}); // avoid flickering
-                        scope.$applyAsync(function() {
+
+                        scope.$applyAsync(function () {
                             dropdown.dropdownMenu.css(css);
+
+                            /*
+                             * Calculate if there is enough space for showing after the icon
+                             * if not, show it above the icon
+                             */
+                            var windowHeight = window.innerHeight - 30, //Subracting 30 is for submenu bar
+                                dropdownHeight = dropdown.dropdownMenu.outerHeight();
+
+                            if ((windowHeight - pos.top) < dropdownHeight) {
+                                dropdown.dropdownMenu.css({
+                                    top: pos.top - dropdownHeight - icon.outerHeight() - 15
+                                    //Subtracting 15 so the dropdown is not stick to the icon
+                                });
+                            }
                         });
                     }
                 });

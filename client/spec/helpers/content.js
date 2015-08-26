@@ -61,7 +61,7 @@ function Content() {
         var itemElem = this.getItem(item);
         browser.actions().mouseMove(itemElem).perform();
         itemElem.element(by.className('icon-dots-vertical')).click();
-        return element(by.css('.dropdown-menu.active'));
+        return element(by.css('.dropdown-menu.open'));
     };
 
     this.checkMarkedForHighlight = function(highlight, item) {
