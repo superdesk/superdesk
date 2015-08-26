@@ -10,7 +10,7 @@
 
 
 import superdesk.io.commands.update_ingest as ingest
-
+import app
 from unittest import TestCase
 from datetime import timedelta
 from nose.tools import assert_raises
@@ -21,7 +21,7 @@ from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
-from superdesk.io.commands.remove_expired_content import get_expired_items
+from superdesk.io.commands.remove_expired_content import get_expired_items, RemoveExpiredContent
 from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
 
 
@@ -224,6 +224,26 @@ class UpdateIngestTest(TestCase):
             service.post(items)
             expiredItems = get_expired_items(provider, now)
             self.assertEquals(4, expiredItems.count())
+
+            # actualy ingest the items and expire them
+            self.ingest_items(items, provider)
+            before = service.get(req=None, lookup={})
+            self.assertEqual(6, before.count())
+
+            # four files in grid fs
+            current_files = app.media.fs('upload').find()
+            self.assertEqual(4, current_files.count())
+
+            remove = RemoveExpiredContent()
+            remove.run(provider.get('type'))
+
+            # only one left in ingest
+            after = service.get(req=None, lookup={})
+            self.assertEqual(1, after.count())
+
+            # all gone
+            current_files = app.media.fs('upload').find()
+            self.assertEqual(0, current_files.count())
 
     def test_apply_rule_set(self):
         with self.app.app_context():
