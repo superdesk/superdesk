@@ -33,8 +33,11 @@ Feature: Prepopulate
         And we get "/desks"
         Then we get list with 2 items
         """
-        {"_items": [{"members": [{"user": "#user_admin#"}, {"user": "#user_admin1#"}, {"user": "#user_admin2#"}, {"user": "#user_admin3#"}], "name": "Sports Desk"},
-                    {"members": [{"user": "#user_admin#"}, {"user": "#user_admin4#"}, {"user": "#user_admin1#"}], "name": "Politic Desk"}]}
+        {"_items": [{"members": [{"user": "#user_admin#"}, {"user": "#user_admin1#"}, {"user": "#user_admin2#"}, {"user": "#user_admin3#"}], "name": "Sports Desk",
+                     "monitoring_settings" : [{"type" : "stage"}, {"type" : "stage"}]},
+                    {"members": [{"user": "#user_admin#"}, {"user": "#user_admin4#"}, {"user": "#user_admin1#"}], "name": "Politic Desk",
+                     "monitoring_settings" : [{"type" : "stage"}, {"type" : "stage"}]}
+                   ]}
         """
 
         When we get "/roles"

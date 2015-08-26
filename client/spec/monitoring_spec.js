@@ -9,6 +9,13 @@ describe('monitoring view', function() {
 
     beforeEach(function() {
         monitoring.openMonitoring();
+        //reset monitoring settings for politic desk
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
     });
 
     it('configure a stage and show it on monitoring view', function() {
@@ -126,6 +133,14 @@ describe('monitoring view', function() {
         monitoring.saveSettings();
 
         workspace.selectDesk('Sports Desk');
+        monitoring.showMonitoringSettings();
+        //reset monitoring settings for sports desk
+        monitoring.toggleDesk(1);
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(1);
         monitoring.toggleStage(1, 1);

@@ -15,10 +15,10 @@ describe('Master Desk', function() {
 
     it('show content view', function() {
         masterDesks.switchToTab('content');
-        expect(itemHeadline(0, 1, 0)).toBe('item3');
-        expect(itemHeadline(0, 3, 0)).toBe('item4');
-        expect(itemHeadline(1, 1, 0)).toBe('item5');
-        expect(itemHeadline(1, 2, 0)).toBe('item6');
+        expect(itemHeadline(1, 1, 0)).toBe('item3');
+        expect(itemHeadline(1, 3, 0)).toBe('item4');
+        expect(itemHeadline(0, 1, 0)).toBe('item5');
+        expect(itemHeadline(0, 2, 0)).toBe('item6');
     });
 
     it('show content view - preview item', function() {
@@ -48,10 +48,10 @@ describe('Master Desk', function() {
 
     it('show tasks view', function() {
         masterDesks.switchToTab('tasks');
-        expect(masterDesks.getTask(0, 0, 0).element(by.tagName('div')).getText()).toContain('item3 slugline');
-        expect(masterDesks.getTask(0, 2, 0).element(by.tagName('div')).getText()).toContain('item4 slugline');
-        expect(masterDesks.getTask(1, 0, 0).element(by.tagName('div')).getText()).toContain('item5 slugline');
-        expect(masterDesks.getTask(1, 1, 0).element(by.tagName('div')).getText()).toContain('item6 slugline');
+        expect(masterDesks.getTask(1, 0, 0).element(by.tagName('div')).getText()).toContain('item3 slugline');
+        expect(masterDesks.getTask(1, 2, 0).element(by.tagName('div')).getText()).toContain('item4 slugline');
+        expect(masterDesks.getTask(0, 0, 0).element(by.tagName('div')).getText()).toContain('item5 slugline');
+        expect(masterDesks.getTask(0, 1, 0).element(by.tagName('div')).getText()).toContain('item6 slugline');
     });
 
     it('tasks view - show desk', function() {
@@ -69,15 +69,15 @@ describe('Master Desk', function() {
 
     it('show user role view all users', function() {
         masterDesks.switchToTab('users');
-        expect(masterDesks.getUser(0, 1, 0).element(by.className('text')).getText())
+        expect(masterDesks.getUser(1, 1, 0).element(by.className('text')).getText())
             .toContain('first name last name');
-        expect(masterDesks.getUser(0, 2, 0).element(by.className('text')).getText())
-            .toContain('first name1 last name1');
-        expect(masterDesks.getUser(0, 3, 0).element(by.className('text')).getText())
-            .toContain('first name2 last name2');
-        expect(masterDesks.getUser(0, 3, 1).element(by.className('text')).getText())
-            .toContain('first name3 last name3');
         expect(masterDesks.getUser(1, 2, 0).element(by.className('text')).getText())
+            .toContain('first name1 last name1');
+        expect(masterDesks.getUser(1, 3, 0).element(by.className('text')).getText())
+            .toContain('first name2 last name2');
+        expect(masterDesks.getUser(1, 3, 1).element(by.className('text')).getText())
+            .toContain('first name3 last name3');
+        expect(masterDesks.getUser(0, 2, 0).element(by.className('text')).getText())
             .toContain('first name1 last name1');
     });
 

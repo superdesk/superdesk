@@ -21,6 +21,7 @@ from superdesk.utc import utcnow
 from eve.utils import date_to_str
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
+from bson.objectid import ObjectId
 
 
 def apply_placeholders(placeholders, text):
@@ -60,6 +61,7 @@ def prepopulate_data(file_name, default_user=get_default_user()):
             username = item.get('username', None) or default_username
             set_logged_user(username, users[username])
             id_name = item.get('id_name', None)
+            id_update = item.get('id_update', None)
             text = json.dumps(item.get('data', None))
             text = apply_placeholders(placeholders, text)
             data = json.loads(text)
@@ -67,13 +69,19 @@ def prepopulate_data(file_name, default_user=get_default_user()):
                 app.data.mongo._mongotize(data, resource)
             if resource == 'users':
                 users.update({data['username']: data['password']})
-            ids = service.post([data])
-            if not ids:
-                raise Exception()
+            if id_update:
+                id_update = apply_placeholders(placeholders, id_update)
+                res = service.patch(ObjectId(id_update), data)
+                if not res:
+                    raise Exception()
+            else:
+                ids = service.post([data])
+                if not ids:
+                    raise Exception()
+                if id_name:
+                    placeholders[id_name] = str(ids[0])
             if app.config['VERSION'] in data:
                 insert_versioning_documents(resource, data)
-            if id_name:
-                placeholders[id_name] = str(ids[0])
 
 
 prepopulate_schema = {
