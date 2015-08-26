@@ -245,8 +245,11 @@ class BasePublishService(BaseService):
 
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         # if the item is a package do recursion to publish
+                        wanted_keys = ['state', 'operation']
+                        sub_updates = dict([(i, updates[i]) for i in wanted_keys if i in updates])
                         self._publish_package_items(package_item, updates)
-                        self._update_archive(original=package_item, updates=updates, should_insert_into_versions=False)
+                        self._update_archive(original=package_item, updates=sub_updates,
+                                             should_insert_into_versions=False)
                         self.update_published_collection(published_item_id=package_item[config.ID_FIELD])
                     else:
                         # publish the item
