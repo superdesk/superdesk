@@ -18,7 +18,7 @@ beat_delay = 30
 
 if __name__ == '__main__':
     config = {
-        'WSH_HOST': WS_HOST,
+        'WS_HOST': WS_HOST,
         'WS_PORT': WS_PORT,
         'LOG_SERVER_ADDRESS': LOG_SERVER_ADDRESS,
         'LOG_SERVER_PORT': LOG_SERVER_PORT
