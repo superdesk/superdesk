@@ -5,7 +5,7 @@
             <li ng-repeat="item in items track by uuid(item)"
                 class="list-item-view"
                 tabindex="0">
-                <div sd-media-box
+                <div sd-media-box data-view-type="viewType"
                     ng-class="{active: item === selected, archived: item.archived || item.created, locked: lock.isLocked}"
                     ng-dblclick="edit(item, true)"
                     ng-click="select(item)"></div>

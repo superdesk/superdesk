@@ -182,7 +182,8 @@
             require: ['^sdMonitoringView', '^sdAuthoringContainer'],
             scope: {
                 group: '=',
-                numItems: '='
+                numItems: '=',
+                viewType: '='
             },
             link: function(scope, elem, attrs, ctrls) {
 
