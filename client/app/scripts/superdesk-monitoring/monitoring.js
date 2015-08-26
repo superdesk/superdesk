@@ -233,6 +233,7 @@
 
                 function edit(item, lock) {
                     authoring.edit(item, lock);
+                    monitoring.preview(null);
                 }
 
                 function select(item) {
