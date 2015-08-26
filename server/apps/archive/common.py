@@ -182,24 +182,6 @@ def set_sign_off(updates, original=None, repo_type=ARCHIVE):
     updates[SIGN_OFF] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
 
 
-item_url = 'regex("[\w,.:_-]+")'
-
-extra_response_fields = [GUID_FIELD, 'headline', 'firstcreated', 'versioncreated', 'archived']
-
-aggregations = {
-    'type': {'terms': {'field': 'type'}},
-    'desk': {'terms': {'field': 'task.desk'}},
-    'stage': {'terms': {'field': 'task.stage'}},
-    'category': {'terms': {'field': 'anpa_category.name'}},
-    'source': {'terms': {'field': 'source'}},
-    'state': {'terms': {'field': 'state'}},
-    'urgency': {'terms': {'field': 'urgency'}},
-    'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
-    'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
-    'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
-}
-
-
 def generate_unique_id_and_name(item, repo_type=ARCHIVE):
     """
     Generates and appends unique_id and unique_name to item.

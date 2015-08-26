@@ -31,10 +31,3 @@ class CredentialsAuthError(SuperdeskApiError):
         logger.warning("Login failure: %s" % json.dumps(credentials))
         if error:
             logger.error("Exception occurred: {}".format(error))
-
-
-class UserInactiveError(SuperdeskApiError):
-    """User is inactive, access restricted"""
-    status_code = 403
-    payload = {'is_active': False}
-    message = 'Account is inactive, access restricted.'
