@@ -44,7 +44,6 @@ module.exports = function (grunt) {
         'template:docs',
         'connect:test',
         'open:docs',
-        'ngtemplates',
         'watch'
     ]);
 
