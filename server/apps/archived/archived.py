@@ -11,7 +11,7 @@
 from eve.utils import config
 
 from apps.publish.published_item import PublishedItemResource, PublishedItemService
-from apps.archive.common import aggregations
+from superdesk.metadata.utils import aggregations
 from superdesk.notification import push_notification
 from apps.archive.common import get_user
 import superdesk

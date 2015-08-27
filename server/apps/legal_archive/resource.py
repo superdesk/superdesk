@@ -8,8 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.archive.common import item_url
-
+from superdesk.metadata.utils import item_url
 from superdesk.resource import Resource
 from superdesk.metadata.item import metadata_schema
 

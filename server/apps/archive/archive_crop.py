@@ -14,7 +14,8 @@ from flask import request
 from eve.utils import config
 from superdesk import get_resource_service
 from superdesk.resource import Resource, build_custom_hateoas
-from .common import item_url, CUSTOM_HATEOAS
+from superdesk.metadata.utils import item_url
+from .common import CUSTOM_HATEOAS
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import crop_image, process_file_from_stream

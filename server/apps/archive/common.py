@@ -16,7 +16,7 @@ import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 from pytz import timezone
-from apps.users.services import get_sign_off
+from superdesk.users.services import get_sign_off
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date

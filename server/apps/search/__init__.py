@@ -12,8 +12,8 @@ from flask import current_app as app, json, g
 from eve_elastic.elastic import set_filters
 
 import superdesk
-from apps.archive.common import aggregations
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
+from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
 
 

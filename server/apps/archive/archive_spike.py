@@ -20,7 +20,8 @@ from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
-from .common import get_user, item_url, is_assigned_to_a_desk
+from superdesk.metadata.utils import item_url
+from .common import get_user, is_assigned_to_a_desk
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.tasks import get_expiry

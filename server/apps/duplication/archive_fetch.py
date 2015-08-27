@@ -14,7 +14,8 @@ from flask import request
 from apps.tasks import send_to
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from apps.archive.common import item_url, generate_unique_id_and_name, remove_unwanted, \
+from superdesk.metadata.utils import item_url
+from apps.archive.common import generate_unique_id_and_name, remove_unwanted, \
     set_original_creator, insert_into_versions, ITEM_OPERATION, item_operations
 from superdesk.metadata.utils import generate_guid
 from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID, ITEM_STATE, CONTENT_STATE

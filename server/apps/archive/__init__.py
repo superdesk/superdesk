@@ -16,7 +16,7 @@ import logging
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveSaveService
 from .commands import RemoveExpiredSpikeContent
-from .ingest import IngestResource, IngestService
+from .ingest import IngestResource, AppIngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 def init_app(app):
 
     endpoint_name = 'ingest'
-    service = IngestService(endpoint_name, backend=superdesk.get_backend())
+    service = AppIngestService(endpoint_name, backend=superdesk.get_backend())
     IngestResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive_versions'

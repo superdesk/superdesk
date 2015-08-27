@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.users.services import current_user_has_privilege
+from superdesk.users.services import current_user_has_privilege
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
 from superdesk.metadata.packages import ITEM_REF
 
@@ -16,7 +16,8 @@ SOURCE = 'archive'
 
 import flask
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
+from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
+from .common import remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule
 from flask import current_app as app
@@ -27,7 +28,7 @@ from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
-from apps.users.services import is_admin
+from superdesk.users.services import is_admin
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave

@@ -16,7 +16,7 @@ from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
-from apps.users.services import current_user_has_privilege
+from superdesk.users.services import current_user_has_privilege
 import superdesk
 
 LOCK_USER = 'lock_user'

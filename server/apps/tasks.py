@@ -21,7 +21,8 @@ from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import on_create_item, item_url
+from superdesk.metadata.utils import item_url
+from apps.archive.common import on_create_item
 from superdesk.services import BaseService
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, ITEM_TYPE
 import superdesk

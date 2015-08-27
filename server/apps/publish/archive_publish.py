@@ -35,7 +35,8 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
-from apps.archive.common import item_url, get_user, insert_into_versions, \
+from superdesk.metadata.utils import item_url
+from apps.archive.common import get_user, insert_into_versions, \
     set_sign_off, item_operations, ITEM_OPERATION
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService

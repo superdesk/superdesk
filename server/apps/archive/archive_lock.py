@@ -10,7 +10,8 @@
 
 from flask import request
 from superdesk.resource import Resource, build_custom_hateoas
-from .common import get_user, get_auth, item_url, CUSTOM_HATEOAS
+from superdesk.metadata.utils import item_url
+from .common import get_user, get_auth, CUSTOM_HATEOAS
 from superdesk.services import BaseService
 from apps.common.components.utils import get_component
 from apps.item_lock.components.item_lock import ItemLock

@@ -165,7 +165,6 @@ INSTALLED_APPS = [
     'apps.archived',
     'apps.validators',
     'apps.validate',
-    'apps.publicapi_publish',
     'apps.workspace',
 ]
 
@@ -286,5 +285,5 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 # This value gets injected into NewsML 1.2 and G2 output documents.
 NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
 
-OrganizationName = "Australian Associated Press"
-OrganizationNameAbbreviation = "AAP"
+OrganizationName = "Superdesk Associated Press"
+OrganizationNameAbbreviation = "SAP"

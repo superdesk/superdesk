@@ -12,7 +12,7 @@
 
 import os
 import settings
-from superdesk.app import get_app as superdesk_app
+from superdesk.factory import get_app as superdesk_app
 
 
 def get_app(config=None):
