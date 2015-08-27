@@ -3079,7 +3079,7 @@ Feature: Package Publishing
       """
       {"_items" : [{"headline": "test package", "state": "published", "type": "composite",
                    "groups" : [{"role":"grpRole:main","id":"main",
-                   "refs":[{"residRef":"123", "headline": "item-1 headline", "version":3}]}]}]
+                   "refs":[{"residRef":"123", "headline": "item-1 headline", "_current_version":3}]}]}]
       }
       """
       When we get "/publish_queue"
@@ -3096,7 +3096,7 @@ Feature: Package Publishing
                    {"headline": "item-1.2 headline", "package_type": "takes", "state": "corrected"},
                    {"headline": "test package", "state": "corrected", "type": "composite",
                    "groups" : [{"role":"grpRole:main","id":"main",
-                   "refs":[{"residRef":"123", "headline": "item-1.2 headline", "version":4}]}]}]
+                   "refs":[{"residRef":"123", "headline": "item-1.2 headline", "_current_version":4}]}]}]
       }
       """
       When we get "/publish_queue"
@@ -3567,7 +3567,7 @@ Feature: Package Publishing
                    {"headline": "test package", "state": "published", "type": "composite"},
                    {"headline": "outer test package", "state": "published", "type": "composite",
                    "groups" : [{"role":"grpRole:main", "id":"main",
-                   "refs":[{"residRef":"compositeitem", "headline": "test package", "version":1}]}]}
+                   "refs":[{"residRef":"compositeitem", "headline": "test package", "_current_version":1}]}]}
                   ]
       }
       """
@@ -3590,11 +3590,11 @@ Feature: Package Publishing
       """
       {"_items" : [{"headline": "test package", "state": "corrected", "type": "composite",
                      "groups" : [{"role":"grpRole:main", "id":"main",
-                     "refs":[{"residRef":"123", "headline": "item-1.2 headline", "version":3}]}]
+                     "refs":[{"residRef":"123", "headline": "item-1.2 headline", "_current_version":3}]}]
                    },
                    {"headline": "outer test package", "state": "corrected", "type": "composite",
                      "groups" : [{"role":"grpRole:main", "id":"main",
-                     "refs":[{"residRef":"compositeitem", "headline": "test package", "version":2}]}]
+                     "refs":[{"residRef":"compositeitem", "headline": "test package", "_current_version":2}]}]
                    }
                   ]
       }

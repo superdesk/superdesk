@@ -245,8 +245,7 @@ class BasePublishService(BaseService):
 
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         # if the item is a package do recursion to publish
-                        wanted_keys = ['state', 'operation']
-                        sub_updates = dict([(i, updates[i]) for i in wanted_keys if i in updates])
+                        sub_updates = {i: updates[i] for i in ['state', 'operation'] if i in updates}
                         sub_updates['groups'] = list(package_item['groups'])
                         self._publish_package_items(package_item, updates)
                         self._update_archive(original=package_item, updates=sub_updates,
@@ -260,7 +259,7 @@ class BasePublishService(BaseService):
 
                 subscribers = self._get_subscribers_for_package_item(package_item)
                 PackageService().update_field_in_package(updates, package_item[config.ID_FIELD],
-                                                         'version', package_item['_current_version'])
+                                                         config.VERSION, package_item[config.VERSION])
 
                 if package_item[config.ID_FIELD] in removed_items:
                     digital_item_id = None
