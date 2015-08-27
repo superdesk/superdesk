@@ -44,41 +44,39 @@ body, html {
 	}
 }
 
-.main-article {
-	width:auto;
-	background: @white;
-	border: 1px solid #cacaca;
-	border-width:0 1px;
-	position:relative;
-	z-index:1;
-	padding: @main-article-padding;
-	margin:0 auto;
-	min-height:100%;
-	.box-sizing(border-box);
-	max-width: 900px;
-
-	.proofread-toggle {
+.theme-controls {
+    position: relative;
+    width: auto;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 4;
+    .proofread-toggle {
 		position: absolute;
-		top: 12px;
+		top: 11px;
 		right: 46px;
 		color: #666;
 		height:23px;
-		padding: 4px 12px;
+		padding: 4px 10px;
 		font-size: 11px;
 		letter-spacing: 0.06em;
-
-		.button-lable {
-			color:#999;
-		}
+                i {
+                    margin-top: -3px;
+                    margin-right: 0;
+                }
 	}
 
 	.theme-select {
 		position: absolute;
-		top: 10px;
+		top: 12px;
 		right: 10px;
 		.dropdown-menu {
 			min-width: 230px;
 			padding: 10px;
+                        right: -7px;
+                        .menu-label {
+                            padding-left: 14px;
+                            margin-bottom: 6px;
+                        }
 			button {
 				.border-radius(3px);
 				margin-bottom: 6px;
@@ -117,6 +115,20 @@ body, html {
 			}
 		}
 	}
+}
+
+.main-article {
+	width:auto;
+	background: @white;
+	border: 1px solid #cacaca;
+	border-width:0 1px;
+	position:relative;
+	z-index:1;
+	padding: @main-article-padding;
+	margin:0 auto;
+	min-height:100%;
+	.box-sizing(border-box);
+	max-width: 900px;
 
 	.field {
 		margin-bottom: 10px;

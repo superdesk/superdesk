@@ -1258,7 +1258,8 @@
                 };
 
                 function applyTheme() {
-                    elem.closest('.theme-container')
+                    elem.closest('.page-content-container')
+                        .children('.theme-container')
                         .attr('class', DEFAULT_CLASS)
                         .addClass(scope.theme && scope.theme.cssClass);
                 }

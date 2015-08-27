@@ -1,12 +1,3 @@
-<button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
-    <span class="button-lable" translate>Mode: </span>
-    <span ng-show="proofread" translate>Proofread</span>
-    <span ng-show="!proofread" translate>Normal</span>
-</button>
-
-<span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
-<span sd-theme-select ng-if="!proofread" data-key="theme"></span>
-
 <ul class="metadata-list" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
     <li class="date-info full-width clearfix">
         <label translate>Created</label>
