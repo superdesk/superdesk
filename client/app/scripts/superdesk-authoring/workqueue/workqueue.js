@@ -44,11 +44,6 @@ function WorkqueueService(session, api) {
     };
 }
 
-ArticleDashboardCtrl.$inject = ['$scope', 'content'];
-function ArticleDashboardCtrl($scope, content) {
-    $scope.content = content;
-}
-
 WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
 function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
 
@@ -135,19 +130,5 @@ angular.module('superdesk.authoring.workqueue', [
     .service('workqueue', WorkqueueService)
     .controller('Workqueue', WorkqueueCtrl)
     .directive('sdWorkqueue', WorkqueueListDirective)
-    .directive('sdDashboardArticles', ArticleDashboardDirective)
-
-    .config(['superdeskProvider', function(superdesk) {
-        superdesk
-            .activity('/authoring/', {
-                label: gettext('Authoring'),
-                description: gettext('Create articles'),
-                templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                beta: true,
-                controller: ArticleDashboardCtrl,
-                category: superdesk.MENU_MAIN,
-                filters: [{action: 'author', type: 'dashboard'}]
-            });
-    }]);
+    .directive('sdDashboardArticles', ArticleDashboardDirective);
 })();
