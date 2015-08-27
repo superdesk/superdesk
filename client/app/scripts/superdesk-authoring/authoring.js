@@ -1651,7 +1651,7 @@
                     label: gettext('Authoring'),
                     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: AuthoringController,
                     filters: [{action: 'author', type: 'article'}],
                     resolve: {
@@ -1696,7 +1696,7 @@
                     label: gettext('Authoring Kill'),
                     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: AuthoringController,
                     filters: [{action: 'kill', type: 'content_article'}],
                     resolve: {
@@ -1728,7 +1728,7 @@
                     label: gettext('Authoring Correct'),
                     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: AuthoringController,
                     filters: [{action: 'correct', type: 'content_article'}],
                     resolve: {
@@ -1758,7 +1758,7 @@
                     label: gettext('Authoring Read Only'),
                     templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: AuthoringController,
                     filters: [{action: 'read_only', type: 'content_article'}],
                     resolve: {

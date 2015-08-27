@@ -628,7 +628,7 @@
                 label: gettext('Packaging'),
                 templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                 controller: PackagingController,
                 filters: [{action: 'author', type: 'package'}],
                 resolve: {
@@ -674,7 +674,7 @@
                 label: gettext('Packaging Read Only'),
                 templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                 controller: PackagingController,
                 filters: [{action: 'read_only', type: 'content_package'}],
                 resolve: {

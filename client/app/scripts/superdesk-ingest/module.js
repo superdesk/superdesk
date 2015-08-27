@@ -1320,7 +1320,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/list.html',
                 category: '/workspace',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                 privileges: {ingest: 1}
             })
             .activity('/settings/ingest', {
