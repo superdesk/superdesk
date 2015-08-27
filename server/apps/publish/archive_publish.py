@@ -247,6 +247,7 @@ class BasePublishService(BaseService):
                         # if the item is a package do recursion to publish
                         wanted_keys = ['state', 'operation']
                         sub_updates = dict([(i, updates[i]) for i in wanted_keys if i in updates])
+                        sub_updates['groups'] = list(package_item['groups'])
                         self._publish_package_items(package_item, updates)
                         self._update_archive(original=package_item, updates=sub_updates,
                                              should_insert_into_versions=False)
@@ -258,6 +259,8 @@ class BasePublishService(BaseService):
                     package_item = super().find_one(req=None, _id=guid)
 
                 subscribers = self._get_subscribers_for_package_item(package_item)
+                PackageService().update_field_in_package(updates, package_item[config.ID_FIELD],
+                                                         'version', package_item['_current_version'])
 
                 if package_item[config.ID_FIELD] in removed_items:
                     digital_item_id = None
@@ -979,6 +982,16 @@ class CorrectPublishService(BasePublishService):
                 if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED] and \
                         package.get(PACKAGE_TYPE, '') == '' and \
                         str(package[config.ID_FIELD]) not in processed_packages:
+                    original_updates['groups'] = package['groups']
+
+                    if updates.get('headline'):
+                        PackageService().update_field_in_package(original_updates, original[config.ID_FIELD],
+                                                                 'headline', updates.get('headline'))
+
+                    if updates.get('slugline'):
+                        PackageService().update_field_in_package(original_updates, original[config.ID_FIELD],
+                                                                 'slugline', updates.get('slugline'))
+
                     archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
                     processed_packages.append(package[config.ID_FIELD])
 

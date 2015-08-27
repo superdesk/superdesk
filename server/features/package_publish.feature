@@ -3010,6 +3010,10 @@ Feature: Package Publishing
               "type" : "composite"
           }]
           """
+      When we patch "/archive/123"
+        """
+        {"body_html": "xyz"}
+        """
       When we post to "/subscribers" with success
           """
           {
@@ -3021,9 +3025,63 @@ Feature: Package Publishing
           }
           """
       When we publish "compositeitem" with "publish" type and "published" state
+        """
+          {"groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      },
+                      {
+                          "idRef": "sidebars"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "123",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "123"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              },
+              {
+                  "id": "sidebars",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "456",
+                          "headline": "item-2 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:sidebars"
+              }
+          ]}
+          """
       Then we get OK response
       When we get "/published"
       Then we get list with 5 items
+      """
+      {"_items" : [{"headline": "test package", "state": "published", "type": "composite",
+                   "groups" : [{"role":"grpRole:main","id":"main",
+                   "refs":[{"residRef":"123", "headline": "item-1 headline", "version":3}]}]}]
+      }
+      """
       When we get "/publish_queue"
       Then we get list with 3 items
       When we publish "123" with "correct" type and "corrected" state
@@ -3036,7 +3094,9 @@ Feature: Package Publishing
       """
       {"_items" : [{"headline": "item-1.2 headline", "type": "text", "state": "corrected"},
                    {"headline": "item-1.2 headline", "package_type": "takes", "state": "corrected"},
-                   {"headline": "test package", "state": "corrected", "type": "composite"}]
+                   {"headline": "test package", "state": "corrected", "type": "composite",
+                   "groups" : [{"role":"grpRole:main","id":"main",
+                   "refs":[{"residRef":"123", "headline": "item-1.2 headline", "version":4}]}]}]
       }
       """
       When we get "/publish_queue"
@@ -3467,6 +3527,35 @@ Feature: Package Publishing
           }]
           """
       When we publish "outercompositeitem" with "publish" type and "published" state
+        """
+          {"groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "compositeitem",
+                          "headline": "test package",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "compositeitem"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ]}
+          """
       Then we get OK response
       When we get "/published"
       Then we get list with 6 items
@@ -3476,7 +3565,9 @@ Feature: Package Publishing
                    {"headline": "item-1 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
                    {"headline": "item-2 headline", "_current_version": 2, "state": "published", "package_type": "takes"},
                    {"headline": "test package", "state": "published", "type": "composite"},
-                   {"headline": "outer test package", "state": "published", "type": "composite"}
+                   {"headline": "outer test package", "state": "published", "type": "composite",
+                   "groups" : [{"role":"grpRole:main", "id":"main",
+                   "refs":[{"residRef":"compositeitem", "headline": "test package", "version":1}]}]}
                   ]
       }
       """
@@ -3490,13 +3581,28 @@ Feature: Package Publishing
       }
       """
       When we publish "123" with "correct" type and "corrected" state
+      """
+      {"headline": "item-1.2 headline"}
+      """
       Then we get OK response
       When we get "/published"
       Then we get list with 10 items
+      """
+      {"_items" : [{"headline": "test package", "state": "corrected", "type": "composite",
+                     "groups" : [{"role":"grpRole:main", "id":"main",
+                     "refs":[{"residRef":"123", "headline": "item-1.2 headline", "version":3}]}]
+                   },
+                   {"headline": "outer test package", "state": "corrected", "type": "composite",
+                     "groups" : [{"role":"grpRole:main", "id":"main",
+                     "refs":[{"residRef":"compositeitem", "headline": "test package", "version":2}]}]
+                   }
+                  ]
+      }
+      """
       When we get "/publish_queue"
       Then we get list with 7 items
       """
-      {"_items" : [{"headline": "item-1 headline", "publishing_action": "corrected"},
+      {"_items" : [{"headline": "item-1.2 headline", "publishing_action": "corrected"},
                    {"headline": "test package", "publishing_action": "corrected"},
                    {"headline": "outer test package", "publishing_action": "corrected", "subscriber_id": "sub-2"}]
       }
@@ -4160,6 +4266,8 @@ Feature: Package Publishing
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-3" not in package "compositeitem" version "3"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-2" in package "compositeitem"
       Then we get "#archive.456.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem"
+
+
 
       @auth
       @notification

@@ -272,6 +272,19 @@ class PackageService():
                 g[ITEM_REF] = new_ref_id
                 g['guid'] = new_ref_id
 
+    def update_field_in_package(self, package, ref_id, field, field_value):
+        """
+        Locates the reference with the ref_id and replaces field value
+        :param package: Package
+        :param ref_id: reference id
+        :param field: field to be replaced
+        :param field_value: value to be used
+        """
+        non_root_groups = (group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP)
+        for g in (ref for group in non_root_groups for ref in group.get(ASSOCIATIONS, [])):
+            if g.get(ITEM_REF, '') == ref_id:
+                g[field] = field_value
+
     def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
         """
         Removes residRef referenced by ref_id_to_remove from the package associations and returns the package id.
