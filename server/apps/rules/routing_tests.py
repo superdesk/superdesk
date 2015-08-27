@@ -9,11 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.rules.routing_rule_validator import RoutingRuleValidator
 
 
-class RoutingRuleValidatorTestCase(TestCase):
+class RoutingRuleValidatorTestCase(SuperdeskTestCase):
     def setUp(self):
         self.items = [
             {

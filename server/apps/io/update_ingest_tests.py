@@ -10,7 +10,7 @@
 
 
 import superdesk.io.commands.update_ingest as ingest
-import app
+from app import get_app
 from unittest import TestCase
 from datetime import timedelta
 from nose.tools import assert_raises
@@ -36,7 +36,7 @@ register_provider('test', TestProviderService(), [ProviderError.anpaError(None, 
 
 class CeleryTaskRaceTest(TestCase):
     def setUp(self):
-        setup(context=self)
+        setup(context=self, app_factory=get_app)
 
     def test_the_second_update_fails_if_already_running(self):
         provider = {'_id': 'abc', 'name': 'test provider', 'update_schedule': {'minutes': 1}}
@@ -56,7 +56,7 @@ class CeleryTaskRaceTest(TestCase):
 
 class UpdateIngestTest(TestCase):
     def setUp(self):
-        setup(context=self)
+        setup(context=self, app_factory=get_app)
         setup_providers(self)
 
     def tearDown(self):

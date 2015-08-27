@@ -10,14 +10,14 @@
 
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.anpa_formatter import AAPAnpaFormatter
 from datetime import datetime
 import io
 
 
-class ANPAFormatterTest(TestCase):
+class ANPAFormatterTest(SuperdeskTestCase):
     subscribers = [{"_id": "1", "name": "notes", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "ANPA", "delivery_type": "email", "format": "ANPA",
@@ -49,125 +49,120 @@ class ANPAFormatterTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            self.app.data.insert('subscribers', self.subscribers)
-            self.app.data.insert('desks', self.desks)
-            init_app(self.app)
+        self.app.data.insert('subscribers', self.subscribers)
+        self.app.data.insert('desks', self.desks)
+        init_app(self.app)
 
     def testANPAFormatter(self):
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
+        subscriber = self.app.data.find('subscribers', None, None)[0]
 
-            f = AAPAnpaFormatter()
-            seq, item = f.format(self.article, subscriber)[0]
+        f = AAPAnpaFormatter()
+        seq, item = f.format(self.article, subscriber)[0]
 
-            self.assertGreater(int(seq), 0)
+        self.assertGreater(int(seq), 0)
 
-            lines = io.StringIO(item.decode())
+        lines = io.StringIO(item.decode())
 
-            line = lines.readline()
-            self.assertTrue('axx' in line[1:])
+        line = lines.readline()
+        self.assertTrue('axx' in line[1:])
 
-            line = lines.readline()
-            self.assertEqual(line[:3], '')  # Skip the sequence
+        line = lines.readline()
+        self.assertEqual(line[:3], '')  # Skip the sequence
 
-            line = lines.readline()
-            self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        line = lines.readline()
+        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'This is a test headline')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'This is a test headline')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'slugline take_key')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'slugline take_key')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'The story body')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'The story body')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'AAP')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'AAP')
 
     def testANPAWithNoSelectorsFormatter(self):
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            subscriber['name'] = 'not notes'
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        subscriber['name'] = 'not notes'
 
-            f = AAPAnpaFormatter()
-            seq, item = f.format(self.article, subscriber)[0]
+        f = AAPAnpaFormatter()
+        seq, item = f.format(self.article, subscriber)[0]
 
-            self.assertGreater(int(seq), 0)
+        self.assertGreater(int(seq), 0)
 
-            lines = io.StringIO(item.decode())
+        lines = io.StringIO(item.decode())
 
-            line = lines.readline()
-            self.assertEqual(line[:3], '')  # Skip the sequence
+        line = lines.readline()
+        self.assertEqual(line[:3], '')  # Skip the sequence
 
-            line = lines.readline()
-            self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        line = lines.readline()
+        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'This is a test headline')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'This is a test headline')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'slugline take_key')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'slugline take_key')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'The story body')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'The story body')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'AAP')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'AAP')
 
     def testANPAWithBylineFormatter(self):
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            subscriber['name'] = 'not notes'
-            byline_article = dict(self.article)
-            byline_article['byline'] = 'Joe Blogs'
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        subscriber['name'] = 'not notes'
+        byline_article = dict(self.article)
+        byline_article['byline'] = 'Joe Blogs'
 
-            f = AAPAnpaFormatter()
-            seq, item = f.format(byline_article, subscriber)[0]
+        f = AAPAnpaFormatter()
+        seq, item = f.format(byline_article, subscriber)[0]
 
-            self.assertGreater(int(seq), 0)
+        self.assertGreater(int(seq), 0)
 
-            lines = io.StringIO(item.decode())
+        lines = io.StringIO(item.decode())
 
-            line = lines.readline()
-            self.assertEqual(line[:3], '')  # Skip the sequence
+        line = lines.readline()
+        self.assertEqual(line[:3], '')  # Skip the sequence
 
-            line = lines.readline()
-            self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        line = lines.readline()
+        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'This is a test headline')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'This is a test headline')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'slugline take_key')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'slugline take_key')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'Joe Blogs')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'Joe Blogs')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'The story body')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'The story body')
 
-            line = lines.readline()
-            self.assertEqual(line.strip(), 'AAP')
+        line = lines.readline()
+        self.assertEqual(line.strip(), 'AAP')
 
     def testMultipleCategoryFormatter(self):
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            multi_article = dict(self.article)
-            multi_article.pop('anpa_category')
-            multi_article['anpa_category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
-            f = AAPAnpaFormatter()
-            docs = f.format(multi_article, subscriber)
-            self.assertEqual(len(docs), 2)
-            cat = 'a'
-            for seq, doc in docs:
-                lines = io.StringIO(doc.decode())
-                line = lines.readline()
-                line = lines.readline()
-                line = lines.readline()
-                self.assertEqual(line[2:3], cat)  # skip the date
-                cat = 'b'
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        multi_article = dict(self.article)
+        multi_article.pop('anpa_category')
+        multi_article['anpa_category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
+        f = AAPAnpaFormatter()
+        docs = f.format(multi_article, subscriber)
+        self.assertEqual(len(docs), 2)
+        cat = 'a'
+        for seq, doc in docs:
+            lines = io.StringIO(doc.decode())
+            line = lines.readline()
+            line = lines.readline()
+            line = lines.readline()
+            self.assertEqual(line[2:3], cat)  # skip the date
+            cat = 'b'
 
     def test_process_headline_empty_sequence_short_headline(self):
         f = AAPAnpaFormatter()

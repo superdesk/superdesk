@@ -11,7 +11,7 @@
 
 import os
 from datetime import timedelta
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
@@ -32,7 +32,7 @@ def setup_provider(token, hours):
     }
 
 
-class GetTokenTestCase(TestCase):
+class GetTokenTestCase(SuperdeskTestCase):
 
     def test_get_null_token(self):
         provider = {}

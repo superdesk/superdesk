@@ -8,11 +8,11 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.macro_register import macros
-from superdesk.tests import TestCase
+from apps.macro_register import macros
+from test_factory import SuperdeskTestCase
 
 
-class MacrosTestCase(TestCase):
+class MacrosTestCase(SuperdeskTestCase):
 
     def test_register(self):
         with self.app.app_context():

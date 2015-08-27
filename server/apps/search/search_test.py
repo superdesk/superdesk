@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from eve.utils import ParsedRequest
 from . import init_app
 
@@ -24,7 +24,7 @@ def ingest_listener(docs):
         doc['_ingest_listener'] = 1
 
 
-class SearchServiceTestCase(TestCase):
+class SearchServiceTestCase(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()

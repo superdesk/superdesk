@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from superdesk.utc import utcnow
 from datetime import timedelta
 from nose.tools import assert_raises
@@ -18,7 +18,7 @@ from apps.publish import init_app
 from superdesk import config
 
 
-class PublishContentTests(TestCase):
+class PublishContentTests(SuperdeskTestCase):
     queue_items = [{"_id": 1,
                     "destination": {
                         "delivery_type": "ftp",

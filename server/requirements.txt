@@ -5,4 +5,5 @@ behave==1.2.5
 wooper==0.4.2
 boto3==1.0.0
 
--e git+git://github.com/superdesk/superdesk-core@master#egg=Superdesk-Core==0.0.1-dev
+-e git+git://github.com/superdesk/eve@sync-develop-24-june#egg=Eve==0.6.0-dev
+-e git+git://github.com/superdesk/superdesk-core@fixes#egg=Superdesk-Core==0.0.1-dev

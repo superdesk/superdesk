@@ -23,7 +23,7 @@ from apps.publish.archive_publish import ArchivePublishService, DIGITAL, WIRE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
 from superdesk.metadata.packages import ITEM_REF
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
 from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME
 from superdesk.utc import utcnow
@@ -43,7 +43,7 @@ PUBLISH_QUEUE = 'publish_queue'
 PUBLISHED = 'published'
 
 
-class ArchivePublishTestCase(TestCase):
+class ArchivePublishTestCase(SuperdeskTestCase):
     def init_data(self):
         self.subscribers = [{"_id": "1", "name": "sub1", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.WIRE,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
@@ -297,25 +297,24 @@ class ArchivePublishTestCase(TestCase):
 
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            self.init_data()
+        self.init_data()
 
-            self.app.data.insert('subscribers', self.subscribers)
-            self.app.data.insert(ARCHIVE, self.articles)
+        self.app.data.insert('subscribers', self.subscribers)
+        self.app.data.insert(ARCHIVE, self.articles)
 
-            self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "validators.json")
-            self.json_data = [
-                {"_id": "kill_text", "act": "kill", "type": "text", "schema": {"headline": {"type": "string"}}},
-                {"_id": "publish_text", "act": "publish", "type": "text", "schema": {}},
-                {"_id": "correct_text", "act": "correct", "type": "text", "schema": {}},
-                {"_id": "publish_composite", "act": "publish", "type": "composite", "schema": {}},
-            ]
-            self.article_versions = self._init_article_versions()
+        self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "validators.json")
+        self.json_data = [
+            {"_id": "kill_text", "act": "kill", "type": "text", "schema": {"headline": {"type": "string"}}},
+            {"_id": "publish_text", "act": "publish", "type": "text", "schema": {}},
+            {"_id": "correct_text", "act": "correct", "type": "text", "schema": {}},
+            {"_id": "publish_composite", "act": "publish", "type": "composite", "schema": {}},
+        ]
+        self.article_versions = self._init_article_versions()
 
-            with open(self.filename, "w+") as file:
-                json.dump(self.json_data, file)
-            init_app(self.app)
-            ValidatorsPopulateCommand().run(self.filename)
+        with open(self.filename, "w+") as file:
+            json.dump(self.json_data, file)
+        init_app(self.app)
+        ValidatorsPopulateCommand().run(self.filename)
 
     def tearDown(self):
         super().tearDown()

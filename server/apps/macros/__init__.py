@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import apps.macros.macro_register  # NOQA
+from .macro_register import register  # NOQA
 from .macros import MacrosResource, MacrosService
 
 

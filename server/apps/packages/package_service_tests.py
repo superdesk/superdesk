@@ -9,11 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from .package_service import PackageService
 
 
-class PackageServiceTestCase(TestCase):
+class PackageServiceTestCase(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()

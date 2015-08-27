@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish.formatters.newsml_1_2_formatter import NewsML12Formatter
 import xml.etree.ElementTree as etree
 import datetime
@@ -17,7 +17,7 @@ from superdesk.errors import FormatterError
 from apps.publish import init_app
 
 
-class Newsml12FormatterTest(TestCase):
+class Newsml12FormatterTest(SuperdeskTestCase):
 
     article = {
         'source': 'AAP',
@@ -69,10 +69,9 @@ class Newsml12FormatterTest(TestCase):
             self.app.data.insert('vocabularies', self.vocab)
 
     def test_newsml_formatter_raises_error(self):
-        with self.app.app_context():
-            with assert_raises(FormatterError):
-                self.article.pop('anpa_category', None)
-                self.formatter.format(self.article, {'name': 'Test Subscriber'})
+        with assert_raises(FormatterError):
+            self.article.pop('anpa_category', None)
+            self.formatter.format(self.article, {'name': 'Test Subscriber'})
 
     def test_format_news_envelope(self):
         self.formatter._format_news_envelope(self.article, self.newsml, 7)
@@ -111,33 +110,30 @@ class Newsml12FormatterTest(TestCase):
         self.assertEquals(self.newsml.find('NewsManagement/Instruction').get('FormalName'), 'Correction')
 
     def test_format_news_component(self):
-        with self.app.app_context():
-            self.formatter._format_news_component(self.article, self.newsml)
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/Role').
-                              get('FormalName'), 'Main')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/Headline').
-                              text, 'This is a test headline')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/ByLine').
-                              text, 'joe')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/DateLine').
-                              text, 'sample dateline')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/CreditLine').
-                              text, 'sample creditline')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/KeywordLine').
-                              text, 'slugline')
-            # self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/RightsMetadata/UsageRights/Geography').
-            #                   text, 'Australia')
-            self.assertEquals(
-                self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[0].
-                get('FormalName'), '02011001')
-            self.assertEquals(
-                self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[1].
-                get('FormalName'), '02011002')
-            self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/DescriptiveMetadata/Property').
-                              get('Value'), 'a')
-            self.assertEquals(
-                self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[0].
-                text, 'sample abstract')
-            self.assertEquals(
-                self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[1].
-                text, 'The story body')
+        self.formatter._format_news_component(self.article, self.newsml)
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/Role').
+                          get('FormalName'), 'Main')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/Headline').
+                          text, 'This is a test headline')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/ByLine').
+                          text, 'joe')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/DateLine').
+                          text, 'sample dateline')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/CreditLine').
+                          text, 'sample creditline')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/NewsLines/KeywordLine').
+                          text, 'slugline')
+        self.assertEquals(
+            self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[0].
+            get('FormalName'), '02011001')
+        self.assertEquals(
+            self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[1].
+            get('FormalName'), '02011002')
+        self.assertEquals(self.newsml.find('NewsComponent/NewsComponent/DescriptiveMetadata/Property').
+                          get('Value'), 'a')
+        self.assertEquals(
+            self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[0].
+            text, 'sample abstract')
+        self.assertEquals(
+            self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[1].
+            text, 'The story body')

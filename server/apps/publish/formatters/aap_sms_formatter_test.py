@@ -8,12 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.aap_sms_formatter import AAPSMSFormatter
 
 
-class AapSMSFormatterTest(TestCase):
+class AapSMSFormatterTest(SuperdeskTestCase):
     subscribers = [{"_id": "1", "name": "Test", "can_send_takes_packages": False, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "AAP SMS", "delivery_type": "ODBC", "format": "AAP SMS",
@@ -31,17 +31,15 @@ class AapSMSFormatterTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            self.app.data.insert('subscribers', self.subscribers)
-            init_app(self.app)
+        self.app.data.insert('subscribers', self.subscribers)
+        init_app(self.app)
 
     def TestSMSFormatter(self):
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
+        subscriber = self.app.data.find('subscribers', None, None)[0]
 
-            f = AAPSMSFormatter()
-            seq, item = f.format(self.article, subscriber)[0]
+        f = AAPSMSFormatter()
+        seq, item = f.format(self.article, subscriber)[0]
 
-            self.assertGreater(int(seq), 0)
-            self.assertDictEqual(item, {'Category': 'a', 'Priority': '1', 'Sequence': item['Sequence'], 'ident': '0',
-                                        'Headline': 'This is a test headline', 'StoryText': 'The story body'})
+        self.assertGreater(int(seq), 0)
+        self.assertDictEqual(item, {'Category': 'a', 'Priority': '1', 'Sequence': item['Sequence'], 'ident': '0',
+                                    'Headline': 'This is a test headline', 'StoryText': 'The story body'})

@@ -10,14 +10,14 @@
 
 from superdesk.publish import SUBSCRIBER_TYPES
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from nose.tools import assert_raises
 from superdesk.errors import PublishQueueError
 from apps.publish import init_app
 from superdesk.publish.publish_service import PublishService
 
 
-class PublishServiceTests(TestCase):
+class PublishServiceTests(SuperdeskTestCase):
     queue_items = [{"_id": "1",
                     "destination": {"name": "NITF", "delivery_type": "ftp", "format": "nitf", "config": {}},
                     "subscriber_id": "1",

@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish.publish_filters.publish_filter import PublishFilterService
 from apps.publish import SubscribersService
 from eve.utils import ParsedRequest
@@ -19,7 +19,7 @@ from settings import URL_PREFIX
 from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
-class PublishFilterTests(TestCase):
+class PublishFilterTests(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()

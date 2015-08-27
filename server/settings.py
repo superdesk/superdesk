@@ -156,7 +156,6 @@ INSTALLED_APPS = [
     'apps.highlights',
     'apps.publish',
     'apps.publish.publish_filters',
-    'apps.macros',
     'apps.dictionaries',
     'apps.duplication',
     'apps.aap_mm',
@@ -166,6 +165,7 @@ INSTALLED_APPS = [
     'apps.validators',
     'apps.validate',
     'apps.workspace',
+    'apps.macros',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
