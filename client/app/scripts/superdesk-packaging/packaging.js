@@ -481,7 +481,12 @@
                 scope.error = null;
 
                 if (scope.item.location) {
-                    api[scope.item.location].getById(scope.item.residRef)
+                    var version = '';
+                    if (scope.item._current_version) {
+                        version = '?version=' + scope.item._current_version;
+                    }
+
+                    api.archive.getByUrl('archive/' + scope.item.residRef + version)
                     .then(function(result) {
                         scope.data = result;
                         scope.isLocked = lock.isLocked(scope.data);
