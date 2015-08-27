@@ -229,7 +229,7 @@ define([
                         }
                     });
             } else {
-                return api.archive.getByUrl(item._links.self.href + '?version=all&embedded={"user":1}')
+                return api.find('archive', item._id, {version: 'all', embedded: {user: 1}})
                     .then(function(result) {
                         _.each(result._items, function(version) {
                             if (version.task) {

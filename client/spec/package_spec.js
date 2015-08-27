@@ -1,4 +1,4 @@
-var openUrl = require('./helpers/utils').open,
+var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
     authoring = require('./helpers/pages').authoring;
@@ -6,9 +6,7 @@ var openUrl = require('./helpers/utils').open,
 describe('Package', function() {
     'use strict';
 
-    beforeEach(function(done) {
-        openUrl('/#/workspace/content').then(done);
-    });
+    beforeEach(route('/workspace/content'));
 
     it('increment package version', function() {
         workspace.switchToDesk('PERSONAL');
@@ -22,20 +20,18 @@ describe('Package', function() {
     });
 
     it('reorder item on package', function() {
-        workspace.switchToDesk('Personal').then(
-            content.setListView
-        ).then(function() {
-            content.actionOnItem('Edit package', 0);
-        });
+        workspace.switchToDesk('Personal');
+        content.setListView();
+        content.actionOnItem('Edit package', 0);
         authoring.showSearch();
         authoring.addToGroup(0, 'MAIN');
         authoring.addToGroup(1, 'STORY');
         authoring.addToGroup(2, 'STORY');
         authoring.addToGroup(3, 'SIDEBARS');
+        authoring.showSearch();
         authoring.moveToGroup('MAIN', 0, 'STORY', 1);
         expect(authoring.getGroupItems('MAIN').count()).toBe(0);
         expect(authoring.getGroupItems('STORY').count()).toBe(3);
-        authoring.save();
     });
 
     it('add multiple items to package', function() {
@@ -48,13 +44,13 @@ describe('Package', function() {
         addItemsToPackage();
 
         // package existing package
-        workspace.openContent('/#/workspace/content');
+        workspace.openContent();
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Package item', 0);
 
         // select package
-        workspace.openContent('/#/workspace/content');
+        workspace.openContent();
         workspace.switchToDesk('Personal');
         element.all(by.repeater('item in items')).first().click();
 

@@ -11,7 +11,7 @@ describe('authoring', function() {
         workspace.open();
         workspace.editItem('item4', 'SPORTS');
         element(by.css('button.stage')).click();
-        expect(browser.getCurrentUrl()).toMatch(/workspace\/content$/);
+        expect(browser.getCurrentUrl()).toMatch(/workspace\/content/);
     });
 
     it('Can Undo content', function() {
@@ -78,7 +78,7 @@ describe('authoring', function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
         workspace.actionOnItem('Spike', 'item5', 'Politic');
-        workspace.actionOnItem('Unspike Item', 0, 'Politic', 'Spiked');
+        workspace.actionOnItem('Unspike Item', 'item5', 'Politic', 'Spiked');
         workspace.editItem('item5', 'Politic');
 
         authoring.showHistory();
@@ -125,12 +125,10 @@ describe('authoring', function() {
         authoring.writeText('some text');
         authoring.save();
         authoring.publish();
-        browser.sleep(500);
         workspace.selectStage('Published');
         workspace.filterItems('composite');
         content.actionOnItem('View item', 0);
         authoring.showHistory();
-        browser.sleep(500);
         expect(authoring.getHistoryItems().count()).toBe(2);
         var publishItem = authoring.getHistoryItem(1);
         expect(publishItem.getText()).toMatch(/Published by.*/);
@@ -143,8 +141,6 @@ describe('authoring', function() {
     it('allows to create a new empty package', function () {
         monitoring.openMonitoring();
         monitoring.createItemAction('create_package');
-        var isVisible = element(by.css('div.packaging-screen')).isDisplayed();
-        expect(isVisible).toBe(true);
+        expect(element(by.className('packaging-screen')).isDisplayed()).toBe(true);
     });
-
 });

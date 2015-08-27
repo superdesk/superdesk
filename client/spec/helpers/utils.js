@@ -1,11 +1,12 @@
 'use strict';
 
-exports.login = login;
-exports.open = openUrl;
-exports.changeUrl = changeUrl;
-exports.printLogs = printLogs;
-exports.waitForSuperdesk = waitForSuperdesk;
-exports.nav = nav;
+module.exports.route = route;
+module.exports.login = login;
+module.exports.open = openUrl;
+module.exports.changeUrl = changeUrl;
+module.exports.printLogs = printLogs;
+module.exports.waitForSuperdesk = waitForSuperdesk;
+module.exports.nav = nav;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -138,4 +139,16 @@ function nav(location) {
     return login().then(function() {
         return browser.setLocation(location);
     });
+}
+
+/**
+ * Nav shortcut for beforeEach, use like `beforeEach(route('/workspace'));`
+ *
+ * @param {string} location
+ * @return {function}
+ */
+function route(location) {
+    return function() {
+        nav(location);
+    };
 }

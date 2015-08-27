@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function SuperdeskCtrl() {
+    function SuperdeskFlagsService() {
         this.flags = {
             menu: false,
             notifications: false
@@ -10,13 +10,20 @@
 
     angular.module('superdesk.menu', ['superdesk.menu.notifications', 'superdesk.asset', 'superdesk.api'])
 
-        .controller('SuperdeskCtrl', SuperdeskCtrl)
+        .service('superdeskFlags', SuperdeskFlagsService)
 
         // set flags for other directives
         .directive('sdSuperdeskView', ['asset', function(asset) {
+
+            SuperdeskViewController.$inject = ['superdeskFlags'];
+
+            function SuperdeskViewController(superdeskFlags) {
+                this.flags = superdeskFlags.flags;
+            }
+
             return {
                 templateUrl: asset.templateUrl('superdesk/menu/views/superdesk-view.html'),
-                controller: 'SuperdeskCtrl',
+                controller: SuperdeskViewController,
                 controllerAs: 'superdesk'
             };
         }])

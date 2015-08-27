@@ -65,13 +65,12 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content'];
-    function ContentCreateDirective(api, desks, templates, content) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace'];
+    function ContentCreateDirective(api, desks, templates, content, authoringWorkspace) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-workspace/content/views/sd-content-create.html',
-            require: '^sdAuthoringWorkspace',
-            link: function(scope, elem, attrs, workspaceCtrl) {
+            link: function(scope) {
                 var NUM_ITEMS = 5;
 
                 /**
@@ -80,7 +79,7 @@
                  * @param {Object} item
                  */
                 function edit(item) {
-                    workspaceCtrl.edit(item);
+                    authoringWorkspace.edit(item);
                 }
 
                 /**

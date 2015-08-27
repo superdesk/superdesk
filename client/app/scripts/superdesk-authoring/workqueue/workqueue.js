@@ -90,18 +90,17 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     };
 }
 
-WorkqueueListDirective.$inject = ['$rootScope'];
-function WorkqueueListDirective($rootScope) {
+WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace'];
+function WorkqueueListDirective($rootScope, authoringWorkspace) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         controller: 'Workqueue',
-        require: '^sdAuthoringWorkspace',
         scope: true,
-        link: function(scope, elem, attrs, workspaceCtrl) {
+        link: function(scope) {
             scope.edit = function(item, event) {
                 if (!event.ctrlKey) {
                     scope.active = item;
-                    workspaceCtrl.edit(item);
+                    authoringWorkspace.edit(item);
                     event.preventDefault();
                 }
             };

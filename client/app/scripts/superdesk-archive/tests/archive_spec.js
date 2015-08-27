@@ -77,12 +77,12 @@ describe('content', function() {
         }));
 
         it('can fetch version history', inject(function(archiveService, api, $q) {
-            spyOn(api.archive, 'getByUrl').and.returnValue($q.when());
+            spyOn(api, 'find').and.returnValue($q.when());
             spyOn(api.legal_archive_versions, 'getByUrl').and.returnValue($q.when());
 
-            item._links = {self: {href: '/archive/123'}};
+            item._links = {_id: '123'};
             archiveService.getVersionHistory(item, {}, 'versions');
-            expect(api.archive.getByUrl).toHaveBeenCalledWith('/archive/123?version=all&embedded={"user":1}');
+            expect(api.find).toHaveBeenCalledWith('archive', '123', {version: 'all', embedded: {user: 1}});
 
             item._type = 'legal_archive';
             item._links = {collection: {href: '/legal_archive'}};

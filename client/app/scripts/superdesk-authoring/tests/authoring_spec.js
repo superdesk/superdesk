@@ -457,9 +457,6 @@ describe('authoring actions', function() {
     */
     function allowedActions(actions, keys) {
         _.forOwn(actions, function(value, key) {
-
-            //console.log('checking state for', key, value, _.contains(keys, key));
-
             if (_.contains(keys, key)) {
                 expect(value).toBeTruthy();
             } else {
@@ -1069,30 +1066,101 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
         }));
+});
 
-    describe('authoring workspace controller', function() {
-        var ctrl, scope;
+describe('authoring workspace', function() {
 
-        beforeEach(inject(function($controller, $rootScope) {
-            scope = $rootScope.$new();
-            scope.flags = {};
-            ctrl = $controller('AuthoringWorkspace', {$scope: scope});
+    beforeEach(module('superdesk.authoring'));
+
+    it('can edit item', inject(function(superdeskFlags, authoringWorkspace) {
+        var item = {};
+
+        expect(superdeskFlags.flags.authoring).toBeFalsy();
+
+        authoringWorkspace.edit(item);
+        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.readonly).toBe(false);
+        expect(authoringWorkspace.getItem()).toBe(item);
+        expect(superdeskFlags.flags.authoring).toBeTruthy();
+
+        authoringWorkspace.close();
+        expect(authoringWorkspace.item).toBe(null);
+        expect(authoringWorkspace.getItem()).toBe(null);
+        expect(superdeskFlags.flags.authoring).toBeFalsy();
+    }));
+
+    it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace) {
+        var item = {};
+        authoringWorkspace.view(item);
+        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.readonly).toBe(true);
+        expect(superdeskFlags.flags.authoring).toBe(true);
+    }));
+
+    describe('init', function() {
+        var item = {};
+
+        beforeEach(module('templates'));
+
+        beforeEach(inject(function(api, $q) {
+            spyOn(api, 'find').and.returnValue($q.when(item));
         }));
 
-        it('can edit item', inject(function() {
-            var item = {};
+        it('can open item from $location for editing', inject(function(api, $location, $rootScope, $injector) {
+            $location.search('edit', 'foo');
+            $rootScope.$digest();
+            var authoringWorkspace = $injector.get('authoringWorkspace');
+            $rootScope.$digest();
+            expect(authoringWorkspace.item).toBe(item);
+            expect(authoringWorkspace.readonly).toBe(false);
+            expect(api.find).toHaveBeenCalledWith('archive', 'foo');
+        }));
 
-            expect(scope.flags.authoring).toBeFalsy();
-
-            ctrl.edit(item);
-            expect(ctrl.item).toBe(item);
-            expect(ctrl.getItem()).toBe(item);
-            expect(scope.flags.authoring).toBeTruthy();
-
-            ctrl.close();
-            expect(ctrl.item).toBe(null);
-            expect(ctrl.getItem()).toBe(null);
-            expect(scope.flags.authoring).toBeFalsy();
+        it('can open item from $location for viewing', inject(function($location, $rootScope, $injector) {
+            $location.search('view', 'bar');
+            $rootScope.$digest();
+            var authoringWorkspace = $injector.get('authoringWorkspace');
+            $rootScope.$digest();
+            expect(authoringWorkspace.item).toBe(item);
+            expect(authoringWorkspace.readonly).toBe(true);
         }));
     });
+});
+
+describe('authoring container directive', function() {
+
+    beforeEach(module('superdesk.authoring'));
+    beforeEach(module('templates'));
+
+    var item, scope, elem, iscope;
+
+    beforeEach(inject(function($compile, $rootScope) {
+        item = {};
+        scope = $rootScope.$new();
+        elem = $compile('<div sd-authoring-container></div>')(scope);
+        scope.$digest();
+        iscope = elem.isolateScope();
+    }));
+
+    it('handles edit', inject(function(authoringWorkspace) {
+        authoringWorkspace.edit(item);
+        scope.$digest();
+
+        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item.lockIt).toBe(true);
+        expect(iscope.authoring.state.opened).toBe(true);
+
+        authoringWorkspace.close();
+        scope.$digest();
+        expect(iscope.authoring.item).toBe(null);
+        expect(iscope.authoring.state.opened).toBe(false);
+    }));
+
+    it('handles view', inject(function(authoringWorkspace) {
+        authoringWorkspace.view(item);
+        scope.$digest();
+        expect(iscope.authoring.item).toBe(item);
+        expect(iscope.authoring.item.lockIt).toBe(false);
+        expect(iscope.authoring.state.opened).toBe(true);
+    }));
 });

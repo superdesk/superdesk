@@ -38,12 +38,13 @@ describe('Send To', function() {
                 .getText()
                 ).toBe('SUBMITTED');
     });
+
     it('can cancel submit request because there are spelling mistakes', function () {
         workspace.open();
         workspace.editItem(1);
         authoring.writeText('mispeled word');
         authoring.sendTo('Sports Desk');
         element(by.className('modal-content')).all(by.css('[ng-click="cancel()"]')).click();
-        expect(browser.getCurrentUrl()).toMatch(/authoring/);
+        expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(true);
     });
 });

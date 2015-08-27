@@ -44,7 +44,7 @@ function Authoring() {
     };
 
     this.sendToSidebarOpened = function(desk, stage) {
-        var sidebar = element(by.css('.send-to-pane')),
+        var sidebar = element.all(by.css('.send-to-pane')).last(),
             dropdown = sidebar.element(by.css('.desk-select .dropdown-toggle'));
 
         dropdown.waitReady();
@@ -180,7 +180,7 @@ function Authoring() {
 
     this.selectSearchItem = function(item) {
         var crtItem = this.getSearchItem(item);
-        var icon = crtItem.element(by.tagName('i'));
+        var icon = crtItem.all(by.tagName('i')).first();
         return icon.waitReady().then(function() {
             browser.actions()
                 .mouseMove(icon)
@@ -191,7 +191,13 @@ function Authoring() {
     };
 
     this.markForHighlights = function() {
-        element(by.className('icon-dots-vertical')).click();
+        var toggle = element(by.id('authoring-extra-dropdown')).element(by.className('icon-dots-vertical'));
+
+        browser.wait(function() {
+            return toggle.isDisplayed();
+        });
+
+        toggle.click();
         browser.actions().mouseMove(element(by.css('.highlights-toggle .dropdown-toggle'))).perform();
     };
 
@@ -227,5 +233,9 @@ function Authoring() {
 
     this.getHeadlineText = function() {
         return headline.getText();
+    };
+
+    this.closeHeader = function() {
+        element(by.className('icon-chevron-up-thin')).click();
     };
 }
