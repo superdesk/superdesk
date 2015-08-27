@@ -116,6 +116,17 @@ describe('monitoring view', function() {
         expect(monitoring.getTextItem(2, 0)).toBe('item1');
     });
 
+    it('configure a saved search that contain ingest items', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.nextStages();
+        monitoring.toggleSearch(2);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
+    });
+
     it('configure monitoring view for 2 desks', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);

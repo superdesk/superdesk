@@ -50,15 +50,17 @@
          * @param {string} queryString
          */
         function getCriteria(card, queryString, queryParam) {
-            var params = (card.type === 'search') ? JSON.parse(JSON.stringify(card.search.filter.query)): {};
+            var params = {};
             params.spike = (card.type === 'spike');
             if (card.fileType) {
                 params.type = card.fileType;
             }
 
-            if (card.type === 'search') {
+            if (card.type === 'search' && card.search.filter.query.q) {
                 if (card.query) {
                     params.q = '(' + card.query + ') ' + card.search.filter.query.q;
+                } else {
+                    params.q = card.search.filter.query.q;
                 }
             } else {
                 params.q = card.query;
@@ -97,6 +99,9 @@
             }
 
             var criteria = {source: query.getCriteria()};
+            if (card.type === 'search' && card.search.filter.query.repo) {
+                criteria.repo = card.search.filter.query.repo;
+            }
             criteria.source.from = 0;
             criteria.source.size = 25;
             return criteria;
@@ -205,8 +210,8 @@
                 scope.viewSingleGroup = viewSingleGroup;
 
                 scope.$watchCollection('group', queryItems);
-                scope.$on('task:stage', handleStage);
-                scope.$on('ingest:update', update);
+                scope.$on('task:stage', queryItems);
+                scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
                 scope.$on('item:unspike', queryItems);
 
@@ -222,12 +227,6 @@
                 var criteria,
                     updateTimeout,
                     moveTimeout;
-
-                function handleStage(event, data) {
-                    if (data.new_stage === scope.stage || data.old_stage === scope.stage) {
-                        update();
-                    }
-                }
 
                 function edit(item, lock) {
                     workspace.edit(item, lock);
@@ -282,8 +281,8 @@
                     });
                 }
 
-                function apiquery(query) {
-                    return api.query('archive', query ? {source: query} : criteria);
+                function apiquery() {
+                    return api.query(criteria.repo ? 'search': 'archive', criteria);
                 }
 
                 function renderNew() {
@@ -305,30 +304,6 @@
                     });
 
                     return next;
-                }
-
-                function updateCurrentView() {
-                    var ids = _.pluck(scope.items, '_id'),
-                        query = {query: {filtered: {filter: {and: [
-                            {terms: {_id: ids}},
-                            {term: {'task.stage': scope.stage}}
-                        ]}}}};
-                    query.size = ids.length;
-                    apiquery(query).then(function(items) {
-                        var nextItems = _.indexBy(items._items, '_id');
-                        angular.forEach(scope.items, function(item, i) {
-                            var diff = nextItems[item._id] || {_deleted: 1};
-                            angular.extend(item, diff);
-                        });
-                    });
-                }
-
-                function update() {
-                    if (scrollElem[0].scrollTop || scope.selected) {
-                        updateCurrentView();
-                    } else {
-                        render();
-                    }
                 }
 
                 function handleScroll(event) {
