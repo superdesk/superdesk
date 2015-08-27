@@ -2,6 +2,7 @@
 
 describe('itemListService', function() {
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
     beforeEach(module('superdesk.itemList'));
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {

@@ -312,6 +312,7 @@ describe('authoring', function() {
 describe('autosave', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
 
     it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
         spyOn(api, 'find').and.returnValue($q.when({}));
@@ -364,6 +365,7 @@ describe('autosave', function() {
 describe('lock service', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
 
     var user = {_id: 'user'};
     var sess = {_id: 'sess'};
@@ -430,6 +432,7 @@ describe('authoring actions', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.desks'));
+    beforeEach(module('templates'));
 
     beforeEach(inject(function(desks, $q) {
         spyOn(desks, 'fetchCurrentUserDesks').and.returnValue($q.when({_items: userDesks}));

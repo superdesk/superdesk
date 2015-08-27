@@ -1,6 +1,8 @@
 'use strict';
 describe('Reload Service', function() {
     beforeEach(module('superdesk.notification'));
+    beforeEach(module('templates'));
+
     var USER_URL = '/users/1';
     var USER = {
         _links: {self: {href: USER_URL}},

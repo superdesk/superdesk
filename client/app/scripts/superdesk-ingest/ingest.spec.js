@@ -5,6 +5,7 @@ describe('ingest', function() {
     describe('send service', function() {
 
         beforeEach(module('superdesk.ingest.send'));
+        beforeEach(module('templates'));
 
         it('can send an item', inject(function(send, api, $q, $rootScope) {
             spyOn(api, 'save').and.returnValue($q.when({_created: 'now'}));

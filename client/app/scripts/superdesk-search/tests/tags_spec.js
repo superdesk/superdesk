@@ -9,6 +9,7 @@ describe('Tag Service', function() {
 
     beforeEach(module('superdesk.search'));
     beforeEach(module('superdesk.desks'));
+    beforeEach(module('templates'));
 
     it('can populate keywords from location', inject(function($location, tags, $rootScope, desks, $q) {
         var members = null;
