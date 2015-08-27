@@ -567,10 +567,10 @@
                     rel: 'consistency'
                 }
             });
-            apiProvider.api('formatted_item', {
+            apiProvider.api('legal_publish_queue', {
                 type: 'http',
                 backend: {
-                    rel: 'formatted_item'
+                    rel: 'legal_publish_queue'
                 }
             });
             apiProvider.api('io_errors', {

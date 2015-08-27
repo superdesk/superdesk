@@ -41,36 +41,17 @@
             <div ng-if="version.operation == 'publish'" ng-click="openVersion(version)">
                 {{ :: 'Published by' | translate }} {{ version.creator }}
                 <em>on <time sd-absdate ng-model="version.versioncreated"></time></em>
-                <div ng-if="version.queuedItems.length" class="queued">
-                    <a ng-href="" ng-if="!version.show_sent_to" ng-click="version.show_sent_to = !version.show_sent_to">
-                        <i class="icon-plus-small true"></i> {{ :: 'Show sent/queued items' | translate }}
-                    </a>
-                    <a ng-href="" ng-if="version.show_sent_to" ng-click="version.show_sent_to = !version.show_sent_to">
-                        <i class="icon-minus-small true"></i> {{ :: 'Hide sent/queued items' | translate }}
-                    </a>
-                    <ul ng-if="version.show_sent_to">
-                        <li ng-repeat="queuedItem in version.queuedItems track by queuedItem._id">
-                            <div ng-if="queuedItem.state !== 'error'">
-                                {{ :: 'Sent/Queued as' | translate }} <b>{{ queuedItem.unique_name }}</b>
-                                {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }}
-                                <em>on <time sd-absdate ng-model="queuedItem.completed_at"></time></em>
-                            </div>
-                            <div ng-if="queuedItem.state === 'error'">
-                                {{ :: 'Error sending as' | translate }} <b>{{ queuedItem.unique_name }}</b>
-                                {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }}
-                                <em>on <time sd-absdate ng-model="queuedItem.completed_at"></time></em>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <div sd-transmission-details data-item="version" class="queued"></div>
             </div>
             <div ng-if="version.operation == 'correct'" ng-click="openVersion(version)">
                 {{ :: 'Correction issued by' | translate }} {{ version.creator }}
                 <em>on <time sd-absdate ng-model="version.versioncreated"></time></em>
+                <div sd-transmission-details data-item="version" class="queued"></div>
             </div>
             <div ng-if="version.operation == 'kill'" ng-click="openVersion(version)">
                 {{ :: 'Killed by' | translate }} {{ version.creator }}
                 <em>on <time sd-absdate ng-model="version.versioncreated"></time></em>
+                <div sd-transmission-details data-item="version" class="queued"></div>
             </div>
         </li>
     </ul>

@@ -1,0 +1,30 @@
+<div>
+    <a ng-href="" ng-if="!show_transmission_details" ng-click="showOrHideTransmissionDetails()">
+        <i class="icon-plus-small true"></i> {{ :: 'Show sent/queued items' | translate }}
+    </a>
+    <a ng-href="" ng-if="show_transmission_details" ng-click="showOrHideTransmissionDetails()">
+        <i class="icon-minus-small true"></i> {{ :: 'Hide sent/queued items' | translate }}
+    </a>
+    <ul ng-if="show_transmission_details">
+        <li ng-repeat="queuedItem in queuedItems track by queuedItem._id" ng-click="showFormattedItem(queuedItem)">
+            <div ng-if="queuedItem.state !== 'error'">
+                {{ :: 'Sent/Queued as' | translate }} <b>{{ queuedItem.unique_name }}</b>
+                {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }}
+                <em><time sd-absdate ng-model="queuedItem.completed_at"></time></em>
+            </div>
+            <div ng-if="queuedItem.state === 'error'">
+                {{ :: 'Error sending as' | translate }} <b>{{ queuedItem.unique_name }}</b>
+                {{ :: 'on' | translate }} {{ queuedItem.destination.name }} {{ :: 'at' | translate }}
+                <em><time sd-absdate ng-model="queuedItem.completed_at"></time></em>
+            </div>
+        </li>
+    </ul>
+    <div sd-modal data-model="transmitted_item" class="subscriber-modal modal-big moz-scroll-fix">
+        <div class="modal-header"> <a href="" class="close" ng-click="hideFormattedItem()"><i class="icon-close-small"></i></a>
+            <h3 translate>Item sent to Subscriber</h3>
+        </div>
+        <div class="modal-body">
+            {{transmitted_item }}
+        </div>
+    </div>
+</div>

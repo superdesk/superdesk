@@ -22,15 +22,6 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
                     $scope.versions = versions;
                     $scope.last = archiveService.lastVersion($scope.item, $scope.versions);
 
-                    _.forEach($scope.versions, function(version) {
-                        if (version.operation === 'publish') {
-                            version.show_sent_to = false;
-                            fetchItemPublishQueue(version).then(function(queue) {
-                                version.queuedItems = queue._items;
-                            });
-                        }
-                    });
-
                     if (archiveService.isLegal($scope.item)) {
                         $scope.canRevert =  false;
                         $scope.openVersion($scope.last);
@@ -45,12 +36,6 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
                     }
                 });
             });
-    }
-
-    function fetchItemPublishQueue (version) {
-        var criteria = {'item_id': version._id, 'item_version': $scope.item._current_version, 'max_results': 20};
-
-        return api.publish_queue.query(criteria);
     }
 
     /**
@@ -70,14 +55,73 @@ function HistoryController($scope, authoring, api, notify, desks, archiveService
     $scope.$watchGroup(['item._id', 'item._latest_version'], fetchHistory);
 }
 
-versioningHistoryDirective.$inject = [];
-function versioningHistoryDirective() {
+VersioningHistoryDirective.$inject = [];
+function VersioningHistoryDirective() {
     return {
         templateUrl: 'scripts/superdesk-authoring/versioning/history/views/history.html'
     };
 }
 
+TransmissionDetailsDirective.$inject = ['api', 'archiveService'];
+function TransmissionDetailsDirective(api, archiveService) {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/versioning/history/views/publish_queue.html',
+        scope: {
+            item: '='
+        },
+        link: function(scope) {
+            scope.transmitted_item = null;
+            scope.show_transmission_details = false;
+
+            /**
+             * Sets the model to be displayed in the modal-body.
+             */
+            scope.showFormattedItem = function(item) {
+                scope.transmitted_item = item.formatted_item;
+            };
+
+            /**
+             * Sets the model of the modal to null when and is hidden.
+             */
+            scope.hideFormattedItem = function() {
+                scope.transmitted_item = null;
+            };
+
+            /**
+             * Triggered when user clicks on +/- symbol in the Item History.
+             *
+             * When user clicks on + symbol, it hits the API to bring the transmission details from publish queue.
+             */
+            scope.showOrHideTransmissionDetails = function() {
+                scope.show_transmission_details = !scope.show_transmission_details;
+
+                if (scope.show_transmission_details) {
+                    var criteria = {'item_id': scope.item._id, 'item_version': scope.item._current_version, 'max_results': 20};
+                    var promise;
+
+                    if (archiveService.isLegal(scope.item)) {
+                        promise = api.legal_publish_queue.query(criteria);
+                    } else {
+                        promise = api.publish_queue.query(criteria);
+                    }
+
+                    promise.then(function(response) {
+                        _.each(response._items, function(item) {
+                            if (angular.isUndefined(item.completed_at)) {
+                                item.completed_at = item._updated;
+                            }
+                        });
+
+                        scope.queuedItems = response._items;
+                    });
+                }
+            };
+        }
+    };
+}
+
 angular.module('superdesk.authoring.versioning.history', [])
-    .directive('sdVersioningHistory', versioningHistoryDirective)
+    .directive('sdVersioningHistory', VersioningHistoryDirective)
+    .directive('sdTransmissionDetails', TransmissionDetailsDirective)
     .controller('HistoryWidgetCtrl', HistoryController);
 })();
