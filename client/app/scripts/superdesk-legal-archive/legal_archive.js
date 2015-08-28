@@ -235,7 +235,6 @@
                     label: gettext('Legal Archive'),
                     description: gettext('Confidential data'),
                     priority: 100,
-                    beta: true,
                     controller: LegalArchiveController,
                     templateUrl: 'scripts/superdesk-legal-archive/views/legal_archive.html',
                     sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
