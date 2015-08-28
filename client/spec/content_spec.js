@@ -101,7 +101,7 @@ describe('Content', function() {
         element(by.className('sd-create-btn')).click();
         element(by.id('create_package')).click();
 
-        authoring.writeTextToHeadline('Empty Package');
+        element.all(by.model('item.headline')).first().sendKeys('Empty Package');
         authoring.save();
         authoring.close();
 
