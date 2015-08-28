@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NewsML Version="1.2">
+<!--AFP NewsML text-photo profile evolution2-->
+<!--Processed by Xafp1-4ToNewsML1-2 rev23-->
+<Catalog Href="http://www.afp.com/dtd/AFPCatalog.xml"/>
+<NewsEnvelope>
+<TransmissionId>1672</TransmissionId>
+<DateAndTime>20140829T135006Z</DateAndTime>
+<NewsService FormalName="DGTE"/>
+<NewsProduct FormalName="PAW"/>
+<NewsProduct FormalName="AFW"/>
+<NewsProduct FormalName="MEW"/>
+<NewsProduct FormalName="EUW"/>
+<NewsProduct FormalName="MAX"/>
+<NewsProduct FormalName="ANA"/>
+<NewsProduct FormalName="DGTE"/>
+<NewsProduct FormalName="DVBP"/>
+<NewsProduct FormalName="DAGI"/>
+<NewsProduct FormalName="DILI"/>
+<NewsProduct FormalName="DVBA"/>
+<NewsProduct FormalName="DVBF"/>
+<Priority FormalName="4"/>
+</NewsEnvelope>
+<NewsItem xml:lang="en">
+<Identification>
+<NewsIdentifier>
+<ProviderId>afp.com</ProviderId>
+<DateId>20140829T135002Z</DateId>
+<NewsItemId>TX-PAR-FXW86</NewsItemId>
+<RevisionId PreviousRevision="0" Update="N">1</RevisionId>
+<PublicIdentifier>urn:newsml:afp.com:20140829T135002Z:TX-PAR-FXW86:1</PublicIdentifier>
+</NewsIdentifier>
+<NameLabel>Sweden-China-auto-business-bankruptcy-Saab</NameLabel>
+</Identification>
+<NewsManagement>
+<NewsItemType FormalName="News"/>
+<FirstCreated>20140829T134951+0000</FirstCreated>
+<ThisRevisionCreated>20140829T134951+0000</ThisRevisionCreated>
+<Status FormalName="Usable"/>
+<Urgency FormalName="4"/>
+<AssociatedWith NewsItem="urn:newsml:afp.com:20140829:ccd3ebb1-ff99-452d-a1c2-5dc0fa24c204"/>
+</NewsManagement>
+<NewsComponent>
+<NewsLines>
+<DateLine>STOCKHOLM, Aug 29, 2014 (AFP) -</DateLine>
+<HeadLine xml:lang="en">Sweden court accepts receivership for Saab carmaker</HeadLine>
+<SlugLine>Sweden-SAAB</SlugLine>
+</NewsLines>
+<RightsMetadata>
+<UsageRights>
+<UsageType>NO ARCHIVAL USE</UsageType>
+</UsageRights>
+</RightsMetadata>
+<AdministrativeMetadata>
+<Provider>
+<Party FormalName="AFP"/>
+</Provider>
+</AdministrativeMetadata>
+<DescriptiveMetadata>
+<Language FormalName="en"/>
+<SubjectCode>
+<SubjectDetail FormalName="04011002" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<SubjectDetail FormalName="04016007" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<Subject FormalName="04000000" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<SubjectDetail FormalName="04016038" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<SubjectMatter FormalName="04011000" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<Subject FormalName="04000000" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<Subject FormalName="04000000" cat="ECO"/>
+</SubjectCode>
+<SubjectCode>
+<Subject FormalName="04000000" cat="ECO"/>
+</SubjectCode>
+<OfInterestTo FormalName="ASI-TEG-1=PAW"/>
+<OfInterestTo FormalName="EAA-TEG-1=AFW"/>
+<OfInterestTo FormalName="EAA-TEG-1=MEW"/>
+<OfInterestTo FormalName="EAA-TEG-1=EUW"/>
+<OfInterestTo FormalName="MAX-TEG-1=MAX"/>
+<OfInterestTo FormalName="ANA-TEG-1=ANA"/>
+<DateLineDate>20140829T134951+0000</DateLineDate>
+<Location HowPresent="Origin">
+<Property FormalName="Country" Value="SWE"/>
+<Property FormalName="City" Value="Stockholm"/>
+</Location>
+<Property FormalName="GeneratorSoftware" Value="libg2"/>
+<Property FormalName="Keyword" Value="Sweden"/>
+<Property FormalName="Keyword" Value="China"/>
+<Property FormalName="Keyword" Value="auto"/>
+<Property FormalName="Keyword" Value="business"/>
+<Property FormalName="Keyword" Value="bankruptcy"/>
+<Property FormalName="Keyword" Value="Saab"/>
+<Genre FormalName="business"/>
+<Genre FormalName="bankruptcy"/>
+</DescriptiveMetadata>
+<ContentItem>
+<MediaType FormalName="Text"/>
+<Format FormalName="NITF3.1"/>
+<Characteristics>
+<SizeInBytes>1344</SizeInBytes>
+<Property FormalName="Words" Value="224"/>
+</Characteristics>
+<DataContent>
+<nitf>
+<body>
+<body.content>
+<p>A Chinese-owned company set up to take over Saab's assets after the troubled Swedish carmaker's bankruptcy said on Friday it had succeeded in being placed in receivership.</p>
+<p>National Electric Vehicle Sweden, or NEVS, had applied to be protected against creditors while seeking new sources of financing. </p>
+<p>"The district court of Vaenersborg today, Friday August 29, accepted NEVS's request for receivership," the company said in a brief statement.</p>
+<p>The announcement came a day after the court initially rejected the request, saying it lacked sufficient clarity and documentation.</p>
+<p>According to several Swedish media reports, NEVS has been negotiating with automakers Mahindra (India) and Dongfeng (China) to raise funds to cover substantial debts to suppliers.</p>
+<p>NEVS said in its application to the court it owed 400 million kroner (43.5 million euros, $57 million) to suppliers, according to news agency TT which obtained a copy of the document.</p>
+<p>The company is controlled by the Chinese industrial enterprise National Modern Energy Holdings, which owns 78 percent of the shares, and the east Chinese city of Qingdao, which owns the rest. </p>
+<p>Since 2000, Saab automobile has had no connection with the defence and aeronautics firm of the same name.</p>
+<p>Saab automobile offers only one model today -- the 9-3 Aero Sedan -- and under NEVS ownership the company has targeted the Chinese market with a line of electric cars.</p>
+<p>hh/ph/ts/hd</p>
+</body.content>
+</body>
+</nitf>
+</DataContent>
+</ContentItem>
+</NewsComponent>
+</NewsItem>
+</NewsML>
+

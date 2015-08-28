@@ -18,7 +18,8 @@ from superdesk.resource import Resource
 from flask import current_app as app
 import flask
 import superdesk
-from apps.auth.errors import UserDisabledError, CredentialsAuthError, UserInactiveError
+from apps.auth.errors import UserDisabledError, CredentialsAuthError
+from superdesk.users.errors import UserInactiveError
 
 
 logger = logging.getLogger(__name__)

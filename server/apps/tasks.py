@@ -14,8 +14,8 @@ from copy import copy
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 
-from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, get_expiry,\
-    item_operations, ITEM_OPERATION, update_version
+from apps.archive.common import get_expiry, item_operations, ITEM_OPERATION, update_version
+from apps.archive.common import insert_into_versions, is_assigned_to_a_desk
 
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError

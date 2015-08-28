@@ -8,12 +8,12 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.field_mappers.selectorcode_mapper import SelectorcodeMapper
 
 
-class SelectorcodeMapperTest(TestCase):
+class SelectorcodeMapperTest(SuperdeskTestCase):
 
     desks = [{'_id': 1, 'name': 'National'},
              {'_id': 2, 'name': 'Sports'},
@@ -21,9 +21,8 @@ class SelectorcodeMapperTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            self.app.data.insert('desks', self.desks)
-            init_app(self.app)
+        self.app.data.insert('desks', self.desks)
+        init_app(self.app)
 
     def test_is_in_subject(self):
         article = {

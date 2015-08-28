@@ -1,0 +1,63 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: someone@a.com.au
+Received: by 11.112.161.199 with SMTP id xu7csp282762lbb;
+        Wed, 18 Feb 2015 22:18:43 -0800 (PST)
+X-Received: by 11.194.60.173 with SMTP id i13mr5757076wjr.124.1424326722918;
+        Wed, 18 Feb 2015 22:18:42 -0800 (PST)
+Return-Path: <asender@a.com.au>
+Received: from mail-wg0-x230.google.com (mail-wg0-x230.google.com. [2a00:1450:400c:c00::230])
+        by mx.google.com with ESMTPS id s6si16731101wic.33.2015.02.18.22.18.41
+        for <someone@a.com.au>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Feb 2015 22:18:41 -0800 (PST)
+Received-SPF: pass (google.com: domain of asender@a.com.au designates 2a00:1450:400c:c00::230 as permitted sender) client-ip=2a00:1450:400c:c00::230;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of asender@a.com.au designates 2a00:1450:400c:c00::230 as permitted sender) smtp.mail=asender@a.com.au;
+       dkim=pass header.i=@a.com.au
+Received: by mail-wg0-f48.google.com with SMTP id l18so5272993wgh.7
+        for <someone@a.com.au>; Wed, 18 Feb 2015 22:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=aap.com.au; s=google;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=8/qvkiddhamAgNPXezsGYJlpICExS9B8vxciud44eLk=;
+        b=daGG4caDKX4l+F7zRyMl8xrIRNXFy7tfcDmgA78iOBJu1cGo4bUjJ/E9IqDDKn6D0T
+         zyFZNf6uQ7e+C/Ejq0doUuJxok5NrKw7jV3qb4j1aFbw2p4WqEvRiWPSTDuKtudhjTjL
+         afwpLrqum47lm2I5r5l0wzHAPzIkjxUT3y6pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-type;
+        bh=8/qvkiddhamAgNPXezsGYJlpICExS9B8vxciud44eLk=;
+        b=QHsBPJR8207rwFekXtGlho3eJLlcWYW+A+ZrUleOR2EfNifQpMqFZSoWulyd0jgGcN
+         hCFftE/fWAr+qeq0OwQRp3nEYgW2VVnYgjpcIW/3L3zdwhAcdHkD9ZxK7w7B1yULrG5B
+         QSKxqP8kizerGcOXznnDJ9YzUelu9WF9nxDsPPOZaNtALJ4zurtrsp5MfNhJDoDEjZup
+         KQSklrTK3Fjh8ktwZ1uDcB4GtBsjxxsvOx4iUZTPLcsSa2O7YZzuey2m+OyZP5DLuTWW
+         RjTBncLUvrxXWyFJwO1uJsMc7ypBjr13DCdr4zOjrspFrAUXyZZkkuuaY+FaFwqIKbq6
+         6pDA==
+X-Gm-Message-State: ALoCoQlxqptPnoimYtMSfmvH5FsyY9YAD/0tH2tN860Dr25641YGSCAvpR9kQsxAmJZqMfQiacC8
+MIME-Version: 1.0
+X-Received: by 11.194.6.228 with SMTP id e4mr5617701wja.63.1424326720756; Wed,
+ 18 Feb 2015 22:18:40 -0800 (PST)
+Received: by 11.194.58.145 with HTTP; Wed, 18 Feb 2015 22:18:40 -0800 (PST)
+Date: Thu, 19 Feb 2015 17:18:40 +1100
+Message-ID: <CAHU3GgVHd6C_RSMQXvOhr6V-Ya0LwdBkqpbZ_qUwGF8JvhrQVg@mail.gmail.com>
+Subject: Test message 1234
+From: a sender <asender@a.com.au>
+To: someone@a.com.au
+Content-Type: multipart/alternative; boundary=047d7b5d86ad3c2989050f6ae8e4
+
+--047d7b5d86ad3c2989050f6ae8e4
+Content-Type: text/plain; charset=UTF-8
+
+body text
+
+-- 
+
+
+--047d7b5d86ad3c2989050f6ae8e4
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">body text<br clear=3D"all"><div>
+
+--047d7b5d86ad3c2989050f6ae8e4--

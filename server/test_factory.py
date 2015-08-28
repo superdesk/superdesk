@@ -21,4 +21,5 @@ class SuperdeskTestCase(TestCase):
         self.ctx.push()
 
     def tearDown(self):
-        self.ctx.pop()
+        if hasattr(self, 'ctx'):
+            self.ctx.pop()

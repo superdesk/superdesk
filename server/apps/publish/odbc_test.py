@@ -10,13 +10,13 @@
 
 from superdesk.publish import SUBSCRIBER_TYPES
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 import superdesk
 from apps.publish import init_app
 from superdesk.publish.odbc import ODBCPublishService
 
 
-class ODBCTests(TestCase):
+class ODBCTests(SuperdeskTestCase):
     subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "critical_errors": {"9004": True},
@@ -60,21 +60,19 @@ class ODBCTests(TestCase):
     def setUp(self):
         super().setUp()
 
-        with self.app.app_context():
-            self.subscribers[0]['destinations'][0]['config']['connection_string'] = \
-                superdesk.app.config["ODBC_TEST_CONNECTION_STRING"]
-            self.app.data.insert('subscribers', self.subscribers)
+        self.subscribers[0]['destinations'][0]['config']['connection_string'] = \
+            superdesk.app.config["ODBC_TEST_CONNECTION_STRING"]
+        self.app.data.insert('subscribers', self.subscribers)
 
-            self.queue_items[0]['destination']['config']['connection_string'] = \
-                superdesk.app.config["ODBC_TEST_CONNECTION_STRING"]
-            self.app.data.insert('publish_queue', self.queue_items)
-            init_app(self.app)
+        self.queue_items[0]['destination']['config']['connection_string'] = \
+            superdesk.app.config["ODBC_TEST_CONNECTION_STRING"]
+        self.app.data.insert('publish_queue', self.queue_items)
+        init_app(self.app)
 
     def test_transmit(self):
         if superdesk.app.config['ODBC_PUBLISH']:
-            with self.app.app_context():
-                subscriber = self.app.data.find('subscribers', None, None)[0]
+            subscriber = self.app.data.find('subscribers', None, None)[0]
 
-                publish_service = ODBCPublishService()
-                ret = publish_service._transmit(self.queue_items[0], subscriber)
-                self.assertGreater(ret, 0)
+            publish_service = ODBCPublishService()
+            ret = publish_service._transmit(self.queue_items[0], subscriber)
+            self.assertGreater(ret, 0)

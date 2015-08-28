@@ -66,13 +66,13 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         self.assertEqual(seq, item['sequence'])
         item.pop('sequence')
         self.assertDictEqual(item,
-                                {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
-                                'headline': 'VIC:This is a test headline', 'service_level': 'a', 'originator': 'AAP',
-                                'take_key': 'take_key', 'article_text': 'The story body', 'priority': '1', 'usn': '1',
-                                'subject_matter': 'international law', 'news_item_type': 'News',
-                                'subject_reference': '02011001', 'subject': 'crime, law and justice',
-                                'wordcount': '1', 'subject_detail': 'international court or tribunal',
-                                'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
+                             {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
+                              'headline': 'VIC:This is a test headline', 'service_level': 'a', 'originator': 'AAP',
+                              'take_key': 'take_key', 'article_text': 'The story body', 'priority': '1', 'usn': '1',
+                              'subject_matter': 'international law', 'news_item_type': 'News',
+                              'subject_reference': '02011001', 'subject': 'crime, law and justice',
+                              'wordcount': '1', 'subject_detail': 'international court or tribunal',
+                              'genre': 'Current', 'keyword': 'slugline', 'author': 'joe'})
 
     def testIPNewsHtmlToText(self):
         article = {
@@ -97,7 +97,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         seq, item = f.format(article, subscriber)[0]
 
         expected = '\r\nThe story body line 1 \r\nLine 2 \r\n\r\nabcdefghi abcdefghi abcdefghi abcdefghi ' \
-                    'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
+                   'abcdefghi abcdefghi abcdefghi abcdefghi \r\nmore'
         self.assertEqual(item['article_text'], expected)
 
     def testMultipleCategories(self):

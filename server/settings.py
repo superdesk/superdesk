@@ -285,5 +285,5 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 # This value gets injected into NewsML 1.2 and G2 output documents.
 NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
 
-OrganizationName = "Superdesk Associated Press"
-OrganizationNameAbbreviation = "SAP"
+ORGANIZATION_NAME = "Superdesk Associated Press"
+ORGANIZATION_NAME_ABBREVIATION = "SAP"

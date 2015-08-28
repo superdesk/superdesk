@@ -20,7 +20,7 @@ from superdesk.users.services import get_sign_off
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
-from settings import OrganizationNameAbbreviation
+from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
     LINKED_IN_PACKAGES, BYLINE, SIGN_OFF
@@ -93,7 +93,7 @@ def set_dateline(doc, repo_type):
 
     if repo_type == ARCHIVE and 'dateline' not in doc:
         current_date_time = dateline_ts = utcnow()
-        doc['dateline'] = {'date': current_date_time, 'source': OrganizationNameAbbreviation}
+        doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION}
 
         user = get_user()
         if user and user.get('user_preferences', {}).get('dateline:located'):
@@ -111,7 +111,7 @@ def set_dateline(doc, repo_type):
 
                 doc['dateline']['located'] = located
                 doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
-                                                               OrganizationNameAbbreviation)
+                                                               ORGANIZATION_NAME_ABBREVIATION)
 
 
 def set_byline(doc, repo_type=ARCHIVE):

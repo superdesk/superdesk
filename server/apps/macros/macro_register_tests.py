@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.macro_register import macros
+from .macro_register import macros
 from test_factory import SuperdeskTestCase
 
 

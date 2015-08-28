@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:wenn_mm="http://feed.wenn.com/xmlns/2010/03/wenn_mm" xmlns:wenn_cm="http://feed.wenn.com/xmlns/2010/03/wenn_cm" xmlns:wenn_nm="http://feed.wenn.com/xmlns/2010/03/wenn_nm" xmlns:georss="http://www.georss.org/georss" xml:lang="en">
+	<title type="text">WENN Feed</title>
+	<subtitle type="text">Entertainment News</subtitle>
+	<link href="http://feed.wenn.org/"/>
+	<updated>2015-01-30T03:26:05+00:00</updated>
+	<author>
+		<name>WENN Newsdesk</name>
+		<email>newsdesk@wenn.com</email>
+	</author>
+        <id>urn:feed-wenn-com:newsfeed:2:2222</id>
+	<wenn_nm:NewsManagement type="feed">
+			<wenn_nm:feed_type>News</wenn_nm:feed_type>
+			<wenn_nm:feed_id>2</wenn_nm:feed_id>
+			<wenn_nm:feed_name>WENN</wenn_nm:feed_name>
+			<wenn_nm:feedinstance_id>2222</wenn_nm:feedinstance_id>
+	</wenn_nm:NewsManagement>
+	<entry>
+		<id>urn:feed-wenn-com:newsfeedarticle:2:2222:1</id>
+		<updated>2015-01-30T00:33:06+00:00</updated>
+		<title type="text"><![CDATA[Suge Knight involved in fatal hit and run incident]]></title>
+<!--		<summary type="text">DBG</summary>-->
+		<content type="text"><![CDATA[This is body content1.]]></content>
+		<category term="Music" />
+		<wenn_nm:NewsManagement type="feedarticle">
+			<wenn_nm:feed_type>News</wenn_nm:feed_type>
+			<wenn_nm:feed_id>2</wenn_nm:feed_id>
+			<wenn_nm:feedinstance_id>2222</wenn_nm:feedinstance_id>
+			<wenn_nm:feedarticle_id>1</wenn_nm:feedarticle_id>
+			<wenn_nm:feedarticle_section id="1">Music</wenn_nm:feedarticle_section>
+			<wenn_nm:feedarticle_priority>med</wenn_nm:feedarticle_priority>
+			<wenn_nm:original_article_id>1369426</wenn_nm:original_article_id>
+			<wenn_nm:published>2015-01-30T00:33:06+00:00</wenn_nm:published>
+			<wenn_nm:updated>2015-01-30T02:40:56+00:00</wenn_nm:updated>
+			<wenn_nm:publishing_status>Published</wenn_nm:publishing_status>
+		</wenn_nm:NewsManagement>
+		<wenn_cm:ContentMetadata type="feedarticle" lang="en-GB">
+<!--			<wenn_cm:published>2015-01-30T00:33:06+00:00</wenn_cm:published>-->
+<!--			<wenn_cm:updated>DBG</wenn_cm:updated>-->
+			<wenn_cm:title><![CDATA[Suge Knight involved in fatal hit and run incident]]></wenn_cm:title>
+			<wenn_cm:first_line><![CDATA[Police officials in Los Angeles are investigating a fatal hit and run incident involving rap mogul SUGE KNIGHT on Thursday (29Jan15).]]></wenn_cm:first_line>
+			<wenn_cm:body><![CDATA[  The embattled hip-hop mogul's lawyer James Blatt confirmed to local news station KABC that Knight was driving the car that killed his friend Terry Carter, and hit a second pedestrian, actor Cle Sloan, who was not seriously hurt.
+
+  Knight claims he was attacked by two people and tried to escape in the vehicle, which led to the hit and run. Blatt adds that Knight is expected to turn himself in to authorities. 
+
+  Officials at the Los Angeles County Sheriff's Department are investigating the incident, telling the Los Angeles Times they are treating the case as a homicide.
+
+  Meanwhile, TMZ.com reports that Knight was in Compton visiting the film set of a hip-hop documentary. Rappers Ice Cube, The Game, and Dr. Dre were also on the set, with Cube even posting a photo on Instagram.com from the film shoot prior to the incident.]]></wenn_cm:body>
+			<wenn_cm:slug>(KL&#38;TD/WNWCZM/RL)</wenn_cm:slug>
+			<wenn_cm:tags>
+				<wenn_cm:tag id="22684" value="Suge Knight" type_id="1" type_value="General Celebrity" />
+				<wenn_cm:tag id="47993" value="Tmz.Com" type_id="23" type_value="Website" />
+				<wenn_cm:tag id="74805" value="Compton" type_id="6" type_value="Place" />
+			</wenn_cm:tags>
+                        <wenn_cm:speaker>Suge Knight</wenn_cm:speaker>
+                        <wenn_cm:categories>
+                                <wenn_cm:catagory id="1" value="Showbiz Music" />
+                                <wenn_cm:catagory id="8" value="Urban" />
+                        </wenn_cm:categories>
+			<wenn_cm:regions>
+				<wenn_cm:region iso3166_alpha2="XX">Worldwide</wenn_cm:region>
+			</wenn_cm:regions>
+		</wenn_cm:ContentMetadata>
+	</entry>
+	<entry>
+		<id>urn:feed-wenn-com:newsfeedarticle:2:2222:3</id>
+		<updated>2015-01-29T21:58:32+00:00</updated>
+		<title type="text"><![CDATA[Jagged Edge singer Kyle Norman arrested over domestic assault]]></title>
+<!--		<summary type="text">DBG</summary>-->
+		<content type="text"><![CDATA[This is body content2.]]></content>
+		<category term="Music" />
+		<wenn_nm:NewsManagement type="feedarticle">
+			<wenn_nm:feed_type>News</wenn_nm:feed_type>
+			<wenn_nm:feed_id>2</wenn_nm:feed_id>
+			<wenn_nm:feedinstance_id>2222</wenn_nm:feedinstance_id>
+			<wenn_nm:feedarticle_id>3</wenn_nm:feedarticle_id>
+			<wenn_nm:feedarticle_section id="1">Music</wenn_nm:feedarticle_section>
+			<wenn_nm:feedarticle_priority>med</wenn_nm:feedarticle_priority>
+			<wenn_nm:original_article_id>1369417</wenn_nm:original_article_id>
+			<wenn_nm:published>2015-01-29T21:58:32+00:00</wenn_nm:published>
+			<wenn_nm:updated>2015-01-29T22:20:11+00:00</wenn_nm:updated>
+			<wenn_nm:publishing_status>Published</wenn_nm:publishing_status>
+		</wenn_nm:NewsManagement>
+		<wenn_cm:ContentMetadata type="feedarticle" lang="en-GB">
+<!--			<wenn_cm:published>2015-01-29T21:58:32+00:00</wenn_cm:published>-->
+<!--			<wenn_cm:updated>DBG</wenn_cm:updated>-->
+			<wenn_cm:title><![CDATA[Jagged Edge singer Kyle Norman arrested over domestic assault]]></wenn_cm:title>
+			<wenn_cm:first_line><![CDATA[JAGGED EDGE singer KYLE NORMAN has been arrested by police in Atlanta, Georgia amid allegations of aggravated assault.]]></wenn_cm:first_line>
+			<wenn_cm:body><![CDATA[  Police were called to the home the R&B star shares with his fiancee in the early hours of Thursday (29Jan15) after she accused Norman of attacking her.
+
+  The victim, whose identity has not been released, told cops the Where the Party At hitmaker had punched and choked her with a scarf, before attempting to shove her engagement ring down her throat following a heated argument about his alcohol intake, according to UsMagazine.com.
+
+  Norman's fiancee also alleges the singer threatened her life by saying she was "gonna die today" and took her car keys and broke her cell phone when she attempted to leave.
+
+  She was admitted to the Atlanta Medical Center for treatment, while the 38-year-old star was taken into custody and booked for the assault.]]></wenn_cm:body>
+			<wenn_cm:slug>(MT/WNWCUW/KL)</wenn_cm:slug>
+			<wenn_cm:tags>
+				<wenn_cm:tag id="30724" value="Jagged Edge" type_id="4" type_value="Band" />
+				<wenn_cm:tag id="53821" value="Where The Party At" type_id="8" type_value="Song" />
+				<wenn_cm:tag id="60878" value="Usmagazine.Com" type_id="23" type_value="Website" />
+				<wenn_cm:tag id="101900" value="Kyle Norman" type_id="16" type_value="Singer / Musician / DJ" />
+			</wenn_cm:tags>
+                        <wenn_cm:speaker>Jagged Edge</wenn_cm:speaker>
+                        <wenn_cm:categories>
+                                <wenn_cm:catagory id="1" value="Showbiz Music" />
+                                <wenn_cm:catagory id="8" value="Urban" />
+                        </wenn_cm:categories>
+			<wenn_cm:regions>
+				<wenn_cm:region iso3166_alpha2="XX">Worldwide</wenn_cm:region>
+			</wenn_cm:regions>
+		</wenn_cm:ContentMetadata>
+	</entry>
+</feed>

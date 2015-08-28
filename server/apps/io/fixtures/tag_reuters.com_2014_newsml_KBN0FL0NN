@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <sent>2014-07-16T15:53:10.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag_reuters.com_2014_newsml_KBN0FL0NN_5</transmitId>
+    <priority>4</priority>
+    <destination>OUSWDM</destination>
+    <destination>OCATPM</destination>
+    <destination>RTRFLN</destination>
+    <destination>OUSTPM</destination>
+    <destination>ORTAP</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <newsItem conformance="power" guid="tag_reuters.com_2014_newsml_KBN0FL0NN" standard="NewsML-G2" standardversion="2.14" version="5" xml:lang="en-US">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters"/>
+        <copyrightNotice xml:lang="en-GB">(c) Copyright Thomson Reuters 2014. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" rtr:msgType="R"/>
+        <provider literal="reuters.com"/>
+        <versionCreated>2014-07-16T15:53:10.000Z</versionCreated>
+        <firstCreated>2014-07-16T08:10:15.000Z</firstCreated>
+        <pubStatus qcode="stat:usable"/>
+        <role qcode="itemRole:N"/>
+        <fileName>2014-07-16T155310Z_5_KBN0FL0NN_RTROPTT_0_US-SYRIA-CRISIS-ASSAD.XML</fileName>
+        <generator creator="sys:lynxPM" versioninfo="0.1.0.21">LYNX:addT:001</generator>
+        <profile versioninfo="01.00.01">SNI-Text</profile>
+        <service qcode="svc:RTR_TNS"/>
+        <title>Confident Assad launches new term in stronger position </title>
+        <memberOf creator="trRule:rule11" modified="2014-07-16T15:53:15.000Z" literal="Politics">
+          <name>Politics</name>
+        </memberOf>
+        <memberOf creator="trRule:rule12" modified="2014-07-16T15:53:15.000Z" literal="Elections">
+          <name>Elections</name>
+        </memberOf>
+        <memberOf creator="trRule:rule18" modified="2014-07-16T15:53:15.000Z" literal="TopNews">
+          <name>Top News</name>
+        </memberOf>
+        <memberOf creator="trRule:rule27" modified="2014-07-16T15:53:15.000Z" literal="World-MiddleEast">
+          <name>Middle East</name>
+        </memberOf>
+        <signal qcode="edStat:U"/>
+        <signal qcode="prodId:TXT"/>
+        <signal qcode="pmt:text"/>
+        <signal qcode="var:itemMod"/>
+        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:derivedFrom" residref="tag_reuters.com_2014_newsml_L6N0PR263" rtr:id="L6N0PR263" rtr:type="idType:USN"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_KBN0FL0NN_5"/>
+        <edNote>This is editorial note.</edNote>
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8"/>
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5"/>
+          </broader>
+        </located>
+        <infoSource literal="Reuters" role="cRole:source"/>
+        <infoSource literal="Reuters" role="cRole:origProv"/>
+        <creator literal="Reuters" role="cRole:source"/>
+        <altId rtr:isOriginal="1" type="idType:USN">KBN0FL0NN</altId>
+        <language tag="en-US"/>
+        <subject qcode="MCC:a"/>
+        <subject qcode="MCC:i"/>
+        <subject qcode="N2:CIV"/>
+        <subject qcode="N2:CRIM"/>
+        <subject qcode="N2:DEFBUY"/>
+        <subject qcode="N2:DIP"/>
+        <subject qcode="N2:INSURG"/>
+        <subject qcode="N2:ISLM"/>
+        <subject qcode="N2:MEAST"/>
+        <subject qcode="N2:NEWS1"/>
+        <subject qcode="N2:OILG"/>
+        <subject qcode="N2:SA" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:SAU"/>
+        <subject qcode="N2:SECUR"/>
+        <subject qcode="N2:SY" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:SYR"/>
+        <subject qcode="N2:VIO"/>
+        <subject qcode="N2:VOTE"/>
+        <subject qcode="N2:WAR"/>
+        <subject qcode="OCC:OLRTXT"/>
+        <subject qcode="subj:02000000"/>
+        <subject qcode="subj:04005000"/>
+        <subject qcode="subj:04016014"/>
+        <subject qcode="subj:11001002"/>
+        <subject qcode="subj:11002000"/>
+        <subject qcode="subj:11003000"/>
+        <subject qcode="subj:11007000"/>
+        <subject qcode="subj:12010000"/>
+        <subject qcode="subj:16003000"/>
+        <subject qcode="subj:16009000"/>
+        <slugline separator="-">US-SYRIA-CRISIS-ASSAD</slugline>
+        <headline>Confident Assad launches new term in stronger position </headline>
+        <dateline>2014-07-16 15:53:10 GMT+00:00</dateline>
+        <by>By Marwan Makdisi</by>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">US-SYRIA-CRISIS-ASSAD:Confident Assad launches new term in stronger position </description>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+html" wordcount="984">
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <title/>
+            </head>
+            <body>
+              <p>By Marwan Makdisi</p>
+              <p>DAMASCUS (Reuters) - Bashar al-Assad was sworn in for a new term as Syria's president on Wednesday, after an election which his opponents dismiss as a sham but which he said proved he had achieved victory after a "dirty war" to unseat him.</p>
+              <p>Once written off in the West as certain to fall, he launches his seven-year term in his securest position since the early days of the three-year-old war. Those close to Damascus say he now believes his Western and regional foes will be forced to deal with him as a bulwark against Sunni Islamist militants who advanced across northern Iraq last month. </p>
+              <p>At his inauguration he delivered a defiant speech, vowing to recover all Syria from Islamist insurgents and warning that Western and Arab countries would pay dearly for supporting rebels he described as terrorists.</p>
+              <p>Looking calm and confident, the president of 14 years repeatedly took aim at the West and Sunni Muslim Gulf Arab monarchies who have funded and armed the rebels that have taken control of much of the north and east of his country.</p>
+              <p>"Soon we will see the Arab, regional and Western states that supported terrorism pay a high price," he said in the speech at the presidential palace in Damascus, broadcast on state TV.</p>
+              <p>"I repeat my call today to those who were misled to put down their guns, because we will not stop fighting terrorism and striking it wherever it is until we restore security to every spot of Syria," Assad said. But with swathes of the country still in rebel hands, opponents said the speech showed Assad was delusional.    </p>
+              <p>"This is completely separated from reality. Assad is going on as if everything is normal and as if he didn't lose two-thirds of the country," Monzer Akbik of the Western-backed National Coalition opposition group told Reuters. "It was a theatrical election and this is a theatrical swearing in."Syria's war has been the battleground for a sectarian struggle between groups supported by Sunni Muslim states including Saudi Arabia and Qatar, and Assad's government backed by Shi'ite Iran.</p>
+              <p>Last month it spread dramatically in Iraq, where an al Qaeda offshoot operating on both sides of the frontier, the Islamic State in Iraq and the Levant (ISIL), seized cities, changed its name to the Islamic State and declared its leader ruler of all Muslims.</p>
+              <p>ISIL has officially been rejected as a terrorist group by the Gulf states that support other Sunni fighters in Syria, but Damascus, Baghdad and Tehran all blame the Gulf kingdoms for supporting the wider Sunni militancy that feeds it.</p>
+              <p>Since advancing in Iraq, ISIL has also expanded its reach in Syria, using weapons seized from the fleeing Iraqi army to fight against rival rebel factions in Syria.</p>
+              <p>Those around Assad now feel that the ISIL threat will force Western leaders to seek a way to work with him against the common foe, said Salem Zahran, a Lebanese political analyst who is sympathetic to Assad and meets Syrian officials regularly.</p>
+              <p>"The Syrian leadership truly feels that the time of isolation is over."</p>
+              <p/>
+              <p>STILL STANDING</p>
+              <p>Assad took power in 2000 after the death of his father Hafez who ruled for three decades. He has held firmly onto control in Damascus since the revolt began, defying confident predictions by Western leaders, including U.S. President Barack Obama, that he would be swiftly toppled.    </p>
+              <p>The revolt, which began with pro-democracy protests in 2011 that Assad dismissed in his speech as the "fake Arab Spring", rapidly descended into sectarian civil war in which more than 170,000 people have been killed. According to the United Nations, 10.8 million Syrians now urgently need aid.    </p>
+              <p>Western countries lined up from the outset behind the rebels that opposed Assad, but unlike in the case of Libya, where NATO warplanes helped bring down dictator Muammar Gaddafi, they have refused to provide overt military support.</p>
+              <p>Wednesday's inauguration comes nearly two years to the day since the nadir of Assad's grip on power, when bombers managed to strike a security meeting of his inner circle in Damascus, killing close relatives leading his defence.</p>
+              <p>But although the rebels made further gains, Iran and Lebanon's powerful Hezbollah Shi'ite militia came to Assad's aid the following year, the start of a counter-offensive that has seen his forces go on to reclaim wide swathes of territory.</p>
+              <p>Meanwhile, the rise of Sunni jihadists like ISIL among the rebels has dampened Western enthusiasm for aiding Assad's enemies, led to infighting within the rebel ranks and bolstered Assad's assertions that his government is fighting extremism.</p>
+              <p>Obama threatened air strikes last year after blaming Assad for a poison gas attack that killed hundreds of people in a Damascus suburb. But the United States called off the operation when Assad agreed to give up chemical arms, effectively ending any threat that the West might use force to remove him.</p>
+              <p>In his speech, Assad dismissed the Syrian opposition abroad as traitors but said he would be willing to work with the country's internal opposition, without giving details.</p>
+              <p>He also spoke about government plans for the future such as the need to fight corruption, ideas for religious educational reform and a program to rebuild some damaged areas.</p>
+              <p>The inauguration featured a display of carefully orchestrated adulation that has been typical of his infrequent public appearances since the start of the war. Dressed in a dark suit, he arrived at the presidential palace in a black car and walked down a red carpet as a military band played. He entered a hall to applause from politicians and religious leaders.    </p>
+              <p>Assad's government says the election is proof of its willingness to enact democratic reforms. He ran against two other candidates, making it the first contested presidential election in Syria's history, after four decades of referendums to approve the appointment of Assad and his father. Official returns gave him 88.7 percent of the vote.</p>
+              <p/>
+              <p> (Additional reporting by Sylvia Westall, Laila Bassam, Oliver Holmes, Mariam Karouny and Tom Perry in Beirut; Editing by Peter Graff)</p>
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

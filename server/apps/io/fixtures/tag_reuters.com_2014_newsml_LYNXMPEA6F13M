@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <sent>2014-07-16T20:15:21.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1</transmitId>
+    <priority>4</priority>
+    <destination>OUSWDM</destination>
+    <destination>OCATPM</destination>
+    <destination>RTRFLN</destination>
+    <destination>OUSTPM</destination>
+    <destination>ORTAP</destination>
+    <channel>PIX</channel>
+  </header>
+  <itemSet>
+    <newsItem conformance="power" guid="tag_reuters.com_2014_newsml_LYNXMPEA6F13M" standard="NewsML-G2" standardversion="2.14" version="1" xml:lang="en-US">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters"/>
+        <copyrightNotice xml:lang="en-GB">(c) Copyright Thomson Reuters 2014. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:picture" rtr:msgType="S"/>
+        <provider literal="reuters.com"/>
+        <versionCreated>2014-07-16T20:15:21.000Z</versionCreated>
+        <firstCreated>2014-07-16T20:15:21.000Z</firstCreated>
+        <pubStatus qcode="stat:usable"/>
+        <role qcode="itemRole:N"/>
+        <fileName>2014-07-16T201521Z_1_LYNXMPEA6F13M_RTROPTP_0_SYRIA-CRISIS-ASSAD.XML</fileName>
+        <generator creator="sys:lynxPM" versioninfo="0.1.0.21">LYNX:addP:001</generator>
+        <profile versioninfo="01.00.01">SNI-Picture</profile>
+        <service qcode="svc:RTR_PIX"/>
+        <title>Syria's President Bashar al-Assad places his right hand on a Koran as he is sworn in for a new seven-year term, at al-Shaab presidential palace in Damascus</title>
+        <memberOf creator="trRule:rule11" modified="2014-07-16T20:15:27.000Z" literal="Politics">
+          <name>Politics</name>
+        </memberOf>
+        <memberOf creator="trRule:rule12" modified="2014-07-16T20:15:27.000Z" literal="Elections">
+          <name>Elections</name>
+        </memberOf>
+        <memberOf creator="trRule:rule18" modified="2014-07-16T20:15:27.000Z" literal="TopNews">
+          <name>Top News</name>
+        </memberOf>
+        <memberOf creator="trRule:rule27" modified="2014-07-16T20:15:27.000Z" literal="World-MiddleEast">
+          <name>Middle East</name>
+        </memberOf>
+        <signal qcode="edStat:N"/>
+        <signal qcode="prodId:PIX"/>
+        <signal qcode="pmt:picture"/>
+        <signal qcode="var:binMod"/>
+        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:processedFrom" residref="tag_reuters.com_0000_newsml_GM1EA7H0B7U01" rtr:id="GM1EA7H0B7U01" rtr:type="idType:IID"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1"/>
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8"/>
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5"/>
+          </broader>
+        </located>
+        <infoSource literal="Reuters" role="cRole:source"/>
+        <infoSource literal="Reuters" role="cRole:origProv"/>
+        <creator literal="Reuters" role="cRole:source"/>
+        <altId rtr:isOriginal="1" type="idType:IID">LYNXMPEA6F13M</altId>
+        <language tag="en-US"/>
+        <subject qcode="MCC:I"/>
+        <subject qcode="N2:POL"/>
+        <subject qcode="N2:REL"/>
+        <subject qcode="N2:SY"/>
+        <subject qcode="N2:TPX"/>
+        <subject qcode="N2:VOTE"/>
+        <subject qcode="OCC:OLRPIX"/>
+        <subject qcode="subj:11000000"/>
+        <subject qcode="subj:11003000"/>
+        <subject qcode="subj:12000000"/>
+        <slugline separator="-">SYRIA-CRISIS-ASSAD</slugline>
+        <headline>Syria's President Bashar al-Assad places his right hand on a Koran as he is sworn in for a new seven-year term, at al-Shaab presidential palace in Damascus</headline>
+        <dateline>2014-07-16 20:15:21 GMT+00:00</dateline>
+        <by>SANA</by>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">Syria's President Bashar al-Assad places his right hand on a Koran as he is sworn in for a new seven-year term, at al-Shaab presidential palace in Damascus July 16, 2014, in this picture released by Syria's national news agency SANA. REUTERS/SANA/Handout via Reuters</description>
+      </contentMeta>
+      <contentSet>
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="106" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-THUMBNAIL" rendition="rend:thumbnail" residref="tag_reuters.com_2014_binary_LYNXMPEA6F13M-THUMBNAIL" rtr:formatVersion="1" size="6747" width="150">
+          <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T201521Z_1_LYNXMPEA6F13M_RTROPTP_1_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-THUMBNAIL</rtr:altLoc>
+        </remoteContent>
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="317" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-VIEWIMAGE" rendition="rend:viewImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F13M-VIEWIMAGE" rtr:formatVersion="1" size="29124" width="450">
+          <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T201521Z_1_LYNXMPEA6F13M_RTROPTP_2_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-VIEWIMAGE</rtr:altLoc>
+        </remoteContent>
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="563" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-BASEIMAGE" rendition="rend:baseImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F13M-BASEIMAGE" rtr:formatVersion="1" size="66348" width="800">
+          <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T201521Z_1_LYNXMPEA6F13M_RTROPTP_3_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-BASEIMAGE</rtr:altLoc>
+        </remoteContent>
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" height="2253" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-FILEDIMAGE" rendition="rend:filedImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F13M-FILEDIMAGE" rtr:formatVersion="1" size="718903" width="3200">
+          <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T201521Z_1_LYNXMPEA6F13M_RTROPTP_4_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F13M_1/tag_reuters.com_2014_binary_LYNXMPEA6F13M-FILEDIMAGE</rtr:altLoc>
+        </remoteContent>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

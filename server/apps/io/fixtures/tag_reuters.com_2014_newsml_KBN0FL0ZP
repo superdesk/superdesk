@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <sent>2014-07-16T13:00:03.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag_reuters.com_2014_newsml_KBN0FL0ZP_2</transmitId>
+    <priority>4</priority>
+    <destination>OUSWDM</destination>
+    <destination>OCATPM</destination>
+    <destination>RTRFLN</destination>
+    <destination>OUSTPM</destination>
+    <destination>ORTAP</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <newsItem conformance="power" guid="tag_reuters.com_2014_newsml_KBN0FL0ZP" standard="NewsML-G2" standardversion="2.14" version="2" xml:lang="en-US">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters"/>
+        <copyrightNotice xml:lang="en-GB">(c) Copyright Thomson Reuters 2014. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" rtr:msgType="R"/>
+        <provider literal="reuters.com"/>
+        <versionCreated>2014-07-16T13:00:03.000Z</versionCreated>
+        <firstCreated>2014-07-16T10:35:57.000Z</firstCreated>
+        <pubStatus qcode="stat:usable"/>
+        <role qcode="itemRole:N"/>
+        <fileName>2014-07-16T130003Z_2_KBN0FL0ZP_RTROPTT_0_US-SYRIA-CRISIS-ASSAD-SPEECH.XML</fileName>
+        <generator creator="sys:lynxPM" versioninfo="0.1.0.21">LYNX:addT:001</generator>
+        <profile versioninfo="01.00.01">SNI-Text</profile>
+        <service qcode="svc:RTR_TNS"/>
+        <title>Syria's Assad says foreign states will pay for supporting 'terrorism'</title>
+        <memberOf creator="trRule:rule11" modified="2014-07-16T13:00:11.000Z" literal="Politics">
+          <name>Politics</name>
+        </memberOf>
+        <memberOf creator="trRule:rule12" modified="2014-07-16T13:00:11.000Z" literal="Elections">
+          <name>Elections</name>
+        </memberOf>
+        <memberOf creator="trRule:rule18" modified="2014-07-16T13:00:11.000Z" literal="TopNews">
+          <name>Top News</name>
+        </memberOf>
+        <memberOf creator="trRule:rule25" modified="2014-07-16T13:00:11.000Z" literal="World-Europe">
+          <name>Europe</name>
+        </memberOf>
+        <memberOf creator="trRule:rule27" modified="2014-07-16T13:00:11.000Z" literal="World-MiddleEast">
+          <name>Middle East</name>
+        </memberOf>
+        <memberOf creator="trRule:rule29" modified="2014-07-16T13:00:11.000Z" literal="World-US">
+          <name>US</name>
+        </memberOf>
+        <signal qcode="edStat:U"/>
+        <signal qcode="prodId:TXT"/>
+        <signal qcode="pmt:text"/>
+        <signal qcode="var:itemMod"/>
+        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:derivedFrom" residref="tag_reuters.com_2014_newsml_L6N0PR2MC" rtr:id="L6N0PR2MC" rtr:type="idType:USN"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_KBN0FL0ZP_2"/>
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8"/>
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5"/>
+          </broader>
+        </located>
+        <infoSource literal="Reuters" role="cRole:source"/>
+        <infoSource literal="Reuters" role="cRole:origProv"/>
+        <creator literal="Reuters" role="cRole:source"/>
+        <altId rtr:isOriginal="1" type="idType:USN">KBN0FL0ZP</altId>
+        <language tag="en-US"/>
+        <subject qcode="MCC:a"/>
+        <subject qcode="MCC:i"/>
+        <subject qcode="N2:DIP"/>
+        <subject qcode="N2:EMRG"/>
+        <subject qcode="N2:EU"/>
+        <subject qcode="N2:IQ" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:IRQ"/>
+        <subject qcode="N2:JO" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:JOR"/>
+        <subject qcode="N2:LB" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:LBN"/>
+        <subject qcode="N2:MEAST"/>
+        <subject qcode="N2:NEWS1"/>
+        <subject qcode="N2:PIA"/>
+        <subject qcode="N2:POL"/>
+        <subject qcode="N2:SY" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:SYR"/>
+        <subject qcode="N2:TR" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:TUR"/>
+        <subject qcode="N2:US" type="cptType:5">
+          <facet qcode="geoProp:5"/>
+        </subject>
+        <subject qcode="N2:USA"/>
+        <subject qcode="N2:VOTE"/>
+        <subject qcode="N2:VOTP"/>
+        <subject qcode="N2:WAR"/>
+        <subject qcode="OCC:OLRTXT"/>
+        <subject qcode="subj:11000000"/>
+        <subject qcode="subj:11002000"/>
+        <subject qcode="subj:11003000"/>
+        <subject qcode="subj:11003004"/>
+        <subject qcode="subj:16009000"/>
+        <slugline separator="-">US-SYRIA-CRISIS-ASSAD-SPEECH</slugline>
+        <headline>Syria's Assad says foreign states will pay for supporting 'terrorism'</headline>
+        <dateline>2014-07-16 13:00:03 GMT+00:00</dateline>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">US-SYRIA-CRISIS-ASSAD-SPEECH:Syria's Assad says foreign states will pay for supporting 'terrorism'</description>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+html" wordcount="780">
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <title/>
+            </head>
+            <body>
+              <p>BEIRUT (Reuters) - President Bashar al-Assad, who was sworn in for a new term on Wednesday, said Western and Arab states that have supported "terrorism" will pay a "high price" and that he would fight insurgents until security was restored to the whole country.</p>
+              <p>"Soon we will see that the Arab, regional and Western states that supported terrorism will pay a high price," he told his supporters at the presidential palace.</p>
+              <p>Assad, supported by Russia and Iran, has defied calls by Western states to step aside during the conflict that started in 2011 with protests against his rule before descending into a war that has killed at least 170,000 people.</p>
+              <p/>
+              <p> (Reporting by Tom Perry, editing by John Stonestreet)</p>
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

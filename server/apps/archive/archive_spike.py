@@ -21,10 +21,9 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
 from superdesk.metadata.utils import item_url
-from .common import get_user, is_assigned_to_a_desk
+from .common import get_user, is_assigned_to_a_desk, get_expiry
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.tasks import get_expiry
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
 from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package, set_sign_off

@@ -19,7 +19,7 @@ from superdesk.utc import utcnow
 from superdesk.tests import setup
 from superdesk.errors import SuperdeskApiError, ProviderError
 from superdesk.io import register_provider
-from superdesk.io.tests import setup_providers, teardown_providers
+from .tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
 from superdesk.io.commands.remove_expired_content import get_expired_items, RemoveExpiredContent
 from superdesk.celery_task_utils import mark_task_as_not_running, is_task_running
@@ -283,14 +283,14 @@ class UpdateIngestTest(TestCase):
             self.ingest_items(items, provider)
 
             # four files in grid fs
-            current_files = app.media.fs('upload').find()
+            current_files = self.app.media.fs('upload').find()
             self.assertEqual(4, current_files.count())
 
             remove = RemoveExpiredContent()
             remove.run(provider.get('type'))
 
             # all gone
-            current_files = app.media.fs('upload').find()
+            current_files = self.app.media.fs('upload').find()
             self.assertEqual(0, current_files.count())
 
     def test_apply_rule_set(self):

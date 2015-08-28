@@ -13,6 +13,7 @@
 import os
 import settings
 from superdesk.factory import get_app as superdesk_app
+from apps.aap_mm.aap_mm_datalayer import AAPMMDatalayer
 
 
 def get_app(config=None):
@@ -38,6 +39,7 @@ def get_app(config=None):
     config['DOMAIN'] = {}
 
     app = superdesk_app(config, media_storage)
+    app.datalayer.aapmm = AAPMMDatalayer(app)
     return app
 
 if __name__ == '__main__':

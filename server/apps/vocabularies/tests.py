@@ -13,7 +13,6 @@ import json
 from test_factory import SuperdeskTestCase
 from superdesk import get_resource_service
 from .command import VocabulariesPopulateCommand
-from settings import URL_PREFIX
 
 
 class VocabulariesPopulateTest(SuperdeskTestCase):
@@ -40,14 +39,13 @@ class VocabulariesPopulateTest(SuperdeskTestCase):
 
     def test_populate_vocabularies(self):
         cmd = VocabulariesPopulateCommand()
-        with self.app.test_request_context(URL_PREFIX):
-            cmd.run(self.filename)
-            service = get_resource_service("vocabularies")
+        cmd.run(self.filename)
+        service = get_resource_service("vocabularies")
 
-            for item in self.json_data:
-                data = service.find_one(_id=item["_id"], req=None)
-                self.assertEqual(data["_id"], item["_id"])
-                self.assertListEqual(data["items"], item["items"])
+        for item in self.json_data:
+            data = service.find_one(_id=item["_id"], req=None)
+            self.assertEqual(data["_id"], item["_id"])
+            self.assertListEqual(data["items"], item["items"])
 
     def tearDown(self):
         os.remove(self.filename)

@@ -12,7 +12,6 @@ import superdesk
 
 from superdesk import get_resource_service
 from flask import current_app as app
-from apps.tasks import send_to
 from apps.archive.archive import SOURCE as ARCHIVE
 from apps.archive.common import generate_unique_id_and_name, remove_unwanted, insert_into_versions
 from superdesk.metadata.item import GUID_TAG, FAMILY_ID, ITEM_STATE, CONTENT_STATE
@@ -71,6 +70,8 @@ class AppScaffoldDataCommand(superdesk.Command):
                 user_id = desk.get('members', [{'user': None}])[0].get('user')
                 dest_doc['original_creator'] = user_id
                 dest_doc['version_creator'] = user_id
+
+                from apps.tasks import send_to
                 send_to(dest_doc, desk_id=desk_id, stage_id=stage_id, user_id=user_id)
                 dest_doc[app.config['VERSION']] = 1  # Above step increments the version and needs to reset
                 dest_doc[FAMILY_ID] = item['_id']
