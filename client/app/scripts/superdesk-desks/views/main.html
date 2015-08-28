@@ -16,15 +16,15 @@
 
 	<div class="main-desk-container">
 
-		<div class="desk-container" ng-if="view === 'content'" ng-repeat="desk in desks._items">
+		<div class="desk-container" ng-if="view === 'content'" ng-repeat="desk in desks._items | orderBy: 'name'">
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
 		</div>
 
-		<div class="desk-container" ng-if="view === 'tasks'" ng-repeat="desk in desks._items">
+		<div class="desk-container" ng-if="view === 'tasks'" ng-repeat="desk in desks._items | orderBy: 'name'">
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk-tasks.html'"></div>
 		</div>
 
-		<div class="desk-container" ng-if="view === 'users'" ng-repeat="desk in desks._items">
+		<div class="desk-container" ng-if="view === 'users'" ng-repeat="desk in desks._items | orderBy: 'name'">
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk_users.html'"></div>
 		</div>
 	</div>

@@ -111,7 +111,7 @@
         "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk"},
         "resource": "desks",
         "username": "admin",
-        "id_name": "-id desk Sport Desks-"
+        "id_name": "-id desk Sports Desks-"
     },
 
     {
@@ -124,7 +124,7 @@
     {
         "data":   {
 		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
+		    "desk" : "-id desk Sports Desks-",
 		    "is_visible" : true,
 		    "task_status" : "todo",
 		    "content_expiry" : 43200,
@@ -133,13 +133,13 @@
 		},
         "resource": "stages",
         "username": "admin",
-        "id_name": "-id stage one Sport Desks-"
+        "id_name": "-id stage one Sports Desks-"
     },
     
     {
         "data":   {
 		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
+		    "desk" : "-id desk Sports Desks-",
 		    "is_visible" : true,
 		    "task_status" : "in_progress",
 		    "content_expiry" : 43200,
@@ -148,13 +148,13 @@
 		},
         "resource": "stages",
         "username": "admin",
-        "id_name": "-id stage two Sport Desks-"
+        "id_name": "-id stage two Sports Desks-"
     },
     
     {
         "data":   {
 		    "default_incoming" : false,
-		    "desk" : "-id desk Sport Desks-",
+		    "desk" : "-id desk Sports Desks-",
 		    "is_visible" : true,
 		    "task_status" : "done",
 		    "content_expiry" : 43200,
@@ -163,7 +163,7 @@
 		},
         "resource": "stages",
         "username": "admin",
-        "id_name": "-id stage three Sport Desks-"
+        "id_name": "-id stage three Sports Desks-"
     },
     
     {
@@ -210,6 +210,46 @@
         "username": "admin",
         "id_name": "-id stage three Politic Desks-"
     },
+
+   {
+        "data":   {
+            "monitoring_settings" : [ 
+                {
+                    "max_items" : 10,
+                    "type" : "stage",
+                    "_id" : "-id stage one Politic Desks-"
+                }, 
+                {
+                    "max_items" : 10,
+                    "type" : "stage",
+                    "_id" : "-id stage two Politic Desks-"
+                }
+            ]
+        },
+        "resource": "desks",
+        "username": "admin",
+        "id_update": "-id desk Politic Desks-"
+    },
+ 
+   {
+        "data":   {
+            "monitoring_settings" : [ 
+                {
+                    "max_items" : 10,
+                    "type" : "stage",
+                    "_id" : "-id stage one Sports Desks-"
+                }, 
+                {
+                    "max_items" : 10,
+                    "type" : "stage",
+                    "_id" : "-id stage three Sports Desks-"
+                }
+            ]
+        },
+        "resource": "desks",
+        "username": "admin",
+        "id_update": "-id desk Sports Desks-"
+    },
     
     {
     	"data": {
@@ -250,6 +290,7 @@
 		"resource": "validators",
 		"id_name": "-id validator publish-"
 	},
+	
     {
         "data": {
             "_id": "subscriber_types",
@@ -284,13 +325,13 @@
     },
     
     {
-    	"data": {"name": "Highlight one", "desks": ["-id desk Sport Desks-"], "groups": ["main"]}, 
+    	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight one-"
     },
     
     {	
-    	"data": {"name": "Highlight two", "desks": ["-id desk Sport Desks-", "-id desk Politic Desks-"], "groups": ["one", "two"]}, 
+    	"data": {"name": "Highlight two", "desks": ["-id desk Sports Desks-", "-id desk Politic Desks-"], "groups": ["one", "two"]}, 
     	"resource": "highlights",
     	"id_name": "-id highlight two-"
     },
@@ -345,10 +386,10 @@
             "_current_version" : 1,
             "original_creator": "-id user admin-",
             "task" : {
-		        "desk" : "-id desk Sport Desks-",
+		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin-",
 		        "status": "todo",
-		        "stage": "-id stage one Sport Desks-"
+		        "stage": "-id stage one Sports Desks-"
 		    }
         }
     },
@@ -365,10 +406,10 @@
             "_current_version" : 1,
             "original_creator": "-id user admin-",
             "task" : {
-		        "desk" : "-id desk Sport Desks-",
+		        "desk" : "-id desk Sports Desks-",
 		        "user" : "-id user admin1-",
 		        "status": "done",
-		        "stage": "-id stage three Sport Desks-"
+		        "stage": "-id stage three Sports Desks-"
 		    }
         }
     },
@@ -487,6 +528,7 @@
         "data": {
             "filter": {
                 "query": {
+                    "repo" : "archive",
                     "q": "headline:(item*)"
                 }
             },
@@ -500,6 +542,7 @@
         "data": {
             "filter": {
                 "query": {
+                    "repo" : "archive",
                     "q": "headline:(item3)"
                 }
             },
