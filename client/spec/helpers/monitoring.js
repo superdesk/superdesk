@@ -112,7 +112,7 @@ function Monitoring() {
         var itemElem = this.getSpikedItem(item);
         browser.actions().mouseMove(itemElem).perform();
         itemElem.element(by.className('icon-dots-vertical')).click();
-        var menu = element(by.css('.dropdown-menu.active'));
+        var menu = element(by.css('.dropdown-menu.open'));
         return menu.element(by.partialLinkText('Unspike')).click();
     };
 
@@ -120,7 +120,7 @@ function Monitoring() {
         var itemElem = this.getItem(group, item);
         browser.actions().mouseMove(itemElem).perform();
         itemElem.element(by.className('icon-dots-vertical')).click();
-        return element(by.css('.dropdown-menu.active'));
+        return element(by.css('.dropdown-menu.open'));
     };
 
     this.showMonitoringSettings = function() {

@@ -495,7 +495,7 @@
     .config(['superdeskProvider', function(superdesk) {
         superdesk
         .activity('mark.item', {
-            label: gettext('Mark item'),
+            label: gettext('Mark for highlight'),
             priority: 30,
             icon: 'list-plus',
             dropdown: true,

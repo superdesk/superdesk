@@ -5,10 +5,11 @@
     sd-dropdown-position-right>
     <button class="more-activity-toggle condensed dropdown-toggle"
         ng-click="stopEvent($event)"
+        ng-dblclick="stopEvent($event)"
         ng-show="active || open"
         dropdown-toggle><i class="icon-dots-vertical"></i></button>
 
-    <ul class="dropdown-menu more-activity-menu" ng-class="{active: open}">
+    <ul class="dropdown dropdown-menu more-activity-menu" ng-class="{open: open}">
         <li><div class="menu-label" translate>Actions</div></li>
         <li class="divider"></li>
 

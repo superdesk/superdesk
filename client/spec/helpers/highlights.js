@@ -159,6 +159,7 @@ function Highlights() {
 
     this.mark = function(highlight, item) {
         var menu = content.openItemMenu(item);
+        browser.actions().mouseMove(element(by.css('[title="Mark for highlight"]'))).perform();
         return menu.element(by.partialButtonText(highlight)).click();
     };
 }
