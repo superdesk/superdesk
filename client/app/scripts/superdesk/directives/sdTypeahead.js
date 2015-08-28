@@ -38,7 +38,7 @@ define(['angular'], function(angular) {
                 },
                 controller: ['$scope', function($scope) {
                     $scope.items = [];
-                    $scope.hide = false;
+                    $scope.hide = true;
 
                     this.activate = function(item) {
                         $scope.active = item;
@@ -63,9 +63,11 @@ define(['angular'], function(angular) {
                     };
 
                     this.select = function(item) {
-                        $scope.hide = true;
-                        $scope.focused = true;
-                        $scope.select({item: item});
+                        if (!$scope.hide) {
+                            $scope.hide = true;
+                            $scope.focused = false;
+                            $scope.select({item: item});
+                        }
                     };
 
                     $scope.isVisible = function() {
@@ -140,6 +142,7 @@ define(['angular'], function(angular) {
                             $list.show();
                         } else {
                             $list.hide();
+                            scope.active = null;
                         }
                     });
                 }

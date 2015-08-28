@@ -6,16 +6,15 @@
     </div>
 </div>
 <div class="dropdown dropleft dropdown-bigger" dropdown>
-    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-show="header && !disabled">
+    <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-if="header && !disabled">
         <i class="icon-white icon-plus-large"></i>
     </button>
     <ul class="dropdown-menu nested-menu">
         <li ng-show="!activeTerm && header">
-            <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" always-visible="true" data-disabled="disabled">
+            <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" always-visible="header" data-disabled="disabled">
                 <li typeahead-item="t" ng-repeat="t in terms" ng-if="!activeTree.length || activeList"><button>{{ :: t.name }}</button></li>
             </ul>
         </li>
-
         <li class="levelup" ng-if="activeTerm">
             <i class="backlink" ng-click="openParent(activeTerm, $event)"></i>
             <button ng-click="selectTerm(activeTerm)">
@@ -23,7 +22,7 @@
                 <b class="category-hover">{{ :: "Choose entire category" | translate }}</b>
             </button>
         </li>
-        <li class="main-list" ng-if="activeTree.length && !activeList" ng-class="{active: activeTerm}">
+        <li class="main-list" ng-if="activeTree.length && !activeList && header" ng-class="{active: activeTerm}">
             <ul sd-shadow>
                 <li ng-repeat="term in activeTree track by term.qcode">
                     <button ng-if="tree[term.qcode]" class="nested-toggle" ng-click="openTree(term, $event)">{{ :: term.name }} <i class="icon-chevron-right-thin submenu-icon"></i></button>

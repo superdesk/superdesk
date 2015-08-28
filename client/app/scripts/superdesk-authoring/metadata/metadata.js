@@ -180,8 +180,8 @@ function MetadataWordsListEditingDirective() {
  * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
  *
  */
-MetadataListEditingDirective.$inject = [];
-function MetadataListEditingDirective() {
+MetadataListEditingDirective.$inject = ['metadata'];
+function MetadataListEditingDirective(metadata) {
     return {
         scope: {
             item: '=',
@@ -195,6 +195,8 @@ function MetadataListEditingDirective() {
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
         link: function(scope) {
+            metadata.subjectScope = scope;
+
             scope.$watch('list', function(items) {
                 if (
                     !items || items.length === 0 ||
