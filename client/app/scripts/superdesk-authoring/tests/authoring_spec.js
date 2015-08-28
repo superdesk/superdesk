@@ -314,12 +314,12 @@ describe('cropImage', function() {
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('templates'));
 
-    it('can save crop', inject(function($q, $rootScope, urls, $http, $httpBackend, cropImage) {
+    it('saves crop', inject(function($q, $rootScope, urls, $http, $httpBackend, cropImage) {
         var item = {
             '_id': 'urn:newsml:localhost:2015-08-25T05:12:09.664870:4eeac2ab-a0e3-4fdc-b8fe-233ef9462ff1',
             'cropsize': {name: '4-3'}
         };
-        var form = {
+        var coordinates = {
             'CropLeft': 0,
             'CropTop': 0,
             'CropRight': 800,
@@ -332,10 +332,10 @@ describe('cropImage', function() {
 
         var POST_URL = _URL + '/' + item._id + '/crop/' + item.cropsize.name;
 
-        $httpBackend.expectPOST(POST_URL, form).respond(201,
+        $httpBackend.expectPOST(POST_URL, coordinates).respond(201,
             {data: {'CropLeft': 0, 'CropTop': 0, 'CropRight': 800, 'CropBottom': 600}});
 
-        cropImage.saveCrop(form, item).then(function(response) {
+        cropImage.saveCrop(coordinates, item).then(function(response) {
             result = response.data;
         });
 

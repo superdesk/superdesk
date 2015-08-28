@@ -689,14 +689,14 @@
 
     CropImageService.$inject = ['urls', '$http'];
     function CropImageService(urls, $http) {
-        this.saveCrop = function saveCrop(form, item) {
+        this.saveCrop = function saveCrop(coordinates, item) {
             return urls.resource('archive').then(function(url) {
                 url = url + '/' + item._id + '/crop/' + item.cropsize.name;
                 return $http.post(url, {
-                    'CropLeft': form.CropLeft,
-                    'CropRight': form.CropRight,
-                    'CropTop': form.CropTop,
-                    'CropBottom': form.CropBottom
+                    'CropLeft': coordinates.CropLeft,
+                    'CropRight': coordinates.CropRight,
+                    'CropTop': coordinates.CropTop,
+                    'CropBottom': coordinates.CropBottom
                 }).then(function(response) {
                     return response.data;
                 });
@@ -718,38 +718,37 @@
             }
         };
 
-        function recordCrop(form, cropName) {
-            $scope.data.renditions[cropName].CropLeft = form.CropLeft;
-            $scope.data.renditions[cropName].CropTop = form.CropTop;
-            $scope.data.renditions[cropName].CropRight = form.CropRight;
-            $scope.data.renditions[cropName].CropBottom = form.CropBottom;
+        function recordCrop(coordinates, cropName) {
+            $scope.data.renditions[cropName].CropLeft = coordinates.CropLeft;
+            $scope.data.renditions[cropName].CropTop = coordinates.CropTop;
+            $scope.data.renditions[cropName].CropRight = coordinates.CropRight;
+            $scope.data.renditions[cropName].CropBottom = coordinates.CropBottom;
         }
 
         $scope.done = function() {
-            var form = {};
-            form.CropLeft = Math.round(Math.min($scope.preview.cords.x, $scope.preview.cords.x2));
-            form.CropRight = Math.round(Math.max($scope.preview.cords.x, $scope.preview.cords.x2));
-            form.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
-            form.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
+            var coordinates = {};
+            coordinates.CropLeft = Math.round(Math.min($scope.preview.cords.x, $scope.preview.cords.x2));
+            coordinates.CropRight = Math.round(Math.max($scope.preview.cords.x, $scope.preview.cords.x2));
+            coordinates.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
+            coordinates.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
 
             var cropName = $scope.data.cropsize.name;
 
             //Save or overwrite crop if item is not published.
             if ($scope.data.state !== 'published') {
-                return cropImage.saveCrop(form, $scope.data).then(function(result) {
+                return cropImage.saveCrop(coordinates, $scope.data).then(function(result) {
                     var picture_url = result.renditions[cropName].href;
                     notify.success(gettext('Image Cropped.'));
                     $scope.data.picture_url = picture_url;
-                    recordCrop(form, cropName);
+                    recordCrop(coordinates, cropName);
                 }, function(response) {
                     if (response.data._status === 'ERR'){
                         notify.error(gettext('Error: ' + response.data._error.message));
-                        return;
                     }
                 });
             } else {
                 //Hold crop changes if item is already published, so it will be save on correction.
-                recordCrop(form, cropName);
+                recordCrop(coordinates, cropName);
                 notify.success(gettext('Crop changes recorded'));
             }
 
@@ -1633,13 +1632,16 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout', 'superdesk'];
-    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout, superdesk) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout',
+    'superdesk', 'notify', 'gettext'];
+    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout, superdesk, notify, gettext) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
+                var DEFAULT_ASPECT_RATIO = 4 / 3;
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
+                scope.errorMessage = null;
 
                 scope.$watch('item', function(item) {
                     if (angular.isDefined(item)) {
@@ -1671,16 +1673,30 @@
                     }
                 };
 
+                /**
+                 * Function to evaluate aspect ratio attribute in advance to provide in
+                 * proper decimal format required by jCrop.
+                 */
                 scope.evalAspectRatio = function(ar) {
-                    ar = ar.replace('-', '/');
-                    var Fn = Function, val = new Fn('return ' + ar)();
-                    return val;
+                    var parts = ar.split('-').map(_.partial(parseInt, _, 10));
+                    var result = parts[0] / parts[1];
+
+                    if (isNaN(result) || !isFinite(result)) {
+                        scope.errorMessage = 'Error: Given Aspect ratio was not valid, using default: ' + DEFAULT_ASPECT_RATIO;
+                        return DEFAULT_ASPECT_RATIO;
+                    } else {
+                        scope.errorMessage = null;
+                        return result;
+                    }
                 };
 
                 scope.editCrop = function(cropsize) {
                     scope.toggleDetails = !scope.toggleDetails;
                     scope.item.cropsize = cropsize;
                     scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
+                    if (scope.errorMessage != null) {
+                        notify.error(gettext(scope.errorMessage));
+                    }
                     superdesk.intent('edit', 'crop',  scope.item);
                 };
             }

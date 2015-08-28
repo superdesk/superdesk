@@ -81,7 +81,11 @@
         <ul>
           <li ng-repeat="cropsize in metadata.crop_sizes track by cropsize.name">
           <label translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
-          <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-crop-select="item.renditions[cropsize.name]" tooltip="{{ :: 'Edit Crop' | translate }}"></div>
+          <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" 
+            data-src="item.renditions.original.href" data-box-width="cropsize.width" 
+            data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" 
+            data-crop-select="item.renditions[cropsize.name]" tooltip="{{ :: 'Edit Crop' | translate }}">
+          </div>
            <br />
           </li>
         </ul>
