@@ -228,4 +228,24 @@ describe('monitoring view', function() {
         monitoring.unspikeMultipleItems();
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
+
+    it('can show/hide monitoring list', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.toggleStage(0, 2);
+        monitoring.nextStages();
+        monitoring.toggleSearch(0);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        monitoring.openAction(0, 0);
+        monitoring.showHideList();
+        expect(monitoring.hasClass(element(by.id('main-container')), 'hideMonitoring')).toBe(true);
+
+        browser.sleep(1000);
+
+        monitoring.showHideList();
+        expect(monitoring.hasClass(element(by.id('main-container')), 'hideMonitoring')).toBe(false);
+    });
 });
