@@ -56,7 +56,7 @@
                 params.type = card.fileType;
             }
 
-            if (card.type === 'search' && card.search.filter.query.q) {
+            if (card.type === 'search' && card.search && card.search.filter.query.q) {
                 if (card.query) {
                     params.q = '(' + card.query + ') ' + card.search.filter.query.q;
                 } else {
@@ -99,7 +99,7 @@
             }
 
             var criteria = {source: query.getCriteria()};
-            if (card.type === 'search' && card.search.filter.query.repo) {
+            if (card.type === 'search' && card.search && card.search.filter.query.repo) {
                 criteria.repo = card.search.filter.query.repo;
             }
             criteria.source.from = 0;

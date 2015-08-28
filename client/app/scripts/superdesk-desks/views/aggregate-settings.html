@@ -9,7 +9,7 @@
         <div class="content">
 
             <div class="legend" translate>Select desks for view</div>
-            <div class="desk" ng-repeat="desk in desks">
+            <div class="desk" ng-repeat="desk in desks | orderBy: 'name'">
                 <div class="desk-title">
                     {{desk.name}}
                     <span sd-switch class="pull-right" ng-model="editGroups[desk._id].selected" ng-click="setDeskInfo(desk._id)"></span>
@@ -37,7 +37,7 @@
     <div sd-wizard-step data-title="{{ :: 'Saved Searches' | translate }}" data-code="searches">
         <div class="content">
             <div class="legend" translate>Select saved searches for view</div>
-            <div class="desk" ng-repeat="search in searches">
+            <div class="desk" ng-repeat="search in searches | orderBy: 'name'">
                 <div class="desk-title">
                     {{search.name}}
                     <span sd-switch class="pull-right" ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>

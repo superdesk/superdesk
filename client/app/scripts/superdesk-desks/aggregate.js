@@ -200,7 +200,7 @@
 
                 if (card.type === 'search') {
                     card.search = self.searchLookup[card._id];
-                    card.header = card.search.name;
+                    card.header = card.search ? card.search.name: 'Deleted saved search';
                 }
 
                 if (card.type === 'personal') {
@@ -216,6 +216,9 @@
         this.edit = function() {
             this.editGroups = {};
             _.each(this.groups, function(item, index) {
+                if (item.type === 'search' && !self.searchLookup[item._id]) {
+                    return;
+                }
                 self.editGroups[item._id] = {
                     _id: item._id,
                     selected: true,
@@ -225,6 +228,9 @@
                 };
                 if (item.type === 'stage') {
                     var stage = self.stageLookup[item._id];
+                    if (!stage) {
+                        return;
+                    }
                     self.editGroups[stage.desk] = {
                         _id: stage._id,
                         selected: true,
