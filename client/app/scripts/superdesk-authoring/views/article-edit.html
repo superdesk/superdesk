@@ -80,14 +80,16 @@
       <div class="original">
         <ul>
           <li ng-repeat="cropsize in metadata.crop_sizes track by cropsize.name">
-           <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-crop-select="item.renditions[cropsize.name]" data-progress-width="progress.width"></div>
+          <label translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
+          <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" data-src="item.renditions.original.href" data-box-width="cropsize.width" data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" data-crop-select="item.renditions[cropsize.name]" tooltip="{{ :: 'Edit Crop' | translate }}"></div>
+           <br />
           </li>
         </ul>
       </div>
     </div>
 
   </div>
-  <button class="pull-right" ng-class="{active: toggleDetails}" ng-click="toggleDetails = !toggleDetails" translate>APPLY CROPS</button>
+  <button id="btnCrop" class="pull-right" ng-class="{active: toggleDetails}" ng-click="toggleDetails = !toggleDetails" translate>{{toggleDetails ? 'APPLY CROPS' : 'CANCEL'}}</button>
   <div ng-if="item.type == 'audio'">
     <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
   </div>

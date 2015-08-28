@@ -4,12 +4,11 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['notify', 'gettext', '$timeout', function(notify, gettext, $timeout) {
+    return ['notify', 'gettext', '$timeout', 'imageFactory', function(notify, gettext, $timeout, imageFactory) {
         return {
             scope: {
                 src: '=',
                 cords: '=',
-                progressWidth: '=',
                 boxWidth: '=',
                 boxHeight: '=',
                 aspectRatio: '=',
@@ -42,12 +41,17 @@ define([
                 }
 
                 // To adjust preview box as per aspect ratio
-                if (scope.aspectRatio.toFixed(2) === '1.33') {
-                    rwidth = 300; rheight = 225;
-                } else if (scope.aspectRatio.toFixed(2) === '1.78') {
-                    rwidth = 300; rheight = 169;
+                if (scope.aspectRatio) {
+                    if (scope.aspectRatio.toFixed(2) === '1.33') {
+                        rwidth = 300; rheight = 225;
+                    } else if (scope.aspectRatio.toFixed(2) === '1.78') {
+                        rwidth = 300; rheight = 169;
+                    } else {
+                        rwidth = 300; rheight = 300;
+                    }
                 } else {
-                    rwidth = 300; rheight = 300;
+                    notify.error(gettext('sdImageCrop: attribute "aspect-ratio" is mandatory'));
+                    throw new Error('sdImageCrop: attribute "aspect-ratio" is mandatory');
                 }
 
                 var updateFunc = function(c) {
@@ -83,25 +87,24 @@ define([
                             notify.pop();
                             notify.error(gettext('Sorry, but image must be at least ' + minimumSize[0] + 'x' + minimumSize[1]));
                             scope.src = null;
-                            scope.progressWidth = 0;
                             scope.$parent.preview.progress = null;
+                            throw new Error('sdImageCrop: Sorry, but image must be at least ' + minimumSize[0] + 'x' + minimumSize[1]);
                         });
                         return;
                     }
                 }
+
                 scope.$watch('src', function(src) {
                     elem.empty();
                     if (src) {
-                        var img = new Image();
+                        var img = imageFactory.makeInstance();
                         img.onload = function() {
-                            scope.progressWidth = 80;
                             scope.$parent.preview.progress = true;
                             var size = [this.width, this.height];
 
                             if (scope.showMinSizeError) {
                                 validateConstraints(this);
                             }
-
                             elem.append(img);
                             $(img).Jcrop({
                                 aspectRatio: scope.aspectRatio,
@@ -119,7 +122,6 @@ define([
                                 boundy = bounds[1];
                                 updateFunc(scope.cords);
                             });
-                            scope.progressWidth = 0;
                         };
                         img.src = src;
                     }

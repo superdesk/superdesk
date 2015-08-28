@@ -29,6 +29,7 @@ tests.push('superdesk/services/modalService');
 tests.push('superdesk/services/preferencesService');
 tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
+tests.push('superdesk/services/image-factory');
 tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
 tests.push('superdesk/itemList/itemList');

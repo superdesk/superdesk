@@ -737,7 +737,7 @@
             //Save or overwrite crop if item is not published.
             if ($scope.data.state !== 'published') {
                 return cropImage.saveCrop(form, $scope.data).then(function(result) {
-                    var picture_url = result._id.renditions[cropName].href;
+                    var picture_url = result.renditions[cropName].href;
                     notify.success(gettext('Image Cropped.'));
                     $scope.data.picture_url = picture_url;
                     recordCrop(form, cropName);
@@ -1639,7 +1639,6 @@
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
-
                 scope.toggleDetails = true;
 
                 scope.$watch('item', function(item) {
@@ -1682,9 +1681,7 @@
                     scope.toggleDetails = !scope.toggleDetails;
                     scope.item.cropsize = cropsize;
                     scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
-                    superdesk.intent('edit', 'crop',  scope.item).then(function(crop) {
-                        //console.log('cropped=' + crop);
-                    });
+                    superdesk.intent('edit', 'crop',  scope.item);
                 };
             }
         };
