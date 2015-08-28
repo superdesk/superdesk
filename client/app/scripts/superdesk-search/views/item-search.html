@@ -1,27 +1,41 @@
 <form>
     <fieldset ng-if="context">
-        <div class="field">
-            <label for="ingest-collection">
-                {{:: 'Ingest' | translate}}
-                <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest">
-            </label>
+        <label> 
+            <input type="radio" value="local" ng-model="repo.search"> 
+            In Superdesk
+        </label>
+        <div ng-show="repo.search == 'local'">
+            <div class="field">
+                <label for="ingest-collection">
+                    {{:: 'Ingest' | translate}}
+                    <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest">
+                </label>
+            </div>
+            <div class="field">
+                <label for="archive-collection">
+                    {{:: 'Production' | translate}}
+                    <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive">
+                </label>
+            </div>
+            <div class="field">
+                <label for="published-collection">
+                    {{:: 'Published' | translate}}
+                    <input type="checkbox" id="published-collection" ng-model="repo.published" ng-checked="repo.published">
+                </label>
+            </div>
+            <div class="field">
+                <label for="archived-collection">
+                    {{:: 'Archived' | translate}}
+                    <input type="checkbox" id="archived-collection" ng-model="repo.archived" ng-checked="repo.archived">
+                </label>
+            </div>
         </div>
-        <div class="field">
-            <label for="archive-collection">
-                {{:: 'Production' | translate}}
-                <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive">
-            </label>
-        </div>
-        <div class="field">
-            <label for="published-collection">
-                {{:: 'Published' | translate}}
-                <input type="checkbox" id="published-collection" ng-model="repo.published" ng-checked="repo.published">
-            </label>
-        </div>
-        <div class="field">
-            <label for="archived-collection">
-                {{:: 'Archived' | translate}}
-                <input type="checkbox" id="archived-collection" ng-model="repo.archived" ng-checked="repo.archived">
+    </fieldset>
+    <fieldset ng-if="context">
+        <div ng-repeat="provider in providers">
+            <label ng-if="provider.type == 'search'"> 
+                <input type="radio" ng-value="provider.source" ng-model="repo.search"> 
+                {{:: provider.name}}
             </label>
         </div>
     </fieldset>

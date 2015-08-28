@@ -163,6 +163,7 @@ describe('sdSearchFacets directive', function () {
                     category: {buckets: []},
                     urgency: {buckets: []},
                     source: {buckets: []},
+                    state: {buckets: []},
                     day: {buckets: []},
                     week: {buckets: []},
                     month: {buckets: []},
