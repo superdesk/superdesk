@@ -312,6 +312,7 @@ describe('authoring', function() {
 describe('cropImage', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
 
     it('can save crop', inject(function($q, $rootScope, urls, $http, $httpBackend, cropImage) {
         var item = {
