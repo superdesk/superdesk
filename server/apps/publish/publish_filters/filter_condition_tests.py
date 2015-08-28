@@ -37,7 +37,9 @@ class FilterConditionTests(TestCase):
                                                        'parent': '05000000'},
                                                       {'name': 'high schools',
                                                        'qcode': '05005003',
-                                                       'parent': '05005000'}], 'state': 'fetched'}]
+                                                       'parent': '05005000'}], 'state': 'fetched'},
+                             {'_id': '9', 'state': 'fetched', 'anpa_category':
+                                 [{'qcode': 'a', 'name': 'Aus News'}]}]
 
             self.app.data.insert('archive', self.articles)
 
@@ -98,6 +100,16 @@ class FilterConditionTests(TestCase):
             self.assertEqual(1, docs.count())
             self.assertEqual('7', docs[0]['_id'])
 
+    def test_mongo_using_category_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'anpa_category', 'operator': 'in', 'value': 'a,i'}
+        query = f.get_mongo_query(doc)
+        with self.app.app_context():
+            docs = superdesk.get_resource_service('archive').\
+                get_from_mongo(req=self.req, lookup=query)
+            self.assertEqual(1, docs.count())
+            self.assertEqual('9', docs[0]['_id'])
+
     def test_mongo_using_subject_filter_complete_string(self):
         f = FilterConditionService()
         doc = {'field': 'subject', 'operator': 'in', 'value': '05005003'}
@@ -157,7 +169,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            self.assertEqual(7, docs.count())
+            self.assertEqual(8, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 
@@ -179,7 +191,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             docs = superdesk.get_resource_service('archive').\
                 get_from_mongo(req=self.req, lookup=query)
-            self.assertEqual(5, docs.count())
+            self.assertEqual(6, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('1' in doc_ids)
             self.assertTrue('2' in doc_ids)
@@ -206,6 +218,17 @@ class FilterConditionTests(TestCase):
             self.assertEqual(1, docs.count())
             self.assertTrue('8' in doc_ids)
 
+    def test_elastic_using_anpa_category_filter_complete_string(self):
+        f = FilterConditionService()
+        doc = {'field': 'anpa_category', 'operator': 'in', 'value': 'a,i'}
+        query = f.get_elastic_query(doc)
+        with self.app.app_context():
+            self._setup_elastic_args(query)
+            docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
+            doc_ids = [d['_id'] for d in docs]
+            self.assertEqual(1, docs.count())
+            self.assertTrue('9' in doc_ids)
+
     def test_elastic_using_in_filter(self):
         f = FilterConditionService()
         doc = {'field': 'urgency', 'operator': 'in', 'value': '3,4'}
@@ -225,7 +248,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
-            self.assertEqual(6, docs.count())
+            self.assertEqual(7, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('6' in doc_ids)
             self.assertTrue('5' in doc_ids)
@@ -249,7 +272,7 @@ class FilterConditionTests(TestCase):
         with self.app.app_context():
             self._setup_elastic_args(query, 'not')
             docs = superdesk.get_resource_service('archive').get(req=self.req, lookup=None)
-            self.assertEqual(7, docs.count())
+            self.assertEqual(8, docs.count())
             doc_ids = [d['_id'] for d in docs]
             self.assertTrue('2' not in doc_ids)
 
@@ -352,6 +375,19 @@ class FilterConditionTests(TestCase):
         self.assertFalse(f.does_match(doc, self.articles[5]))
         self.assertTrue(f.does_match(doc, self.articles[6]))
         self.assertFalse(f.does_match(doc, self.articles[7]))
+
+    def test_does_match_with_category_filter(self):
+        f = FilterConditionService()
+        doc = {'field': 'anpa_category', 'operator': 'in', 'value': 'a,i'}
+        self.assertFalse(f.does_match(doc, self.articles[0]))
+        self.assertFalse(f.does_match(doc, self.articles[1]))
+        self.assertFalse(f.does_match(doc, self.articles[2]))
+        self.assertFalse(f.does_match(doc, self.articles[3]))
+        self.assertFalse(f.does_match(doc, self.articles[4]))
+        self.assertFalse(f.does_match(doc, self.articles[5]))
+        self.assertFalse(f.does_match(doc, self.articles[6]))
+        self.assertFalse(f.does_match(doc, self.articles[7]))
+        self.assertTrue(f.does_match(doc, self.articles[8]))
 
     def test_does_match_with_subject_filter(self):
         f = FilterConditionService()

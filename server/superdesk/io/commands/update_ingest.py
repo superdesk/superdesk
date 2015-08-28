@@ -213,6 +213,13 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
 
 
 def process_anpa_category(item, provider):
+    """
+    Given the item which contains an anpa_category, expand this out with the name from the vocabulary
+    and also us the qcode from the vocabulary as this will keep the case of the code consistent
+    :param item: containing an anpa_category
+    :param provider:
+    :return: and item with the anpa_category expanded
+    """
     try:
         anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
         if anpa_categories:
@@ -221,6 +228,8 @@ def process_anpa_category(item, provider):
                     if anpa_category['is_active'] is True \
                             and item_category['qcode'].lower() == anpa_category['qcode'].lower():
                         item_category['name'] = anpa_category['name']
+                        # make the case of the qcode match what we hold in our dictionary
+                        item_category['qcode'] = anpa_category['qcode']
                         break
     except Exception as ex:
         raise ProviderError.anpaError(ex, provider)
