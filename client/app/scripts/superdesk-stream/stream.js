@@ -88,8 +88,7 @@
             label: gettext('Workspace'),
             controller: 'StreamController',
             templateUrl: asset.templateUrl('superdesk-stream/views/workspace-stream.html'),
-            topTemplateUrl: asset.templateUrl('superdesk-dashboard/views/workspace-topnav.html'),
-            beta: true
+            topTemplateUrl: asset.templateUrl('superdesk-dashboard/views/workspace-topnav.html')
         });
     }]);
 })();

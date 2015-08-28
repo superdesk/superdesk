@@ -334,8 +334,8 @@
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
-            {id: 'camera', label: gettext('Take a picture'), beta: true},
-            {id: 'web', label: gettext('Use a Web URL'), beta: true}
+            {id: 'camera', label: gettext('Take a picture')},
+            {id: 'web', label: gettext('Use a Web URL')}
         ];
 
         beta.isBeta().then(function(beta) {
