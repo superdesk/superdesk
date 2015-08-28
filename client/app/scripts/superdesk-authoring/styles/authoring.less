@@ -570,19 +570,25 @@ header.header-info {
     position: relative;
     max-width: 900px;
     margin: 0 auto;
-    height: 0px;
     padding: 22px 40px;
     border: 1px solid #cacaca;
     background-color: @white;
-    overflow: hidden;
     z-index: 2;
     .box-sizing(border-box);
     .box-shadow(0px 2px 4px -1px rgba(0,0,0,0.2));
-    &.active {
-        height: auto;
-        overflow: visible;
+    ul.metadata-list {
+        height: 20px;
+        overflow: hidden;
+        margin-top: -9px;
+        margin-bottom: -8px;
     }
-    + button {
+    &.active {
+        ul.metadata-list {
+            height: auto;
+            overflow: visible;
+        }
+    }
+    > button {
         position: absolute;
         width: 23px;
         height: 23px;
@@ -591,7 +597,7 @@ header.header-info {
         font-size: 0;
         left: 50%;
         margin-left: -11.5px;
-        margin-top: -12px;
+        bottom: -11px;
         background-color: @white;
         z-index: 3;
         .border-radius(23px);
@@ -604,7 +610,6 @@ header.header-info {
 
     .metadata-list {
         .date-info {
-            margin-top: -8px;
             margin-bottom: 15px;
             white-space: nowrap;
             * {
