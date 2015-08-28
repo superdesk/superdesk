@@ -7,7 +7,7 @@
         {{ item[field].length > 0 ? item[field][0].name : "none" | translate }}
         <b class="caret"></b>
     </div>
-	<ul class="dropdown-menu pull-right">
+	<ul class="dropdown-menu pull-left">
 		<li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
 		<li ng-repeat="o in list" ng-click="select(o)"><button ng-disabled="disabled">{{::o.name}}</button></li>
 	</ul>

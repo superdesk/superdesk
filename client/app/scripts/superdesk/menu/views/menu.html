@@ -15,7 +15,7 @@
           <button class="current-user pull-right" ng-click="toggleNotifications()">
               <span class="label label-info circle small" ng-show="notifications.unread">{{ notifications.unread }}</span>
               <figure class="avatar">
-                <img sd-user-avatar data-src="currentUser.picture_url" class="avatar" alt="{{currentUser.display_name || currentUser.username }}">
+                <img sd-user-avatar data-src="currentUser.picture_url" alt="{{currentUser.display_name || currentUser.username }}">
               </figure>
           </button>
           <button ng-click="toggleBeta()" class="beta-switch pull-right">
