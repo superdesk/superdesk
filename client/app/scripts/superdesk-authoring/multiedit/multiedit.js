@@ -293,7 +293,7 @@
                     label: gettext('Authoring'),
                     templateUrl: 'scripts/superdesk-authoring/multiedit/views/multiedit.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: MultieditController,
                     filters: [{action: 'author', type: 'multiedit'}]
                 });

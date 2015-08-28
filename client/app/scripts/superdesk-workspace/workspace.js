@@ -5,8 +5,8 @@
     angular.module('superdesk.workspace', ['superdesk.workspace.content'])
         .service('workspaces', WorkspaceService)
         .directive('sdDeskDropdown', WorkspaceDropdownDirective)
-        .directive('sdEditWorkspace', EditWorkspaceDirective)
-        ;
+        .directive('sdWorkspaceSidenav', WorkspaceSidenavDirective)
+        .directive('sdEditWorkspace', EditWorkspaceDirective);
 
     WorkspaceService.$inject = ['api', 'desks', 'session', 'preferencesService', '$q'];
     function WorkspaceService(api, desks, session, preferences, $q) {
@@ -233,6 +233,34 @@
                 scope.$watch(function() {
                     return workspaces.active;
                 }, initialize, true);
+            }
+        };
+    }
+
+    WorkspaceSidenavDirective.$inject = [];
+    function WorkspaceSidenavDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
+            link: function(scope) {
+
+                /*
+                 * Function for showing and hiding monitoring list
+                 * while authoring view is opened.
+                 *
+                 * @param {string} location Gets default url of called element
+                 * @param {object} e Gets $event from the element
+                 */
+                scope.hideMonitoring = function (location, e) {
+                    var flags = scope.$parent.flags,
+                        route = scope.currentRoute.href;
+
+                    if (flags.authoring && route === location) {
+                        e.preventDefault();
+                        flags.hideMonitoring = !flags.hideMonitoring;
+                    } else {
+                        flags.hideMonitoring = false;
+                    }
+                };
             }
         };
     }

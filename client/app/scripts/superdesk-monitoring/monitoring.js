@@ -20,7 +20,7 @@
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/monitoring.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });
     }
 
@@ -32,7 +32,7 @@
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/spike-monitoring.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html'
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });
     }
 

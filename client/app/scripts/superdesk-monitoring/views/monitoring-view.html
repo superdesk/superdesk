@@ -46,8 +46,7 @@
     </div>
 
     <section class="main-section search-page-container"
-             ng-class="monitoring.state"
-             >
+             ng-class="monitoring.state">
 
         <div class="subnav">
             <ul class="filtertype-icon-list">
@@ -68,7 +67,7 @@
                         sd-monitoring-group data-group="group" data-view-type="'spiked'"></div>
                 </div>
                 <div ng-if="monitoring.singleGroup">
-                    <div sd-monitoring-group data-group="monitoring.singleGroup" data-num-items="10" data-view-type="'single_monitoring'"></div>
+                    <div sd-monitoring-group class="single-group" data-group="monitoring.singleGroup" data-num-items="10" data-view-type="'single_monitoring'"></div>
                 </div>
                 <div ng-if="!monitoring.singleGroup && type === 'highlights'">
                     <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"

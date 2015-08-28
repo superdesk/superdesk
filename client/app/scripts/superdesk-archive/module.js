@@ -300,7 +300,7 @@ define([
                     controller: require('./controllers/list'),
                     templateUrl: require.toUrl('./views/list.html'),
                     topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html'),
-                    sideTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-sidenav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     filters: [
                         {action: 'view', type: 'content'}
                     ],
