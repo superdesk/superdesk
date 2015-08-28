@@ -3,7 +3,8 @@
 
 var authoring = require('./helpers/authoring'),
     monitoring = require('./helpers/monitoring'),
-    workspace = require('./helpers/workspace');
+    workspace = require('./helpers/workspace'),
+    desks = require('./helpers/desks');
 
 describe('monitoring view', function() {
 
@@ -165,6 +166,36 @@ describe('monitoring view', function() {
 
         workspace.selectDesk('Sports Desk');
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
+    });
+
+    it('configure a stage and then delete the stage', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.toggleStage(0, 3);
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        desks.openDesksSettings();
+        desks.edit('Politic Desk');
+        desks.showTab('stages');
+        desks.removeStage('three');
+        desks.showTab('macros');
+        desks.save();
+
+        monitoring.openMonitoring();
+        expect(monitoring.getGroup('deleted desk or stage')).not.toBe(null);
+
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.toggleStage(0, 2);
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        expect(monitoring.getTextItem(0, 0)).toBe('item6');
     });
 
     it('can search content', function() {
