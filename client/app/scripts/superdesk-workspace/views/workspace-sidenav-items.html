@@ -1,9 +1,9 @@
 <li ng-class="{active: currentRoute.href === '/workspace'}">
-    <a href="#/workspace" class="big-icon-dashboard"
+    <a href="#/workspace" class="big-icon-dashboard" ng-click="hideMonitoring(currentRoute.href === '/workspace', $event)"
        title="{{ :: 'Dashboard' | translate }}"></a>
 </li>
 <li ng-class="{active: currentRoute.href === '/workspace/monitoring'}">
-    <a href="#/workspace/monitoring" class="big-icon-view" ng-click="hideMonitoring('/workspace/monitoring', $event)"
+    <a href="#/workspace/monitoring" class="big-icon-view" ng-click="hideMonitoring(currentRoute.href === '/workspace/monitoring', $event)"
        title="{{ :: 'Monitoring' | translate }}"></a>
 </li>
 <li ng-class="{active: currentRoute.href === '/workspace/highlights'}">
@@ -12,11 +12,11 @@
     </div>
 </li>
 <li ng-class="{active: currentRoute.href === '/workspace/tasks'}" ng-if="privileges.tasks">
-    <a href="#/workspace/tasks" class="big-icon-tasks"
+    <a href="#/workspace/tasks" class="big-icon-tasks" ng-click="hideMonitoring(currentRoute.href === '/workspace/tasks', $event)"
        title="{{ :: 'Tasks' | translate }}"></a>
 </li>
 <li ng-class="{active: currentRoute.href === '/workspace/spike-monitoring'}">
-    <a href="#/workspace/spike-monitoring" class="big-icon-spiked" ng-click="hideMonitoring('/workspace/spike-monitoring', $event)"
+    <a href="#/workspace/spike-monitoring" class="big-icon-spiked" ng-click="hideMonitoring(currentRoute.href === '/workspace/spike-monitoring', $event)"
        title="{{ :: 'Spike' | translate }}"></a>
 </li>
 
@@ -26,7 +26,7 @@
        title="{{ :: 'Personal' | translate }}"></a>
 </li>
 <li ng-class="{active: currentRoute.href === '/search'}">
-    <a href="#/search" class="big-icon-global-search" 
+    <a href="#/search" class="big-icon-global-search" ng-click="hideMonitoring(currentRoute.href === '/search', $event)"
        title="{{ :: 'Search' | translate }}"></a>
 </li>
 

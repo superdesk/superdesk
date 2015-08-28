@@ -247,14 +247,13 @@
                  * Function for showing and hiding monitoring list
                  * while authoring view is opened.
                  *
-                 * @param {string} location Gets default url of called element
+                 * @param {boolean} state Gets the state of button
                  * @param {object} e Gets $event from the element
                  */
-                scope.hideMonitoring = function (location, e) {
-                    var flags = scope.$parent.flags,
-                        route = scope.currentRoute.href;
+                scope.hideMonitoring = function (state, e) {
+                    var flags = scope.$parent.flags;
 
-                    if (flags.authoring && route === location) {
+                    if (flags.authoring && state) {
                         e.preventDefault();
                         flags.hideMonitoring = !flags.hideMonitoring;
                     } else {
