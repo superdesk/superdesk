@@ -10,7 +10,7 @@
 
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.aap_bulletinbuilder_formatter import AAPBulletinBuilderFormatter
 from superdesk.utils import json_serialize_datetime_objectId
@@ -19,7 +19,7 @@ from superdesk.utc import utcnow
 from bson import ObjectId
 
 
-class AapBulletinBuilderFormatterTest(TestCase):
+class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
     subscribers = [{"_id": "1", "name": "Test", "subscriber_type": SUBSCRIBER_TYPES.WIRE, "media_type": "media",
                     "is_active": True, "sequence_num_settings": {"max": 10, "min": 1},
                     "destinations": [{"name": "AAP Bulletin Builder", "delivery_type": "pull",
@@ -29,9 +29,8 @@ class AapBulletinBuilderFormatterTest(TestCase):
 
     def setUp(self):
         super().setUp()
-        with self.app.app_context():
-            self.app.data.insert('subscribers', self.subscribers)
-            init_app(self.app)
+        self.app.data.insert('subscribers', self.subscribers)
+        init_app(self.app)
 
     def TestBulletinBuilderFormatter(self):
         article = {
@@ -52,12 +51,11 @@ class AapBulletinBuilderFormatterTest(TestCase):
             'lock_user': ObjectId()
         }
 
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            f = AAPBulletinBuilderFormatter()
-            seq, item = f.format(article, subscriber)[0]
-            self.assertGreater(int(seq), 0)
-            self.assertEqual(json.dumps(article, default=json_serialize_datetime_objectId), item)
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        f = AAPBulletinBuilderFormatter()
+        seq, item = f.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        self.assertEqual(json.dumps(article, default=json_serialize_datetime_objectId), item)
 
     def TestStripHtml(self):
         article = {
@@ -74,13 +72,12 @@ class AapBulletinBuilderFormatterTest(TestCase):
                      ' abcdefghi abcdefghi abcdefghi more\r\n\r\n'
                      'test')
 
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            f = AAPBulletinBuilderFormatter()
-            seq, item = f.format(article, subscriber)[0]
-            self.assertGreater(int(seq), 0)
-            test_article = json.loads(item)
-            self.assertEqual(test_article['body_text'], body_text)
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        f = AAPBulletinBuilderFormatter()
+        seq, item = f.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        test_article = json.loads(item)
+        self.assertEqual(test_article['body_text'], body_text)
 
     def TestLocator(self):
         article = {
@@ -102,18 +99,17 @@ class AapBulletinBuilderFormatterTest(TestCase):
             'place': [{'qcode': 'VIC', 'name': 'VIC'}]
         }
 
-        with self.app.app_context():
-            subscriber = self.app.data.find('subscribers', None, None)[0]
-            f = AAPBulletinBuilderFormatter()
-            seq, item = f.format(article, subscriber)[0]
-            self.assertGreater(int(seq), 0)
-            test_article = json.loads(item)
-            self.assertEqual(test_article['headline'], 'This is a test headline')
-            self.assertEqual(test_article['place'][0]['qcode'], 'CRIK')
-            article['anpa_category'] = [{'qcode': 'a'}]
-            article['place'] = [{'qcode': 'VIC', 'name': 'VIC'}]
-            seq, item = f.format(article, subscriber)[0]
-            self.assertGreater(int(seq), 0)
-            test_article = json.loads(item)
-            self.assertEqual(test_article['headline'], 'This is a test headline')
-            self.assertEqual(test_article['place'][0]['qcode'], 'VIC')
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+        f = AAPBulletinBuilderFormatter()
+        seq, item = f.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        test_article = json.loads(item)
+        self.assertEqual(test_article['headline'], 'This is a test headline')
+        self.assertEqual(test_article['place'][0]['qcode'], 'CRIK')
+        article['anpa_category'] = [{'qcode': 'a'}]
+        article['place'] = [{'qcode': 'VIC', 'name': 'VIC'}]
+        seq, item = f.format(article, subscriber)[0]
+        self.assertGreater(int(seq), 0)
+        test_article = json.loads(item)
+        self.assertEqual(test_article['headline'], 'This is a test headline')
+        self.assertEqual(test_article['place'][0]['qcode'], 'VIC')

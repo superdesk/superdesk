@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent
@@ -19,7 +19,7 @@ from datetime import timedelta
 from apps.archive.common import validate_schedule
 
 
-class RemoveSpikedContentTestCase(TestCase):
+class RemoveSpikedContentTestCase(SuperdeskTestCase):
 
     articles = [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
                  '_id': '1',
@@ -150,7 +150,7 @@ class RemoveSpikedContentTestCase(TestCase):
             self.assertEquals(2, expiredItems.count())
 
 
-class ArchiveTestCase(TestCase):
+class ArchiveTestCase(SuperdeskTestCase):
     def setUp(self):
         super().setUp()
 

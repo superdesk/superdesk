@@ -21,8 +21,6 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from publicapi.settings import MONGO_DBNAME as PUBLICAPI_MONGO_DBNAME  # noqa @UnusedImport
-
 
 def env(variable, fallback_value=None):
     env_value = os.environ.get(variable, '')
@@ -67,8 +65,6 @@ MONGO_URI = env('MONGO_URI', 'mongodb://localhost/%s' % MONGO_DBNAME)
 
 LEGAL_ARCHIVE_DBNAME = env('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
 LEGAL_ARCHIVE_URI = env('LEGAL_ARCHIVE_URI', 'mongodb://localhost/%s' % LEGAL_ARCHIVE_DBNAME)
-
-PUBLICAPI_MONGO_URI = env('PUBLICAPI_MONGO_URI')
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
@@ -125,23 +121,48 @@ SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = [
     'apps.auth',
-    'apps.users',
+    'superdesk.roles',
+]
+
+# LDAP settings
+LDAP_SERVER = env('LDAP_SERVER', '')  # Ex: ldap://sourcefabric.org
+LDAP_SERVER_PORT = env('LDAP_SERVER_PORT', 389)
+
+# Fully Qualified Domain Name. Ex: sourcefabric.org
+LDAP_FQDN = env('LDAP_FQDN', '')
+
+# LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=sourcefabric,dc=org
+LDAP_BASE_FILTER = env('LDAP_BASE_FILTER', '')
+
+# change the user depending on the LDAP directory structure
+LDAP_USER_FILTER = env('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))")
+
+# LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
+LDAP_USER_ATTRIBUTES = json.loads(env('LDAP_USER_ATTRIBUTES',
+                                      '{"givenName": "first_name", "sn": "last_name", '
+                                      '"displayName": "display_name", "mail": "email", '
+                                      '"ipPhone": "phone"}'))
+
+if LDAP_SERVER:
+    INSTALLED_APPS.append('apps.ldap')
+else:
+    INSTALLED_APPS.append('superdesk.users')
+    INSTALLED_APPS.append('apps.auth.db')
+
+
+INSTALLED_APPS.extend([
     'superdesk.upload',
     'superdesk.notification',
     'superdesk.activity',
-    'superdesk.comments',
+    'apps.comments',
 
     'superdesk.io',
     'superdesk.io.subjectcodes',
-    'superdesk.io.reuters',
-    'superdesk.io.aap',
-    'superdesk.io.afp',
+    'apps.io',
     'superdesk.io.ftp',
     'superdesk.io.rss',
     'superdesk.publish',
-    'superdesk.macro_register',
     'superdesk.commands',
-    'superdesk.data_consistency',
     'superdesk.locators.locators',
 
     'apps.archive',
@@ -162,7 +183,6 @@ INSTALLED_APPS = [
     'apps.highlights',
     'apps.publish',
     'apps.publish.publish_filters',
-    'apps.macros',
     'apps.dictionaries',
     'apps.duplication',
     'apps.aap_mm',
@@ -171,9 +191,9 @@ INSTALLED_APPS = [
     'apps.archived',
     'apps.validators',
     'apps.validate',
-    'apps.publicapi_publish',
     'apps.workspace',
-]
+    'apps.macros',
+])
 
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
@@ -215,31 +235,6 @@ MAIL_USE_SSL = json.loads(env('MAIL_USE_SSL', 'False').lower())
 MAIL_USERNAME = env('MAIL_USERNAME', 'admin@sourcefabric.org')
 MAIL_PASSWORD = env('MAIL_PASSWORD', '')
 ADMINS = [MAIL_USERNAME]
-
-# LDAP settings
-LDAP_SERVER = env('LDAP_SERVER', '')  # Ex: ldap://sourcefabric.org
-LDAP_SERVER_PORT = env('LDAP_SERVER_PORT', 389)
-
-# Fully Qualified Domain Name. Ex: sourcefabric.org
-LDAP_FQDN = env('LDAP_FQDN', '')
-
-# LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=sourcefabric,dc=org
-LDAP_BASE_FILTER = env('LDAP_BASE_FILTER', '')
-
-# change the user depending on the LDAP directory structure
-LDAP_USER_FILTER = env('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))")
-
-# LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
-LDAP_USER_ATTRIBUTES = json.loads(env('LDAP_USER_ATTRIBUTES',
-                                      '{"givenName": "first_name", "sn": "last_name", '
-                                      '"displayName": "display_name", "mail": "email", '
-                                      '"ipPhone": "phone"}'))
-
-if LDAP_SERVER:
-    INSTALLED_APPS.append('apps.auth.ldap')
-else:
-    INSTALLED_APPS.append('apps.auth.db')
-
 SUPERDESK_TESTING = (env('SUPERDESK_TESTING', 'false').lower() == 'true')
 
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
@@ -292,5 +287,5 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 # This value gets injected into NewsML 1.2 and G2 output documents.
 NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
 
-OrganizationName = "Australian Associated Press"
-OrganizationNameAbbreviation = "AAP"
+ORGANIZATION_NAME = "Superdesk Associated Press"
+ORGANIZATION_NAME_ABBREVIATION = "SAP"

@@ -8,7 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from collections import namedtuple
 import json
 import logging
 from settings import MAX_VALUE_OF_PUBLISH_SEQUENCE
@@ -19,11 +18,9 @@ from superdesk.utils import ListCursor
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
+from superdesk.publish import subscriber_types, SUBSCRIBER_TYPES  # NOQA
 
 logger = logging.getLogger(__name__)
-
-subscriber_types = ['broadcast', 'digital', 'wire']
-SUBSCRIBER_TYPES = namedtuple('SUBSCRIBER_TYPES', ['BROADCAST', 'DIGITAL', 'WIRE'])(*subscriber_types)
 
 
 class SubscribersResource(Resource):

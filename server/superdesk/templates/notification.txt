@@ -1,5 +1,0 @@
-{{notification}}
-
-Regards,
-
-The {{app_name}} Team

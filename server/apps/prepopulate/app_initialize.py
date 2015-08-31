@@ -59,10 +59,12 @@ class AppInitializeWithDataCommand(superdesk.Command):
 
     def import_file(self, entity_name, file_name, index_params, do_patch=False):
 
+        print('Config: ', app.config['APP_ABSPATH'])
         if file_name:
-            file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
-                                file_name)
-            with open(file, 'rt') as app_prepopulation:
+            file_path = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
+                                     file_name)
+            print('Got file path: ', file_path)
+            with open(file_path, 'rt') as app_prepopulation:
                 json_data = json.loads(app_prepopulation.read())
                 service = get_resource_service(entity_name)
                 data = [app.data.mongo._mongotize(item, service.datasource) for item in json_data]

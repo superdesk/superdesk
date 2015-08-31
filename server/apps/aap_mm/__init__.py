@@ -8,12 +8,14 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.aap_mm.service import AapMMService
-from apps.aap_mm.resource import AapMMResource
+from .service import AapMMService
+from .resource import AapMMResource
 from superdesk import intrinsic_privilege
+from .aap_mm_datalayer import AAPMMDatalayer
 
 
 def init_app(app):
+    app.data.aapmm = AAPMMDatalayer(app)
     service = AapMMService(datasource=None, backend=app.data.aapmm)
     AapMMResource(endpoint_name='aapmm', app=app, service=service)
     intrinsic_privilege(resource_name='aapmm', method=['GET', 'POST'])

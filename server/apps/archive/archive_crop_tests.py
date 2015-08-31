@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from unittest import mock
 from apps.archive.archive_crop import ArchiveCropService
 from nose.tools import assert_raises
@@ -17,17 +17,12 @@ from superdesk.errors import SuperdeskApiError
 from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
-class ArchiveCropTestCase(TestCase):
+class ArchiveCropTestCase(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()
-        self.ctx = self.app.app_context()
-        self.ctx.push()
         self.service = ArchiveCropService()
         VocabulariesPopulateCommand().run(os.path.abspath('apps/prepopulate/data_initialization/vocabularies.json'))
-
-    def tearDown(self):
-        self.ctx.pop()
 
     def test_validate_aspect_ratio_fails(self):
         doc = {'CropLeft': 0, 'CropRight': 80, 'CropTop': 0, 'CropBottom': 60}

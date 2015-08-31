@@ -13,7 +13,8 @@ from flask import g
 
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
-from apps.auth.errors import UserDisabledError, CredentialsAuthError, UserInactiveError
+from apps.auth.errors import UserDisabledError, CredentialsAuthError
+from superdesk.users.errors import UserInactiveError
 
 
 class DbAuthService(AuthService):

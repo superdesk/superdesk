@@ -10,16 +10,16 @@
 
 import os
 import json
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from superdesk import get_resource_service
 from apps.validators.command import ValidatorsPopulateCommand
 from settings import URL_PREFIX
 
 
-class ValidatorsPopulateTest(TestCase):
+class ValidatorsPopulateTest(SuperdeskTestCase):
 
     def setUp(self):
-        super(ValidatorsPopulateTest, self).setUp()
+        super().setUp()
         self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "validators.json")
         self.json_data = [{"_id": "publish", "schema": {"headline": {"type": "string"}}}]
 
@@ -39,4 +39,4 @@ class ValidatorsPopulateTest(TestCase):
 
     def tearDown(self):
         os.remove(self.filename)
-        super(ValidatorsPopulateTest, self).tearDown()
+        super().tearDown()

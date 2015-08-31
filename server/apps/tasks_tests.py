@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from apps.archive.common import get_item_expiry
 from app import get_app
 from superdesk.utc import get_expiry_date
@@ -17,7 +17,7 @@ from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
 
 
-class TasksTestCase(TestCase):
+class TasksTestCase(SuperdeskTestCase):
 
     app = None
 

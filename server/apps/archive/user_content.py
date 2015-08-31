@@ -10,7 +10,8 @@
 
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
-from .common import aggregations, CUSTOM_HATEOAS
+from .common import CUSTOM_HATEOAS
+from superdesk.metadata.utils import aggregations
 from .archive import ArchiveResource
 import superdesk
 

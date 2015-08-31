@@ -16,11 +16,11 @@ import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 from pytz import timezone
-from apps.users.services import get_sign_off
+from superdesk.users.services import get_sign_off
 
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
-from settings import OrganizationNameAbbreviation
+from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
     LINKED_IN_PACKAGES, BYLINE, SIGN_OFF
@@ -93,7 +93,7 @@ def set_dateline(doc, repo_type):
 
     if repo_type == ARCHIVE and 'dateline' not in doc:
         current_date_time = dateline_ts = utcnow()
-        doc['dateline'] = {'date': current_date_time, 'source': OrganizationNameAbbreviation}
+        doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION}
 
         user = get_user()
         if user and user.get('user_preferences', {}).get('dateline:located'):
@@ -111,7 +111,7 @@ def set_dateline(doc, repo_type):
 
                 doc['dateline']['located'] = located
                 doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
-                                                               OrganizationNameAbbreviation)
+                                                               ORGANIZATION_NAME_ABBREVIATION)
 
 
 def set_byline(doc, repo_type=ARCHIVE):
@@ -180,24 +180,6 @@ def set_sign_off(updates, original=None, repo_type=ARCHIVE):
 
     updated_sign_off = '{}/{}'.format(current_sign_off, sign_off)
     updates[SIGN_OFF] = updated_sign_off[1:] if updated_sign_off.startswith('/') else updated_sign_off
-
-
-item_url = 'regex("[\w,.:_-]+")'
-
-extra_response_fields = [GUID_FIELD, 'headline', 'firstcreated', 'versioncreated', 'archived']
-
-aggregations = {
-    'type': {'terms': {'field': 'type'}},
-    'desk': {'terms': {'field': 'task.desk'}},
-    'stage': {'terms': {'field': 'task.stage'}},
-    'category': {'terms': {'field': 'anpa_category.name'}},
-    'source': {'terms': {'field': 'source'}},
-    'state': {'terms': {'field': 'state'}},
-    'urgency': {'terms': {'field': 'urgency'}},
-    'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
-    'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
-    'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
-}
 
 
 def generate_unique_id_and_name(item, repo_type=ARCHIVE):

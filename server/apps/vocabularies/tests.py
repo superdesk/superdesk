@@ -10,16 +10,15 @@
 
 import os
 import json
-from superdesk.tests import TestCase
+from test_factory import SuperdeskTestCase
 from superdesk import get_resource_service
 from .command import VocabulariesPopulateCommand
-from settings import URL_PREFIX
 
 
-class VocabulariesPopulateTest(TestCase):
+class VocabulariesPopulateTest(SuperdeskTestCase):
 
     def setUp(self):
-        super(VocabulariesPopulateTest, self).setUp()
+        super().setUp()
         self.filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), "vocabularies.json")
         self.json_data = [
             {"_id": "categories",
@@ -40,15 +39,14 @@ class VocabulariesPopulateTest(TestCase):
 
     def test_populate_vocabularies(self):
         cmd = VocabulariesPopulateCommand()
-        with self.app.test_request_context(URL_PREFIX):
-            cmd.run(self.filename)
-            service = get_resource_service("vocabularies")
+        cmd.run(self.filename)
+        service = get_resource_service("vocabularies")
 
-            for item in self.json_data:
-                data = service.find_one(_id=item["_id"], req=None)
-                self.assertEqual(data["_id"], item["_id"])
-                self.assertListEqual(data["items"], item["items"])
+        for item in self.json_data:
+            data = service.find_one(_id=item["_id"], req=None)
+            self.assertEqual(data["_id"], item["_id"])
+            self.assertListEqual(data["items"], item["items"])
 
     def tearDown(self):
         os.remove(self.filename)
-        super(VocabulariesPopulateTest, self).tearDown()
+        super().tearDown()
