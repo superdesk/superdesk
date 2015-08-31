@@ -88,6 +88,16 @@
             return packages.createEmptyPackage(pkg_defaults, group);
         };
 
+        /**
+         * Get single highlight by its id
+         *
+         * @param {string} _id
+         * @return {Promise}
+         */
+        service.find = function(_id) {
+            return api.find('highlights', _id);
+        };
+
         return service;
     }
 
@@ -291,23 +301,19 @@
         };
     }
 
-    CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', 'authoringWorkspace', '$location'];
-    function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, authoringWorkspace, $location) {
+    CreateHighlightsButtonDirective.$inject = ['highlightsService', 'authoringWorkspace'];
+    function CreateHighlightsButtonDirective(highlightsService, authoringWorkspace) {
         return {
             scope: {highlight_id: '=highlight'},
             templateUrl: 'scripts/superdesk-highlights/views/create_highlights_button_directive.html',
             link: function(scope) {
-                scope.createHighlight = function(highlight) {
-                    var promise = highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
-                        scope.highlights = _.find(result._items, {_id: scope.highlight_id});
-                        scope.hasHighlights = _.size(scope.highlights) > 0;
-                    });
-
-                    promise = promise.then(function() {
-                        highlightsService.createEmptyHighlight(scope.highlights).then(function(new_package) {
-                            authoringWorkspace.edit(new_package);
-                        });
-                    });
+                /**
+                 * Create new highlight package for current highlight and start editing it
+                 */
+                scope.createHighlight = function() {
+                    highlightsService.find(scope.highlight_id)
+                        .then(highlightsService.createEmptyHighlight)
+                        .then(authoringWorkspace.edit);
                 };
             }
         };

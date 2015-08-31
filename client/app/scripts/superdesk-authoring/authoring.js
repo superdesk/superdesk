@@ -907,9 +907,7 @@
 
                 function _exportHighlight(_id) {
                     api.generate_highlights.save({}, {'package': _id})
-                    .then(function(item) {
-                        superdesk.intent('author', 'article', item);
-                    }, function(response) {
+                    .then(authoringWorkspace.edit, function(response) {
                         notify.error(gettext('Error creating highlight.'));
                     });
                 }
