@@ -78,6 +78,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean',
         'less:dev',
+        'ngtemplates',
         'useminPrepare',
         'concat',
         'requirejs', // must go after concat
@@ -88,7 +89,6 @@ module.exports = function (grunt) {
         'copy:docs',
         'template:test',
         'nggettext_compile',
-        'ngtemplates',
         'filerev',
         'usemin'
     ]);
