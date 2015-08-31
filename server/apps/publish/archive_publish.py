@@ -247,7 +247,7 @@ class BasePublishService(BaseService):
                         # if the item is a package do recursion to publish
                         sub_updates = {i: updates[i] for i in ['state', 'operation'] if i in updates}
                         sub_updates['groups'] = list(package_item['groups'])
-                        self._publish_package_items(package_item, updates)
+                        self._publish_package_items(package_item, sub_updates)
                         self._update_archive(original=package_item, updates=sub_updates,
                                              should_insert_into_versions=False)
                         self.update_published_collection(published_item_id=package_item[config.ID_FIELD])
@@ -255,6 +255,7 @@ class BasePublishService(BaseService):
                         # publish the item
                         archive_publish.patch(id=package_item.pop(config.ID_FIELD), updates=package_item)
 
+                    insert_into_versions(id_=guid)
                     package_item = super().find_one(req=None, _id=guid)
 
                 subscribers = self._get_subscribers_for_package_item(package_item)
@@ -992,6 +993,7 @@ class CorrectPublishService(BasePublishService):
                                                                      'slugline', updates.get('slugline'))
 
                     archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
+                    insert_into_versions(id_=package[config.ID_FIELD])
                     processed_packages.append(package[config.ID_FIELD])
 
     def update(self, id, updates, original):
