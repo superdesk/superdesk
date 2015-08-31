@@ -218,6 +218,10 @@ function MetadataListEditingDirective(metadata) {
                 scope.activeTree = tree[null];
             });
 
+            scope.$on('$destroy', function(){
+                metadata.subjectScope = null;
+            })
+
             scope.openParent = function(term, $event) {
                 var parent = _.find(scope.list, {qcode: term.parent});
                 scope.openTree(parent, $event);
