@@ -192,10 +192,14 @@
              */
             function setupCard(card) {
                 if (card.type === 'stage') {
-                    var stage = self.stageLookup[card._id],
-                        desk = self.deskLookup[stage.desk];
-                    card.header = desk.name;
-                    card.subheader = stage.name;
+                    var stage = self.stageLookup[card._id];
+                    if (stage) {
+                        var desk = self.deskLookup[stage.desk];
+                        card.header = desk.name;
+                        card.subheader = stage.name;
+                    } else {
+                        card.header = 'Deleted desk or stage';
+                    }
                 }
 
                 if (card.type === 'search') {
@@ -420,6 +424,10 @@
                     }
                 };
 
+                /**
+                 * Return the list of selected groups (stages, personal or saved searches)
+                 * @return {Array} list of groups
+                 */
                 scope.getValues = function() {
                     var values = Object.keys(scope.editGroups).map(function(key) {
                         return scope.editGroups[key];
@@ -429,8 +437,11 @@
                             return false;
                         }
                         if (item.type === 'stage') {
-                            var desk = scope.stageLookup[item._id].desk;
-                            return scope.editGroups[desk].selected;
+                            var stage = scope.stageLookup[item._id];
+                            if (!stage || !stage.desk) {
+                                return false;
+                            }
+                            return scope.editGroups[stage.desk].selected;
                         }
                         if (item.type === 'personal') {
                             return scope.editGroups.personal.selected;
