@@ -38,6 +38,8 @@ from re import findall
 from eve.utils import ParsedRequest
 import shutil
 from apps.dictionaries.resource import DICTIONARY_FILE
+from test_factory import setup_auth_user
+
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -250,7 +252,7 @@ def step_impl_given_resource_with_provider(context, provider):
 @given('config')
 def step_impl_given_config(context):
     tests.setup(context, json.loads(context.text))
-    tests.setup_auth_user(context)
+    setup_auth_user(context)
 
 
 @given('we have "{role_name}" role')
@@ -1184,13 +1186,13 @@ def we_reset_password_for_user(context):
 def when_we_switch_user(context):
     user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True,
             'needs_activation': False, 'sign_off': 'foo'}
-    tests.setup_auth_user(context, user)
+    setup_auth_user(context, user)
     set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 
 
 @when('we setup test user')
 def when_we_setup_test_user(context):
-    tests.setup_auth_user(context, test_user)
+    setup_auth_user(context, test_user)
 
 
 @when('we get my "{url}"')
@@ -1446,7 +1448,7 @@ def login_as(context, username, password, user_type):
     if context.text:
         user.update(json.loads(context.text))
 
-    tests.setup_auth_user(context, user)
+    setup_auth_user(context, user)
 
 
 @given('we login as user "{username}" with password "{password}" and user type "{user_type}"')

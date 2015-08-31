@@ -16,6 +16,7 @@ from features.steps.steps import get_macro_path
 from flask import json
 from app import get_app
 from apps.vocabularies.command import VocabulariesPopulateCommand
+from test_factory import setup_auth_user
 
 
 readonly_fields = ['display_name', 'password', 'phone', 'first_name', 'last_name']
@@ -52,7 +53,7 @@ def before_scenario(context, scenario):
         scenario.mark_skipped()
 
     if scenario.status != 'skipped' and 'auth' in scenario.tags:
-        tests.setup_auth_user(context)
+        setup_auth_user(context)
 
     if scenario.status != 'skipped' and 'provider' in scenario.tags:
         setup_providers(context)
