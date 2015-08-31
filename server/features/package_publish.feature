@@ -2446,6 +2446,10 @@ Feature: Package Publishing
       When we get "/publish_queue"
       Then we get "#archive.456.take_package#" as "sidebars" story for subscriber "sub-2" in package "compositeitem"
       Then we get "compositeitem" in formatted output as "main" story for subscriber "sub-2"
+      When we get "/archive/compositeitem?version=all"
+      Then we get list with 2 items
+      When we get "/archive/outercompositeitem?version=all"
+      Then we get list with 2 items
 
 
 
@@ -3367,6 +3371,7 @@ Feature: Package Publishing
       Then we get list with 2 items
 
 
+
       @auth
       @notification
       Scenario: Correct a story in a nested package
@@ -3607,6 +3612,13 @@ Feature: Package Publishing
                    {"headline": "outer test package", "publishing_action": "corrected", "subscriber_id": "sub-2"}]
       }
       """
+      When we get "/archive/123?version=all"
+      Then we get list with 3 items
+      When we get "/archive/compositeitem?version=all"
+      Then we get list with 3 items
+      When we get "/archive/outercompositeitem?version=all"
+      Then we get list with 3 items
+
 
       @auth
       @notification
