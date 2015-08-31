@@ -1424,6 +1424,9 @@ header .sortbar {
 	margin-right: 10px;
 	.text-normal();
 
+  	&.state_embargo {
+	  	.state-color(@state-color-embargo) !important;
+	}
 	&.state-draft {
 		.state-color(@state-color-default);
 	}

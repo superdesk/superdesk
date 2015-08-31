@@ -47,8 +47,7 @@
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
     <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
-
-    <div class="state-label state-{{item.state}}">{{item.state}}</div>
+    <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
 </div>
 
 <div class="action">

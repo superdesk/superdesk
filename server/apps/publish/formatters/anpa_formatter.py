@@ -13,7 +13,7 @@ import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
 import datetime
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, BYLINE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, BYLINE, EMBARGO
 from .field_mappers.selectorcode_mapper import SelectorcodeMapper
 from .field_mappers.locator_mapper import LocatorMapper
 
@@ -96,6 +96,10 @@ class AAPAnpaFormatter(Formatter):
 
                 if 'dateline' in article and 'text' in article['dateline']:
                     anpa.append(article.get('dateline').get('text').encode('ascii', 'ignore'))
+
+                if article.get(EMBARGO):
+                    embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
+                    article['body_html'] = embargo + article['body_html']
 
                 if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                     anpa.append(article.get('body_html', '').encode('ascii', 'replace'))

@@ -12,7 +12,7 @@ import json
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 from superdesk.utils import json_serialize_datetime_objectId
 
 
@@ -51,6 +51,9 @@ class NINJSFormatter(Formatter):
 
             if article[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 ninjs['associations'] = self._get_associations(article)
+
+            if article.get(EMBARGO):
+                ninjs['embargoed'] = article.get(EMBARGO).isoformat()
 
             return [(pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId))]
         except Exception as ex:

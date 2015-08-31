@@ -17,7 +17,7 @@ from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
     LAST_TAKE, ASSOCIATIONS, MAIN_GROUP, SEQUENCE, ITEM_REF
-from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE, EMBARGO
 from apps.archive.common import insert_into_versions
 from .package_service import get_item_ref, create_root_group
 
@@ -110,7 +110,8 @@ class TakesPackageService():
         takes_package[ITEM_TYPE] = CONTENT_TYPE.COMPOSITE
         takes_package[PACKAGE_TYPE] = TAKES_PACKAGE
         fields_for_creating_takes_package = self.fields_for_creating_take.copy()
-        fields_for_creating_takes_package.extend(['abstract', 'publish_schedule', 'event_id', 'rewrite_of', 'task'])
+        fields_for_creating_takes_package.extend(['abstract', 'publish_schedule', 'event_id', 'rewrite_of', 'task',
+                                                  EMBARGO])
 
         for field in fields_for_creating_takes_package:
             takes_package[field] = target.get(field)
@@ -128,12 +129,13 @@ class TakesPackageService():
 
     def link_as_next_take(self, target, link):
         """
-        # check if target has an associated takes package
-        # if not, create it and add target as a take
-        # check if the target is the last take, if not, resolve the last take
-        # copy metadata from the target and add it as the next take
-        # return the update link item
+        Check if target has an associated takes package. If not, create it and add target as a take.
+        Check if the target is the last take, if not, resolve the last take. Copy metadata from the target and add it
+        as the next take and return the update link item
+
+        :return: the updated link item
         """
+
         takes_package_id = self.get_take_package_id(target)
         archive_service = get_resource_service(ARCHIVE)
         takes_package = archive_service.find_one(req=None, _id=takes_package_id) if takes_package_id else {}
@@ -275,3 +277,11 @@ class TakesPackageService():
         request = ParsedRequest()
         request.sort = SEQUENCE
         return list(get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query))
+
+    def is_takes_package(self, package):
+        """
+        Returns True if the passed package and is of type takes. Otherwise, returns False.
+        :return: True if it's a Takes Package, False otherwise.
+        """
+
+        return package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and package.get(PACKAGE_TYPE, '') == TAKES_PACKAGE

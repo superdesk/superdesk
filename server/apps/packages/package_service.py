@@ -17,7 +17,7 @@ from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE, \
     ASSOCIATIONS, ITEM_REF, GROUPS, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP, ROLE, ROOT_ROLE, MAIN_ROLE, GROUP_ID
 from apps.archive.common import insert_into_versions
@@ -368,3 +368,22 @@ class PackageService():
         """
         return [ref.get(ITEM_REF) for group in package.get(GROUPS, [])
                 for ref in group.get(ASSOCIATIONS, []) if ITEM_REF in ref]
+
+    def check_if_any_item_in_package_has_embargo(self, package):
+        """
+        Recursively checks if any item in the package has embargo.
+        :raises: SuperdeskApiError.badRequestError() if any item in the package has embargo.
+        """
+
+        item_refs_in_package = self.get_residrefs(package)
+
+        for item_ref in item_refs_in_package:
+            doc = get_resource_service(ARCHIVE).find_one(req=None, _id=item_ref)
+
+            if doc.get(EMBARGO):
+                raise SuperdeskApiError.badRequestError("Package can't have item which has emabrgo. "
+                                                        "Slugline/Unique Name of the item having embargo: %s/%s" %
+                                                        (doc.get('slugline'), doc.get('unique_name')))
+
+            if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                self.check_if_any_item_in_package_has_embargo(doc)

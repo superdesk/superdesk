@@ -13,7 +13,7 @@ import logging
 from flask import request
 
 from superdesk import get_resource_service, Service
-from superdesk.metadata.item import ITEM_STATE
+from superdesk.metadata.item import ITEM_STATE, EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.archive.common import CUSTOM_HATEOAS
 from superdesk.metadata.utils import item_url
@@ -59,6 +59,9 @@ class ArchiveRewriteService(Service):
         """
         if not original:
             raise SuperdeskApiError.notFoundError(message='Cannot find the article')
+
+        if original.get(EMBARGO):
+            raise SuperdeskApiError.badRequestError("Rewrite of an Item having embargo isn't possible")
 
         if not original.get('event_id'):
             raise SuperdeskApiError.notFoundError(message='Event id does not exist')

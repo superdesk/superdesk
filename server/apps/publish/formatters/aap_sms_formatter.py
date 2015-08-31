@@ -12,7 +12,7 @@ from apps.publish.formatters import Formatter
 import superdesk
 from bs4 import BeautifulSoup
 from superdesk.errors import FormatterError
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 
 
 class AAPSMSFormatter(Formatter):
@@ -27,6 +27,11 @@ class AAPSMSFormatter(Formatter):
             odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa_category', [{}])[0].get('qcode'),
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': article.get('priority', 'r')}
+
+            if article.get(EMBARGO):
+                embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
+                article['body_html'] = embargo + article['body_html']
+
             if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
                 odbc_item['StoryText'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
             elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:

@@ -16,14 +16,14 @@ import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 from pytz import timezone
-from superdesk.users.services import get_sign_off
 
+from superdesk.users.services import get_sign_off
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
 from settings import ORGANIZATION_NAME_ABBREVIATION
 from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
-    LINKED_IN_PACKAGES, BYLINE, SIGN_OFF
+    LINKED_IN_PACKAGES, BYLINE, SIGN_OFF, EMBARGO
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -418,6 +418,10 @@ def item_schema(extra=None):
         },
         SEQUENCE: {
             'type': 'integer'
+        },
+        EMBARGO: {
+            'type': 'datetime',
+            'nullable': True
         }
     }
     schema.update(metadata_schema)

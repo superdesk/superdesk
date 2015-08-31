@@ -17,12 +17,12 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 from superdesk import default_user_preferences, get_resource_service, utc
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 from eve.io.mongo import MongoJSONEncoder
 from base64 import b64encode
 
 from wooper.general import fail_and_print_body, apply_path, \
-    parse_json_response
+    parse_json_response, WooperAssertionError
 from wooper.expect import (
     expect_status, expect_status_in,
     expect_json, expect_json_length,
@@ -177,7 +177,18 @@ def patch_current_user(context, data):
 def apply_placeholders(context, text):
     placeholders = getattr(context, 'placeholders', {})
     for placeholder in findall('#([^#"]+)#', text):
-        if placeholder not in placeholders:
+        if placeholder.startswith('DATE'):
+            value = utcnow()
+            unit = placeholder.find('+')
+            if unit != -1:
+                value += timedelta(days=int(placeholder[unit + 1]))
+            else:
+                unit = placeholder.find('-')
+                if unit != -1:
+                    value -= timedelta(days=int(placeholder[unit + 1]))
+
+            value = value.strftime("%Y-%m-%dT%H:%M:%S%z")
+        elif placeholder not in placeholders:
             try:
                 resource_name, field_name = placeholder.lower().split('.', maxsplit=1)
             except:
@@ -1540,7 +1551,8 @@ def step_impl_when_publish_url(context, item_id, pub_type, state):
     headers = if_match(context, res.get('_etag'))
     context_data = {"state": state}
     if context.text:
-        context_data.update(json.loads(context.text))
+        data = apply_placeholders(context, context.text)
+        context_data.update(json.loads(data))
     data = json.dumps(context_data)
     context.response = context.client.patch(get_prefixed_url(context.app, '/archive/{}/{}'.format(pub_type, item_id)),
                                             data=data, headers=headers)
@@ -1699,3 +1711,70 @@ def there_is_no_key_in_response(context, key):
 def there_is_no_key_in_preferences(context, key, namespace):
     data = get_json_data(context.response)['user_preferences']
     assert key not in data[namespace], 'key "%s" is in %s' % (key, data[namespace])
+
+
+@then('we check if article has Embargo and Ed. Note of the article has embargo indication')
+def step_impl_then_check_embargo(context):
+    assert_200(context.response)
+    try:
+        response_data = json.loads(context.response.get_data())
+    except Exception:
+        fail_and_print_body(context.response, 'response is not valid json')
+
+    if response_data.get('_meta') and response_data.get('_items'):
+        for item in response_data.get('_items'):
+            assert_embargo(context, item)
+    else:
+        assert_embargo(context, response_data)
+
+
+def assert_embargo(context, item):
+    if not item.get('embargo'):
+        fail_and_print_body(context, context.response, 'Embargo not found')
+
+    if not item.get('ednote'):
+        fail_and_print_body(context, context.response, 'Embargo indication in "Ed. Note" not found')
+
+    assert_equal((item['ednote'].find('Embargoed') > -1), True)
+
+
+@when('embargo lapses for "{item_id}"')
+def embargo_lapses(context, item_id):
+    item_id = apply_placeholders(context, item_id)
+    item = get_res("/archive/%s" % item_id, context)
+
+    updates = {'embargo': (utcnow() - timedelta(minutes=1))}
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        get_resource_service('archive').system_update(id=item['_id'], original=item, updates=updates)
+
+
+@then('we validate the published item expiry to be after publish expiry set in desk settings {publish_expiry_in_desk}')
+def validate_published_item_expiry(context, publish_expiry_in_desk):
+    assert_200(context.response)
+    try:
+        response_data = json.loads(context.response.get_data())
+    except Exception:
+        fail_and_print_body(context.response, 'response is not valid json')
+
+    if response_data.get('_meta') and response_data.get('_items'):
+        for item in response_data.get('_items'):
+            assert_expiry(context, item, publish_expiry_in_desk)
+    else:
+        assert_expiry(context, response_data, publish_expiry_in_desk)
+
+
+def assert_expiry(context, item, publish_expiry_in_desk):
+    embargo = item.get('embargo')
+    actual = datetime.strptime(item.get('expiry'), '%Y-%m-%dT%H:%M:%S%z')
+    error_message = 'Published Item Expiry validation fails'
+    publish_expiry_in_desk = int(publish_expiry_in_desk)
+
+    if embargo:
+        expected = get_expiry_date(minutes=publish_expiry_in_desk,
+                                   offset=datetime.strptime(embargo, '%Y-%m-%dT%H:%M:%S%z'))
+        if actual != expected:
+            raise WooperAssertionError("{}. Expected: {}, Actual: {}".format(error_message, expected, actual))
+    else:
+        expected = get_expiry_date(minutes=publish_expiry_in_desk)
+        if expected < actual:
+            raise WooperAssertionError("{}. Expected: {}, Actual: {}".format(error_message, expected, actual))

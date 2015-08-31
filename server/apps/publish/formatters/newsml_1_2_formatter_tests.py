@@ -8,6 +8,8 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from superdesk.utc import utcnow
+
 from test_factory import SuperdeskTestCase
 from apps.publish.formatters.newsml_1_2_formatter import NewsML12Formatter
 import xml.etree.ElementTree as etree
@@ -18,7 +20,6 @@ from apps.publish import init_app
 
 
 class Newsml12FormatterTest(SuperdeskTestCase):
-
     article = {
         'source': 'AAP',
         'anpa_category': [{'qcode': 'a'}],
@@ -137,3 +138,19 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         self.assertEquals(
             self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[1].
             text, 'The story body')
+
+    def test_format_news_management_for_embargo(self):
+        embargo_ts = (utcnow() + datetime.timedelta(days=2))
+        doc = self.article.copy()
+        doc['embargo'] = embargo_ts
+
+        self.formatter._format_news_management(doc, self.newsml)
+
+        self.assertEquals(self.newsml.find('NewsManagement/NewsItemType').get('FormalName'), 'News')
+        self.assertEquals(self.newsml.find('NewsManagement/FirstCreated').text, '20150613T114519+0000')
+        self.assertEquals(self.newsml.find('NewsManagement/ThisRevisionCreated').text, '20150613T114519+0000')
+        self.assertEquals(self.newsml.find('NewsManagement/Urgency').get('FormalName'), '2')
+        self.assertEquals(self.newsml.find('NewsManagement/Instruction').get('FormalName'), 'Update')
+        self.assertEquals(self.newsml.find('NewsManagement/Status').get('FormalName'), 'Embargoed')
+        self.assertEquals(self.newsml.find('NewsManagement/StatusWillChange/FutureStatus').get('FormalName'), 'usable')
+        self.assertEquals(self.newsml.find('NewsManagement/StatusWillChange/DateAndTime').text, embargo_ts.isoformat())

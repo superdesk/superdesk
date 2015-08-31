@@ -14,7 +14,7 @@ from xml.etree.ElementTree import SubElement
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 from superdesk.utc import utcnow
 from settings import NEWSML_PROVIDER_ID
 
@@ -77,7 +77,15 @@ class NewsML12Formatter(Formatter):
             article['firstcreated'].strftime('%Y%m%dT%H%M%S+0000')
         SubElement(news_management, 'ThisRevisionCreated').text = \
             article['versioncreated'].strftime('%Y%m%dT%H%M%S+0000')
-        SubElement(news_management, 'Status', {'FormalName': article['pubstatus']})
+
+        if article.get(EMBARGO):
+            SubElement(news_management, 'Status', {'FormalName': 'Embargoed'})
+            status_will_change = SubElement(news_management, 'StatusWillChange')
+            SubElement(status_will_change, 'FutureStatus', {'FormalName': article['pubstatus']})
+            SubElement(status_will_change, 'DateAndTime').text = article[EMBARGO].isoformat()
+        else:
+            SubElement(news_management, 'Status', {'FormalName': article['pubstatus']})
+
         SubElement(news_management, 'Urgency', {'FormalName': str(article['urgency'])})
         if article['state'] == 'corrected':
             SubElement(news_management, 'Instruction', {'FormalName': 'Correction'})

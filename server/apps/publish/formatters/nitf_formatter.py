@@ -14,7 +14,7 @@ from xml.etree.ElementTree import SubElement
 from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 
 
 class NITFFormatter(Formatter):
@@ -56,10 +56,15 @@ class NITFFormatter(Formatter):
         tobject = SubElement(head, 'tobject', {'tobject.type': 'news'})
         self.__format_subjects(article, tobject)
 
-        docdata = SubElement(head, 'docdata', {'management-status': article['pubstatus']})
+        if article.get(EMBARGO):
+            docdata = SubElement(head, 'docdata', {'management-status': 'embargoed'})
+            SubElement(docdata, 'date.expire', {'norm': str(article.get(EMBARGO).isoformat())})
+        else:
+            docdata = SubElement(head, 'docdata', {'management-status': article['pubstatus']})
+            SubElement(docdata, 'date.expire', {'norm': str(article.get('expiry', ''))})
+
         SubElement(docdata, 'urgency', {'id-string': str(article.get('urgency', ''))})
         SubElement(docdata, 'date.issue', {'norm': str(article.get('firstcreated', ''))})
-        SubElement(docdata, 'date.expire', {'norm': str(article.get('expiry', ''))})
 
         self.__format_keywords(article, head)
 

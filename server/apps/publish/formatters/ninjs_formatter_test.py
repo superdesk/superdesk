@@ -7,6 +7,8 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from datetime import timedelta
+from superdesk.utc import utcnow
 
 from test_factory import SuperdeskTestCase
 from apps.publish.formatters.ninjs_formatter import NINJSFormatter
@@ -21,6 +23,7 @@ class ninjsFormatterTest(SuperdeskTestCase):
         init_app(self.app)
 
     def testTextFomatter(self):
+        embargo_ts = (utcnow() + timedelta(days=2))
         article = {
             'guid': 'tag:aap.com.au:20150613:12345',
             '_current_version': 1,
@@ -45,15 +48,15 @@ class ninjsFormatterTest(SuperdeskTestCase):
             'creditline': 'sample creditline',
             'keywords': ['traffic'],
             'abstract': 'sample abstract',
-            'place': 'Australia'
+            'place': 'Australia',
+            'embargo': embargo_ts
         }
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
-        expected = json.loads(
-            '{"version": "1", "place": "Australia", "pubstatus": "usable", \
-            "body_html": "The story body", "type": "text", \
-            "subject": [{"qcode": "02011001", "name": "international court or tribunal"}, \
-            {"qcode": "02011002", "name": "extradition"}], \
-            "headline": "This is a test headline", "byline": "joe", "_id": "urn:localhost.abc", "urgency": 2}')
+        expected = {"version": "1", "place": "Australia", "pubstatus": "usable", "body_html": "The story body",
+                    "type": "text", "subject": [{"qcode": "02011001", "name": "international court or tribunal"},
+                                                {"qcode": "02011002", "name": "extradition"}],
+                    "headline": "This is a test headline", "byline": "joe", "_id": "urn:localhost.abc", "urgency": 2,
+                    "embargoed": embargo_ts.isoformat()}
         self.assertEqual(json.loads(doc), expected)
 
     def testPictureFomatter(self):
