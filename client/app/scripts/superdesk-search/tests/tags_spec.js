@@ -80,7 +80,6 @@ describe('Tag Service', function() {
         var members = null;
         $location.search([
             'type=["text","composite"]',
-            'state=["submitted","faked","madeup"]',
             'q=slugline:(FBI) (Obama) (Australia)'
         ].join('&'));
         $rootScope.$apply();
@@ -94,7 +93,6 @@ describe('Tag Service', function() {
 
         $rootScope.$digest();
         expect(members.selectedFacets.type.length).toBe(2);
-        expect(members.selectedFacets.state.length).toBe(3);
         expect(members.selectedKeywords.length).toBe(2);
         expect(members.selectedParameters.length).toBe(1);
 
