@@ -309,6 +309,45 @@ describe('authoring', function() {
     });
 });
 
+describe('cropImage', function() {
+    beforeEach(module('superdesk.authoring'));
+    beforeEach(module('superdesk.mocks'));
+    beforeEach(module('templates'));
+
+    it('saves crop', inject(function($q, $rootScope, urls, $http, $httpBackend, cropImage) {
+        var item = {
+            '_id': 'urn:newsml:localhost:2015-08-25T05:12:09.664870:4eeac2ab-a0e3-4fdc-b8fe-233ef9462ff1',
+            'cropsize': {name: '4-3'}
+        };
+        var coordinates = {
+            'CropLeft': 0,
+            'CropTop': 0,
+            'CropRight': 800,
+            'CropBottom': 600
+        };
+        var result;
+
+        var _URL = 'http://master.dev.superdesk.org/api/archive';
+        spyOn(urls, 'resource').and.returnValue($q.when(_URL));
+
+        var POST_URL = _URL + '/' + item._id + '/crop/' + item.cropsize.name;
+
+        $httpBackend.expectPOST(POST_URL, coordinates).respond(201,
+            {data: {'CropLeft': 0, 'CropTop': 0, 'CropRight': 800, 'CropBottom': 600}});
+
+        cropImage.saveCrop(coordinates, item).then(function(response) {
+            result = response.data;
+        });
+
+        $httpBackend.flush();
+        expect(result.CropLeft).toBe(0);
+        expect(result.CropTop).toBe(0);
+        expect(result.CropRight).toBe(800);
+        expect(result.CropBottom).toBe(600);
+        expect(urls.resource).toHaveBeenCalledWith('archive');
+    }));
+});
+
 describe('autosave', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.mocks'));

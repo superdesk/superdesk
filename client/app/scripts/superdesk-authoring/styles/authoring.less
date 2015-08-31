@@ -908,3 +908,47 @@ header.header-info {
         }
     }
 }
+
+.item-detail-info {
+        height: 0px;
+        overflow: hidden;
+        .box-sizing(border-box);
+        &.active {
+            height: auto;
+        }
+        + button {
+            position: absolute;
+            width: 23px;
+            height: 23px;
+            border: 0;
+            padding: 0 5px;
+            font-size: 0;
+            left: 98%;
+            margin-left: -11.5px;
+            margin-top: -13px;
+            background-color: @white;
+            .border-radius(23px);
+            .transition(transform 0.5s);
+            &.active {
+                .rotate(180deg);
+            }
+        }
+
+        .edit-photo {
+			display: none	;
+			color: #fff;
+			text-transform: uppercase;
+			font-size: 9px;
+			text-decoration: none;
+			text-align: center;
+			position: relative;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		&:hover {
+			.edit-photo {
+			display: block;
+			}
+		}
+	}
