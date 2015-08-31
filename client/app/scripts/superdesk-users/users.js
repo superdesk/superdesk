@@ -1019,12 +1019,22 @@
                 }
             };
         }])
+
+        /**
+         * @memberof superdesk.users
+         * @ngdoc directive
+         * @name sdUserPreferences
+         * @description
+         *   This directive creates the Preferences tab on the user profile
+         *   panel, allowing users to set various system preferences for
+         *   themselves.
+         */
         .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset', 'metadata', '$timeout',
             function(api, session, preferencesService, notify, asset, metadata, $timeout) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, element, attrs) {
-                    var orig;
+                    var orig;  // original preferences, before any changes
 
                     preferencesService.get().then(function(result) {
                         orig = result;
@@ -1041,10 +1051,16 @@
                         scope.datelinePreview = scope.preferences['dateline:located'].located;
                     };
 
+                    /**
+                    * Saves the changes to the preferences on the server.
+                    *
+                    * @method save
+                    */
                     scope.save = function() {
-                        var update = patch();
+                        var update = createPatchObject();
 
                         preferencesService.update(update).then(function() {
+                                // TODO: notify user "preferences saved"?
                                 scope.cancel();
                             }, function(response) {
                                 notify.error(gettext('User preferences could not be saved...'));
@@ -1065,29 +1081,84 @@
                         });
                     };
 
-                    function buildPreferences(struct) {
+                    /**
+                    * Builds a user preferences object in scope from the given
+                    * data.
+                    *
+                    * @function buildPreferences
+                    * @param {Object} data - user preferences data, arranged in
+                    *   logical groups. The keys represent these groups' names,
+                    *   while the corresponding values are objects containing
+                    *   user preferences settings for a particular group.
+                    */
+                    function buildPreferences(data) {
                         scope.preferences = {};
-                        _.each(struct, function(val, key) {
+                        _.each(data, function(val, key) {
                             if (val.label && val.category) {
                                 scope.preferences[key] = _.create(val);
                             }
                         });
 
-                        if (angular.isUndefined(metadata.values) || angular.isUndefined(metadata.values.cities)) {
-                            metadata.initialize().then(function() {
-                                scope.cities = metadata.values.cities;
+                        if (angular.isUndefined(metadata.values) ||
+                            angular.isUndefined(metadata.values.cities) ||
+                            angular.isUndefined(metadata.values.categories)
+                        ) {
+                            metadata.initialize().then(function () {
+                                updateScopeData(metadata.values, data);
                             });
                         } else {
-                            scope.cities = metadata.values.cities;
+                            updateScopeData(metadata.values, data);
                         }
                     }
 
-                    function patch() {
+                    /**
+                    * Updates auxiliary scope data, such as the lists of
+                    * available and content categories to choose from.
+                    *
+                    * @function updateScopeData
+                    * @param {Object} helperData - auxiliary data used by the
+                    *   preferences settings UI
+                    * @param {Object} userPrefs - user's personal preferences
+                    *   settings
+                    */
+                    function updateScopeData(helperData, userPrefs) {
+                        scope.cities = helperData.cities;
+
+                        // Create a list of categories for the UI widgets to
+                        // work on. New category objects are created so that
+                        // objects in the existing category list are protected
+                        // from modifications on ng-model changes.
+                        scope.categories = [];
+                        helperData.categories.forEach(function (cat) {
+                            var newObj = _.create(cat),
+                                selectedCats = userPrefs['categories:preferred'].selected;
+                            newObj.selected = !!selectedCats[cat.qcode];
+                            scope.categories.push(newObj);
+                        });
+                    }
+
+                    /**
+                    * Creates and returns a user preferences object that can
+                    * be used as a parameter in a PATCH request to the server
+                    * when user preferences are saved.
+                    *
+                    * @function createPatchObject
+                    * @return {Object}
+                    */
+                    function createPatchObject() {
                         var p = {};
+
                         _.each(orig, function(val, key) {
                             if (key === 'dateline:located') {
                                 var $input = element.find('.input-term > input');
                                 scope.changeDatelinePreview(scope.preferences[key], $input[0].value);
+                            }
+
+                            if (key === 'categories:preferred') {
+                                val.selected = {};
+                                scope.categories.forEach(function (cat) {
+                                    val.selected[cat.qcode] = !!cat.selected;
+                                });
                             }
 
                             p[key] = _.extend(val, scope.preferences[key]);

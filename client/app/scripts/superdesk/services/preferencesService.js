@@ -16,7 +16,8 @@ define(['angular'], function(angular) {
                         'workqueue:items': 1,
                         'dashboard:ingest': 1,
                         'agg:view': 1,
-                        'workspace:active': 1
+                        'workspace:active': 1,
+                        'categories:preferred': 1
                     },
                     preferences,
                     preferencesPromise;

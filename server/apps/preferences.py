@@ -120,6 +120,13 @@ class PreferencesResource(Resource):
         'category': 'dateline'
     })
 
+    superdesk.register_default_user_preference('categories:preferred', {
+        'type': 'dict',
+        'category': 'categories',
+        'label': 'Preferred Categories',
+        'selected': {},
+    })
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])
