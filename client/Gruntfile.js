@@ -43,13 +43,34 @@ module.exports = function (grunt) {
         'template:docs',
         'connect:test',
         'open:docs',
+        'ngtemplates',
         'watch'
     ]);
 
-    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
-    grunt.registerTask('server:travis', ['clean', 'style', 'template:travis', 'connect:travis']);
-
+    grunt.registerTask('server', [
+        'clean',
+        'style',
+        'template:test',
+        'connect:test',
+        'open:test',
+        'ngtemplates',
+        'watch'
+    ]);
+    grunt.registerTask('server:e2e', [
+        'clean',
+        'style',
+        'template:mock',
+        'connect:mock',
+        'ngtemplates',
+        'watch'
+    ]);
+    grunt.registerTask('server:travis', [
+        'clean',
+        'style',
+        'ngtemplates',
+        'template:travis',
+        'connect:travis'
+    ]);
     grunt.registerTask('bower', [
         'build',
         'copy:bower'
@@ -57,6 +78,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean',
         'less:dev',
+        'ngtemplates',
         'useminPrepare',
         'concat',
         'requirejs', // must go after concat
