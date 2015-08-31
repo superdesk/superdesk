@@ -57,11 +57,26 @@ function Content() {
         return menu.element(by.partialLinkText(action)).click();
     };
 
+    function waitFor(elem) {
+        return browser.wait(function() {
+            return elem.isDisplayed();
+        }, 300);
+    }
+
     this.openItemMenu = function(item) {
-        var itemElem = this.getItem(item);
-        browser.actions().mouseMove(itemElem).perform();
-        itemElem.element(by.className('icon-dots-vertical')).click();
-        return element(by.css('.dropdown-menu.open'));
+        this.getItem(item).click();
+
+        var preview = element(by.id('item-preview'));
+        waitFor(preview);
+
+        var toggle = preview.element(by.className('icon-dots-vertical'));
+        waitFor(toggle);
+
+        toggle.click();
+
+        var menu = element(by.css('.dropdown-menu.open'));
+        waitFor(menu);
+        return menu;
     };
 
     this.checkMarkedForHighlight = function(highlight, item) {
@@ -71,20 +86,16 @@ function Content() {
             .toContain(highlight);
     };
 
+    var list = element(by.className('list-view'));
+
     this.getCount = function () {
-        browser.wait(function() {
-            // make sure list is there before counting
-            return element(by.css('.list-view')).isPresent();
-        });
-        return element.all(by.repeater('items._items')).count();
+        waitFor(list);
+        return list.all(by.repeater('items._items')).count();
     };
 
     this.getItemCount = function () {
-        browser.wait(function() {
-            // make sure list is there before counting
-            return element(by.css('.list-view')).isPresent();
-        });
-        return element.all(by.repeater('item in items track by uuid(item)')).count();
+        waitFor(list);
+        return list.all(by.repeater('item in items track by uuid(item)')).count();
     };
 
     /**

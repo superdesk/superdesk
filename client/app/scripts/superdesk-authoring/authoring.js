@@ -767,6 +767,7 @@
 
     AuthoringDirective.$inject = [
         'superdesk',
+        'authoringWorkspace',
         'notify',
         'gettext',
         'desks',
@@ -784,11 +785,10 @@
         '$window',
         'modal'
     ];
-    function AuthoringDirective(superdesk, notify, gettext, desks, authoring, api, session, lock, privileges,
-                                content, $location, referrer, macros, $timeout, $q, $window, modal) {
+    function AuthoringDirective(superdesk, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
+                                privileges, content, $location, referrer, macros, $timeout, $q, $window, modal) {
         return {
-            require: '^sdAuthoringWorkspace',
-            link: function($scope, elem, attrs, workspaceCtrl) {
+            link: function($scope, elem, attrs) {
                 var _closing;
 
                 $scope.privileges = privileges.privileges;
@@ -980,7 +980,7 @@
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
-                                $location.url($scope.referrerUrl);
+                                authoringWorkspace.close();
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
@@ -1016,9 +1016,8 @@
                  */
                 $scope.close = function() {
                     _closing = true;
-                    authoring.close($scope.item, $scope.origItem, $scope.save_enabled())
-                    .then(function () {
-                        workspaceCtrl.close($scope.item);
+                    authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
+                        authoringWorkspace.close($scope.item);
                     });
                 };
 
@@ -1335,8 +1334,10 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
-    function SendItem($q, api, desks, notify, $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
+    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace',
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
+    function SendItem($q, api, desks, notify, authoringWorkspace,
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
         return {
             scope: {
                 item: '=',
@@ -1527,7 +1528,7 @@
                             if (sendAndContinue) {
                                 return deferred.resolve();
                             } else {
-                                $location.url(scope.$parent.referrerUrl);
+                                authoringWorkspace.close();
                             }
                         }, function(err) {
                             if (err.data._issues['validator exception']) {
@@ -1705,6 +1706,7 @@
     }
 
     angular.module('superdesk.authoring', [
+            'superdesk.menu',
             'superdesk.editor',
             'superdesk.activity',
             'superdesk.authoring.widgets',
@@ -1726,8 +1728,7 @@
         .service('lock', LockService)
         .service('authThemes', AuthoringThemesService)
         .service('cropImage', CropImageService)
-
-        .controller('AuthoringWorkspace', AuthoringWorkspaceController)
+        .service('authoringWorkspace', AuthoringWorkspaceService)
 
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
@@ -1739,7 +1740,6 @@
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
         .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
-        .directive('sdAuthoringWorkspace', AuthoringWorkspaceDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)
 
@@ -1765,11 +1765,10 @@
                 })
                 .activity('edit.text', {
                     label: gettext('Edit item'),
-                    href: '/authoring/:_id',
                     priority: 10,
                     icon: 'pencil',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('author', 'article', data.item);
+                    controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                        authoringWorkspace.edit(data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     additionalCondition:['authoring', 'item', function(authoring, item) {
@@ -1844,8 +1843,8 @@
                     label: gettext('View item'),
                     priority: 2000,
                     icon: 'fullscreen',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('read_only', 'content_article', data.item);
+                    controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                        authoringWorkspace.view(data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
                     condition: function(item) {
@@ -1888,7 +1887,8 @@
             });
         }]);
 
-    function AuthoringContainerDirective() {
+    AuthoringContainerDirective.$inject = ['authoringWorkspace'];
+    function AuthoringContainerDirective(authoringWorkspace) {
         function AuthoringContainerController() {
             var self = this;
 
@@ -1897,8 +1897,8 @@
             this.edit = function(item, lock) {
                 self.item = item || null;
                 self.state.opened = !!self.item;
-                if (self.item && lock) {
-                    self.item.lockIt = true;
+                if (self.item) {
+                    self.item.lockIt = !!lock;
                 }
             };
         }
@@ -1907,11 +1907,12 @@
             controller: AuthoringContainerController,
             controllerAs: 'authoring',
             templateUrl: 'scripts/superdesk-authoring/views/authoring-container.html',
-            require: '^sdAuthoringWorkspace',
-            scope: true,
-            link: function(scope, elem, attrs, workspaceCtrl) {
-                scope.$watch(workspaceCtrl.getItem, function(item) {
-                    scope.authoring.edit(item, true);
+            scope: {},
+            link: function(scope) {
+                scope.$watch(authoringWorkspace.getItem, function(item, oldItem) {
+                    if (item !== oldItem) {
+                        scope.authoring.edit(item, !authoringWorkspace.readonly);
+                    }
                 });
             }
         };
@@ -2000,31 +2001,46 @@
         };
     }
 
-    AuthoringWorkspaceController.$inject = ['$scope', '$location', 'api'];
-    function AuthoringWorkspaceController($scope, $location, api) {
+    AuthoringWorkspaceService.$inject = ['$location', 'api', 'superdeskFlags'];
+    function AuthoringWorkspaceService($location, api, superdeskFlags) {
         this.item = null;
+        this.readonly = false;
 
         var self = this;
 
         /**
-         * Set item for editing
-         *
-         * this will change item which is watched by authoring container directive
-         * and set authoring flag
+         * Open item for editing
          *
          * @param {Object} item
          */
         this.edit = function(item) {
             self.item = item;
-            $scope.flags.authoring = !!item;
+            self.readonly = false;
+            superdeskFlags.flags.authoring = !!item;
             $location.search('edit', item ? item._id : null);
+        };
+
+        /**
+         * Open an item in readonly mode without locking it
+         *
+         * @param {Object} item
+         */
+        this.view = function(item) {
+            self.item = item;
+            self.readonly = true;
+            superdeskFlags.flags.authoring = !!item;
+            $location.search('view', item ? item._id : null);
         };
 
         /**
          * Stop editing
          */
         this.close = function() {
-            self.edit(null);
+            self.item = null;
+            self.readonly = null;
+            superdeskFlags.flags.authoring = false;
+            $location.search('edit', null);
+            $location.search('view', null);
         };
 
         /**
@@ -2036,17 +2052,29 @@
             return self.item;
         };
 
-        // init
-        if ($location.search().edit) {
-            api.find('archive', $location.search().edit).then(this.edit);
+        /**
+         * Find item by given id
+         *
+         * @param {string} _id
+         * @return {Promise}
+         */
+        function find(_id) {
+            return api.find('archive', _id);
         }
-    }
 
-    function AuthoringWorkspaceDirective() {
-        return {
-            controller: 'AuthoringWorkspace',
-            controllerAs: 'workspace'
-        };
-    }
+        /**
+         * Populates item based on $location
+         */
+        function main() {
+            if ($location.search().edit) {
+                find($location.search().edit).then(self.edit);
+            }
 
+            if ($location.search().view) {
+                find($location.search().view).then(self.view);
+            }
+        }
+
+        main();
+    }
 })();

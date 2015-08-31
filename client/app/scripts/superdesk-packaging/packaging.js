@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave'];
-    function PackagesService(api, $q, archiveService, lock, autosave) {
+    PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave', 'authoring'];
+    function PackagesService(api, $q, archiveService, lock, autosave, authoring) {
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
@@ -24,13 +24,7 @@
         };
 
         this.open = function open(_id, readOnly) {
-            return api.find('archive', _id, {embedded: {lock_user: 1}})
-            .then(function _lock(item) {
-                item._editable = !readOnly;
-                return lock.lock(item);
-            }).then(function _autosave(item) {
-                return autosave.open(item);
-            });
+            return authoring.open(_id, readOnly);
         };
 
         this.createPackageFromItems = function (items, defaults) {
@@ -688,11 +682,10 @@
             })
             .activity('edit.package', {
                 label: gettext('Edit package'),
-                href: '/packaging/:_id',
                 priority: 10,
                 icon: 'pencil',
-                controller: ['data', 'superdesk', function(data, superdesk) {
-                    superdesk.intent('author', 'package', data.item);
+                controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                    authoringWorkspace.edit(data.item);
                 }],
                 filters: [{action: 'list', type: 'archive'}],
                 condition: function(item) {
@@ -707,8 +700,8 @@
                 label: gettext('View item'),
                 priority: 2000,
                 icon: 'external',
-                controller: ['data', 'superdesk', function(data, superdesk) {
-                    superdesk.intent('read_only', 'content_package', data.item);
+                controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                    authoringWorkspace.view(data.item);
                 }],
                 filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
                 condition: function(item) {
@@ -734,19 +727,17 @@
             })
             .activity('create.package', {
                 label: gettext('Create package'),
-                controller: ['data', 'packages', 'superdesk',
-                    function(data, packages, superdesk) {
+                controller: ['data', 'packages', 'authoringWorkspace',
+                    function(data, packages, authoringWorkspace) {
+                        function edit(item) {
+                            authoringWorkspace.edit(item);
+                        }
+
                         if (data && data.items) {
-                            packages.createPackageFromItems(data.items, data.defaults)
-                            .then(function(new_package) {
-                                superdesk.intent('author', 'package', new_package);
-                            });
+                            packages.createPackageFromItems(data.items, data.defaults).then(edit);
                         } else {
                             var defaultData = data && data.defaults ? data.defaults : {};
-                            packages.createEmptyPackage(defaultData)
-                            .then(function(new_package) {
-                                superdesk.intent('author', 'package', new_package);
-                            });
+                            packages.createEmptyPackage(defaultData).then(edit);
                         }
                     }],
                 filters: [{action: 'create', type: 'package'}],
@@ -758,10 +749,11 @@
                 label: gettext('Package item'),
                 priority: 5,
                 icon: 'package-plus',
-                controller: ['data', 'packages', 'superdesk', 'notify', 'gettext', function(data, packages, superdesk, notify, gettext) {
+                controller: ['data', 'packages', 'authoringWorkspace', 'notify', 'gettext',
+                function(data, packages, authoringWorkspace, notify, gettext) {
                     packages.createPackageFromItems([data.item])
-                    .then(function(new_package) {
-                        superdesk.intent('author', 'package', new_package);
+                    .then(function(newPackage) {
+                        authoringWorkspace.edit(newPackage);
                     }, function(response) {
                         if (response.status === 403 && response.data && response.data._message) {
                             notify.error(gettext(response.data._message), 3000);

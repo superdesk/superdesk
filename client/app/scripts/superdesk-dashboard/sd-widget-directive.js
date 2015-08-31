@@ -23,9 +23,9 @@ define([
      * Params:
      * @scope {Object} widget
      */
-    return ['$modal', function($modal) {
+    return ['$modal', 'asset', function($modal, asset) {
         return {
-            templateUrl: require.toUrl('./views/widget.html'),
+            templateUrl: asset.templateUrl('superdesk-dashboard/views/widget.html'),
             restrict: 'A',
             replace: true,
             transclude: true,

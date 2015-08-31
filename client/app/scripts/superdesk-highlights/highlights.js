@@ -291,13 +291,12 @@
         };
     }
 
-    CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', '$location'];
-    function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, $location) {
+    CreateHighlightsButtonDirective.$inject = ['superdesk', 'desks', 'highlightsService', 'authoringWorkspace', '$location'];
+    function CreateHighlightsButtonDirective(superdesk, desks, highlightsService, authoringWorkspace, $location) {
         return {
-            require: '^sdAuthoringWorkspace',
             scope: {highlight_id: '=highlight'},
             templateUrl: 'scripts/superdesk-highlights/views/create_highlights_button_directive.html',
-            link: function(scope, elem, attrs, workspaceCtrl) {
+            link: function(scope) {
                 scope.createHighlight = function(highlight) {
                     var promise = highlightsService.get(desks.getCurrentDeskId()).then(function(result) {
                         scope.highlights = _.find(result._items, {_id: scope.highlight_id});
@@ -306,7 +305,7 @@
 
                     promise = promise.then(function() {
                         highlightsService.createEmptyHighlight(scope.highlights).then(function(new_package) {
-                            workspaceCtrl.edit(new_package);
+                            authoringWorkspace.edit(new_package);
                         });
                     });
                 };

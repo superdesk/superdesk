@@ -1,5 +1,5 @@
 
-var openUrl = require('./helpers/utils').open,
+var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/content'),
     authoring = require('./helpers/authoring'),
@@ -9,9 +9,7 @@ describe('HIGHLIGHTS', function() {
     'use strict';
 
     describe('add highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('add highlights configuration with one desk', function() {
             highlights.add();
@@ -59,9 +57,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('edit highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('change the name of highlight configuration', function() {
             highlights.edit('highlight one');
@@ -137,9 +133,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('delete highlights configuration:', function() {
-        beforeEach(function() {
-            openUrl('/#/settings/highlights');
-        });
+        beforeEach(route('/settings/highlights'));
 
         it('delete highlight configuration', function() {
             expect(highlights.getRow('highlight one').count()).toBe(1);
@@ -149,9 +143,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('mark for highlights in a desk:', function() {
-        beforeEach(function() {
-            openUrl('/#/workspace/content');
-        });
+        beforeEach(route('/workspace/content'));
 
         it('mark for highlights in list view', function() {
             workspace.switchToDesk('SPORTS DESK');
@@ -182,11 +174,11 @@ describe('HIGHLIGHTS', function() {
             highlights.createHighlightsPackage('Highlight two');
             authoring.showSearch();
             authoring.addToGroup(0, 'ONE');
-            expect(authoring.getGroupedItems('ONE').count()).toBe(1);
+            expect(authoring.getGroupItems('ONE').count()).toBe(1);
             authoring.showSearch();
             authoring.save();
-            expect(content.getItemCount()).toBe(1);
-            authoring.close();
+            route('/workspace/content')();
+            expect(content.getCount()).toBe(3);
         });
 
         it('filter by highlights in highlight package', function() {
@@ -218,9 +210,10 @@ describe('HIGHLIGHTS', function() {
 
             authoring.addToGroup(0, 'ONE');
             authoring.addToGroup(1, 'TWO');
-            expect(authoring.getGroupedItems('ONE').count()).toBe(1);
-            expect(authoring.getGroupedItems('TWO').count()).toBe(1);
+            expect(authoring.getGroupItems('ONE').count()).toBe(1);
+            expect(authoring.getGroupItems('TWO').count()).toBe(1);
             authoring.save();
+
             highlights.exportHighlights();
             authoring.save();
             authoring.close();
@@ -232,9 +225,7 @@ describe('HIGHLIGHTS', function() {
     });
 
     describe('multi mark for highlights:', function() {
-        beforeEach(function() {
-            openUrl('/#/workspace/content');
-        });
+        beforeEach(route('/workspace/content'));
 
         it('multi mark for highlights', function() {
             workspace.switchToDesk('SPORTS DESK');

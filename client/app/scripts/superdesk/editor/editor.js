@@ -501,7 +501,7 @@ function EditorService(spellcheck, $rootScope) {
     }
 }
 
-angular.module('superdesk.editor', [])
+angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 

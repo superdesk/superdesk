@@ -124,7 +124,7 @@ function Monitoring() {
     };
 
     this.showMonitoringSettings = function() {
-        element(by.css('.icon-dots-vertical')).click();
+        element.all(by.className('icon-dots-vertical')).first().click();
         browser.wait(function() {
             return element(by.css('.icon-settings')).isDisplayed();
         });
@@ -132,7 +132,7 @@ function Monitoring() {
         browser.wait(function() {
             return element.all(by.css('.aggregate-widget-config')).isDisplayed();
         });
-        element(by.css('[ng-click="goTo(step)"]')).click();
+        element.all(by.css('[ng-click="goTo(step)"]')).first().click();
     };
 
     this.nextStages = function() {

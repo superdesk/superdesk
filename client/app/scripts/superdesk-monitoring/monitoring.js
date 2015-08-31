@@ -169,8 +169,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'desks', '$timeout'];
-    function MonitoringGroupDirective(cards, api, desks, $timeout) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'desks', 'authoringWorkspace', '$timeout'];
+    function MonitoringGroupDirective(cards, api, desks, authoringWorkspace, $timeout) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -184,7 +184,7 @@
 
         return {
             templateUrl: 'scripts/superdesk-monitoring/views/monitoring-group.html',
-            require: ['^sdMonitoringView', '^sdAuthoringWorkspace'],
+            require: ['^sdMonitoringView'],
             scope: {
                 group: '=',
                 numItems: '=',
@@ -192,8 +192,7 @@
             },
             link: function(scope, elem, attrs, ctrls) {
 
-                var monitoring = ctrls[0],
-                    workspace = ctrls[1];
+                var monitoring = ctrls[0];
 
                 scope.view = 'compact';
                 scope.page = 1;
@@ -229,7 +228,7 @@
                     moveTimeout;
 
                 function edit(item, lock) {
-                    workspace.edit(item, lock);
+                    authoringWorkspace.edit(item, !lock);
                     monitoring.preview(null);
                 }
 
