@@ -245,8 +245,8 @@ class BasePublishService(BaseService):
 
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         # if the item is a package do recursion to publish
-                        wanted_keys = ['state', 'operation']
-                        sub_updates = dict([(i, updates[i]) for i in wanted_keys if i in updates])
+                        sub_updates = {i: updates[i] for i in ['state', 'operation'] if i in updates}
+                        sub_updates['groups'] = list(package_item['groups'])
                         self._publish_package_items(package_item, updates)
                         self._update_archive(original=package_item, updates=sub_updates,
                                              should_insert_into_versions=False)
@@ -258,6 +258,8 @@ class BasePublishService(BaseService):
                     package_item = super().find_one(req=None, _id=guid)
 
                 subscribers = self._get_subscribers_for_package_item(package_item)
+                self.package_service.update_field_in_package(updates, package_item[config.ID_FIELD],
+                                                             config.VERSION, package_item[config.VERSION])
 
                 if package_item[config.ID_FIELD] in removed_items:
                     digital_item_id = None
@@ -444,7 +446,7 @@ class BasePublishService(BaseService):
         :param target_subscribers: List of subscriber and items-per-subscriber
         """
         self._process_publish_updates(package, updates)
-        all_items = PackageService().get_residrefs(package)
+        all_items = self.package_service.get_residrefs(package)
         for items in target_subscribers.values():
             updated = deepcopy(package)
             updates_copy = deepcopy(updates)
@@ -453,13 +455,13 @@ class BasePublishService(BaseService):
             wanted_items = [item for item in items['items'] if items['items'].get(item, None)]
             unwanted_items = [item for item in all_items if item not in wanted_items]
             for i in unwanted_items:
-                still_items_left = PackageService().remove_ref_from_inmem_package(updated, i)
+                still_items_left = self.package_service.remove_ref_from_inmem_package(updated, i)
                 if not still_items_left and self.publish_type != 'correct':
                     # if nothing left in the package to be published and
                     # if not correcting then don't send the package
                     return
             for key in wanted_items:
-                PackageService().replace_ref_in_package(updated, key, items['items'][key])
+                self.package_service.replace_ref_in_package(updated, key, items['items'][key])
             self.queue_transmission(updated, [subscriber])
 
     def _process_publish_updates(self, doc, updates):
@@ -971,7 +973,7 @@ class CorrectPublishService(BasePublishService):
         original_updates['operation'] = updates['operation']
         original_updates[ITEM_STATE] = updates[ITEM_STATE]
         super().on_updated(updates, original)
-        packages = PackageService().get_packages(original[config.ID_FIELD])
+        packages = self.package_service.get_packages(original[config.ID_FIELD])
         if packages and packages.count() > 0:
             archive_correct = get_resource_service('archive_correct')
             processed_packages = []
@@ -979,6 +981,16 @@ class CorrectPublishService(BasePublishService):
                 if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED] and \
                         package.get(PACKAGE_TYPE, '') == '' and \
                         str(package[config.ID_FIELD]) not in processed_packages:
+                    original_updates['groups'] = package['groups']
+
+                    if updates.get('headline'):
+                        self.package_service.update_field_in_package(original_updates, original[config.ID_FIELD],
+                                                                     'headline', updates.get('headline'))
+
+                    if updates.get('slugline'):
+                        self.package_service.update_field_in_package(original_updates, original[config.ID_FIELD],
+                                                                     'slugline', updates.get('slugline'))
+
                     archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
                     processed_packages.append(package[config.ID_FIELD])
 
