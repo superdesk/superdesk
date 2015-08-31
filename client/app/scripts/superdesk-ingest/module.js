@@ -943,7 +943,7 @@ define([
                 };
 
                 scope.selectCategory = function(item) {
-                    scope.rule.filter.category.push({qcode: item.value, name: item.name});
+                    scope.rule.filter.category.push({qcode: item.qcode, name: item.name});
                     scope.categoryTerm = '';
                 };
 
@@ -952,8 +952,7 @@ define([
                     scope.filteredCategories = _.filter(scope.categories, function(category) {
                         return (
                             regex.test(category.name) &&
-                            _.findIndex(scope.rule.filter.category, {qcode: category.value}) === -1 &&
-                            category.is_active === true
+                            _.findIndex(scope.rule.filter.category, {qcode: category.qcode}) === -1
                         );
                     });
                 };
@@ -974,8 +973,7 @@ define([
                     scope.filteredGenres = _.filter(scope.genres, function(genre) {
                         return (
                             regex.test(genre.name) &&
-                            scope.rule.filter.genre.indexOf(genre.value) === -1 &&
-                            genre.is_active === true
+                            scope.rule.filter.genre.indexOf(genre.value) === -1
                         );
                     });
                 };

@@ -226,7 +226,7 @@ class FilterConditionService(BaseService):
 
     def _get_field(self, field):
         if field == 'anpa_category':
-            return 'anpa_category.value'
+            return 'anpa_category.qcode'
         elif field == 'genre':
             return 'genre.name'
         elif field == 'subject':
