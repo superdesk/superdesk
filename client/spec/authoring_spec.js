@@ -142,9 +142,9 @@ describe('authoring', function() {
 
     it('allows to create a new empty package', function () {
         monitoring.openMonitoring();
-        browser.sleep(500);
         monitoring.createItemAction('create_package');
-        expect(authoring.findItemTypeIcons('composite').count()).toBeGreaterThan(0);
+        var isVisible = element(by.css('div.packaging-screen')).isDisplayed();
+        expect(isVisible).toBe(true);
     });
 
 });

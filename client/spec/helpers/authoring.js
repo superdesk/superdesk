@@ -147,8 +147,8 @@ function Authoring() {
     };
 
     this.getGroupedItems = function(group) {
-        return element(by.css('[data-title="' + group.toLowerCase() + '"]'))
-            .all(by.repeater('child in item.childData'));
+        return element(by.css('[data-group="' + group.toLowerCase() + '"]'))
+            .all(by.repeater('item in group.items'));
     };
 
     this.getGroupItems = function(group) {
