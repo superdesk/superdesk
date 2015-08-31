@@ -158,29 +158,7 @@
         };
 
         // Highlights related functionality
-
         $scope.highlight = !!item.highlight;
-
-        $scope.exportHighlight = function(item) {
-            if ($scope.save_enabled()) {
-                modal.confirm(gettext('You have unsaved changes, do you want to continue.'))
-                    .then(function() {
-                        _exportHighlight(item._id);
-                    }
-                );
-            } else {
-                _exportHighlight(item._id);
-            }
-        };
-
-        function _exportHighlight(_id) {
-            api.generate_highlights.save({}, {'package': _id})
-            .then(function(item) {
-                superdesk.intent('author', 'article', item);
-            }, function(response) {
-                notify.error(gettext('Error creating highlight.'));
-            });
-        }
     }
 
     SearchWidgetCtrl.$inject = ['$scope', 'packages', 'api', 'search'];
