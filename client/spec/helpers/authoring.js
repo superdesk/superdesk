@@ -115,7 +115,7 @@ function Authoring() {
     };
 
     this.getQueuedItems = function() {
-        return element.all(by.repeater('queuedItem in version.queuedItems'));
+        return element.all(by.repeater('queuedItem in queuedItems'));
     };
 
     this.getSearchItem = function(item) {

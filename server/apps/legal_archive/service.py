@@ -42,6 +42,18 @@ class LegalService(Service):
         if privileges.get(resource_privileges, 0) == 0:
             raise SuperdeskApiError.forbiddenError()
 
+    def enhance(self, legal_archive_docs):
+        """
+        Enhances the item in Legal Archive Service
+        :param legal_archive_docs:
+        """
+
+        if isinstance(legal_archive_docs, list):
+            for legal_archive_doc in legal_archive_docs:
+                legal_archive_doc['_type'] = LEGAL_ARCHIVE_NAME
+        else:
+            legal_archive_docs['_type'] = LEGAL_ARCHIVE_NAME
+
 
 class LegalArchiveService(LegalService):
     def on_fetched(self, docs):
@@ -49,23 +61,14 @@ class LegalArchiveService(LegalService):
         Overriding this to enhance the published article with the one in archive collection
         """
 
-        self._enhance(docs[config.ITEMS])
+        self.enhance(docs[config.ITEMS])
 
     def on_fetched_item(self, doc):
         """
         Overriding this to enhance the published article with the one in archive collection
         """
 
-        self._enhance([doc])
-
-    def _enhance(self, legal_archive_docs):
-        """
-        Enhances the item in Legal Archive Service
-        :param legal_archive_docs:
-        """
-
-        for legal_archive_doc in legal_archive_docs:
-            legal_archive_doc['_type'] = LEGAL_ARCHIVE_NAME
+        self.enhance(doc)
 
 
 class LegalPublishQueueService(LegalService):
@@ -98,5 +101,6 @@ class LegalArchiveVersionsService(LegalService):
         for doc in version_history:
             doc[config.ID_FIELD] = doc[id_field]
             del doc[id_field]
+            self.enhance(doc)
 
         return ListCursor(version_history)
