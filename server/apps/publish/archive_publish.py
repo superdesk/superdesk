@@ -756,16 +756,21 @@ class BasePublishService(BaseService):
         if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not takes_package and self.publish_type == ITEM_PUBLISH:
             items = self.package_service.get_residrefs(package)
 
+            # make sure package is not scheduled or spiked
+            if package[ITEM_STATE] in (CONTENT_STATE.SPIKED, CONTENT_STATE.SCHEDULED):
+                raise ValidationError(['Package cannot be {}'.format(package[ITEM_STATE])])
+
             if items:
                 for guid in items:
                     doc = super().find_one(req=None, _id=guid)
+
                     if package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         digital = self.takes_package_service.get_take_package(doc) or {}
                         self._validate_package_contents(doc, digital, validation_errors)
 
-                    # make sure no items are killed or locked
-                    if doc[ITEM_STATE] in (CONTENT_STATE.KILLED, CONTENT_STATE.SPIKED):
-                        raise ValidationError(['Package contains killed or spike item'])
+                    # make sure no items are killed or spiked or scheduled
+                    if doc[ITEM_STATE] in (CONTENT_STATE.KILLED, CONTENT_STATE.SPIKED, CONTENT_STATE.SCHEDULED):
+                        raise ValidationError(['Package cannot contain {} item'.format(doc[ITEM_STATE])])
 
                     # don't validate items that already have published
                     if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
@@ -776,7 +781,7 @@ class BasePublishService(BaseService):
 
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
-                        validation_errors.extend(['{}: packaged item is locked'.format(doc['headline'])])
+                        validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
 
 
 class ArchivePublishResource(BasePublishResource):

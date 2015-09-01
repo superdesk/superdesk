@@ -231,7 +231,7 @@ Feature: Package Publishing
       And we publish "compositeitem" with "publish" type and "published" state
       Then we get error 400
       """
-      {"_issues": {"validator exception": "['WA:Navy steps in with WA asylum-seeker boat: packaged item is locked']"}, "_status": "ERR"}
+      {"_issues": {"validator exception": "['WA:Navy steps in with WA asylum-seeker boat: packaged item cannot be locked']"}, "_status": "ERR"}
       """
 
     @auth
@@ -662,7 +662,7 @@ Feature: Package Publishing
       When we publish "compositeitem" with "publish" type and "published" state
       Then we get error 400
       """
-        {"_issues": {"validator exception": "['Package contains killed or spike item']"}, "_status": "ERR"}
+        {"_issues": {"validator exception": "['Package cannot contain spiked item']"}, "_status": "ERR"}
       """
 
 

@@ -19,7 +19,7 @@ from superdesk.resource import Resource
 from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
 from .common import remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
-    handle_existing_data, item_schema, validate_schedule
+    handle_existing_data, item_schema, validate_schedule, is_item_in_package
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -203,6 +203,9 @@ class ArchiveService(BaseService):
                 updates['publish_schedule'] = None
             else:
                 # validate the schedule
+                if is_item_in_package(original):
+                    raise SuperdeskApiError.badRequestError(message='This item is in a package' +
+                                                            ' it needs to be removed before the item can be scheduled!')
                 package = TakesPackageService().get_take_package(original) or {}
                 validate_schedule(updates.get('publish_schedule'), package.get(SEQUENCE, 1))
 

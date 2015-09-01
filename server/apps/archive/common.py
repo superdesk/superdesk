@@ -428,7 +428,7 @@ def item_schema(extra=None):
 
 def is_item_in_package(item):
     """
-    Determins if the passed item is a member of a non-takes package
+    Checks if the passed item is a member of a non-takes package
     :param item:
     :return: True if the item belongs to a non-takes package
     """
