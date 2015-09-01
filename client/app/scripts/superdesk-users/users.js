@@ -1029,8 +1029,13 @@
          *   panel, allowing users to set various system preferences for
          *   themselves.
          */
-        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset', 'metadata', '$timeout',
-            function(api, session, preferencesService, notify, asset, metadata, $timeout) {
+        .directive('sdUserPreferences', [
+            'api', 'session', 'preferencesService', 'notify', 'asset',
+            'metadata', 'modal', '$timeout', '$q',
+        function (
+            api, session, preferencesService, notify, asset, metadata, modal,
+            $timeout, $q
+        ) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, element, attrs) {
@@ -1065,19 +1070,30 @@
                     };
 
                     /**
-                    * Saves the changes to the preferences on the server.
+                    * Saves the preferences changes on the server. It also
+                    * invokes additional checks beforehand, namely the
+                    * preferred categories selection.
                     *
                     * @method save
                     */
-                    scope.save = function() {
-                        var update = createPatchObject();
-
-                        preferencesService.update(update).then(function() {
-                                notify.success(gettext('User preferences saved'));
-                                scope.cancel();
-                            }, function(response) {
-                                notify.error(gettext('User preferences could not be saved...'));
-                            });
+                    scope.save = function () {
+                        preSaveCategoriesCheck()
+                        .then(function () {
+                            var update = createPatchObject();
+                            return preferencesService.update(update);
+                        }, function () {
+                            return $q.reject('canceledByModal');
+                        })
+                        .then(function () {
+                            notify.success(gettext('User preferences saved'));
+                            scope.cancel();
+                        }, function (reason) {
+                            if (reason !== 'canceledByModal') {
+                                notify.error(gettext(
+                                    'User preferences could not be saved...'
+                                ));
+                            }
+                        });
                     };
 
                     /**
@@ -1188,6 +1204,47 @@
                             newObj.selected = !!selectedCats[cat.qcode];
                             scope.categories.push(newObj);
                         });
+                    }
+
+                    /**
+                    * Checks if at least one preferred category has been
+                    * selected, and if not, asks the user whether or not to
+                    * proceed with a default set of categories selected.
+                    *
+                    * Returns a promise that is resolved if saving the
+                    * preferences should continue, and rejected if it should be
+                    * aborted (e.g. when no categories are selected AND the
+                    * user does not confirm using a default set of categories).
+                    *
+                    * @function preSaveCategoriesCheck
+                    * @return {Object} - a promise object
+                    */
+                    function preSaveCategoriesCheck() {
+                        var modalResult,
+                            msg,
+                            someSelected;
+
+                        someSelected = scope.categories.some(function (cat) {
+                            return cat.selected;
+                        });
+
+                        if (someSelected) {
+                            // all good, simply return a promise that resolves
+                            return $q.when();
+                        }
+
+                        msg = [
+                            'No preferred categories selected. Should you ',
+                            'choose to proceed with your choice, a default ',
+                            'set of categories will be selected for you.'
+                        ].join('');
+                        msg = gettext(msg);
+
+                        modalResult = modal.confirm(msg).then(function () {
+                            scope.checkDefault();
+                        });
+
+                        return modalResult;
                     }
 
                     /**
