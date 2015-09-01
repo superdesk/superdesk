@@ -1073,7 +1073,7 @@
                         var update = createPatchObject();
 
                         preferencesService.update(update).then(function() {
-                                // TODO: notify user "preferences saved"?
+                                notify.success(gettext('User preferences saved'));
                                 scope.cancel();
                             }, function(response) {
                                 notify.error(gettext('User preferences could not be saved...'));
