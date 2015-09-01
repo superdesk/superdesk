@@ -104,7 +104,8 @@
 </div>
 
 <div class="composite-preview" ng-if="item.type === 'composite'">
-    <div sd-package data-item="item"></div>
+  <div sd-package-items-edit ng-model="item.groups" ng-if="_editable"></div>
+  <div sd-package data-item="item" class="composite-preview" ng-if="!_editable"></div>
 </div>
 
 <div class="field pull-left" ng-if="item.sign_off">
