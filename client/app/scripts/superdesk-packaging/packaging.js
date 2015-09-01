@@ -469,7 +469,7 @@
                         version = '?version=' + scope.item._current_version;
                     }
 
-                    api.archive.getByUrl('archive/' + scope.item.residRef + version)
+                    api[scope.item.location].getByUrl(scope.item.location + '/' + scope.item.residRef + version)
                     .then(function(result) {
                         scope.data = result;
                         scope.isLocked = lock.isLocked(scope.data);
