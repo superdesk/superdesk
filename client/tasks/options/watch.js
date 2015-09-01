@@ -19,6 +19,7 @@ module.exports = {
     },
     assets: {
         options: {livereload: true},
+        tasks: ['ngtemplates'],
         files: [
             '<%= appDir %>/styles/**/*.css',
             '<%= appDir %>/scripts/superdesk*/**/*.html',
