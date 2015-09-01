@@ -93,7 +93,8 @@
     </div>
 
   </div>
-  <button id="btnCrop" class="pull-right" ng-class="{active: toggleDetails}" ng-click="toggleDetails = !toggleDetails" translate>{{toggleDetails ? 'APPLY CROPS' : 'CANCEL'}}</button>
+  <button id="btnCrop1" class="pull-right" ng-class="{active: toggleDetails}" ng-click="toggleDetails = !toggleDetails" translate>{{toggleDetails ? 'APPLY CROPS' : 'CANCEL'}}</button>
+    <button id="btnCrop" class="pull-right" ng-click="applyCrop()" translate>APPLY CROPS</button>
   <div ng-if="item.type == 'audio'">
     <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
   </div>

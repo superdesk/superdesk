@@ -9,16 +9,33 @@
         <div><label class="cords-label">{{preview.cords}}</label></div>
     </div>
     <section class="main">
-        <div class="preview">
+        <div id="dynBoxId2" class="preview">
+          <div class="original">
+            <div class="crop-area image">
+                <ul> {{data.cropsizes}}
+                  <li ng-repeat="cropsize in data.cropsizes track by cropsize.name">
+                  <label translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
+                  <div sd-image-crop data-show-Min-Size-Error="true"
+                    data-src="data.renditions.original.href" data-cords="preview.cords" data-box-width="cropsize.width" 
+                    data-box-height="cropsize.height" data-aspect-ratio="4/3" 
+                    data-minimum-size="[cropsize.width, cropsize.height]" data-crop-select="data.renditions[cropsize.name]">
+                  </div>
+                   <br />
+                  </li>
+                </ul>
+            </div>
+          </div>
+        </div>
+        <div class="preview" ng-hide="true">
             <div class="crop-area image" ng-hide="false">
-                <div class="original">
+               <!--  <div class="original">
                     <div sd-image-crop data-src="data.renditions.original.href" data-show-Min-Size-Error="true" 
                         data-cords="preview.cords" data-box-width="data.cropsize.width" data-box-height="data.cropsize.height" 
                         data-aspect-ratio="data.aspectR" data-minimum-size="[data.cropsize.width, data.cropsize.height]" 
                         data-crop-select="data.renditions[data.cropsize.name]">
                     </div>
-                </div>
-                <div class="preview">
+                </div> -->
+                <div class="preview" ng-hide="true">
                     <div class="preview-large-4-3-small" ng-if="data.cropsize.name === '4-3'">
                         <img ng-src="{{data.renditions.original.href}}" class="preview-target-1">
                     </div>

@@ -725,22 +725,23 @@
             $scope.data.renditions[cropName].CropBottom = coordinates.CropBottom;
         }
 
-        $scope.done = function() {
-            var coordinates = {};
-            coordinates.CropLeft = Math.round(Math.min($scope.preview.cords.x, $scope.preview.cords.x2));
-            coordinates.CropRight = Math.round(Math.max($scope.preview.cords.x, $scope.preview.cords.x2));
-            coordinates.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
-            coordinates.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
+        function saveCrops(key) {
+            var coordinates = [];
+            coordinates[key].CropLeft = Math.round(Math.min($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
+            coordinates[key].CropRight = Math.round(Math.max($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
+            coordinates[key].CropTop = Math.round(Math.min($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
+            coordinates[key].CropBottom = Math.round(Math.max($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
 
-            var cropName = $scope.data.cropsize.name;
+            //var cropName = $scope.data.cropsize.name;
+            var cropName = key;
 
             //Save or overwrite crop if item is not published.
             if ($scope.data.state !== 'published') {
-                return cropImage.saveCrop(coordinates, $scope.data).then(function(result) {
+                return cropImage.saveCrop(coordinates[key], $scope.data).then(function(result) {
                     var picture_url = result.renditions[cropName].href;
                     notify.success(gettext('Image Cropped.'));
                     $scope.data.picture_url = picture_url;
-                    recordCrop(coordinates, cropName);
+                    recordCrop(coordinates[key], cropName);
                 }, function(response) {
                     if (response.data._status === 'ERR'){
                         notify.error(gettext('Error: ' + response.data._error.message));
@@ -748,10 +749,16 @@
                 });
             } else {
                 //Hold crop changes if item is already published, so it will be save on correction.
-                recordCrop(coordinates, cropName);
+                recordCrop(coordinates[key], cropName);
                 notify.success(gettext('Crop changes recorded'));
             }
+        }
 
+        $scope.done = function() {
+            _.forEach($scope.data.cropsizes, function(cropsize) {
+                console.log(cropsize);
+                saveCrops(cropsize);
+            });
         };
     }
 
@@ -1706,6 +1713,17 @@
                     }
                     superdesk.intent('edit', 'crop',  scope.item);
                 };
+                //
+                scope.applyCrop = function() {
+                    //scope.toggleDetails = !scope.toggleDetails;
+                    scope.item.cropsizes = scope.metadata.crop_sizes;
+                    //scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
+                    /*if (scope.errorMessage != null) {
+                        notify.error(gettext(scope.errorMessage));
+                    }*/
+                    superdesk.intent('edit', 'crop',  scope.item);
+                };
+
             }
         };
     }
