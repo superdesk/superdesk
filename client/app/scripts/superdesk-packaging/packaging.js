@@ -14,6 +14,7 @@
 
     PackagesService.$inject = ['api', '$q', 'archiveService', 'lock', 'autosave', 'authoring'];
     function PackagesService(api, $q, archiveService, lock, autosave, authoring) {
+        var self = this;
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
@@ -91,9 +92,20 @@
                 origGroups.push(targetGroup);
             }
             _.each(items, function(item) {
-                targetGroup.refs.push(getReferenceFor(item));
+                targetGroup.refs.push(self.getReferenceFor(item));
             });
             _.extend(current, {groups: origGroups});
+        };
+
+        this.isAdded = function(pkg, item) {
+            for (var i = 0; i < pkg.groups.length; i++) {
+                for (var j = 0; j < pkg.groups[i].refs.length; j++) {
+                    if (pkg.groups[i].refs[j].guid === item._id) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
 
         this.fetchItem = function(packageItem) {
@@ -106,6 +118,17 @@
                         console.log('Item not found');
                     }
                 });
+        };
+
+        this.getReferenceFor = function(item) {
+            return {
+                headline: item.headline || '',
+                residRef: item._id,
+                location: 'archive',
+                slugline: item.slugline || '',
+                renditions: item.renditions || {},
+                itemClass: item.type ? ('icls:' + item.type) : ''
+            };
         };
 
         function getGroupFor(item, idRef) {
@@ -133,17 +156,6 @@
 
             archiveService.addTaskToArticle(defaults);
             return _.merge(item, defaults);
-        }
-
-        function getReferenceFor(item) {
-            return {
-                headline: item.headline || '',
-                residRef: item._id,
-                location: 'archive',
-                slugline: item.slugline || '',
-                renditions: item.renditions || {},
-                itemClass: item.type ? ('icls:' + item.type) : ''
-            };
         }
 
     }
@@ -314,12 +326,21 @@
         };
     }
 
-    function PackageItemsEditDirective() {
+    PackageItemsEditDirective.$inject = ['packages'];
+    function PackageItemsEditDirective(packages) {
         return {
             scope: false,
             require: 'ngModel',
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-items-edit.html',
             link: function(scope, elem, attrs, ngModel) {
+                scope.$on('package:addItems', function(event, data) {
+                    var groupIndex = _.findIndex(scope.list, {id: 'main'});
+                    for (var i = 0; i < data.length; i++) {
+                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data[i]));
+                    }
+                    autosave();
+                });
+
                 ngModel.$render = function() {
                     scope.list = ngModel.$viewValue;
                 };
@@ -722,6 +743,23 @@
                 ],
                 additionalCondition:['authoring', 'item', function(authoring, item) {
                     return authoring.itemActions(item).package_item;
+                }],
+                group: 'packaging'
+            })
+            .activity('addtopackage', {
+                label: gettext('Add to package'),
+                priority: 5,
+                icon: 'package-plus',
+                controller: ['data', '$rootScope', function(data, $rootScope) {
+                    $rootScope.$broadcast('package:addItems', [data.item]);
+                }],
+                filters: [
+                    {action: 'list', type: 'archive'}
+                ],
+                additionalCondition:['packages', 'authoringWorkspace', 'item', function(packages, authoringWorkspace, item) {
+                    var pkg = authoringWorkspace.getItem();
+                    return pkg && pkg.type === 'composite' &&
+                        pkg._id !== item._id && !packages.isAdded(pkg, item);
                 }],
                 group: 'packaging'
             });
