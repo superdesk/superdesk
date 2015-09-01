@@ -113,4 +113,78 @@ describe('sdUserPreferences directive', function() {
         });
     });
 
+    describe('scope\'s checkAll() method', function () {
+        beforeEach(function () {
+            scope.categories = [
+                {qcode: '1', selected: false},
+                {qcode: '2', selected: true},
+                {qcode: '3', selected: false},
+                {qcode: '4', selected: false}
+            ];
+        });
+
+        it('marks all categories as selected', function () {
+            scope.checkAll();
+            scope.categories.forEach(function (cat) {
+                expect(cat.selected).toBe(true);
+            });
+        });
+
+        it('marks the form as dirty', function () {
+            scope.userPrefs.$dirty = false;
+            scope.checkAll();
+            expect(scope.userPrefs.$dirty).toBe(true);
+        });
+    });
+
+    describe('scope\'s checkNone() method', function () {
+        beforeEach(function () {
+            scope.categories = [
+                {qcode: 'a', selected: true},
+                {qcode: 'b', selected: true},
+                {qcode: 'c', selected: false},
+                {qcode: 'd', selected: true}
+            ];
+        });
+
+        it('marks all categories as NOT selected', function () {
+            scope.checkNone();
+            scope.categories.forEach(function (cat) {
+                expect(cat.selected).toBe(false);
+            });
+        });
+
+        it('marks the form as dirty', function () {
+            scope.userPrefs.$dirty = false;
+            scope.checkNone();
+            expect(scope.userPrefs.$dirty).toBe(true);
+        });
+    });
+
+    describe('scope\'s checkDefault() method', function () {
+        beforeEach(function () {
+            scope.categories = [
+                {qcode: 'a', selected: true},
+                {qcode: 'b', selected: true},
+                {qcode: 'c', selected: false},
+                {qcode: 'd', selected: true}
+            ];
+        });
+
+        it('makes only the default categories to be selected', function () {
+            scope.defaultCategories = {'b': true, 'c': true};
+            scope.checkDefault();
+            scope.categories.forEach(function (cat) {
+                var expectSelected = _.includes(['b', 'c'], cat.qcode);
+                expect(cat.selected).toBe(expectSelected);
+            });
+        });
+
+        it('marks the form as dirty', function () {
+            scope.userPrefs.$dirty = false;
+            scope.checkDefault();
+            expect(scope.userPrefs.$dirty).toBe(true);
+        });
+    });
+
 });

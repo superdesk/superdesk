@@ -1044,6 +1044,19 @@
                         scope.datelinePreview = scope.preferences['dateline:located'].located;
                     });
 
+                    // A list of category codes that are considered preferred
+                    // by default, unless of course the user changes this
+                    // preference setting.
+                    scope.defaultCategories = Object.freeze({
+                        'a': true,  // Australian General News
+                        'e': true,  // Entertainment
+                        'f': true,  // Finance
+                        'i': true,  // International News
+                        's': true,  // Overseas Sport
+                        't': true,  // Domestic Sport
+                        'v': true,  // Advisories
+                    });
+
                     scope.cancel = function() {
                         scope.userPrefs.$setPristine();
                         buildPreferences(orig);
@@ -1079,6 +1092,46 @@
                         $timeout(function () {
                             scope.datelinePreview = datelinePreference.located;
                         });
+                    };
+
+                    /**
+                    * Marks all categories in the preferred categories list
+                    * as selected.
+                    *
+                    * @method checkAll
+                    */
+                    scope.checkAll = function () {
+                        scope.categories.forEach(function (cat) {
+                            cat.selected = true;
+                        });
+                        scope.userPrefs.$setDirty();
+                    };
+
+                    /**
+                    * Marks all categories in the preferred categories list
+                    * as *not* selected.
+                    *
+                    * @method checkNone
+                    */
+                    scope.checkNone = function () {
+                        scope.categories.forEach(function (cat) {
+                            cat.selected = false;
+                        });
+                        scope.userPrefs.$setDirty();
+                    };
+
+                    /**
+                    * Marks the categories in the preferred categories list
+                    * that are considered default as selected, and all the
+                    * other categories as *not* selected.
+                    *
+                    * @method checkDefault
+                    */
+                    scope.checkDefault = function () {
+                        scope.categories.forEach(function (cat) {
+                            cat.selected = !!scope.defaultCategories[cat.qcode];
+                        });
+                        scope.userPrefs.$setDirty();
                     };
 
                     /**

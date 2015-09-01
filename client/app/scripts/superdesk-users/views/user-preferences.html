@@ -8,7 +8,8 @@
     <div class="preferences form-flat inner-content" ng-init="val = true">
         <div class="title">User settings</div>
         <ul>
-            <li class="fieldset" ng-repeat="(id, p) in preferences track by id" ng-if="p.category !== 'dateline'">
+            <li class="fieldset" ng-repeat="(id, p) in preferences track by id"
+                ng-if="p.category !== 'dateline' && p.category !== 'categories'">
                 <div class="legend">{{ p.category }}</div>
                 <div sd-info-item>
                     <label translate>{{ :: p.label }}</label>
@@ -43,11 +44,25 @@
                   <label translate>
                     {{ :: preferences['categories:preferred'].label }}
                   </label>
-                  <label translate>
-                    By checking the categories you are interested in, the system
-                    will only display them in a menu for setting the content
+                  <p class="discreet" translate>
+                    By selecting the categories you are interested in, the system
+                    will only display these in a menu for setting the content
                     item's categories (along with any of its existing categories).
-                  </label>
+                  </p>
+
+                  <div class="actions">
+                    <a ng-click="checkAll()"
+                       title="{{:: 'Select all categories' | translate}}"
+                       translate>all</a> |
+
+                    <a ng-click="checkNone()"
+                       title="{{:: 'Clear all selected' | translate}}"
+                       translate>none</a> |
+
+                    <a ng-click="checkDefault()"
+                       title="{{:: 'Select default categories only' | translate}}"
+                       translate>default</a>
+                  </div>
 
                   <div ng-repeat="cat in categories track by cat.qcode">
                     <input
