@@ -152,10 +152,6 @@
                 if (params.stage) {
                     query.post_filter({terms: {'task.stage': JSON.parse(params.stage)}});
                 }
-
-                if (params.state) {
-                    query.post_filter({terms: {'state': JSON.parse(params.state)}});
-                }
             }
 
             /**
@@ -275,8 +271,7 @@
             'week': 1,
             'month': 1,
             'desk': 1,
-            'stage':1,
-            'state':1
+            'stage':1
         };
 
         function initSelectedParameters (parameters) {
@@ -412,16 +407,12 @@
 
             var criteria = search.query($location.search()).getCriteria(true);
             var provider = 'search';
-            if (criteria.repo) {
+            if (criteria.repo && criteria.repo.indexOf(',') === -1) {
                 provider = criteria.repo;
             }
 
-            if ($scope.repo.search) {
-                if ($scope.repo.search !== 'local') {
-                    provider = $scope.repo.search;
-                } else if (criteria.repo.indexOf(',') >= 0) {
-                    provider = 'search';
-                }
+            if ($scope.repo.search && $scope.repo.search !== 'local') {
+                provider = $scope.repo.search;
             }
 
             api.query(provider, criteria).then(function(result) {
@@ -488,8 +479,7 @@
                             'date': {},
                             'source': {},
                             'category': {},
-                            'urgency': {},
-                            'state':{}
+                            'urgency': {}
                         };
                     };
 
@@ -521,10 +511,6 @@
 
                             _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                 scope.aggregations.source[source.key] = source.doc_count;
-                            });
-
-                            _.forEach(scope.items._aggregations.state.buckets, function(state) {
-                                scope.aggregations.state[state.key] = state.doc_count;
                             });
 
                             _.forEach(scope.items._aggregations.day.buckets, function(day) {
@@ -989,7 +975,6 @@
                         var params = $location.search();
                         scope.query = params.q;
                         scope.flags = false;
-                        scope.meta = {};
 
                         fetchProviders();
 
@@ -1136,8 +1121,7 @@
                             if (item.subject.length > subjectCodes.length) {
                                 /* Adding subject codes to filter */
                                 var addItemSubjectName = 'subject.name:(' + item.subject[item.subject.length - 1].name + ')',
-                                    query = getQuery(),
-                                    q = (query === null ? addItemSubjectName : query + ' ' + addItemSubjectName);
+                                    q = (scope.query ? scope.query + ' ' + addItemSubjectName : addItemSubjectName);
 
                                 $location.search('q', q);
                             } else {

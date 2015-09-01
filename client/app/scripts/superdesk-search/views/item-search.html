@@ -8,25 +8,25 @@
             <div class="field">
                 <label for="ingest-collection">
                     {{:: 'Ingest' | translate}}
-                    <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
+                    <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest">
                 </label>
             </div>
             <div class="field">
                 <label for="archive-collection">
                     {{:: 'Production' | translate}}
-                    <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
+                    <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive">
                 </label>
             </div>
             <div class="field">
                 <label for="published-collection">
                     {{:: 'Published' | translate}}
-                    <input type="checkbox" id="published-collection" ng-model="repo.published" ng-checked="repo.published" tabindex="6">
+                    <input type="checkbox" id="published-collection" ng-model="repo.published" ng-checked="repo.published">
                 </label>
             </div>
             <div class="field">
                 <label for="archived-collection">
                     {{:: 'Archived' | translate}}
-                    <input type="checkbox" id="archived-collection" ng-model="repo.archived" ng-checked="repo.archived" tabindex="7">
+                    <input type="checkbox" id="archived-collection" ng-model="repo.archived" ng-checked="repo.archived">
                 </label>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 {{:: 'Headline' | translate}}
             </label>
             <div class="control">
-                <input type="text" id="search-headline" ng-model="meta.headline" tabindex="6">
+                <input type="text" id="search-headline" ng-model="meta.headline">
             </div>
         </div>
 
@@ -55,7 +55,7 @@
 
             </label>
             <div class="control">
-                <input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="8">
+                <input type="text" id="search-slugline" ng-model="meta.slugline">
             </div>
         </div>
 
@@ -64,13 +64,13 @@
                 <label for="search-storyname">
                     {{:: 'Story Name' | translate}}
                 </label>
-                <input type="text" id="search-storyname" ng-model="meta.unique_name" tabindex="9">
+                <input type="text" id="search-storyname" ng-model="meta.unique_name">
             </div>
             <div class="field">
                 <label for="search-storytext">
                     {{:: 'Story Text' | translate}}
                 </label>
-                <input type="text" id="search-storytext" ng-model="meta.body_html" tabindex="10">
+                <input type="text" id="search-storytext" ng-model="meta.body_html">
             </div>
         </div>
 
@@ -78,20 +78,20 @@
             <label for="search-creator">
                 {{:: 'Creator' | translate}}
             </label>
-            <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="12">
+            <input type="text" id="search-creator" ng-model="meta.original_creator">
         </div>
 
         <div class="field">
             <label for="search-subject">
                 {{:: 'Subject' | translate}}
             </label>
-            <div class="control">
+            <div class="control" id="search-subject">
                 <div sd-meta-terms data-item="subjectitems" data-field="subject" data-unique="qcode" data-list="subjectcodes" data-change="subjectSearch(subjectitems)"></div>
             </div>
         </div>
     </fieldset>
 </form>
 <div class="actions">
-    <button class="btn btn-info pull-right" ng-click="search()" tabindex="13" translate>Go</button>
-    <button class="btn pull-right" ng-click="focusOnSearch();" tabindex="14" translate>Cancel</button>
+    <button class="btn btn-info pull-right" ng-click="search()" translate>Go</button>
+    <button class="btn pull-right" ng-click="focusOnSearch();" translate>Cancel</button>
 </div>
