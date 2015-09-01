@@ -261,8 +261,8 @@
 		height: @nav-height;
 		width: 100%;
 		.box-sizing(border-box);
-		.box-shadow-both(inset -13px 0px 10px -10px #070707, 0 2px 3px 0px #202020);
-		border-bottom: 1px solid #121212;
+		.box-shadow(0 2px 3px 0px #202020);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 	}
 	.content {
 		position: absolute;
@@ -282,12 +282,9 @@
 					position: relative;
 					height: 100%;
 					.box-sizing(border-box);
-					border-bottom:1px solid #353535;
-					border-top: 1px solid #272727; //fake border - same as bg
-					.box-shadow(inset 0 -1px 0px 0px #1b1b1b);
-					padding-left: 30px;
+					padding-left: 35px;
 					height: 37px;
-					line-height: 33px;
+					line-height: 36px;
 					font-size: 14px;
 					color: #f0f0f0;
 					text-decoration: none;
@@ -353,6 +350,13 @@
 					background: #1f1f1f;
 					color:#3299b7;
 				}
+			}
+			> li.main-menu_group-header {
+				font-size: 11px;
+				text-transform: uppercase;
+				padding: 20px 0 6px 20px;
+				color: rgba(255, 255, 255, 0.5);
+				letter-spacing: 0.06em;
 			}
 		}
 	}
