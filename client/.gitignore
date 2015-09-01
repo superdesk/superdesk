@@ -26,3 +26,4 @@ e2e-test-results/
 nbproject/
 coveralls.json
 lcov.info
+app/scripts/templates.js
