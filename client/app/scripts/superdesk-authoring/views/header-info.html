@@ -105,7 +105,12 @@
 
     <li class="terms-box" ng-if="metadata.categories">
         <label translate>CATEGORY</label>
-        <div class="data" sd-meta-terms data-item="item" data-field="anpa_category" data-unique="qcode" data-list="metadata.categories" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
+        <div
+            sd-meta-terms class="data"
+            ng-disabled="!_editable"
+            data-item="item" data-field="anpa_category" data-unique="qcode"
+            data-list="availableCategories" data-header="true"
+            data-change="autosave(item)"></div>
     </li>
 
     <li class="full-width terms-box" ng-if="metadata.subjectcodes">
