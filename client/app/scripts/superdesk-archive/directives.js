@@ -2,6 +2,7 @@
     'use strict';
 
     return angular.module('superdesk.archive.directives', [
+        'superdesk.filters',
         'superdesk.authoring',
         'superdesk.ingest',
         'superdesk.workflow'
@@ -86,6 +87,26 @@
                 templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
             };
         }])
+        .directive('sdItemPreviewContainer', function() {
+            return {
+                template: '<div ng-if="item" sd-media-view data-item="item" data-close="close()"></div>',
+                scope: {},
+                link: function(scope) {
+                    scope.item = null;
+
+                    scope.$on('intent:preview:item', function(event, intent) {
+                        scope.item = intent.data;
+                    });
+
+                    /**
+                     * Close lightbox
+                     */
+                    scope.close = function() {
+                        scope.item = null;
+                    };
+                }
+            };
+        })
         .directive('sdMediaView', ['keyboardManager', 'packages', function(keyboardManager, packages) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/media-view.html',

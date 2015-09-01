@@ -13,7 +13,7 @@
 
         <button id="Edit" class="btn btn-medium pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.edit"
-            ng-click="lock()"
+            ng-click="edit()"
             translate>Edit</button>
 
         <button class="btn btn-medium pull-left"

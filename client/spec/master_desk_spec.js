@@ -24,7 +24,7 @@ describe('Master Desk', function() {
     it('show content view - preview item', function() {
         masterDesks.switchToTab('content');
         masterDesks.previewItem(0, 1, 0);
-        expect(authoring.lock.isDisplayed()).toBe(true);
+        expect(masterDesks.previewTitle.getText()).toBe('item5');
     });
 
     it('show content view - edit item', function() {

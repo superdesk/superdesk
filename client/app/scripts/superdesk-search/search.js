@@ -799,6 +799,7 @@
                 },
                 link: function(scope) {
                     scope.tab = 'content';
+
                     scope.$watch('item', function(item) {
                         scope.selected = {preview: item || null};
                     });
@@ -1341,5 +1342,4 @@
             return canSpike;
         };
     }
-
 })();

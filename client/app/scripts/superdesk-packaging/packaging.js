@@ -589,34 +589,12 @@
         };
     }
 
-    PackagingEmbeddedDirective.$inject = ['packages'];
-    function PackagingEmbeddedDirective(packages) {
+    function PackagingEmbeddedDirective() {
         return {
             templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
-            require: '^sdAuthoringContainer',
             scope: {
-                item: '='
-            },
-            link: function(scope, elem, attrs, authoringCtrl) {
-                scope.$watch('item', function(item) {
-                    if (item && item.lockIt){
-                        scope.lock();
-                    } else {
-                        scope.origItem = null;
-                        scope.$applyAsync(function() {
-                            scope.origItem = item;
-                            scope.action = 'view';
-                        });
-                    }
-                });
-
-                scope.lock = function() {
-                    packages.open(scope.item._id)
-                    .then(function(item) {
-                        scope.origItem = item;
-                        scope.action = 'edit';
-                    });
-                };
+                origItem: '=item',
+                action: '='
             }
         };
     }

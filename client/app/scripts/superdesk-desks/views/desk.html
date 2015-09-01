@@ -10,11 +10,10 @@
 	</div>
 </div>
 <div class="desk-content">
-	
 	<div class="stage" ng-repeat="stage in deskStages[desk._id]">
 		<div class="stage-header clearfix">
-			<div class="stage-name pull-left">{{stage.name}}</div>
-			<span class="label pull-right">{{total}}</span>
+			<div class="stage-name pull-left">{{ :: stage.name}}</div>
+			<span class="label pull-right">{{ total }}</span>
 		</div>
 		<div class="stage-content"
 			sd-stage-items
@@ -25,5 +24,4 @@
 			data-selected="selected">
 		</div>
 	</div>
-
 </div>
