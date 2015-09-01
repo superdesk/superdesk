@@ -1,114 +1,6 @@
 Feature: Cropping the Image Articles
 
     @auth
-    @vocabulary
-    Scenario: Create a new crop of an Image Story succeeds
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
-      """
-      When we get "/archive/123"
-      Then we get existing resource
-      """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropBottom":600}}}
-      """
-
-    @auth
-    @vocabulary
-    Scenario: Create a new crop of an Image Story with random name fails
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/little"
-      """
-      {"CropLeft":0,"CropRight":40,"CropTop":0,"CropBottom":30}
-      """
-      Then we get error 400
-      """
-      {"_message": "Unknown crop name!", "_status": "ERR"}
-      """
-
-    @auth
-    @vocabulary
-    Scenario: Create a new crop of an Image Story with wrong aspect ratio fails
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":850,"CropTop":0,"CropBottom": 900}
-      """
-      Then we get error 400
-      """
-      {"_message": "Wrong aspect ratio!", "_status": "ERR"}
-      """
-
-    @auth
-    @vocabulary
-    Scenario: Create a new crop of an Image Story with wrong width
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":400,"CropTop":0,"CropBottom": 700}
-      """
-      Then we get error 400
-      """
-      {"_message": "Wrong crop size. Minimum crop size is 800x600.", "_status": "ERR"}
-      """
-
-    @auth
-    @vocabulary
-    Scenario: Create a new crop of an Image Story with wrong height
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom": 500}
-      """
-      Then we get error 400
-      """
-      {"_message": "Wrong crop size. Minimum crop size is 800x600.", "_status": "ERR"}
-      """
-
-    @auth
-    @vocabulary
-    Scenario: Update of an existing crop of an unpublished image should delete old crop
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
-      """
-      Then we get rendition "4-3" with mimetype "image/jpeg"
-      And we fetch a file "#rendition.4-3.href#"
-      And we get OK response
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":10,"CropRight":810,"CropTop":10,"CropBottom":610}
-      """
-      Then we get response code 201
-      And we fetch a file "#rendition.4-3.href#"
-      And we get error 404
-      When we get "/archive/123"
-      Then we get OK response
-      And we get rendition "4-3" with mimetype "image/jpeg"
-      Then we get OK response
-
-    @auth
-    @vocabulary
-    Scenario: Delete an existing crop of an Image Story succeeds
-      When upload a file "bike.jpg" to "archive" with "123"
-      When we post to "/archive/123/crop/4-3"
-      """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
-      """
-      Then we get rendition "4-3" with mimetype "image/jpeg"
-      When we get "/archive/123"
-      Then we get existing resource
-      """
-      {"renditions": {"4-3": {"mime_type": "image/jpeg", "CropRight": 800}}}
-      """
-      When we delete "/archive/123/crop/4-3"
-      Then we get response code 204
-      And we fetch a file "#rendition.4-3.href#"
-      And we get error 404
-
-    @auth
     Scenario: Publish a picture without the crops fails
       Given the "validators"
       """
@@ -186,13 +78,14 @@ Feature: Cropping the Image Articles
       """
       [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
       """
-      When we post to "/archive/123/crop/4-3"
+      When we patch "/archive/123"
       """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
-      """
-      When we post to "/archive/123/crop/16-9"
-      """
-      {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
+      {
+        "renditions": {
+          "4-3": {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600},
+          "16-9": {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
+        }
+      }
       """
       When we post to "/subscribers" with success
       """
@@ -206,7 +99,7 @@ Feature: Cropping the Image Articles
 
 
     @auth
-    @vocabulary
+    @vocabulary @test
     Scenario: Correct a picture with the crops succeeds
       Given the "validators"
       """
@@ -252,13 +145,14 @@ Feature: Cropping the Image Articles
       """
       [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
       """
-      When we post to "/archive/123/crop/4-3"
+      When we patch "/archive/123"
       """
-      {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600}
-      """
-      When we post to "/archive/123/crop/16-9"
-      """
-      {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
+      {
+        "renditions": {
+          "4-3": {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600},
+          "16-9": {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
+        }
+      }
       """
       Then we get rendition "4-3" with mimetype "image/jpeg"
       And we get rendition "16-9" with mimetype "image/jpeg"
@@ -288,8 +182,87 @@ Feature: Cropping the Image Articles
       }
       """
       And we fetch a file "#rendition.4-3.href#"
-      And we get OK response
+      And we get error 404
       When we get "/archive/123"
       Then we get rendition "4-3" with mimetype "image/jpeg"
       And we get rendition "16-9" with mimetype "image/jpeg"
+      And we fetch a file "#rendition.4-3.href#"
+      And we get OK response
 
+
+    @auth
+    @vocabulary
+    Scenario: Create a new crop of an Image Story succeeds using archive
+      When upload a file "bike.jpg" to "archive" with "123"
+      When we patch "/archive/123"
+      """
+      {"headline": "Adding Crop Image", "slugline": "crop image",
+       "renditions": {
+          "4-3": {"CropLeft":0,"CropRight":800,"CropTop":0,"CropBottom":600},
+          "16-9": {"CropLeft":0,"CropRight":1280,"CropTop":0,"CropBottom":720}
+        }
+      }
+      """
+      Then we get OK response
+      And we get rendition "4-3" with mimetype "image/jpeg"
+      And we get rendition "16-9" with mimetype "image/jpeg"
+      And we get existing resource
+      """
+      {"headline": "Adding Crop Image", "slugline": "crop image",
+       "renditions": {
+          "4-3": {
+                    "CropLeft":0, "CropRight":800,
+                    "CropTop":0,"CropBottom":600,
+                    "mime_type": "image/jpeg",
+                    "href": "#rendition.4-3.href#"
+                 },
+          "16-9": {
+                    "CropLeft":0,
+                    "CropRight":1280,
+                    "CropTop":0,
+                    "CropBottom":720,
+                    "mime_type": "image/jpeg",
+                    "href": "#rendition.16-9.href#"
+                  }
+        }
+      }
+      """
+      And we fetch a file "#rendition.4-3.href#"
+      And we get OK response
+      When we patch "/archive/123"
+      """
+      {"headline": "replace crop", "slugline": "replace crop",
+       "renditions": {
+          "4-3": {"CropLeft":10,"CropRight":810,"CropTop":10,"CropBottom":610}
+        }
+      }
+      """
+      Then we get OK response
+      And we fetch a file "#rendition.4-3.href#"
+      And we get error 404
+      When we get "/archive/123"
+      Then we get rendition "4-3" with mimetype "image/jpeg"
+      And we get rendition "16-9" with mimetype "image/jpeg"
+      And we get existing resource
+      """
+      {"headline": "replace crop", "slugline": "replace crop",
+       "renditions": {
+          "4-3": {
+                    "CropLeft":10, "CropRight":810,
+                    "CropTop":10,"CropBottom":610,
+                    "mime_type": "image/jpeg",
+                    "href": "#rendition.4-3.href#"
+                 },
+          "16-9": {
+                    "CropLeft":0,
+                    "CropRight":1280,
+                    "CropTop":0,
+                    "CropBottom":720,
+                    "mime_type": "image/jpeg",
+                    "href": "#rendition.16-9.href#"
+                  }
+        }
+      }
+      """
+      And we fetch a file "#rendition.4-3.href#"
+      And we get OK response

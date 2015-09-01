@@ -20,6 +20,7 @@ from superdesk.metadata.utils import extra_response_fields, item_url, aggregatio
 from .common import remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package
+from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
@@ -236,6 +237,11 @@ class ArchiveService(BaseService):
         if force_unlock:
             del updates['force_unlock']
 
+        # create crops
+        crop_service = ArchiveCropService()
+        crop_service.validate_multiple_crops(updates, original)
+        crop_service.create_multiple_crops(updates, original)
+
         if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_update(updates, original)
 
@@ -246,6 +252,8 @@ class ArchiveService(BaseService):
 
         if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_updated(updates, original)
+
+        ArchiveCropService().delete_replaced_crop_files(updates, original)
 
         user = get_user()
 

@@ -51,6 +51,51 @@ class ArchiveCropTestCase(SuperdeskTestCase):
         self.assertIsNotNone(self.service.get_crop_by_name('4-3'))
         self.assertIsNone(self.service.get_crop_by_name('d'))
 
+    def test_validate_crop_raises_error_if_item_is_not_picture(self):
+        original = {"type": "text"}
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        with self.assertRaises(SuperdeskApiError) as context:
+            self.service.validate_crop(original, "4-3", doc)
+
+        ex = context.exception
+        self.assertEqual(ex.message, 'Only images can be cropped!')
+        self.assertEqual(ex.status_code, 400)
+
+    def test_validate_crop_raises_error_if_renditions_are_missing(self):
+        original = {"type": "picture"}
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        with self.assertRaises(SuperdeskApiError) as context:
+            self.service.validate_crop(original, "4-3", doc)
+
+        ex = context.exception
+        self.assertEqual(ex.message, 'Missing renditions!')
+        self.assertEqual(ex.status_code, 400)
+
+    def test_validate_crop_raises_error_if_original_rendition_is_missing(self):
+        original = {"type": "picture",
+                    "renditions": {"4-3": {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}}}
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        with self.assertRaises(SuperdeskApiError) as context:
+            self.service.validate_crop(original, "4-3", doc)
+
+        ex = context.exception
+        self.assertEqual(ex.message, 'Missing original rendition!')
+        self.assertEqual(ex.status_code, 400)
+
+    def test_validate_crop_raises_error_if_crop_name_is_unknown(self):
+        original = {"type": "picture",
+                    "renditions": {
+                        "original": {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+                    }
+                    }
+        doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
+        with self.assertRaises(SuperdeskApiError) as context:
+            self.service.validate_crop(original, "d", doc)
+
+        ex = context.exception
+        self.assertEqual(ex.message, 'Unknown crop name!')
+        self.assertEqual(ex.status_code, 400)
+
     def test_add_crop_raises_error_if_original_missing(self):
         original = {
             'renditions': {
@@ -60,7 +105,7 @@ class ArchiveCropTestCase(SuperdeskTestCase):
         }
         doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
         with self.assertRaises(SuperdeskApiError) as context:
-            self.service.add_crop(original, '4-3', doc)
+            self.service.create_crop(original, '4-3', doc)
 
         ex = context.exception
         self.assertEqual(ex.message, 'Original file couldn\'t be found')
@@ -81,7 +126,7 @@ class ArchiveCropTestCase(SuperdeskTestCase):
         with mock.patch('superdesk.app.media.get', return_value=media):
             doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
             with self.assertRaises(SuperdeskApiError) as context:
-                self.service.add_crop(original, '4-3', doc)
+                self.service.create_crop(original, '4-3', doc)
 
             ex = context.exception
             self.assertEqual(ex.message, 'Saving crop failed: test')

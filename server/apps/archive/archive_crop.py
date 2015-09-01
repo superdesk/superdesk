@@ -10,55 +10,34 @@
 
 import superdesk
 import logging
-from flask import request
-from eve.utils import config
+from copy import deepcopy
 from superdesk import get_resource_service
-from superdesk.resource import Resource, build_custom_hateoas
-from superdesk.metadata.utils import item_url
-from .common import CUSTOM_HATEOAS
-from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import crop_image, process_file_from_stream
 from superdesk.upload import UploadService, url_for_media
-from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, crop_schema, ITEM_STATE, PUBLISH_STATES
-from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE
+
 
 logger = logging.getLogger(__name__)
 
 
-class ArchiveCropResource(Resource):
-    endpoint_name = 'archive_crop'
-    url = 'archive/<{0}:item_id>/crop/<{0}:crop_name>'.format(item_url)
-    schema = crop_schema
-    datasource = {'source': 'archive'}
-    item_methods = []
-    resource_methods = ['GET', 'POST', 'DELETE']
-    resource_title = endpoint_name
-    privileges = {'POST': 'archive', 'DELETE': 'archive'}
+class ArchiveCropService():
 
-
-class ArchiveCropService(BaseService):
-    def create(self, docs, **kwargs):
-        doc = docs[0]
-        item_id = request.view_args['item_id']
-        crop_name = request.view_args['crop_name'].lower()
-        archive_service = get_resource_service(ARCHIVE)
-        original = archive_service.find_one(req=None, _id=item_id)
-        self.validate_crop(original, crop_name, doc)
-        self.add_crop(original, crop_name, doc)
-        doc.clear()
-        doc.update(original)
-        build_custom_hateoas(CUSTOM_HATEOAS, doc)
-        return [doc[config.ID_FIELD]]
-
-    def delete(self, lookup):
-        item_id = request.view_args['item_id']
-        crop_name = request.view_args['crop_name'].lower()
-        archive_service = get_resource_service(ARCHIVE)
-        original = archive_service.find_one(req=None, _id=item_id)
-        self.delete_crop(original, crop_name)
+    crop_sizes = []
 
     def validate_crop(self, original, crop_name, doc):
+        """
+
+        :param dict original: original item
+        :param str crop_name: name of the crop
+        :param dict doc: crop co-ordinates
+        :raises SuperdeskApiError.badRequestError:
+            For following conditions:
+            1) if type != picture
+            2) if renditions are missing in the original image
+            3) if original rendition is missing
+            4) Crop name is invalid
+        """
         # Check if type is picture
         if original[ITEM_TYPE] != CONTENT_TYPE.PICTURE:
             raise SuperdeskApiError.badRequestError(message='Only images can be cropped!')
@@ -103,41 +82,32 @@ class ArchiveCropService(BaseService):
         :param crop_name: Crop name
         :return: Matching crop or None
         """
-        crops = get_resource_service('vocabularies').find_one(req=None, _id='crop_sizes').get('items')
-        if not crops:
-            raise SuperdeskApiError.badRequestError(message='Crops couldn\'t be loaded!')
+        if not self.crop_sizes:
+            self.crop_sizes = get_resource_service('vocabularies').find_one(req=None, _id='crop_sizes').get('items')
 
-        return next((c for c in crops if c.get('name', '').lower() == crop_name.lower()), None)
+        if not self.crop_sizes:
+            raise SuperdeskApiError.badRequestError(message='Crops sizes couldn\'t be loaded!')
 
-    def delete_crop(self, original, crop_name):
-        """
-        Deletes an existing crop with the given name
-        :param original: Article to add the crop
-        :param crop_name: Name of the crop
-        """
-        renditions = original.get('renditions')
-        file_id = renditions.get(crop_name, {}).get('media', '')
-        renditions.pop(crop_name, None)
-        get_resource_service(ARCHIVE).patch(original[config.ID_FIELD], {'renditions': renditions})
-        self._delete_crop_file(file_id)
+        return next((c for c in self.crop_sizes if c.get('name', '').lower() == crop_name.lower()), None)
 
-    def add_crop(self, original, crop_name, doc):
+    def create_crop(self, original, crop_name, doc):
         """
-        Updates the crop with the same name if exists,
-        otherwise creates a new crop with the given parameters
+        Create a new crop based on the crop co-ordinates
         :param original: Article to add the crop
         :param crop_name: Name of the crop
         :param doc: Crop details
         :raises SuperdeskApiError.badRequestError
+        :return dict: modified renditions
         """
-        renditions = original.get('renditions')
+        renditions = original.get('renditions', {})
         crop_data = UploadService().get_cropping_data(doc)
         original_crop = renditions.get(crop_name, {})
         fields = ('CropLeft', 'CropTop', 'CropRight', 'CropBottom')
+        crop_created = False
 
         if any(crop_data[i] != original_crop.get(name) for i, name in enumerate(fields)):
 
-            original_image = original.get('renditions', {}).get('original', {})
+            original_image = renditions.get('original', {})
             original_file = superdesk.app.media.get(original_image.get('media'), 'upload')
             if not original_file:
                 raise SuperdeskApiError.badRequestError('Original file couldn\'t be found')
@@ -149,17 +119,13 @@ class ArchiveCropService(BaseService):
                     raise SuperdeskApiError.badRequestError('Saving crop failed: {}'.format(str(out)))
 
                 renditions[crop_name] = self._save_cropped_image(out, original_file, doc)
-                if original.get(ITEM_STATE) in PUBLISH_STATES:
-                    get_resource_service(ARCHIVE).system_update(original[config.ID_FIELD],
-                                                                {'renditions': renditions}, original)
-                else:
-                    get_resource_service(ARCHIVE).patch(original[config.ID_FIELD], {'renditions': renditions})
-                    self._delete_crop_file(original_crop.get('media'))
-
+                crop_created = True
             except SuperdeskApiError:
                 raise
             except Exception as ex:
                 raise SuperdeskApiError.badRequestError('Generating crop failed: {}'.format(str(ex)))
+
+        return renditions, crop_created
 
     def _save_cropped_image(self, file_stream, file, doc):
         """
@@ -176,7 +142,7 @@ class ArchiveCropService(BaseService):
             file_stream.seek(0)
             file_id = superdesk.app.media.put(file_stream, filename=file_name,
                                               content_type=content_type,
-                                              resource=self.datasource,
+                                              resource='upload',
                                               metadata=metadata)
             crop['media'] = file_id
             crop['mime_type'] = content_type
@@ -197,9 +163,50 @@ class ArchiveCropService(BaseService):
         """
         Delete the crop file
         :param Object_id file_id: Object_Id of the file.
-        :return:
         """
         try:
             superdesk.app.media.delete(file_id)
         except:
             logger.exception("Crop File cannot be deleted. File_Id {}".format(file_id))
+
+    def create_multiple_crops(self, updates, original):
+        """
+        Create multiple crops based on the renditions.
+        :param dict updates: update item
+        :param dict original: original of the updated item
+        """
+        update_renditions = updates.get('renditions', {})
+        if original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE and update_renditions:
+            renditions = original.get('renditions', {})
+            original_copy = deepcopy(original)
+            for key in update_renditions:
+                if self.get_crop_by_name(key):
+                    renditions, crop_created = self.create_crop(original_copy, key, update_renditions.get(key, {}))
+
+            updates['renditions'] = renditions
+
+    def validate_multiple_crops(self, updates, original):
+        """
+        Validate crops for the image
+        :param dict updates: update item
+        :param dict original: original of the updated item
+        """
+        renditions = updates.get('renditions', {})
+        if renditions and original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:
+            for key in renditions:
+                self.validate_crop(original, key, renditions.get(key, {}))
+
+    def delete_replaced_crop_files(self, updates, original):
+        """
+        Delete the replaced crop files.
+        :param dict updates: update item
+        :param dict original: original of the updated item
+        """
+        update_renditions = updates.get('renditions', {})
+        if original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE and update_renditions:
+            renditions = original.get('renditions', {})
+            for key in update_renditions:
+                if self.get_crop_by_name(key) and \
+                        update_renditions.get(key, {}).get('media') != \
+                        renditions.get(key, {}).get('media'):
+                    self._delete_crop_file(renditions.get(key, {}).get('media'))
