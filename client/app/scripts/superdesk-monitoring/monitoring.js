@@ -280,8 +280,12 @@
                     });
                 }
 
+                /**
+                 * Request the data on search or archive endpoints
+                 * return {promise} list of items
+                 */
                 function apiquery() {
-                    return api.query(criteria.repo ? 'search': 'archive', criteria);
+                    return api.query(scope.group.type === 'search' ? 'search': 'archive', criteria);
                 }
 
                 function renderNew() {
