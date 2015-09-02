@@ -320,3 +320,33 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.assertEquals(ingest.get_is_idle(provider), True)
         provider['idle_time'] = dict(hours=0, minutes=0)
         self.assertEquals(ingest.get_is_idle(provider), False)
+
+    def test_files_dont_duplicate_ingest(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self.provider_services[provider.get('type')]
+        provider_service.provider = provider
+
+        items = provider_service.fetch_ingest(guid)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+
+        service = get_resource_service('ingest')
+        service.post(items)
+
+        # ingest the items
+        self.ingest_items(items, provider)
+
+        items = provider_service.fetch_ingest(guid)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+
+        # ingest them again
+        self.ingest_items(items, provider)
+
+        # 12 files in grid fs
+        current_files = self.app.media.fs('upload').find()
+        self.assertEqual(12, current_files.count())
