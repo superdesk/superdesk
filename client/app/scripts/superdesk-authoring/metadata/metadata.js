@@ -8,9 +8,9 @@ MetadataCtrl.$inject = [
     'preferencesService'
 ];
 function MetadataCtrl(
-    $scope, desks, metadata, $filter, privileges, datetimeHelper,
-    preferencesService
-) {
+    $scope, desks, metadata, $filter,
+    privileges, datetimeHelper, preferencesService) {
+
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
