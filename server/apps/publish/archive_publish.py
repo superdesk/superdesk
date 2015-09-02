@@ -21,6 +21,7 @@ from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FI
     PUBLISH_STATES
 from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES
 from apps.publish.subscribers import SUBSCRIBER_TYPES
+from apps.archive.archive_crop import ArchiveCropService
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
 from superdesk.emails import send_article_killed_email
@@ -961,11 +962,7 @@ class CorrectPublishService(BasePublishService):
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_CORRECT
-        if updates.get('renditions', []) and original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:
-            crop_service = get_resource_service('archive_crop')
-            for key in updates.get('renditions', {}):
-                crop_service.validate_crop(original, key, updates.get('renditions', {}).get(key, {}))
-
+        ArchiveCropService().validate_multiple_crops(updates, original)
         super().on_update(updates, original)
         set_sign_off(updates, original)
 
@@ -980,6 +977,7 @@ class CorrectPublishService(BasePublishService):
         original_updates['operation'] = updates['operation']
         original_updates[ITEM_STATE] = updates[ITEM_STATE]
         super().on_updated(updates, original)
+        ArchiveCropService().delete_replaced_crop_files(updates, original)
         packages = self.package_service.get_packages(original[config.ID_FIELD])
         if packages and packages.count() > 0:
             archive_correct = get_resource_service('archive_correct')
@@ -1003,12 +1001,7 @@ class CorrectPublishService(BasePublishService):
                     processed_packages.append(package[config.ID_FIELD])
 
     def update(self, id, updates, original):
-        if updates.get('renditions', []) and original.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:
-            crop_service = get_resource_service('archive_crop')
-            for key in updates.get('renditions', {}):
-                if crop_service.get_crop_by_name(key):
-                    crop_service.add_crop(original, key, updates.get('renditions', {}).get(key, {}))
-
+        ArchiveCropService().create_multiple_crops(updates, original)
         super().update(id, updates, original)
 
     def get_subscribers(self, doc, target_media_type):
