@@ -710,55 +710,38 @@
         $scope.preview = {};
 
         $scope.close = function() {
-            if ($scope.data.state !== 'published') {
-                $scope.reject();
-                $route.reload();
-            } else {
-                return $scope.resolve($scope.data);
-            }
+            return $scope.resolve($scope.data);
         };
 
         function recordCrop(coordinates, cropName) {
-            $scope.data.renditions[cropName].CropLeft = coordinates.CropLeft;
-            $scope.data.renditions[cropName].CropTop = coordinates.CropTop;
-            $scope.data.renditions[cropName].CropRight = coordinates.CropRight;
-            $scope.data.renditions[cropName].CropBottom = coordinates.CropBottom;
+            if ($scope.data.renditions[cropName] != null) {
+                $scope.data.renditions[cropName].CropLeft = coordinates.CropLeft;
+                $scope.data.renditions[cropName].CropTop = coordinates.CropTop;
+                $scope.data.renditions[cropName].CropRight = coordinates.CropRight;
+                $scope.data.renditions[cropName].CropBottom = coordinates.CropBottom;
+            } else {
+                var obj = {};
+                obj[cropName] = coordinates;
+                _.extend($scope.data.renditions, obj);
+            }
         }
 
         function saveCrops(key) {
-            var coordinates = [];
-            coordinates[key].CropLeft = Math.round(Math.min($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
-            coordinates[key].CropRight = Math.round(Math.max($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
-            coordinates[key].CropTop = Math.round(Math.min($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
-            coordinates[key].CropBottom = Math.round(Math.max($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
+            var coordinates = {};
+            coordinates.CropLeft = Math.round(Math.min($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
+            coordinates.CropRight = Math.round(Math.max($scope.preview[key].cords.x, $scope.preview[key].cords.x2));
+            coordinates.CropTop = Math.round(Math.min($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
+            coordinates.CropBottom = Math.round(Math.max($scope.preview[key].cords.y, $scope.preview[key].cords.y2));
 
-            //var cropName = $scope.data.cropsize.name;
             var cropName = key;
-
-            //Save or overwrite crop if item is not published.
-            if ($scope.data.state !== 'published') {
-                return cropImage.saveCrop(coordinates[key], $scope.data).then(function(result) {
-                    var picture_url = result.renditions[cropName].href;
-                    notify.success(gettext('Image Cropped.'));
-                    $scope.data.picture_url = picture_url;
-                    recordCrop(coordinates[key], cropName);
-                }, function(response) {
-                    if (response.data._status === 'ERR'){
-                        notify.error(gettext('Error: ' + response.data._error.message));
-                    }
-                });
-            } else {
-                //Hold crop changes if item is already published, so it will be save on correction.
-                recordCrop(coordinates[key], cropName);
-                notify.success(gettext('Crop changes recorded'));
-            }
+            recordCrop(coordinates, cropName);
         }
 
         $scope.done = function() {
             _.forEach($scope.data.cropsizes, function(cropsize) {
-                console.log(cropsize);
-                saveCrops(cropsize);
+                saveCrops(cropsize.name);
             });
+            notify.success(gettext('Crop changes have been recorded'));
         };
     }
 
@@ -1715,12 +1698,12 @@
                 };
                 //
                 scope.applyCrop = function() {
-                    //scope.toggleDetails = !scope.toggleDetails;
+                    var ar = {};
                     scope.item.cropsizes = scope.metadata.crop_sizes;
-                    //scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
-                    /*if (scope.errorMessage != null) {
-                        notify.error(gettext(scope.errorMessage));
-                    }*/
+                    _.forEach(scope.item.cropsizes, function(cropsizes) {
+                        ar = {aspectRatio: scope.evalAspectRatio(cropsizes.name)};
+                        _.extend(_.filter(scope.item.cropsizes, {name: cropsizes.name})[0], ar);
+                    });
                     superdesk.intent('edit', 'crop',  scope.item);
                 };
 
