@@ -4,7 +4,7 @@ module.exports = {
     app: {
         cwd: 'app',
         src: 'scripts/superdesk*/**/*.html',
-        dest: 'app/scripts/templates.js',
+        dest: '<%= distDir %>/scripts/superdesk-templates.js',
         options: {
             htmlmin: {
                 collapseWhitespace: true,
