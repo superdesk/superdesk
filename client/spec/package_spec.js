@@ -1,7 +1,8 @@
 var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
-    authoring = require('./helpers/pages').authoring;
+    authoring = require('./helpers/pages').authoring,
+    monitoring = require('./helpers/monitoring');
 
 describe('Package', function() {
     'use strict';
@@ -70,6 +71,20 @@ describe('Package', function() {
         content.selectItem(1);
         content.createPackageFromItems();
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
+    });
+
+    it('can add items to an existing package', function() {
+        monitoring.openMonitoring();
+        monitoring.showMonitoringSettings();
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        monitoring.openAction(2, 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(0);
+        monitoring.actionOnItem('Add to package', 0, 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
     it('create package from published item', function() {
