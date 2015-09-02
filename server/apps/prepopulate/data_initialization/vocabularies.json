@@ -31,6 +31,18 @@
         ]
     },
     {
+        "_id": "default_categories",
+        "items": [
+            {"is_active": true, "qcode": "a"},
+            {"is_active": true, "qcode": "e"},
+            {"is_active": true, "qcode": "f"},
+            {"is_active": true, "qcode": "i"},
+            {"is_active": true, "qcode": "s"},
+            {"is_active": true, "qcode": "t"},
+            {"is_active": true, "qcode": "v"}
+        ]
+    },
+    {
         "_id": "genre",
         "items": [
             {"is_active": true, "name": "Article (news)", "value": "Article"},

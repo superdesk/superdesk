@@ -1049,19 +1049,6 @@
                         scope.datelinePreview = scope.preferences['dateline:located'].located;
                     });
 
-                    // A list of category codes that are considered preferred
-                    // by default, unless of course the user changes this
-                    // preference setting.
-                    scope.defaultCategories = Object.freeze({
-                        'a': true,  // Australian General News
-                        'e': true,  // Entertainment
-                        'f': true,  // Finance
-                        'i': true,  // International News
-                        's': true,  // Overseas Sport
-                        't': true,  // Domestic Sport
-                        'v': true,  // Advisories
-                    });
-
                     scope.cancel = function() {
                         scope.userPrefs.$setPristine();
                         buildPreferences(orig);
@@ -1161,6 +1148,9 @@
                     *   user preferences settings for a particular group.
                     */
                     function buildPreferences(data) {
+                        var buckets,  // names of the needed metadata buckets
+                            initNeeded;  // metadata service init needed?
+
                         scope.preferences = {};
                         _.each(data, function(val, key) {
                             if (val.label && val.category) {
@@ -1168,10 +1158,18 @@
                             }
                         });
 
-                        if (angular.isUndefined(metadata.values) ||
-                            angular.isUndefined(metadata.values.cities) ||
-                            angular.isUndefined(metadata.values.categories)
-                        ) {
+                        // metadata service initialization is needed if its
+                        // values object is undefined or any of the needed
+                        // data buckets are missing in it
+                        buckets = [
+                            'cities', 'categories', 'default_categories'
+                        ];
+                        initNeeded = buckets.some(function (bucketName) {
+                            var values = metadata.values || {};
+                            return angular.isUndefined(values[bucketName]);
+                        });
+
+                        if (initNeeded) {
                             metadata.initialize().then(function () {
                                 updateScopeData(metadata.values, data);
                             });
@@ -1192,6 +1190,14 @@
                     */
                     function updateScopeData(helperData, userPrefs) {
                         scope.cities = helperData.cities;
+
+                        // A list of category codes that are considered
+                        // preferred by default, unless of course the user
+                        // changes this preference setting.
+                        scope.defaultCategories = {};
+                        helperData.default_categories.forEach(function (cat) {
+                            scope.defaultCategories[cat.qcode] = true;
+                        });
 
                         // Create a list of categories for the UI widgets to
                         // work on. New category objects are created so that

@@ -58,7 +58,8 @@ describe('sdUserPreferences directive', function() {
             categories: [
                 {name: 'Domestic Sport', qcode: 't'},
                 {name: 'Politics', qcode: 'p'}
-            ]
+            ],
+            default_categories: [{qcode: 'x'}]
         };
 
         prefFetch.resolve(fetchedPreferences);
@@ -73,6 +74,21 @@ describe('sdUserPreferences directive', function() {
             ]
         )).toBe(true);
     });
+
+    it('initializes the list of default preferred categories in scope',
+        function () {
+            metadata.values = {
+                categories: [{name: 'Politics', qcode: 'p'}],
+                default_categories: [{qcode: 'x'}, {qcode: 'y'}]
+            };
+
+            prefFetch.resolve(fetchedPreferences);
+            metadataInit.resolve();
+            scope.$digest();
+
+            expect(scope.defaultCategories).toEqual({'x': true, 'y': true});
+        }
+    );
 
     describe('scope\'s save() method', function () {
         var modal,
@@ -243,6 +259,7 @@ describe('sdUserPreferences directive', function() {
                 {qcode: 'c', selected: false},
                 {qcode: 'd', selected: true}
             ];
+            scope.defaultCategories = {};
         });
 
         it('makes only the default categories to be selected', function () {
