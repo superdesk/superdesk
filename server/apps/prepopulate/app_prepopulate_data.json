@@ -311,6 +311,59 @@
     },
 
     {
+        "data": {
+            "_id": "categories",
+            "items": [
+                {"is_active": true, "name": "Australian General News", "qcode": "a"},
+                {"is_active": true, "name": "Australian Weather", "qcode": "b", "subject": "17000000"},
+                {"is_active": true, "name": "General Features", "qcode": "c"},
+                {"is_active": false, "name": "Reserved (obsolete/unused)", "qcode": "d"},
+                {"is_active": true, "name": "Entertainment", "qcode": "e", "subject": "01000000"},
+                {"is_active": true, "name": "Finance", "qcode": "f", "subject": "04000000"},
+                {"is_active": false, "name": "SportSet", "qcode": "g"},
+                {"is_active": true, "name": "FormGuide", "qcode": "h"},
+                {"is_active": true, "name": "International News", "qcode": "i"},
+                {"is_active": false, "name": "Reserved (obsolete/unused)", "qcode": "k"},
+                {"is_active": true, "name": "Press Release Service", "qcode": "j"},
+                {"is_active": true, "name": "Lotteries", "qcode": "l"},
+                {"is_active": true, "name": "Line Check Messages", "qcode": "m"},
+                {"is_active": false, "name": "Reserved", "qcode": "n"},
+                {"is_active": true, "name": "State Parliaments", "qcode": "o", "subject": "11000000"},
+                {"is_active": true, "name": "Federal Parliament", "qcode": "p", "subject": "11000000"},
+                {"is_active": true, "name": "Stockset", "qcode": "q", "subject": "04000000"},
+                {"is_active": true, "name": "Racing (Turf)", "qcode": "r", "subject": "15000000"},
+                {"is_active": true, "name": "Overseas Sport", "qcode": "s", "subject": "15000000"},
+                {"is_active": true, "name": "Domestic Sport", "qcode": "t", "subject": "15000000"},
+                {"is_active": false, "name": "Reserved (Obsolete/unused)", "qcode": "u"},
+                {"is_active": true, "name": "Advisories", "qcode": "v"},
+                {"is_active": false, "name": "Reserved (Obsolete/unused)", "qcode": "w"},
+                {"is_active": true, "name": "Special Events (olympics/ Aus elections)", "qcode": "x"},
+                {"is_active": false, "name": "Special Events (obsolete/unused)", "qcode": "y"},
+                {"is_active": false, "name": "Supplementary Traffic", "qcode": "z"}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies categories-"
+    },
+
+    {
+        "data": {
+            "_id": "default_categories",
+            "items" : [
+                {"qcode" : "a", "is_active" : true},
+                {"qcode" : "e", "is_active" : true},
+                {"qcode" : "f", "is_active" : true},
+                {"qcode" : "i", "is_active" : true},
+                {"qcode" : "s", "is_active" : true},
+                {"qcode" : "t", "is_active" : true},
+                {"qcode" : "v", "is_active" : true}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies default_categories-"
+    },
+
+    {
     	"data": {
     		"name" : "Public API",
     		"subscriber_type": "digital",

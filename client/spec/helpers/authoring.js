@@ -10,10 +10,14 @@ function Authoring() {
     this.close_button = element(by.buttonText('CLOSE'));
     this.save_button = element(by.buttonText('SAVE'));
 
-    this.navbarMenuBtn = $('.dropdown-toggle.sd-create-btn');
+    this.navbarMenuBtn = element(by.css('.dropdown-toggle.sd-create-btn'));
+    this.newPlainArticleLink = element(by.id('create_text_article'));
     this.newEmptyPackageLink = element(by.id('create_package'));
-    this.infoIconsBox = $('.info-icons');
+    this.infoIconsBox = element(by.css('.info-icons'));
     this.sendToButton = element(by.id('send-to-btn'));
+
+    this.setCategoryBtn = element(by.id('category-setting'))
+        .element(by.tagName('button'));
 
     /**
      * Find all file type icons in the item's info icons box matching the
