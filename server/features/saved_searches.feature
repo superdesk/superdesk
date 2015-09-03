@@ -25,7 +25,7 @@ Feature: Saved Searches
         Then we get response code 201
 
 	@auth
-    Scenario: A user shouldn't see another user's searches
+    Scenario: A user shouldn't see another user's searches but all saved searches will show them
         Given empty "saved_searches"
         When we post to "/users"
         """
@@ -49,6 +49,9 @@ Feature: Saved Searches
         Then we get list with 1 items
         When we get "/users/#CONTEXT_USER_ID#/saved_searches"
         Then we get list with 1 items
+
+        When we get "/all_saved_searches"
+        Then we get list with 2 items
 
     @auth
     Scenario: Create a Saved Search without a name

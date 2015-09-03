@@ -10,19 +10,13 @@ describe('monitoring view', function() {
 
     beforeEach(function() {
         monitoring.openMonitoring();
-        //reset monitoring settings for politic desk
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
     });
 
     it('configure a stage and show it on monitoring view', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.nextSearches();
         monitoring.nextReorder();
@@ -32,6 +26,7 @@ describe('monitoring view', function() {
 
     it('configure personal and show it on monitoring view', function() {
         monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
         monitoring.togglePersonal();
         monitoring.nextStages();
         monitoring.nextSearches();
@@ -43,6 +38,7 @@ describe('monitoring view', function() {
 
     it('configure a saved search and show it on monitoring view', function() {
         monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -53,8 +49,9 @@ describe('monitoring view', function() {
 
     it('configure a stage and a saved search and show them on monitoring view', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -67,8 +64,9 @@ describe('monitoring view', function() {
     it('configure a stage and a saved search then unselect stage and show search on monitoring view',
     function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -86,8 +84,9 @@ describe('monitoring view', function() {
 
     it('configure stage and search and then reorder', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.toggleSearch(2);
@@ -107,8 +106,9 @@ describe('monitoring view', function() {
 
     it('configure a stage, a saved search and personal and then set max items', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.togglePersonal();
         monitoring.nextStages();
         monitoring.toggleSearch(1);
@@ -149,8 +149,9 @@ describe('monitoring view', function() {
 
     it('configure monitoring view for 2 desks', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.nextSearches();
         monitoring.nextReorder();
@@ -158,16 +159,9 @@ describe('monitoring view', function() {
 
         workspace.selectDesk('Sports Desk');
         monitoring.showMonitoringSettings();
-        //reset monitoring settings for sports desk
-        monitoring.toggleDesk(1);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(1);
-        monitoring.toggleStage(1, 1);
+        monitoring.toggleStage(1, 0);
+        monitoring.toggleStage(1, 2);
+        monitoring.toggleStage(1, 3);
         monitoring.nextStages();
         monitoring.nextSearches();
         monitoring.nextReorder();
@@ -181,13 +175,7 @@ describe('monitoring view', function() {
     });
 
     it('configure a stage and then delete the stage', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 3);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
+        expect(monitoring.getGroups().count()).toBe(4);
 
         desks.openDesksSettings();
         desks.edit('Politic Desk');
@@ -197,23 +185,14 @@ describe('monitoring view', function() {
         desks.save();
 
         monitoring.openMonitoring();
-        expect(monitoring.getGroup('deleted desk or stage')).not.toBe(null);
-
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
+        expect(monitoring.getGroups().count()).toBe(3);
     });
 
     it('can search content', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
+        monitoring.toggleStage(0, 0);
+        monitoring.toggleStage(0, 1);
+        monitoring.toggleStage(0, 3);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -230,46 +209,19 @@ describe('monitoring view', function() {
     });
 
     it('can preview content', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.toggleSearch(0);
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        monitoring.previewAction(0, 0);
+        monitoring.previewAction(2, 0);
         expect(monitoring.getPreviewTitle()).toBe('item6');
     });
 
     it('can open read only content', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.toggleSearch(0);
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        monitoring.openAction(0, 0);
+        monitoring.openAction(2, 0);
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
     it('updates item group on single item spike-unspike', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 1);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        expect(monitoring.getGroupItems(0).count()).toBe(1);
-        monitoring.actionOnItem('Spike', 0, 0);
-        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(1);
+        monitoring.actionOnItem('Spike', 1, 0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
         monitoring.openSpiked();
         expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
         monitoring.unspikeItem(0);
@@ -277,20 +229,10 @@ describe('monitoring view', function() {
     });
 
     it('updates item group on multiple item spike-unspike', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 1);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
         expect(monitoring.getGroupItems(1).count()).toBe(1);
-        monitoring.selectItem(0, 0);
+        monitoring.selectItem(1, 0);
         monitoring.spikeMultipleItems();
-        browser.sleep(4000);
-        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
         monitoring.openSpiked();
         expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
         monitoring.selectSpikedItem(0);
@@ -299,16 +241,7 @@ describe('monitoring view', function() {
     });
 
     it('can show/hide monitoring list', function() {
-        monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
-        monitoring.toggleStage(0, 2);
-        monitoring.nextStages();
-        monitoring.toggleSearch(0);
-        monitoring.nextSearches();
-        monitoring.nextReorder();
-        monitoring.saveSettings();
-
-        monitoring.openAction(0, 0);
+        monitoring.openAction(1, 0);
         monitoring.showHideList();
         expect(monitoring.hasClass(element(by.id('main-container')), 'hideMonitoring')).toBe(true);
 

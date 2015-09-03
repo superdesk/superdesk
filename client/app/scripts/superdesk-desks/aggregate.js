@@ -19,9 +19,7 @@
         this.loading = true;
         this.selected = null;
         this.groups = [];
-        this.spikeGroups = null;
-        this.allStages = null;
-        this.allDesks = null;
+        this.spikeGroups = [];
         this.modalActive = false;
         this.searchLookup = {};
         this.deskLookup = {};
@@ -29,6 +27,7 @@
         this.fileTypes = ['all', 'text', 'picture', 'composite', 'video', 'audio'];
         this.selectedFileType = [];
         this.monitoringSearch = false;
+        this.user = session.identity;
 
         desks.initialize()
         .then(angular.bind(this, function() {
@@ -45,7 +44,7 @@
                 }));
         }))
         .then(angular.bind(this, function() {
-            return api.query('saved_searches', {}, session.identity)
+            return api.query('all_saved_searches', {})
                .then(angular.bind(this, function(searchesList) {
                    this.searches = searchesList._items;
                    _.each(this.searches, function(item) {
@@ -56,11 +55,7 @@
         .then(angular.bind(this, function() {
             return this.readSettings()
                 .then(angular.bind(this, function(groups) {
-                    if (groups) {
-                        _.each(groups, angular.bind(this, function(item) {
-                            this.groups.push(item);
-                        }));
-                    }
+                    initGroups(groups);
                     setupCards();
                     this.loading = false;
                 }));
@@ -94,6 +89,57 @@
         };
 
         /**
+         * Init groups by filter out from groups stages or saved searches that
+         * are not available(deleted or no right on them for stages only) and return all
+         * stages for current desk if monitoring setting is not set
+         **/
+        function initGroups(groups) {
+            if (self.groups.length > 0) {
+                self.groups.length = 0;
+            }
+            if (!groups || groups.length === 0) {
+                _.each(self.stageLookup, function(item) {
+                    if (item.desk === desks.getCurrentDeskId()) {
+                        self.groups.push({_id: item._id, type: 'stage', header: item.name});
+                    }
+                });
+            } else {
+                _.each(groups, function(item) {
+                    if (item.type === 'stage' && !self.stageLookup[item._id]) {
+                        return;
+                    }
+                    if (item.type === 'search' && !self.searchLookup[item._id]) {
+                        return;
+                    }
+                    self.groups.push(item);
+                });
+            }
+            initSpikeGroups();
+        }
+
+        /**
+         * Init the spike desks based on already initialized groups
+         */
+        function initSpikeGroups() {
+            var spikeDesks = {};
+            if (self.spikeGroups.length > 0) {
+                self.spikeGroups.length = 0;
+            }
+            if (self.groups.length === 0) {
+                return;
+            }
+            _.each(self.groups, function(item, index) {
+                if (item.type === 'stage') {
+                    var stage = self.stageLookup[item._id];
+                    spikeDesks[stage.desk] = self.deskLookup[stage.desk];
+                }
+            });
+            _.each(spikeDesks, function(item) {
+                self.spikeGroups.push({_id: item._id, type: 'spike', header: item.name});
+            });
+        }
+
+        /**
          * Refresh view after setup
          */
         function refresh() {
@@ -102,14 +148,7 @@
             }
             return self.readSettings()
                 .then(function(groups) {
-                    if (self.groups.length) {
-                        self.groups.length = 0;
-                    }
-                    if (groups) {
-                        _.each(groups, function(item) {
-                            self.groups.push(item);
-                        });
-                    }
+                    initGroups(groups);
                     setupCards();
                 });
         }
@@ -165,23 +204,14 @@
             _.each(this.groups, function(item) {
                 item.fileType = value;
             });
-            if (this.allStages) {
-                _.each(this.allStages, function(item) {
-                    item.fileType = value;
-                });
-            }
-            if (this.spikeGroups) {
-                _.each(this.spikeGroups, function(item) {
-                    item.fileType = value;
-                });
-            }
-            if (this.allDesks) {
-                _.each(this.allDesks, function(item) {
-                    item.fileType = value;
-                });
-            }
+            _.each(this.spikeGroups, function(item) {
+                item.fileType = value;
+            });
         };
 
+        /**
+         * Add card metadata into current groups
+         */
         function setupCards() {
             var cards = self.groups;
             angular.forEach(cards, setupCard);
@@ -193,18 +223,14 @@
             function setupCard(card) {
                 if (card.type === 'stage') {
                     var stage = self.stageLookup[card._id];
-                    if (stage) {
-                        var desk = self.deskLookup[stage.desk];
-                        card.header = desk.name;
-                        card.subheader = stage.name;
-                    } else {
-                        card.header = 'Deleted desk or stage';
-                    }
+                    var desk = self.deskLookup[stage.desk];
+                    card.header = desk.name;
+                    card.subheader = stage.name;
                 }
 
                 if (card.type === 'search') {
                     card.search = self.searchLookup[card._id];
-                    card.header = card.search ? card.search.name: 'Deleted saved search';
+                    card.header = card.search.name;
                 }
 
                 if (card.type === 'personal') {
@@ -217,12 +243,12 @@
             this.selected = item;
         };
 
+        /**
+         * For edit monitoring settings add desk groups to the list
+         */
         this.edit = function() {
             this.editGroups = {};
             _.each(this.groups, function(item, index) {
-                if (item.type === 'search' && !self.searchLookup[item._id]) {
-                    return;
-                }
                 self.editGroups[item._id] = {
                     _id: item._id,
                     selected: true,
@@ -232,9 +258,6 @@
                 };
                 if (item.type === 'stage') {
                     var stage = self.stageLookup[item._id];
-                    if (!stage) {
-                        return;
-                    }
                     self.editGroups[stage.desk] = {
                         _id: stage._id,
                         selected: true,
@@ -246,78 +269,28 @@
             this.modalActive = true;
         };
 
+        /**
+         * Set the search set by user on all groups
+         */
         this.search = function(query) {
             _.each(this.groups, function(item) {
                 item.query = query;
             });
-            if (this.allStages) {
-                _.each(this.allStages, function(item) {
-                    item.query = query;
-                });
-            }
-            if (this.spikeGroups) {
-                _.each(this.spikeGroups, function(item) {
-                    item.query = query;
-                });
-            }
-            if (this.allDesks) {
-                _.each(this.allDesks, function(item) {
-                    item.query = query;
-                });
-            }
+            _.each(this.spikeGroups, function(item) {
+                item.query = query;
+            });
         };
 
+        /**
+         * Reset on all groups the search set by user
+         */
         this.resetSearch = function() {
             _.each(this.groups, function(item) {
                 item.query = null;
             });
-            if (this.allStages) {
-                _.each(this.allStages, function(item) {
-                    item.query = null;
-                });
-            }
-            if (this.spikeGroups) {
-                _.each(this.spikeGroups, function(item) {
-                    item.query = null;
-                });
-            }
-            if (this.allDesks) {
-                _.each(this.allDesks, function(item) {
-                    item.query = null;
-                });
-            }
-        };
-
-        /**
-         * Creates a list of spike desk groups based on the setting from agg:view property.
-         * If a stage is selected the correspondent desk will appear in the result list.
-         * If agg:view is not set, all desks will be returned
-         * @return [{_id: string, type: string, header:string}]
-         */
-        this.getSpikeGroups = function() {
-            if (this.groups.length > 0) {
-                if (!this.spikeGroups) {
-                    var spikeDesks = {};
-                    _.each(this.groups, function(item, index) {
-                        if (item.type === 'stage') {
-                            var stage = self.stageLookup[item._id];
-                            spikeDesks[stage.desk] = self.deskLookup[stage.desk].name;
-                        }
-                    });
-
-                    this.spikeGroups = Object.keys(spikeDesks).map(function(key) {
-                        return {_id: key, type: 'spike', header: spikeDesks[key]};
-                    });
-                }
-                return this.spikeGroups;
-            }
-
-            if (!this.allDesks) {
-                this.allDesks = Object.keys(this.deskLookup).map(function(key) {
-                    return {_id: key, type: 'spike', header: self.deskLookup[key].name};
-                });
-            }
-            return this.allDesks;
+            _.each(this.spikeGroups, function(item) {
+                item.query = null;
+            });
         };
 
         this.state = storage.getItem('agg:state') || {};
@@ -438,9 +411,6 @@
                         }
                         if (item.type === 'stage') {
                             var stage = scope.stageLookup[item._id];
-                            if (!stage || !stage.desk) {
-                                return false;
-                            }
                             return scope.editGroups[stage.desk].selected;
                         }
                         if (item.type === 'personal') {

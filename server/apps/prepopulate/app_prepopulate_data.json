@@ -210,46 +210,6 @@
         "username": "admin",
         "id_name": "-id stage three Politic Desks-"
     },
-
-   {
-        "data":   {
-            "monitoring_settings" : [ 
-                {
-                    "max_items" : 10,
-                    "type" : "stage",
-                    "_id" : "-id stage one Politic Desks-"
-                }, 
-                {
-                    "max_items" : 10,
-                    "type" : "stage",
-                    "_id" : "-id stage two Politic Desks-"
-                }
-            ]
-        },
-        "resource": "desks",
-        "username": "admin",
-        "id_update": "-id desk Politic Desks-"
-    },
- 
-   {
-        "data":   {
-            "monitoring_settings" : [ 
-                {
-                    "max_items" : 10,
-                    "type" : "stage",
-                    "_id" : "-id stage one Sports Desks-"
-                }, 
-                {
-                    "max_items" : 10,
-                    "type" : "stage",
-                    "_id" : "-id stage three Sports Desks-"
-                }
-            ]
-        },
-        "resource": "desks",
-        "username": "admin",
-        "id_update": "-id desk Sports Desks-"
-    },
     
     {
     	"data": {

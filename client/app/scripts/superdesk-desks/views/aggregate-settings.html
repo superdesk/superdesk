@@ -37,7 +37,7 @@
     <div sd-wizard-step data-title="{{ :: 'Saved Searches' | translate }}" data-code="searches">
         <div class="content">
             <div class="legend" translate>Select saved searches for view</div>
-            <div class="desk" ng-repeat="search in searches | orderBy: 'name'">
+            <div class="desk" ng-repeat="search in searches | filter: {'user': user} | orderBy: 'name'">
                 <div class="desk-title">
                     {{search.name}}
                     <span sd-switch class="pull-right" ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>

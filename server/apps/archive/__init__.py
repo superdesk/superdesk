@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from apps.archive.saved_searches import AllSavedSearchesResource
 
 
 """Media archive module"""
@@ -33,6 +34,7 @@ from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
 from .archive_link import ArchiveLinkResource, ArchiveLinkService
 from .archive_rewrite import ArchiveRewriteResource, ArchiveRewriteService
+from superdesk.services import BaseService
 
 
 logger = logging.getLogger(__name__)
@@ -91,6 +93,10 @@ def init_app(app):
     endpoint_name = 'saved_searches'
     service = SavedSearchesService(endpoint_name, backend=superdesk.get_backend())
     SavedSearchesResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'all_saved_searches'
+    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    AllSavedSearchesResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'saved_search_items'
     service = SavedSearchItemsService(endpoint_name, backend=superdesk.get_backend())
