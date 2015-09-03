@@ -63,7 +63,7 @@
                         sd-monitoring-group data-group="group" data-view-type="'monitoring'"></div>
                 </div>
                 <div ng-if="!monitoring.singleGroup && type === 'spike'">
-                    <div ng-repeat="group in aggregate.getSpikeGroups() track by group._id"
+                    <div ng-repeat="group in aggregate.spikeGroups track by group._id | orderBy: name"
                         sd-monitoring-group data-group="group" data-view-type="'spiked'"></div>
                 </div>
                 <div ng-if="monitoring.singleGroup">
