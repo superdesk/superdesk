@@ -73,7 +73,7 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
     });
 
-    it('can add items to an existing package', function() {
+    fit('can add items to an existing package', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
@@ -81,14 +81,14 @@ describe('Package', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        monitoring.openAction(2, 0);
+        monitoring.openAction(4, 0);
         browser.sleep(500);
         expect(authoring.getGroupItems('MAIN').count()).toBe(0);
-        monitoring.actionOnItem('Add to package', 0, 0);
+        monitoring.actionOnItem('Add to package', 1, 0);
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
-    it('can add items to a package only once', function() {
+    fit('can add items to a package only once', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
@@ -96,15 +96,15 @@ describe('Package', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        monitoring.openAction(2, 0);
+        monitoring.openAction(4, 0);
         browser.sleep(1000);
-        monitoring.actionOnItem('Add to package', 0, 0);
+        monitoring.actionOnItem('Add to package', 1, 0);
         browser.sleep(1000);
         authoring.save();
         browser.refresh();
-        monitoring.openAction(2, 0);
+        monitoring.openAction(4, 0);
         browser.sleep(500);
-        var menu = monitoring.openItemMenu(0, 0);
+        var menu = monitoring.openItemMenu(1, 0);
         expect(menu.element(by.partialLinkText('Add to package')).isPresent()).toBe(false);
     });
 
