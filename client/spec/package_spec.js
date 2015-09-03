@@ -82,12 +82,13 @@ describe('Package', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         monitoring.openAction(2, 0);
+        browser.sleep(500);
         expect(authoring.getGroupItems('MAIN').count()).toBe(0);
         monitoring.actionOnItem('Add to package', 0, 0);
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
-    it('can disable adding items to a package only once', function() {
+    it('can add items to a package only once', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
@@ -96,11 +97,15 @@ describe('Package', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         monitoring.openAction(2, 0);
+        browser.sleep(1000);
         monitoring.actionOnItem('Add to package', 0, 0);
-        monitoring.openMonitoring();
+        browser.sleep(1000);
+        authoring.save();
+        browser.refresh();
         monitoring.openAction(2, 0);
+        browser.sleep(500);
         var menu = monitoring.openItemMenu(0, 0);
-        expect(menu.element(by.partialLinkText('Add to package')).isDisplayed()).toBe(false);
+        expect(menu.element(by.partialLinkText('Add to package')).isPresent()).toBe(false);
     });
 
     it('create package from published item', function() {
