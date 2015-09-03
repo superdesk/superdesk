@@ -98,14 +98,11 @@
         };
 
         this.isAdded = function(pkg, item) {
-            for (var i = 0; i < pkg.groups.length; i++) {
-                for (var j = 0; j < pkg.groups[i].refs.length; j++) {
-                    if (pkg.groups[i].refs[j].guid === item._id) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return pkg.groups.some(function(group) {
+                return group.refs.some(function(ref) {
+                    return ref.guid === item._id;
+                });
+            });
         };
 
         this.fetchItem = function(packageItem) {
