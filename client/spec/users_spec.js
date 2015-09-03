@@ -1,6 +1,9 @@
 
-var post = require('./helpers/fixtures').post;
-var openUrl = require('./helpers/utils').open;
+var authoring = require('./helpers/authoring'),
+    openUrl = require('./helpers/utils').open,
+    post = require('./helpers/fixtures').post,
+    userPrefs = require('./helpers/user_prefs'),
+    workspace = require('./helpers/workspace');
 
 describe('Users', function() {
     'use strict';
@@ -171,6 +174,61 @@ describe('Users', function() {
             expect(buttonSave.isEnabled()).toBe(false);
             expect(buttonCancel.isEnabled()).toBe(true);
         });
+    });
+
+    describe('editing user preferences:', function () {
+        beforeEach(function(done) {
+            userPrefs.navigateTo().then(function () {
+                return userPrefs.prefsTab.click();
+            }).then(done);
+        });
+
+        it('should filter categories in the Authoring metadata head menu ' +
+           'based on the user\'s preferred categories settings',
+            function () {
+                var catListItems,  // elements in the offered category list
+                    parentDiv;
+
+                userPrefs.btnCheckNone.click();  // uncheck all categories
+
+                // select the Entertainment and Finance categories
+                userPrefs.categoryCheckboxes.get(3).click();  // Entertainment
+                userPrefs.categoryCheckboxes.get(4).click();  // Finance
+
+                userPrefs.btnSave.click();  // save changes
+
+                // navigate to Workspace and create a new article
+                workspace.openContent();
+                authoring.navbarMenuBtn.click();
+                authoring.newPlainArticleLink.click();
+
+                // authoring opened, click the set category menu and see what
+                // categories are offered
+                authoring.setCategoryBtn.click();
+
+                // it is difficult to distinguish the categories menu element
+                // from other similar menus, thus we need to perform all
+                // element selections from the button's immediate parent
+                parentDiv = authoring.setCategoryBtn.element(by.xpath('..'));
+
+                /////
+                // XXX: workaround - there seems to be a bug in sd-typeahead,
+                // no categories are shown, thus something needs to be entered
+                // into textbox (and immediately deleted) so that the category
+                // list shows up
+                /// TODO: remove when the bug is resolved and this is not needed
+                //        anymore
+                var txtCategory = parentDiv.element(by.css('input[type="text"]'));
+                txtCategory.sendKeys('x', protractor.Key.BACK_SPACE);
+                /// end workaround ///
+
+                catListItems = parentDiv.all(by.css('.item-list li > button'));
+
+                expect(catListItems.count()).toEqual(2);
+                expect(catListItems.get(0).getText()).toEqual('Entertainment');
+                expect(catListItems.get(1).getText()).toEqual('Finance');
+            }
+        );
     });
 
     describe('default desk field should not be visible', function() {

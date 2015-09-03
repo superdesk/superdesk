@@ -13,6 +13,26 @@ Feature: Vocabularies
       """
 
   @auth
+  Scenario: List default preferred categories vocabulary
+    Given the "vocabularies"
+      """
+      [{
+          "_id": "default_categories",
+          "items": [
+              {"is_active": true, "qcode": "a"},
+              {"is_active": false, "qcode": "b"},
+              {"is_active": true, "qcode": "c"}
+          ]
+        }
+      ]
+      """
+    When we get "/vocabularies/default_categories"
+    Then we get existing resource
+      """
+      {"_id": "default_categories", "items": [{"qcode": "a"}, {"qcode": "c"}]}
+      """
+
+  @auth
   Scenario: List newsvalue vocabulary
     Given the "vocabularies"
       """

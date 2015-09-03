@@ -1,12 +1,15 @@
 <form name="userPrefs">
+
     <div class="action-bar clearfix" ng-class="{show: userPrefs.$dirty }">
         <button class="btn btn-info pull-right" ng-disabled="!userPrefs.$dirty" ng-click="save()" translate>Save</button>
         <button class="btn pull-right" ng-click="cancel()" ng-disabled="!userPrefs.$dirty" translate>Cancel</button>
     </div>
+
     <div class="preferences form-flat inner-content" ng-init="val = true">
         <div class="title">User settings</div>
         <ul>
-            <li class="fieldset" ng-repeat="(id, p) in preferences track by id" ng-if="p.category !== 'dateline'">
+            <li class="fieldset" ng-repeat="(id, p) in preferences track by id"
+                ng-if="p.category !== 'dateline' && p.category !== 'categories'">
                 <div class="legend">{{ p.category }}</div>
                 <div sd-info-item>
                     <label translate>{{ :: p.label }}</label>
@@ -18,6 +21,7 @@
                     </span>
                 </div>
             </li>
+
             <li class="fieldset terms-box">
                 <div class="legend">{{ :: preferences['dateline:located'].category }}</div>
                 <div sd-info-item>
@@ -30,6 +34,48 @@
                     <span>{{ datelinePreview | previewDateline:datelineSource}} </span>
                 </div>
             </li>
+
+            <li class="fieldset">
+              <div class="legend">
+                {{ :: preferences['categories:preferred'].category }}
+              </div>
+
+              <div sd-info-item>
+                  <label translate>
+                    {{ :: preferences['categories:preferred'].label }}
+                  </label>
+                  <p class="discreet" translate>
+                    By selecting the categories you are interested in, the system
+                    will only display these in a menu for setting the content
+                    item's categories (along with any of its existing categories).
+                  </p>
+
+                  <div class="actions">
+                    <a ng-click="checkAll()"
+                       title="{{:: 'Select all categories' | translate}}"
+                       translate>all</a> |
+
+                    <a ng-click="checkNone()"
+                       title="{{:: 'Clear all selected' | translate}}"
+                       translate>none</a> |
+
+                    <a ng-click="checkDefault()"
+                       title="{{:: 'Select default categories only' | translate}}"
+                       translate>default</a>
+                  </div>
+
+                  <div ng-repeat="cat in categories track by cat.qcode">
+                    <input
+                        type="checkbox"
+                        name="categories" id="cat_{{::cat.qcode}}"
+                        value="{{cat.qcode}}" ng-model="cat.selected" />
+                     <label for="cat_{{::cat.qcode}}">
+                        {{:: cat.name | translate}}</label>
+                  </div>
+              </div>
+            </li>
+
         </ul>
+
     </div>
 </form>

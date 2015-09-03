@@ -3,8 +3,14 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges', 'datetimeHelper'];
-function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelper) {
+MetadataCtrl.$inject = [
+    '$scope', 'desks', 'metadata', '$filter', 'privileges', 'datetimeHelper',
+    'preferencesService'
+];
+function MetadataCtrl(
+    $scope, desks, metadata, $filter,
+    privileges, datetimeHelper, preferencesService) {
+
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
@@ -19,7 +25,10 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
                 $scope.associatedItem = item;
             });
         }
-    });
+
+        return preferencesService.get();
+    })
+    .then(setAvailableCategories);
 
     $scope.processGenre = function() {
         $scope.item.genre = _.map($scope.item.genre, function(g) {
@@ -62,6 +71,41 @@ function MetadataCtrl($scope, desks, metadata, $filter, privileges, datetimeHelp
             $scope.autosave($scope.item);
         }
     };
+
+    /**
+    * Builds a list of categories available for selection in scope. Used by
+    * the "category" menu in the Authoring metadata section.
+    *
+    * @function setAvailableCategories
+    * @param {Object} prefs - user preferences setting, including the
+    *   preferred categories settings, among other things
+    */
+    function setAvailableCategories(prefs) {
+        var all,        // all available categories
+            assigned = {},   // category codes already assigned to the article
+            filtered,
+            itemCategories,  // existing categories assigned to the article
+
+            // user's category preference settings , i.e. a map
+            // object (<category_code> --> true/false)
+            userPrefs;
+
+        all = metadata.values.categories || [];
+        userPrefs = prefs['categories:preferred'].selected || {};
+
+        // gather article's existing category codes
+        itemCategories = $scope.item.anpa_category || [];
+
+        itemCategories.forEach(function (cat) {
+            assigned[cat.qcode] = true;
+        });
+
+        filtered = _.filter(all, function (cat) {
+            return userPrefs[cat.qcode] || assigned[cat.qcode];
+        });
+
+        $scope.availableCategories = filtered;
+    }
 
     function setPublishScheduleDate(newValue, oldValue) {
         if (newValue !== oldValue) {

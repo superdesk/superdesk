@@ -103,9 +103,14 @@
         <div sd-meta-dropdown data-item="item" data-field="place" data-list="metadata.locators" ng-disabled="!_editable" data-change="autosave(item)"></div>
     </li>
 
-    <li class="terms-box" ng-if="metadata.categories">
+    <li class="terms-box" ng-if="metadata.categories" id="category-setting">
         <label translate>CATEGORY</label>
-        <div class="data" sd-meta-terms data-item="item" data-field="anpa_category" data-unique="qcode" data-list="metadata.categories" ng-disabled="!_editable" data-header="true" data-change="autosave(item)"></div>
+        <div
+            sd-meta-terms class="data"
+            ng-disabled="!_editable"
+            data-item="item" data-field="anpa_category" data-unique="qcode"
+            data-list="availableCategories" data-header="true"
+            data-change="autosave(item)"></div>
     </li>
 
     <li class="full-width terms-box" ng-if="metadata.subjectcodes">
