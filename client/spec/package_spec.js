@@ -87,6 +87,22 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
+    it('can disable adding items to a package only once', function() {
+        monitoring.openMonitoring();
+        monitoring.showMonitoringSettings();
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        monitoring.openAction(2, 0);
+        monitoring.actionOnItem('Add to package', 0, 0);
+        monitoring.openMonitoring();
+        monitoring.openAction(2, 0);
+        var menu = monitoring.openItemMenu(0, 0);
+        expect(menu.element(by.partialLinkText('Add to package')).isDisplayed()).toBe(false);
+    });
+
     it('create package from published item', function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
