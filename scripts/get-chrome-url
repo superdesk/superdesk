@@ -4,16 +4,12 @@ import json
 import requests
 
 OS = 'linux'
-CHANNEL = 'beta'
+CHANNEL = 'stable'
 BUILDS_URL = 'https://storage.googleapis.com/chromium-browser-continuous/Linux_x64/{}/chrome-linux.zip'
 VERSIONS_URL = 'https://omahaproxy.appspot.com/all.json'
 
 payload = {'os': OS, 'channel': CHANNEL}
 r = requests.get(VERSIONS_URL, params=payload)
-#build = r.json()[0]['versions'][0]['branch_base_position']
-# XXX: the build number as received from omahaproxy.appspot.com is incorrect,
-#      binding it to a fixed value until the issue is resolved so that it
-#      won't prevent the e2e tests from being run
-build = 344999
+build = r.json()[0]['versions'][0]['branch_base_position']
 print(BUILDS_URL.format(build))
 
