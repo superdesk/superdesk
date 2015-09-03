@@ -1863,22 +1863,13 @@
             /**
              * Start editing item using given action mode
              *
-             * It will fetch item from server first and lock it if appropriate for given action
-             *
              * @param {string} item
              * @param {string} action
              */
             this.edit = function(item, action) {
-                self.item = null;
-                self.action = null;
+                self.item = item;
+                self.action = action;
                 self.state.opened = !!item;
-                if (item) {
-                    authoring.open(item, action === 'view')
-                        .then(function(origItem) {
-                            self.item = origItem;
-                            self.action = action;
-                        });
-                }
             };
         }
 
@@ -1891,7 +1882,12 @@
             link: function(scope, elem, attrs, ctrl) {
                 scope.$watch(authoringWorkspace.getState, function(state) {
                     if (state) {
-                        ctrl.edit(state.item, state.action);
+                        ctrl.edit(null, null);
+                        // do this in next digest cycle so that it can
+                        // destroy authoring/packaging-embedded in current cycle
+                        scope.$applyAsync(function() {
+                            ctrl.edit(state.item, state.action);
+                        });
                     }
                 });
             }
@@ -1960,8 +1956,8 @@
         };
     }
 
-    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags'];
-    function AuthoringWorkspaceService($location, superdeskFlags) {
+    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags', 'authoring'];
+    function AuthoringWorkspaceService($location, superdeskFlags, authoring) {
         this.item = null;
         this.action = null;
         this.state = null;
@@ -1975,7 +1971,7 @@
          * @param {string} action
          */
         this.edit = function(item, action) {
-            self.item = item._id || null;
+            self.item = item || null;
             self.action = action || 'edit';
             saveState();
         };
@@ -2048,17 +2044,23 @@
          * used on page reload
          */
         function saveState() {
-            $location.search('item', self.item);
+            $location.search('item', self.item ? self.item._id : null);
             $location.search('action', self.action);
             superdeskFlags.flags.authoring = !!self.item;
             self.state = {item: self.item, action: self.action};
         }
 
+        /**
+         * On load try to fetch item set in url
+         */
         function init() {
             if ($location.search().item && $location.search().action in self) {
-                self.item = $location.search().item;
+                var itemId = $location.search().item;
                 self.action = $location.search().action;
-                saveState();
+                authoring.open(itemId, self.action === 'view').then(function(item) {
+                    self.item = item;
+                    saveState();
+                });
             }
         }
 

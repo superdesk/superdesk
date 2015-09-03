@@ -1087,9 +1087,9 @@ describe('authoring workspace', function() {
         expect(superdeskFlags.flags.authoring).toBeFalsy();
 
         authoringWorkspace.edit(item);
-        expect(authoringWorkspace.item).toBe('foo');
+        expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('edit');
-        expect(authoringWorkspace.getItem()).toBe('foo');
+        expect(authoringWorkspace.getItem()).toBe(item);
         expect(authoringWorkspace.getAction()).toBe('edit');
         expect(superdeskFlags.flags.authoring).toBeTruthy();
 
@@ -1102,7 +1102,7 @@ describe('authoring workspace', function() {
     it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace) {
         var item = {_id: 'foo'};
         authoringWorkspace.view(item);
-        expect(authoringWorkspace.item).toBe('foo');
+        expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('view');
         expect(superdeskFlags.flags.authoring).toBe(true);
     }));
@@ -1110,20 +1110,29 @@ describe('authoring workspace', function() {
     it('can kill an item', inject(function(authoringWorkspace) {
         var item = {_id: 'foo'};
         authoringWorkspace.kill(item);
-        expect(authoringWorkspace.item).toBe(item._id);
+        expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('kill');
     }));
 
     describe('init', function() {
         beforeEach(module('templates'));
 
+        var item;
+
+        beforeEach(inject(function($q, authoring) {
+            item = {_id: 'foo'};
+            spyOn(authoring, 'open').and.returnValue($q.when(item));
+        }));
+
         it('can open item from $location for editing', inject(function(api, $location, $rootScope, $injector) {
-            $location.search('item', 'foo');
+            $location.search('item', item._id);
             $location.search('action', 'edit');
             $rootScope.$digest();
+
             var authoringWorkspace = $injector.get('authoringWorkspace');
             $rootScope.$digest();
-            expect(authoringWorkspace.item).toBe('foo');
+
+            expect(authoringWorkspace.item).toBe(item);
             expect(authoringWorkspace.action).toBe('edit');
         }));
 
@@ -1133,7 +1142,7 @@ describe('authoring workspace', function() {
             $rootScope.$digest();
             var authoringWorkspace = $injector.get('authoringWorkspace');
             $rootScope.$digest();
-            expect(authoringWorkspace.item).toBe('bar');
+            expect(authoringWorkspace.item).toBe(item);
             expect(authoringWorkspace.action).toBe('view');
         }));
     });
@@ -1149,11 +1158,10 @@ describe('authoring container directive', function() {
         $templateCache.put('scripts/superdesk-authoring/views/authoring-container.html', '<div></div>');
     }));
 
-    var item, scope, elem, iscope, itemId;
+    var item, scope, elem, iscope;
 
     beforeEach(inject(function($compile, $rootScope, $q, authoring) {
-        itemId = 'foo';
-        item = {_id: itemId};
+        item = {_id: 'foo'};
         spyOn(authoring, 'open').and.returnValue($q.when(item));
 
         scope = $rootScope.$new();
@@ -1164,6 +1172,11 @@ describe('authoring container directive', function() {
 
     it('handles edit', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.edit(item);
+        $rootScope.$digest();
+
+        // testing reset in first cycle between
+        expect(iscope.authoring.item).toBe(null);
+
         $rootScope.$digest();
 
         expect(iscope.authoring.item).toBe(item);
@@ -1178,7 +1191,8 @@ describe('authoring container directive', function() {
 
     it('handles view', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.view(item);
-        scope.$digest();
+        $rootScope.$digest();
+        $rootScope.$digest();
         expect(iscope.authoring.item).toBe(item);
         expect(iscope.authoring.action).toBe('view');
         expect(iscope.authoring.state.opened).toBe(true);
@@ -1187,12 +1201,14 @@ describe('authoring container directive', function() {
     it('handles kill', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.kill(item);
         $rootScope.$digest();
+        $rootScope.$digest();
         expect(iscope.authoring.item).toBe(item);
         expect(iscope.authoring.action).toBe('kill');
     }));
 
     it('handles correct', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.correct(item);
+        $rootScope.$digest();
         $rootScope.$digest();
         expect(iscope.authoring.item).toBe(item);
         expect(iscope.authoring.action).toBe('correct');
