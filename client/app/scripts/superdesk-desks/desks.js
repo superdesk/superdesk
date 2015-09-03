@@ -97,11 +97,7 @@
                 scope.cachePreviousItems = [];
 
                 scope.preview = function(item) {
-                    desks.setWorkspace(item.task.desk, item.task.stage);
-                    if (!sessionStorage.getItem('previewUrl')) {
-                        sessionStorage.setItem('previewUrl', $location.url());
-                    }
-                    superdesk.intent('read_only', 'content_article', item);
+                    superdesk.intent('preview', 'item', item);
                 };
 
                 scope.edit = function(item) {

@@ -4,6 +4,8 @@
 module.exports = new MasterDesks();
 
 function MasterDesks() {
+    this.previewTitle = element(by.className('lightbox-title'));
+
     this.switchToTab = function(name) {
         element(by.id(name)).click();
     };

@@ -867,6 +867,13 @@
                 };
 
                 /**
+                 * Start editing current item
+                 */
+                $scope.edit = function edit() {
+                    authoringWorkspace.edit($scope.origItem);
+                };
+
+                /**
                  * Create a new version
                  */
                 $scope.save = function() {
@@ -1778,8 +1785,8 @@
                     priority: 100,
                     icon: 'remove',
                     group: 'corrections',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('kill', 'content_article', data.item);
+                    controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                        authoringWorkspace.kill(data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     additionalCondition:['authoring', 'item', function(authoring, item) {
@@ -1787,55 +1794,19 @@
                     }],
                     privileges: {kill: 1}
                 })
-                .activity('kill.content_article', {
-                    category: '/authoring',
-                    href: '/authoring/:_id/kill',
-                    when: '/authoring/:_id/kill',
-                    label: gettext('Authoring Kill'),
-                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
-                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                    controller: AuthoringController,
-                    filters: [{action: 'kill', type: 'content_article'}],
-                    resolve: {
-                        item: ['$route', 'authoring', function($route, authoring) {
-                            return authoring.open($route.current.params._id, false);
-                        }],
-                        action: [function() {return 'kill';}]
-                    },
-                    authoring: true
-                })
                 .activity('correct.text', {
                     label: gettext('Correct item'),
                     priority: 100,
                     icon: 'pencil',
                     group: 'corrections',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
-                        superdesk.intent('correct', 'content_article', data.item);
+                    controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
+                        authoringWorkspace.correct(data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).correct;
                     }],
                     privileges: {correct: 1}
-                })
-                .activity('correct.content_article', {
-                    category: '/authoring',
-                    href: '/authoring/:_id/correct',
-                    when: '/authoring/:_id/correct',
-                    label: gettext('Authoring Correct'),
-                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
-                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                    controller: AuthoringController,
-                    filters: [{action: 'correct', type: 'content_article'}],
-                    resolve: {
-                        item: ['$route', 'authoring', function($route, authoring) {
-                            return authoring.open($route.current.params._id, false);
-                        }],
-                        action: [function() {return 'correct';}]
-                    },
-                    authoring: true
                 })
                 .activity('view.text', {
                     label: gettext('View item'),
@@ -1848,24 +1819,6 @@
                     condition: function(item) {
                         return item.type !== 'composite';
                     }
-                })
-                .activity('read_only.content_article', {
-                    category: '/authoring',
-                    href: '/authoring/:_id/view/:_type',
-                    when: '/authoring/:_id/view/:_type',
-                    label: gettext('Authoring Read Only'),
-                    templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
-                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                    controller: AuthoringController,
-                    filters: [{action: 'read_only', type: 'content_article'}],
-                    resolve: {
-                        item: ['$route', 'authoring', function($route, authoring) {
-                            return authoring.open($route.current.params._id, true, $route.current.params._type);
-                        }],
-                        action: [function() {return 'view';}]
-                    },
-                    authoring: true
                 })
                 .activity('edit.crop', {
                     label: gettext('EDIT CROP'),
@@ -1885,18 +1838,32 @@
             });
         }]);
 
-    AuthoringContainerDirective.$inject = ['authoringWorkspace'];
-    function AuthoringContainerDirective(authoringWorkspace) {
+    AuthoringContainerDirective.$inject = ['authoring', 'authoringWorkspace'];
+    function AuthoringContainerDirective(authoring, authoringWorkspace) {
+
         function AuthoringContainerController() {
             var self = this;
 
             this.state = {};
 
-            this.edit = function(item, lock) {
-                self.item = item || null;
-                self.state.opened = !!self.item;
-                if (self.item) {
-                    self.item.lockIt = !!lock;
+            /**
+             * Start editing item using given action mode
+             *
+             * It will fetch item from server first and lock it if appropriate for given action
+             *
+             * @param {string} item
+             * @param {string} action
+             */
+            this.edit = function(item, action) {
+                self.item = null;
+                self.action = null;
+                self.state.opened = !!item;
+                if (item) {
+                    authoring.open(item, action === 'view')
+                        .then(function(origItem) {
+                            self.item = origItem;
+                            self.action = action;
+                        });
                 }
             };
         }
@@ -1906,44 +1873,24 @@
             controllerAs: 'authoring',
             templateUrl: 'scripts/superdesk-authoring/views/authoring-container.html',
             scope: {},
-            link: function(scope) {
-                scope.$watch(authoringWorkspace.getItem, function(item, oldItem) {
-                    if (item !== oldItem) {
-                        scope.authoring.edit(item, !authoringWorkspace.readonly);
+            require: 'sdAuthoringContainer',
+            link: function(scope, elem, attrs, ctrl) {
+                scope.$watch(authoringWorkspace.getState, function(state) {
+                    if (state) {
+                        ctrl.edit(state.item, state.action);
                     }
                 });
             }
         };
     }
 
-    AuthoringEmbeddedDirective.$inject = ['authoring'];
-    function AuthoringEmbeddedDirective(authoring) {
+    AuthoringEmbeddedDirective.$inject = [];
+    function AuthoringEmbeddedDirective() {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
-            require: '^sdAuthoringContainer',
             scope: {
-                listItem: '=item'
-            },
-            link: function(scope, elem, attrs, authoringCtrl) {
-                scope.$watch('listItem', function(item) {
-                    if (item && item.lockIt){
-                        scope.lock();
-                    } else {
-                        scope.origItem = null;
-                        scope.$applyAsync(function() {
-                            scope.origItem = item;
-                            scope.action = 'view';
-                        });
-                    }
-                });
-
-                scope.lock = function() {
-                    scope.origItem = null;
-                    authoring.open(scope.listItem._id).then(function(item) {
-                        scope.origItem = item;
-                        scope.action = 'edit';
-                    });
-                };
+                origItem: '=item',
+                action: '='
             }
         };
     }
@@ -1999,10 +1946,11 @@
         };
     }
 
-    AuthoringWorkspaceService.$inject = ['$location', 'api', 'superdeskFlags'];
-    function AuthoringWorkspaceService($location, api, superdeskFlags) {
+    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags'];
+    function AuthoringWorkspaceService($location, superdeskFlags) {
         this.item = null;
-        this.readonly = false;
+        this.action = null;
+        this.state = null;
 
         var self = this;
 
@@ -2010,12 +1958,12 @@
          * Open item for editing
          *
          * @param {Object} item
+         * @param {string} action
          */
-        this.edit = function(item) {
-            self.item = item;
-            self.readonly = false;
-            superdeskFlags.flags.authoring = !!item;
-            $location.search('edit', item ? item._id : null);
+        this.edit = function(item, action) {
+            self.item = item._id || null;
+            self.action = action || 'edit';
+            saveState();
         };
 
         /**
@@ -2024,10 +1972,7 @@
          * @param {Object} item
          */
         this.view = function(item) {
-            self.item = item;
-            self.readonly = true;
-            superdeskFlags.flags.authoring = !!item;
-            $location.search('view', item ? item._id : null);
+            self.edit(item, 'view');
         };
 
         /**
@@ -2035,10 +1980,26 @@
          */
         this.close = function() {
             self.item = null;
-            self.readonly = null;
-            superdeskFlags.flags.authoring = false;
-            $location.search('edit', null);
-            $location.search('view', null);
+            self.action = null;
+            saveState();
+        };
+
+        /**
+         * Kill an item
+         *
+         * @param {Object} item
+         */
+        this.kill = function(item) {
+            self.edit(item, 'kill');
+        };
+
+        /**
+         * Correct an item
+         *
+         * @param {Object} item
+         */
+        this.correct = function(item) {
+            self.edit(item, 'correct');
         };
 
         /**
@@ -2051,28 +2012,42 @@
         };
 
         /**
-         * Find item by given id
+         * Get current action
          *
-         * @param {string} _id
-         * @return {Promise}
+         * @return {string}
          */
-        function find(_id) {
-            return api.find('archive', _id);
-        }
+        this.getAction = function() {
+            return self.action;
+        };
 
         /**
-         * Populates item based on $location
+         * Get current state
+         *
+         * @return {Object}
          */
-        function main() {
-            if ($location.search().edit) {
-                find($location.search().edit).then(self.edit);
-            }
+        this.getState = function() {
+            return self.state;
+        };
 
-            if ($location.search().view) {
-                find($location.search().view).then(self.view);
+        /**
+         * Save current item/action state into $location so that it can be
+         * used on page reload
+         */
+        function saveState() {
+            $location.search('item', self.item);
+            $location.search('action', self.action);
+            superdeskFlags.flags.authoring = !!self.item;
+            self.state = {item: self.item, action: self.action};
+        }
+
+        function init() {
+            if ($location.search().item && $location.search().action in self) {
+                self.item = $location.search().item;
+                self.action = $location.search().action;
+                saveState();
             }
         }
 
-        main();
+        init();
     }
 })();

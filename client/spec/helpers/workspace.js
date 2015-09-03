@@ -80,7 +80,7 @@ function Workspace() {
 
         return browser.wait(function() {
             return element(by.className('list-view')).isPresent();
-        });
+        }, 300);
     };
 
     this.selectStage = function(stage) {

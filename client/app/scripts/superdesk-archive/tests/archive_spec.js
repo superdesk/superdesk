@@ -130,4 +130,24 @@ describe('content', function() {
             expect(multi.getItems().length).toBe(0);
         }));
     });
+
+    describe('item preview container', function() {
+        it('can handle preview:item intent', inject(function($rootScope, $compile, superdesk) {
+            var scope = $rootScope.$new();
+            var elem = $compile('<div sd-item-preview-container></div>')(scope);
+            scope.$digest();
+
+            var iscope = elem.isolateScope();
+            expect(iscope.item).toBe(null);
+
+            scope.$apply(function() {
+                superdesk.intent('preview', 'item', item);
+            });
+
+            expect(iscope.item).toBe(item);
+
+            iscope.close();
+            expect(iscope.item).toBe(null);
+        }));
+    });
 });
