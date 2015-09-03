@@ -24,9 +24,8 @@ define([
         var permissions = {};
         var panes = {};
 
-        $routeProvider.when('/', {redirectTo: '/workspace'});
-
         angular.extend(this, constans);
+
         /**
          * Register widget.
          *

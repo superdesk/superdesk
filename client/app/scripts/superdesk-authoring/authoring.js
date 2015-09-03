@@ -189,6 +189,7 @@
          *
          * @param {string} _id Item _id.
          * @param {boolean} read_only
+         * @param {string} itemType
          */
         this.open = function openAuthoring(_id, read_only, itemType) {
             if (angular.isDefined(itemType) && itemType === 'legal_archive') {
@@ -197,7 +198,8 @@
                     return item;
                 });
             } else {
-                return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
+                return api.find('archive', _id, {embedded: {lock_user: 1}})
+                .then(function _lock(item) {
                     item._editable = !read_only;
                     return lock.lock(item);
                 }).then(function _autosave(item) {
@@ -1971,9 +1973,11 @@
          * @param {string} action
          */
         this.edit = function(item, action) {
-            self.item = item || null;
-            self.action = action || 'edit';
-            saveState();
+            if (item) {
+                authoringOpen(item._id, action || 'edit');
+            } else {
+                self.close();
+            }
         };
 
         /**
@@ -2055,13 +2059,20 @@
          */
         function init() {
             if ($location.search().item && $location.search().action in self) {
-                var itemId = $location.search().item;
-                self.action = $location.search().action;
-                authoring.open(itemId, self.action === 'view').then(function(item) {
-                    self.item = item;
-                    saveState();
-                });
+                authoringOpen($location.search().item, $location.search().action);
             }
+        }
+
+        /**
+         * Fetch item by id and start editing it
+         */
+        function authoringOpen(itemId, action) {
+            return authoring.open(itemId, action === 'view')
+                .then(function(item) {
+                    self.item = item;
+                    self.action = action;
+                })
+                .then(saveState);
         }
 
         init();

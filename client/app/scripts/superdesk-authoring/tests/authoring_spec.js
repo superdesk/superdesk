@@ -1079,14 +1079,21 @@ describe('authoring actions', function() {
 
 describe('authoring workspace', function() {
 
+    var item = {_id: 'foo'};
+
     beforeEach(module('superdesk.authoring'));
 
-    it('can edit item', inject(function(superdeskFlags, authoringWorkspace) {
-        var item = {_id: 'foo'};
+    beforeEach(inject(function($q, authoring) {
+        spyOn(authoring, 'open').and.returnValue($q.when(item));
+    }));
+
+    it('can edit item', inject(function(superdeskFlags, authoringWorkspace, $rootScope) {
 
         expect(superdeskFlags.flags.authoring).toBeFalsy();
 
         authoringWorkspace.edit(item);
+        $rootScope.$apply();
+
         expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('edit');
         expect(authoringWorkspace.getItem()).toBe(item);
@@ -1099,31 +1106,22 @@ describe('authoring workspace', function() {
         expect(superdeskFlags.flags.authoring).toBeFalsy();
     }));
 
-    it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace) {
-        var item = {_id: 'foo'};
+    it('can open item in readonly mode', inject(function(superdeskFlags, authoringWorkspace, $rootScope) {
         authoringWorkspace.view(item);
+        $rootScope.$apply();
         expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('view');
         expect(superdeskFlags.flags.authoring).toBe(true);
     }));
 
-    it('can kill an item', inject(function(authoringWorkspace) {
-        var item = {_id: 'foo'};
+    it('can kill an item', inject(function(authoringWorkspace, $rootScope) {
         authoringWorkspace.kill(item);
+        $rootScope.$apply();
         expect(authoringWorkspace.item).toBe(item);
         expect(authoringWorkspace.action).toBe('kill');
     }));
 
     describe('init', function() {
-        beforeEach(module('templates'));
-
-        var item;
-
-        beforeEach(inject(function($q, authoring) {
-            item = {_id: 'foo'};
-            spyOn(authoring, 'open').and.returnValue($q.when(item));
-        }));
-
         it('can open item from $location for editing', inject(function(api, $location, $rootScope, $injector) {
             $location.search('item', item._id);
             $location.search('action', 'edit');
@@ -1174,7 +1172,7 @@ describe('authoring container directive', function() {
         authoringWorkspace.edit(item);
         $rootScope.$digest();
 
-        // testing reset in first cycle between
+        // testing reset in first cyclte between
         expect(iscope.authoring.item).toBe(null);
 
         $rootScope.$digest();
