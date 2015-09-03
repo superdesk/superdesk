@@ -4,7 +4,7 @@ import json
 import requests
 
 OS = 'linux'
-CHANNEL = 'beta'
+CHANNEL = 'stable'
 BUILDS_URL = 'https://storage.googleapis.com/chromium-browser-continuous/Linux_x64/{}/chrome-linux.zip'
 VERSIONS_URL = 'https://omahaproxy.appspot.com/all.json'
 
