@@ -654,10 +654,21 @@
                     scope.$on('item:published:no_post_publish_actions', itemDelete);
                     scrollElem.on('scroll', handleScroll);
 
-                    scope.$watch('view', queryItems);
+                    scope.$watch('view', function(newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            scrollElem.scrollTop(0);
+                            render();
+                        }
+                    });
                     scope.$watch(function getSearchParams() {
                         return _.omit($location.search(), '_id');
-                    }, queryItems, true);
+                    }, function(newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            queryItems().then(function () {
+                                scrollElem.scrollTop(0);
+                            });
+                        }
+                    }, true);
 
                     /*
                      * Function for creating small delay,
@@ -673,7 +684,6 @@
                      * filling scope for the first time
                      */
                     function queryItems() {
-                        scrollElem.scrollTop(0);
                         criteria.source.size = 0;
                         scope.total = null;
                         return api.query('search', criteria).then(function (items) {

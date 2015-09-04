@@ -512,6 +512,10 @@
             };
         })
 
+        /*
+         * This directive is only temporarly,
+         * it will be deleted with content and ingest
+         */
         .directive('sdContentResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
             function ($location, preferencesService, packages, tags, asset) {
                 var update = {
