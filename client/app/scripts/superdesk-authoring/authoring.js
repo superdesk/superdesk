@@ -701,28 +701,44 @@
                 $scope.origPreview = $scope.preview;
                 return;
             }
+
+            // During the initialisation of jcrop the preview object keeps changing and
+            // new keys are being added to it. We want to ignore those changes and only
+            // respond to those  that are actually caused by the changed crop coordinates.
             if (Object.keys(newValue).length === Object.keys(oldValue).length) {
                 $scope.data.isDirty = true;
                 return;
             }
         }, true);
 
+        /*
+        * Gets the crop coordinates, which was set in preview object during the onChange
+        * event of jcrop
+        */
         function getCropCoordinates(cropName) {
             var coordinates = {};
-            coordinates.CropLeft = Math.round(Math.min($scope.preview[cropName].cords.x, $scope.preview[cropName].cords.x2));
-            coordinates.CropRight = Math.round(Math.max($scope.preview[cropName].cords.x, $scope.preview[cropName].cords.x2));
-            coordinates.CropTop = Math.round(Math.min($scope.preview[cropName].cords.y, $scope.preview[cropName].cords.y2));
-            coordinates.CropBottom = Math.round(Math.max($scope.preview[cropName].cords.y, $scope.preview[cropName].cords.y2));
+            var cropPoints  = $scope.preview[cropName];
+            coordinates.CropLeft = Math.round(Math.min(cropPoints.cords.x, cropPoints.cords.x2));
+            coordinates.CropRight = Math.round(Math.max(cropPoints.cords.x, cropPoints.cords.x2));
+            coordinates.CropTop = Math.round(Math.min(cropPoints.cords.y, cropPoints.cords.y2));
+            coordinates.CropBottom = Math.round(Math.max(cropPoints.cords.y, cropPoints.cords.y2));
 
             return coordinates;
         }
 
+        /*
+        * Serves for holding the crop coordinates
+        */
         function recordCrops(cropName) {
             var obj = {};
             obj[cropName] = getCropCoordinates(cropName);
             _.extend($scope.data.cropData, obj);
         }
 
+        /*
+        * Records the coordinates for each crop sizes available and
+        * notify the user and then resolve the activity.
+        */
         $scope.done = function() {
             _.forEach($scope.data.cropsizes, function(cropsize) {
                 recordCrops(cropsize.name);
@@ -734,11 +750,11 @@
         $scope.close = function() {
             if ($scope.data.isDirty) {
                 modal.confirm(gettext('You have unsaved changes, do you want to continue?'))
-                .then(angular.bind(this, function record() { // Ok = continue w/o saving
+                .then(function() { // Ok = continue w/o saving
                     $scope.data.isDirty = false;
                     $scope.preview = $scope.origPreview;
                     $scope.resolve($scope.data);
-                }));
+                });
             } else {
                 $scope.reject();
             }
