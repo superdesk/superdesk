@@ -73,7 +73,7 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
     });
 
-    fit('can add items to an existing package', function() {
+    it('can add items to an existing package', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
@@ -88,7 +88,7 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
-    fit('can add items to a package only once', function() {
+    it('can add items to a package only once', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
