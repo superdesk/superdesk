@@ -29,5 +29,5 @@
     </section>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn submit" ng-click="done()" ng-disabled="!preview || !preview.progress" translate>Done</button>
+    <button type="button" class="btn btn-medium btn-info" ng-click="done()" ng-disabled="!preview || !preview.progress || !data.isDirty" translate>Save</button>
 </div>
