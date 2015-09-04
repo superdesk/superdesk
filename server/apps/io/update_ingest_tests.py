@@ -198,19 +198,19 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_service.provider = provider
 
         items = provider_service.fetch_ingest(guid)
-        for item in items:
-            item['ingest_provider'] = provider['_id']
-
         now = utcnow()
-        items[0]['expiry'] = now - timedelta(hours=11)
-        items[1]['expiry'] = now - timedelta(hours=11)
-        items[2]['expiry'] = now + timedelta(hours=11)
-        items[5]['versioncreated'] = now + timedelta(minutes=11)
+        for i, item in enumerate(items):
+            item['ingest_provider'] = provider['_id']
+            expiry_time = now - timedelta(hours=11)
+            if i > 4:
+                expiry_time = now + timedelta(minutes=11)
+
+            item['expiry'] = item['versioncreated'] = expiry_time
 
         service = get_resource_service('ingest')
         service.post(items)
         expiredItems = get_expired_items(provider, now)
-        self.assertEquals(4, expiredItems.count())
+        self.assertEquals(5, expiredItems.count())
 
     def test_expiring_with_content(self):
         provider_name = 'reuters'
@@ -220,14 +220,14 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_service.provider = provider
 
         items = provider_service.fetch_ingest(guid)
-        for item in items:
-            item['ingest_provider'] = provider['_id']
-
         now = utcnow()
-        items[0]['expiry'] = now - timedelta(hours=11)
-        items[1]['expiry'] = now - timedelta(hours=11)
-        items[2]['expiry'] = now + timedelta(hours=11)
-        items[5]['versioncreated'] = now + timedelta(minutes=11)
+        for i, item in enumerate(items):
+            item['ingest_provider'] = provider['_id']
+            expiry_time = now - timedelta(hours=11)
+            if i > 4:
+                expiry_time = now + timedelta(minutes=11)
+
+            item['expiry'] = item['versioncreated'] = expiry_time
 
         service = get_resource_service('ingest')
         service.post(items)
