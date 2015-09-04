@@ -24,5 +24,13 @@
         </div>
     </section>
 
-    <div sd-authoring-sidebar></div>
+    <div sd-send-item
+        ng-if="views.send"
+        data-item="item"
+        data-view="views.send"
+        data-before-send="beforeSend"
+        data-editable="_editable"
+        data-mode="authoring">
+    </div>
+
 </div>

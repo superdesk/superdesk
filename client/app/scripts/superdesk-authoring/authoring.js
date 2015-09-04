@@ -1228,10 +1228,6 @@
         return {templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html'};
     }
 
-    function AuthoringSidebarDirective() {
-        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-sidebar.html'};
-    }
-
     function DashboardCard() {
         return {
             link: function(scope, elem) {
@@ -1398,6 +1394,7 @@
                 item: '=',
                 view: '=',
                 _beforeSend: '=beforeSend',
+                _editable: '=editable',
                 mode: '@'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
@@ -1807,7 +1804,6 @@
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
-        .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)

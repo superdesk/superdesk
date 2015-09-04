@@ -11,10 +11,6 @@
 	top: 0; right: 0; left: 0; bottom: 0;
 	.main-section {
 		.transition(all ease 0.3s);
-		&.auth-sendto {
-			right: @send-to-pane-width;
-			left: -@send-to-pane-width;
-		}
 	}
 }
 
@@ -108,10 +104,6 @@
                 &.has-highlights {
                     overflow: visible;
                 }
-	}
-	&.auth-sendto {
-		right: @send-to-pane-width;
-		left: -@send-to-pane-width;
 	}
 }
 
@@ -410,7 +402,7 @@
 	top: 0; bottom: 0;
         right: 0;
 	
-	header {
+	> header {
 		height: @nav-height;
 		border-bottom: 1px solid #424242;
 		padding: 0 20px;
@@ -426,10 +418,64 @@
 		}
 	}
 	.content {
-		padding: 20px;
+		width: 100%;
+		position: absolute;
+    	bottom: 125px;
+    	top: 50px;
+
+    	.toggle-box {
+    		padding: 20px 20px 0;
+    		.btn-list {
+    			padding: 0;
+    		}
+    		> header:before{
+    			border-bottom: 1px solid #4f4f4f;
+    		}
+    		> header h6 {
+    			margin-left: -5px;
+    			background: #3b3b3b;
+    			color: #fff;
+    		}
+    		> header .chevron {
+				background-color: #3b3b3b;
+				i {
+					background-image: url("../../images/glyphicons-halflings-white.png");
+				}
+    		}
+    		.publish-label {
+    			color: #8D8A8A;
+    			font-size: 10px;
+    			text-transform: uppercase;
+    		}
+    		.publish-list {
+    			li {
+					float: left;
+					width: (@send-to-pane-width - 55)/2;
+					&:nth-child(2n) {
+						margin-left: 15px;
+					}
+					input {
+						background: #4f4f4f;
+				    	font-size: 13px;
+				    	line-height: 18px;
+			    	    height: 35px;
+		    	        border: 2px solid #4f4f4f !important;
+	    	            border-radius: 3px !important;
+	    	            color: #fff;
+					}
+					button {
+						background: #4f4f4f;
+						top: 7px;
+						.icon-calendar, .icon-time {
+							background-image: url("../../images/glyphicons-halflings-white.png");
+						}
+					}
+    			}
+    		}
+    	}
 
 		.desk-select {
-			margin-bottom: 15px;
+		    padding-bottom: 15px;
 			.dropdown-toggle {
 				width: 100%;
 				text-align: left;
@@ -448,13 +494,25 @@
 			}
 		}
 		.btn-list {
-			height: 1%;
-			overflow: hidden;
-			margin-bottom: 30px;
+			padding: 0 20px;
+			&.btn-bottom {
+			    bottom: 0;
+			    padding-top: 15px;
+			    position: absolute;
+			    border-top: 1px solid #424242;
+			    li {
+			    	&:last-child {
+			    		width: @send-to-pane-width - 40;
+			    	}
+
+			    	button {
+			    		text-transform: uppercase;
+			    	}
+			    }
+			}
 			li {
 				float: left;
 				width: (@send-to-pane-width - 55)/2;
-				padding: 0;
 				padding: 0 0 15px;
 
 				&:nth-child(2n) {
@@ -543,9 +601,14 @@
     width: @send-to-pane-width;
     height: 100%;
     right: -@send-to-pane-width;
+    overflow: auto;
+    z-index: 1;
     .transition(all ease 0.3s);
     &.show {
         right: 0;
+    }
+    &.outer-pane {
+		top: 95px;
     }
 }
 
