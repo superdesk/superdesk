@@ -81,7 +81,7 @@ class AppInitializeWithDataCommand(superdesk.Command):
                             if '_id' in loaded_item and loaded_item['_id'] == item['_id']:
                                 existing_data.append(loaded_item)
                                 data.remove(loaded_item)
-                if data and existing.count() == 0:
+                if data:
                     service.post(data)
                 if existing_data and do_patch:
                     for item in existing_data:
