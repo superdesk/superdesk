@@ -1,7 +1,8 @@
 var route = require('./helpers/utils').route,
     workspace = require('./helpers/workspace'),
     content = require('./helpers/pages').content,
-    authoring = require('./helpers/pages').authoring;
+    authoring = require('./helpers/pages').authoring,
+    monitoring = require('./helpers/monitoring');
 
 describe('Package', function() {
     'use strict';
@@ -70,6 +71,41 @@ describe('Package', function() {
         content.selectItem(1);
         content.createPackageFromItems();
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
+    });
+
+    it('can add items to an existing package', function() {
+        monitoring.openMonitoring();
+        monitoring.showMonitoringSettings();
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        monitoring.openAction(4, 0);
+        browser.sleep(500);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(0);
+        monitoring.actionOnItem('Add to package', 1, 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
+    });
+
+    it('can add items to a package only once', function() {
+        monitoring.openMonitoring();
+        monitoring.showMonitoringSettings();
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        monitoring.openAction(4, 0);
+        browser.sleep(1000);
+        monitoring.actionOnItem('Add to package', 1, 0);
+        browser.sleep(1000);
+        authoring.save();
+        browser.refresh();
+        monitoring.openAction(4, 0);
+        browser.sleep(500);
+        var menu = monitoring.openItemMenu(1, 0);
+        expect(menu.element(by.partialLinkText('Add to package')).isPresent()).toBe(false);
     });
 
     it('create package from published item', function() {

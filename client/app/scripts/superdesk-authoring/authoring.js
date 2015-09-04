@@ -189,6 +189,7 @@
          *
          * @param {string} _id Item _id.
          * @param {boolean} read_only
+         * @param {string} itemType
          */
         this.open = function openAuthoring(_id, read_only, itemType) {
             if (angular.isDefined(itemType) && itemType === 'legal_archive') {
@@ -197,7 +198,8 @@
                     return item;
                 });
             } else {
-                return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
+                return api.find('archive', _id, {embedded: {lock_user: 1}})
+                .then(function _lock(item) {
                     item._editable = !read_only;
                     return lock.lock(item);
                 }).then(function _autosave(item) {
@@ -1863,22 +1865,13 @@
             /**
              * Start editing item using given action mode
              *
-             * It will fetch item from server first and lock it if appropriate for given action
-             *
              * @param {string} item
              * @param {string} action
              */
             this.edit = function(item, action) {
-                self.item = null;
-                self.action = null;
+                self.item = item;
+                self.action = action;
                 self.state.opened = !!item;
-                if (item) {
-                    authoring.open(item, action === 'view')
-                        .then(function(origItem) {
-                            self.item = origItem;
-                            self.action = action;
-                        });
-                }
             };
         }
 
@@ -1891,7 +1884,12 @@
             link: function(scope, elem, attrs, ctrl) {
                 scope.$watch(authoringWorkspace.getState, function(state) {
                     if (state) {
-                        ctrl.edit(state.item, state.action);
+                        ctrl.edit(null, null);
+                        // do this in next digest cycle so that it can
+                        // destroy authoring/packaging-embedded in current cycle
+                        scope.$applyAsync(function() {
+                            ctrl.edit(state.item, state.action);
+                        });
                     }
                 });
             }
@@ -1960,8 +1958,8 @@
         };
     }
 
-    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags'];
-    function AuthoringWorkspaceService($location, superdeskFlags) {
+    AuthoringWorkspaceService.$inject = ['$location', 'superdeskFlags', 'authoring'];
+    function AuthoringWorkspaceService($location, superdeskFlags, authoring) {
         this.item = null;
         this.action = null;
         this.state = null;
@@ -1975,9 +1973,11 @@
          * @param {string} action
          */
         this.edit = function(item, action) {
-            self.item = item._id || null;
-            self.action = action || 'edit';
-            saveState();
+            if (item) {
+                authoringOpen(item._id, action || 'edit');
+            } else {
+                self.close();
+            }
         };
 
         /**
@@ -2048,18 +2048,31 @@
          * used on page reload
          */
         function saveState() {
-            $location.search('item', self.item);
+            $location.search('item', self.item ? self.item._id : null);
             $location.search('action', self.action);
             superdeskFlags.flags.authoring = !!self.item;
             self.state = {item: self.item, action: self.action};
         }
 
+        /**
+         * On load try to fetch item set in url
+         */
         function init() {
             if ($location.search().item && $location.search().action in self) {
-                self.item = $location.search().item;
-                self.action = $location.search().action;
-                saveState();
+                authoringOpen($location.search().item, $location.search().action);
             }
+        }
+
+        /**
+         * Fetch item by id and start editing it
+         */
+        function authoringOpen(itemId, action) {
+            return authoring.open(itemId, action === 'view')
+                .then(function(item) {
+                    self.item = item;
+                    self.action = action;
+                })
+                .then(saveState);
         }
 
         init();

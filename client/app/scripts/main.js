@@ -34,6 +34,10 @@ define('main', [
         superdesk.constant('config', config);
         superdesk.constant('lodash', _);
 
+        superdesk.config(['$routeProvider', function($routeProvider) {
+            $routeProvider.when('/', {redirectTo: '/workspace'});
+        }]);
+
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {
