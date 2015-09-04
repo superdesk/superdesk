@@ -144,19 +144,12 @@ class AAPMMDatalayer(DataLayer):
                 if any(i['Name'] == 'Original' for i in resolutions['Image']):
                     url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Original/download'.format(_id)
                     mime_type = 'image/jpeg'
-                    source_ref = {'href': url, 'mimetype': mime_type}
                 else:
                     raise FileNotFoundError
             elif doc[ITEM_TYPE] == CONTENT_TYPE.VIDEO:
                 if any(v['Name'] == 'Ipod' for v in resolutions['Video']):
                     url = self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Ipod/download'.format(_id)
                     mime_type = doc.get('renditions').get('original').get('mimetype')
-                else:
-                    raise FileNotFoundError
-                if any(v['Name'] == 'Video' for v in resolutions['Video']):
-                    source_ref = {
-                        'href': self._app.config['AAP_MM_SEARCH_URL'] + '/Assets/{}/Video/download'.format(_id),
-                        'mimetype': 'video/quicktime'}
                 else:
                     raise FileNotFoundError
             else:
@@ -167,7 +160,6 @@ class AAPMMDatalayer(DataLayer):
             else:
                 mime_type = 'image/jpeg'
             url = doc['renditions']['original']['href']
-            source_ref = {'href': url, 'mimetype': mime_type}
 
         r = self._http.request('GET', url, headers=self._headers)
         out = BytesIO(r.data)
@@ -188,7 +180,6 @@ class AAPMMDatalayer(DataLayer):
             renditions = generate_renditions(out, file_id, inserted, file_type,
                                              content_type, rendition_spec, self.url_for_media)
             doc['renditions'] = renditions
-            doc['renditions']['original_source'] = source_ref
         except Exception as io:
             logger.exception(io)
             for file_id in inserted:
