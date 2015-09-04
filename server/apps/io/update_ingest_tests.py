@@ -72,7 +72,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         provider_service.provider = provider
         items = provider_service.fetch_ingest(guid)
         items.extend(provider_service.fetch_ingest(guid))
-        self.assertEquals(12, len(items))
+        self.assertEqual(12, len(items))
         self.ingest_items(items, provider)
 
     def test_ingest_item_expiry(self):
@@ -210,7 +210,7 @@ class UpdateIngestTest(SuperdeskTestCase):
         service = get_resource_service('ingest')
         service.post(items)
         expiredItems = get_expired_items(provider, now)
-        self.assertEquals(5, expiredItems.count())
+        self.assertEqual(5, expiredItems.count())
 
     def test_expiring_with_content(self):
         provider_name = 'reuters'
@@ -283,12 +283,12 @@ class UpdateIngestTest(SuperdeskTestCase):
 
         provider_name = 'reuters'
         provider = self._get_provider(provider_name)
-        self.assertEquals('body', ingest.apply_rule_set(item, provider)['body_html'])
+        self.assertEqual('body', ingest.apply_rule_set(item, provider)['body_html'])
 
         item = {'body_html': '@@body@@'}
         provider_name = 'AAP'
         provider = self._get_provider(provider_name)
-        self.assertEquals('@@body@@', ingest.apply_rule_set(item, provider)['body_html'])
+        self.assertEqual('@@body@@', ingest.apply_rule_set(item, provider)['body_html'])
 
     def test_all_ingested_items_have_sequence(self):
         provider_name = 'reuters'
@@ -301,25 +301,25 @@ class UpdateIngestTest(SuperdeskTestCase):
         self.assertIsNotNone(item['ingest_provider_sequence'])
 
     def test_get_task_ttl(self):
-        self.assertEquals(300, ingest.get_task_ttl({}))
+        self.assertEqual(300, ingest.get_task_ttl({}))
         provider = {'update_schedule': {'minutes': 10}}
-        self.assertEquals(600, ingest.get_task_ttl(provider))
+        self.assertEqual(600, ingest.get_task_ttl(provider))
         provider['update_schedule']['hours'] = 1
         provider['update_schedule']['minutes'] = 1
-        self.assertEquals(3660, ingest.get_task_ttl(provider))
+        self.assertEqual(3660, ingest.get_task_ttl(provider))
 
     def test_get_task_id(self):
         provider = {'name': 'foo', '_id': 'abc'}
-        self.assertEquals('update-ingest-foo-abc', ingest.get_task_id(provider))
+        self.assertEqual('update-ingest-foo-abc', ingest.get_task_id(provider))
 
     def test_is_idle(self):
         provider = dict(idle_time=dict(hours=1, minutes=0))
         provider['last_item_update'] = utcnow()
-        self.assertEquals(ingest.get_is_idle(provider), False)
+        self.assertEqual(ingest.get_is_idle(provider), False)
         provider['idle_time']['hours'] = -1
-        self.assertEquals(ingest.get_is_idle(provider), True)
+        self.assertEqual(ingest.get_is_idle(provider), True)
         provider['idle_time'] = dict(hours=0, minutes=0)
-        self.assertEquals(ingest.get_is_idle(provider), False)
+        self.assertEqual(ingest.get_is_idle(provider), False)
 
     def test_files_dont_duplicate_ingest(self):
         provider_name = 'reuters'
