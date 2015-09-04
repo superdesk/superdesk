@@ -28,7 +28,8 @@
         marked_for_not_publication: false,
         pubstatus: null,
         more_coming: false,
-        targeted_for: []
+        targeted_for: [],
+        renditions: null
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -687,71 +688,76 @@
         };
     }
 
-    CropImageService.$inject = ['urls', '$http'];
-    function CropImageService(urls, $http) {
-        this.saveCrop = function saveCrop(coordinates, item) {
-            return urls.resource('archive').then(function(url) {
-                url = url + '/' + item._id + '/crop/' + item.cropsize.name;
-                return $http.post(url, {
-                    'CropLeft': coordinates.CropLeft,
-                    'CropRight': coordinates.CropRight,
-                    'CropTop': coordinates.CropTop,
-                    'CropBottom': coordinates.CropBottom
-                }).then(function(response) {
-                    return response.data;
-                });
-            });
-        };
-    }
-
-    ChangeImageController.$inject = ['$scope', 'cropImage', 'gettext', 'notify', '$route'];
-    function ChangeImageController($scope, cropImage, gettext, notify, $route) {
+    ChangeImageController.$inject = ['$scope', 'gettext', 'notify', 'modal', '$q'];
+    function ChangeImageController($scope, gettext, notify, modal, $q) {
         $scope.data = $scope.locals.data;
         $scope.preview = {};
+        $scope.origPreview = {};
+        $scope.data.cropData = {};
+        $scope.data.isDirty = false;
 
-        $scope.close = function() {
-            if ($scope.data.state !== 'published') {
-                $scope.reject();
-                $route.reload();
-            } else {
-                return $scope.resolve($scope.data);
+        $scope.$watch('preview', function(newValue, oldValue) {
+            if (newValue === oldValue) {
+                $scope.origPreview = $scope.preview;
+                return;
             }
-        };
 
-        function recordCrop(coordinates, cropName) {
-            $scope.data.renditions[cropName].CropLeft = coordinates.CropLeft;
-            $scope.data.renditions[cropName].CropTop = coordinates.CropTop;
-            $scope.data.renditions[cropName].CropRight = coordinates.CropRight;
-            $scope.data.renditions[cropName].CropBottom = coordinates.CropBottom;
+            // During the initialisation of jcrop the preview object keeps changing and
+            // new keys are being added to it. We want to ignore those changes and only
+            // respond to those  that are actually caused by the changed crop coordinates.
+            if (Object.keys(newValue).length === Object.keys(oldValue).length) {
+                $scope.data.isDirty = true;
+                return;
+            }
+        }, true);
+
+        /*
+        * Gets the crop coordinates, which was set in preview object during the onChange
+        * event of jcrop
+        */
+        function getCropCoordinates(cropName) {
+            var coordinates = {};
+            var cropPoints  = $scope.preview[cropName];
+            coordinates.CropLeft = Math.round(Math.min(cropPoints.cords.x, cropPoints.cords.x2));
+            coordinates.CropRight = Math.round(Math.max(cropPoints.cords.x, cropPoints.cords.x2));
+            coordinates.CropTop = Math.round(Math.min(cropPoints.cords.y, cropPoints.cords.y2));
+            coordinates.CropBottom = Math.round(Math.max(cropPoints.cords.y, cropPoints.cords.y2));
+
+            return coordinates;
         }
 
+        /*
+        * Serves for holding the crop coordinates
+        */
+        function recordCrops(cropName) {
+            var obj = {};
+            obj[cropName] = getCropCoordinates(cropName);
+            _.extend($scope.data.cropData, obj);
+        }
+
+        /*
+        * Records the coordinates for each crop sizes available and
+        * notify the user and then resolve the activity.
+        */
         $scope.done = function() {
-            var coordinates = {};
-            coordinates.CropLeft = Math.round(Math.min($scope.preview.cords.x, $scope.preview.cords.x2));
-            coordinates.CropRight = Math.round(Math.max($scope.preview.cords.x, $scope.preview.cords.x2));
-            coordinates.CropTop = Math.round(Math.min($scope.preview.cords.y, $scope.preview.cords.y2));
-            coordinates.CropBottom = Math.round(Math.max($scope.preview.cords.y, $scope.preview.cords.y2));
+            _.forEach($scope.data.cropsizes, function(cropsize) {
+                recordCrops(cropsize.name);
+            });
+            notify.success(gettext('Crop changes have been recorded'));
+            $scope.resolve($scope.data);
+        };
 
-            var cropName = $scope.data.cropsize.name;
-
-            //Save or overwrite crop if item is not published.
-            if ($scope.data.state !== 'published') {
-                return cropImage.saveCrop(coordinates, $scope.data).then(function(result) {
-                    var picture_url = result.renditions[cropName].href;
-                    notify.success(gettext('Image Cropped.'));
-                    $scope.data.picture_url = picture_url;
-                    recordCrop(coordinates, cropName);
-                }, function(response) {
-                    if (response.data._status === 'ERR'){
-                        notify.error(gettext('Error: ' + response.data._error.message));
-                    }
+        $scope.close = function() {
+            if ($scope.data.isDirty) {
+                modal.confirm(gettext('You have unsaved changes, do you want to continue?'))
+                .then(function() { // Ok = continue w/o saving
+                    $scope.data.isDirty = false;
+                    $scope.preview = $scope.origPreview;
+                    $scope.resolve($scope.data);
                 });
             } else {
-                //Hold crop changes if item is already published, so it will be save on correction.
-                recordCrop(coordinates, cropName);
-                notify.success(gettext('Crop changes recorded'));
+                $scope.reject();
             }
-
         };
     }
 
@@ -1697,15 +1703,24 @@
                     }
                 };
 
-                scope.editCrop = function(cropsize) {
-                    scope.toggleDetails = !scope.toggleDetails;
-                    scope.item.cropsize = cropsize;
-                    scope.item.aspectR = scope.evalAspectRatio(cropsize.name);
-                    if (scope.errorMessage != null) {
-                        notify.error(gettext(scope.errorMessage));
-                    }
-                    superdesk.intent('edit', 'crop',  scope.item);
+                scope.applyCrop = function() {
+                    var ar = {};
+                    scope.item.cropsizes = scope.metadata.crop_sizes;
+                    _.forEach(scope.item.cropsizes, function(cropsizes) {
+                        ar = {aspectRatio: scope.evalAspectRatio(cropsizes.name)};
+                        _.extend(_.filter(scope.item.cropsizes, {name: cropsizes.name})[0], ar);
+                    });
+
+                    superdesk.intent('edit', 'crop',  scope.item).then(function(data) {
+                        if (!scope.$parent.dirty) {
+                            scope.$parent.dirty = data.isDirty;
+                        }
+                        var orig = _.create(data.renditions);
+                        var diff = data.cropData;
+                        scope.item.renditions = _.merge(orig, diff);
+                    });
                 };
+
             }
         };
     }
@@ -1732,7 +1747,6 @@
         .service('confirm', ConfirmDirtyService)
         .service('lock', LockService)
         .service('authThemes', AuthoringThemesService)
-        .service('cropImage', CropImageService)
         .service('authoringWorkspace', AuthoringWorkspaceService)
 
         .directive('sdDashboardCard', DashboardCard)

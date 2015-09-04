@@ -128,7 +128,6 @@ define([
                     img.onload = function() {
                         scope.$parent.preview.progress = true;
                         var size = [this.width, this.height];
-
                         if (scope.showMinSizeError) {
                             validateConstraints(this);
                         }

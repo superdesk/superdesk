@@ -71,29 +71,11 @@
         ng-trim="false"></textarea>
   <div class="abstract" ng-if="!_editable">{{item.description}}</div>
 </div>
-
 <div class="field" ng-if="isMediaType">
   <div class="full-preview" ng-if="item.type == 'picture'" sd-ratio-calc>
-    <div ng-if="toggleDetails" class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
-
-    <div id="dynBoxId1" class="item-detail-info" ng-class="{active: !toggleDetails}">
-      <div class="original">
-        <ul>
-          <li ng-repeat="cropsize in metadata.crop_sizes track by cropsize.name">
-          <label translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
-          <div sd-image-crop ng-if="item.type === 'picture'" ng-click="editCrop(cropsize)" 
-            data-src="item.renditions.original.href" data-box-width="cropsize.width" 
-            data-box-height="cropsize.height" data-aspect-ratio="evalAspectRatio(cropsize.name)" 
-            data-crop-select="item.renditions[cropsize.name]" tooltip="{{ :: 'Edit Crop' | translate }}">
-          </div>
-           <br />
-          </li>
-        </ul>
-      </div>
-    </div>
-
+    <div class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
   </div>
-  <button id="btnCrop" class="pull-right" ng-class="{active: toggleDetails}" ng-click="toggleDetails = !toggleDetails" translate>{{toggleDetails ? 'APPLY CROPS' : 'CANCEL'}}</button>
+  <button id="btnCrop" class="pull-right" ng-click="applyCrop()" ng-if="metadata.crop_sizes" translate>APPLY CROPS</button>
   <div ng-if="item.type == 'audio'">
     <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
   </div>
