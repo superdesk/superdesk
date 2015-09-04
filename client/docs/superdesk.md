@@ -4,7 +4,7 @@ Term `superdesk` here will refer to the core lib of the framework, located in `a
 
 ### How to write an app using superdesk
 Every app is an angular module, with some config blocks that register app components and thus make them available to other apps and the framework.
-```
+```js
 var app = angular.module('myApp', ['superdesk']);
 ```
 
@@ -15,22 +15,22 @@ There are 2 components an app can provide at the moment:
 #### Widgets
 Widget is a component that can be rendered on user dashboard.
 
-```
+```js
 app.config(['superdeskProvider', function(superdeskProvider) {
-  superdeskProvider.widget('myWidget', {
-    label: 'MyWidget', // string
-    multiple: true, // boolean - can user have more such widgets at a time (with different config)
-    icon: 'info', // string - `icon-` class
-    thumbnail: 'scripts/my-app/images/thumbnail.png', // url for thumbnail image
-    template: 'scripts/my-app/views/widget.html', // url for widget template
-    description: 'My Widget long description', // string
-    configuration: {max: 5}, // Object - default config for widget
-    configurationTemplate: 'scripts/my-app/views/config.html', // url for config template
-    max_sizex: 2, // integer - max horizontal size (2 of 4x4 dashboard),
-    max_sizey: 2, // integer - max vertical size
-    sizex: 1, // integer - default horizontal size
-    sizey: 1, // integer - default vertical size
-  });
+    superdeskProvider.widget('myWidget', {
+        label: 'MyWidget', // string
+        multiple: true, // boolean - can user have more such widgets at a time (with different config)
+        icon: 'info', // string - `icon-` class
+        thumbnail: 'scripts/my-app/images/thumbnail.png', // url for thumbnail image
+        template: 'scripts/my-app/views/widget.html', // url for widget template
+        description: 'My Widget long description', // string
+        configuration: {max: 5}, // Object - default config for widget
+        configurationTemplate: 'scripts/my-app/views/config.html', // url for config template
+        max_sizex: 2, // integer - max horizontal size (2 of 4x4 dashboard),
+        max_sizey: 2, // integer - max vertical size
+        sizex: 1, // integer - default horizontal size
+        sizey: 1, // integer - default vertical size
+    });
 }]);
 ```
 
@@ -38,7 +38,7 @@ app.config(['superdeskProvider', function(superdeskProvider) {
 Activity can be displayed in a main menu, or be triggered from other apps when needed. You can also override existing activities for given action.
 
 ##### Register Main menu activity
-```
+```js
 app.config(['superdeskProvider', function(superdeskProvider) {
     superdeskProvider.activity('myActivity', {
         label: gettext('My App Dashboard'),
@@ -50,14 +50,14 @@ app.config(['superdeskProvider', function(superdeskProvider) {
 ##### Register activity for certain action
 To specify what your activity can do, you can define intent filters:
 
-```
+```js
 app.config(['superdeskProvider', function(superdeskProvider) {
-  superdeskProvider.activity('mySendActivity', {
-    label: gettext('Send'),
-    filters: [
-      {action: 'send', type: 'picture'}
-    ]
-  });
+    superdeskProvider.activity('mySendActivity', {
+        label: gettext('Send'),
+        filters: [
+            {action: 'send', type: 'picture'}
+        ]
+    });
 }]);
 ```
 
@@ -66,11 +66,11 @@ Each filter has `action` and data `type` which is used to pick the appropriate a
 #### Intent
 When you want to start an `activity` out of your app, you have to create an `intent` for it. There you specify `action` you want to perform with data and superdesk will resolve it to an `activity` which can handle it. In case there are multiple `activities` for the task user will be presented with a dialog where he can choose one.
 
-```
+```js
 app.controller(function($scope, superdesk) {
-  $scope.send = function(item) {
-    superdesk.intent('send', item);
-  };
+    $scope.send = function(item) {
+        superdesk.intent('send', item);
+    };
 });
 ```
 
