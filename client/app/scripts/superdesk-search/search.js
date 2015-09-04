@@ -68,27 +68,12 @@
          * Single query instance
          */
         function Query(params) {
-            var DEFAULT_SIZE = 25,
-                size,
+            var size,
                 filters = [],
                 post_filters = [];
 
             if (params == null) {
                 params = {};
-            }
-
-            /**
-             * Set from/size for given query and params
-             *
-             * @param {Object} query
-             * @param {Object} params
-             * @returns {Object}
-             */
-            function paginate(query, params) {
-                var page = params.page || 1;
-                var pagesize = size || Number(localStorage.getItem('pagesize')) || Number(params.max_results) || DEFAULT_SIZE;
-                query.size = pagesize;
-                query.from = (page - 1) * query.size;
             }
 
             function buildFilters(params, query) {
@@ -168,8 +153,6 @@
                 if (post_filters.length > 0) {
                     criteria.post_filter = {'and': post_filters};
                 }
-
-                paginate(criteria, search);
 
                 if (search.q) {
                     criteria.query.filtered.query = {query_string: {
@@ -378,54 +361,6 @@
             initSelectedFacets: initSelectedFacets,
             removeFacet: removeFacet
         };
-    }
-
-    SearchController.$inject = ['$scope', '$location', 'api', 'search', 'notify', 'session'];
-    function SearchController($scope, $location, api, search, notify, session) {
-        $scope.context = 'search';
-        $scope.$on('item:deleted:archived', itemDelete);
-        $scope.$on('item:published:no_post_publish_actions', itemDelete);
-
-        function itemDelete(e, data) {
-            if (session.identity._id === data.user) {
-                refresh();
-            }
-        }
-
-        $scope.repo = {
-            ingest: true,
-            archive: true,
-            published: true,
-            archived: true
-        };
-
-        function refresh() {
-            var query = _.omit($location.search(), '_id');
-            if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
-                $location.search('page', null);
-            }
-
-            var criteria = search.query($location.search()).getCriteria(true);
-            var provider = 'search';
-            if (criteria.repo && criteria.repo.indexOf(',') === -1) {
-                provider = criteria.repo;
-            }
-
-            if ($scope.repo.search && $scope.repo.search !== 'local') {
-                provider = $scope.repo.search;
-            }
-
-            api.query(provider, criteria).then(function(result) {
-                $scope.items = result;
-            });
-
-            oldQuery =  query;
-        }
-
-        var oldQuery = _.omit($location.search(), '_id');
-        $scope.$watch(function getSearchParams() {
-            return _.omit($location.search(), '_id');
-        }, refresh, true);
     }
 
     angular.module('superdesk.search', [
@@ -659,8 +594,8 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', 'asset',
-            function($location, preferencesService, packages, tags, asset) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'asset', '$timeout', 'api', 'search', 'session',
+            function($location, preferencesService, packages, asset, $timeout, api, search, session) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -675,6 +610,21 @@
                 }
             };
 
+            var itemParameters = {
+                compact: {
+                    ITEM_HEIGHT: 57,
+                    ITEMS_COUNT: 25,
+                    BUFFER: 8
+                },
+                mgrid: {
+                    ITEM_HEIGHT: 239,
+                    ITEM_WIDTH: 190,
+                    ITEMS_COUNT: 27,
+                    ITEMS_ROW: 9,
+                    BUFFER: 18
+                }
+            };
+
             return {
                 require: '^sdSearchContainer',
                 templateUrl: asset.templateUrl('superdesk-search/views/search-results.html'),
@@ -685,8 +635,151 @@
 
                     var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
+                    var updateTimeout,
+                        criteria = search.query($location.search()).getCriteria(true),
+                        list = elem[0].getElementsByClassName('list-view')[0],
+                        scrollElem = elem.find('.content'),
+                        oldQuery = _.omit($location.search(), '_id');
+
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
+
+                    scope.repo = {
+                        ingest: true, archive: true,
+                        published: true, archived: true
+                    };
+
+                    scope.context = 'search';
+                    scope.$on('item:deleted:archived', itemDelete);
+                    scope.$on('item:published:no_post_publish_actions', itemDelete);
+                    scrollElem.on('scroll', handleScroll);
+
+                    scope.$watch('view', queryItems);
+                    scope.$watch(function getSearchParams() {
+                        return _.omit($location.search(), '_id');
+                    }, queryItems, true);
+
+                    /*
+                     * Function for creating small delay,
+                     * before activating render function
+                     */
+                    function handleScroll() {
+                        $timeout.cancel(updateTimeout);
+                        updateTimeout = $timeout(render, 100, false);
+                    }
+
+                    /*
+                     * Function for fetching total items and
+                     * filling scope for the first time
+                     */
+                    function queryItems() {
+                        scrollElem.scrollTop(0);
+                        criteria.source.size = 0;
+                        scope.total = null;
+                        return api.query('search', criteria).then(function (items) {
+                            scope.total = items._meta.total;
+                            scope.$applyAsync(render);
+                        });
+                    }
+
+                    queryItems();
+
+                    /*
+                     * Function for fetching the elements from the database
+                     *
+                     * @returns {undefined}
+                     */
+                    function render() {
+                        var query = _.omit($location.search(), '_id');
+                        var parameters = sourceParam();
+
+                        if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
+                            $location.search('page', null);
+                        }
+
+                        criteria = search.query($location.search()).getCriteria(true);
+                        var provider = 'search', tempItems;
+
+                        if (criteria.repo && criteria.repo.indexOf(',') === -1) {
+                            provider = criteria.repo;
+                        }
+
+                        if (scope.repo.search && scope.repo.search !== 'local') {
+                            provider = scope.repo.search;
+                        }
+
+                        criteria.source.from = parameters.from;
+                        criteria.source.size = parameters.to - parameters.from;
+
+                        api.query(provider, criteria).then(function (items) {
+                            scope.$applyAsync(function () {
+                                list.style.paddingTop = parameters.padding;
+                                if (!scope.items) {
+                                    scope.items = items;
+                                } else {
+                                    tempItems = {'_items': merge(items._items)};
+                                    scope.items = _.assign(tempItems, _.omit(items, '_items'));
+                                }
+                            });
+                        });
+
+                        oldQuery = query;
+                    }
+
+                    /*
+                     * Function for calculating number of fetched items
+                     *
+                     * @returns {Object} Returns object with criteria values
+                     */
+                    function sourceParam() {
+                        var top, start, from, itemsCount, to, padding;
+
+                        if (scope.view === 'mgrid') {
+                            itemParameters[scope.view].ITEMS_ROW = Math.floor(scrollElem.width() / itemParameters[scope.view].ITEM_WIDTH);
+                            itemParameters[scope.view].BUFFER = itemParameters[scope.view].ITEMS_ROW * 3;
+                        }
+
+                        top = scrollElem[0].scrollTop;
+                        start = scope.view === 'mgrid' ?
+                                Math.floor(top / itemParameters[scope.view].ITEM_HEIGHT) * itemParameters[scope.view].ITEMS_ROW :
+                                Math.floor(top / itemParameters[scope.view].ITEM_HEIGHT);
+                        from = Math.max(0, start - itemParameters[scope.view].BUFFER);
+                        itemsCount = itemParameters[scope.view].ITEMS_COUNT;
+                        to = Math.min(scope.total, start + itemsCount + itemParameters[scope.view].BUFFER);
+                        padding = scope.view === 'mgrid' ?
+                                (from * itemParameters[scope.view].ITEM_HEIGHT) / itemParameters[scope.view].ITEMS_ROW + 'px' :
+                                (from * itemParameters[scope.view].ITEM_HEIGHT) + 'px';
+
+                        return {from: from, to: to, padding: padding};
+                    }
+
+                    /*
+                     * Function for filtering and merging new and old items
+                     *
+                     * @param {type} newItems New items fetched from the database
+                     * @returns {Array} Filtered array with old and new data together
+                     */
+                    function merge(newItems) {
+                        var next = [],
+                            olditems = scope.items._items || [];
+
+                        angular.forEach(newItems, function (item) {
+                            var old = _.find(olditems, {_id: item._id});
+                            next.push(old ? angular.extend(old, item) : item);
+                        });
+
+                        return next;
+                    }
+
+                    /*
+                     * Function for updating list
+                     * after item has been deleted
+                     */
+                    function itemDelete(e, data) {
+                        if (session.identity._id === data.user) {
+                            queryItems();
+                        }
+                    }
 
                     scope.preview = function preview(item) {
                         if (multiSelectable) {
@@ -1283,7 +1376,6 @@
                 priority: 200,
                 category: superdesk.MENU_MAIN,
                 label: gettext('Search'),
-                controller: SearchController,
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });

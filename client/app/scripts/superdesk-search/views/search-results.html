@@ -6,8 +6,6 @@
             <div sd-item-sortbar></div>
 
             <div sd-item-searchbar data-repo="repo" data-context="context" class="searchbar-flex-handler"></div>
-        
-            <div sd-pagination data-items="items"></div>
 
             <div class="view-select">
                 <button tooltip="{{ :: 'switch to grid view' | translate }}" tooltip-placement="left"  ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
@@ -26,7 +24,7 @@
 
             <div sd-shadow>
                 <ul class="{{view}}-view list-view">
-                    <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
+                    <li ng-repeat="item in items._items track by item._id" class="list-item-view" ng-class="{active: item === selected.preview || item._id === selected.fetch}">
                         <div sd-media-box></div>
                     </li>
                 </ul>
