@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from superdesk.utc import utcnow
 from test_factory import SuperdeskTestCase
 from apps.publish.formatters.newsml_g2_formatter import NewsMLG2Formatter
 import xml.etree.ElementTree as etree
@@ -16,6 +17,7 @@ from apps.publish import init_app
 
 
 class NewsMLG2FormatterTest(SuperdeskTestCase):
+    embargo_ts = (utcnow() + datetime.timedelta(days=2))
     article = {
         'guid': 'tag:aap.com.au:20150613:12345',
         '_current_version': 1,
@@ -41,7 +43,8 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'creditline': 'sample creditline',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
-        'place': 'Australia'
+        'place': 'Australia',
+        'embargo': embargo_ts
     }
 
     package = {
@@ -387,6 +390,10 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/{http://iptc.org/std/nar/2006-10-01/}inlineXML/' +
             '{http://iptc.org/std/nar/2006-10-01/}nitf/{http://iptc.org/std/nar/2006-10-01/}body/' +
             '{http://iptc.org/std/nar/2006-10-01/}body.content').text, 'The story body')
+        self.assertEquals(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}embargoed').text,
+            self.embargo_ts.isoformat())
 
     def testPreformattedFomatter(self):
         article = dict(self.article)

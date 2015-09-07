@@ -29,6 +29,7 @@
         pubstatus: null,
         more_coming: false,
         targeted_for: [],
+        embargo: null,
         renditions: null
     });
 
@@ -128,10 +129,6 @@
             this.stop(item);
             timeouts[item._id] = $timeout(function() {
                 var diff = extendItem({_id: item._id}, item);
-
-                if (diff.publish_schedule === null) {
-                    delete diff.publish_schedule;
-                }
 
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
                     extendItem(item, _autosave);
@@ -449,8 +446,9 @@
 
             var lockedByMe = !lock.isLocked(current_item);
 
-            // new take should be on the text item that are closed or last take but not killed.
+            // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
+                !current_item.embargo &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
 
@@ -469,7 +467,7 @@
                 }
 
                 action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
-                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    _.contains(['text', 'preformatted'], current_item.type) && !current_item.embargo &&
                     (angular.isUndefined(current_item.more_coming) || !current_item.more_coming));
 
             } else {
@@ -500,9 +498,10 @@
                 !is_read_only_state && current_item.package_type !== 'takes' &&
                  user_privileges.mark_for_highlights);
 
-            // allow all stories to be packaged
+            // allow all stories to be packaged if it doesn't have Embargo
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
-            current_item.package_type !== 'takes' && current_item.state !== 'killed';
+                !current_item.embargo && current_item.package_type !== 'takes' && current_item.state !== 'killed';
+
             action.multi_edit = _.contains(['text', 'preformatted'], item.type) && !is_read_only_state;
 
             //check for desk membership for edit rights.
@@ -927,36 +926,70 @@
                     });
                 }
 
-                function validatePublishSchedule(item) {
-                    if (_.contains(['published', 'killed', 'corrected'], item.state)) {
-                        return true;
+                /**
+                 * Invoked by validatePublishScheduleAndEmbargo() to validate the date and time values.
+                 *
+                 * @return {string} if the values are invalid then returns appropriate error message.
+                 *         Otherwise empty string.
+                 */
+                function validateTimestamp(datePartOfTS, timePartOfTS, timestamp, fieldName) {
+                    var errorMessage = '';
+
+                    if (datePartOfTS && !timePartOfTS) {
+                        errorMessage = gettext(fieldName + ' time is invalid!');
+                    } else if (timePartOfTS && !datePartOfTS) {
+                        errorMessage = gettext(fieldName + ' date is invalid!');
                     }
 
-                    if (item.publish_schedule_date && !item.publish_schedule_time) {
-                        notify.error(gettext('Publish Schedule time is invalid!'));
-                        return false;
-                    }
-
-                    if (item.publish_schedule_time && !item.publish_schedule_date) {
-                        notify.error(gettext('Publish Schedule date is invalid!'));
-                        return false;
-                    }
-
-                    if (item.publish_schedule) {
-                        var schedule = new Date(item.publish_schedule);
+                    if (errorMessage === '' && timestamp) {
+                        var schedule = new Date(timestamp);
 
                         if (!_.isDate(schedule)) {
-                            notify.error(gettext('Publish Schedule is not a valid date!'));
+                            errorMessage = gettext(fieldName + ' is not a valid date!');
+                        } else if (schedule < _.now()) {
+                            errorMessage = gettext(fieldName + ' cannot be earlier than now!');
+                        } else if (!schedule.getTime()) {
+                            errorMessage = gettext(fieldName + ' time is invalid!');
+                        }
+                    }
+
+                    return errorMessage;
+                }
+
+                /**
+                 * Validates the Embargo Date and Time and Publish Schedule Date and Time if they are set on the item.
+                 *
+                 * @return {boolean} true if valid, false otherwise.
+                 */
+                function validatePublishScheduleAndEmbargo(item) {
+                    if (item.embargo && item.publish_schedule) {
+                        notify.error(gettext('An Item can\'t have both Embargo and Publish Schedule.'));
+                        return false;
+                    }
+
+                    var errorMessage;
+                    if (item.embargo_date || item.embargo_time) {
+                        if (_.contains(['scheduled', 'killed', 'corrected'], item.state)) {
+                            notify.error(gettext('Embargo isn\'t applicable after publishing'));
                             return false;
                         }
 
-                        if (schedule < _.now()) {
-                            notify.error(gettext('Publish Schedule cannot be earlier than now!'));
+                        errorMessage = validateTimestamp(item.embargo_date, item.embargo_time, item.embargo, 'Embargo');
+                        if (errorMessage !== '') {
+                            notify.error(errorMessage);
                             return false;
                         }
+                    }
 
-                        if (!schedule.getTime()) {
-                            notify.error(gettext('Publish Schedule time is invalid!'));
+                    if (item.publish_schedule_date || item.publish_schedule_time) {
+                        if (_.contains(['published', 'killed', 'corrected'], item.state)) {
+                            return true;
+                        }
+
+                        errorMessage = validateTimestamp(item.publish_schedule_date, item.publish_schedule_time,
+                            item.publish_schedule, 'Publish Schedule');
+                        if (errorMessage !== '') {
+                            notify.error(errorMessage);
                             return false;
                         }
                     }
@@ -1001,8 +1034,12 @@
                     });
                 }
 
+                /**
+                 * Depending on the item state one of the publish, correct, kill actions will be executed on the item
+                 * in $scope.
+                 */
                 $scope.publish = function() {
-                    if (validatePublishSchedule($scope.item)) {
+                    if (validatePublishScheduleAndEmbargo($scope.item)) {
                         if ($scope.dirty) { // save dialog & then publish if confirm
                             var message = $scope.action === 'kill' ? $scope.action : 'publish';
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
@@ -1469,11 +1506,17 @@
                 /**
                  * Send the current item (take) to different desk or stage and create a new take.
                  * If publish_schedule is set then the user cannot schedule the take.
+                 * Fails if user has set Embargo on the item.
                  */
                 scope.sendAndContinue = function () {
                     // cannot schedule takes.
                     if (scope.item && scope.item.publish_schedule) {
                         notify.error(gettext('Takes cannot be scheduled.'));
+                        return;
+                    }
+
+                    if (scope.item && scope.item.embargo) {
+                        notify.error(gettext('Takes cannot have Embargo.'));
                         return;
                     }
 

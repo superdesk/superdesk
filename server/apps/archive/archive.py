@@ -8,10 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.users.services import current_user_has_privilege
-from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
-from superdesk.metadata.packages import ITEM_REF
-
 SOURCE = 'archive'
 
 import flask
@@ -19,7 +15,8 @@ from superdesk.resource import Resource
 from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
 from .common import remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
-    handle_existing_data, item_schema, validate_schedule, is_item_in_package
+    handle_existing_data, item_schema, validate_schedule, is_item_in_package, ITEM_DUPLICATE, ITEM_OPERATION, \
+    ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -29,8 +26,8 @@ from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
-from superdesk.users.services import is_admin
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE
+from superdesk.users.services import current_user_has_privilege, is_admin
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE, EMBARGO
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -45,8 +42,8 @@ from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
-from apps.archive.common import ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE,\
-    ITEM_UPDATE, ITEM_DESCHEDULE, SEQUENCE
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
+from superdesk.metadata.packages import ITEM_REF, SEQUENCE
 
 
 logger = logging.getLogger(__name__)
@@ -156,6 +153,9 @@ class ArchiveService(BaseService):
             if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self.packageService.on_create([doc])
 
+            # Do the validation after Circular Reference check passes in Package Service
+            self.validate_embargo(doc)
+
             if doc.get('media'):
                 self.mediaService.on_create([doc])
 
@@ -246,6 +246,11 @@ class ArchiveService(BaseService):
             self.packageService.on_update(updates, original)
 
         update_version(updates, original)
+
+        # Do the validation after Circular Reference check passes in Package Service
+        updated = original.copy()
+        updated.update(updates)
+        self.validate_embargo(updated)
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
@@ -501,6 +506,39 @@ class ArchiveService(BaseService):
             return req_for_save == 'true'
 
         return True
+
+    def validate_embargo(self, item):
+        """
+        Validates the embargo of the item. Following are checked:
+            1. Item can't be a package or a take or a re-write of another story
+            2. Publish Schedule and Embargo are mutually exclusive
+            3. Always a future date except in case of Corrected and Killed.
+        :raises: SuperdeskApiError.badRequestError() if the validation fails
+        """
+
+        if item[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE:
+            embargo = item.get(EMBARGO)
+            if embargo:
+                if item.get('publish_schedule') or item[ITEM_STATE] == CONTENT_STATE.SCHEDULED:
+                    raise SuperdeskApiError.badRequestError("An item can't have both Publish Schedule and Embargo")
+
+                package = TakesPackageService().get_take_package(item)
+                if package:
+                    raise SuperdeskApiError.badRequestError("Takes doesn't support Embargo")
+
+                if item.get('rewrite_of'):
+                    raise SuperdeskApiError.badRequestError("Rewrites doesn't support Embargo")
+
+                if not isinstance(embargo, datetime.date) or not embargo.time():
+                    raise SuperdeskApiError.badRequestError("Invalid Embargo")
+
+                if item[ITEM_STATE] not in [CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED] and embargo <= utcnow():
+                    raise SuperdeskApiError.badRequestError("Embargo cannot be earlier than now")
+        elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not self.takesService.is_takes_package(item):
+            if item.get(EMBARGO):
+                raise SuperdeskApiError.badRequestError("A Package doesn't support Embargo")
+
+            self.packageService.check_if_any_item_in_package_has_embargo(item)
 
 
 class AutoSaveResource(Resource):

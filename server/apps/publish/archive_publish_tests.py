@@ -239,6 +239,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           'firstcreated': utcnow(),
                           'expiry': utcnow() + timedelta(minutes=20),
                           'sequence': 2,
+                          'state': 'draft',
                           'unique_name': '#7'},
                          {'guid': '8',
                           '_id': '8',

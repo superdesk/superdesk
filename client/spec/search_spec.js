@@ -16,6 +16,7 @@ describe('Search', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
         var searchTextbox = element(by.id('search-input'));
+        searchTextbox.click();
         searchTextbox.clear();
         searchTextbox.sendKeys('item3');
         var focused = browser.driver.switchTo().activeElement().getAttribute('id');

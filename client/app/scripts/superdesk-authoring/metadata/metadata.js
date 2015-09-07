@@ -1,15 +1,14 @@
-
 (function() {
 
 'use strict';
 
 MetadataCtrl.$inject = [
     '$scope', 'desks', 'metadata', '$filter', 'privileges', 'datetimeHelper',
-    'preferencesService'
+    'preferencesService', 'archiveService'
 ];
 function MetadataCtrl(
     $scope, desks, metadata, $filter,
-    privileges, datetimeHelper, preferencesService) {
+    privileges, datetimeHelper, preferencesService, archiveService) {
 
     desks.initialize()
     .then(function() {
@@ -35,14 +34,6 @@ function MetadataCtrl(
             return _.pick(g, 'name');
         });
     };
-
-    $scope.$watch('item.publish_schedule_date', function(newValue, oldValue) {
-        setPublishScheduleDate(newValue, oldValue);
-    });
-
-    $scope.$watch('item.publish_schedule_time', function(newValue, oldValue) {
-        setPublishScheduleDate(newValue, oldValue);
-    });
 
     $scope.disableAddingTargetedFor = function() {
         return !$scope.item._editable || angular.isUndefined($scope.item.targeted_for_value) || $scope.item.targeted_for_value === '';
@@ -107,6 +98,14 @@ function MetadataCtrl(
         $scope.availableCategories = filtered;
     }
 
+    $scope.$watch('item.publish_schedule_date', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
+
+    $scope.$watch('item.publish_schedule_time', function(newValue, oldValue) {
+        setPublishScheduleDate(newValue, oldValue);
+    });
+
     function setPublishScheduleDate(newValue, oldValue) {
         if (newValue !== oldValue) {
             if ($scope.item.publish_schedule_date && $scope.item.publish_schedule_time) {
@@ -120,7 +119,43 @@ function MetadataCtrl(
         }
     }
 
-    function resolvePublishScheduleDate() {
+    $scope.$watch('item.embargo_date', function(newValue, oldValue) {
+        setEmbargoTS(newValue, oldValue);
+    });
+
+    $scope.$watch('item.embargo_time', function(newValue, oldValue) {
+        setEmbargoTS(newValue, oldValue);
+    });
+
+    /**
+     * Listener method which gets invoked when either Embargo Date or Embargo Time has changed. This function takes
+     * values of both Embargo Date and Embargo Time to form Timestamp.
+     */
+    function setEmbargoTS(newValue, oldValue) {
+        if (newValue !== oldValue) {
+            if ($scope.item.embargo_date && $scope.item.embargo_time) {
+                $scope.item.embargo = datetimeHelper.mergeDateTime(
+                    $scope.item.embargo_date, $scope.item.embargo_time).format();
+            } else {
+                $scope.item.embargo = null;
+            }
+
+            $scope.autosave($scope.item);
+        }
+    }
+
+    /**
+     * Publish Schedule and Embargo are saved as Timestamps in DB but each field has date and time as two different
+     * inputs in UI. This function breaks the timestamp fetched from API to Date and Time and assigns those values to
+     * the appropriate field.
+     */
+    function resolvePublishScheduleAndEmbargoTS() {
+        if ($scope.item.embargo) {
+            var embargoTS = new Date(Date.parse($scope.item.embargo));
+            $scope.item.embargo_date = $filter('formatDateTimeString')(embargoTS, 'MM/DD/YYYY');
+            $scope.item.embargo_time = $filter('formatDateTimeString')(embargoTS, 'HH:mm:ss');
+        }
+
         if ($scope.item.publish_schedule) {
             var publishSchedule = new Date(Date.parse($scope.item.publish_schedule));
             $scope.item.publish_schedule_date = $filter('formatDateTimeString')(publishSchedule, 'MM/DD/YYYY');
@@ -128,8 +163,31 @@ function MetadataCtrl(
         }
     }
 
+    /**
+     * Returns true if Publish Schedule needs to be displayed, false otherwise.
+     */
+    $scope.showPublishSchedule = function() {
+        return $scope.item.type !== 'composite' && !$scope.item.embargo_date && !$scope.item.embargo_time &&
+            ['published', 'killed', 'corrected'].indexOf($scope.item.state) === -1;
+    };
+
+    /**
+     * Returns true if Embargo needs to be displayed, false otherwise.
+     */
+    $scope.showEmbargo = function() {
+        return $scope.item.type !== 'composite' && !$scope.item.publish_schedule_date &&
+            !$scope.item.publish_schedule_time && !archiveService.isPublished($scope.item);
+    };
+
+    /**
+     * Returns true if Embargo needs to be displayed, false otherwise.
+     */
+    $scope.isEmbargoEditable = function() {
+        return $scope.item._editable && !archiveService.isPublished($scope.item);
+    };
+
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
-    resolvePublishScheduleDate();
+    resolvePublishScheduleAndEmbargoTS();
 }
 
 MetadataDropdownDirective.$inject = [];

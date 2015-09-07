@@ -13,7 +13,7 @@
 		<li>
 			<label translate>State</label>
 			<div class="data">
-				<div class="state-label state-{{item.state}}">{{item.state}}</div>
+				<div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
 			</div>
 		</li>
 		<li ng-if="item.original_source">
@@ -127,7 +127,16 @@
 			</li>
 		</ul>
 	</div>
-	<div sd-toggle-box data-title="Publishing" data-open="true" ng-hide="['published', 'killed', 'corrected'].indexOf(item.state)!=-1">
+	<div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
+		<ul class="basic-list">
+			<li class="auto">
+				<label translate>Embargo</label>
+				<div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
+				<div sd-timepicker ng-model="item.embargo_time" ng-disabled="!isEmbargoEditable()"></div>
+			</li>
+		</ul>
+	</div>
+	<div sd-toggle-box data-title="Publishing" data-open="true" ng-if="showPublishSchedule()">
 		<ul class="basic-list">
 			<li class="auto">
 				<label translate>Publish Schedule</label>

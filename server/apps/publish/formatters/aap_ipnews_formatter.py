@@ -20,7 +20,7 @@ from superdesk.errors import FormatterError
 from superdesk.io.iptc import subject_codes
 from apps.publish.formatters.field_mappers.selectorcode_mapper import SelectorcodeMapper
 from apps.publish.formatters.field_mappers.locator_mapper import LocatorMapper
-from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 
 
 class AAPIpNewsFormatter(Formatter):
@@ -68,9 +68,9 @@ class AAPIpNewsFormatter(Formatter):
                              'category': category.get('qcode'),
                              'headline': article.get('headline', '').replace('\'', '\'\''),
                              'author': article.get('byline', '').replace('\'', '\'\''),
-                             'keyword': article.get('slugline', None).replace('\'', '\'\'')}
+                             'keyword': article.get('slugline', None).replace('\'', '\'\''),
+                             'subject_reference': self._set_subject(category, article)}
 
-                odbc_item['subject_reference'] = self._set_subject(category, article)
                 if 'subject_reference' in odbc_item and odbc_item['subject_reference'] is not None \
                         and odbc_item['subject_reference'] != '00000000':
                     odbc_item['subject'] = subject_codes[odbc_item['subject_reference'][:2] + '000000']
@@ -123,6 +123,11 @@ class AAPIpNewsFormatter(Formatter):
                 headline_prefix = LocatorMapper().map(article, category.get('qcode').upper())
                 if headline_prefix:
                     odbc_item['headline'] = '{}:{}'.format(headline_prefix, odbc_item['headline'])
+
+                if article.get(EMBARGO):
+                    embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
+                    odbc_item['article_text'] = embargo + odbc_item['article_text']
+
                 docs.append((pub_seq_num, odbc_item))
 
             return docs

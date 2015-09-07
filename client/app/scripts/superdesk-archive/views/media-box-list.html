@@ -24,7 +24,7 @@
     </div>
     <div class="item-info">
         <div class="line">
-            <div class="state-label state-{{item.state}}" ng-hide="viewType">{{item.state}}</div>
+            <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}" ng-hide="viewType">{{item.state}}</div>
             <div class="headline">
                 <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | limitTo: 40}}</span>
                 <span id="title" title="{{ item.headline }}">{{ item.headline | limitTo: 90 || item.type }}</span> 

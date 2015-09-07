@@ -9,7 +9,7 @@
 
         <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
-        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+        <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
 
         <div class="core-content">
 
