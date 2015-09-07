@@ -246,13 +246,17 @@ class NewsMLG2Formatter(Formatter):
                     SubElement(group_Elem, 'groupRef', attrib={'idref': ref.get('idRef')})
                 else:
                     if 'residRef' in ref:
-                        itemRef = SubElement(group_Elem, 'itemRef',
-                                             attrib={'residref': ref.get('guid'),
-                                                     'contenttype': 'application/vnd.iptc.g2.newsitem+xml'})
-                        SubElement(itemRef, 'itemClass', attrib={'qcode': 'ninat:' + ref.get('type', 'text')})
-                        self._format_pubstatus(ref, itemRef)
-                        self._format_headline(ref, itemRef)
-                        self._format_slugline(ref, itemRef)
+                        # get the current archive item being refered to
+                        archive_item = superdesk.get_resource_service('archive').find_one(req=None,
+                                                                                          _id=ref.get('residRef'))
+                        if archive_item:
+                            itemRef = SubElement(group_Elem, 'itemRef',
+                                                 attrib={'residref': ref.get('guid'),
+                                                         'contenttype': 'application/vnd.iptc.g2.newsitem+xml'})
+                            SubElement(itemRef, 'itemClass', attrib={'qcode': 'ninat:' + ref.get('type', 'text')})
+                            self._format_pubstatus(archive_item, itemRef)
+                            self._format_headline(archive_item, itemRef)
+                            self._format_slugline(archive_item, itemRef)
 
     def _format_contentset(self, article, item):
         """

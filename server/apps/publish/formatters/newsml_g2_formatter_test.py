@@ -160,10 +160,6 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
                                 'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
                                 'media': '55cc03731d41c8cea12b650e'
                             },
-                            'original_source': {
-                                'mimetype': 'image/jpeg',
-                                'href': 'http://one-cdn.aap.com.au/Preview/20150813001165688150?assetType=IMAGE&path=/aap_dev17/device/imagearc/2015/08-13/ad/36/ef/aapimage-6lscjhydkmhwztrg1t6_minihighres.jpg'  # noqa
-                            },
                             'original': {
                                 'height': 800,
                                 'mimetype': 'image/jpeg',
@@ -201,10 +197,6 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             'date': '2015-08-14T04:45:53.000Z'
         },
         'renditions': {
-            'original_source': {
-                'href': 'https://one-api.aap.com.au/api/v3/Assets/20150731001161435160/Original/download',
-                'mimetype': 'image/jpeg'
-            },
             'viewImage': {
                 'height': 415,
                 'href': 'http://localhost:5000/api/upload/55cd72811d41c828e1773786/raw?_schema=http',
@@ -336,6 +328,15 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'unique_id': 573
     }
 
+    packaged_articles = [{'_id': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                          'headline': 'package article headline',
+                          'slugline': 'slugline',
+                          'pubStatus': 'usable'},
+                         {'_id': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                          'headline': 'package article headline',
+                          'slugline': 'slugline',
+                          'pubStatus': 'usable'}]
+
     vocab = [{'_id': 'rightsinfo', 'items': [{'name': 'AAP',
                                               'copyrightHolder': 'copy right holder',
                                               'copyrightNotice': 'copy right notice',
@@ -358,6 +359,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         self.formatter.string_now = self.now.strftime('%Y-%m-%dT%H:%M:%S.0000Z')
         init_app(self.app)
         self.app.data.insert('vocabularies', self.vocab)
+        self.app.data.insert('archive', self.packaged_articles)
 
     def testFomatter(self):
         seq, doc = self.formatter.format(self.article, {'name': 'Test Subscriber'})[0]
@@ -416,7 +418,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
-            'US Police')
+            'slugline')
 
     def testPicturePackagePublish(self):
         article = dict(self.picture_package)
@@ -428,7 +430,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
-            'Prison Riot')
+            'slugline')
 
     def testPicturePublish(self):
         article = dict(self.picture)
