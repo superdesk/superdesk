@@ -274,7 +274,6 @@
             };
         }])
         .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
-            var promise = ingestSources.initialize();
             return {
                 scope: {
                     item: '='
@@ -288,7 +287,7 @@
                             scope.name = scope.item.source;
                         }
 
-                        promise.then(function() {
+                        ingestSources.initialize().then(function() {
                             if (scope.item.ingest_provider && scope.item.ingest_provider in ingestSources.providersLookup) {
                                 scope.name = ingestSources.providersLookup[scope.item.ingest_provider].name;
                             }

@@ -61,7 +61,6 @@ define(['angular'], function(angular) {
                                 .then(function(_preferences) {
                                     preferences = _preferences;
                                     initPreferences(preferences);
-                                    $rootScope.preferences = preferences;
                                     return preferences;
                                 });
                         });
