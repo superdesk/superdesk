@@ -2901,11 +2901,11 @@ Feature: Package Publishing
       }
       """
       When we get digital item of "11"
-      When we get "/publish_queue"
+      And we get "/publish_queue?max_results=100"
       Then we get "#archive.11.take_package#" as "main" story for subscriber "sub-1" in package "compositeitem1"
-      Then we get "compositeitem1" as "main" story for subscriber "sub-2" in package "outercompositeitem"
-      Then we get "compositeitem2" as "main" story for subscriber "sub-2" in package "outercompositeitem"
-      Then we get "compositeitem3" as "main" story for subscriber "sub-2" in package "outercompositeitem"
+      And we get "compositeitem1" as "main" story for subscriber "sub-2" in package "outercompositeitem"
+      And we get "compositeitem2" as "main" story for subscriber "sub-2" in package "outercompositeitem"
+      And we get "compositeitem3" as "main" story for subscriber "sub-2" in package "outercompositeitem"
 
 
       @auth
