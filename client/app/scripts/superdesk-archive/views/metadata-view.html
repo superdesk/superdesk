@@ -2,7 +2,7 @@
     <dl>
         <dt translate>State</dt>
         <dd>
-            <div class="state-label state-{{item.state}}">{{item.state}}</div>
+            <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
             <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
         </dd>
     </dl>

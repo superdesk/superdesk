@@ -4,11 +4,11 @@
 
 MetadataCtrl.$inject = [
     '$scope', 'desks', 'metadata', '$filter', 'privileges', 'datetimeHelper',
-    'preferencesService'
+    'preferencesService', 'archiveService'
 ];
 function MetadataCtrl(
     $scope, desks, metadata, $filter,
-    privileges, datetimeHelper, preferencesService) {
+    privileges, datetimeHelper, preferencesService, archiveService) {
 
     desks.initialize()
     .then(function() {
@@ -167,15 +167,23 @@ function MetadataCtrl(
      * Returns true if Publish Schedule needs to be displayed, false otherwise.
      */
     $scope.showPublishSchedule = function() {
-        return $scope.item.type !== 'composite' && (angular.isUndefined($scope.item.embargo) ||
-            _.isNull($scope.item.embargo)) && ['published', 'killed', 'corrected'].indexOf($scope.item.state) === -1;
+        return $scope.item.type !== 'composite' && !$scope.item.embargo_date && !$scope.item.embargo_time &&
+            ['published', 'killed', 'corrected'].indexOf($scope.item.state) === -1;
+    };
+
+    /**
+     * Returns true if Embargo needs to be displayed, false otherwise.
+     */
+    $scope.showEmbargo = function() {
+        return $scope.item.type !== 'composite' && !$scope.item.publish_schedule_date &&
+            !$scope.item.publish_schedule_time && !archiveService.isPublished($scope.item);
     };
 
     /**
      * Returns true if Embargo needs to be displayed, false otherwise.
      */
     $scope.isEmbargoEditable = function() {
-        return $scope.item._editable && ['scheduled', 'published', 'killed', 'corrected'].indexOf($scope.item.state) === -1;
+        return $scope.item._editable && !archiveService.isPublished($scope.item);
     };
 
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);

@@ -82,7 +82,7 @@
                                 <li><time sd-datetime data-date="item.versioncreated"></time></li>
                                 <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
                                 <li ng-show="item.provider && options.sizex > 1"><em translate>source</em>{{ item.provider }}</li>
-                                <li><div class="state-label state-{{item.state}}">{{item.state}}</div></li>
+                                <li><div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div></li>
                             </ul>
 
                             <div class="main-line clearfix">

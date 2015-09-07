@@ -13,7 +13,7 @@
 		<li>
 			<label translate>State</label>
 			<div class="data">
-				<div class="state-label state-{{item.state}}">{{item.state}}</div>
+				<div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
 			</div>
 		</li>
 		<li ng-if="item.original_source">
@@ -127,7 +127,7 @@
 			</li>
 		</ul>
 	</div>
-	<div sd-toggle-box data-title="Embargo" data-open="true" ng-if="item.type !== 'composite'">
+	<div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
 		<ul class="basic-list">
 			<li class="auto">
 				<label translate>Embargo</label>
