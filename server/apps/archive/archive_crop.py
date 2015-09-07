@@ -113,7 +113,7 @@ class ArchiveCropService():
                 raise SuperdeskApiError.badRequestError('Original file couldn\'t be found')
 
             try:
-                cropped, out = crop_image(original_file, original_file.filename, crop_data)
+                cropped, out = crop_image(original_file, original_file.name, crop_data)
 
                 if not cropped:
                     raise SuperdeskApiError.badRequestError('Saving crop failed: {}'.format(str(out)))

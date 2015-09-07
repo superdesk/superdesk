@@ -121,7 +121,7 @@ class ArchiveCropTestCase(SuperdeskTestCase):
         }
 
         media = mock.MagicMock()
-        media.filename = 'test.jpg'
+        media.name = 'test.jpg'
 
         with mock.patch('superdesk.app.media.get', return_value=media):
             doc = {'CropLeft': 0, 'CropRight': 800, 'CropTop': 0, 'CropBottom': 600}
