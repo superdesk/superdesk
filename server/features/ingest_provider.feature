@@ -17,6 +17,7 @@ Feature: Ingest Provider
           "name": "reuters 4",
           "source": "reuters",
           "is_closed": false,
+          "content_expiry": 0,
           "config": {"username": "foo", "password": "bar"}
         }]
 	    """
@@ -35,6 +36,9 @@ Feature: Ingest Provider
               "on_error": true,
               "on_close": true,
               "on_open": true
+          },
+          "last_opened": {
+              "opened_by": "#CONTEXT_USER_ID#"
           }
         }]}
 	    """
@@ -94,11 +98,11 @@ Feature: Ingest Provider
 	    """
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
-        {"name":"the test of the test ingest_provider modified"}
+        {"name":"the test of the test ingest_provider modified", "content_expiry": 0}
         """
         Then we get updated response
         """
-        {"name":"the test of the test ingest_provider modified"}
+        {"name":"the test of the test ingest_provider modified", "content_expiry": 2880}
         """
         When we get "/activity/"
         Then we get existing resource
