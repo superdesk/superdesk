@@ -28,21 +28,21 @@ class SearchService(superdesk.Service):
         super().__init__(datasource=datasource, backend=backend)
         self._default_repos = ['ingest', 'archive', 'published', 'archived']
 
-        self._private_filters = [{
-            'or': [
-                {'and': [{'term': {'_type': 'ingest'}}]},
-                {'and': [{'exists': {'field': 'task.desk'}},
-                         {'terms': {ITEM_STATE: [CONTENT_STATE.FETCHED, CONTENT_STATE.ROUTED, CONTENT_STATE.DRAFT,
-                                                 CONTENT_STATE.PROGRESS, CONTENT_STATE.SUBMITTED]}}]},
-                {'and': [{'term': {'_type': 'published'}},
-                         {'term': {'allow_post_publish_actions': True}},
-                         {'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED, CONTENT_STATE.PUBLISHED, CONTENT_STATE.KILLED,
-                                                 CONTENT_STATE.CORRECTED]}}]},
-                {'and': [{'term': {'_type': 'published'}},
-                         {'term': {'allow_post_publish_actions': False}},
-                         {'term': {'can_be_removed': False}}]}
-            ]
-        }]
+        self._private_filters = dict(ingest={'and': [{'term': {'_type': 'ingest'}}]},
+                                     archive={'and': [{'exists': {'field': 'task.desk'}},
+                                                      {'terms': {
+                                                          ITEM_STATE: [CONTENT_STATE.FETCHED, CONTENT_STATE.DRAFT,
+                                                                       CONTENT_STATE.ROUTED, CONTENT_STATE.PROGRESS,
+                                                                       CONTENT_STATE.SUBMITTED]}}]},
+                                     published={'and': [{'term': {'_type': 'published'}},
+                                                        {'term': {'allow_post_publish_actions': True}},
+                                                        {'terms': {ITEM_STATE: [CONTENT_STATE.SCHEDULED,
+                                                                                CONTENT_STATE.PUBLISHED,
+                                                                                CONTENT_STATE.KILLED,
+                                                                                CONTENT_STATE.CORRECTED]}}]},
+                                     archived={'and': [{'term': {'_type': 'published'}},
+                                                       {'term': {'allow_post_publish_actions': False}},
+                                                       {'term': {'can_be_removed': False}}]})
 
     def _get_query(self, req):
         """Get elastic query."""
@@ -57,10 +57,28 @@ class SearchService(superdesk.Service):
         repos = args.get('repo')
 
         if repos is None:
-            return self._default_repos
+            return self._default_repos.copy()
         else:
             repos = repos.split(',')
             return [repo for repo in repos if repo in self._default_repos]
+
+    def _get_filters(self, repos):
+        """
+        Gets filters for the passed repos.
+        """
+        filters = []
+
+        for repo in repos:
+            filters.append(self._private_filters[repo])
+
+        # 'archived' is a logical entity and docs in archived repo actually exist in published repo.
+        # Without this, elastic search will throw error.
+        if 'archived' in repos:
+            repos.remove('archived')
+            if 'published' not in repos:
+                repos.append('published')
+
+        return [{'or': filters}]
 
     def get(self, req, lookup):
         """
@@ -70,17 +88,19 @@ class SearchService(superdesk.Service):
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
+        filters = self._get_filters(types)
+
         query['aggs'] = aggregations
 
         stages = superdesk.get_resource_service('users').get_invisible_stages_ids(g.get('user', {}).get('_id'))
         if stages:
-            self._private_filters.append({'and': [{'not': {'terms': {'task.stage': stages}}}]})
+            filters.append({'and': [{'not': {'terms': {'task.stage': stages}}}]})
 
         # if the system has a setting value for the maximum search depth then apply the filter
         if not app.settings['MAX_SEARCH_DEPTH'] == -1:
-            set_filters(query, self._private_filters + [{'limit': {'value': app.settings['MAX_SEARCH_DEPTH']}}])
-        else:
-            set_filters(query, self._private_filters)
+            filters.append(dict(limit={'value': app.settings['MAX_SEARCH_DEPTH']}))
+
+        set_filters(query, filters)
 
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
         docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do

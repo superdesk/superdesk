@@ -537,7 +537,7 @@
                     link: function (scope, elem, attr, controller) {
 
                         var GRID_VIEW = 'mgrid',
-                                LIST_VIEW = 'compact';
+                            LIST_VIEW = 'compact';
 
                         var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
@@ -590,6 +590,13 @@
                             var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
                             return setView(nextView);
                         }
+
+                        /**
+                         * Generates Identifier to be used by track by expression.
+                         */
+                        scope.generateTrackIdentifier = function(item) {
+                            return (item.state === 'ingested') ? item._id : item._id + ':' + (item._current_version || item.item_version);
+                        };
                     }
                 };
             }])

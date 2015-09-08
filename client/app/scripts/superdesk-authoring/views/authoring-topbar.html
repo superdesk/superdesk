@@ -24,12 +24,12 @@
         <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.correct"
             ng-click="openAction('correct')"
-            translate>Correct</button>
+            translate>Edit and Correct</button>
 
         <button class="btn btn-medium btn-info pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.kill"
             ng-click="openAction('kill')"
-            translate>Kill</button>
+            translate>Edit and Kill</button>
 
         <button class="btn btn-medium pull-left" ng-click="close()" translate>CLOSE</button>
 
