@@ -271,6 +271,11 @@
                 delete diff.publish_schedule;
             }
 
+            //check if rendition is dirty for real
+            if (_.isEqual(orig.renditions, diff.renditions)) {
+                delete diff.renditions;
+            }
+
             stripHtml(diff);
             var endpoint = 'archive_' + action;
             return api.update(endpoint, orig, diff)
