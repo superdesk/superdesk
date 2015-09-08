@@ -140,6 +140,7 @@ define(['angular'], function(angular) {
                     scope.$watch('isVisible()', function(visible) {
                         if (visible || scope.alwaysVisible) {
                             $list.show();
+                            scope.hide = false;
                         } else {
                             $list.hide();
                             scope.active = null;
