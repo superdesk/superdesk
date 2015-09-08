@@ -96,7 +96,12 @@ function TransmissionDetailsDirective(api, archiveService) {
                 scope.show_transmission_details = !scope.show_transmission_details;
 
                 if (scope.show_transmission_details) {
-                    var criteria = {'item_id': scope.item._id, 'item_version': scope.item._current_version, 'max_results': 20};
+                    var criteria = {'max_results': 20};
+
+                    criteria.where = JSON.stringify ({
+                        '$and': [{'item_id': scope.item._id}, {'item_version': scope.item._current_version}]
+                    });
+
                     var promise;
 
                     if (archiveService.isLegal(scope.item)) {
