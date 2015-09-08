@@ -25,8 +25,8 @@ define([
                 description: 'Content widget'
             });
         }])
-        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', '$location',
-        function ($scope, api, BaseWidgetController, $location) {
+        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', 'superdesk',
+        function ($scope, api, BaseWidgetController, superdesk) {
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
@@ -49,10 +49,7 @@ define([
                 open: {
                     title: 'Open',
                     method: function(item) {
-                        if (!sessionStorage.getItem('previewUrl')) {
-                            sessionStorage.setItem('previewUrl', $location.url());
-                        }
-                        $location.path('/authoring/' + item._id + '/view');
+                        superdesk.intent('edit', 'item', item);
                     },
                     'class': 'open',
                     icon: 'icon-pencil'

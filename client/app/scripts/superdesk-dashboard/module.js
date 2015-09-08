@@ -146,8 +146,7 @@ define([
             topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
             priority: -1000,
-            category: superdesk.MENU_MAIN,
-            reloadOnSearch: true
+            category: superdesk.MENU_MAIN
         });
     }]);
 });
