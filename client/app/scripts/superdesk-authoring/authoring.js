@@ -1395,6 +1395,7 @@
                 view: '=',
                 _beforeSend: '=beforeSend',
                 _editable: '=editable',
+                _publish: '=publish',
                 mode: '@'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',

@@ -10,23 +10,23 @@
                 <div class="dropdown desk-select" dropdown>
                     <button class="dropdown-toggle" dropdown-toggle>
                         <span ng-show="!selectedDesk" translate>Select desk</span>
-                        <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
+                        <span ng-show="selectedDesk">{{::selectedDesk.name}}</span>
                         <b class="caret white"></b>
                     </button>
                     <div class="dropdown-menu">
                         <ul>
-                            <li ng-repeat="desk in desks._items">
-                                <button ng-click="selectDesk(desk)">{{desk.name}}</button>
+                            <li ng-repeat="desk in desks._items track by $index">
+                                <button ng-click="selectDesk(desk)">{{::desk.name}}</button>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <ul class="btn-list" ng-if="stages">
-                    <li ng-repeat="stage in stages">
+                    <li ng-repeat="stage in stages track by $index">
                         <button
                             ng-class="{active: stage._id === selectedStage._id}"
                             ng-disabled="stage._id === item.task.stage"
-                            ng-click="selectStage(stage)">{{stage.name}}</button>
+                            ng-click="selectStage(stage)">{{::stage.name}}</button>
                     </li>
                 </ul>
             </div>
@@ -65,8 +65,7 @@
                 </li>
                 <li ng-if="mode === 'authoring'">
                     <button type="submit"
-                    ng-click="publish()"
-                    ng-disabled = "action !== 'view' && (itemActions.publish || itemActions.kill || itemActions.correct)"
+                    ng-click="_publish()"
                     translate>publish</button>
                 </li>
         </div>
