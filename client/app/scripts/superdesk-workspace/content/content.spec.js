@@ -26,6 +26,10 @@ describe('superdesk.workspace.content', function() {
         it('can create packages', inject(function(api, content, $rootScope) {
             content.createPackageItem().then(done);
             $rootScope.$digest();
+            expect(api.save).toHaveBeenCalledWith('archive', {headline: '', slugline: '',
+                description: '', type: 'composite',
+                groups: [{role: 'grpRole:NEP', refs: [{idRef: 'main'}], id: 'root'},
+                {refs: [], id: 'main', role: 'grpRole:main'}], version: 0});
             expect(done).toHaveBeenCalledWith(ITEM);
         }));
 

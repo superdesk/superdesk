@@ -36,7 +36,8 @@
                 slugline: item.slugline || '',
                 description: item.description || '',
                 state: 'draft',
-                type: 'composite'
+                type: 'composite',
+                version: 0
             };
             var groups = [{
                     role: 'grpRole:NEP',

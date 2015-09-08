@@ -46,13 +46,14 @@ describe('Package', function() {
 
         // package existing package
         workspace.openContent();
-        workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Package item', 0);
+        authoring.writeTextToPackageSlugline('Package2');
+        authoring.save();
+        authoring.close();
 
         // select package
         workspace.openContent();
-        workspace.switchToDesk('Personal');
         element.all(by.repeater('item in items')).first().click();
 
         // preview package via preview
@@ -60,9 +61,22 @@ describe('Package', function() {
         element.all(by.repeater('child in item')).first().click();
         browser.sleep(100);
         expect(element(by.css('h5.lightbox-title')).getText()).toBe('package1');
-
         expect(element(by.css('.condensed-preview')).all(by.repeater('child in item')).count()).toBe(3);
     });
+
+    function addItemsToPackage() {
+        workspace.switchToDesk('Personal').then(
+            content.setListView
+        ).then(function() {
+            content.actionOnItem('Edit package', 0);
+        });
+        authoring.showSearch();
+        authoring.selectSearchItem(0);
+        authoring.selectSearchItem(1);
+        authoring.selectSearchItem(2);
+        authoring.addMultiToGroup('MAIN');
+        authoring.save();
+    }
 
     it('create package from multiple items', function() {
         workspace.switchToDesk('SPORTS DESK');
@@ -123,17 +137,4 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
-    function addItemsToPackage() {
-        workspace.switchToDesk('Personal').then(
-            content.setListView
-        ).then(function() {
-            content.actionOnItem('Edit package', 0);
-        });
-        authoring.showSearch();
-        authoring.selectSearchItem(0);
-        authoring.selectSearchItem(1);
-        authoring.selectSearchItem(2);
-        authoring.addMultiToGroup('MAIN');
-        authoring.save();
-    }
 });
