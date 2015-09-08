@@ -356,10 +356,9 @@ define([
                     label: gettext('Duplicate'),
                     icon: 'copy',
                     controller: ['api', 'notify', '$rootScope', 'data', function(api, notify, $rootScope, data) {
-                        api.save('duplicate', {}, {desk: data.item.task.desk}, data.item).then(
-                            function() {
+                        api.save('duplicate', {}, {desk: data.item.task.desk}, data.item)
+                            .then(function() {
                                 notify.success(gettext('Item Duplicated'));
-                                $rootScope.$broadcast('item:fetch');
                             });
                     }],
                     filters: [{action: 'list', type: 'archive'}],

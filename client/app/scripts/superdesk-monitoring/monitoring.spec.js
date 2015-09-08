@@ -127,4 +127,31 @@ describe('monitoring', function() {
             });
         }));
     });
+
+    describe('monitoring group directive', function() {
+
+        beforeEach(module('templates'));
+
+        beforeEach(inject(function($templateCache) {
+            // change template not to require aggregate config but rather render single group
+            $templateCache.put('scripts/superdesk-monitoring/views/monitoring-view.html',
+                '<div sd-monitoring-group data-group="{type: \'stage\', _id: \'foo\'}"></div>');
+        }));
+
+        it('can update items on content:update event',
+        inject(function($rootScope, $compile, $q, api) {
+            var scope = $rootScope.$new();
+            $compile('<div sd-monitoring-view></div>')(scope);
+            scope.$digest();
+
+            spyOn(api, 'query').and.returnValue($q.when({_items: [], _meta: {total: 0}}));
+            scope.$broadcast('content:update', {stage: 'bar'});
+            scope.$digest();
+            expect(api.query).not.toHaveBeenCalled();
+
+            scope.$broadcast('content:update', {stage: 'foo'});
+            scope.$digest();
+            expect(api.query).toHaveBeenCalled();
+        }));
+    });
 });

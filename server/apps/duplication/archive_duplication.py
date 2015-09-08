@@ -60,7 +60,14 @@ class DuplicateService(BaseService):
             guid_of_duplicated_items.append(new_guid)
 
         if kwargs.get('notify', True):
-            push_notification('item:duplicate', duplicated=1)
+            task = archived_doc.get('task', {})
+            push_notification(
+                'content:update',
+                duplicated=1,
+                item=str(new_guid),
+                desk=str(task.get('desk', '')),
+                stage=str(task.get('stage', ''))
+            )
 
         return guid_of_duplicated_items
 
