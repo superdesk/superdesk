@@ -69,10 +69,10 @@
 	}
 	.authoring-topbar {
 		height: 30px;
-	    text-overflow: ellipsis;
-	    white-space: nowrap;
-	    overflow: hidden;
-	    max-width: 55%;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                max-width: 55%;
 		.lock-info {
 			background: rgba(229,28,35,0.3);
 			width: 30px;
@@ -105,6 +105,9 @@
                         .text-semibold();
                     }
 		}
+                &.has-highlights {
+                    overflow: visible;
+                }
 	}
 	&.auth-sendto {
 		right: @send-to-pane-width;

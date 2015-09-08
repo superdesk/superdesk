@@ -1,5 +1,5 @@
 <div id="subnav" class="subnav" ng-class="{'auth-sendto': views.send}">
-    <div class="authoring-topbar clearfix pull-left">
+    <div class="authoring-topbar clearfix pull-left" ng-class="{'has-highlights': item.highlights}">
         <button class="stage" ng-show="stage" ng-click="openStage()"><b>{{deskName}}</b> / {{ stage.name }}</button>
         <div ng-if="item.more_coming === true" class="state-label state-in_progress" translate>More coming</div>
         <span class="lock-info" ng-show="item._locked && item.lock_user"><i class="icon-lock-red"></i></span>

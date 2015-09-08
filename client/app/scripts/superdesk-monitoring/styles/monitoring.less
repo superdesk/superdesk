@@ -44,6 +44,14 @@
                 }
                 .inline-content-items {
                     margin-bottom: 0;
+                    &.list-without-items {
+                        height: 38px !important;
+                        li {
+                            line-height: 38px;
+                            text-align: center;
+                            color: #999;
+                        }
+                    }
                 }
                 &.limited {
                     max-height: 285px;
