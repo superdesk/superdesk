@@ -16,6 +16,7 @@ describe('authoring', function() {
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.privileges'));
     beforeEach(module('superdesk.desks'));
+    beforeEach(module('templates'));
 
     beforeEach(inject(function($window) {
         $window.onbeforeunload = angular.noop;
@@ -71,20 +72,19 @@ describe('authoring', function() {
     }));
 
     it('unlocks a locked item and locks by current user',
-        inject(function(authoring, lock, $rootScope, $timeout, api, $q, $location) {
+    inject(function(authoring, lock, $rootScope, $timeout, api, $q, $location) {
+        spyOn(api, 'save').and.returnValue($q.when({}));
+        spyOn(lock, 'unlock').and.returnValue($q.when({}));
 
-            spyOn(api, 'save').and.returnValue($q.when({}));
-            spyOn(lock, 'unlock').and.returnValue($q.when({}));
+        var lockedItem = {guid: GUID, _id: GUID, _locked: true, lock_user: 'user:5', task: 'desk:1'};
+        var $scope = startAuthoring(lockedItem, 'edit');
+        $rootScope.$digest();
 
-            var lockedItem = {guid: GUID, _id: GUID, _locked: true, lock_user: 'user:5', task: 'desk:1'};
-            var $scope = startAuthoring(lockedItem, 'edit');
-            $rootScope.$digest();
-
-            $scope.unlock();
-            $timeout.flush(5000);
-            $rootScope.$digest();
-            expect($location.path(), '/authoring/' + $scope.item._id);
-        }));
+        $scope.unlock();
+        $timeout.flush(5000);
+        $rootScope.$digest();
+        expect($location.path(), '/authoring/' + $scope.item._id);
+    }));
 
     it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
         var $scope = startAuthoring({guid: GUID, _id: GUID, task: 'desk:1'}, 'edit'),

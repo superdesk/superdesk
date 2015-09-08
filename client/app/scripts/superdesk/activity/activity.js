@@ -123,8 +123,6 @@ define([
                             $routeProvider.when(activity.when, {redirectTo: '/workspace'});
                         }
                     });
-
-                    $route.reload();
                 });
 
                 /**
