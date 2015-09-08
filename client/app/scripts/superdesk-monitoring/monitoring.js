@@ -2,7 +2,7 @@
 
     'use strict';
 
-    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search'])
+    angular.module('superdesk.monitoring', ['superdesk.api', 'superdesk.aggregate', 'superdesk.search', 'superdesk.ui'])
         .service('cards', CardsService)
         .controller('Monitoring', MonitoringController)
         .directive('sdMonitoringView', MonitoringViewDirective)
@@ -221,6 +221,21 @@
                 scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
                 scope.$on('item:unspike', queryItems);
+
+                scope.$on('content:update', function(event, data) {
+                    switch (scope.group.type) {
+                        case 'stage':
+                            // refresh stage if it matches updated stage
+                            if (data.stage === scope.group._id) {
+                                queryItems();
+                            }
+                            break;
+
+                        default:
+                            // no way to determine if item should be visible, refresh
+                            queryItems();
+                    }
+                });
 
                 var list = elem[0].getElementsByClassName('inline-content-items')[0],
                     scrollElem = elem.find('.stage-content').first();
