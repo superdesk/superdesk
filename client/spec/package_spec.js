@@ -96,10 +96,14 @@ describe('Package', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         monitoring.openAction(4, 0);
-        browser.sleep(500);
-        expect(authoring.getGroupItems('MAIN').count()).toBe(0);
+        browser.sleep(1000);
+        expect(authoring.getGroupItems('STORY').count()).toBe(0);
         monitoring.actionOnItem('Add to package', 1, 0);
-        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
+        var groups = element.all(by.model('group.selected'));
+        groups.get(1).click();
+        element.all(by.partialButtonText('Add')).click();
+        browser.sleep(500);
+        expect(authoring.getGroupItems('STORY').count()).toBe(1);
     });
 
     it('can add items to a package only once', function() {
@@ -113,6 +117,9 @@ describe('Package', function() {
         monitoring.openAction(4, 0);
         browser.sleep(1000);
         monitoring.actionOnItem('Add to package', 1, 0);
+        var groups = element.all(by.model('group.selected'));
+        groups.get(1).click();
+        element.all(by.partialButtonText('Add')).click();
         browser.sleep(1000);
         authoring.save();
         browser.refresh();
