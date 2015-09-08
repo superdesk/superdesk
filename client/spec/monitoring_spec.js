@@ -44,7 +44,8 @@ describe('monitoring view', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        expect(monitoring.getTextItem(0, 0)).toBe('item1');
+
     });
 
     it('configure a stage and a saved search and show them on monitoring view', function() {
@@ -58,7 +59,7 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('item6');
-        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        expect(monitoring.getTextItem(1, 0)).toBe('item1');
     });
 
     it('configure a stage and a saved search then unselect stage and show search on monitoring view',
@@ -79,7 +80,7 @@ describe('monitoring view', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        expect(monitoring.getTextItem(0, 0)).toBe('item1');
     });
 
     it('configure stage and search and then reorder', function() {
@@ -94,7 +95,7 @@ describe('monitoring view', function() {
         monitoring.moveOrderItem(0, 1);
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        expect(monitoring.getTextItem(0, 0)).toBe('item1');
         expect(monitoring.getTextItem(1, 0)).toBe('item6');
 
         monitoring.showMonitoringSettings();
@@ -121,7 +122,7 @@ describe('monitoring view', function() {
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('package1');
         expect(monitoring.getTextItem(1, 0)).toBe('item6');
-        expect(monitoring.getTextItem(2, 0)).toBe('item5');
+        expect(monitoring.getTextItem(2, 0)).toBe('item1');
     });
 
     it('configure a saved search that contain ingest items', function() {
@@ -199,9 +200,9 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('item6');
-        expect(monitoring.getTextItem(1, 0)).toBe('item5');
-        expect(monitoring.getTextItem(1, 1)).toBe('item6');
-        expect(monitoring.getTextItem(1, 2)).toBe('item3');
+        expect(monitoring.getTextItem(1, 0)).toBe('item1');
+        expect(monitoring.getTextItem(1, 1)).toBe('item2');
+        expect(monitoring.getTextItem(1, 2)).toBe('item5');
 
         monitoring.searchAction('item6');
         expect(monitoring.getTextItem(0, 0)).toBe('item6');
