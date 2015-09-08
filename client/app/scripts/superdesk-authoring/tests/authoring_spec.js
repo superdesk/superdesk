@@ -1121,6 +1121,13 @@ describe('authoring workspace', function() {
         expect(authoringWorkspace.action).toBe('kill');
     }));
 
+    it('can handle edit.item activity', inject(function(superdesk, authoringWorkspace, $rootScope) {
+        superdesk.intent('edit', 'item', item);
+        $rootScope.$digest();
+        expect(authoringWorkspace.item).toBe(item);
+        expect(authoringWorkspace.action).toBe('edit');
+    }));
+
     describe('init', function() {
         it('can open item from $location for editing', inject(function(api, $location, $rootScope, $injector) {
             $location.search('item', item._id);

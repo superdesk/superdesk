@@ -1886,6 +1886,12 @@
                     controller: ChangeImageController,
                     templateUrl: 'scripts/superdesk-authoring/views/change-image.html',
                     filters: [{action: 'edit', type: 'crop'}]
+                })
+                .activity('edit.item', {
+                    filters: [{action: 'edit', type: 'item'}],
+                    controller: ['authoringWorkspace', 'data', function(authoringWorkspace, data) {
+                        authoringWorkspace.edit(data);
+                    }]
                 });
         }])
         .config(['apiProvider', function(apiProvider) {
