@@ -51,19 +51,27 @@
          */
         function getCriteria(card, queryString, queryParam) {
             var params = {};
-            params.spike = (card.type === 'spike');
-            if (card.fileType) {
-                params.type = card.fileType;
-            }
 
-            if (card.type === 'search' && card.search && card.search.filter.query.q) {
+            if (card.type === 'search' && card.search && card.search.filter.query) {
                 if (card.query) {
-                    params.q = '(' + card.query + ') ' + card.search.filter.query.q;
+                    if (card.search.filter.query.q) {
+                        params.q = '(' + card.query + ') ' + card.search.filter.query.q;
+                    } else {
+                        params.q = '(' + card.query + ') ';
+                    }
                 } else {
-                    params.q = card.search.filter.query.q;
+                    params = card.search.filter.query;
                 }
             } else {
                 params.q = card.query;
+            }
+
+            params.spike = (card.type === 'spike');
+
+            if (card.fileType) {
+                params.type = card.fileType;
+            } else {
+                delete params.type;
             }
 
             var query = search.query(params);
@@ -285,7 +293,20 @@
                  * return {promise} list of items
                  */
                 function apiquery() {
-                    return api.query(scope.group.type === 'search' ? 'search': 'archive', criteria);
+
+                    var provider = 'search';
+                    if (scope.group.type === 'search') {
+                        if (criteria.repo && criteria.repo.indexOf(',') === -1) {
+                            provider = criteria.repo;
+                            if (!criteria.source.size) {
+                                criteria.source.size = 25;
+                            }
+                        }
+                    } else {
+                        provider = 'archive';
+                    }
+
+                    return api.query(provider, criteria);
                 }
 
                 function renderNew() {
