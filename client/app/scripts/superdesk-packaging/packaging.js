@@ -332,9 +332,13 @@
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-items-edit.html',
             link: function(scope, elem, attrs, ngModel) {
                 scope.$on('package:addItems', function(event, data) {
-                    var groupIndex = _.findIndex(scope.list, {id: 'main'});
-                    for (var i = 0; i < data.length; i++) {
-                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data[i]));
+                    var groupIndex = _.findIndex(scope.list, {id: data.group});
+                    if (groupIndex === -1) {
+                        scope.list.push({id: data.group, items: []});
+                        groupIndex = scope.list.length - 1;
+                    }
+                    for (var i = 0; i < data.items.length; i++) {
+                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data.items[i]));
                     }
                     autosave();
                 });
@@ -748,8 +752,15 @@
                 label: gettext('Add to package'),
                 priority: 5,
                 icon: 'package-plus',
-                controller: ['data', '$rootScope', function(data, $rootScope) {
-                    $rootScope.$broadcast('package:addItems', [data.item]);
+                templateUrl: 'scripts/superdesk-packaging/views/add-to-package.html',
+                controller: ['$scope', '$rootScope', 'packages', function($scope, $rootScope, packages) {
+                    $scope.groupList = packages.groupList;
+                    $scope.close = $scope.reject;
+                    $scope.group = {selected: $scope.groupList[0]};
+                    $scope.done = function() {
+                        $rootScope.$broadcast('package:addItems', {items: [$scope.locals.data.item], group: $scope.group.selected});
+                        $scope.resolve();
+                    };
                 }],
                 filters: [
                     {action: 'list', type: 'archive'}
@@ -759,6 +770,7 @@
                     return pkg && pkg.type === 'composite' &&
                         pkg._id !== item._id && !packages.isAdded(pkg, item);
                 }],
+                modal: true,
                 group: 'packaging'
             });
     }])

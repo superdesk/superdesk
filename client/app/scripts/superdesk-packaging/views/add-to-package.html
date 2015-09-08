@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h3 class="pull-left">{{ activity.label|translate }}</h3>
+    <button type="button" class="close" ng-click="close()"><i class="icon-close-small"></i></button>
+</div>
+
+<div class="modal-body">
+    <div>
+        <label translate>Choose the group you want to add the item to:</label>
+    </div>
+    <section class="main">
+        <ul>
+            <li ng-repeat="g in groupList">
+                <input type="radio" ng-model="group.selected" value="{{g}}"> {{g}}
+            </li>
+        </ul>
+    </section>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-medium btn-info" ng-click="done()" translate>Add</button>
+</div>
