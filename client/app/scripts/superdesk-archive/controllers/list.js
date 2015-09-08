@@ -62,10 +62,6 @@ define([
             multi.reset();
         };
 
-        $scope.openUpload = function openUpload() {
-            superdesk.intent('upload', 'media');
-        };
-
         this.fetchItems = function fetchItems(criteria) {
             if (resource == null) {
                 return;

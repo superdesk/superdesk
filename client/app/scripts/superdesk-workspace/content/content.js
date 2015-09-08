@@ -65,8 +65,8 @@
         };
     }
 
-    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace'];
-    function ContentCreateDirective(api, desks, templates, content, authoringWorkspace) {
+    ContentCreateDirective.$inject = ['api', 'desks', 'templates', 'content', 'authoringWorkspace', 'superdesk'];
+    function ContentCreateDirective(api, desks, templates, content, authoringWorkspace, superdesk) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-workspace/content/views/sd-content-create.html',
@@ -105,6 +105,13 @@
                  */
                 scope.createFromTemplate = function(template) {
                     content.createItemFromTemplate(template).then(edit);
+                };
+
+                /**
+                 * Start content upload modal
+                 */
+                scope.openUpload = function openUpload() {
+                    superdesk.intent('upload', 'media');
                 };
 
                 scope.contentTemplates = null;
