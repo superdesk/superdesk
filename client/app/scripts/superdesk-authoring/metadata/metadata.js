@@ -301,8 +301,7 @@ function MetadataListEditingDirective(metadata) {
 
             scope.$watch('list', function(items) {
                 if (
-                    !items || items.length === 0 ||
-                    !items[0].hasOwnProperty('parent')
+                    !items || items.length === 0
                 ) {
                     return;
                 }
@@ -316,6 +315,7 @@ function MetadataListEditingDirective(metadata) {
                     }
                 });
 
+                scope.terms = items;
                 scope.tree = tree;
                 scope.activeTree = tree[null];
             });
@@ -335,7 +335,6 @@ function MetadataListEditingDirective(metadata) {
                 $event.stopPropagation();
             };
 
-            scope.terms = scope.list;
             scope.activeList = false;
             scope.selectedTerm = '';
             var uniqueField = scope.unique || 'qcode';
