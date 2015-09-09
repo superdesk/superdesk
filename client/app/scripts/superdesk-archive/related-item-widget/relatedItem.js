@@ -20,8 +20,9 @@ define([
                 display: {authoring: true, packages: false, legalArchive: false}
             });
         }])
-        .controller('relatedItemController', ['$scope', 'api', 'BaseWidgetController', '$location', 'notify',
-        function ($scope, api, BaseWidgetController, $location, notify) {
+        .controller('relatedItemController',
+        ['$scope', 'api', 'BaseWidgetController', '$location', 'notify', 'superdesk',
+        function ($scope, api, BaseWidgetController, $location, notify, superdesk) {
             var before24HrDateTime = moment().subtract(1, 'days').format();
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
@@ -67,7 +68,7 @@ define([
                 open: {
                     title: 'Open',
                     method: function(item) {
-                        $location.path('/authoring/' + item._id + '/view');
+                        superdesk.intent('edit', 'item', item);
                     },
                     'class': 'open',
                     icon: 'icon-external'

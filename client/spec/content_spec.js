@@ -20,25 +20,31 @@ describe('Content', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
+    // wait a bit after sending keys to body
+    function pressKey(key) {
+        body.sendKeys(key);
+        browser.sleep(50);
+    }
+
     it('can navigate with keyboard', function() {
-        body.sendKeys(protractor.Key.UP);
+        pressKey(protractor.Key.UP);
         expect(selectedHeadline()).toBe('package1');
 
-        body.sendKeys(protractor.Key.DOWN);
+        pressKey(protractor.Key.DOWN);
         expect(selectedHeadline()).toBe('item1');
 
-        body.sendKeys(protractor.Key.RIGHT);
+        pressKey(protractor.Key.RIGHT);
         expect(selectedHeadline()).toBe('item2');
 
-        body.sendKeys(protractor.Key.LEFT);
+        pressKey(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item1');
 
-        body.sendKeys(protractor.Key.UP);
+        pressKey(protractor.Key.UP);
         expect(selectedHeadline()).toBe('package1');
     });
 
     it('can open search with s', function() {
-        body.sendKeys('s');
+        pressKey('s');
         expect(element(by.id('search-input')).isDisplayed()).toBe(true);
     });
 
