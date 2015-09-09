@@ -46,7 +46,7 @@
          * @return {Promise}
          */
         this.createPackageItem = function(item) {
-            var data = item ? {items: [item]} : {};
+            var data = item ? {items: [item], version: 0} : {version: 0};
             return packages.createEmptyPackage(data);
         };
 

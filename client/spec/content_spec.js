@@ -108,4 +108,18 @@ describe('Content', function() {
         expect(content.count()).toBe(3);
     });
 
+    it('can close unsaved empty package in a desk', function() {
+        workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
+
+        element(by.className('sd-create-btn')).click();
+        element(by.id('create_package')).click();
+
+        element.all(by.model('item.headline')).first().sendKeys('Empty Package');
+        authoring.close();
+
+        element.all(by.className('btn-warning')).first().click();
+        expect(content.count()).toBe(2);
+    });
+
 });
