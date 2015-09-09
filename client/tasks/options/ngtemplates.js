@@ -12,7 +12,7 @@ module.exports = {
             },
             bootstrap: function(module, script) {
                 return '"use strict";' +
-                    'var templates = angular.module("templates", []);' +
+                    'var templates = angular.module("templates");' +
                     'templates.run([\'$templateCache\', function($templateCache) {' +
                     script + ' }]);';
             }

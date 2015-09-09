@@ -11,7 +11,7 @@ module.exports = {
     },
     code: {
         options: {livereload: true},
-        tasks: ['hint'],
+        tasks: [],
         files: [
             '<%= appDir %>/scripts/*.js',
             '<%= appDir %>/scripts/superdesk*/**/*.js'
@@ -19,7 +19,7 @@ module.exports = {
     },
     assets: {
         options: {livereload: true},
-        tasks: ['ngtemplates'],
+        tasks: [],
         files: [
             '<%= appDir %>/styles/**/*.css',
             '<%= appDir %>/scripts/superdesk*/**/*.html',

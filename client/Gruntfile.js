@@ -53,9 +53,9 @@ module.exports = function (grunt) {
         'template:test',
         'connect:test',
         'open:test',
-        'ngtemplates',
         'watch'
     ]);
+
     grunt.registerTask('server:e2e', [
         'clean',
         'style',
@@ -64,6 +64,7 @@ module.exports = function (grunt) {
         'ngtemplates',
         'watch'
     ]);
+
     grunt.registerTask('server:travis', [
         'clean',
         'style',
@@ -71,10 +72,12 @@ module.exports = function (grunt) {
         'template:travis',
         'connect:travis'
     ]);
+
     grunt.registerTask('bower', [
         'build',
         'copy:bower'
     ]);
+
     grunt.registerTask('build', [
         'clean',
         'less:dev',
