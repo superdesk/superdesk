@@ -52,6 +52,11 @@
                 "required": true,
                 "allowed": [1, 2, 3, 4, 5]
             },
+            "priority": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
             "dateline": {
                 "type": "dict",
                 "required": true,
@@ -115,6 +120,11 @@
                 "required": true,
                 "allowed": [1, 2, 3, 4, 5]
             },
+            "priority": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
             "dateline": {
                 "type": "dict",
                 "required": true,
@@ -173,6 +183,16 @@
                     "located": {"type": "dict", "required": true},
                     "text": {"type": "string", "required": true}
                 }
+            },
+            "urgency": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
         }
     },
@@ -188,6 +208,16 @@
                     "located": {"type": "dict", "required": true},
                     "text": {"type": "string", "required": true}
                 }
+            },
+            "urgency": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5]
+            },
+            "priority": {
+                "type": "integer",
+                "required": true,
+                "allowed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
         }
     },
