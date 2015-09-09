@@ -67,7 +67,9 @@ define([
                 stopListener();
                 $http.defaults.headers.common.Authorization = session.token;
                 $rootScope.loading = false;
-                $route.reload();
+                // do this in next $digest so that beta service can setup route redirects
+                // for features that should not be available
+                $rootScope.$applyAsync($route.reload);
             });
 
             // prevent routing when there is no token
