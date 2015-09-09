@@ -1,159 +1,176 @@
 <div class="metadata-view">
+    
+    <div>
+        <dl>
+            <dt translate>Slugline</dt>
+            <dd>{{ item.slugline }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Urgency</dt>
+            <dd>{{ item.urgency }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Priority</dt>
+            <dd>{{ item.priority }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Word Count</dt>
+            <dd>{{ item.word_count }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Keywords</dt>
+            <dd ng-if="item.keywords && item.keywords.length > 0">{{ item.keywords | mergeWords}}</dd>
+        </dl>
+       
+        <dl ng-if="item.original_source">
+            <dt translate>Original source</dt>
+            <dd>{{ item.original_source }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Source</dt>
+            <dd sd-meta-ingest data-item="item"></dd>
+        </dl>
+        <dl>
+            <dt translate>Take key</dt>
+            <dd>{{ item.anpa_take_key }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Signal</dt>
+            <dd ng-if="item.signal">{{ item.signal }}</dd>
+        </dl>
+        <dl>
+            <dt translate>ANPA category</dt>
+            <dd ng-if="item['anpa_category']">{{ item['anpa_category'] | mergeWords:'name' }}</dd>
+        </dl>
+        <dl >
+            <dt translate>Subject</dt>
+            <dd ng-if="item.subject && item.subject.length > 0">{{ item.subject | mergeWords:'name'}}</dd>
+        </dl>
+         <dl>
+            <dt translate>Editorial Note</dt>
+            <dd ng-if="item.editorial_note">{{ item.editorial_note }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Genre</dt>
+            <dd ng-if="item.genre  && item.genre.length > 0">{{ item.genre | mergeWords:'name'}}</dd>
+        </dl>
+        <dl>
+            <dt translate>Dateline</dt>
+            <dd>{{ item.dateline.text }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Place</dt>
+            <dd ng-if="item.place && item.place.length > 0">{{ item.place | mergeWords:'name'}}</dd>
+        </dl>
+        <dl>
+            <dt translate>Byline</dt>
+            <dd>{{ item.byline }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Sign-off</dt>
+            <dd>{{ item.sign_off }}</dd>
+        </dl>
+    </div>
+
+    <div>
+        <dl ng-if="item._current_version">
+            <dt translate>Version</dt>
+            <dd>{{ item._current_version }}</dd>
+        </dl>
+        <dl ng-if="item.firstcreated">
+            <dt translate>Created</dt>
+            <dd sd-reldate-complex ng-model="item.firstcreated"></dd>
+        </dl>
+        <dl ng-if="item.versioncreated">
+            <dt translate>Last updated</dt>
+            <dd sd-reldate-complex ng-model="item.versioncreated"></dd>
+        </dl>
+        <dl ng-if="item.expiry">
+            <dt translate>Expiry</dt>
+            <dd sd-reldate-complex ng-model="item.expiry"></dd>
+        </dl>
+        <dl ng-if="originalCreator">
+            <dt translate>Original creator</dt>
+            <dd>{{ originalCreator }}</dd>
+        </dl>
+        <dl ng-if="versionCreator">
+            <dt translate>Version creator</dt>
+            <dd>{{ versionCreator }}</dd>
+        </dl>
+    </div>
+
+    <div>
+        <!-- Story details -->
+        <dl ng-if="item.language">
+            <dt translate>Language</dt>
+            <dd>{{ item.language }}</dd>
+        </dl>
+
+        <dl>
+            <dt translate>PubStatus</dt>
+            <dd ng-if="item.pubstatus">{{ item.pubstatus }}</dd>
+        </dl>
+
+        <dl ng-if="item.ingest_provider_sequence">
+            <dt translate>Ingest provider sequence</dt>
+            <dd>{{ item.ingest_provider_sequence }}</dd>
+        </dl>
+
+        <!-- publish schedule data -->
+        <dl>
+            <dt translate>Publish Schedule</dt>
+            <dd ng-if="item.publish_schedule" sd-reldate-complex ng-model="item.publish_schedule"></dd>
+        </dl>
+
+        <dl>
+            <dt translate>Targeted For</dt>
+            <dd ng-if="item.targeted_for">{{item.targeted_for | mergeTargets}}</dd>
+        </dl>
+
+        <!-- file specific data -->
+        <dl ng-if="item.FileMeta">
+            <dt translate>Aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
+            <dt translate>Exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
+            <dt translate>Focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
+            <dt translate>Iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
+            <dt translate>Flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
+        </dl>
+    </div>
+
+    <div ng-if="item.copyrightholder || item.copyrightholder || item.usageterms">
+        <!-- copyright details details -->
+        <dl>
+            <dt translate>Copyright holder</dt>
+            <dd ng-if="item.copyrightholder">{{ item.copyrightholder }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Copyright notice</dt>
+            <dd ng-if="item.copyrightnotice">{{ item.copyrightnotice }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Usageterms</dt>
+            <dd ng-if="item.usageterms">{{ item.usageterms }}</dd>
+        </dl>
+    </div>
+
     <dl>
-        <dt translate>State</dt>
-        <dd>
-            <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
-            <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
-        </dd>
-    </dl>
-    <dl ng-if="item.guid">
-        <dt translate>GUID</dt>
-        <dd>{{ item.guid }}</dd>
-    </dl>
-    <dl ng-if="item.unique_name">
-        <dt translate>Unique</dt>
-        <dd>{{ item.unique_name }}</dd>
-    </dl>
-    <dl>
-        <dt translate>Type</dt>
-        <dd>{{ item.type }}</dd>
-    </dl>
-    <dl ng-if="item._current_version">
-        <dt translate>Version</dt>
-        <dd>{{ item._current_version }}</dd>
-    </dl>
-
-    <dl ng-if="item.firstcreated">
-        <dt translate>Created</dt>
-        <dd sd-reldate-complex ng-model="item.firstcreated"></dd>
-    </dl>
-    <dl ng-if="item.versioncreated">
-        <dt translate>Last updated</dt>
-        <dd sd-reldate-complex ng-model="item.versioncreated"></dd>
-    </dl>
-    <dl ng-if="item.expiry">
-        <dt translate>Expiry</dt>
-        <dd sd-reldate-complex ng-model="item.expiry"></dd>
-    </dl>
-    <dl ng-if="originalCreator">
-        <dt translate>Original creator</dt>
-        <dd>{{ originalCreator }}</dd>
-    </dl>
-    <dl ng-if="versionCreator">
-        <dt translate>Version creator</dt>
-        <dd>{{ versionCreator }}</dd>
-    </dl>
-    <dl ng-if="item.sign_off">
-        <dt translate>Sign-off</dt>
-        <dd>{{ item.sign_off }}</dd>
-    </dl>
-
-    <!-- ingest details -->
-    <dl ng-if="item.original_source">
-        <dt translate>Original source</dt>
-        <dd>{{ item.original_source }}</dd>
-    </dl>
-    <dl>
-        <dt translate>Source</dt>
-        <dd sd-meta-ingest data-item="item"></dd>
-    </dl>
-    <dl ng-if="item.ingest_provider_sequence">
-        <dt translate>Ingest provider sequence</dt>
-        <dd>{{ item.ingest_provider_sequence }}</dd>
-    </dl>
-    <!-- copyright details details -->
-    <dl ng-if="item.copyrightholder">
-        <dt translate>Copyright holder</dt>
-        <dd>{{ item.copyrightholder }}</dd>
-    </dl>
-    <dl ng-if="item.copyrightnotice">
-        <dt translate>Copyright notice</dt>
-        <dd>{{ item.copyrightnotice }}</dd>
-    </dl>
-    <dl ng-if="item.usageterms">
-        <dt translate>Usageterms</dt>
-        <dd>{{ item.usageterms }}</dd>
-    </dl>
-
-    <!-- category details -->
-    <dl ng-if="item['anpa_category']">
-        <dt translate>ANPA category</dt>
-        <dd>{{ item['anpa_category'] | mergeWords:'name' }}</dd>
-    </dl>
-    <dl ng-if="item.subject && item.subject.length > 0">
-        <dt translate>Subject</dt>
-        <dd>{{ item.subject | mergeWords:'name'}}</dd>
-    </dl>
-    <dl ng-if="item.genre  && item.genre.length > 0">
-        <dt translate>Genre</dt>
-        <dd>{{ item.genre | mergeWords:'name'}}</dd>
-    </dl>
-    <dl ng-if="item.place && item.place.length > 0">
-        <dt translate>Place</dt>
-        <dd>{{ item.place | mergeWords:'name'}}</dd>
-    </dl>
-
-    <dl ng-if="item.dateline.text">
-        <dt translate>Dateline</dt>
-        <dd>{{ item.dateline.text }}</dd>
-    </dl>
-
-    <dl ng-if="item.targeted_for">
-        <dt translate>Targeted For</dt>
-        <dd>{{item.targeted_for | mergeTargets}}</dd>
-    </dl>
-
-    <!-- Story details -->
-    <dl ng-if="item.language">
-        <dt translate>Language</dt>
-        <dd>{{ item.language }}</dd>
-    </dl>
-    <dl ng-if="item.anpa_take_key">
-        <dt translate>ANPA take key</dt>
-        <dd>{{ item.anpa_take_key }}</dd>
-    </dl>
-    <dl ng-if="item.keywords && item.keywords.length > 0">
-        <dt translate>Keywords</dt>
-        <dd>{{ item.keywords | mergeWords}}</dd>
-    </dl>
-    <dl ng-if="item.word_count">
-        <dt translate>Word Count</dt>
-        <dd>{{ item.word_count }}</dd>
-    </dl>
-    <dl ng-if="item.priority">
-        <dt translate>Priority</dt>
-        <dd>{{ item.priority }}</dd>
-    </dl>
-    <dl ng-if="item.urgency">
-        <dt translate>Urgency</dt>
-        <dd>{{ item.urgency }}</dd>
-    </dl>
-    <dl ng-if="item.pubstatus">
-        <dt translate>PubStatus</dt>
-        <dd>{{ item.pubstatus }}</dd>
-    </dl>
-    <dl ng-if="item.signal">
-        <dt translate>Signal</dt>
-        <dd>{{ item.signal }}</dd>
-    </dl>
-    <dl ng-if="item.byline">
-        <dt translate>Byline</dt>
-        <dd>{{ item.byline }}</dd>
-    </dl>
-
-    <!-- publish schedule data -->
-    <dl ng-if="item.publish_schedule">
-        <dt translate>Publish Schedule</dt>
-        <dd sd-reldate-complex ng-model="item.publish_schedule"></dd>
-    </dl>
-
-    <!-- file specific data -->
-    <dl ng-if="item.FileMeta">
-        <dt translate>Aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
-        <dt translate>Exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
-        <dt translate>Focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
-        <dt translate>Iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
-        <dt translate>Flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
-    </dl>
+            <dt translate>State</dt>
+            <dd>
+                <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
+                <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
+            </dd>
+        </dl>
+        <dl ng-if="item.guid">
+            <dt translate>GUID</dt>
+            <dd>{{ item.guid }}</dd>
+        </dl>
+        <dl ng-if="item.unique_name">
+            <dt translate>Unique ID</dt>
+            <dd>{{ item.unique_name }}</dd>
+        </dl>
+        <dl>
+            <dt translate>Type</dt>
+            <dd>{{ item.type }}</dd>
+        </dl>
     
 </div>
