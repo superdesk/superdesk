@@ -1594,6 +1594,10 @@
                         }, function(err) {
                             if (angular.isDefined(err.data._message)) {
                                 notify.error(err.data._message);
+                            } else {
+                                if (angular.isDefined(err.data._issues['validator exception'])) {
+                                    notify.error(err.data._issues['validator exception']);
+                                }
                             }
 
                             if (sendAndContinue) {
