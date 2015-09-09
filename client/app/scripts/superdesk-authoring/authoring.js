@@ -1592,8 +1592,8 @@
                                 authoringWorkspace.close();
                             }
                         }, function(err) {
-                            if (err.data._issues['validator exception']) {
-                                notify.error(err.data._issues['validator exception']);
+                            if (angular.isDefined(err.data._message)) {
+                                notify.error(err.data._message);
                             }
 
                             if (sendAndContinue) {
