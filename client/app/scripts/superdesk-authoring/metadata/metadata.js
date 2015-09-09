@@ -163,29 +163,6 @@ function MetadataCtrl(
         }
     }
 
-    /**
-     * Returns true if Publish Schedule needs to be displayed, false otherwise.
-     */
-    $scope.showPublishSchedule = function() {
-        return $scope.item.type !== 'composite' && !$scope.item.embargo_date && !$scope.item.embargo_time &&
-            ['published', 'killed', 'corrected'].indexOf($scope.item.state) === -1;
-    };
-
-    /**
-     * Returns true if Embargo needs to be displayed, false otherwise.
-     */
-    $scope.showEmbargo = function() {
-        return $scope.item.type !== 'composite' && !$scope.item.publish_schedule_date &&
-            !$scope.item.publish_schedule_time && !archiveService.isPublished($scope.item);
-    };
-
-    /**
-     * Returns true if Embargo needs to be displayed, false otherwise.
-     */
-    $scope.isEmbargoEditable = function() {
-        return $scope.item._editable && !archiveService.isPublished($scope.item);
-    };
-
     $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
     resolvePublishScheduleAndEmbargoTS();
 }

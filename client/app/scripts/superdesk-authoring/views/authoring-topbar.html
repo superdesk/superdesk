@@ -46,12 +46,6 @@
 			 ng-if="highlight"
 			 translate>Export</button>
 
-        <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="publish()"
-            ng-if = "action !== 'view' && (itemActions.publish || itemActions.kill || itemActions.correct)"
-            ng-show="_editable"
-            translate>{{action === "edit" ? "PUBLISH": action}}</button>
-
         <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
