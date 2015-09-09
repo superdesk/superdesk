@@ -3,8 +3,6 @@ honcho==0.6.6
 python3-ldap==0.9.8.4
 behave==1.2.5
 wooper==0.4.2
-boto3==1.0.0
 
 git+git://github.com/superdesk/eve@sync-develop-24-june#egg=Eve==0.6.0-dev
 -e git+git://github.com/superdesk/superdesk-core@0e317580007#egg=Superdesk-Core==0.0.1-dev
-
