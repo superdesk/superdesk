@@ -30,6 +30,9 @@ function MasterDesks() {
     this.editItem = function(desk, stage, item) {
         this.getItem(desk, stage, item).click();
         this.getItem(desk, stage, item).element(by.className('icon-pencil')).click();
+        browser.wait(function() {
+            return element(by.className('auth-screen')).isDisplayed();
+        }, 100); // wait for editor sidebar animation
     };
 
     this.getStatus = function(desk, status) {

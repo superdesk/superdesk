@@ -12,7 +12,7 @@ describe('Package', function() {
     it('increment package version', function() {
         workspace.switchToDesk('PERSONAL');
         content.setListView();
-        content.actionOnItem('Edit package', 0);
+        content.editItem(0);
         authoring.showSearch();
         authoring.addToGroup(0, 'MAIN');
         authoring.save();
@@ -23,7 +23,7 @@ describe('Package', function() {
     it('reorder item on package', function() {
         workspace.switchToDesk('Personal');
         content.setListView();
-        content.actionOnItem('Edit package', 0);
+        content.editItem(0);
         authoring.showSearch();
         authoring.addToGroup(0, 'MAIN');
         authoring.addToGroup(1, 'STORY');
@@ -68,7 +68,7 @@ describe('Package', function() {
         workspace.switchToDesk('Personal').then(
             content.setListView
         ).then(function() {
-            content.actionOnItem('Edit package', 0);
+            content.editItem(0);
         });
         authoring.showSearch();
         authoring.selectSearchItem(0);

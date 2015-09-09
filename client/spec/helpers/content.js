@@ -57,6 +57,10 @@ function Content() {
         return menu.element(by.partialLinkText(action)).click();
     };
 
+    this.editItem = function(item) {
+        return this.actionOnItem('Edit item', item);
+    };
+
     function waitFor(elem) {
         return browser.wait(function() {
             return elem.isDisplayed();

@@ -478,8 +478,8 @@
         };
     }
 
-    PackageItemPreviewDirective.$inject = ['api', 'lock'];
-    function PackageItemPreviewDirective(api, lock) {
+    PackageItemPreviewDirective.$inject = ['api', 'lock', 'superdesk'];
+    function PackageItemPreviewDirective(api, lock, superdesk) {
         return {
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-item-preview.html',
             link: function(scope) {
@@ -527,6 +527,10 @@
                         });
                     }
                 });
+
+                scope.open = function(item) {
+                    superdesk.intent('view', 'item', item);
+                };
             }
         };
     }
@@ -612,16 +616,6 @@
         };
     }
 
-    function PackagingEmbeddedDirective() {
-        return {
-            templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
-            scope: {
-                origItem: '=item',
-                action: '='
-            }
-        };
-    }
-
     AddPackageDropdownDirective.$inject = ['$rootScope', 'packages'];
     function AddPackageDropdownDirective($rootScope, packages) {
         return {
@@ -652,73 +646,10 @@
     .directive('sdPackageRef', PackageRefDirective)
     .directive('sdPackageItemPreview', PackageItemPreviewDirective)
     .directive('sdWidgetPreventPreview', PreventPreviewDirective)
-    .directive('sdPackagingEmbedded', PackagingEmbeddedDirective)
     .directive('sdAddPackageDropdown', AddPackageDropdownDirective)
 
     .config(['superdeskProvider', function(superdesk) {
         superdesk
-            .activity('packaging', {
-                category: '/authoring',
-                href: '/packaging/:_id',
-                when: '/packaging/:_id',
-                label: gettext('Packaging'),
-                templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: PackagingController,
-                filters: [{action: 'author', type: 'package'}],
-                resolve: {
-                    item: ['$route', 'authoring', function($route, authoring) {
-                        return authoring.open($route.current.params._id, false);
-                    }]
-                },
-                authoring: true
-            })
-            .activity('edit.package', {
-                label: gettext('Edit package'),
-                priority: 10,
-                icon: 'pencil',
-                controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
-                    authoringWorkspace.edit(data.item);
-                }],
-                filters: [{action: 'list', type: 'archive'}],
-                condition: function(item) {
-                    return !_.contains(['published', 'killed', 'corrected'], item.state) &&
-                        item.type === 'composite' && item.package_type !== 'takes';
-                },
-                additionalCondition:['authoring', 'item', function(authoring, item) {
-                    return authoring.itemActions(item).package_item;
-                }]
-            })
-            .activity('view.package', {
-                label: gettext('View item'),
-                priority: 2000,
-                icon: 'external',
-                controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
-                    authoringWorkspace.view(data.item);
-                }],
-                filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
-                condition: function(item) {
-                    return item.type === 'composite';
-                }
-            })
-            .activity('read_only.content_package', {
-                category: '/packaging',
-                href: '/packaging/:_id/view/:_type',
-                when: '/packaging/:_id/view/:_type',
-                label: gettext('Packaging Read Only'),
-                templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
-                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                controller: PackagingController,
-                filters: [{action: 'read_only', type: 'content_package'}],
-                resolve: {
-                    item: ['$route', 'authoring', function($route, authoring) {
-                        return authoring.open($route.current.params._id, true, $route.current.params._type);
-                    }]
-                },
-                authoring: true
-            })
             .activity('create.package', {
                 label: gettext('Create package'),
                 controller: ['data', 'packages', 'authoringWorkspace',
