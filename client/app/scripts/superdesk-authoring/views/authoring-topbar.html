@@ -112,7 +112,7 @@
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
 
-        <button id="send-to-btn" ng-show="_editable"
+        <button id="send-to-btn" ng-show="_editable && $root.isActionAllowed(item, 'move') && itemActions.send"
             class="navbtn navbtn-hover" title="{{ :: 'Send to desk' | translate }}"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>
