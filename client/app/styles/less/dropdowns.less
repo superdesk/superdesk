@@ -244,6 +244,27 @@
     vertical-align: middle;
     .dropdown-menu {
         top: -23px;
+        right: calc(~'100% + 15px');
+        &:before {
+            width: 15px;
+            height: 22px;
+            display: block;
+            z-index: 100;
+            position: absolute;
+            right: -15px;
+            top: 10px;
+            background: url(../../images/dropdown-arrow-side.png) no-repeat;
+            .rotate(180deg);
+            content: " ";
+        }
+    }
+}
+
+.dropright {
+    display: inline-block;
+    vertical-align: middle;
+    .dropdown-menu {
+        top: -23px;
         left: calc(~'100% + 15px');
         &:before {
             width: 15px;

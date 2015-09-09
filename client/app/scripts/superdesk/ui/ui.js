@@ -259,9 +259,10 @@ define([
         return {
             link: function(scope, element) {
 
-                var tolerance = 250;
-                var isRightOriented = null;
-                var menu = null;
+                var tolerance = 300,
+                    isRightOriented = null,
+                    isInlineOriented = null,
+                    menu = null;
 
                 element.bind('click', function(event) {
 
@@ -281,12 +282,33 @@ define([
                         } else {
                             menu.addClass('pull-right');
                         }
+
+                        if (closeToRight(event)) {
+                            menu.addClass('pull-right');
+                        } else {
+                            menu.removeClass('pull-right');
+                        }
+                    }
+
+                    if (isInlineOriented) {
+                        if (closeToLeft(event)) {
+                            element.removeClass('dropleft').addClass('dropright');
+                        } else {
+                            element.addClass('dropleft').removeClass('dropright');
+                        }
+
+                        if (closeToRight(event)) {
+                            element.removeClass('dropright').addClass('dropleft');
+                        } else {
+                            element.addClass('dropright').removeClass('dropleft');
+                        }
                     }
                 });
 
                 function checkOrientation() {
                     menu = element.children('.dropdown-menu');
                     isRightOriented = menu.hasClass('pull-right');
+                    isInlineOriented = element.hasClass('dropright') || element.hasClass('dropleft');
                 }
 
                 function closeToBottom(e) {
@@ -296,6 +318,11 @@ define([
 
                 function closeToLeft(e) {
                     return e.pageX < tolerance;
+                }
+
+                function closeToRight(e) {
+                    var docWidth = $document.width();
+                    return (docWidth - e.pageX) < tolerance;
                 }
             }
         };
