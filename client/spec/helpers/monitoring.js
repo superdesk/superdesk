@@ -17,6 +17,13 @@ function Monitoring() {
     };
 
     /**
+     * Open personal monitoring view
+     */
+    this.openPersonal = function() {
+        element(by.className('big-icon-personal')).click();
+    };
+
+    /**
      * On monitoring view create a new item
      *
      * @param {string} action - the create item action can be: create_text_article,
@@ -46,6 +53,26 @@ function Monitoring() {
 
     this.getSpikedItems = function() {
         return element.all(by.repeater('item in items'));
+    };
+
+    /**
+     * Get the personal element at 'index' row
+     *
+     * @param {number} index
+     * @return {object}
+     */
+    this.getPersonalItem = function(index) {
+        return element.all(by.repeater('item in items')).get(index);
+    };
+
+    /**
+     * Get the personal element text at 'index' row
+     *
+     * @param {number} index
+     * @return {string}
+     */
+    this.getPersonalItemText = function(index) {
+        return this.getPersonalItem(index).element(by.id('title')).getText();
     };
 
     this.getSpikedItem = function(item) {
