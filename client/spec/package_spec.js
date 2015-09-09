@@ -87,7 +87,7 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(2);
     });
 
-    fit('can add an item to an existing package only once', function() {
+    it('can add an item to an existing package only once', function() {
         monitoring.openMonitoring();
         monitoring.showMonitoringSettings();
         monitoring.togglePersonal();
