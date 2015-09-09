@@ -219,6 +219,12 @@ describe('monitoring view', function() {
         expect(authoring.save_button.isDisplayed()).toBe(true);
     });
 
+    it('can start content upload', function() {
+        monitoring.openCreateMenu();
+        monitoring.startUpload();
+        expect(monitoring.uploadModal.isDisplayed()).toBe(true);
+    });
+
     it('updates item group on single item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(1);
         monitoring.actionOnItem('Spike', 1, 0);

@@ -247,4 +247,15 @@ function Monitoring() {
     this.showHideList = function() {
         element(by.className('big-icon-view')).click();
     };
+
+    this.openCreateMenu = function() {
+        element(by.className('sd-create-btn')).click();
+        browser.sleep(100);
+    };
+
+    this.startUpload = function() {
+        element(by.id('start-upload-btn')).click();
+    };
+
+    this.uploadModal = element(by.className('upload-media'));
 }
