@@ -196,12 +196,13 @@ class StagesService(BaseService):
         return superdesk.get_resource_service('archive').get(req, None)
 
     def _stage_in_rule(self, stage_id):
-        '''
+        """
         Returns the ingest routing rules that refer to the passed stage
         :param stage_id:
         :return: routing scheme rules that refer to the passed stage
-        '''
-        query_filter = {'rules.actions.fetch.stage': str(stage_id)}
+        """
+        query_filter = {'$or': [{'rules.actions.fetch.stage': str(stage_id)},
+                                {'rules.actions.publish.stage': str(stage_id)}]}
         return superdesk.get_resource_service('routing_schemes').get(req=None, lookup=query_filter)
 
     def get_stages_by_visibility(self, is_visible=False, user_desk_ids=[]):
