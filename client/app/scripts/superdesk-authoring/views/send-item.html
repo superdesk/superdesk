@@ -15,14 +15,14 @@
                     </button>
                     <div class="dropdown-menu">
                         <ul>
-                            <li ng-repeat="desk in desks._items track by $index">
+                            <li ng-repeat="desk in desks._items track by desk._id">
                                 <button ng-click="selectDesk(desk)">{{::desk.name}}</button>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <ul class="btn-list" ng-if="stages">
-                    <li ng-repeat="stage in stages track by $index">
+                    <li ng-repeat="stage in stages track by stage._id">
                         <button
                             ng-class="{active: stage._id === selectedStage._id}"
                             ng-disabled="stage._id === item.task.stage"
@@ -65,8 +65,9 @@
                 </li>
                 <li ng-if="mode === 'authoring'">
                     <button type="submit"
+                    ng-show="_editable"
                     ng-click="_publish()"
-                    translate>publish</button>
+                    translate>{{_action === "edit" ? "publish": _action}}</button>
                 </li>
         </div>
     </div>
