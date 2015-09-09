@@ -164,6 +164,7 @@
 			}
 		}
 		.item-locked {
+			width: 93%;
 			float: left;
 			.border-box();
 			.border-radius(14px);
@@ -199,6 +200,10 @@
 				color: @gray;
 				float: left;
 				margin-top: 2px;
+				overflow: hidden;
+			    text-overflow: ellipsis;
+			    max-width: 59%;
+			    white-space: nowrap;
 			}
 			.btn {
 				visibility: hidden;
@@ -206,6 +211,8 @@
 				.border-radius(0 14px 14px 0);
 				padding-left: 15px;
 				border-left: 1px solid #fff;
+			    right: 44px;
+    			position: absolute;
 			}
 			.locked-content {
 				.clearfix();
