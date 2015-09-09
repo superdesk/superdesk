@@ -332,9 +332,13 @@
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-items-edit.html',
             link: function(scope, elem, attrs, ngModel) {
                 scope.$on('package:addItems', function(event, data) {
-                    var groupIndex = _.findIndex(scope.list, {id: 'main'});
-                    for (var i = 0; i < data.length; i++) {
-                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data[i]));
+                    var groupIndex = _.findIndex(scope.list, {id: data.group});
+                    if (groupIndex === -1) {
+                        scope.list.push({id: data.group, items: []});
+                        groupIndex = scope.list.length - 1;
+                    }
+                    for (var i = 0; i < data.items.length; i++) {
+                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data.items[i]));
                     }
                     autosave();
                 });
@@ -618,6 +622,19 @@
         };
     }
 
+    AddPackageDropdownDirective.$inject = ['$rootScope', 'packages'];
+    function AddPackageDropdownDirective($rootScope, packages) {
+        return {
+            templateUrl: 'scripts/superdesk-packaging/views/sd-add-package-dropdown.html',
+            link: function(scope) {
+                scope.groupList = packages.groupList;
+                scope.select = function(group) {
+                    $rootScope.$broadcast('package:addItems', {items: [scope.item], group: group});
+                };
+            }
+        };
+    }
+
     var app = angular.module('superdesk.packaging', [
         'superdesk.api',
         'superdesk.activity',
@@ -636,6 +653,7 @@
     .directive('sdPackageItemPreview', PackageItemPreviewDirective)
     .directive('sdWidgetPreventPreview', PreventPreviewDirective)
     .directive('sdPackagingEmbedded', PackagingEmbeddedDirective)
+    .directive('sdAddPackageDropdown', AddPackageDropdownDirective)
 
     .config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -747,10 +765,9 @@
             .activity('addtopackage', {
                 label: gettext('Add to package'),
                 priority: 5,
+                dropdown: true,
                 icon: 'package-plus',
-                controller: ['data', '$rootScope', function(data, $rootScope) {
-                    $rootScope.$broadcast('package:addItems', [data.item]);
-                }],
+                templateUrl: 'scripts/superdesk-packaging/views/add-to-package.html',
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
