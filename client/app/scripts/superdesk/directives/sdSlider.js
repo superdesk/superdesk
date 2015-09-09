@@ -52,7 +52,7 @@ define(['angular'], function (angular) {
                             value = minValue;
                         }
 
-                        $('[sd-slider]').slider({
+                        $('[sd-slider][data-field="' + scope.field + '"]').slider({
                             range: 'max',
                             min: minValue,
                             max: maxValue,

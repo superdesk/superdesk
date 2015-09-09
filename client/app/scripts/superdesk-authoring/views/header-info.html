@@ -24,7 +24,7 @@
                             <div class="data">
                                 <div sd-slider 
                                      data-value="item.urgency"
-                                     data-list="metadata.newsvalue"
+                                     data-list="metadata.urgency"
                                      data-unique="value"
                                      data-field="urgency"
                                      data-invert="true"
@@ -37,17 +37,17 @@
                 </div>
             </div>
             <div class="slider-icon pull-left">
-                <div class="dropdown dropright" dropdown>
-                    <i class="output-item-label label-{{item.urgency}} dropdown-toggle" dropdown-toggle>{{ item.urgency }}</i>
+                <div class="dropdown dropleft" dropdown>
+                    <i class="output-item-label label-{{item.priority}} dropdown-toggle" dropdown-toggle>{{ item.priority ? item.priority: "-" }}</i>
                     <div class="dropdown-menu">
-                        <label>{{ "NEWS VALUE" | translate }}</label>
+                        <label>{{ "PRIORITY" | translate }}</label>
                         <div class="item">
                             <div class="data">
                                 <div sd-slider 
-                                     data-value="item.urgency"
-                                     data-list="metadata.newsvalue"
+                                     data-value="item.priority"
+                                     data-list="metadata.priority"
                                      data-unique="value"
-                                     data-field="urgency"
+                                     data-field="priority"
                                      data-invert="true"
                                      data-disabled="!_editable"
                                      data-update="sliderUpdate(item, field)">

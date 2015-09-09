@@ -2062,7 +2062,7 @@
                         };
 
                         /*
-                         * Slider for Urgency and News Value
+                         * Slider for Urgency and Priority
                          */
                         scope.sliderUpdate = function(item, field) {
 

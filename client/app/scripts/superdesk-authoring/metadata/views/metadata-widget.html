@@ -42,12 +42,6 @@
 			<label translate>Expiry</label>
 			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
 		</li>
-		<li>
-			<label translate>Priority</label>
-			<div class="data visible small" ng-if="metadata.priority">
-				<div sd-meta-dropdown data-list="metadata.priority" data-item="item" data-field="priority" data-change="autosave(item)" ng-disabled="!_editable" ></div>
-			</div>
-		</li>
 		<li class="terms-box">
 			<label translate>Targeted For</label>
 			<div ng-if="metadata.targeted_for">
