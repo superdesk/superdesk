@@ -177,8 +177,8 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'desks', 'authoringWorkspace', '$timeout'];
-    function MonitoringGroupDirective(cards, api, desks, authoringWorkspace, $timeout) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'desks', 'authoringWorkspace', '$timeout', 'superdesk', 'activityService'];
+    function MonitoringGroupDirective(cards, api, desks, authoringWorkspace, $timeout, superdesk, activityService) {
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -251,8 +251,19 @@
                     moveTimeout;
 
                 function edit(item, lock) {
-                    authoringWorkspace.edit(item, !lock);
-                    monitoring.preview(null);
+                    if (item._type === 'ingest') {
+                        var intent = {action: 'list', type: 'ingest'},
+                        activity = superdesk.findActivities(intent, item)[0];
+
+                        activityService.start(activity, {data: {item: item}})
+                            .then(function (item) {
+                                authoringWorkspace.edit(item, !lock);
+                                monitoring.preview(null);
+                            });
+                    } else {
+                        authoringWorkspace.edit(item, !lock);
+                        monitoring.preview(null);
+                    }
                 }
 
                 function select(item) {

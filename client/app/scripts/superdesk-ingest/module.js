@@ -1457,11 +1457,14 @@ define([
                     function(archiveItem) {
                         item.task_id = archiveItem.task_id;
                         item.archived = archiveItem._created;
+                        return archiveItem;
                     }, function(response) {
                         item.error = response;
                     })
                 ['finally'](function() {
-                    item.actioning.archive = false;
+                    if (item.actioning) {
+                        item.actioning.archive = false;
+                    }
                 });
         }
 
