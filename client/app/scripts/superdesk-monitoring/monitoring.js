@@ -10,7 +10,8 @@
         .directive('sdMonitoringGroupHeader', MonitoringGroupHeader)
         .directive('sdItemActionsMenu', ItemActionsMenu)
         .config(configureMonitoring)
-        .config(configureSpikeMonitoring);
+        .config(configureSpikeMonitoring)
+        .config(configurePersonal);
 
     configureMonitoring.$inject = ['superdeskProvider'];
     function configureMonitoring(superdesk) {
@@ -31,6 +32,21 @@
                 label: gettext('Spike Monitoring'),
                 priority: 100,
                 templateUrl: 'scripts/superdesk-monitoring/views/spike-monitoring.html',
+                topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
+            });
+    }
+
+    /**
+     * Configure personal option from left menu
+     */
+    configurePersonal.$inject = ['superdeskProvider'];
+    function configurePersonal(superdesk) {
+        superdesk
+            .activity('/workspace/personal', {
+                label: gettext('Personal'),
+                priority: 100,
+                templateUrl: 'scripts/superdesk-monitoring/views/personal.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'
             });

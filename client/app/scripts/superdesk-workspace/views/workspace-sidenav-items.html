@@ -21,8 +21,8 @@
 </li>
 
 <hr>
-<li>
-    <a href="" class="big-icon-personal"
+<li ng-class="{active: currentRoute.href === '/workspace/personal'}">
+    <a href="#/workspace/personal" class="big-icon-personal" ng-click="hideMonitoring(currentRoute.href === '/workspace/personal', $event)"
        title="{{ :: 'Personal' | translate }}"></a>
 </li>
 <li ng-class="{active: currentRoute.href === '/search'}">

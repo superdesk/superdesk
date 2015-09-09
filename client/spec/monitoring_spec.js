@@ -225,6 +225,13 @@ describe('monitoring view', function() {
         expect(monitoring.uploadModal.isDisplayed()).toBe(true);
     });
 
+    it('show personal', function() {
+        monitoring.openPersonal();
+        expect(monitoring.getPersonalItemText(0)).toBe('package1');
+        expect(monitoring.getPersonalItemText(1)).toBe('item1');
+        expect(monitoring.getPersonalItemText(2)).toBe('item2');
+    });
+
     it('updates item group on single item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(1);
         monitoring.actionOnItem('Spike', 1, 0);
