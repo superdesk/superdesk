@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    AggregateCtrl.$inject = ['$scope', 'api', 'session', 'desks', 'workspaces', 'preferencesService', 'storage', 'gettext'];
-    function AggregateCtrl($scope, api, session, desks, workspaces, preferencesService, storage, gettext) {
+    AggregateCtrl.$inject = ['$scope', 'api', 'desks', 'workspaces', 'preferencesService', 'storage', 'gettext'];
+    function AggregateCtrl($scope, api, desks, workspaces, preferencesService, storage, gettext) {
         var PREFERENCES_KEY = 'agg:view';
         var defaultMaxItems = 10;
         var self = this;
@@ -27,7 +27,6 @@
         this.fileTypes = ['all', 'text', 'picture', 'composite', 'video', 'audio'];
         this.selectedFileType = [];
         this.monitoringSearch = false;
-        this.user = session.identity;
 
         desks.initialize()
         .then(angular.bind(this, function() {
@@ -316,8 +315,8 @@
         };
     }
 
-    AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'preferencesService', 'WizardHandler'];
-    function AggregateSettingsDirective(desks, workspaces, preferencesService, WizardHandler) {
+    AggregateSettingsDirective.$inject = ['desks', 'workspaces', 'session', 'preferencesService', 'WizardHandler'];
+    function AggregateSettingsDirective(desks, workspaces, session, preferencesService, WizardHandler) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/aggregate-settings-configuration.html',
             scope: {
@@ -342,9 +341,19 @@
                     current: 'desks'
                 };
 
+                scope.$watch('step.current', function(step) {
+                    if (step === 'searches') {
+                        scope.initSavedSearches(scope.showAllSavedSearches);
+                    }
+                });
+
+                scope.showAllSavedSearches = false;
+                scope.currentSavedSearches = [];
+
                 scope.closeModal = function() {
                     scope.step.current = 'desks';
                     scope.modalActive = false;
+                    scope.showAllSavedSearches = false;
                     scope.onclose();
                 };
 
@@ -395,6 +404,25 @@
                         item.max_items = defaultMaxItems;
                         item.order = _.size(scope.editGroups);
                     }
+                };
+
+                /**
+                 * Init searches list with all searches if allSearches is true or
+                 * user saved searches and other user saved searches
+                 * if they are already selected
+                 */
+                scope.initSavedSearches = function(showAllSavedSearches) {
+                    var user = session.identity._id;
+                    scope.showAllSavedSearches = showAllSavedSearches;
+                    if (scope.currentSavedSearches.length > 0) {
+                        scope.currentSavedSearches.length = 0;
+                    }
+                    _.each(scope.searches, function(item) {
+                        var group = scope.editGroups[item._id];
+                        if (scope.showAllSavedSearches || item.user === user || group && group.selected) {
+                            scope.currentSavedSearches.push(item);
+                        }
+                    });
                 };
 
                 /**
@@ -468,7 +496,7 @@
                             });
                         }
                     });
-
+                    scope.showAllSavedSearches = false;
                     scope.onclose();
                 };
             }
