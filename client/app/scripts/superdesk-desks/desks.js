@@ -1023,8 +1023,12 @@
                             desks.fetchDeskById(stage.desk).then(function(desk) {
                                 scope.desk.edit = desk;
                             });
-                        }, function(result) {
-                            scope.message = gettext('There was a problem, stage was not deleted.');
+                        }, function(response) {
+                            if (angular.isDefined(response.data._message)) {
+                                scope.message = gettext('Error: ' + response.data._message);
+                            } else {
+                                scope.message = gettext('There was a problem, stage was not deleted.');
+                            }
                         });
                     };
 

@@ -382,8 +382,10 @@ Feature: Stages
         [{"type": "text"}]
         """
         When we delete "/stages/#stages._id#"
-
-        Then we get response code 403
+        Then we get error 403
+        """
+        {"_status": "ERR", "_message": "Only empty stages can be deleted."}
+        """
 
     @auth
     @notification
@@ -482,3 +484,108 @@ Feature: Stages
 
 
         Then we get 2 visible stages
+
+    @auth
+    Scenario: Cannot delete stage if it is refered to by a routing scheme
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "task_status": "todo",
+        "desk": "#desks._id#"
+        }
+        """
+
+        When we patch "/stages/#stages._id#"
+        """
+        {"desk":"#desks._id#"}
+        """
+        And we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Sports Rule",
+                "filter": {
+                  "category": [{"name": "Overseas Sport", "qcode": "S"}]
+                },
+                "actions": {
+                  "fetch": [
+                              {"desk": "#desks._id#",
+                                "stage": "#stages._id#",
+                                "macro": "transform"}]
+                }
+              }
+            ]
+          }
+        ]
+        """
+        When we delete "/stages/#stages._id#"
+        Then we get error 403
+        """
+        {"_status": "ERR", "_message": "Stage is refered to by Ingest Routing Schemes : routing rule scheme 1"}
+        """
+
+    @auth
+    Scenario: Cannot delete default stage
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "task_status": "todo",
+        "desk": "#desks._id#"
+        }
+        """
+        When we delete "/stages/#desks.incoming_stage#"
+        Then we get error 403
+        """
+        {"_status": "ERR", "_message": "Cannot delete a default stage."}
+        """
+
+    @auth
+    @notification
+    Scenario: Can delete stage if there are only spiked documents
+        Given empty "archive"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "task_status": "todo",
+        "desk": "#desks._id#"
+        }
+        """
+
+        When we patch "/stages/#stages._id#"
+        """
+        {"desk":"#desks._id#"}
+        """
+        When we post to "archive"
+        """
+        [{"headline": "This is spiked", "type": "text", "state": "spiked"}]
+        """
+        When we delete "/stages/#stages._id#"
+        Then we get response code 204
+        Then we get notifications
+        """
+        [{"event": "stage", "extra": {"deleted": 1}}]
+        """

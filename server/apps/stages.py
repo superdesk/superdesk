@@ -21,6 +21,7 @@ from apps.tasks import task_statuses
 from superdesk.utc import get_expiry_date
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
+from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
 
 logger = logging.getLogger(__name__)
 
@@ -108,15 +109,32 @@ class StagesService(BaseService):
                 self.set_desk_ref(doc, 'incoming_stage')
 
     def on_delete(self, doc):
+        """
+        Checks if deleting the stage would not violate data integrity, raises an exception if it does.
+
+            1/ Can't delete the default incomming stage
+            2/ The stage must have no unspiked documents
+            3/ The stage can not be refered to by a ingest routing rule
+
+        :param doc:
+        :return:
+        """
         if doc['default_incoming'] is True:
             desk_id = doc.get('desk', None)
             if desk_id and superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id):
                 raise SuperdeskApiError.forbiddenError(message='Cannot delete a default stage.')
-        else:
-            # check if the stage has any documents in it
-            items = self.get_stage_documents(str(doc['_id']))
-            if items.count() > 0:  # cannot delete
-                raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
+
+        # check if the stage has any documents in it
+        items = self._get_unspiked_stage_documents(str(doc['_id']))
+        if items.count() > 0:  # cannot delete
+            raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
+
+        # check if the stage is refered to in a ingest routing rule
+        rules = self._stage_in_rule(doc['_id'])
+        if rules.count() > 0:
+            rule_names = ', '.join(rule.get('name') for rule in rules)
+            raise SuperdeskApiError.forbiddenError(
+                message='Stage is refered to by Ingest Routing Schemes : {}'.format(rule_names))
 
     def on_deleted(self, doc):
         push_notification(self.notification_key,
@@ -156,11 +174,36 @@ class StagesService(BaseService):
                               stage_id=str(original.get('_id')),
                               desk_id=str(original.get('desk')))
 
+    def _get_unspiked_stage_documents(self, stage_id):
+        """
+        Returns the documents that are on the stage and not spiked
+        :param stage_id:
+        :return:
+        """
+        query_filter = superdesk.json.dumps(
+            {'bool': {
+                'must': {'term': {'task.stage': stage_id}},
+                'must_not': {'term': {ITEM_STATE: CONTENT_STATE.SPIKED}}
+            }})
+        req = ParsedRequest()
+        req.args = {'filter': query_filter}
+        return superdesk.get_resource_service('archive').get(req, None)
+
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})
         req = ParsedRequest()
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
+
+    def _stage_in_rule(self, stage_id):
+        """
+        Returns the ingest routing rules that refer to the passed stage
+        :param stage_id:
+        :return: routing scheme rules that refer to the passed stage
+        """
+        query_filter = {'$or': [{'rules.actions.fetch.stage': str(stage_id)},
+                                {'rules.actions.publish.stage': str(stage_id)}]}
+        return superdesk.get_resource_service('routing_schemes').get(req=None, lookup=query_filter)
 
     def get_stages_by_visibility(self, is_visible=False, user_desk_ids=[]):
         """
