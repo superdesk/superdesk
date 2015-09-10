@@ -589,5 +589,18 @@
             "name": "saved search items and ingest",
             "user": "-id user admin-"
         }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "saved search admin1",
+            "user": "-id user admin1-"
+        }
     }
 ]

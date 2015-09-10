@@ -209,7 +209,11 @@ function Monitoring() {
     };
 
     this.getSearch = function(search) {
-        return config.all(by.repeater('search in searches')).get(search);
+        return config.all(by.repeater('search in currentSavedSearches')).get(search);
+    };
+
+    this.getSearchText = function(search) {
+        return this.getSearch(search).element(by.css('.desk-title')).getText();
     };
 
     this.toggleDesk = function(desk) {
@@ -226,6 +230,10 @@ function Monitoring() {
 
     this.toggleSearch = function(search) {
         this.getSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
+    };
+
+    this.toggleAllSearches = function() {
+        element(by.css('[ng-click="initSavedSearches(showAllSavedSearches)"]')).click();
     };
 
     this.getOrderItem = function(item) {

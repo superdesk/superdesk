@@ -148,6 +148,26 @@ describe('monitoring view', function() {
         expect(monitoring.getTextItem(0, 1)).toBe('item5');
     });
 
+    it('configure a saved search from other user', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.nextStages();
+        monitoring.toggleAllSearches();
+        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
+        monitoring.toggleSearch(0);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
+        expect(monitoring.getTextItem(0, 1)).toBe('item5');
+
+        monitoring.showMonitoringSettings();
+        monitoring.nextStages();
+        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
+        monitoring.toggleAllSearches();
+        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
+    });
+
     it('configure monitoring view for 2 desks', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleStage(0, 0);
