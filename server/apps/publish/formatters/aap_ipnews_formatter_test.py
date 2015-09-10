@@ -39,7 +39,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         'type': 'preformatted',
         'body_html': 'The story body',
         'word_count': '1',
-        'priority': '1',
+        'priority': 1,
         'place': [{'qcode': 'VIC', 'name': 'VIC'}]
     }
 
@@ -68,7 +68,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         self.assertDictEqual(item,
                              {'category': 'a', 'texttab': 't', 'fullStory': 1, 'ident': '0',
                               'headline': 'VIC:This is a test headline', 'service_level': 'a', 'originator': 'AAP',
-                              'take_key': 'take_key', 'article_text': 'The story body', 'priority': '1', 'usn': '1',
+                              'take_key': 'take_key', 'article_text': 'The story body', 'priority': 'f', 'usn': '1',
                               'subject_matter': 'international law', 'news_item_type': 'News',
                               'subject_reference': '02011001', 'subject': 'crime, law and justice',
                               'wordcount': '1', 'subject_detail': 'international court or tribunal',
@@ -88,7 +88,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
             'body_html': '<p>The story body line 1<br>Line 2</p>\
                          <p>abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi abcdefghi more</p>',
             'word_count': '1',
-            'priority': '1'
+            'priority': 1
         }
 
         subscriber = self.app.data.find('subscribers', None, None)[0]
@@ -114,7 +114,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
             'type': 'text',
             'body_html': 'body',
             'word_count': '1',
-            'priority': '1',
+            'priority': 1,
             'task': {'desk': 1},
             'place': [{'qcode': 'VIC', 'name': 'VIC'}]
         }
@@ -150,7 +150,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
             'type': 'text',
             'body_html': 'body',
             'word_count': '1',
-            'priority': '1',
+            'priority': 1,
             'task': {'desk': 1},
             'urgency': 1,
             'place': [{'qcode': 'VIC', 'name': 'VIC'}],
@@ -180,7 +180,7 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
             'type': 'text',
             'body_html': 'body',
             'word_count': '1',
-            'priority': '1',
+            'priority': 1,
             'task': {'desk': 1},
             'urgency': 1,
             'place': [{'qcode': 'VIC', 'name': 'VIC'}],

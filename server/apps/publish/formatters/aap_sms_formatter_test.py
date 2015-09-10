@@ -22,7 +22,7 @@ class AapSMSFormatterTest(SuperdeskTestCase):
                     }]
 
     article = {
-        'priority': '1',
+        'priority': 1,
         'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
         'type': 'preformatted',
@@ -41,5 +41,5 @@ class AapSMSFormatterTest(SuperdeskTestCase):
         seq, item = f.format(self.article, subscriber)[0]
 
         self.assertGreater(int(seq), 0)
-        self.assertDictEqual(item, {'Category': 'a', 'Priority': '1', 'Sequence': item['Sequence'], 'ident': '0',
+        self.assertDictEqual(item, {'Category': 'a', 'Priority': 'f', 'Sequence': item['Sequence'], 'ident': '0',
                                     'Headline': 'This is a test headline', 'StoryText': 'The story body'})

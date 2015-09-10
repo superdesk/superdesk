@@ -33,8 +33,32 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         'body_html': 'The story body',
         'type': 'text',
         'word_count': '1',
-        'priority': '1',
+        'priority': 1,
         '_id': 'urn:localhost.abc',
+        'state': 'published',
+        'urgency': 2,
+        'pubstatus': 'usable',
+        'dateline': {'text': 'sample dateline'},
+        'creditline': 'sample creditline',
+        'keywords': ['traffic'],
+        'abstract': 'sample abstract',
+        'place': 'Australia'
+    }
+
+    preformatted = {
+        'source': 'AAP',
+        'anpa_category': [{'qcode': 'a'}],
+        'headline': 'This is a test headline',
+        'byline': 'joe',
+        'slugline': 'slugline',
+        'subject': [{'qcode': '02011001'}, {'qcode': '02011002'}],
+        'anpa_take_key': 'take_key',
+        'unique_id': '1',
+        'type': 'preformatted',
+        'body_html': 'The story body',
+        'type': 'preformatted',
+        'word_count': '1',
+        '_id': 'urn:localhost.123',
         'state': 'published',
         'urgency': 2,
         'pubstatus': 'usable',
@@ -78,7 +102,11 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         self.formatter._format_news_envelope(self.article, self.newsml, 7)
         self.assertEquals(self.newsml.find('TransmissionId').text, '7')
         self.assertEquals(self.newsml.find('DateAndTime').text, '20150613T114519+0000')
-        self.assertEquals(self.newsml.find('Priority').get('FormalName'), '1')
+        self.assertEquals(self.newsml.find('Priority').get('FormalName'), 1)
+        newsml = etree.Element("NewsML")
+        self.formatter._format_news_envelope(self.preformatted, newsml, 7)
+        self.assertEquals(newsml.find('Priority').get('FormalName'), 5)
+
 
     def test_format_identification(self):
         self.formatter._format_identification(self.article, self.newsml)

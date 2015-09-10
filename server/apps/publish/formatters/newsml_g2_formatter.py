@@ -71,6 +71,7 @@ class NewsMLG2Formatter(Formatter):
         # MAY NEED TO EXPAND THIS
         SubElement(header, 'transmitId').text = str(pub_seq_num)
         SubElement(header, 'origin').text = article.get('original_source', 'AAP')
+        SubElement(header, 'priority').text = article.get('priority', '5')
 
     def _format_item(self, newsMessage):
         return SubElement(newsMessage, 'itemSet')
