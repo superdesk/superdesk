@@ -13,7 +13,7 @@ import superdesk
 
 class ValidatorsResource(superdesk.Resource):
     schema = {
-        '_id': {'type': 'string', 'required': True},
+        '_id': {'type': 'string', 'required': True, 'unique': True},
         'act': {'type': 'string', 'required': True},
         'type': {'type': 'string', 'required': True},
         'schema': {

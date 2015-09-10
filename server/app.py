@@ -32,7 +32,7 @@ def get_app(config=None):
 
     media_storage = None
     if config['AMAZON_CONTAINER_NAME']:
-        from apps.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
 
     config['DOMAIN'] = {}
