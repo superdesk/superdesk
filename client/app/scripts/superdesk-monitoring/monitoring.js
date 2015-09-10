@@ -84,12 +84,6 @@
 
             params.spike = (card.type === 'spike');
 
-            if (card.fileType) {
-                params.type = card.fileType;
-            } else {
-                delete params.type;
-            }
-
             var query = search.query(params);
 
             switch (card.type) {
@@ -116,6 +110,10 @@
                 default:
                     query.filter({term: {'task.stage': card._id}});
                     break;
+            }
+
+            if (card.fileType) {
+                query.filter({terms: {'type': JSON.parse(card.fileType)}});
             }
 
             if (queryString) {
