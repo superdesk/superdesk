@@ -355,7 +355,7 @@ define([
                         };
 
                         css.left = 'auto';
-                        css.right = Math.max(5, window.innerWidth - pos.left) + 'px';
+                        css.right = Math.max(5, window.innerWidth - pos.left);
 
                         dropdown.dropdownMenu.css({opacity: '0'}); // avoid flickering
 
@@ -370,9 +370,20 @@ define([
                                 dropdownHeight = dropdown.dropdownMenu.outerHeight();
 
                             if ((windowHeight - pos.top) < dropdownHeight) {
-                                dropdown.dropdownMenu.css({
-                                    top: pos.top - dropdownHeight - icon.outerHeight() - 15
+                                if ((pos.top - 110) < dropdownHeight) { //Substracting 110 is for topmenu and submenu bar
+                                    css = {
+                                        top: '110px',
+                                        right: css.right + 30
+                                        // Addition 30 so the drodpown would not overlap icon
+                                    };
+                                } else {
+                                    css.top = pos.top - dropdownHeight - icon.outerHeight() - 15;
                                     //Subtracting 15 so the dropdown is not stick to the icon
+                                }
+
+                                dropdown.dropdownMenu.css({
+                                    top: css.top,
+                                    right: css.right
                                 });
                             }
                         });
