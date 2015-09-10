@@ -370,6 +370,8 @@
             "guid": "item1",
             "versioncreated": "2015-01-03T10:10:10+0000",
             "_current_version" : 1,
+            "unique_name": "item1",
+            "unique_id": 1,
             "original_creator": "-id user admin-"
         }
     },
@@ -497,6 +499,8 @@
             "versioncreated": "NOW()",
             "_current_version" : 1,
             "original_creator": "-id user admin-",
+            "unique_id": 2,
+            "unique_name": "package1",
 	    	"groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}]
     	}
     },

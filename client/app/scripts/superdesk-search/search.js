@@ -924,8 +924,8 @@
          * Open Item dialog
          */
         .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify',
-            'gettext', 'keyboardManager', 'asset',
-            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset) {
+            'gettext', 'keyboardManager', 'asset', 'authoringWorkspace',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager, asset, authoringWorkspace) {
             return {
                 scope: {repo: '=', context: '='},
                 templateUrl: asset.templateUrl('superdesk-search/views/item-globalsearch.html'),
@@ -951,11 +951,7 @@
                         if (items.length > 0) {
                             reset();
                             scope.flags.enabled = false;
-                            if (items[0].type === 'composite') {
-                                superdesk.intent('author', 'package', items[0]);
-                            } else {
-                                superdesk.intent('author', 'article', items[0]);
-                            }
+                            authoringWorkspace.edit(items[0]);
                         } else {
                             notify.error(gettext('Item not found...'));
                             scope.flags.enabled = true;
@@ -975,7 +971,7 @@
                             {term: {unique_name: scope.meta.unique_name}}
                         ];
                         var criteria = {
-                            repo: 'ingest,archive,published,archived',
+                            repo: 'archive',
                             source: {
                                 query: {filtered: {filter: {
                                     and: filter

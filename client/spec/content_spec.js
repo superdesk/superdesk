@@ -134,4 +134,48 @@ describe('Content', function() {
         expect(content.count()).toBe(2);
     });
 
+    it('can open item using hotkey ctrl+0', function() {
+        content.setListView();
+
+        browser.actions().sendKeys(protractor.Key.chord(protractor.Key.CONTROL, '0')).perform();
+        browser.sleep(500);
+
+        var storyNameEl = element(by.model('meta.unique_name'));
+        expect(storyNameEl.isDisplayed()).toBe(true);
+
+        storyNameEl.clear();
+        storyNameEl.sendKeys('item1');
+
+        element(by.id('searchItemByNameBtn')).click();
+        browser.sleep(500);
+
+        expect(element(by.className('info-icons')).all(by.className('filetype-icon-text'))
+            .first().isDisplayed()).toBe(true);
+        expect(element(by.className('navigation-tabs')).all(by.repeater('widget in widgets')).count()).toBe(7);
+
+        element(by.id('closeAuthoringBtn')).click();
+    });
+
+    it('can open package using hotkey ctrl+0', function() {
+        content.setListView();
+
+        browser.actions().sendKeys(protractor.Key.chord(protractor.Key.CONTROL, '0')).perform();
+        browser.sleep(500);
+
+        var storyNameEl = element(by.model('meta.unique_name'));
+        expect(storyNameEl.isDisplayed()).toBe(true);
+
+        storyNameEl.clear();
+        storyNameEl.sendKeys('package1');
+
+        element(by.id('searchItemByNameBtn')).click();
+        browser.sleep(500);
+
+        expect(element(by.className('info-icons')).all(by.className('filetype-icon-composite'))
+            .first().isDisplayed()).toBe(true);
+        expect(element(by.className('navigation-tabs')).all(by.repeater('widget in widgets')).count()).toBe(6);
+
+        element(by.id('closeAuthoringBtn')).click();
+    });
+
 });
