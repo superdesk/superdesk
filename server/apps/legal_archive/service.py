@@ -90,7 +90,7 @@ class LegalArchiveVersionsService(LegalService):
         Version of an article in Legal Archive isn't maintained by Eve. Overriding this to fetch the version history.
         """
 
-        id_field = versioned_id_field({'id_field': 'item_id'})
+        id_field = versioned_id_field({'id_field': config.ID_FIELD})
 
         if req and req.args and req.args.get(config.ID_FIELD):
             version_history = list(super().get_from_mongo(req=ParsedRequest(),

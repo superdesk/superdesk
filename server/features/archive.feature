@@ -95,6 +95,7 @@ Feature: News Items Archive
 
 
     @auth
+    @vocabulary
     Scenario: Upload image into archive and validate metadata set by API
         Given empty "archive"
         When we upload a file "bike.jpg" to "archive"
@@ -288,6 +289,7 @@ Feature: News Items Archive
         Then we get response code 200
 
     @auth
+    @vocabulary
     Scenario: State of an Uploaded Image, submitted to a desk when updated should change to in-progress
         Given empty "archive"
         And "desks"

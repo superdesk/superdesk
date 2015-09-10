@@ -324,8 +324,10 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
     def _init_article_versions(self):
         resource_def = self.app.config['DOMAIN']['archive_versions']
+        version_id = versioned_id_field(resource_def)
+        print(version_id)
         return [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 versioned_id_field(resource_def): '8',
+                 version_id: '8',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 1,
                  'urgency': 4,
@@ -340,7 +342,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 versioned_id_field(resource_def): '8',
+                 version_id: '8',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 2,
                  'urgency': 4,
@@ -356,7 +358,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 versioned_id_field(resource_def): '8',
+                 version_id: '8',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 3,
                  'urgency': 4,
@@ -373,7 +375,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 versioned_id_field(resource_def): '8',
+                 version_id: '8',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 4,
                  'body_html': 'Test body',
