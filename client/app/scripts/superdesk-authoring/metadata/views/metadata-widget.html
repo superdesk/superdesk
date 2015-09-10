@@ -127,22 +127,4 @@
 			</li>
 		</ul>
 	</div>
-	<div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
-		<ul class="basic-list">
-			<li class="auto">
-				<label translate>Embargo</label>
-				<div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
-				<div sd-timepicker ng-model="item.embargo_time" ng-disabled="!isEmbargoEditable()"></div>
-			</li>
-		</ul>
-	</div>
-	<div sd-toggle-box data-title="Publishing" data-open="true" ng-if="showPublishSchedule()">
-		<ul class="basic-list">
-			<li class="auto">
-				<label translate>Publish Schedule</label>
-				<div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
-				<div sd-timepicker ng-model="item.publish_schedule_time" ng-disabled="!_editable"></div>
-			</li>
-		</ul>
-	</div>
 </div>

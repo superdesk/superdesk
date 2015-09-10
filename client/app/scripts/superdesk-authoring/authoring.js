@@ -1237,10 +1237,6 @@
         return {templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html'};
     }
 
-    function AuthoringSidebarDirective() {
-        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-sidebar.html'};
-    }
-
     function DashboardCard() {
         return {
             link: function(scope, elem) {
@@ -1407,6 +1403,9 @@
                 item: '=',
                 view: '=',
                 _beforeSend: '=beforeSend',
+                _editable: '=editable',
+                _publish: '=publish',
+                _action: '=action',
                 mode: '@'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
@@ -1492,6 +1491,29 @@
                     } else {
                         return runSend(open);
                     }
+                };
+
+                /**
+                 * Returns true if Publish Schedule needs to be displayed, false otherwise.
+                 */
+                scope.showPublishSchedule = function() {
+                    return scope.item.type !== 'composite' && !scope.item.embargo_date && !scope.item.embargo_time &&
+                        ['published', 'killed', 'corrected'].indexOf(scope.item.state) === -1;
+                };
+
+                /**
+                 * Returns true if Embargo needs to be displayed, false otherwise.
+                 */
+                scope.showEmbargo = function() {
+                    return scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
+                        !scope.item.publish_schedule_time && !authoring.isPublished(scope.item);
+                };
+
+                /**
+                 * Returns true if Embargo needs to be displayed, false otherwise.
+                 */
+                scope.isEmbargoEditable = function() {
+                    return scope.item._editable && !authoring.isPublished(scope.item);
                 };
 
                 function runSend(open) {
@@ -1820,7 +1842,6 @@
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
         .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
-        .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)

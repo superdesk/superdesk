@@ -1,67 +1,74 @@
-<div class="pane-holder" ng-class="{show: isActive}">
+<div class="pane-holder outer-pane" ng-class="{show: isActive}">    
     <div class="send-to-pane">
         <header>
-            <h3 translate ng-show="mode !== 'archive'">Send</h3>
+            <h3 translate ng-show="mode !== 'archive'">Send to / Publish</h3>
             <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
             <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
         </header>
         <div class="content">
-            <div class="dropdown desk-select" dropdown>
-                <button class="dropdown-toggle" dropdown-toggle>
-                    <span ng-show="!selectedDesk" translate>Select desk</span>
-                    <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
-                    <b class="caret white"></b>
-                </button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li ng-repeat="desk in desks._items">
-                            <button ng-click="selectDesk(desk)">{{desk.name}}</button>
-                        </li>
-                    </ul>
+            <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true">
+                <div class="dropdown desk-select" dropdown>
+                    <button class="dropdown-toggle" dropdown-toggle>
+                        <span ng-show="!selectedDesk" translate>Select desk</span>
+                        <span ng-show="selectedDesk">{{::selectedDesk.name}}</span>
+                        <b class="caret white"></b>
+                    </button>
+                    <div class="dropdown-menu">
+                        <ul>
+                            <li ng-repeat="desk in desks._items track by desk._id">
+                                <button ng-click="selectDesk(desk)">{{::desk.name}}</button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <ul class="btn-list" ng-if="stages">
-                <li ng-repeat="stage in stages">
-                    <button
-                        ng-class="{active: stage._id === selectedStage._id}"
-                        ng-disabled="stage._id === item.task.stage"
-                        ng-click="selectStage(stage)">{{stage.name}}</button>
-                </li>
-            </ul>
-            <div ng-if="macros && selectedDesk">
-                <header>
-                    <h3 translate ng-show="macros">Transformation</h3>
-                </header>
-                <br />
-                <ul class="btn-list">
-                    <li ng-repeat="macro in macros">
-                        <button 
-                            ng-class="{active: macro.label === selectedMacro.label}" 
-                            ng-click="selectMacro(macro)">{{macro.label}}</button>
+                <ul class="btn-list" ng-if="stages">
+                    <li ng-repeat="stage in stages track by stage._id">
+                        <button
+                            ng-class="{active: stage._id === selectedStage._id}"
+                            ng-disabled="stage._id === item.task.stage"
+                            ng-click="selectStage(stage)">{{::stage.name}}</button>
                     </li>
                 </ul>
             </div>
-            <ul class="btn-list">
-                <li>
-                    <button class="cancel" ng-click="close()" translate>cancel</button>
+            <div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
+                <label class="publish-label" translate>Embargo</label>
+                <ul class="publish-list">
+                    <li>
+                        <div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
+                    </li>
+                    <li>
+                        <div sd-timepicker ng-model="item.embargo_time" ng-disabled="!isEmbargoEditable()"></div>
+                    </li>
+                </ul>
+            </div>
+            <div sd-toggle-box data-title="Publishing" data-open="true" ng-if="showPublishSchedule()">
+                <label class="publish-label" translate>Publish Schedule</label>
+                <ul class="publish-list">
+                    <li>
+                        <div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
+                    </li>
+                    <li>
+                        <div sd-timepicker ng-model="item.publish_schedule_time" ng-disabled="!_editable"></div>
+                    </li>
+                </ul>
+            </div>
+            <ul class="btn-list btn-bottom">
+                <li ng-if="mode === 'authoring' && canSendAndContinue()">
+                    <button class="send" ng-click="sendAndContinue()"
+                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    translate>send and continue</button>
                 </li>
                 <li>
                     <button id="send-item-btn" class="send" ng-click="send()"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
                 </li>
-                <li ng-if="mode !== 'authoring'">
-                    <button class="send"
-                        ng-click="send(true)"
-                        ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage) || config"
-                        translate>send and open</button>
+                <li ng-if="mode === 'authoring'">
+                    <button type="submit"
+                    ng-show="_editable"
+                    ng-click="_publish()"
+                    translate>{{_action === "edit" ? "publish": _action}}</button>
                 </li>
-                <li ng-if="mode === 'authoring' && canSendAndContinue()">
-                    <button class="send" ng-click="sendAndContinue()"
-                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
-                    translate>send and continue</button>
-                </li>
-            </ul>
         </div>
     </div>
 </div>

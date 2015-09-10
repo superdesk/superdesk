@@ -30,6 +30,9 @@ describe('Master Desk', function() {
     it('show content view - edit item', function() {
         masterDesks.switchToTab('content');
         masterDesks.editItem(0, 1, 0);
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.sendToButton.click();
         expect(authoring.publish_button.isDisplayed()).toBe(true);
     });
 

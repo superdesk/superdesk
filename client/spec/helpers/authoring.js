@@ -6,7 +6,7 @@ module.exports = new Authoring();
 function Authoring() {
 
     this.lock = element(by.css('[ng-click="lock()"]'));
-    this.publish_button = element(by.buttonText('PUBLISH'));
+    this.publish_button = element(by.buttonText('publish'));
     this.close_button = element(by.buttonText('CLOSE'));
     this.save_button = element(by.buttonText('SAVE'));
 
@@ -75,6 +75,7 @@ function Authoring() {
     };
 
     this.publish = function() {
+        this.sendToButton.click();
         return this.publish_button.click();
     };
 
