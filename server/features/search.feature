@@ -38,48 +38,13 @@ Feature: Search Feature
         [{"name": "Sports Desk", "spike_expiry": 60}]
         """
         Given "archive"
-            """
-            [{"guid": "1", "task": {"desk": "#desks._id#"}}]
-            """
-        When we post to "/archive"
-            """
-            [{"guid": "2", "task": {"desk": "#desks._id#"}}]
-            """
-        When we post to "/archive"
-            """
-            [{"guid": "3", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "4", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "5", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "6", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "7", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "8", "task": {"desk": "#desks._id#"}}]
-            """
-
-        When we post to "/archive"
-            """
-            [{"guid": "9", "task": {"desk": "#desks._id#"}}]
-            """
-
+        """
+        [{"guid": "1", "task": {"desk": "#desks._id#"}}, {"guid": "2", "task": {"desk": "#desks._id#"}},
+         {"guid": "3", "task": {"desk": "#desks._id#"}}, {"guid": "4", "task": {"desk": "#desks._id#"}},
+         {"guid": "5", "task": {"desk": "#desks._id#"}}, {"guid": "6", "task": {"desk": "#desks._id#"}},
+         {"guid": "7", "task": {"desk": "#desks._id#"}}, {"guid": "8", "task": {"desk": "#desks._id#"}},
+         {"guid": "9", "task": {"desk": "#desks._id#"}}]
+        """
         Then we set elastic limit
         When we get "/search"
         Then we get list with 5 items

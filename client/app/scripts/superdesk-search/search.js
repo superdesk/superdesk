@@ -680,10 +680,10 @@
                     }
 
                     /*
-                     * Function for fetching total items and
-                     * filling scope for the first time
+                     * Function for fetching total items and filling scope for the first time.
                      */
                     function queryItems() {
+                        criteria = search.query($location.search()).getCriteria(true);
                         criteria.source.size = 0;
                         scope.total = null;
                         return api.query('search', criteria).then(function (items) {
@@ -774,7 +774,10 @@
                             olditems = scope.items._items || [];
 
                         angular.forEach(newItems, function (item) {
-                            var old = _.find(olditems, {_id: item._id});
+                            var predicate = (item.state === 'ingested') ? {_id: item._id} :
+                                {_id: item._id, _current_version: item._current_version};
+
+                            var old = _.find(olditems, predicate);
                             next.push(old ? angular.extend(old, item) : item);
                         });
 
@@ -837,6 +840,13 @@
                         var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
                         return setView(nextView);
                     }
+
+                    /**
+                     * Generates Identifier to be used by track by expression.
+                     */
+                    scope.generateTrackIdentifier = function(item) {
+                        return (item.state === 'ingested') ? item._id : item._id + ':' + item._current_version;
+                    };
                 }
             };
         }])

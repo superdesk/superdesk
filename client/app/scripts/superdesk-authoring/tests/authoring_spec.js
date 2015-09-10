@@ -362,14 +362,24 @@ describe('autosave', function() {
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('templates'));
 
-    it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
+    it('can fetch an autosave for item locked by user and is editable',
+        inject(function(autosave, api, $q, $rootScope) {
         spyOn(api, 'find').and.returnValue($q.when({}));
-        autosave.open({_locked: false, _id: 1});
+        autosave.open({_locked: false, _editable: true, _id: 1});
         $rootScope.$digest();
         expect(api.find).toHaveBeenCalledWith('archive_autosave', 1);
     }));
 
-    it('will skip autosave fetch when item is locked', inject(function(autosave, api, $rootScope) {
+    it('will skip autosave fetch when item is locked by user but not editable',
+        inject(function(autosave, api, $q, $rootScope) {
+        spyOn(api, 'find').and.returnValue($q.when({}));
+        autosave.open({_locked: false, _editable: false, _id: 1});
+        $rootScope.$digest();
+        expect(api.find).not.toHaveBeenCalled();
+    }));
+
+    it('will skip autosave fetch when item is locked by another user',
+        inject(function(autosave, api, $rootScope) {
         spyOn(api, 'find');
         autosave.open({_locked: true});
         $rootScope.$digest();

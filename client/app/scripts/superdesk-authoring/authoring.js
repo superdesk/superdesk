@@ -109,7 +109,7 @@
          * Open an item
          */
         this.open = function openAutosave(item) {
-            if (item._locked || item.read_only) {
+            if (item._locked || !item._editable) {
                 // no way to get autosave
                 return $q.when(item);
             }
@@ -835,7 +835,12 @@
                             });
 
                             var compiled = _.template(body);
-                            var args = _.pick($scope.origItem, placeholders);
+                            var args = {};
+
+                            _.each(placeholders, function(placeholder) {
+                                args[placeholder] = (placeholder !== 'dateline') ? $scope.origItem[placeholder] :
+                                    $scope.origItem[placeholder].text.toUpperCase();
+                            });
                             $scope.origItem.body_html = compiled(args);
                         }
                         _.each(template, function(value, key) {
@@ -1145,7 +1150,11 @@
                 };
 
                 $scope.openAction = function(action) {
-                    $location.path('/authoring/' + $scope.item._id + '/' + action);
+                    if (action === 'correct') {
+                        authoringWorkspace.correct($scope.item);
+                    } else if (action === 'kill') {
+                        authoringWorkspace.kill($scope.item);
+                    }
                 };
 
                 $scope.isLockedByMe = function() {
