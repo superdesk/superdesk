@@ -98,17 +98,21 @@ describe('Package', function() {
         monitoring.openAction(4, 0);
         browser.sleep(1000);
         expect(authoring.getGroupItems('STORY').count()).toBe(0);
+
         var menu = monitoring.openItemMenu(1, 0);
         browser.actions().mouseMove(element(by.partialLinkText('Add to package'))).perform();
         menu.element(by.partialButtonText('story')).click();
         expect(authoring.getGroupItems('STORY').count()).toBe(1);
+
         browser.sleep(1000);
         authoring.save();
         browser.refresh();
         monitoring.openAction(4, 0);
         browser.sleep(500);
         menu = monitoring.openItemMenu(1, 0);
-        expect(menu.element(by.partialLinkText('Add to package')).isPresent()).toBe(false);
+        browser.actions().mouseMove(element(by.partialLinkText('Add to package'))).perform();
+        menu.element(by.partialButtonText('story')).click();
+        expect(authoring.getGroupItems('STORY').count()).toBe(1);
     });
 
     it('create package from published item', function() {
