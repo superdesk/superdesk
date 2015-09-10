@@ -6,11 +6,11 @@
     </div>
 </div>
 
-<div class="dropdown dropleft dropdown-bigger" dropdown>
+<div class="dropdown dropright dropdown-bigger" dropdown sd-dropdown-position>
     <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-if="header && !disabled">
         <i class="icon-white icon-plus-large"></i>
     </button>
-    <ul class="dropdown-menu nested-menu">
+    <ul class="dropdown-menu nested-menu pull-right">
         <li ng-show="!activeTerm && header">
             <ul sd-typeahead items="terms" term="selectedTerm" search="searchTerms(term)" select="selectTerm(item)" always-visible="header" data-disabled="disabled">
                 <li typeahead-item="t" ng-repeat="t in terms" ng-if="!activeTree.length || activeList"><button>{{ :: t.name }}</button></li>
