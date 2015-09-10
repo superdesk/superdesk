@@ -421,7 +421,7 @@ define([
                         }]
                 })
                 .activity('rewrite', {
-                    label: gettext('Re-write'),
+                    label: gettext('Update'),
                     icon: 'multi-star-color',
                     filters: [{action: 'list', type: 'archive'}],
                     group: 'corrections',
@@ -439,13 +439,13 @@ define([
                                     return api.save('archive_rewrite', {}, {}, data.item);
                                 })
                                 .then(function(new_item) {
-                                    notify.success(gettext('Rewrite Created.'));
+                                    notify.success(gettext('Update Created.'));
                                     superdesk.intent('author', 'article', new_item._id);
                                 }, function(response) {
                                     if (angular.isDefined(response.data._message)) {
-                                        notify.error(gettext('Failed to generate rewrite: ' + response.data._message));
+                                        notify.error(gettext('Failed to generate update: ' + response.data._message));
                                     } else {
-                                        notify.error(gettext('There is an error. Failed to generate rewrite.'));
+                                        notify.error(gettext('There is an error. Failed to generate update.'));
                                     }
                                 });
                         }]
