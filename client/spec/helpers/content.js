@@ -58,7 +58,7 @@ function Content() {
     };
 
     this.editItem = function(item) {
-        return this.actionOnItem('Edit item', item);
+        return this.actionOnItem('Edit', item);
     };
 
     function waitFor(elem) {
