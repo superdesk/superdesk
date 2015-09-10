@@ -1846,7 +1846,7 @@
                     authoring: true
                 })
                 .activity('edit.item', {
-                    label: gettext('Edit item'),
+                    label: gettext('Edit'),
                     priority: 10,
                     icon: 'pencil',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {

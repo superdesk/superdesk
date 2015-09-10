@@ -89,11 +89,9 @@ function Workspace() {
     };
 
     this.editItem = function(item, desk) {
-        return this.switchToDesk(desk || 'PERSONAL')
-        .then(content.setListView)
-        .then(function() {
-            return content.actionOnItem('Edit item', item);
-        });
+        this.switchToDesk(desk || 'PERSONAL');
+        content.setListView();
+        return content.editItem(item);
     };
 
     this.actionOnItem = function(action, item, desk, stage) {
