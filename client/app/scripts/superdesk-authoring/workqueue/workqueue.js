@@ -95,7 +95,7 @@ function WorkqueueListDirective($rootScope, authoringWorkspace) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         controller: 'Workqueue',
-        scope: true,
+        scope: {},
         link: function(scope) {
             scope.edit = function(item, event) {
                 if (!event.ctrlKey) {
@@ -107,7 +107,7 @@ function WorkqueueListDirective($rootScope, authoringWorkspace) {
 
             scope.link = function(item) {
                 if (item) {
-                    return item.type === 'composite' ? $rootScope.link('edit.package', item) : $rootScope.link('edit.text', item);
+                    return $rootScope.link('authoring', item);
                 }
             };
         }

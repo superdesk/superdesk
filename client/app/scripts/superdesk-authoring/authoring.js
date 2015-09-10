@@ -1836,15 +1836,18 @@
                     },
                     authoring: true
                 })
-                .activity('edit.text', {
+                .activity('edit.item', {
                     label: gettext('Edit item'),
                     priority: 10,
                     icon: 'pencil',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
-                        authoringWorkspace.edit(data.item);
+                        authoringWorkspace.edit(data.item ? data.item : data);
                     }],
-                    filters: [{action: 'list', type: 'archive'}],
-                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                    filters: [
+                        {action: 'list', type: 'archive'},
+                        {action: 'edit', type: 'item'}
+                    ],
+                    additionalCondition: ['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).edit;
                     }]
                 })
@@ -1876,17 +1879,18 @@
                     }],
                     privileges: {correct: 1}
                 })
-                .activity('view.text', {
+                .activity('view.item', {
                     label: gettext('View item'),
                     priority: 2000,
                     icon: 'fullscreen',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.view(data.item);
                     }],
-                    filters: [{action: 'list', type: 'archive'}, {action: 'list', type: 'legal_archive'}],
-                    condition: function(item) {
-                        return item.type !== 'composite';
-                    }
+                    filters: [
+                        {action: 'list', type: 'archive'},
+                        {action: 'list', type: 'legal_archive'},
+                        {action: 'view', type: 'item'}
+                    ]
                 })
                 .activity('edit.crop', {
                     label: gettext('EDIT CROP'),
@@ -1895,12 +1899,6 @@
                     controller: ChangeImageController,
                     templateUrl: 'scripts/superdesk-authoring/views/change-image.html',
                     filters: [{action: 'edit', type: 'crop'}]
-                })
-                .activity('edit.item', {
-                    filters: [{action: 'edit', type: 'item'}],
-                    controller: ['authoringWorkspace', 'data', function(authoringWorkspace, data) {
-                        authoringWorkspace.edit(data);
-                    }]
                 });
         }])
         .config(['apiProvider', function(apiProvider) {

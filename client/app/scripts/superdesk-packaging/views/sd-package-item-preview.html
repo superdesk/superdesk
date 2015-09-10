@@ -17,23 +17,10 @@
             <div ng-hide=":: data.headline || data.slugline || data.description" translate>Blank headline received</div>
         </div>
 
-        <a
-            ng-if="(data.type !== 'composite') && data.guid && !error"
-            ng-href="#/authoring/{{ data.guid }}/view/archive?_id={{ data.guid }}"
+        <a ng-if="data.guid && !error"
+            ng-click="open(data)"
             title="{{ :: 'Open item' | translate }}"
-            ng-click="$event.stopPropagation();"
-            class="open-item">
-            <i class="icon-external"></i>
-        </a>
-
-        <a
-            ng-if="(data.type === 'composite') && data.guid && !error"
-            ng-href="#/packaging/{{ data.guid }}/view/packaging?_id={{ data.guid }}"
-            title="{{ :: 'Open item' | translate }}"
-            ng-click="$event.stopPropagation();"
-            class="open-item">
-            <i class="icon-external"></i>
-        </a>
+            class="open-item"><i class="icon-external"></i></a>
 
         <div class="package-details" ng-if="data.type === 'composite'"><i class="svg-icon-right"></i></div>
 

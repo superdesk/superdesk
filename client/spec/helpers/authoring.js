@@ -218,7 +218,7 @@ function Authoring() {
     var bodyHtml = element(by.model('item.body_html')).all(by.className('editor-type-html')).first();
     var headline = element(by.model('item.headline')).all(by.className('editor-type-html')).first();
     var abstract = element(by.model('item.abstract')).all(by.className('editor-type-html')).first();
-    var packageSlugline = element(by.className('keyword'));
+    var packageSlugline = element.all(by.className('keyword')).last();
 
     this.writeText = function (text) {
         bodyHtml.sendKeys(text);
@@ -233,6 +233,9 @@ function Authoring() {
     };
 
     this.writeTextToPackageSlugline = function (text) {
+        browser.wait(function() {
+            return packageSlugline.isDisplayed();
+        }, 100);
         packageSlugline.sendKeys(text);
     };
 

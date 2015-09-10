@@ -197,13 +197,16 @@ define([
                         }
 
                         return _.sortBy(_.filter(this.activities, function(activity) {
-                            var additionalConditionValue = true;
-                            if (activity.additionalCondition) {
-                                additionalConditionValue = $injector.invoke(activity.additionalCondition, {}, {'item': item});
-                            }
-
                             return _.find(activity.filters, criteria) && isAllowed(activity) &&
-                                activity.condition(item) && additionalConditionValue;
+                                activity.condition(item) && testAdditionalCondition();
+
+                            function testAdditionalCondition() {
+                                if (activity.additionalCondition) {
+                                    return $injector.invoke(activity.additionalCondition, {}, {'item': item ? item : intent.data});
+                                }
+
+                                return true;
+                            }
                         }), 'priority').reverse();
                     },
 

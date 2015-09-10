@@ -11,7 +11,13 @@ describe('Content', function() {
     var body = element(by.tagName('body'));
 
     function selectedHeadline() {
-        return element(by.binding('selected.preview.headline')).getText();
+        var headline = element(by.className('preview-headline'));
+
+        browser.wait(function() {
+            return headline.isDisplayed();
+        }, 100); // animated sidebar
+
+        return headline.getText();
     }
 
     beforeEach(function() {
