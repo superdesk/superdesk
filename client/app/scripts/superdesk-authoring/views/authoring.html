@@ -5,9 +5,10 @@
             <div class="page-content-container"
                  ng-click="views.send = false">
                 <div class="theme-controls">
-                    <button class="proofread-toggle btn btn-light"
+                    <button class="proofread-toggle btn"
                             ng-class="{active: proofread}"
-                            ng-click="proofread = !proofread">
+                            ng-click="proofread = !proofread"
+                            title="{{:: 'Toggle theme' | translate}}">
                         <i class="icon-adjust"></i>
                     </button>
 

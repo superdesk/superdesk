@@ -1,17 +1,29 @@
 <div class="dropdown theme-select pull-right" dropdown>
     <button class="dropdown-toggle" dropdown-toggle>
-        <i class="icon-dots-vertical"></i>
+        <i class="icon-chevron-down-thin"></i>
     </button>
-    <div class="dropdown-menu pull-right">
-        <ul>
+    <div class="dropdown-menu pull-right" ng-click="$event.stopPropagation()">
+        <ul class="normal-theme-list">
             <li>
-                <div ng-if="key === 'theme'" class="menu-label" translate>Choose Normal Theme</div>
-                <div ng-if="key === 'proofreadTheme'" class="menu-label" translate>Choose Proofread Theme</div>
+                <i class="theme-status" ng-class="{active: key === 'theme'}"></i>
+                <div class="menu-label" translate>Choose Normal Theme</div>
             </li>
             <li ng-repeat="t in themes">
-                <button ng-click="changeTheme(t)" class="{{t.cssClass}}">
-                    {{t.label}}
+                <button ng-click="changeTheme('theme', t)" class="{{t.cssClass}}">
+                    {{:: t.label}}
                     <i class="icon-ok" ng-if="theme === t"></i>
+                </button>
+            </li>
+        </ul>
+        <ul class="proofread-theme-list">
+            <li>
+                <i class="theme-status" ng-class="{active: key === 'proofreadTheme'}"></i>
+                <div class="menu-label" translate>Choose Proofread Theme</div>
+            </li>
+            <li ng-repeat="t in themes">
+                <button ng-click="changeTheme('proofreadTheme', t)" class="{{t.cssClass}}">
+                    {{:: t.label}}
+                    <i class="icon-ok" ng-if="proofreadTheme === t"></i>
                 </button>
             </li>
         </ul>

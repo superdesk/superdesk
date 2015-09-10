@@ -1229,3 +1229,53 @@ describe('authoring container directive', function() {
         expect(iscope.authoring.action).toBe('correct');
     }));
 });
+
+describe('authoring themes', function () {
+    beforeEach(module('superdesk.preferences'));
+    beforeEach(module('superdesk.authoring'));
+
+    beforeEach(inject(function ($q, preferencesService) {
+        spyOn(preferencesService, 'get').and.returnValue($q.when({'editor:theme': ['theme:proofreadTheme']}));
+    }));
+
+    var normalTheme = {
+        cssClass: '',
+        label: 'Default Theme normal',
+        key: 'default-normal'
+    },
+    darkTheme = {
+        cssClass: 'dark-theme-mono',
+        label: 'Dark Theme monospace',
+        key: 'dark-mono'
+    };
+
+    it('can define normal theme', inject(function (authThemes) {
+        spyOn(authThemes, 'save');
+        authThemes.save('theme', normalTheme);
+        expect(authThemes.save).toHaveBeenCalledWith('theme', normalTheme);
+    }));
+
+    it('can define proofread theme', inject(function (authThemes) {
+        spyOn(authThemes, 'save');
+        authThemes.save('proofreadTheme', darkTheme);
+        expect(authThemes.save).toHaveBeenCalledWith('proofreadTheme', darkTheme);
+    }));
+
+    it('can get normal theme', inject(function (authThemes, preferencesService, $rootScope, $q) {
+        var theme = null;
+        authThemes.get('theme').then(function (_theme) {
+            theme = _theme;
+        });
+        $rootScope.$digest();
+        expect(theme).not.toBe(null);
+    }));
+
+    it('can get proofread theme', inject(function (authThemes, preferencesService, $rootScope, $q) {
+        var proofreadTheme = null;
+        authThemes.get('proofreadTheme').then(function (_theme) {
+            proofreadTheme = _theme;
+        });
+        $rootScope.$digest();
+        expect(proofreadTheme).not.toBe(null);
+    }));
+});
