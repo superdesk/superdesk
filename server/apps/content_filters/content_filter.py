@@ -74,7 +74,6 @@ class ContentFilterService(BaseService):
         return self.backend.get(self.datasource, req=req, lookup=lookup)
 
     def update(self, id, updates, original):
-        import pudb; pu.db
         content_filter = dict(original)
         content_filter.update(updates)
         self._validate_no_circular_reference(content_filter, content_filter['_id'])

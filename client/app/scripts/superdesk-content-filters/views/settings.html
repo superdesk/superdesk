@@ -1,18 +1,47 @@
-<div sd-settings-view>
-  <div class="split-content" sd-dictionary-config>
+<div id="content-filters-settings" sd-settings-view>
+  <div class="split-content">
 
-    <div class="header">
-      <h2 translate>Content Filters Management</h2>
-      TODO: add tabs like in publish_filters
+    <ul class="nav nav-tabs">
+        <li ng-class="{active: ctrl.activeTab === 'filters'}">
+            <button
+                ng-click="ctrl.changeTab('filters')"
+                translate>Filters</button>
+        </li>
 
-      <button class="btn btn-info pull-right">
-        <i class="icon-plus-sign icon-white"></i>
-        {{ :: 'Click Me' | translate }}
-      </button>
-    </div>
+        <li ng-class="{active: ctrl.activeTab === 'filter_conditions'}">
+            <button
+                ng-click="ctrl.changeTab('filter_conditions')"
+                translate>Filter Conditions</button>
+        </li>
 
-    <div class="content">
-      <p>This is the content (in filters settings template</p>
+
+        <li ng-class="{active: ctrl.activeTab === 'filter_search'}">
+            <button
+                ng-click="ctrl.changeTab('filter_search')"
+                translate>Filter Search</button>
+        </li>
+    </ul>
+
+    <div class="content" ng-switch="ctrl.activeTab">
+        <div ng-switch-when="filter_conditions">
+            <div ng-include="ctrl.TEMPLATES_DIR +
+                             '/manage-filter-conditions.html'">
+            </div>
+        </div>
+
+        <div ng-switch-when="filters">
+            <div sd-manage-filters-tab></div>
+        </div>
+
+        <div ng-switch-when="filter_search">
+            <!-- TODO: what is this data-search?
+            also, does this get reloaded everytime the tab is switched?
+            should perhaps not, right?
+            -->
+            <div ng-include="ctrl.TEMPLATES_DIR + '/filter-search.html'"
+                 data-search="search">
+            </div>
+        </div>
     </div>
 
   </div>

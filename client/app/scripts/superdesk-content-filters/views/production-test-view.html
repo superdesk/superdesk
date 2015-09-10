@@ -1,0 +1,73 @@
+<section class="main-section.filter">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
+        <div class="list-pane">
+            <header>
+                <div class="sortbar pull-left">
+                    <span ng-repeat="type in resultType">
+                        <input type="radio" ng-click="fetchResults()" name="type" value="{{ :: type.value}}" data-ng-model="model.selectedType"> {{ :: type.id}}
+                    </span>
+                </div>
+
+            </header>
+            <div class="content">
+                <div sd-shadow>
+                    <table class="table styled-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th translate>State</th>
+                                <th translate>Unique Name</th>
+                                <th translate>Headline</th>
+                                <th translate>Keywords</th>
+                                <th translate>Source</th>
+                                <th translate>ANPA Category</th>
+                                <th translate>View</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr 
+                            ng-class="{active: result_item === selectedItem, archived: result_item.archived || result_item.created,
+                            locked: lock.isLocked}" tabindex="1" ng-keyup="handleKeyEvent($event)" 
+                            ng-repeat="result_item in testResult track by result_item._id" ng-click="preview(result_item);"
+                            >
+                                <td><i class="filetype-icon-{{result_item.type}}" ng-hide="hover || item.selected"></i></td>
+                                <td><div class="state-label state-{{result_item.state}}">{{ :: result_item.state}}</div></td>
+                                <td>{{ :: result_item.unique_name}}</td>
+                                <td>{{ :: result_item.headline | limitTo: 60}}
+                                    <span sd-item-container data-item="result_item" title="{{ result_item.container }}" 
+                                    class="container"></span>
+                                </td>
+                                <td>{{ :: result_item.slugline | limitTo: 40}}</td>
+                                <td>{{ :: result_item.source}}</td>
+                                <td>{{ :: result_item['anpa_category'] | mergeWords:'name' }}</td>
+                                <td>
+                                    <i ng-click="openView(result_item)" class="icon-fullscreen true" title="Open in new tab"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+        <div class="preview-pane content-item-preview" ng-show="selected.preview" ng-init="tab = 'content'">
+        <header>
+          <ul class="nav nav-tabs">
+            <li ng-class="{active: tab === 'content'}">
+              <button ng-click="tab = 'content'"><span translate>Content</span></button>
+            </li>
+            <li ng-class="{active: tab === 'metadata'}">
+              <button ng-click="tab = 'metadata'"><span translate>Metadata</span></button>
+            </li>
+          </ul>
+          <button ng-click="preview(null)" class="close-preview">
+            <i class="icon-close-small"></i>
+          </button>
+        </header>
+        <div class="content" ng-if="selected.preview">
+          <div ng-if="tab === 'content'" sd-media-preview></div>
+          <div ng-if="tab === 'metadata'" sd-media-metadata data-item="selected.preview"></div>
+        </div>
+      </div>
+    </div>
+</section>
+<div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>

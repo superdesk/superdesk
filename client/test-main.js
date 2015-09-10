@@ -53,6 +53,9 @@ tests.push('superdesk-authoring/packages/packages');
 tests.push('superdesk-authoring/editor/find-replace');
 tests.push('superdesk-authoring/multiedit/multiedit');
 tests.push('superdesk-authoring/macros/macros');
+
+tests.push('superdesk-content-filters/content-filters');
+
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-packaging/packaging');
 tests.push('superdesk-desks/desks');
