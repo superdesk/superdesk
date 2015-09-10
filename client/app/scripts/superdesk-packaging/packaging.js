@@ -324,8 +324,8 @@
         };
     }
 
-    PackageItemsEditDirective.$inject = ['packages'];
-    function PackageItemsEditDirective(packages) {
+    PackageItemsEditDirective.$inject = ['packages', 'notify'];
+    function PackageItemsEditDirective(packages, notify) {
         return {
             scope: false,
             require: 'ngModel',
@@ -338,7 +338,11 @@
                         groupIndex = scope.list.length - 1;
                     }
                     for (var i = 0; i < data.items.length; i++) {
-                        scope.list[groupIndex].items.unshift(packages.getReferenceFor(data.items[i]));
+                        if (isAdded(data.items[i])) {
+                            notify.error(gettext('Item is already in this package.'));
+                        } else {
+                            scope.list[groupIndex].items.unshift(packages.getReferenceFor(data.items[i]));
+                        }
                     }
                     autosave();
                 });
@@ -424,6 +428,14 @@
                 function autosave() {
                     ngModel.$setViewValue({list: scope.list});
                     scope.autosave(scope.item);
+                }
+
+                function isAdded(item) {
+                    return scope.list.some(function(group) {
+                        return group.items.some(function(i) {
+                            return i.residRef === item._id;
+                        });
+                    });
                 }
             }
         };
@@ -702,10 +714,9 @@
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
-                additionalCondition:['packages', 'authoringWorkspace', 'item', function(packages, authoringWorkspace, item) {
+                additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
                     var pkg = authoringWorkspace.getItem();
-                    return pkg && pkg.type === 'composite' &&
-                        pkg._id !== item._id && !packages.isAdded(pkg, item);
+                    return pkg && pkg.type === 'composite' && pkg._id !== item._id;
                 }],
                 group: 'packaging'
             });
