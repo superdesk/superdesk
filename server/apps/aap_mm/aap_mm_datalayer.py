@@ -8,6 +8,7 @@ from superdesk.utc import utc, utcnow
 from eve_elastic.elastic import ElasticCursor
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.errors import SuperdeskApiError
 from flask import url_for
 
 import logging
@@ -165,10 +166,12 @@ class AAPMMDatalayer(DataLayer):
         out = BytesIO(r.data)
         file_name, content_type, metadata = process_file_from_stream(out, mime_type)
 
+        inserted = []
+
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
-            file_id = self._app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            file_id = self._app.media.put(out, filename=file_name, content_type=content_type, metadata=None)
             doc['mimetype'] = content_type
             doc['filemeta'] = decode_metadata(metadata)
             # set the version created to now to bring it to the top of the desk, images can be quite old
@@ -178,12 +181,15 @@ class AAPMMDatalayer(DataLayer):
             rendition_spec = self._app.config['RENDITIONS']['picture']
 
             renditions = generate_renditions(out, file_id, inserted, file_type,
-                                             content_type, rendition_spec, self.url_for_media)
+                                             content_type, rendition_spec,
+                                             self.url_for_media, insert_metadata=False)
             doc['renditions'] = renditions
         except Exception as io:
             logger.exception(io)
             for file_id in inserted:
                 delete_file_on_error(doc, file_id)
+
+            raise SuperdeskApiError.internalError('Generating renditions failed')
 
         return doc
 
