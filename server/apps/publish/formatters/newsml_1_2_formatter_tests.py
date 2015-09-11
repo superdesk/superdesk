@@ -107,7 +107,6 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         self.formatter._format_news_envelope(self.preformatted, newsml, 7)
         self.assertEquals(newsml.find('Priority').get('FormalName'), '5')
 
-
     def test_format_identification(self):
         self.formatter._format_identification(self.article, self.newsml)
         self.assertEquals(self.newsml.find('Identification/NewsIdentifier/ProviderId').text, 'sourcefabric.org')

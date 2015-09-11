@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from apps.publish.formatters import Formatter
-from apps.publish.formatters.aap_formatter_common import map_priority, set_subject
+from apps.publish.formatters.aap_formatter_common import map_priority
 import superdesk
 from bs4 import BeautifulSoup
 from superdesk.errors import FormatterError
