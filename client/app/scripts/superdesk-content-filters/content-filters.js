@@ -282,7 +282,8 @@
                         $scope.close();
                     },
                     function(response) {
-                        if (angular.isDefined(response.data._issues['validator exception'])) {
+                        if (angular.isDefined(response.data._issues) &&
+                            angular.isDefined(response.data._issues['validator exception'])) {
                             notify.error(gettext('Error: ' + response.data._issues['validator exception']));
                         } else if (angular.isDefined(response.data._issues)) {
                             if (response.data._issues.name && response.data._issues.name.unique) {
@@ -292,7 +293,7 @@
                             }
                         } else if (angular.isDefined(response.data._message)) {
                             notify.error(gettext('Error: ' + response.data._message));
-                        } else if (angular.isDefined(response.status === 500)) {
+                        } else if (response.status === 500) {
                             notify.error(gettext('Error: Internal error in Filter testing'));
                         } else {
                             notify.error(gettext('Error: Failed to test content filter.'));
