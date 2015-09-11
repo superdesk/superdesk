@@ -418,7 +418,7 @@ class ArchiveService(BaseService):
 
         new_versions = []
         for old_version in old_versions:
-            old_version[versioned_id_field()] = new_doc[config.ID_FIELD]
+            old_version[versioned_id_field({'id_field': config.ID_FIELD})] = new_doc[config.ID_FIELD]
             del old_version[config.ID_FIELD]
 
             old_version['guid'] = new_doc['guid']
@@ -491,7 +491,7 @@ class ArchiveService(BaseService):
 
         doc_id = str(doc[config.ID_FIELD])
         super().delete_action({config.ID_FIELD: doc_id})
-        get_resource_service('archive_versions').delete(lookup={versioned_id_field(): doc_id})
+        get_resource_service('archive_versions').delete(lookup={versioned_id_field({'id_field': config.ID_FIELD}): doc_id})
 
     def __is_req_for_save(self, doc):
         """
@@ -544,7 +544,7 @@ class ArchiveService(BaseService):
 class AutoSaveResource(Resource):
     endpoint_name = 'archive_autosave'
     item_url = item_url
-    schema = item_schema({'_id': {'type': 'string'}})
+    schema = item_schema({'_id': {'type': 'string', 'unique': True}})
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH', 'DELETE']
     resource_title = endpoint_name
