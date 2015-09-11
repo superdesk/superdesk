@@ -224,8 +224,10 @@
                         scope.wsList = _workspaces;
                         if (activeId) {
                             scope.selected = _.find(scope.wsList, {_id: activeId});
+                            scope.workspaceType = 'workspace';
                         } else {
                             scope.selected = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
+                            scope.workspaceType = 'desk';
                         }
                     });
                 }

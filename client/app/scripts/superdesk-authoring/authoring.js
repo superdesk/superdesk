@@ -1374,22 +1374,43 @@
                 var DEFAULT_CLASS = 'main-article theme-container';
 
                 scope.themes = authThemes.availableThemes;
-                authThemes.get(scope.key).then(function(theme) {
+                authThemes.get('theme').then(function(theme) {
                     scope.theme = theme;
-                    applyTheme();
+                    if (scope.key === 'theme') {
+                        applyTheme(theme);
+                    }
+                });
+                authThemes.get('proofreadTheme').then(function(theme) {
+                    scope.proofreadTheme = theme;
+                    if (scope.key === 'proofreadTheme') {
+                        applyTheme(theme);
+                    }
                 });
 
-                scope.changeTheme = function(theme) {
-                    scope.theme = theme;
-                    authThemes.save(scope.key, theme);
-                    applyTheme();
+                /*
+                 * Changing predefined themes for proofread and normal mode
+                 *
+                 * @param {string} key Type of theme (proofread or normal)
+                 * @param {object} theme New theme
+                 */
+                scope.changeTheme = function(key, theme) {
+                    scope[key] = theme;
+                    authThemes.save(key, theme);
+                    if (scope.key === key) {
+                        applyTheme(theme);
+                    }
                 };
 
-                function applyTheme() {
+                /*
+                 * Applying a theme for currently selected mode
+                 *
+                 * @param {object} theme New theme
+                 */
+                function applyTheme(theme) {
                     elem.closest('.page-content-container')
                         .children('.theme-container')
                         .attr('class', DEFAULT_CLASS)
-                        .addClass(scope.theme && scope.theme.cssClass);
+                        .addClass(theme && theme.cssClass);
                 }
             }
         };
