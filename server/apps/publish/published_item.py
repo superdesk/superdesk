@@ -321,7 +321,8 @@ class PublishedItemService(BaseService):
 
             # Step 4
             if self.can_remove_from_production(doc):
-                lookup = {'$and': [{versioned_id_field(): doc['item_id']},
+                resource_def = app.config['DOMAIN']['archive_versions']
+                lookup = {'$and': [{versioned_id_field(resource_def): doc['item_id']},
                                    {config.VERSION: {'$lte': doc[config.VERSION]}}]}
                 get_resource_service('archive_versions').delete(lookup)
 
@@ -428,7 +429,8 @@ class PublishedItemService(BaseService):
         # Step 1 - Get Version History
         req = ParsedRequest()
         req.sort = '[("%s", 1)]' % config.VERSION
-        lookup = {'$and': [{versioned_id_field(): legal_archive_doc[config.ID_FIELD]},
+        resource_def = app.config['DOMAIN']['archive_versions']
+        lookup = {'$and': [{versioned_id_field(resource_def): legal_archive_doc[config.ID_FIELD]},
                            {config.VERSION: {'$lte': legal_archive_doc[config.VERSION]}}]}
 
         version_history = get_resource_service('archive_versions').get(req=req, lookup=lookup)
