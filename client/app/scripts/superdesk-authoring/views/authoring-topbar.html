@@ -107,11 +107,6 @@
             </div>
         </div>
 
-        <div ng-if="item._type !== 'legal_archive'" class="navbtn dropdown strict pull-left" title="{{ :: 'Create' | translate }}" dropdown>
-            <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-            <ul class="dropdown-menu pull-right" sd-content-create></ul>
-        </div>
-
         <button id="send-to-btn" ng-show="_editable && $root.isActionAllowed(item, 'move') && itemActions.send"
             class="navbtn navbtn-hover" title="{{ :: 'Send to / Publish' | translate }}"
             ng-click="views.send = !views.send">
