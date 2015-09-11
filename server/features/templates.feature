@@ -1,4 +1,4 @@
-Feature: Templates fetching
+Feature: Templates
 
     @auth
     Scenario: Get predifined templates
@@ -26,3 +26,20 @@ Feature: Templates fetching
         """
         {"template_desk": null}
         """
+
+    @auth
+    Scenario: User can schedule a content creation
+        When we post to "content_templates"
+        """
+        {"template_name": "test", "template_type": "create", "headline": "test", "type": "text", "slugline": "test",
+         "schedule": {"day_of_week": ["MON"], "create_at": "0815"}}
+        """
+        Then we get new resource
+        And next run is on monday "0815"
+
+        When we patch latest
+        """
+        {"schedule": {"day_of_week": ["MON"], "create_at": "0915"}}
+        """
+        Then next run is on monday "0915"
+        And last run is set

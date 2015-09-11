@@ -21,6 +21,15 @@ from superdesk.metadata.item import CONTENT_STATE
 logger = logging.getLogger(__name__)
 
 
+WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+
+
+def parse_time(current_datetime, timestr=None):
+    if timestr is None:
+        timestr = '0000'
+    return current_datetime.replace(hour=int(timestr[:2]), minute=int(timestr[-2:]), second=0)
+
+
 class RoutingRuleSchemeResource(Resource):
     """
     Resource class for 'routing_schemes' endpoint
@@ -107,7 +116,6 @@ class RoutingRuleSchemeService(BaseService):
     """
     Service class for 'routing_schemes' endpoint.
     """
-    day_of_week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
     def on_create(self, docs):
         """
@@ -218,7 +226,7 @@ class RoutingRuleSchemeService(BaseService):
 
         if schedule:
             day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
-            if not (len(set(day_of_week) & set(self.day_of_week)) == len(day_of_week)):
+            if not (len(set(day_of_week) & set(WEEKDAYS)) == len(day_of_week)):
                 raise SuperdeskApiError.badRequestError(message="Invalid values for day of week.")
 
             if schedule.get('hour_of_day_from') or schedule.get('hour_of_day_to'):
@@ -256,13 +264,9 @@ class RoutingRuleSchemeService(BaseService):
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '0000')[:2]),
-                                                     minute=int(schedule.get('hour_of_day_from', '0000')[-2:]),
-                                                     second=0)
-                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_to', '2359')[:2]),
-                                                   minute=int(schedule.get('hour_of_day_to', '2359')[-2:]),
-                                                   second=59)
-                if not ((self.day_of_week[current_datetime.weekday()] in schedule.get('day_of_week', []))
+                from_time = parse_time(current_datetime, schedule.get('hour_of_day_from'))
+                to_time = parse_time(current_datetime, schedule.get('hour_of_day_to'))
+                if not ((WEEKDAYS[current_datetime.weekday()] in schedule.get('day_of_week', []))
                         and (from_time < current_datetime < to_time)):
                     is_scheduled = False
 

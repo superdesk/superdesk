@@ -9,11 +9,41 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import re
+import datetime
 from superdesk import Resource, Service
+from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema
+from apps.rules.routing_rules import WEEKDAYS, parse_time
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
+
+
+def get_next_run(schedule, now=None):
+    """Get next run time based on schedule.
+
+    Schedule is day of week and time.
+
+    :param dict schedule: dict with `day_of_week` and `create_at` params
+    :param datetime now
+    :return datetime
+    """
+    allowed_days = [WEEKDAYS.index(day.upper()) for day in schedule.get('day_of_week')]
+    if not allowed_days:
+        return None
+
+    if now is None:
+        now = utcnow()
+    next_run = parse_time(now, schedule.get('create_at'))
+
+    if next_run < now:
+        # if the time passed already skip today
+        next_run += datetime.timedelta(days=1)
+
+    while next_run.weekday() not in allowed_days:
+        next_run += datetime.timedelta(days=1)
+
+    return next_run
 
 
 class ContentTemplatesResource(Resource):
@@ -30,6 +60,9 @@ class ContentTemplatesResource(Resource):
             'default': 'create',
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
+        'schedule': {'type': 'dict'},
+        'last_run': {'type': 'datetime', 'readonly': True},
+        'next_run': {'type': 'datetime', 'readonly': True},
     }
 
     schema.update(metadata_schema)
@@ -50,11 +83,16 @@ class ContentTemplatesService(Service):
         for doc in docs:
             doc['template_name'] = doc['template_name'].lower().strip()
             self.validate_template_name(doc['template_name'])
+            if doc.get('schedule'):
+                doc['next_run'] = get_next_run(doc.get('schedule'))
 
     def on_update(self, updates, original):
         if 'template_name' in updates:
             updates['template_name'] = updates['template_name'].lower().strip()
             self.validate_template_name(updates['template_name'])
+        if updates.get('schedule'):
+            updates['last_run'] = original.get('next_run')
+            updates['next_run'] = get_next_run(updates.get('schedule'))
 
     def validate_template_name(self, doc_template_name):
         query = {'template_name': re.compile('^{}$'.format(doc_template_name), re.IGNORECASE)}
