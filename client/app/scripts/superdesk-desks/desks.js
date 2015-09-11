@@ -429,6 +429,8 @@
                     templateUrl: 'scripts/superdesk-desks/views/main.html',
                     sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: DeskListController,
+                    priority: -100,
+                    adminTools: false,
                     category: superdesk.MENU_MAIN,
                     privileges: {desks: 1}
                 })

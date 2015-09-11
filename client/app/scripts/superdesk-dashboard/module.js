@@ -146,6 +146,7 @@ define([
             topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
             sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
             priority: -1000,
+            adminTools: false,
             category: superdesk.MENU_MAIN
         });
     }]);

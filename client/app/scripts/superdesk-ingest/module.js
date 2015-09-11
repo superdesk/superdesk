@@ -1333,6 +1333,8 @@ define([
                 templateUrl: 'scripts/superdesk-ingest/views/dashboard/dashboard.html',
                 controller: IngestDashboardController,
                 category: superdesk.MENU_MAIN,
+                priority: 100,
+                adminTools: true,
                 privileges: {ingest_providers: 1}
             })
             .activity('fetchAs', {

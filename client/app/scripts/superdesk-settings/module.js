@@ -14,6 +14,7 @@ define([
                 templateUrl: require.toUrl('./views/main.html'),
                 category: superdesk.MENU_MAIN,
                 priority: 1000,
+                adminTools: true,
                 _settings: 1
             });
         }])

@@ -1390,7 +1390,6 @@
             superdesk.activity('/search', {
                 description: gettext('Find live and archived content'),
                 priority: 200,
-                category: superdesk.MENU_MAIN,
                 label: gettext('Search'),
                 templateUrl: asset.templateUrl('superdesk-search/views/search.html'),
                 sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html'

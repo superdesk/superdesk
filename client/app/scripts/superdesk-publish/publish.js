@@ -545,6 +545,7 @@
                     templateUrl: 'scripts/superdesk-publish/views/publish-queue.html',
                     controller: PublishQueueController,
                     category: superdesk.MENU_MAIN,
+                    adminTools: false,
                     privileges: {publish_queue: 1}
                 });
         }])
