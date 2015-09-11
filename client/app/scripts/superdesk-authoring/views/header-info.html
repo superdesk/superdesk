@@ -15,7 +15,7 @@
             <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected" tooltip="Article Type" tooltip-placement="middle"></i>
 
             <div class="slider-icon pull-left">
-                <div class="dropdown dropleft" dropdown>
+                <div class="dropdown dropright" dropdown>
                     <i class="urgency-icon-{{item.priority}} dropdown-toggle" dropdown-toggle></i>
                     <div class="dropdown-menu">
                         <label>{{ "PRIORITY" | translate }}</label>
@@ -37,9 +37,8 @@
                 </div>
             </div>
             <div class="slider-icon pull-left">
-                <div class="dropdown dropleft" dropdown>
-                    <i class="output-item-label label-{{ item.urgency ? item.urgency: '0' }}
-                    dropdown-toggle" dropdown-toggle>{{ item.urgency}}</i>
+                <div class="dropdown dropright" dropdown>
+                    <i class="output-item-label label-{{ item.urgency ? item.urgency: '0' }} dropdown-toggle" dropdown-toggle>{{ item.urgency}}</i>
                     <div class="dropdown-menu">
                         <label>{{ "URGENCY" | translate }}</label>
                         <div class="item">
