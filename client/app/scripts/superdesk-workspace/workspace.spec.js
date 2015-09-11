@@ -63,17 +63,16 @@ describe('workspace', function() {
 
         it('can set active desk',
         inject(function(workspaces, desks, api, preferencesService, $q, $rootScope) {
-            spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 'deskworkspace'}]}));
             spyOn(preferencesService, 'update');
 
             var desk = {_id: 'foo'};
+            desks.deskLookup = [];
+            desks.deskLookup.foo = desk;
             workspaces.setActiveDesk(desk);
             $rootScope.$digest();
 
-            expect(workspaces.active._id).toBe('deskworkspace');
-            expect(api.query).toHaveBeenCalledWith('desks', {where: {desk: 'foo'}});
             expect(preferencesService.update).toHaveBeenCalledWith(
-                {'workspace:active': {workspace: ''}},
+                {'workspace:active': {workspace: 'foo'}},
                 'workspace:active'
             );
         }));
@@ -101,13 +100,15 @@ describe('workspace', function() {
 
         it('can create desk workspace if desk is selected but no workspace',
         inject(function(workspaces, desks, api, preferencesService, $q, $rootScope) {
-            spyOn(preferencesService, 'get').and.returnValue($q.when(null));
+            spyOn(preferencesService, 'get').and.returnValue($q.when({workspace: DESK}));
             spyOn(api, 'query').and.returnValue($q.when({_items: []}));
+            desks.deskLookup = [];
+            desks.deskLookup[DESK] = {_id: DESK};
             workspaces.getActive();
             $rootScope.$digest();
             expect(workspaces.active.desk).toBe(DESK);
             expect(workspaces.active.widgets).toEqual([]);
-            expect(api.query).toHaveBeenCalledWith('desks', {where: {desk: DESK}});
+            expect(api.query).toHaveBeenCalledWith('workspaces', {where: {desk: DESK}});
         }));
 
         it('can create user workspaces if there is no desk and no workspace',
@@ -126,11 +127,15 @@ describe('workspace', function() {
     describe('sdDeskDropdown directive', function() {
         var scope, workspaces;
 
-        beforeEach(inject(function (desks, _workspaces_, $rootScope, $compile) {
+        beforeEach(inject(function (desks, _workspaces_, api, preferencesService, $q, $rootScope, $compile) {
             workspaces = _workspaces_;
             spyOn(desks, 'setCurrentDeskId');
             spyOn(workspaces, 'setActive');
-            spyOn(workspaces, 'setActiveDesk');
+            spyOn(preferencesService, 'update');
+            desks.deskLookup = [];
+            desks.deskLookup.foo = {_id: 'foo'};
+            spyOn(preferencesService, 'get').and.returnValue($q.when({workspace: 'foo'}));
+            spyOn(api, 'query').and.returnValue($q.when({_items: []}));
 
             scope = $rootScope.$new();
             $compile('<div sd-desk-dropdown></div>')(scope);
@@ -140,7 +145,6 @@ describe('workspace', function() {
         describe('selectDesk() scope method', function() {
             it('can set workspace type', inject(function () {
                 var desk = {_id: 'foo'};
-
                 scope.workspaceType = null;
                 scope.selectDesk(desk);
 
