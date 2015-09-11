@@ -6,51 +6,53 @@
             <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
         </header>
         <div class="content">
-            <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true">
-                <div class="dropdown desk-select" dropdown>
-                    <button class="dropdown-toggle" dropdown-toggle>
-                        <span ng-show="!selectedDesk" translate>Select desk</span>
-                        <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
-                        <b class="caret white"></b>
-                    </button>
-                    <div class="dropdown-menu">
-                        <ul>
-                            <li ng-repeat="desk in desks._items track by desk._id">
-                                <button ng-click="selectDesk(desk)">{{::desk.name}}</button>
-                            </li>
-                        </ul>
+            <div class="publish-pane-box">
+                <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true">
+                    <div class="dropdown desk-select" dropdown>
+                        <button class="dropdown-toggle" dropdown-toggle>
+                            <span ng-show="!selectedDesk" translate>Select desk</span>
+                            <span ng-show="selectedDesk">{{selectedDesk.name}}</span>
+                            <b class="caret white"></b>
+                        </button>
+                        <div class="dropdown-menu">
+                            <ul>
+                                <li ng-repeat="desk in desks._items track by desk._id">
+                                    <button ng-click="selectDesk(desk)">{{::desk.name}}</button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                    <ul class="btn-list" ng-if="stages">
+                        <li ng-repeat="stage in stages track by stage._id">
+                            <button
+                                ng-class="{active: stage._id === selectedStage._id}"
+                                ng-disabled="stage._id === item.task.stage"
+                                ng-click="selectStage(stage)">{{::stage.name}}</button>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="btn-list" ng-if="stages">
-                    <li ng-repeat="stage in stages track by stage._id">
-                        <button
-                            ng-class="{active: stage._id === selectedStage._id}"
-                            ng-disabled="stage._id === item.task.stage"
-                            ng-click="selectStage(stage)">{{::stage.name}}</button>
-                    </li>
-                </ul>
-            </div>
-            <div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
-                <label class="publish-label" translate>Embargo</label>
-                <ul class="publish-list">
-                    <li>
-                        <div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
-                    </li>
-                    <li>
-                        <div sd-timepicker ng-model="item.embargo_time" ng-disabled="!isEmbargoEditable()"></div>
-                    </li>
-                </ul>
-            </div>
-            <div sd-toggle-box data-title="Publishing" data-open="true" ng-if="showPublishSchedule()">
-                <label class="publish-label" translate>Publish Schedule</label>
-                <ul class="publish-list">
-                    <li>
-                        <div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
-                    </li>
-                    <li>
-                        <div sd-timepicker ng-model="item.publish_schedule_time" ng-disabled="!_editable"></div>
-                    </li>
-                </ul>
+                <div sd-toggle-box data-title="Embargo" data-open="true" ng-if="showEmbargo()">
+                    <label class="publish-label" translate>Embargo</label>
+                    <ul class="publish-list">
+                        <li>
+                            <div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
+                        </li>
+                        <li>
+                            <div sd-timepicker ng-model="item.embargo_time" ng-disabled="!isEmbargoEditable()"></div>
+                        </li>
+                    </ul>
+                </div>
+                <div sd-toggle-box data-title="Publishing" data-open="true" ng-if="showPublishSchedule()">
+                    <label class="publish-label" translate>Publish Schedule</label>
+                    <ul class="publish-list">
+                        <li>
+                            <div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
+                        </li>
+                        <li>
+                            <div sd-timepicker ng-model="item.publish_schedule_time" ng-disabled="!_editable"></div>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <ul class="btn-list btn-bottom">
                 <li ng-if="mode === 'authoring' && canSendAndContinue()">

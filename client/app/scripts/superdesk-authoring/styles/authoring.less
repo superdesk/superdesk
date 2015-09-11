@@ -423,10 +423,20 @@
     	bottom: 125px;
     	top: 50px;
 
+    	.publish-pane-box {
+		    overflow: auto;
+		    bottom: 125px;
+		    top: 0;
+		    position: absolute;
+    	}
+
     	.toggle-box {
-    		padding: 20px 20px 0;
+    		padding: 20px 10px 0 20px;
     		.btn-list {
     			padding: 0;
+    		}
+    		> header {
+    			width: @send-to-pane-width - 40;
     		}
     		> header:before{
     			border-bottom: 1px solid #4f4f4f;
@@ -448,6 +458,7 @@
     			text-transform: uppercase;
     		}
     		.publish-list {
+    			width: @send-to-pane-width - 40;
     			li {
 					float: left;
 					width: (@send-to-pane-width - 55)/2;
@@ -477,7 +488,7 @@
 		.desk-select {
 		    padding-bottom: 15px;
 			.dropdown-toggle {
-				width: 100%;
+				width: @send-to-pane-width - 40;
 				text-align: left;
 				background: #4f4f4f;
 				padding: 10px 15px;
