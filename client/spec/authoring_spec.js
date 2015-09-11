@@ -143,4 +143,22 @@ describe('authoring', function() {
         monitoring.createItemAction('create_package');
         expect(element(by.className('packaging-screen')).isDisplayed()).toBe(true);
     });
+
+    it('can change normal theme', function () {
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.editItem('item6', 'Politic');
+        authoring.changeNormalTheme('dark-theme');
+
+        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme')).toBe(true);
+    });
+
+    it('can change proofread theme', function () {
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.editItem('item6', 'Politic');
+        authoring.changeProofreadTheme('dark-theme-mono');
+
+        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme-mono')).toBe(true);
+    });
 });
