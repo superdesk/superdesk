@@ -102,10 +102,10 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         self.formatter._format_news_envelope(self.article, self.newsml, 7)
         self.assertEquals(self.newsml.find('TransmissionId').text, '7')
         self.assertEquals(self.newsml.find('DateAndTime').text, '20150613T114519+0000')
-        self.assertEquals(self.newsml.find('Priority').get('FormalName'), 1)
+        self.assertEquals(self.newsml.find('Priority').get('FormalName'), '1')
         newsml = etree.Element("NewsML")
         self.formatter._format_news_envelope(self.preformatted, newsml, 7)
-        self.assertEquals(newsml.find('Priority').get('FormalName'), 5)
+        self.assertEquals(newsml.find('Priority').get('FormalName'), '5')
 
 
     def test_format_identification(self):

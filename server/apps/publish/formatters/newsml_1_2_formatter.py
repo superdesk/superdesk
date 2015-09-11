@@ -48,7 +48,7 @@ class NewsML12Formatter(Formatter):
     def _format_news_envelope(self, article, news_envelope, pub_seq_num):
         SubElement(news_envelope, 'TransmissionId').text = str(pub_seq_num)
         SubElement(news_envelope, 'DateAndTime').text = self.string_now
-        SubElement(news_envelope, 'Priority', {'FormalName': article.get('priority', 5)})
+        SubElement(news_envelope, 'Priority', {'FormalName': str(article.get('priority', 5))})
 
     def _format_identification(self, article, news_item):
         revision = self._process_revision(article)
