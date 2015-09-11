@@ -216,9 +216,8 @@ class ninjsFormatterTest(SuperdeskTestCase):
 
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         expected = json.loads('{"headline": "WA:Navy steps in with WA asylum-seeker boat", \
-        "_created": "2015-07-24T05:05:00.000Z", "version": "2", \
+        "version": "2", \
         "_id": "urn:newsml:localhost:2015-07-24T15:05:00.116047:435c93c2-492c-4668-ab47-ae6e2b9b1c2c", \
-        "_updated": "2015-07-24T05:05:25.000Z", \
         "associations": {"main": \
         [{"_id": "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916", "type": "text"}], \
         "sidebars": \
