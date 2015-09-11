@@ -301,6 +301,7 @@ define([
                     controller: PlanningDashboardController,
                     templateUrl: 'scripts/superdesk-planning/views/planning.html',
                     category: superdesk.MENU_MAIN,
+                    adminTools: false,
                     reloadOnSearch: false,
                     filters: [],
                     privileges: {planning: 1}

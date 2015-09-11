@@ -31,7 +31,11 @@
     <div class="header"></div>
     <div class="content">
       <ul>
-        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item.isActive}">
+        <li ng-repeat="item in menu | filter:{ adminTools: false } | orderBy:'priority'" ng-class="{active: item.isActive}">
+          <a ng-href="#{{ :: item.href }}" title="{{ :: item.description | translate }}">{{ :: item.label | translate }}</a>
+        </li>
+        <li class="main-menu_group-header">Admin tools</li>
+        <li ng-repeat="item in menu | filter:{ adminTools: true } | orderBy:'priority'" ng-class="{active: item.isActive}">
           <a ng-href="#{{ :: item.href }}" title="{{ :: item.description | translate }}">{{ :: item.label | translate }}</a>
         </li>
       </ul>

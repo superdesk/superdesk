@@ -717,12 +717,12 @@
         .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk
                 .activity('/users/', {
-                    label: gettext('Users'),
+                    label: gettext('User management'),
                     description: gettext('Find your colleagues'),
-                    priority: 100,
                     controller: UserListController,
                     templateUrl: asset.templateUrl('superdesk-users/views/list.html'),
                     category: superdesk.MENU_MAIN,
+                    adminTools: true,
                     reloadOnSearch: false,
                     filters: [
                         {

@@ -238,7 +238,6 @@
                     controller: LegalArchiveController,
                     templateUrl: 'scripts/superdesk-legal-archive/views/legal_archive.html',
                     sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
-                    category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: [],
                     privileges: {legal_archive: 1}
