@@ -11,8 +11,8 @@
 
     'use strict';
 
-    MultieditService.$inject = ['storage', 'superdesk'];
-    function MultieditService(storage, superdesk) {
+    MultieditService.$inject = ['storage', 'superdesk', 'authoringWorkspace'];
+    function MultieditService(storage, superdesk, authoringWorkspace) {
 
         //1. Service manages multiedit screen
         //2. Screen has it's boards, at least 2 of them
@@ -53,7 +53,10 @@
             superdesk.intent('author', 'dashboard');
         };
 
-        this.open = function() {
+        this.open = function () {
+            if (authoringWorkspace.getState()) {
+                authoringWorkspace.close();
+            }
             superdesk.intent('author', 'multiedit');
         };
 
