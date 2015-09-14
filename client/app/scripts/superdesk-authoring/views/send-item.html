@@ -7,7 +7,8 @@
         </header>
         <div class="content">
             <div class="publish-pane-box">
-                <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true">
+                <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true"
+                     ng-if="mode === 'ingest' || (mode === 'authoring' && $root.isActionAllowed(item, 'move') && itemActions.send)">
                     <div class="dropdown desk-select" dropdown>
                         <button class="dropdown-toggle" dropdown-toggle>
                             <span ng-show="!selectedDesk" translate>Select desk</span>
@@ -55,12 +56,12 @@
                 </div>
             </div>
             <ul class="btn-list btn-bottom">
-                <li ng-if="mode === 'authoring' && canSendAndContinue()">
+                <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send">
                     <button class="send" ng-click="sendAndContinue()"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send and continue</button>
                 </li>
-                <li>
+                <li ng-if="mode === 'ingest' || (mode === 'authoring' && isSendEnabled() && itemActions.send)">
                     <button id="send-item-btn" class="send" ng-click="send()"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
