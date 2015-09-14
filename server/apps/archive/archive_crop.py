@@ -116,7 +116,7 @@ class ArchiveCropService():
                 cropped, out = crop_image(original_file, original_file.name, crop_data)
 
                 if not cropped:
-                    raise SuperdeskApiError.badRequestError('Saving crop failed: {}'.format(str(out)))
+                    raise SuperdeskApiError.badRequestError('Saving crop failed.')
 
                 renditions[crop_name] = self._save_cropped_image(out, original_file, doc)
                 crop_created = True
