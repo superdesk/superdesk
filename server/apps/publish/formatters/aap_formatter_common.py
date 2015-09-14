@@ -26,7 +26,7 @@ def map_priority(priority):
         6: 'd'
     }
 
-    return mapping[priority] if priority in mapping else mapping[5]
+    return mapping.get(priority, mapping[5])
 
 
 def set_subject(category, article):
