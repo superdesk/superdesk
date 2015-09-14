@@ -29,10 +29,20 @@ Feature: Templates
 
     @auth
     Scenario: User can schedule a content creation
+        Given "desks"
+        """
+        [{"name": "sports"}]
+        """
+        And "stages"
+        """
+        [{"name": "schedule", "desk": "#desks._id#"}]
+        """
+
         When we post to "content_templates"
         """
         {"template_name": "test", "template_type": "create", "headline": "test", "type": "text", "slugline": "test",
-         "schedule": {"day_of_week": ["MON"], "create_at": "0815"}}
+         "schedule": {"day_of_week": ["MON"], "create_at": "0815"},
+         "template_desk": "#desks._id#", "template_stage": "#stages._id#"}
         """
         Then we get new resource
         And next run is on monday "0815"
@@ -42,4 +52,8 @@ Feature: Templates
         {"schedule": {"day_of_week": ["MON"], "create_at": "0915"}}
         """
         Then next run is on monday "0915"
-        And last run is set
+
+        When we run create content task
+        And we run create content task
+        And we get "/archive"
+        Then we get list with 1 items

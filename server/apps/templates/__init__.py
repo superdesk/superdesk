@@ -8,13 +8,13 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from .content_templates import ContentTemplatesResource, ContentTemplatesService, CONTENT_TEMPLATE_PRIVILEGE
 import superdesk
+from .content_templates import ContentTemplatesResource, ContentTemplatesService, CONTENT_TEMPLATE_PRIVILEGE
+from .content_templates import create_scheduled_content  # noqa
 
 
 def init_app(app):
     endpoint_name = 'content_templates'
     service = ContentTemplatesService(endpoint_name, backend=superdesk.get_backend())
     ContentTemplatesResource(endpoint_name, app=app, service=service)
-
     superdesk.privilege(name=CONTENT_TEMPLATE_PRIVILEGE, label='Templates', description='Create templates')

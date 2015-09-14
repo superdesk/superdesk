@@ -114,6 +114,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.publish.content_purge',
         'schedule': crontab(minute=30)
     },
+    'content:schedule': {
+        'task': 'apps.templates.content_templates.create_scheduled_content',
+        'schedule': crontab(minute='*/5'),
+    },
 }
 
 SENTRY_DSN = env('SENTRY_DSN')

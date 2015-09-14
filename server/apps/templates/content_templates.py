@@ -10,13 +10,18 @@
 
 import re
 import datetime
+import superdesk
 from superdesk import Resource, Service
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
 from superdesk.metadata.item import metadata_schema
-from apps.rules.routing_rules import WEEKDAYS, parse_time
+from apps.rules.routing_rules import Weekdays, set_time
+from superdesk.celery_app import celery
+from flask import current_app as app
+
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
+SCHEDULED_ITEM_STATE = 'in_progress'
 
 
 def get_next_run(schedule, now=None):
@@ -28,16 +33,17 @@ def get_next_run(schedule, now=None):
     :param datetime now
     :return datetime
     """
-    allowed_days = [WEEKDAYS.index(day.upper()) for day in schedule.get('day_of_week')]
+    allowed_days = [Weekdays[day.upper()].value for day in schedule.get('day_of_week')]
     if not allowed_days:
         return None
 
     if now is None:
         now = utcnow()
-    next_run = parse_time(now, schedule.get('create_at'))
 
+    next_run = set_time(now, schedule.get('create_at'))
+
+    # if the time passed already today do it tomorrow earliest
     if next_run < now:
-        # if the time passed already skip today
         next_run += datetime.timedelta(days=1)
 
     while next_run.weekday() not in allowed_days:
@@ -60,6 +66,7 @@ class ContentTemplatesResource(Resource):
             'default': 'create',
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
+        'template_stage': Resource.rel('stages', embeddable=False, nullable=True),
         'schedule': {'type': 'dict'},
         'last_run': {'type': 'datetime', 'readonly': True},
         'next_run': {'type': 'datetime', 'readonly': True},
@@ -91,7 +98,6 @@ class ContentTemplatesService(Service):
             updates['template_name'] = updates['template_name'].lower().strip()
             self.validate_template_name(updates['template_name'])
         if updates.get('schedule'):
-            updates['last_run'] = original.get('next_run')
             updates['next_run'] = get_next_run(updates.get('schedule'))
 
     def validate_template_name(self, doc_template_name):
@@ -99,3 +105,56 @@ class ContentTemplatesService(Service):
         if self.find_one(req=None, **query):
             msg = 'Template name must be unique'
             raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
+
+    def get_scheduled_templates(self, now):
+        query = {'next_run': {'$lte': now}}
+        return self.find(query)
+
+
+def get_scheduled_templates(now):
+    """Get templates that should be used to create items for given time.
+
+    :param datetime now
+    :return Cursor
+    """
+    return superdesk.get_resource_service('content_templates').get_scheduled_templates(now)
+
+
+def set_template_timestamps(template, now):
+    """Update template `next_run` field to next time it should run.
+
+    :param dict template
+    :param datetime now
+    """
+    updates = {
+        'last_run': now,
+        'next_run': get_next_run(template.get('schedule'), now),
+    }
+    service = superdesk.get_resource_service('content_templates')
+    service.update(template['_id'], updates, template)
+
+
+def create_item_from_template(template):
+    """Create item in production using data from given template.
+
+    :param dict template
+    """
+    production = superdesk.get_resource_service('archive')
+    item = {key: value for key, value in template.items() if key in metadata_schema}
+    item['state'] = SCHEDULED_ITEM_STATE
+    item['template'] = template['_id']
+    item['task'] = {'desk': template.get('template_desk'), 'stage': template.get('template_stage')}
+    production.create([item])
+
+
+@celery.task(soft_time_limit=120)
+def create_scheduled_content(now=None):
+    if now is None:
+        now = utcnow()
+    templates = get_scheduled_templates(now)
+    for template in templates:
+        try:
+            set_template_timestamps(template, now)
+            create_item_from_template(template)
+        except app.data.OriginalChangedError:
+            pass  # ignore template if it changed meanwhile
