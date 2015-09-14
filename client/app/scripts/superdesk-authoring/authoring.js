@@ -1821,7 +1821,7 @@
                     });
 
                     superdesk.intent('edit', 'crop',  scope.item).then(function(data) {
-                        if (mainEditScope.hasOwnProperty('dirty') && !mainEditScope.dirty) {
+                        if (!mainEditScope.dirty) {
                             mainEditScope.dirty = data.isDirty;
                         }
                         var orig = _.create(data.renditions);
