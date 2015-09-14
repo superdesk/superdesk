@@ -251,4 +251,21 @@ function Authoring() {
     this.closeHeader = function() {
         element(by.className('icon-chevron-up-thin')).click();
     };
+
+    this.changeNormalTheme = function (theme) {
+        element(by.className('theme-select'))
+                .element(by.className('dropdown-toggle')).click();
+
+        element(by.className('normal-theme-list'))
+                .all(by.className(theme)).first().click();
+    };
+
+    this.changeProofreadTheme = function (theme) {
+        element(by.className('proofread-toggle')).click();
+        element(by.className('theme-select'))
+                .element(by.className('dropdown-toggle')).click();
+
+        element(by.className('proofread-theme-list'))
+                .all(by.className(theme)).first().click();
+    };
 }

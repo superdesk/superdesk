@@ -284,4 +284,28 @@ describe('monitoring view', function() {
         monitoring.showHideList();
         expect(monitoring.hasClass(element(by.id('main-container')), 'hideMonitoring')).toBe(false);
     });
+
+    it('can fetch ingest item', function () {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.nextStages();
+        monitoring.toggleSearch(3);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        monitoring.openAction(0, 0);
+
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.toggleStage(0, 0);
+        monitoring.nextStages();
+        monitoring.toggleSearch(3);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
+        expect(authoring.save_button.isDisplayed()).toBe(true);
+    });
 });
