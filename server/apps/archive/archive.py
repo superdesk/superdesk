@@ -413,7 +413,7 @@ class ArchiveService(BaseService):
         :param old_id: identifier to fetch version history
         :param new_doc: identifiers from this doc will be used to create version history for the duplicated item.
         """
-        resource_def = self.app.config['DOMAIN']['archive_versions']
+        resource_def = app.config['DOMAIN']['archive']
         version_id = versioned_id_field(resource_def)
         old_versions = get_resource_service('archive_versions').get(req=None, lookup={'guid': old_id})
 

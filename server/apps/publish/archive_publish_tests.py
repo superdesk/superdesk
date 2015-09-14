@@ -325,9 +325,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
     def _init_article_versions(self):
         resource_def = self.app.config['DOMAIN']['archive_versions']
         version_id = versioned_id_field(resource_def)
-        print(version_id)
         return [{'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 version_id: '8',
+                 version_id: '1',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 1,
                  'urgency': 4,
@@ -342,7 +341,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 version_id: '8',
+                 version_id: '1',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 2,
                  'urgency': 4,
@@ -358,7 +357,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 version_id: '8',
+                 version_id: '1',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 3,
                  'urgency': 4,
@@ -375,7 +374,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                  'expiry': utcnow() + timedelta(minutes=20),
                  'unique_name': '#8'},
                 {'guid': 'tag:localhost:2015:69b961ab-2816-4b8a-a584-a7b402fed4f9',
-                 version_id: '8',
+                 version_id: '1',
                  ITEM_TYPE: CONTENT_TYPE.TEXT,
                  config.VERSION: 4,
                  'body_html': 'Test body',
@@ -401,12 +400,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         article = archive_service.find_one(_id=article_id, req=None)
         resource_def = self.app.config['DOMAIN'][LEGAL_ARCHIVE_VERSIONS_NAME]
         version_id = versioned_id_field(resource_def)
-        print('Getting from legal archive versions: ', version_id, article_id)
         article_versions = archive_versions_service.get(req=None, lookup={version_id: article_id})
 
         lookup = {'item_id': article_id, 'publishing_action': publishing_action} if publishing_action else \
             {'item_id': article_id}
-        queue_items = list(publish_queue_service.get(req=None, lookup=lookup))
+        queue_items = publish_queue_service.get(req=None, lookup=lookup)
 
         return article, article_versions, queue_items
 
@@ -608,7 +606,10 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
 
-        self.assertGreaterEqual(len(queue_items), 1, 'Publish Queue Items must be greater than or equal to 1')
+        self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
+        self.assertEqual(article_versions_in_legal_archive.count(), 4)
+
+        self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
         for queue_item in queue_items:
             self.assertEqual(queue_item['item_id'], self.articles[0]['_id'])
             self.assertEqual(queue_item['item_version'], original[config.VERSION])
@@ -667,7 +668,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.PUBLISHED)
 
         self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
-        self.assertEqual(article_versions_in_legal_archive.count(), 5)
+        self.assertEqual(article_versions_in_legal_archive.count(), 1)
 
         self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
 
@@ -690,7 +691,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.KILLED)
 
         self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
-        self.assertEqual(article_versions_in_legal_archive.count(), 6)
+        self.assertEqual(article_versions_in_legal_archive.count(), 2)
 
         for queue_item in queue_items:
             self.assertEqual(queue_item['item_id'], original[config.ID_FIELD])

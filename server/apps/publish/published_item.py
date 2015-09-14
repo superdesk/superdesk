@@ -321,7 +321,7 @@ class PublishedItemService(BaseService):
 
             # Step 4
             if self.can_remove_from_production(doc):
-                resource_def = app.config['DOMAIN']['archive_versions']
+                resource_def = app.config['DOMAIN']['archive']
                 lookup = {'$and': [{versioned_id_field(resource_def): doc['item_id']},
                                    {config.VERSION: {'$lte': doc[config.VERSION]}}]}
                 get_resource_service('archive_versions').delete(lookup)
@@ -429,11 +429,12 @@ class PublishedItemService(BaseService):
         # Step 1 - Get Version History
         req = ParsedRequest()
         req.sort = '[("%s", 1)]' % config.VERSION
-        resource_def = app.config['DOMAIN']['archive_versions']
-        lookup = {'$and': [{versioned_id_field(resource_def): legal_archive_doc[config.ID_FIELD]},
+        resource_def = app.config['DOMAIN']['archive']
+        version_id = versioned_id_field(resource_def)
+        lookup = {'$and': [{version_id: legal_archive_doc[config.ID_FIELD]},
                            {config.VERSION: {'$lte': legal_archive_doc[config.VERSION]}}]}
 
-        version_history = get_resource_service('archive_versions').get(req=req, lookup=lookup)
+        version_history = list(get_resource_service('archive_versions').get(req=req, lookup=lookup))
         legal_archive_doc_versions = []
         for versioned_doc in version_history:
             self._denormalize_user_desk(versioned_doc)
@@ -458,7 +459,6 @@ class PublishedItemService(BaseService):
         # Step 6
         if legal_archive_doc_versions:
             legal_archive_versions_service.post(legal_archive_doc_versions)
-
         # Step 7
         legal_publish_queue_service.post(queue_items)
 
