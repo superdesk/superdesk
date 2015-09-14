@@ -819,59 +819,88 @@ define([
         };
     }
 
+    /**
+     * Timepicker directive saving utc time to model but rendering local time.
+     */
     function TimepickerAltDirective() {
         var STEP = 5;
 
-        var convertIn = function(time) {
-            return {
-                hours: parseInt(time.substr(0, 2), 10),
-                minutes: parseInt(time.substr(2, 2), 10)
-            };
-        };
-
-        var convertOut = function(hours, minutes) {
-            var h = hours.toString();
-            var m = minutes.toString();
-            if (h.length === 1) {
-                h = '0' + h;
-            }
-            if (m.length === 1) {
-                m = '0' + m;
-            }
-            return h + m;
-        };
-
-        var range = function(min, max, step) {
+        function range(min, max, step) {
             step = step || 1;
-            var range = [];
+            var items = [];
             for (var i = min; i <= max; i = i + step) {
-                range.push(i);
+                items.push(i);
             }
-            return range;
-        };
+            return items;
+        }
 
         return {
-            scope: {
-                model: '='
-            },
+            scope: {model: '='},
             templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
             link: function(scope) {
+
+                var d = new Date();
+
                 scope.open = false;
-                scope.hours = 0;
-                scope.minutes = 0;
                 scope.hoursRange = range(0, 23);
                 scope.minutesRange = range(0, 59, STEP);
 
-                scope.$watch('model', function() {
-                    var result = convertIn(scope.model);
-                    scope.hours = result.hours;
-                    scope.minutes = result.minutes;
-                });
-
-                scope.submit = function() {
-                    scope.model = convertOut(scope.hours, scope.minutes);
-                    scope.open = false;
+                /**
+                 * Set local hours
+                 *
+                 * @param {int} hours
+                 */
+                scope.setHours = function(hours) {
+                    d.setHours(hours);
+                    update();
                 };
+
+                /**
+                 * Set local minutes
+                 *
+                 * @param {int} minutes
+                 */
+                scope.setMinutes = function(minutes) {
+                    d.setMinutes(minutes);
+                    update();
+                };
+
+                /**
+                 * Toggle time picker on/off
+                 */
+                scope.toggle = function() {
+                    scope.open = !scope.open;
+                };
+
+                if (scope.model) {
+                    d.setUTCHours(scope.model.substr(0, 2));
+                    d.setUTCMinutes(scope.model.substr(2, 2));
+                } else {
+                    d.setHours(0);
+                    d.setMinutes(0);
+                }
+
+                update();
+
+                /**
+                 * Update scope using local time and model using utc time
+                 */
+                function update() {
+                    scope.hours = d.getHours();
+                    scope.minutes = d.getMinutes();
+                    scope.model = utc();
+                }
+
+                /**
+                 * Get utc time for model
+                 *
+                 * @return {string} utc time in format `HHMM`
+                 */
+                function utc() {
+                    var hours = d.getUTCHours().toString();
+                    var minutes = d.getUTCMinutes().toString();
+                    return ('00' + hours).slice(-2) + ('00' + minutes).slice(-2);
+                }
             }
         };
     }
@@ -930,6 +959,43 @@ define([
         };
     }
 
+    WeekdayPickerDirective.$inject = ['weekdays'];
+    function WeekdayPickerDirective(weekdays) {
+        return {
+            templateUrl: 'scripts/superdesk/ui/views/weekday-picker.html',
+            scope: {model: '='},
+            link: function(scope) {
+                scope.weekdays = weekdays;
+                scope.weekdayList = Object.keys(weekdays);
+
+                scope.model = scope.model || [];
+
+                /**
+                 * Test if given day is selected for schedule
+                 *
+                 * @param {string} day
+                 * @return {boolean}
+                 */
+                scope.isDayChecked = function(day) {
+                    return scope.model.indexOf(day) !== -1;
+                };
+
+                /**
+                 * Toggle given day on/off
+                 *
+                 * @param {string} day
+                 */
+                scope.toggleDay = function(day) {
+                    if (scope.isDayChecked(day)) {
+                        scope.model.splice(scope.model.indexOf(day), 1);
+                    } else {
+                        scope.model.push(day);
+                    }
+                };
+            }
+        };
+    }
+
     return angular.module('superdesk.ui', [])
 
         .directive('sdShadow', ShadowDirective)
@@ -954,5 +1020,6 @@ define([
         .filter('leadingZero', LeadingZeroFilter)
         .directive('sdDropdownPosition', DropdownPositionDirective)
         .directive('sdDropdownPositionRight', DropdownPositionRightDirective)
+        .directive('sdWeekdayPicker', WeekdayPickerDirective)
         ;
 });

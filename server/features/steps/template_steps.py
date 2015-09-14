@@ -18,3 +18,4 @@ def then_next_run_is_on_monday(context, time):
     assert isinstance(next_run, datetime)
     assert next_run.weekday() == 0
     assert next_run.strftime('%H%M') == time
+    assert next_run.strftime('%S') == '00', 'there should be no seconds, but it was %s' % (next_run.strftime('%S'), )

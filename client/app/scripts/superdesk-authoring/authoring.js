@@ -1795,7 +1795,7 @@
                     if (angular.isDefined(item)) {
                         item._datelinedate = '';
 
-                        if (angular.isDefined(item.dateline.located) && !_.isNull(item.dateline.located)) {
+                        if (item.dateline && item.dateline.located != null) {
                             item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
                         }
                     }

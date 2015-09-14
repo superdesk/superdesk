@@ -33,17 +33,21 @@ def get_next_run(schedule, now=None):
     :param datetime now
     :return datetime
     """
-    allowed_days = [Weekdays[day.upper()].value for day in schedule.get('day_of_week')]
+    if not schedule.get('is_active', False):
+        return None
+
+    allowed_days = [Weekdays[day.upper()].value for day in schedule.get('day_of_week', [])]
     if not allowed_days:
         return None
 
     if now is None:
         now = utcnow()
 
+    now = now.replace(second=0)
     next_run = set_time(now, schedule.get('create_at'))
 
     # if the time passed already today do it tomorrow earliest
-    if next_run < now:
+    if next_run <= now:
         next_run += datetime.timedelta(days=1)
 
     while next_run.weekday() not in allowed_days:
@@ -67,7 +71,11 @@ class ContentTemplatesResource(Resource):
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),
         'template_stage': Resource.rel('stages', embeddable=False, nullable=True),
-        'schedule': {'type': 'dict'},
+        'schedule': {'type': 'dict', 'schema': {
+            'is_active': {'type': 'boolean'},
+            'create_at': {'type': 'string'},
+            'day_of_week': {'type': 'list'},
+        }},
         'last_run': {'type': 'datetime', 'readonly': True},
         'next_run': {'type': 'datetime', 'readonly': True},
     }
@@ -107,7 +115,7 @@ class ContentTemplatesService(Service):
             raise SuperdeskApiError.preconditionFailedError(message=msg, payload=msg)
 
     def get_scheduled_templates(self, now):
-        query = {'next_run': {'$lte': now}}
+        query = {'next_run': {'$lte': now}, 'schedule.is_active': True}
         return self.find(query)
 
 
@@ -144,7 +152,7 @@ def create_item_from_template(template):
     item['state'] = SCHEDULED_ITEM_STATE
     item['template'] = template['_id']
     item['task'] = {'desk': template.get('template_desk'), 'stage': template.get('template_stage')}
-    production.create([item])
+    production.post([item])
 
 
 @celery.task(soft_time_limit=120)

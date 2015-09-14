@@ -35,20 +35,52 @@
             <input id="template-name" required
               ng-model="template.template_name">
         </div>
+
         <div class="field">
             <label for="template-type" translate>Template Type</label>
             <select id="template-type" required
               ng-model="template.template_type"
               ng-options="type._id as type.label for type in types"></select>
         </div>
+
         <div class="field">
-              <label for="template-desk" translate>Desk</label>
-              <div class="control">
-                  <select id="template-desk" ng-model="template.template_desk" ng-options="desk._id as desk.name for desk in desks._items">
-                      <option value="" translate>None</option>
-                  </select>
-              </div>
+          <label for="template-desk" translate>Desk</label>
+          <div class="control">
+            <select id="template-desk"
+              ng-model="template.template_desk"
+              ng-change="updateStages(template.template_desk)">
+                <option value="" translate>None</option>
+                <option ng-repeat="desk in desks._items track by desk._id" value="{{ desk._id }}" ng-selected="desk._id === template.template_desk">{{ :: desk.name }}</option>
+            </select>
           </div>
+        </div>
+
+        <div class="field" ng-if="template.template_desk && stages">
+          <label for="template-stage" translate>Stage</label>
+          <div class="control">
+            <select id="template-stage"
+              ng-model="template.template_stage">
+              <option ng-repeat="stage in stages track by stage._id" value="{{ stage._id }}" ng-selected="stage._id === template.template_stage">{{ :: stage.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="schedule-toggle" translate>Automatically create item</label>
+          <div class="control">
+            <span sd-switch ng-model="template.schedule.is_active"></span>
+          </div>
+        </div>
+
+        <div class="field" ng-if="template.schedule.is_active">
+          <label translate>On</label>
+          <div class="day-filter-box clearfix" sd-weekday-picker data-model="template.schedule.day_of_week"></div>
+        </div>
+
+        <div class="field" ng-if="template.schedule.is_active">
+          <label translate>At</label>
+          <span sd-timepicker-alt data-model="template.schedule.create_at"></span>
+        </div>
 
       </div>
       <div class="fieldset" sd-article-edit></div>

@@ -41,7 +41,7 @@ Feature: Templates
         When we post to "content_templates"
         """
         {"template_name": "test", "template_type": "create", "headline": "test", "type": "text", "slugline": "test",
-         "schedule": {"day_of_week": ["MON"], "create_at": "0815"},
+         "schedule": {"day_of_week": ["MON"], "create_at": "0815", "is_active": true},
          "template_desk": "#desks._id#", "template_stage": "#stages._id#"}
         """
         Then we get new resource
@@ -49,7 +49,7 @@ Feature: Templates
 
         When we patch latest
         """
-        {"schedule": {"day_of_week": ["MON"], "create_at": "0915"}}
+        {"schedule": {"day_of_week": ["MON"], "create_at": "0915", "is_active": true}}
         """
         Then next run is on monday "0915"
 

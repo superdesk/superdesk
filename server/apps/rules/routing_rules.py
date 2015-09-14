@@ -62,7 +62,7 @@ def set_time(current_datetime, timestr=None):
     if timestr is None:
         timestr = '0000'
     time = datetime.strptime(timestr, '%H%M')
-    return current_datetime.replace(hour=time.hour, minute=time.minute)
+    return current_datetime.replace(hour=time.hour, minute=time.minute, second=0)
 
 
 class RoutingRuleSchemeResource(Resource):

@@ -22,30 +22,30 @@
         var PREFERENCES_KEY = 'templates:recent';
 
         this.TEMPLATE_METADATA = [
-                'headline',
-                'slugline',
-                'abstract',
-                'dateline',
-                'byline',
-                'subject',
-                'genre',
-                'type',
-                'language',
-                'anpa_category',
-                'anpa_take_key',
-                'keywords',
-                'priority',
-                'urgency',
-                'pubstatus',
-                'description',
-                'body_html',
-                'body_text',
-                'place',
-                'located',
-                'creditline',
-                'ednote',
-                'language'
-            ];
+            'headline',
+            'slugline',
+            'abstract',
+            'dateline',
+            'byline',
+            'subject',
+            'genre',
+            'type',
+            'language',
+            'anpa_category',
+            'anpa_take_key',
+            'keywords',
+            'priority',
+            'urgency',
+            'pubstatus',
+            'description',
+            'body_html',
+            'body_text',
+            'place',
+            'located',
+            'creditline',
+            'ednote',
+            'language'
+        ];
 
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
@@ -182,9 +182,11 @@
                 $scope.edit = function(template) {
                     $scope.origTemplate = template || {'type': 'text'};
                     $scope.template = _.create($scope.origTemplate);
+                    $scope.template.schedule = $scope.origTemplate.schedule || {};
 
                     $scope.item = $scope.template;
                     $scope._editable = true;
+                    $scope.updateStages($scope.template.template_desk);
                 };
 
                 $scope.remove = function(template) {
@@ -208,6 +210,10 @@
                     $scope.origTemplate = null;
                     $scope.template = null;
                     $scope.vars = null;
+                };
+
+                $scope.updateStages = function(desk) {
+                    $scope.stages = desk ? desks.deskStages[desk] : null;
                 };
 
                 fetchTemplates();

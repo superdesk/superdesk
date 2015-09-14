@@ -1,8 +1,10 @@
 <div class="timepicker-input" ng-init="opened = false">
  	<input type="text" 
- 		class="input-small" ng-model="tt"
- 		sd-timepicker-inner data-opened="opened"
- 		ng-disabled = "disabled"
+ 		class="input-small"
+        ng-model="tt"
+ 		sd-timepicker-inner
+        data-opened="opened"
+ 		ng-disabled="disabled"
  	/>
 	<button class="btn btn-default" ng-click="opened = !opened" ng-disabled = "disabled"><i class="icon-time"></i></button>
 </div>

@@ -2,14 +2,7 @@
 
     <div class="field">
         <label translate>Days</label>
-        <div class="day-filter-box clearfix">
-            <button class="btn btn-light pull-left"
-                ng-repeat="day in dayList"
-                ng-click="toggleDay(rule, day)"
-                ng-class="{active: isDayChecked(rule, day)}">
-                    {{dayLookup[day]|translate}}
-            </button>
-        </div>
+        <div class="day-filter-box clearfix" sd-weekday-picker data-model="rule.schedule.day_of_week"></div>
     </div>
 
     <div class="field">
