@@ -1145,7 +1145,7 @@
                 $scope.unlock = function() {
                     $scope.unlockClicked = true;
                     lock.unlock($scope.item).then(function(unlocked_item) {
-                        $location.path('/authoring/' + $scope.item._id);
+                        $scope.edit(unlocked_item);
                     });
                 };
 
