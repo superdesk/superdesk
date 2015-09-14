@@ -140,17 +140,17 @@ class Newsml12FormatterTest(SuperdeskTestCase):
     def test_format_news_component(self):
         self.formatter._format_news_component(self.article, self.newsml)
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/Role').
-                          get('FormalName'), 'Main')
+                         get('FormalName'), 'Main')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/NewsLines/Headline').
-                          text, 'This is a test headline')
+                         text, 'This is a test headline')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/NewsLines/ByLine').
-                          text, 'joe')
+                         text, 'joe')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/NewsLines/DateLine').
-                          text, 'sample dateline')
+                         text, 'sample dateline')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/NewsLines/CreditLine').
-                          text, 'sample creditline')
+                         text, 'sample creditline')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/NewsLines/KeywordLine').
-                          text, 'slugline')
+                         text, 'slugline')
         self.assertEqual(
             self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[0].
             get('FormalName'), '02011001')
@@ -158,7 +158,7 @@ class Newsml12FormatterTest(SuperdeskTestCase):
             self.newsml.findall('NewsComponent/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')[1].
             get('FormalName'), '02011002')
         self.assertEqual(self.newsml.find('NewsComponent/NewsComponent/DescriptiveMetadata/Property').
-                          get('Value'), 'a')
+                         get('Value'), 'a')
         self.assertEqual(
             self.newsml.findall('NewsComponent/NewsComponent/NewsComponent/ContentItem/DataContent')[0].
             text, 'sample abstract')
