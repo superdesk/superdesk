@@ -54,8 +54,10 @@ class AAPMMDatalayer(DataLayer):
         query_keywords = '*:*'
         if 'query' in req['query']['filtered']:
             query_keywords = req['query']['filtered']['query']['query_string']['query']
-        fields = {'query': query_keywords, 'pageSize': str(req.get('size', '25')),
-                  'pageNumber': str(int(req.get('from', '0')) // int(req.get('size', '25')) + 1)}
+
+        size = int(req.get('size', '25')) if int(req.get('size', '25')) > 0 else 25
+        fields = {'query': query_keywords, 'pageSize': str(size),
+                  'pageNumber': str(int(req.get('from', '0')) // size + 1)}
         r = self._http.request('GET', url, fields=fields, headers=self._headers)
         hits = self._parse_hits(json.loads(r.data.decode('UTF-8')))
         return ElasticCursor(docs=hits['docs'], hits={'hits': hits})

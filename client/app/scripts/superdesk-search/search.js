@@ -686,13 +686,30 @@
                         criteria = search.query($location.search()).getCriteria(true);
                         criteria.source.size = 0;
                         scope.total = null;
-                        return api.query('search', criteria).then(function (items) {
+                        return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
                             scope.$applyAsync(render);
                         });
                     }
 
                     queryItems();
+
+                    /*
+                     * Function to get the search endpoint name based on the criteria
+                     *
+                     * @param {Object} criteria
+                     * @returns {string}
+                     */
+                    function getProvider(criteria) {
+                        var provider = 'search';
+                        if (criteria.repo && criteria.repo.indexOf(',') === -1) {
+                            provider = criteria.repo;
+                        }
+                        if (scope.repo.search && scope.repo.search !== 'local') {
+                            provider = scope.repo.search;
+                        }
+                        return provider;
+                    }
 
                     /*
                      * Function for fetching the elements from the database
@@ -708,20 +725,12 @@
                         }
 
                         criteria = search.query($location.search()).getCriteria(true);
-                        var provider = 'search', tempItems;
-
-                        if (criteria.repo && criteria.repo.indexOf(',') === -1) {
-                            provider = criteria.repo;
-                        }
-
-                        if (scope.repo.search && scope.repo.search !== 'local') {
-                            provider = scope.repo.search;
-                        }
+                        var tempItems;
 
                         criteria.source.from = parameters.from;
                         criteria.source.size = parameters.to - parameters.from;
 
-                        api.query(provider, criteria).then(function (items) {
+                        api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.$applyAsync(function () {
                                 list.style.paddingTop = parameters.padding;
                                 if (!scope.items) {
