@@ -87,10 +87,10 @@ class SubscribersResource(Resource):
                 }
             }
         },
-        'publish_filter': {
+        'content_filter': {
             'type': 'dict',
             'schema': {
-                'filter_id': Resource.rel('publish_filters', nullable=True),
+                'filter_id': Resource.rel('content_filters', nullable=True),
                 'filter_type': {
                     'type': 'string',
                     'allowed': ['blocking', 'permitting'],
@@ -132,7 +132,7 @@ class SubscribersService(BaseService):
 
     def _get_subscribers_by_filter_condition(self, filter_condition):
         """
-        Searches all subscribers that has a publish filter with the given filter condition
+        Searches all subscribers that has a content filter with the given filter condition
         If filter condition is used in a global filter then it returns all
         subscribers that not disabled the global filter.
         :param filter_condition: Filter condition to test
@@ -143,11 +143,11 @@ class SubscribersService(BaseService):
         selected_subscribers = {}
 
         filter_condition_service = get_resource_service('filter_conditions')
-        publish_filter_service = get_resource_service('publish_filters')
+        content_filter_service = get_resource_service('content_filters')
         existing_filter_conditions = filter_condition_service.check_similar(filter_condition)
         for fc in existing_filter_conditions:
-            existing_publish_filters = publish_filter_service.get_publish_filters_by_filter_condition(fc['_id'])
-            for pf in existing_publish_filters:
+            existing_content_filters = content_filter_service.get_content_filters_by_filter_condition(fc['_id'])
+            for pf in existing_content_filters:
                 if pf.get('is_global', False):
                     for s in all_subscribers:
                         gfs = s.get('global_filters', {})
@@ -155,9 +155,9 @@ class SubscribersService(BaseService):
                             selected_subscribers[s['_id']] = s
 
                 for s in all_subscribers:
-                    if s.get('publish_filter') and \
-                        'filter_id' in s['publish_filter'] and \
-                            s['publish_filter']['filter_id'] == pf['_id']:
+                    if s.get('content_filter') and \
+                        'filter_id' in s['content_filter'] and \
+                            s['content_filter']['filter_id'] == pf['_id']:
                         selected_subscribers[s['_id']] = s
 
         return list(selected_subscribers.values())

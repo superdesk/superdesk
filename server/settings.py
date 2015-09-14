@@ -190,7 +190,6 @@ INSTALLED_APPS.extend([
     'apps.rules',
     'apps.highlights',
     'apps.publish',
-    'apps.publish.publish_filters',
     'apps.content_filters',
     'apps.dictionaries',
     'apps.duplication',

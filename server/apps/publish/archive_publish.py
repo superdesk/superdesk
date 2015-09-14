@@ -622,7 +622,7 @@ class BasePublishService(BaseService):
         filtered_subscribers = []
         req = ParsedRequest()
         req.args = {'is_global': True}
-        service = get_resource_service('publish_filters')
+        service = get_resource_service('content_filters')
         global_filters = list(service.get(req=req, lookup=None))
 
         for subscriber in subscribers:
@@ -645,7 +645,7 @@ class BasePublishService(BaseService):
             if not self.conforms_global_filter(subscriber, global_filters, doc):
                 continue
 
-            if not self.conforms_publish_filter(subscriber, doc):
+            if not self.conforms_content_filter(subscriber, doc):
                 continue
 
             filtered_subscribers.append(subscriber)
@@ -724,7 +724,7 @@ class BasePublishService(BaseService):
         get_resource_service('published').update_published_items(published_item_id, LAST_PUBLISHED_VERSION, False)
         get_resource_service('published').post([published_item])
 
-    def conforms_publish_filter(self, subscriber, doc):
+    def conforms_content_filter(self, subscriber, doc):
         """
         Checks if the document matches the subscriber filter
         :param subscriber: Subscriber to get the filter
@@ -736,19 +736,19 @@ class BasePublishService(BaseService):
         False if doesn't match and permitting
         True if doesn't match and blocking
         """
-        publish_filter = subscriber.get('publish_filter')
+        content_filter = subscriber.get('content_filter')
 
-        if publish_filter is None or 'filter_id' not in publish_filter or publish_filter['filter_id'] is None:
+        if content_filter is None or 'filter_id' not in content_filter or content_filter['filter_id'] is None:
             return True
 
-        service = get_resource_service('publish_filters')
-        filter = service.find_one(req=None, _id=publish_filter['filter_id'])
+        service = get_resource_service('content_filters')
+        filter = service.find_one(req=None, _id=content_filter['filter_id'])
         does_match = service.does_match(filter, doc)
 
         if does_match:
-            return publish_filter['filter_type'] == 'permitting'
+            return content_filter['filter_type'] == 'permitting'
         else:
-            return publish_filter['filter_type'] == 'blocking'
+            return content_filter['filter_type'] == 'blocking'
 
     def conforms_global_filter(self, subscriber, global_filters, doc):
         """
@@ -761,7 +761,7 @@ class BasePublishService(BaseService):
         and it matches the document
         False if global filter matches the document or all of them overriden
         """
-        service = get_resource_service('publish_filters')
+        service = get_resource_service('content_filters')
         gfs = subscriber.get('global_filters', {})
         for global_filter in global_filters:
             if gfs.get(str(global_filter['_id']), True):

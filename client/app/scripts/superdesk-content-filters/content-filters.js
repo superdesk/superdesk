@@ -125,7 +125,7 @@
      *   settings page.
      */
     FilterConditionsController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function FilterConditionsController($scope, filters, notify, modal) {
+    function FilterConditionsController($scope, contentFilters, notify, modal) {
         $scope.filterConditions = null;
         $scope.filterCondition = null;
         $scope.origFilterCondition = null;
@@ -135,7 +135,7 @@
         $scope.valueFieldLookup = {};
 
         $scope.edit = function(fc) {
-            filters.getFilterConditionParameters().then(function(params) {
+            contentFilters.getFilterConditionParameters().then(function(params) {
                 $scope.filterConditionParameters = params;
                 _.each(params, function(param) {
                     $scope.operatorLookup[param.field] = param.operators;
@@ -162,7 +162,7 @@
         $scope.save = function() {
             $scope.filterCondition.value = getFilterValue();
             delete $scope.filterCondition.values;
-            filters.saveFilterCondition($scope.origFilterCondition, $scope.filterCondition)
+            contentFilters.saveFilterCondition($scope.origFilterCondition, $scope.filterCondition)
                 .then(
                     function() {
                         notify.success(gettext('Filter condition saved.'));
@@ -187,7 +187,7 @@
         $scope.remove = function(filterCondition) {
             modal.confirm(gettext('Are you sure you want to delete filter condition?'))
             .then(function() {
-                return filters.remove(filterCondition);
+                return contentFilters.remove(filterCondition);
             })
             .then(function(result) {
                 _.remove($scope.filterConditions, filterCondition);
@@ -229,7 +229,7 @@
         };
 
         var fetchFilterConditions = function() {
-            filters.getAllFilterConditions().then(function(f) {
+            contentFilters.getAllFilterConditions().then(function(f) {
                 $scope.filterConditions = f;
             });
         };
@@ -247,7 +247,7 @@
      *   page.
      */
     ManageContentFiltersController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function ManageContentFiltersController($scope, filters, notify, modal) {
+    function ManageContentFiltersController($scope, contentFilters, notify, modal) {
         $scope.filterConditions = null;
         $scope.contentFilters = null;
         $scope.contentFilter = null;
@@ -275,7 +275,7 @@
 
         $scope.saveFilter = function() {
             delete $scope.contentFilter.article_id;
-            filters.saveContentFilter($scope.origContentFilter, $scope.contentFilter)
+            contentFilters.saveContentFilter($scope.origContentFilter, $scope.contentFilter)
                 .then(
                     function() {
                         notify.success(gettext('Content filter saved.'));
@@ -305,7 +305,7 @@
         $scope.remove = function(pf) {
             modal.confirm(gettext('Are you sure you want to delete content filter?'))
             .then(function() {
-                return filters.remove(pf);
+                return contentFilters.remove(pf);
             })
             .then(function(result) {
                 _.remove($scope.contentFilters, pf);
@@ -355,7 +355,7 @@
                 return;
             }
 
-            filters.testContentFilter({'filter': $scope.contentFilter, 'article_id': $scope.test.article_id})
+            contentFilters.testContentFilter({'filter': $scope.contentFilter, 'article_id': $scope.test.article_id})
                 .then(
                     function(result) {
                         $scope.test.test_result = result.match_results ? 'Does Match' : 'Doesn\'t Match';
@@ -415,7 +415,7 @@
         };
 
         var fetchFilterConditions = function() {
-            filters.getAllFilterConditions().then(function(_filters) {
+            contentFilters.getAllFilterConditions().then(function(_filters) {
                 $scope.filterConditions = _filters;
                 _.each(_filters, function(filter) {
                     $scope.filterConditionLookup[filter._id] = filter;
@@ -424,7 +424,7 @@
         };
 
         var fetchContentFilters = function() {
-            filters.getAllContentFilters().then(function(_filters) {
+            contentFilters.getAllContentFilters().then(function(_filters) {
                 $scope.contentFilters = _filters;
                 _.each($scope.contentFilters, function(filter) {
                     $scope.contentFiltersLookup[filter._id] = filter;
@@ -460,8 +460,8 @@
      *   against existing content items. Triggered by the action under the
      *   Filters tab on the Content Filters settings page.
      */
-    ProductionTestController.$inject = ['$scope', 'filters', 'notify', '$location', '$window'];
-    function ProductionTestController($scope, filters, notify, $location, $window) {
+    ProductionTestController.$inject = ['$scope', 'contentFilters', 'notify', '$location', '$window'];
+    function ProductionTestController($scope, contentFilters, notify, $location, $window) {
         $scope.preview = null;
         $scope.selected = {};
         $scope.selectedItem = {};
@@ -556,21 +556,23 @@
             fetchProductionTestResult();
         });
         var fetchProductionTestResult = function() {
-            filters.testPublishFilter({'filter_id': $scope.selectedfilter, 'return_matching': $scope.$eval($scope.model.selectedType)})
-                .then(
-                    function(result) {
-                        $scope.testResult = result.match_results;
-                    },
-                    function(response) {
-                        if (angular.isDefined(response.data._issues)) {
-                            notify.error(gettext('Error: ' + response.data._issues));
-                        } else if (angular.isDefined(response.data._message)) {
-                            notify.error(gettext('Error: ' + response.data._message));
-                        } else {
-                            notify.error(gettext('Error: Failed to fetch production test results.'));
-                        }
+            contentFilters.testContentFilter({
+                'filter_id': $scope.selectedfilter,
+                'return_matching': $scope.$eval($scope.model.selectedType
+            )}).then(
+                function(result) {
+                    $scope.testResult = result.match_results;
+                },
+                function(response) {
+                    if (angular.isDefined(response.data._issues)) {
+                        notify.error(gettext('Error: ' + response.data._issues));
+                    } else if (angular.isDefined(response.data._message)) {
+                        notify.error(gettext('Error: ' + response.data._message));
+                    } else {
+                        notify.error(gettext('Error: Failed to fetch production test results.'));
                     }
-                );
+                }
+            );
 
         };
     }
@@ -584,7 +586,7 @@
      *   settings page.
      */
     FilterSearchController.$inject = ['$scope', 'contentFilters', 'notify'];
-    function FilterSearchController($scope, filters, notify) {
+    function FilterSearchController($scope, contentFilters, notify) {
         $scope.filterCondition = null;
         $scope.operatorLookup = {};
         $scope.valueLookup = {};
@@ -619,7 +621,7 @@
         };
 
         function fetchContentFilters() {
-            filters.getAllContentFilters().then(function(_filters) {
+            contentFilters.getAllContentFilters().then(function(_filters) {
                 $scope.contentFilters = _filters;
                 _.each($scope.contentFilters, function(filter) {
                     $scope.contentFiltersLookup[filter._id] = filter;
@@ -628,7 +630,7 @@
         }
 
         function populateData() {
-            return filters.getFilterConditionParameters().then(function(params) {
+            return contentFilters.getFilterConditionParameters().then(function(params) {
                 $scope.filterConditionParameters = params;
                 _.each(params, function(param) {
                     $scope.operatorLookup[param.field] = param.operators;
@@ -678,7 +680,7 @@
                     'value': $scope.filterCondition.value
                 };
                 $scope.loading = true;
-                filters.getFilterSearchResults(inputs).then(function(result) {
+                contentFilters.getFilterSearchResults(inputs).then(function(result) {
                     $scope.searchResult = result;
                     if (result.length === 0) {
                         notify.error(gettext('no results found'));

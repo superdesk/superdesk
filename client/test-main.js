@@ -80,7 +80,6 @@ tests.push('superdesk-archive/directives');
 
 tests.push('superdesk-dictionaries/dictionaries');
 tests.push('superdesk-publish/publish');
-tests.push('superdesk-publish/filters/publish-filters');
 tests.push('superdesk/editor/spellcheck/spellcheck');
 tests.push('superdesk-templates/templates');
 tests.push('superdesk-highlights/highlights');

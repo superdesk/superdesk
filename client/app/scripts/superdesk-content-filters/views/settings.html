@@ -34,10 +34,6 @@
         </div>
 
         <div ng-switch-when="filter_search">
-            <!-- TODO: what is this data-search?
-            also, does this get reloaded everytime the tab is switched?
-            should perhaps not, right?
-            -->
             <div ng-include="ctrl.TEMPLATES_DIR + '/filter-search.html'"
                  data-search="search">
             </div>

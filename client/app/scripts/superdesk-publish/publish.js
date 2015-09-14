@@ -11,7 +11,7 @@
 (function() {
     'use strict';
 
-    var app = angular.module('superdesk.publish', ['superdesk.users', 'superdesk.publish.filters']);
+    var app = angular.module('superdesk.publish', ['superdesk.users', 'superdesk.content_filters']);
 
     app.value('transmissionTypes', {
         ftp: {
@@ -301,8 +301,14 @@
         $scope.reload();
     }
 
-    SubscribersDirective.$inject = ['gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal', 'metadata', 'filters', '$q'];
-    function SubscribersDirective(gettext, notify, api, adminPublishSettingsService, modal, metadata, filters, $q) {
+    SubscribersDirective.$inject = [
+        'gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal',
+        'metadata', 'contentFilters', '$q'
+    ];
+    function SubscribersDirective(
+        gettext, notify, api, adminPublishSettingsService,
+        modal, metadata, contentFilters, $q) {
+
         return {
             templateUrl: 'scripts/superdesk-publish/views/subscribers.html',
             link: function ($scope) {
@@ -310,7 +316,7 @@
                 $scope.origSubscriber = null;
                 $scope.subscribers = null;
                 $scope.newDestination = null;
-                $scope.publishFilters = null;
+                $scope.contentFilters = null;
                 $scope.geoRestrictions = null;
                 $scope.subTypes = null;
 
@@ -336,13 +342,13 @@
                 }
 
                 /**
-                 * Fetches publish filters from backend and returns the same.
+                 * Fetches content filters from backend and returns the same.
                  *
                  * @return {*}
                  */
-                var fetchPublishFilters = function() {
-                    return api.query('publish_filters').then(function(filters) {
-                        $scope.publishFilters = filters._items;
+                var fetchContentFilters = function() {
+                    return api.query('content_filters').then(function(filters) {
+                        $scope.contentFilters = filters._items;
                     });
                 };
 
@@ -366,12 +372,12 @@
                 };
 
                 /**
-                 * Fetches list of global publish filters and returns the same.
+                 * Fetches list of global content filters and returns the same.
                  *
                  * @return {*}
                  */
-                var fetchGlobalPublishFilters = function() {
-                    return filters.getGlobalPublishFilters().then(function(filters) {
+                var fetchGlobalContentFilters = function() {
+                    return contentFilters.getGlobalContentFilters().then(function(filters) {
                         $scope.globalFilters = filters;
                     });
                 };
@@ -420,8 +426,8 @@
                  * Upserts the selected subscriber.
                  */
                 $scope.save = function() {
-                    if ($scope.subscriber.publish_filter && $scope.subscriber.publish_filter.filter_id === '') {
-                        $scope.subscriber.publish_filter = null;
+                    if ($scope.subscriber.content_filter && $scope.subscriber.content_filter.filter_id === '') {
+                        $scope.subscriber.content_filter = null;
                     }
 
                     $scope.subscriber.destinations = $scope.destinations;
@@ -457,16 +463,16 @@
                 $scope.edit = function(subscriber) {
                     var promises = [];
                     promises.push(fetchPublishErrors());
-                    promises.push(fetchPublishFilters());
-                    promises.push(fetchGlobalPublishFilters());
+                    promises.push(fetchContentFilters());
+                    promises.push(fetchGlobalContentFilters());
 
                     $q.all(promises).then(function() {
                         $scope.origSubscriber = subscriber || {};
                         $scope.subscriber = _.create($scope.origSubscriber);
                         $scope.subscriber.critical_errors = $scope.origSubscriber.critical_errors;
-                        $scope.subscriber.publish_filter = $scope.origSubscriber.publish_filter || {};
+                        $scope.subscriber.content_filter = $scope.origSubscriber.content_filter || {};
                         $scope.subscriber.global_filters =  $scope.origSubscriber.global_filters || {};
-                        $scope.subscriber.publish_filter.filter_type = $scope.subscriber.publish_filter.filter_type  || 'blocking';
+                        $scope.subscriber.content_filter.filter_type = $scope.subscriber.content_filter.filter_type  || 'blocking';
 
                         $scope.destinations = [];
                         if (angular.isDefined($scope.subscriber.destinations) && !_.isNull($scope.subscriber.destinations) &&
@@ -578,18 +584,6 @@
                 type: 'http',
                 backend: {
                     rel: 'io_errors'
-                }
-            });
-            apiProvider.api('publish_filters', {
-                type: 'http',
-                backend: {
-                    rel: 'publish_filters'
-                }
-            });
-            apiProvider.api('publish_filter_test', {
-                type: 'http',
-                backend: {
-                    rel: 'publish_filter_test'
                 }
             });
         }]);

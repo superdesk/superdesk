@@ -335,7 +335,7 @@ class FilterConditionParametersService(BaseService):
         values = {}
         values['anpa_category'] = get_resource_service('vocabularies').find_one(req=None, _id='categories')['items']
         values['genre'] = get_resource_service('vocabularies').find_one(req=None, _id='genre')['items']
-        values['urgency'] = get_resource_service('vocabularies').find_one(req=None, _id='newsvalue')['items']
+        values['urgency'] = get_resource_service('vocabularies').find_one(req=None, _id='urgency')['items']
         values['priority'] = get_resource_service('vocabularies').find_one(req=None, _id='priority')['items']
         values['type'] = get_resource_service('vocabularies').find_one(req=None, _id='type')['items']
         values['subject'] = get_subjectcodeitems()

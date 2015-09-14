@@ -114,10 +114,10 @@ Feature: Filter Condition
     """
 
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer"}]
     """
     When we delete "/filter_conditions/#filter_conditions._id#"
     Then we get error 400

@@ -74,17 +74,17 @@ Feature: Content Publishing
       [{"name": "sport", "field": "headline", "operator": "like", "value": "est"}]
       """
       Then we get latest
-      Given empty "publish_filters"
-      When we post to "/publish_filters" with success
+      Given empty "content_filters"
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       When we post to "/subscribers" with success
       """
       {
         "name":"Channel 3","media_type":"media", "subscriber_type": "digital",  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -131,17 +131,17 @@ Feature: Content Publishing
       """
 
       Then we get latest
-      Given empty "publish_filters"
-      When we post to "/publish_filters" with success
+      Given empty "content_filters"
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       When we post to "/subscribers" with success
       """
       {
         "name":"Channel 3","media_type":"media", "subscriber_type": "digital",  "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+        "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "blocking"},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
@@ -178,10 +178,10 @@ Feature: Content Publishing
       """
 
       Then we get latest
-      Given empty "publish_filters"
-      When we post to "/publish_filters" with success
+      Given empty "content_filters"
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}],
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}],
         "name": "soccer-only", "is_global": true}]
       """
       When we post to "/subscribers" with success
@@ -225,10 +225,10 @@ Feature: Content Publishing
       """
 
       Then we get latest
-      Given empty "publish_filters"
-      When we post to "/publish_filters" with success
+      Given empty "content_filters"
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}],
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}],
         "name": "soccer-only", "is_global": true}]
       """
       When we post to "/subscribers" with success
@@ -240,7 +240,7 @@ Feature: Content Publishing
         "email": "test@test.com",
         "sequence_num_settings":{"min" : 1, "max" : 10},
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}],
-        "global_filters": {"#publish_filters._id#": false}
+        "global_filters": {"#content_filters._id#": false}
       }
       """
 

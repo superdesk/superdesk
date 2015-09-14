@@ -47,10 +47,10 @@ Feature: Subscribers
     """
 
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
 
     Then we get latest
@@ -64,11 +64,11 @@ Feature: Subscribers
     """
     And we patch latest
     """
-    {"publish_filter":{"filter_id":"#publish_filters._id#"}}
+    {"content_filter":{"filter_id":"#content_filters._id#"}}
     """
     Then we get updated response
     """
-    {"publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"}}
+    {"content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"}}
     """
 
   @auth
@@ -80,10 +80,10 @@ Feature: Subscribers
     [{"name": "sport", "field": "anpa_category", "operator": "in", "value": "4"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
 
     Then we get latest
@@ -97,7 +97,7 @@ Feature: Subscribers
       "sequence_num_settings":{"min" : 1, "max" : 10},
       "email": "test@test.com",
       "destinations":[{"name":"destination1","format": "nitf", "delivery_type":"FTP","config":{"ip":"144.122.244.55","password":"xyz"}}],
-      "publish_filter": {"filter_id":"#publish_filters._id#", "filter_type":"blocking"}
+      "content_filter": {"filter_id":"#content_filters._id#", "filter_type":"blocking"}
     }
     """
     And we get "/subscribers?filter_condition={"field":"anpa_category", "operator":"in", "value":"4"}"
@@ -235,10 +235,10 @@ Feature: Subscribers
     """
 
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
 
     Then we get latest
@@ -252,9 +252,9 @@ Feature: Subscribers
     """
     When we patch "/subscribers/#subscribers._id#"
     """
-    {"global_filters":{"#publish_filters._id#":true}}
+    {"global_filters":{"#content_filters._id#":true}}
     """
     Then we get updated response
     """
-    {"global_filters":{"#publish_filters._id#":true}}
+    {"global_filters":{"#content_filters._id#":true}}
     """

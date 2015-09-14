@@ -1810,7 +1810,7 @@ Feature: Package Publishing
       @vocabulary
       Scenario: Publish a package with three already published text stories being sent different subscribers
       Given empty "filter_conditions"
-      Given empty "publish_filters"
+      Given empty "content_filters"
       Given empty "archive"
       Given "desks"
           """
@@ -1868,9 +1868,9 @@ Feature: Package Publishing
       [{"name": "sport", "field": "urgency", "operator": "in", "value": "1"}]
       """
       Then we get latest
-      When we post to "/publish_filters" with success
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       Then we get latest
       Given "subscribers"
@@ -1888,7 +1888,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }, {
             "_id": "sub-3",
@@ -2042,7 +2042,7 @@ Feature: Package Publishing
       @vocabulary
       Scenario: Publish a package with three already published text stories no subscribers matched so no package sent
       Given empty "filter_conditions"
-      Given empty "publish_filters"
+      Given empty "content_filters"
       Given empty "archive"
       Given "desks"
           """
@@ -2102,9 +2102,9 @@ Feature: Package Publishing
       [{"name": "sport", "field": "urgency", "operator": "in", "value": "1"}]
       """
       Then we get latest
-      When we post to "/publish_filters" with success
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       Then we get latest
       Given "subscribers"
@@ -2122,7 +2122,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }, {
             "_id": "sub-3",
@@ -2130,7 +2130,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }]
       """
@@ -2464,7 +2464,7 @@ Feature: Package Publishing
       Given empty "published"
       Given empty "publish_queue"
       Given empty "filter_conditions"
-      Given empty "publish_filters"
+      Given empty "content_filters"
       Given empty "subscribers"
       Given "desks"
           """
@@ -2608,9 +2608,9 @@ Feature: Package Publishing
         [{"name": "sport", "field": "urgency", "operator": "in", "value": "1"}]
         """
         Then we get latest
-        When we post to "/publish_filters" with success
+        When we post to "/content_filters" with success
         """
-        [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+        [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
         """
         Then we get latest
         Given "subscribers"
@@ -2628,7 +2628,7 @@ Feature: Package Publishing
               "subscriber_type": "digital",
               "sequence_num_settings":{"min" : 1, "max" : 10},
               "email": "test@test.com",
-              "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+              "content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"},
               "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
             }, {
               "_id": "sub-3",
@@ -2636,7 +2636,7 @@ Feature: Package Publishing
               "subscriber_type": "digital",
               "sequence_num_settings":{"min" : 1, "max" : 10},
               "email": "test@test.com",
-              "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type":"blocking"},
+              "content_filter":{"filter_id":"#content_filters._id#", "filter_type":"blocking"},
               "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
             }]
         """
@@ -3760,7 +3760,7 @@ Feature: Package Publishing
       Given empty "published"
       Given empty "publish_queue"
       Given empty "filter_conditions"
-      Given empty "publish_filters"
+      Given empty "content_filters"
       Given empty "subscribers"
       Given "desks"
           """
@@ -3885,9 +3885,9 @@ Feature: Package Publishing
       [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
       """
       Then we get latest
-      When we post to "/publish_filters" with success
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       Then we get latest
       Given "subscribers"
@@ -3898,7 +3898,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }, {
             "_id": "sub-2",
@@ -3913,7 +3913,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }]
       """
@@ -4133,9 +4133,9 @@ Feature: Package Publishing
       [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
       """
       Then we get latest
-      When we post to "/publish_filters" with success
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       Then we get latest
       Given "subscribers"
@@ -4146,7 +4146,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }, {
             "_id": "sub-2",
@@ -4161,7 +4161,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }]
       """
@@ -4663,7 +4663,7 @@ Feature: Package Publishing
       Given empty "published"
       Given empty "publish_queue"
       Given empty "filter_conditions"
-      Given empty "publish_filters"
+      Given empty "content_filters"
       Given empty "subscribers"
       Given "desks"
           """
@@ -4788,9 +4788,9 @@ Feature: Package Publishing
       [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,3"}]
       """
       Then we get latest
-      When we post to "/publish_filters" with success
+      When we post to "/content_filters" with success
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       Then we get latest
       Given "subscribers"
@@ -4801,7 +4801,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "blocking"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "blocking"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }, {
             "_id": "sub-2",
@@ -4816,7 +4816,7 @@ Feature: Package Publishing
             "subscriber_type": "digital",
             "sequence_num_settings":{"min" : 1, "max" : 10},
             "email": "test@test.com",
-            "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+            "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
             "destinations":[{"name":"Test","format": "ninjs", "delivery_type":"PublicArchive","config":{"recipients":"test@test.com"}}]
           }]
       """
