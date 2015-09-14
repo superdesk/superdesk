@@ -1763,6 +1763,7 @@
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
                 scope.errorMessage = null;
+                var mainEditScope = scope.$parent.$parent;
 
                 scope.$watch('item', function(item) {
                     if (angular.isDefined(item)) {
@@ -1820,8 +1821,8 @@
                     });
 
                     superdesk.intent('edit', 'crop',  scope.item).then(function(data) {
-                        if (!scope.$parent.dirty) {
-                            scope.$parent.dirty = data.isDirty;
+                        if (mainEditScope.hasOwnProperty('dirty') && !mainEditScope.dirty) {
+                            mainEditScope.dirty = data.isDirty;
                         }
                         var orig = _.create(data.renditions);
                         var diff = data.cropData;
