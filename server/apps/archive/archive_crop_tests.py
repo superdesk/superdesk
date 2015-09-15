@@ -129,5 +129,5 @@ class ArchiveCropTestCase(SuperdeskTestCase):
                 self.service.create_crop(original, '4-3', doc)
 
             ex = context.exception
-            self.assertEqual(ex.message, 'Saving crop failed: test')
+            self.assertEqual(ex.message, 'Saving crop failed.')
             self.assertEqual(ex.status_code, 400)
