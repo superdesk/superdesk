@@ -107,7 +107,7 @@
             </div>
         </div>
 
-        <button id="send-to-btn" ng-show="_editable && $root.isActionAllowed(item, 'move') && itemActions.send"
+        <button id="send-to-btn" ng-show="_editable"
             class="navbtn navbtn-hover" title="{{ :: 'Send to / Publish' | translate }}"
             ng-click="views.send = !views.send">
             <i class="svg-icon-sendto"></i>

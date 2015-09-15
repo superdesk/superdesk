@@ -91,7 +91,6 @@ describe('authoring', function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item5', 'Politic');
-        expect(authoring.sendToButton.isDisplayed()).toBe(false);
         authoring.writeText(' ');
         authoring.save();
         expect(authoring.sendToButton.isDisplayed()).toBe(true);
@@ -161,4 +160,27 @@ describe('authoring', function() {
 
         expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme-mono')).toBe(true);
     });
+
+    it('can show correct and kill buttons based on the selected action', function() {
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.editItem('item5', 'Politic');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.publish();
+
+        workspace.selectStage('Published');
+        workspace.filterItems('text');
+
+        content.actionOnItem('Correct item', 0);
+        authoring.sendToButton.click();
+        expect(authoring.correct_button.isDisplayed()).toBe(true);
+        element(by.id('closeAuthoringBtn')).click();
+
+        content.actionOnItem('Kill item', 0);
+        authoring.sendToButton.click();
+        expect(authoring.kill_button.isDisplayed()).toBe(true);
+        element(by.id('closeAuthoringBtn')).click();
+    });
+
 });

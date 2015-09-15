@@ -1463,7 +1463,8 @@
                         desks.initialize()
                             .then(fetchDesks)
                             .then(fetchStages)
-                            .then(fetchMacros);
+                            .then(fetchMacros)
+                            .then(initializeItemActions);
                     }
                 }
 
@@ -1518,8 +1519,8 @@
                  * Returns true if Publish Schedule needs to be displayed, false otherwise.
                  */
                 scope.showPublishSchedule = function() {
-                    return scope.item && scope.item.type !== 'composite' && !scope.item.embargo_date &&
-                        !scope.item.embargo_time &&
+                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
+                        !scope.item.embargo_date && !scope.item.embargo_time &&
                         ['published', 'killed', 'corrected'].indexOf(scope.item.state) === -1;
                 };
 
@@ -1527,9 +1528,8 @@
                  * Returns true if Embargo needs to be displayed, false otherwise.
                  */
                 scope.showEmbargo = function() {
-                    return scope.item && scope.item.type !== 'composite' &&
-                        !scope.item.publish_schedule_date && !scope.item.publish_schedule_time &&
-                        !authoring.isPublished(scope.item);
+                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
+                        !scope.item.publish_schedule_date && !scope.item.publish_schedule_time;
                 };
 
                 /**
@@ -1560,6 +1560,14 @@
 
                 scope.canSendAndContinue = function() {
                     return !authoring.isPublished(scope.item) && _.contains(['text', 'preformatted'], scope.item.type);
+                };
+
+                /**
+                 * Returns true if 'send' button should be displayed. Otherwise, returns false.
+                 * @return {boolean}
+                 */
+                scope.isSendEnabled = function() {
+                    return !authoring.isPublished(scope.item);
                 };
 
                 /**
@@ -1748,6 +1756,15 @@
                             scope.macros = _macros;
                         });
                     }
+                }
+
+                /**
+                 * The itemActions defined in parent scope (Authoring Directive) is made accessible via this method.
+                 * scope.$parent isn't used as send-item directive is used in multiple places and has different
+                 * hierarchy.
+                 */
+                function initializeItemActions() {
+                    scope.itemActions = authoring.itemActions(scope.item);
                 }
             }
         };

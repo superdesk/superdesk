@@ -7,6 +7,8 @@ function Authoring() {
 
     this.lock = element(by.css('[ng-click="lock()"]'));
     this.publish_button = element(by.buttonText('publish'));
+    this.correct_button = element(by.buttonText('correct'));
+    this.kill_button = element(by.buttonText('kill'));
     this.close_button = element(by.buttonText('CLOSE'));
     this.save_button = element(by.buttonText('SAVE'));
 
