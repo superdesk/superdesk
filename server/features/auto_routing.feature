@@ -308,6 +308,54 @@ Feature: Auto Routing
         }
         """
 
+
+    @auth @provider
+    Scenario: Content is fetched to desk in the ingested item
+        Given empty "desks"
+        When we post to "/desks"
+        """
+          {
+            "name": "Finance Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
+          }
+        """
+        Then we get response code 201
+        When we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Finance Rule 1",
+                "filter": {
+                  "subject": [{"qcode": "04000000"}]
+                },
+                "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "preserve_desk": true,
+                  "exit": false
+                }
+              }
+            ]
+          }
+        ]
+        """
+        Then we get response code 201
+        When we ingest and fetch "AAP" "aap-finance.xml" to desk "#desks._id#" stage "#desks.incoming_stage#" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we get "/archive?q=#desks._id#"
+        Then we get list with 1 items
+        """
+        {"_items": [
+          {
+              "headline": "ASIA:Samsung sells defence, petrochemical units"
+          }
+        ]}
+        """
+
+
     @auth @provider @clean
     Scenario: Content is fetched and transformed different stages
         Given empty "desks"

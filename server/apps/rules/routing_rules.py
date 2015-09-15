@@ -15,10 +15,10 @@ from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
-
+from eve.utils import config
+from superdesk.metadata.item import CONTENT_STATE
 
 logger = logging.getLogger(__name__)
-STATE_ROUTED = 'routed'
 
 
 class RoutingRuleSchemeResource(Resource):
@@ -70,6 +70,9 @@ class RoutingRuleSchemeResource(Resource):
                                 }
                             },
                             'exit': {
+                                'type': 'boolean'
+                            },
+                            'preserve_desk': {
                                 'type': 'boolean'
                             }
                         }
@@ -139,7 +142,7 @@ class RoutingRuleSchemeService(BaseService):
         Will throw BadRequestError if any of the pre-conditions fail.
         """
 
-        if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc['_id']):
+        if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc[config.ID_FIELD]):
             raise SuperdeskApiError.forbiddenError('Routing scheme is applied to channel(s). It cannot be deleted.')
 
     def apply_routing_scheme(self, ingest_item, provider, routing_scheme):
@@ -156,14 +159,22 @@ class RoutingRuleSchemeService(BaseService):
 
         for rule in self.__get_scheduled_routing_rules(rules):
             if RoutingRuleValidator().is_valid_rule(ingest_item, rule.get('filter', {})):
-                self.__fetch(ingest_item, rule.get('actions', {}).get('fetch', []))
+                if rule.get('actions', {}).get('preserve_desk', False) and ingest_item.get('task', {}).get('desk'):
+                    desk = get_resource_service('desks').find_one(req=None, _id=ingest_item['task']['desk'])
+                    self.__fetch(ingest_item, [{'desk': desk[config.ID_FIELD], 'stage': desk['incoming_stage']}])
+                    fetch_actions = [f for f in rule.get('actions', {}).get('fetch', [])
+                                     if f.get('desk') != ingest_item['task']['desk']]
+                else:
+                    fetch_actions = rule.get('actions', {}).get('fetch', [])
+
+                self.__fetch(ingest_item, fetch_actions)
                 self.__publish(ingest_item, rule.get('actions', {}).get('publish', []))
                 if rule.get('actions', {}).get('exit', False):
                     break
             else:
                 logger.info("Routing rule %s of Routing Scheme %s for Provider %s did not match for item %s" %
                             (rule.get('name'), routing_scheme.get('name'),
-                             provider.get('name'), ingest_item.get('_id')))
+                             provider.get('name'), ingest_item[config.ID_FIELD]))
 
     def __validate_routing_scheme(self, routing_scheme):
         """
@@ -270,10 +281,10 @@ class RoutingRuleSchemeService(BaseService):
         for destination in destinations:
             try:
                 item_id = get_resource_service('fetch') \
-                    .fetch([{'_id': ingest_item['_id'],
+                    .fetch([{config.ID_FIELD: ingest_item[config.ID_FIELD],
                              'desk': str(destination.get('desk')),
                              'stage': str(destination.get('stage')),
-                             'state': STATE_ROUTED,
+                             'state': CONTENT_STATE.ROUTED,
                              'macro': destination.get('macro', None)}])[0]
 
                 archive_items.append(item_id)
