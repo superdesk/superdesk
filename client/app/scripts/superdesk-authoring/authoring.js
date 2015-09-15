@@ -1435,9 +1435,9 @@
             }
         };
     }
-    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace',
+    SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
         '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
-    function SendItem($q, api, desks, notify, authoringWorkspace,
+    function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
         $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
         return {
             scope: {
@@ -1474,6 +1474,10 @@
                 }
 
                 function activateItem(item) {
+                    if (scope.mode === 'monitoring') {
+                        superdeskFlags.flags.fetching = !!item;
+                    }
+
                     scope.isActive = !!item;
                     activate();
                 }
@@ -1489,6 +1493,10 @@
                 }
 
                 scope.close = function() {
+                    if (scope.mode === 'monitoring') {
+                        superdeskFlags.flags.fetching = false;
+                    }
+
                     if (scope.$parent.views) {
                         scope.$parent.views.send = false;
                     } else {
@@ -1532,6 +1540,18 @@
                                 });
                     } else {
                         return runSend(open);
+                    }
+                };
+
+                /*
+                 * Returns true if Destination field and Send button needs to be displayed, false otherwise.
+                 * @returns {Boolean}
+                 */
+                scope.showSendButtonAndDestination = function () {
+                    if (scope.itemActions) {
+                        return scope.mode === 'ingest' ||
+                                scope.mode === 'monitoring' ||
+                                (scope.mode === 'authoring' && scope.isSendEnabled() && scope.itemActions.send);
                     }
                 };
 

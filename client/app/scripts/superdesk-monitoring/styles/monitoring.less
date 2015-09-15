@@ -29,6 +29,7 @@
             bottom: 0;
             padding: 9px 18px 18px;
             overflow-y: scroll;
+            .transition(all .3s);
             .border-box();
 
             .stage {
@@ -117,6 +118,14 @@
                     right: @sidepreview-width - 80;
                 }
             }
+        }
+    }
+}
+
+#main-container {
+    &.fetching {
+        .content-list {
+            right: 445px;
         }
     }
 }

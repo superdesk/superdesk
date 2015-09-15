@@ -154,6 +154,9 @@
         this.closePreview = closePreview;
         this.previewItem = null;
 
+        this.fetchAs = fetchAs;
+        this.closeFetchAs = closeFetchAs;
+
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
 
@@ -171,6 +174,14 @@
 
         function closePreview() {
             preview(null);
+        }
+
+        function fetchAs(item) {
+            vm.state['with-fetchas'] = !!item;
+        }
+
+        function closeFetchAs(item) {
+            vm.state['with-fetchas'] = !!item;
         }
 
         function edit(item) {

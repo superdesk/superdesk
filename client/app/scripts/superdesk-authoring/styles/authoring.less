@@ -420,8 +420,8 @@
 	.content {
 		width: 100%;
 		position: absolute;
-    	bottom: 125px;
-    	top: 50px;
+                bottom: 0;
+                top: 50px;
 
     	.publish-pane-box {
 		    overflow: auto;
@@ -619,7 +619,10 @@
         right: 0;
     }
     &.outer-pane {
-		top: 95px;
+        top: 95px;
+        .content {
+            bottom: 125px;
+        }
     }
 }
 
