@@ -31,10 +31,10 @@ describe('packaging', function() {
             addItem(item);
             expect(scope.groups[1].refs.length).toBe(1);
 
-            function addItem(item) {
+            function addItem(i) {
                 scope.$broadcast('package:addItems', {
                     group: 'main',
-                    items: [item]
+                    items: [i]
                 });
             }
         }));
