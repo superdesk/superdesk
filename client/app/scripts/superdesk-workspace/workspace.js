@@ -48,6 +48,19 @@
         }
 
         /**
+         * Set active workspace for given desk
+         *
+         * @param {Object} desk
+         * @return {Promise}
+         */
+        function setActiveDesk(desk) {
+            var updates = {};
+            updates[PREFERENCE_KEY] = {workspace: desk._id};
+            preferences.update(updates, PREFERENCE_KEY);
+            return getDeskWorkspace(desk._id).then(updateActive);
+        }
+
+        /**
          * Set active workspace
          *
          * @param {Object} workspace
@@ -57,17 +70,6 @@
             var updates = {};
             updates[PREFERENCE_KEY] = {workspace: workspace ? workspace._id : ''};
             preferences.update(updates, PREFERENCE_KEY);
-        }
-
-        /**
-         * Set active workspace for given desk
-         *
-         * @param {Object} desk
-         * @return {Promise}
-         */
-        function setActiveDesk(desk) {
-            setActiveWorkspace(null);
-            return getDeskWorkspace(desk._id, desk.name).then(updateActive);
         }
 
         /**
@@ -88,7 +90,7 @@
          */
         function getActiveWorkspaceId() {
             return preferences.get(PREFERENCE_KEY).then(function(prefs) {
-                return prefs && prefs.workspace ? prefs.workspace : null;
+                return (prefs && prefs.workspace) ? prefs.workspace : null;
             });
         }
 
@@ -101,13 +103,21 @@
          * @return {Promise}
          */
         function getActiveWorkspace() {
-            return desks.fetchCurrentDeskId()
+            return desks.initialize()
                 .then(getActiveWorkspaceId)
                 .then(function(activeId) {
-                    if (activeId) {
-                        return findWorkspace(activeId);
-                    } else if (desks.activeDeskId) {
+                    if (desks.activeDeskId && desks.deskLookup[desks.activeDeskId]) {
+                        self.workspaceType = 'desk';
                         return getDeskWorkspace(desks.activeDeskId);
+                    } else if (activeId && desks.deskLookup[activeId]) {
+                        self.workspaceType = 'desk';
+                        desks.setCurrentDeskId(activeId);
+                        return getDeskWorkspace(activeId);
+                    } else if (activeId) {
+                        return findWorkspace(activeId);
+                    } else if (desks.getCurrentDeskId()) {
+                        self.workspaceType = 'desk';
+                        return getDeskWorkspace(desks.getCurrentDeskId());
                     } else {
                         return createUserWorkspace();
                     }
@@ -131,7 +141,7 @@
          * @return {Promise}
          */
         function getDeskWorkspace(deskId) {
-            return api.query('desks', {where: {desk: deskId}}).then(function(result) {
+            return api.query('workspaces', {where: {desk: deskId}}).then(function(result) {
                 if (result._items.length === 1) {
                     return result._items[0];
                 } else {
@@ -207,7 +217,9 @@
                     $location.search('_id', null);
                 }
 
-                // init
+                /**
+                 * Restore the last desk/current workspace selection
+                 */
                 function initialize() {
                     var activeId = null;
                     workspaces.getActiveId()
@@ -222,7 +234,13 @@
                     .then(workspaces.queryUserWorkspaces)
                     .then(function(_workspaces) {
                         scope.wsList = _workspaces;
-                        if (activeId) {
+                        if (desks.activeDeskId && desks.deskLookup[desks.activeDeskId]) {
+                            scope.selected = _.find(scope.desks, {_id: desks.activeDeskId});
+                            scope.workspaceType = 'desk';
+                        } else if (activeId && desks.deskLookup[activeId]) {
+                            scope.selected = _.find(scope.desks, {_id: activeId});
+                            scope.workspaceType = 'desk';
+                        } else if (activeId && _.find(scope.wsList, {_id: activeId})) {
                             scope.selected = _.find(scope.wsList, {_id: activeId});
                             scope.workspaceType = 'workspace';
                         } else {
