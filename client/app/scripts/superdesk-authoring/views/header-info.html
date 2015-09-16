@@ -12,21 +12,23 @@
 
     <li class="full-width general-info">
         <div class="item info-icons">
-            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected" tooltip="Article Type" tooltip-placement="middle"></i>
+            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected"
+               tooltip="Article Type" tooltip-placement="middle"></i>
 
             <div class="slider-icon pull-left">
                 <div class="dropdown dropright" dropdown>
-                    <i class="urgency-icon-{{item.urgency}} dropdown-toggle" dropdown-toggle></i>
+                    <i class="urgency-icon-{{item.priority}} dropdown-toggle" dropdown-toggle
+                       tooltip="Priority" tooltip-placement="middle"></i>
                     <div class="dropdown-menu">
-                        <label>{{ "URGENCY" | translate }}</label>
+                        <label>{{ "PRIORITY" | translate }}</label>
                         <div class="item">
-                            <label><i class="urgency-icon-{{item.urgency}}"></i></label>
+                            <label><i class="urgency-icon-{{item.priority}}"></i></label>
                             <div class="data">
                                 <div sd-slider 
-                                     data-value="item.urgency"
-                                     data-list="metadata.newsvalue"
+                                     data-value="item.priority"
+                                     data-list="metadata.priority"
                                      data-unique="value"
-                                     data-field="urgency"
+                                     data-field="priority"
                                      data-invert="true"
                                      data-disabled="!_editable"
                                      data-update="sliderUpdate(item, field)">
@@ -38,14 +40,15 @@
             </div>
             <div class="slider-icon pull-left">
                 <div class="dropdown dropright" dropdown>
-                    <i class="output-item-label label-{{item.urgency}} dropdown-toggle" dropdown-toggle>{{ item.urgency }}</i>
+                    <i class="output-item-label label-{{ item.urgency ? item.urgency: '0' }} dropdown-toggle"
+                       tooltip="NewsValue / Urgency" tooltip-placement="middle" dropdown-toggle>{{ item.urgency}}</i>
                     <div class="dropdown-menu">
-                        <label>{{ "NEWS VALUE" | translate }}</label>
+                        <label>{{ "URGENCY" | translate }}</label>
                         <div class="item">
                             <div class="data">
                                 <div sd-slider 
                                      data-value="item.urgency"
-                                     data-list="metadata.newsvalue"
+                                     data-list="metadata.urgency"
                                      data-unique="value"
                                      data-field="urgency"
                                      data-invert="true"

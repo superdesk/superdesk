@@ -55,6 +55,8 @@ class NINJSFormatter(Formatter):
             if article.get(EMBARGO):
                 ninjs['embargoed'] = article.get(EMBARGO).isoformat()
 
+            ninjs['priority'] = article.get('priority', 5)
+
             return [(pub_seq_num, json.dumps(ninjs, default=json_serialize_datetime_objectId))]
         except Exception as ex:
             raise FormatterError.ninjsFormatterError(ex, subscriber)

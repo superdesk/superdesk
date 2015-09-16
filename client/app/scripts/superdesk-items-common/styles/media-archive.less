@@ -8,6 +8,7 @@
 /* ====================================== */
    // item(news) urgency colors and labels
 
+	@outputItemColor0 : #8a8a8a;
 	@outputItemColor1 : #005e84;
 	@outputItemColor2 : #64a4bf;
 	@outputItemColor3 : #b0cfdd;
@@ -24,7 +25,11 @@
 		line-height: 17px;
 		vertical-align: top;
 		visibility: hidden;
-                font-style: normal;
+	  	font-style: normal;
+		&.label-0 {
+			background: @outputItemColor0;
+			visibility: visible;
+		}
 		&.label-1 {
 			background: @outputItemColor1;
 			visibility: visible;
@@ -404,6 +409,12 @@
 			position: absolute;
 			bottom: 7px;
 			left: 36px;
+		}
+
+	  	.priority-label {
+			position: absolute;
+			bottom: 7px;
+			left: 60px;
 		}
 
 		.state-label {

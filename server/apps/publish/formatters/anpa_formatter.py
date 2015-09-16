@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from apps.publish.formatters import Formatter
+from apps.publish.formatters.aap_formatter_common import map_priority
 import superdesk
 from superdesk.errors import FormatterError
 from bs4 import BeautifulSoup
@@ -46,7 +47,7 @@ class AAPAnpaFormatter(Formatter):
 
                 # field seperator
                 anpa.append(b'\x0A')  # -LF
-                anpa.append(article.get('priority', 'r').encode('ascii'))
+                anpa.append(map_priority(article.get('priority')).encode('ascii'))
                 anpa.append(b'\x20')
 
                 anpa.append(category['qcode'].encode('ascii'))

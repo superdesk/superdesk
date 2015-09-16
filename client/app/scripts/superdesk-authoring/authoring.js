@@ -2063,14 +2063,14 @@
                         };
 
                         /*
-                         * Slider for Urgency and News Value
+                         * Slider for Urgency and Priority
                          */
                         scope.sliderUpdate = function(item, field) {
 
                             var o = {};
 
                             if (angular.isDefined(item)) {
-                                o[field] = item.name;
+                                o[field] = item.value;
                             } else {
                                 o[field] = null;
                             }

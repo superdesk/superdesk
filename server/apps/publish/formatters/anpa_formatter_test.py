@@ -13,6 +13,7 @@ from apps.publish.subscribers import SUBSCRIBER_TYPES
 from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.anpa_formatter import AAPAnpaFormatter
+from apps.publish.formatters.aap_formatter_common import map_priority
 from datetime import datetime
 import io
 
@@ -39,7 +40,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         'body_html': 'The story body',
         'type': 'text',
         'word_count': '1',
-        'priority': '1',
+        'priority': 1,
         'task': {'desk': 1}
     }
 
@@ -70,7 +71,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line[:3], '')  # Skip the sequence
 
         line = lines.readline()
-        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        self.assertEqual(line[0:20], 'f a bc-slugline   ')  # skip the date
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'This is a test headline')
@@ -99,7 +100,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line[:3], '')  # Skip the sequence
 
         line = lines.readline()
-        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        self.assertEqual(line[0:20], 'f a bc-slugline   ')  # skip the date
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'This is a test headline')
@@ -130,7 +131,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line[:3], '')  # Skip the sequence
 
         line = lines.readline()
-        self.assertEqual(line[0:20], '1 a bc-slugline   ')  # skip the date
+        self.assertEqual(line[0:20], 'f a bc-slugline   ')  # skip the date
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'This is a test headline')
@@ -202,3 +203,14 @@ class ANPAFormatterTest(SuperdeskTestCase):
         anpa = []
         f._process_headline(anpa, article3, 'a')
         self.assertEqual(anpa[0], b'VIC:123456789012345678901234567890')
+
+    def test_map_priority(self):
+        self.assertEqual('f', map_priority(1))
+        self.assertEqual('u', map_priority(2))
+        self.assertEqual('b', map_priority(3))
+        self.assertEqual('r', map_priority(4))
+        self.assertEqual('z', map_priority(5))
+        self.assertEqual('d', map_priority(6))
+        self.assertEqual('z', map_priority(None))
+        self.assertEqual('z', map_priority(7))
+        self.assertEqual('z', map_priority(''))

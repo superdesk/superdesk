@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from apps.publish.formatters import Formatter
+from apps.publish.formatters.aap_formatter_common import map_priority
 import superdesk
 from bs4 import BeautifulSoup
 from superdesk.errors import FormatterError
@@ -26,7 +27,7 @@ class AAPSMSFormatter(Formatter):
 
             odbc_item = {'Sequence': pub_seq_num, 'Category': article.get('anpa_category', [{}])[0].get('qcode'),
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
-                         'Priority': article.get('priority', 'r')}
+                         'Priority': map_priority(article.get('priority'))}
 
             if article.get(EMBARGO):
                 embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())

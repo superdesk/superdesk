@@ -367,30 +367,33 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
     def testFomatter(self):
         seq, doc = self.formatter.format(self.article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}sender').text,
             'sourcefabric.org')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}priority').text,
+            '1')
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}origin').text, 'AAP')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}rightsInfo/{http://iptc.org/std/nar/2006-10-01/}usageTerms').text,
             'terms')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}provider/' +
             '{http://iptc.org/std/nar/2006-10-01/}name').text,
             'sourcefabric.org')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/{http://iptc.org/std/nar/2006-10-01/}headline').text,
             'This is a test headline')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/{http://iptc.org/std/nar/2006-10-01/}inlineXML/' +
             '{http://iptc.org/std/nar/2006-10-01/}nitf/{http://iptc.org/std/nar/2006-10-01/}body/' +
             '{http://iptc.org/std/nar/2006-10-01/}body.content').text, 'The story body')
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemMeta/{http://iptc.org/std/nar/2006-10-01/}embargoed').text,
             self.embargo_ts.isoformat())
@@ -400,7 +403,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         article['type'] = 'preformatted'
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/{http://iptc.org/std/nar/2006-10-01/}inlineData').text,
             'The story body')
@@ -410,7 +413,7 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         article['source'] = 'BOGUS'
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
-        self.assertEquals(xml.find(
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}rightsInfo/{http://iptc.org/std/nar/2006-10-01/}usageTerms').text,
             'default terms')
@@ -421,6 +424,9 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         article['versioncreated'] = self.now
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}priority').text,
+            '5')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
@@ -434,6 +440,9 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
         self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}priority').text,
+            '5')
+        self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
@@ -445,6 +454,9 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         article['versioncreated'] = self.now
         seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
         xml = etree.fromstring(doc)
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}priority').text,
+            '5')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
