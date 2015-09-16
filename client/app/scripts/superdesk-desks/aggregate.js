@@ -131,10 +131,16 @@
                 if (item.type === 'stage') {
                     var stage = self.stageLookup[item._id];
                     spikeDesks[stage.desk] = self.deskLookup[stage.desk];
+                } else if (item.type === 'personal') {
+                    spikeDesks.personal = {_id: 'personal', name: 'personal'};
                 }
             });
             _.each(spikeDesks, function(item) {
-                self.spikeGroups.push({_id: item._id, type: 'spike', header: item.name});
+                if (item._id === 'personal') {
+                    self.spikeGroups.push({_id: item._id, type: 'spike-personal', header: item.name});
+                } else {
+                    self.spikeGroups.push({_id: item._id, type: 'spike', header: item.name});
+                }
             });
         }
 
