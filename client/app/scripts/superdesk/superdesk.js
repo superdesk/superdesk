@@ -96,5 +96,9 @@ define([
             }
         }]);
 
+    // make sure there is templates module defined
+    angular.module('templates', []);
+    modules.push('templates');
+
     return angular.module('superdesk', modules);
 });
