@@ -77,7 +77,9 @@
                                     </ul>
                                     <div class="content">
                                         <div sd-ingest-routing-general ng-if="tab === 'general'" data-rule="rule" data-remove-action="removeRule"></div>
-                                        <div sd-ingest-routing-filter ng-if="tab === 'filter'" data-rule="rule"></div>
+                                        <div sd-ingest-routing-filter
+                                            ng-if="tab === 'filter'" data-rule="rule"
+                                            data-content-filters="contentFilters"></div>
                                         <div sd-ingest-routing-action ng-if="tab === 'action'" data-rule="rule"></div>
                                         <div sd-ingest-routing-schedule ng-if="tab === 'schedule'" data-rule="rule"></div>
                                     </div>

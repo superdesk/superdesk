@@ -9,9 +9,10 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+import superdesk
+
 from enum import Enum
 from datetime import datetime
-from apps.rules.routing_rule_validator import RoutingRuleValidator
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -94,9 +95,7 @@ class RoutingRuleSchemeResource(Resource):
                     'name': {
                         'type': 'string'
                     },
-                    'filter': {
-                        'type': 'dict'
-                    },
+                    'filter': Resource.rel('content_filters', nullable=True),
                     'actions': {
                         'type': 'dict',
                         'schema': {
@@ -209,8 +208,12 @@ class RoutingRuleSchemeService(BaseService):
             logger.warning("Routing Scheme % for provider % has no rules configured." %
                            (provider.get('name'), routing_scheme.get('name')))
 
+        filters_service = superdesk.get_resource_service('content_filters')
+
         for rule in self.__get_scheduled_routing_rules(rules):
-            if RoutingRuleValidator().is_valid_rule(ingest_item, rule.get('filter', {})):
+            content_filter = rule.get('filter', {})
+
+            if filters_service.does_match(content_filter, ingest_item):
                 if rule.get('actions', {}).get('preserve_desk', False) and ingest_item.get('task', {}).get('desk'):
                     desk = get_resource_service('desks').find_one(req=None, _id=ingest_item['task']['desk'])
                     self.__fetch(ingest_item, [{'desk': desk[config.ID_FIELD], 'stage': desk['incoming_stage']}])
