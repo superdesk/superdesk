@@ -39,4 +39,23 @@ describe('packaging', function() {
             }
         }));
     });
+
+    describe('package-item-preview directive', function() {
+
+        // ignore template
+        beforeEach(inject(function($templateCache) {
+            $templateCache.put('scripts/superdesk-packaging/views/sd-package-item-preview.html', '');
+        }));
+
+        it('can open preview', inject(function($rootScope, $compile, superdesk) {
+            var scope = $rootScope.$new();
+            scope.item = {_id: 'foo'};
+            $compile('<div sd-package-item-preview></div>')(scope);
+            scope.$digest();
+            spyOn(superdesk, 'intent');
+            var item = {_id: 'bar'};
+            scope.open(item);
+            expect(superdesk.intent).toHaveBeenCalledWith('view', 'item', {item: item});
+        }));
+    });
 });
