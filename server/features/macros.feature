@@ -40,7 +40,7 @@ Feature: Macros
             """
         Then we get new resource
             """
-            {"item": {"body_html": "$12"}}
+            {"item": {"body_html": "AUD 14"}}
             """
 
     @auth
@@ -59,7 +59,7 @@ Feature: Macros
         When we get "/archive/item1"
         Then we get existing resource
             """
-            {"body_html": "$12"}
+            {"body_html": "AUD 14"}
             """
 
     @auth
