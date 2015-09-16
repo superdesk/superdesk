@@ -112,7 +112,7 @@
             templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-dropdown.html',
             link: function(scope) {
 
-                scope.current = $route.current.params._id;
+                scope.current = $route.current.params.item;
                 scope.queue = [scope.current];
 
                 scope.$watch(function () {
