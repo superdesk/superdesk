@@ -29,13 +29,33 @@ define([
             }
         }
 
+        /**
+         * Return the list of available widgets that can be added
+         * to current dashboard
+         *
+         * @return {promise} list of widgets
+         */
         function getAvailableWidgets(userWidgets) {
             return _.filter(widgets, function(widget) {
-                return widget.multi || _.find(userWidgets, {_id: widget._id}) == null;
+                return widget.multiple || _.find(userWidgets, {_id: widget._id}) == null;
             });
         }
 
+        /**
+         * Add widgets to current dashboard
+         *
+         * @param {object} widget
+         */
         this.addWidget = function(widget) {
+            if (widget.multiple) {
+                widget = angular.copy(widget);
+                widget.multiple_id = 0;
+                angular.forEach(this.widgets, function(item) {
+                    if (item._id === widget._id && item.multiple_id >= widget.multiple_id) {
+                        widget.multiple_id = item.multiple_id + 1;
+                    }
+                });
+            }
             widget.active = true;
             this.widgets.push(widget);
             this.selectWidget();
@@ -68,9 +88,14 @@ define([
             });
         }
 
+        /**
+         * Prepare the widget to be saved. Filter any non-required data.
+         *
+         * @return {promise} widget
+         */
         function pickWidgets(widgets) {
             return _.map(widgets, function(widget) {
-                return _.pick(widget, ['_id', 'configuration', 'sizex', 'sizey', 'col', 'row', 'active']);
+                return _.pick(widget, ['_id', 'configuration', 'sizex', 'sizey', 'col', 'row', 'active', 'multiple_id']);
             });
         }
 

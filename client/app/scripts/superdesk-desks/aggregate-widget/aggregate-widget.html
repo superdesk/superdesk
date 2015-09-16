@@ -1,4 +1,4 @@
-<div class="widget-container" ng-controller="AggregateCtrl as agg">
+<div class="widget-container" ng-controller="AggregateCtrl as agg" ng-init="agg.setWidget(widget)">
     <div class="main-list" ng-class="{wrap: agg.selected}">
         <div class="search-box">
             <input type="text" placeholder="{{ :: 'Search' | translate }}"

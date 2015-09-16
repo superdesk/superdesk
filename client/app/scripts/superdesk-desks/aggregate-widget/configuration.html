@@ -1,4 +1,4 @@
-<div ng-controller="AggregateCtrl as agg">
+<div ng-controller="AggregateCtrl as agg" ng-init="agg.setWidget(widget)">
     <div ng-if="!agg.loading" ng-init="agg.edit()"
          sd-aggregate-settings 
          data-modal-active="agg.modalActive"
@@ -11,6 +11,6 @@
          data-groups="agg.groups"
          data-edit-groups="agg.editGroups"
          data-onclose="$close()"
-         data-widget="true">
+         data-widget="widget">
     </div>
 </div>

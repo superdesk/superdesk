@@ -76,4 +76,72 @@ function Dashboard() {
     this.getWidget = function(index) {
         return this.getWidgets().get(index);
     };
+
+    /**
+     * Show the monitoring settings for 'index' widget
+     *
+     * @param {number} index
+     */
+    this.showMonitoringSettings = function(index) {
+        this.getWidget(index).all(by.css('[ng-click="openConfiguration()"]')).first().click();
+        browser.wait(function() {
+            return element.all(by.css('.aggregate-widget-config')).isDisplayed();
+        });
+    };
+
+    /**
+     * Get groups for widget
+     *
+     * @param {number} widget index
+     * @return {promise} list of groups elements
+     */
+    this.getGroups = function(widget) {
+        return this.getWidget(widget).all(by.repeater('group in agg.cards'));
+    };
+
+    /**
+     * Get a group for a widget
+     *
+     * @param {number} widget index
+     * @param {number} group index
+     * @return {promise} group element
+     */
+    this.getGroup = function(widget, group) {
+        return this.getGroups(widget).get(group);
+    };
+
+    /**
+     * Get the list of items from a group for a widget
+     *
+     * @param {number} widget index
+     * @param {number} group index
+     * @return {promise} items element list
+     */
+    this.getGroupItems = function(widget, group) {
+        return this.getGroup(widget, group).all(by.repeater('item in items'));
+    };
+
+    /**
+     * Get an item from a group for a widget
+     *
+     * @param {number} widget index
+     * @param {number} group index
+     * @param {number} item index
+     * @return {promise} item element
+     */
+    this.getItem = function(widget, group, item) {
+        return this.getGroupItems(widget, group).get(item);
+    };
+
+    /**
+     * Get an item from a group for a widget
+     *
+     * @param {number} widget index
+     * @param {number} group index
+     * @param {number} item index
+     * @return {promise} item element
+     */
+    this.getTextItem = function(widget, group, item) {
+        return this.getItem(widget, group, item).element(by.id('title')).getText();
+    };
 }
