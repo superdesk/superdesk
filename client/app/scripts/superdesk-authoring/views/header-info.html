@@ -1,18 +1,18 @@
 <ul class="metadata-list form-flat" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
     <li class="date-info full-width clearfix">
         <label translate>Created</label>
-        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}" ng-if="item.firstcreated">{{ item.firstcreated|reldate }}</time>
+        <time sd-datetime data-date="item.firstcreated"></time>
         <label translate>by</label>
         <b>{{userLookup[item.original_creator].display_name}}</b>
         <div class="modified" ng-if="item.versioncreated">
             <label translate>Modified</label>
-            <time datetime="{{ item.versioncreated}}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
+            <time sd-datetime data-date="item.versioncreated"></time>
         </div>
     </li>
 
     <li class="full-width general-info">
         <div class="item info-icons">
-            <i class="filetype-icon-{{item.type}}" ng-hide="hover || item.selected"
+            <i class="filetype-icon-{{ :: item.type }}" ng-hide="hover || item.selected"
                tooltip="Article Type" tooltip-placement="middle"></i>
 
             <div class="slider-icon pull-left">
@@ -20,7 +20,7 @@
                     <i class="urgency-icon-{{item.priority}} dropdown-toggle" dropdown-toggle
                        tooltip="Priority" tooltip-placement="middle"></i>
                     <div class="dropdown-menu">
-                        <label>{{ "PRIORITY" | translate }}</label>
+                        <label translate>PRIORITY</label>
                         <div class="item">
                             <label><i class="urgency-icon-{{item.priority}}"></i></label>
                             <div class="data">
@@ -41,9 +41,9 @@
             <div class="slider-icon pull-left">
                 <div class="dropdown dropright" dropdown>
                     <i class="output-item-label label-{{ item.urgency ? item.urgency: '0' }} dropdown-toggle"
-                       tooltip="NewsValue / Urgency" tooltip-placement="middle" dropdown-toggle>{{ item.urgency}}</i>
+                       tooltip="{{ :: 'NewsValue / Urgency' | translate }}" tooltip-placement="middle" dropdown-toggle>{{ item.urgency}}</i>
                     <div class="dropdown-menu">
-                        <label>{{ "URGENCY" | translate }}</label>
+                        <label translate>URGENCY</label>
                         <div class="item">
                             <div class="data">
                                 <div sd-slider 
@@ -61,8 +61,8 @@
                 </div>
             </div>
         </div>
-        <div class="item">
-            <label class="word-count"><b>{{item.word_count ? item.word_count : 0}}</b> {{item.word_count === 1 ? "WORD" : "WORDS"}}</label>
+        <div class="item" ng-if="item.type === 'text'">
+            <label class="word-count"><b>{{ item.word_count || 0 }}</b> <span translate translate-n="item.word_count" translate-plural="{{ $count }} WORDS">1 WORD</span></label>
         </div>
         <div class="item" ng-if="item.signal">
             <span class="signal">{{ item.signal }}</span>
