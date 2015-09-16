@@ -701,6 +701,13 @@ header.header-info {
             b {
                 color: #575656;
                 font-weight: 400;
+                text-overflow: ellipsis;
+			    white-space: nowrap;
+			    overflow: hidden;
+			    max-width: 45%;
+    	        @media only screen and (max-width : 1180px) {
+		            max-width: 25%;
+		        }
             }
             label { 
                 min-width: 0;
@@ -812,6 +819,9 @@ header.header-info {
                 display: flex;
                 width: 100%;
                 margin-right: 0;
+            }
+            &:first-child{
+            	width: 95%;
             }
             label, .data {
                 font-size: 10px;
