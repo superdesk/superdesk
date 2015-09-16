@@ -1,4 +1,4 @@
-<ul class="metadata-list" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
+<ul class="metadata-list form-flat" ng-controller="MetadataWidgetCtrl" ng-if="loaded">
     <li class="date-info full-width clearfix">
         <label translate>Created</label>
         <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}" ng-if="item.firstcreated">{{ item.firstcreated|reldate }}</time>
