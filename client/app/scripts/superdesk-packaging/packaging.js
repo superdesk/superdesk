@@ -541,7 +541,7 @@
                 });
 
                 scope.open = function(item) {
-                    superdesk.intent('view', 'item', item);
+                    superdesk.intent('view', 'item', {item: item});
                 };
             }
         };
