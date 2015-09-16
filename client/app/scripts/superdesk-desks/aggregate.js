@@ -27,6 +27,7 @@
         this.fileTypes = ['all', 'text', 'picture', 'composite', 'video', 'audio'];
         this.selectedFileType = [];
         this.monitoringSearch = false;
+        this.searchQuery = null;
 
         desks.initialize()
         .then(angular.bind(this, function() {
@@ -114,6 +115,10 @@
                 });
             }
             initSpikeGroups();
+            updateFileTypeCriteria();
+            if (self.searchQuery) {
+                self.search(self.searchQuery);
+            }
         }
 
         /**
@@ -183,6 +188,20 @@
         };
 
         /**
+         * Update the type filter criteria
+         */
+        function updateFileTypeCriteria() {
+            var value = (self.selectedFileType.length === 0) ? null: JSON.stringify(self.selectedFileType);
+
+            _.each(self.groups, function(item) {
+                item.fileType = value;
+            });
+            _.each(self.spikeGroups, function(item) {
+                item.fileType = value;
+            });
+        }
+
+        /**
          * Set the current 'fileType' filter
          * param {string} fileType
          */
@@ -197,15 +216,7 @@
                     this.selectedFileType.push(fileType);
                 }
             }
-
-            var value = (this.selectedFileType.length === 0) ? null: JSON.stringify(this.selectedFileType);
-
-            _.each(this.groups, function(item) {
-                item.fileType = value;
-            });
-            _.each(this.spikeGroups, function(item) {
-                item.fileType = value;
-            });
+            updateFileTypeCriteria();
         };
 
         /**
@@ -272,6 +283,7 @@
          * Set the search set by user on all groups
          */
         this.search = function(query) {
+            this.searchQuery = query;
             _.each(this.groups, function(item) {
                 item.query = query;
             });
@@ -284,6 +296,7 @@
          * Reset on all groups the search set by user
          */
         this.resetSearch = function() {
+            this.searchQuery = null;
             _.each(this.groups, function(item) {
                 item.query = null;
             });
