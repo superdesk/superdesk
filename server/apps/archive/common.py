@@ -154,7 +154,7 @@ def get_auth():
 
 def set_original_creator(doc):
     usr = get_user()
-    user = str(usr.get('_id', ''))
+    user = str(usr.get('_id', doc.get('original_creator', '')))
     doc['original_creator'] = user
 
 
