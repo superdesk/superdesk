@@ -50,19 +50,28 @@ class Weekdays(Enum):
         """
         return today.weekday() in [cls[day.upper()].value for day in list_of_days]
 
+    @classmethod
+    def dayname(cls, day):
+        """Get name shortcut (MON, TUE, ...) for given day.
 
-def set_time(current_datetime, timestr=None):
+        :param datetime day
+        """
+        return cls(day.weekday()).name
+
+
+def set_time(current_datetime, timestr, second=0):
     """Set time of given datetime according to timestr.
 
     Time format for timestr is `%H%M`, eg. 1014.
 
     :param datetime current_datetime
     :param string timestr
+    :param int second
     """
     if timestr is None:
         timestr = '0000'
     time = datetime.strptime(timestr, '%H%M')
-    return current_datetime.replace(hour=time.hour, minute=time.minute, second=0)
+    return current_datetime.replace(hour=time.hour, minute=time.minute, second=second)
 
 
 class RoutingRuleSchemeResource(Resource):
@@ -298,8 +307,8 @@ class RoutingRuleSchemeService(BaseService):
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = set_time(current_datetime, schedule.get('hour_of_day_from'))
-                to_time = set_time(current_datetime, schedule.get('hour_of_day_to'))
+                from_time = set_time(current_datetime, schedule.get('hour_of_day_from', '0000'))
+                to_time = set_time(current_datetime, schedule.get('hour_of_day_to', '2359'), second=59)
                 if not (Weekdays.is_scheduled_day(current_datetime, schedule.get('day_of_week', []))
                         and (from_time < current_datetime < to_time)):
                     is_scheduled = False

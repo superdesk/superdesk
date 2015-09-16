@@ -1656,17 +1656,22 @@ def when_we_schedule_the_routing_scheme(context, scheme_id):
         href = get_self_href(res, context)
         headers = if_match(context, res.get('_etag'))
         rule = res.get('rules')[0]
-        day_of_week = get_resource_service('routing_schemes').day_of_week
+
+        from apps.rules.routing_rules import Weekdays
+
         rule['schedule'] = {
-            'day_of_week': [day_of_week[(datetime.now() + timedelta(days=1)).weekday()],
-                            day_of_week[(datetime.now() + timedelta(days=2)).weekday()]],
+            'day_of_week': [
+                Weekdays.dayname(datetime.now() + timedelta(days=1)),
+                Weekdays.dayname(datetime.now() + timedelta(days=2))
+            ],
             'hour_of_day_from': '1600',
             'hour_of_day_to': '2000'
         }
+
         if len(res.get('rules')) > 1:
             rule = res.get('rules')[1]
             rule['schedule'] = {
-                'day_of_week': [day_of_week[datetime.now().weekday()]]
+                'day_of_week': [Weekdays.dayname(datetime.now())]
             }
 
         context.response = context.client.patch(get_prefixed_url(context.app, href),

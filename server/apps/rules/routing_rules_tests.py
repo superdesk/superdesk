@@ -17,3 +17,8 @@ class WeekdaysTestCase(unittest.TestCase):
         self.assertFalse(Weekdays.is_scheduled_day(now, []))
         self.assertTrue(Weekdays.is_scheduled_day(now, [day]))
         self.assertFalse(Weekdays.is_scheduled_day(now + timedelta(days=1), [day]))
+
+    def test_weekday_dayname(self):
+        now = datetime.now()
+        day = now.strftime('%A')[:3].upper()
+        self.assertEqual(day, Weekdays.dayname(now))
