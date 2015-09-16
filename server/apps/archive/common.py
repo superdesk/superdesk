@@ -9,14 +9,14 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
-from datetime import datetime
-
-from eve.utils import config
 import flask
+from eve.utils import config
+from datetime import datetime
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 from pytz import timezone
 
+import superdesk
 from superdesk.users.services import get_sign_off
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow, get_expiry_date
@@ -25,11 +25,12 @@ from superdesk import get_resource_service
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
     LINKED_IN_PACKAGES, BYLINE, SIGN_OFF, EMBARGO
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
-import superdesk
 from superdesk.metadata.item import GUID_NEWSML, GUID_FIELD, GUID_TAG, not_analyzed
 from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE, SEQUENCE
 from superdesk.metadata.utils import generate_guid
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
+from apps.auth import get_user
+
 
 ARCHIVE = 'archive'
 CUSTOM_HATEOAS = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
@@ -138,13 +139,6 @@ def on_duplicate_item(doc):
 def update_dates_for(doc):
     for item in ['firstcreated', 'versioncreated']:
         doc.setdefault(item, utcnow())
-
-
-def get_user(required=False):
-    user = flask.g.get('user', {})
-    if '_id' not in user and required:
-        raise SuperdeskApiError.notFoundError('Invalid user.')
-    return user
 
 
 def get_auth():

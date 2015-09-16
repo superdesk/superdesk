@@ -126,6 +126,12 @@
                     }
                 });
 
+                scope.$on('content:update', function($event, data) {
+                    if (cards.shouldUpdate(scope.stage, data)) {
+                        queryItems();
+                    }
+                });
+
                 var container = elem[0];
                 var offsetY = 0;
                 elem.bind('scroll', function() {

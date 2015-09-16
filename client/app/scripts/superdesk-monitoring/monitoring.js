@@ -55,6 +55,7 @@
     CardsService.$inject = ['api', 'search', 'session'];
     function CardsService(api, search, session) {
         this.criteria = getCriteria;
+        this.shouldUpdate = shouldUpdate;
 
         /**
          * Get items criteria for given card
@@ -86,30 +87,30 @@
             var query = search.query(params);
 
             switch (card.type) {
-                case 'search':
-                    break;
+            case 'search':
+                break;
 
-                case 'spike-personal':
-                case 'personal':
-                    query.filter({bool: {
-                        must: {term: {original_creator: session.identity._id}},
-                        must_not: {exists: {field: 'task.desk'}}
-                    }});
-                    break;
+            case 'spike-personal':
+            case 'personal':
+                query.filter({bool: {
+                    must: {term: {original_creator: session.identity._id}},
+                    must_not: {exists: {field: 'task.desk'}}
+                }});
+                break;
 
-                case 'spike':
-                    query.filter({term: {'task.desk': card._id}});
-                    break;
+            case 'spike':
+                query.filter({term: {'task.desk': card._id}});
+                break;
 
-                case 'highlights':
-                    query.filter({and: [
-                        {term: {'highlights': queryParam.highlight}}
-                    ]});
-                    break;
+            case 'highlights':
+                query.filter({and: [
+                    {term: {'highlights': queryParam.highlight}}
+                ]});
+                break;
 
-                default:
-                    query.filter({term: {'task.stage': card._id}});
-                    break;
+            default:
+                query.filter({term: {'task.stage': card._id}});
+                break;
             }
 
             if (card.fileType) {
@@ -127,6 +128,21 @@
             criteria.source.from = 0;
             criteria.source.size = 25;
             return criteria;
+        }
+
+        function shouldUpdate(card, data) {
+            switch (card.type) {
+            case 'stage':
+                // refresh stage if it matches updated stage
+                return !!data.stages[card._id];
+
+            case 'personal':
+                return data.user === session.identity._id;
+
+            default:
+                // no way to determine if item should be visible, refresh
+                return true;
+            }
         }
     }
 
@@ -237,19 +253,22 @@
                 scope.$on('item:unspike', queryItems);
 
                 scope.$on('content:update', function(event, data) {
-                    switch (scope.group.type) {
-                        case 'stage':
-                            // refresh stage if it matches updated stage
-                            if (data.stage === scope.group._id) {
-                                queryItems();
-                            }
-                            break;
-
-                        default:
-                            // no way to determine if item should be visible, refresh
-                            queryItems();
+                    if (cards.shouldUpdate(scope.group, data)) {
+                        scheduleQuery();
                     }
                 });
+
+                var queryTimeout;
+
+                /**
+                 * Schedule content reload in next 50ms
+                 *
+                 * In case there is another signal within timeout it will trigger it only once.
+                 */
+                function scheduleQuery() {
+                    $timeout.cancel(queryTimeout);
+                    queryTimeout = $timeout(queryItems, 50, false);
+                }
 
                 var list = elem[0].getElementsByClassName('inline-content-items')[0],
                     scrollElem = elem.find('.stage-content').first();

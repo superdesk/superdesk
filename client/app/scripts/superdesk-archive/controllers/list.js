@@ -124,9 +124,7 @@ define([
         $scope.$on('item:copy', refreshItems);
         $scope.$on('item:take', refreshItems);
         $scope.$on('item:duplicate', refreshItems);
-        $scope.$on('item:created', refreshItems);
-        $scope.$on('item:updated', refreshItems);
-        $scope.$on('item:replaced', refreshItems);
+        $scope.$on('content:update', refreshItems);
         $scope.$on('item:deleted', refreshItems);
         $scope.$on('item:mark', refreshItems);
         $scope.$on('item:spike', reset);
