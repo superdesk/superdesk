@@ -34,11 +34,7 @@ class BaseProxy(DataLayer):
         req = ParsedRequest()
         req.args = {}
         req.projection = projection
-
-        if hasattr(self.data_layer, 'find'):
-            return self.data_layer.find(resource, req, lookup)
-        else:
-            return self.data_layer.get(resource, req, lookup)
+        return self.data_layer.get(resource, req, lookup)
 
     def create(self, resource, docs):
         return self.data_layer.create(resource, docs)
