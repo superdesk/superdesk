@@ -37,8 +37,17 @@ class LegalArchiveResource(LegalResource):
 class LegalArchiveVersionsResource(LegalResource):
     endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
     resource_title = endpoint_name
+    doc_schema = {'_id_document': {'type': 'string'}}
+    doc_schema.update(metadata_schema)
+    schema = doc_schema
 
 
 class LegalPublishQueueResource(LegalResource):
     endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
     resource_title = endpoint_name
+    doc_schema = {
+        'item_id': {'type': 'string'},
+        'item_version': {'type': 'string'}
+    }
+    doc_schema.update(metadata_schema)
+    schema = doc_schema

@@ -50,6 +50,7 @@ class AllSavedSearchesResource(Resource):
     datasource = {'source': 'saved_searches'}
     resource_methods = ['GET']
     item_methods = []
+    schema = SavedSearchesResource.schema
 
 
 class SavedSearchesService(BaseService):

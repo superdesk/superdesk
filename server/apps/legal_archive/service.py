@@ -11,7 +11,7 @@
 import logging
 from eve.versioning import versioned_id_field
 
-from flask import g
+from flask import g, current_app as app
 
 from eve.utils import config, ParsedRequest
 from .resource import LEGAL_ARCHIVE_NAME
@@ -90,7 +90,8 @@ class LegalArchiveVersionsService(LegalService):
         Version of an article in Legal Archive isn't maintained by Eve. Overriding this to fetch the version history.
         """
 
-        id_field = versioned_id_field()
+        resource_def = app.config['DOMAIN'][LEGAL_ARCHIVE_NAME]
+        id_field = versioned_id_field(resource_def)
 
         if req and req.args and req.args.get(config.ID_FIELD):
             version_history = list(super().get_from_mongo(req=ParsedRequest(),
