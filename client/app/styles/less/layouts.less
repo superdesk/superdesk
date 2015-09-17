@@ -56,10 +56,9 @@ a:hover {
             #workspace-container {
                 box-shadow: 2px 0 10px 0 rgba(0,0,0,0.3);
                 right: 44%;
-                overflow: hidden;
                 z-index:100;
                 .transition(all .5s);
-                @media only screen and (max-width : 1330px) {
+                @media only screen and (max-width : 1430px) {
                     right: 54%;
                 }
             }
@@ -67,7 +66,7 @@ a:hover {
             #authoring-container {
                 width: 44%;
                 .transition(width .5s);
-                @media only screen and (max-width : 1330px) {
+                @media only screen and (max-width : 1430px) {
                     width: 54%;
                 }
             }
@@ -79,6 +78,9 @@ a:hover {
             }
             #authoring-container {
                 width: calc(~'100% - '@sidebar-width);
+            }
+            .content-item-preview {
+            	display: none;
             }
         }
 }
@@ -189,18 +191,18 @@ a:hover {
 		> .content {
 			position: absolute;
 			top: @nav-height + 1;
-			left: 0; right: 0; bottom: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
 		}
 	}
 	.list-pane {
 		position:absolute;
 		background: @background-main;
 		top: 0;
-		right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
+		right: 0;
 		left: 0; bottom:0;
 		border-right: 1px solid #d0d0d0;
-		overflow: auto;
-		overflow-x: hidden;
 		z-index: 1;
 		.transition(right ease 0.2s);
 		.shadow-list-holder {
@@ -211,6 +213,10 @@ a:hover {
 		}
 		> .content {
 			overflow: auto;
+			right: @sidepreview-width;
+	        @media only screen and (max-width : 1430px) {
+	            right: @sidepreview-width - 40;
+	        }
 		}
 	}
 	.preview-pane {
@@ -254,16 +260,53 @@ a:hover {
 			}
 		}
 	}
+
 	&.closed {
 		.transition(right ease 0.2s);
 		.list-pane {
-			right: 0;
 			border-right: 0;
+			> .content {
+				right: 0;
+			}
 		}
 		.preview-pane {
 			right: -@sidepreview-width;
 		}
 	}
+
+    .content-item-preview {
+        position: absolute;
+        top:50px;
+        right: 0;
+        bottom: 0;
+        @media only screen and (max-width : 1430px) {
+            width: @sidepreview-width - 40;
+        }
+    }
+}
+
+.authoring {
+    .preview-layout {
+    	.list-pane {
+			> .content {
+		        @media only screen and (max-width : 1630px) {
+		            right: @sidepreview-width - 40;
+		        }
+	            @media only screen and (max-width : 1430px) {
+	                right: @sidepreview-width - 80;
+	            }
+			}
+		}
+        .content-item-preview {
+            @media only screen and (max-width : 1630px) {
+	            width: @sidepreview-width - 40;
+	        }
+            @media only screen and (max-width : 1430px) {
+                width: @sidepreview-width - 80;
+                box-shadow: inset 4px 0 8px -5px rgba(0,0,0,0.9), 0 1px 12px 2px rgba(0,0,0,0.3), 0 1px 2px 1px rgba(0,0,0,0.3);
+            }
+        }
+    }
 }
 
 // Split content

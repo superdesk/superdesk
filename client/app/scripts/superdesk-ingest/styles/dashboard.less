@@ -35,15 +35,22 @@
                 &:before {
                     display: none;
                 }
-                width: 250px;
+                width: 238px;
                 .info {
                     color: @grayLight;
                     font-style: italic;
                 }
-                .divider {
-                    margin: 8px -10px;
+                .menu-label {
+                    padding-left: 6px;
+                }
+                > li {
+                    padding-left: 10px;
+                    &:last-child {
+                        padding-left: 0;
+                    }
                 }
             }
+
         }
         .header {
             height: 90px;
@@ -68,6 +75,7 @@
             color: @white;
             font-size: 14px;
             padding: 10px 15px;
+            height: 36px;
             .time {
                 font-size: 11px;
             }
@@ -123,6 +131,9 @@
                 }
                 i {
                     .opacity(60);
+                }
+                .chevron {
+                    background-color: #fff;
                 }
             }
         }            

@@ -13,7 +13,7 @@
     <li class="full-width general-info">
         <div class="item info-icons">
             <i class="filetype-icon-{{ :: item.type }}" ng-hide="hover || item.selected"
-               tooltip="Article Type" tooltip-placement="middle"></i>
+               tooltip="{{ :: 'Article Type' | translate }}" tooltip-placement="middle"></i>
 
             <div class="slider-icon pull-left">
                 <div class="dropdown dropright" dropdown>
