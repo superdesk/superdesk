@@ -48,7 +48,7 @@
 				<span sd-check ng-model="item.negation" tooltip="Adds Negation" tooltip-placement="right" ng-disabled="!_editable"></span>
 				<select id="targeted_for_list" ng-model="item.targeted_for_value" ng-disabled="!_editable">
 					<option value=""></option>
-					<option value="{{g.value}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
+					<option value="{{g.name}}" ng-repeat="g in metadata.targeted_for track by g.name">{{:: g.name}}</option>
 				</select>
 				<button class="btn btn-small btn-primary" type="button" ng-click="addTargeted()" ng-disabled="disableAddingTargetedFor()" translate>Add</button>
 				<div class="terms" ng-if="item['targeted_for'].length">
