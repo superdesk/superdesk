@@ -433,7 +433,7 @@
         };
 
         function uuid(item) {
-            return item._id;
+            return (item.state === 'ingested') ? item._id : item._id + ':' + (item._current_version || item.item_version);
         }
     }
 
