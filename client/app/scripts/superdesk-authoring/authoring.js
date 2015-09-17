@@ -908,6 +908,8 @@
                             } else if (angular.isDefined(response.data._issues['validator exception'])) {
                                 notify.error(gettext('Error: ' + response.data._issues['validator exception']));
                             }
+                        } else if (response.status === 412) {
+                            notifyPreconditionFailed();
                         } else {
                             notify.error(gettext('Error. Item not updated.'));
                         }
@@ -1030,8 +1032,7 @@
                                     }
                                 }
                             } else if (response.status === 412) {
-                                notify.error(gettext('Precondition Error: Item not published.'));
-                                $scope.save_visible = false;
+                                notifyPreconditionFailed();
                             } else {
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
@@ -1042,6 +1043,14 @@
                             notify.error(gettext('Unknown Error: Item not published.'));
                         }
                     });
+                }
+
+                function notifyPreconditionFailed() {
+                    notify.error(gettext('Item has changed since it was opened. ' +
+                        'Please close and reopen the item to continue. ' +
+                        'Regrettably, your changes cannot be saved.'));
+                    $scope._editable = false;
+                    $scope.dirty = false;
                 }
 
                 /**
