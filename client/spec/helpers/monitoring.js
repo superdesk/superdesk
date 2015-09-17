@@ -335,4 +335,9 @@ function Monitoring() {
     };
 
     this.uploadModal = element(by.className('upload-media'));
+
+    this.fetchAs = function(group, item) {
+        this.actionOnItem('Fetch As', group, item);
+        return element(by.id('send-item-btn')).click();
+    };
 }
