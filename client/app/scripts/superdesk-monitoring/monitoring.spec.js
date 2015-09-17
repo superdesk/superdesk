@@ -119,6 +119,15 @@ describe('monitoring', function() {
             });
         }));
 
+        it('can get criteria for saved search with search', inject(function(cards) {
+            var card = {_id: '123', type: 'search', query: 'test',
+                        search: {filter: {query: {q: 'foo', type: '[\"picture\"]'}}}
+            };
+            var criteria = cards.criteria(card);
+            expect(criteria.source.query.filtered.query.query_string.query).toBe('(test) foo');
+            expect(criteria.source.post_filter.and).toContain({terms: {type: ['picture']}});
+        }));
+
         it('can get criteria for file type filter with search', inject(function(cards) {
             var card = {_id: '123', fileType: JSON.stringify(['text']), query: 'test'};
             var criteria = cards.criteria(card);
