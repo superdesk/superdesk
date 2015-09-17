@@ -15,7 +15,7 @@ describe('Content', function() {
 
         browser.wait(function() {
             return headline.isDisplayed();
-        }, 100); // animated sidebar
+        }, 200); // animated sidebar
 
         return headline.getText();
     }
