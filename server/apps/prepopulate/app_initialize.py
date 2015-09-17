@@ -9,7 +9,20 @@ from flask import current_app as app
 
 """
 App initialization information, maps resource name to the file containing the data
-and the index to be created for the resource.
+and the index to be created for the resource and the boolean flag to update the
+resource or not.
+__entities__ = {
+    "resource_name": ("file_name", "index_params", "do_patch")
+}
+"file_name" (str): name of the file containing seed data
+"index_params list: List of key (field or List of tuple as required by pymongo create_index function.
+http://api.mongodb.org/python/current/api/pymongo/collection.html
+For example:
+[[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], "username"] will create two indexes
+- composite index of "first_name", "last_name" field.
+- index on username field.
+Alternatively index param can be specified as
+[[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], [("username", pymongo.ASCENDING)]]
 """
 __entities__ = {
     'roles': ('roles.json', ['name'], False),
@@ -58,7 +71,22 @@ class AppInitializeWithDataCommand(superdesk.Command):
         return 0
 
     def import_file(self, entity_name, file_name, index_params, do_patch=False):
-
+        """
+        imports seed data based on the entity_name (resource name) from the file_name specified.
+        index_params use to create index for that entity/resource
+        :param str entity_name: name of the resource
+        :param str file_name: file name that contains seed data
+        :param list index_params: list of indexes that is created on that entity.
+        For example:
+        [[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], "username"] will create two indexes
+        - composite index of "first_name", "last_name" field.
+        - index on username field.
+        Alternatively index param can be specified as
+        [[("first_name", pymongo.ASCENDING), ("last_name", pymongo.ASCENDING)], [("username", pymongo.ASCENDING)]]
+        Refer to pymongo create_index documentation for more information.
+        http://api.mongodb.org/python/current/api/pymongo/collection.html
+        :param bool do_patch: if True then patch the document else don't patch.
+        """
         print('Config: ', app.config['APP_ABSPATH'])
         if file_name:
             file_path = os.path.join(app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', 'data_initialization',
