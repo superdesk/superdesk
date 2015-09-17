@@ -16,7 +16,7 @@ from apps.publish.formatters.field_mappers.selectorcode_mapper import Selectorco
 class SelectorcodeMapperTest(SuperdeskTestCase):
 
     desks = [{'_id': 1, 'name': 'National'},
-             {'_id': 2, 'name': 'Sports'},
+             {'_id': 2, 'name': 'Sport'},
              {'_id': 3, 'name': 'Finance'}]
 
     def setUp(self):

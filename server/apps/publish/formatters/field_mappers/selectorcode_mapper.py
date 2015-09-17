@@ -128,7 +128,7 @@ class SelectorcodeMapper(FieldMapper):
     def map(self, article, category, **kwargs):
         handlers = {
             'NATIONAL': self._set_ndx_selector_codes,
-            'SPORTS': self._set_sdx_selector_codes,
+            'SPORT': self._set_sdx_selector_codes,
             'FINANCE': self._set_fdx_selector_codes,
         }
 
@@ -151,6 +151,8 @@ class SelectorcodeMapper(FieldMapper):
         item = next((i for i in geo_resource.get('items') if i['name'] == name), None)
         if item:
             return item.get('value')
+        else:
+            return ''
 
     def set_selectors_for_dg(self, article, subscriber_name, *dist_groups):
         """
