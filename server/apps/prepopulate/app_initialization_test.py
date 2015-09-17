@@ -54,4 +54,4 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         self.assertEqual(result, 0)
         result = app.data.mongo.pymongo(resource='users').db['users'].index_information()
         self.assertTrue('username_1' in result)
-        self.assertTrue('first_name_1_last_name-1')
+        self.assertTrue('first_name_1_last_name_-1' in result)
