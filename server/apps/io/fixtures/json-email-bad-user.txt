@@ -1,0 +1,50 @@
+                                                                                                                                                                                                                                                               
+Delivered-To: someone@a.com.au
+Received: by 10.31.129.81 with SMTP id c78csp759910vkd;
+        Sun, 13 Sep 2015 19:06:01 -0700 (PDT)
+X-Received: by 10.50.67.18 with SMTP id j18mr5977662igt.43.1442196361898;
+        Sun, 13 Sep 2015 19:06:01 -0700 (PDT)
+Return-Path: <mock@mail.com.au>
+Received: from mail-io0-x245.google.com (mail-io0-x245.google.com. [2607:f8b0:4001:c06::245])
+        by mx.google.com with ESMTPS id bx20si1098024igb.99.2015.09.13.19.06.01
+        for <someone@a.com.au>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Sep 2015 19:06:01 -0700 (PDT)
+Received-SPF: pass (google.com: domain of mock@mail.com.au designates 2607:f8b0:4001:c06::245 as permitted sender) client-ip=2607:f8b0:4001:c06::245;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of mock@mail.com.au designates 2607:f8b0:4001:c06::245 as permitted sender) smtp.mailfrom=mock@mail.com.au;
+       dkim=pass header.i=@a.com.au;
+       dmarc=pass (p=NONE dis=NONE) header.from=a.com.au
+Received: by iofb144 with SMTP id b144so264709624iof.1
+        for <someone@a.com.au>; Sun, 13 Sep 2015 19:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=a.com.au; s=google;
+        h=mime-version:message-id:date:subject:from:to:content-type;
+        bh=8T+ORbs3EZVtOLihHlW5c56pJZ1GhAhVPnradAhtwrw=;
+        b=LoGU+CsO0CCEyav/zTwEWSdn8AMwOEZDN0RKIVcZi7XeTqEG6b7kmcM7kTOhWpBW1o
+         az61QPNfMmiuA91tDneWP497Ki4g5gzfbzAJHZMiZ3wU7d1USyICyMm7rroJ5qyrY2TV
+         +CleTPELWfF5n7nr3HZ2MTzMw8UAem5hzvp0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-gm-message-state:mime-version:message-id:date:subject:from:to
+         :content-type;
+        bh=8T+ORbs3EZVtOLihHlW5c56pJZ1GhAhVPnradAhtwrw=;
+        b=gndqaaMiATBnGGsJM5Mi3TYTRQi4GYDldMeMX1LQqzPtS/7be4iXMuyi0o6E5K7H5f
+         T4PRSs/ll6UYIDJFidssvFn/yMCowNBGV6NjWdqlnEdZxOnRuBlqshWWM4/Qqd1IAvCh
+         r9IIl7H+Y4X9a4nGN7PCLAdTVbbE9FQSZE5K22MFsIg5rGTf4JMLlcBDaoNx4ziU69Zg
+         LO68ped9MLiBSPduwdEcApA6WDKXHkyX+hxYVYr61NgCSH00lG1yNLsXtqo57N/nvsDM
+         /8hV3RnqFdJWglu5gj0+zHXehMAT89ioIl4Ys0H/PB6k1a9yS1O8KrdtY5BusQE+DzTq
+         YimQ==
+X-Gm-Message-State: ALoCoQkr6GCrXvQPjnaSuzaUBQkcK4Mr6ZRISBNKJqldP558ADRfUaQRyp4fs3DcPUbo/ysCzBF/zufqop1pHI10X8mo6neHUZXDHoeMD4HRX9a7G45cwiMUSvYKi4NhExVkQ/cc1BjiX4ScbFpMGZ94/FH8jf7mfAZxX4DbsczzG3+iY90bqFE=
+MIME-Version: 1.0
+X-Received: by 10.107.32.204 with SMTP id g195mr4069158iog.12.1442196361149;
+ Sun, 13 Sep 2015 19:06:01 -0700 (PDT)
+Message-ID: <001a1140cd6ecd9de8051fab814d@google.com>
+Date: Mon, 14 Sep 2015 02:06:01 +0000
+Subject: Formatted Editorial Story
+From: mock@mail.com.au
+To: someone@a.com.au
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed; delsp=yes
+
+{"Category":["DOMESTIC SPORT"],"Username":["wrong@mail.com.au"],"Abstract":["Abstract-2"],"Priority":["5"],"Headline":["Headline-2"],"Slugline":["Slugline-2"],"Desk":["Brisbane"],"Sign off":["TA"],"Urgency":["4"],"Timestamp":["9/14/2015
+12:06:00"],"Body":["Lorem ipsum"]}
