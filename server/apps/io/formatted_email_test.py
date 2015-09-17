@@ -15,7 +15,6 @@ from superdesk.io.rfc822 import rfc822Parser
 from superdesk.errors import IngestEmailError
 
 
-
 class rfc822JsonFormatter(SuperdeskTestCase):
 
     vocab = [{'_id': 'categories', 'items': [{'is_active': True, 'name': 'Domestic Sport', 'qcode': 's'}]}]
