@@ -92,6 +92,16 @@ function Monitoring() {
         element(by.model('query')).sendKeys(search);
     };
 
+    /**
+     * Perform filter by filterType that can be
+     * all, audio, video, text, picture and composite
+     *
+     * @param {string} fileType
+     */
+    this.filterAction = function(fileType) {
+        element(by.className('filetype-icon-' + fileType)).click();
+    };
+
     this.previewAction = function(group, item) {
         this.getItem(group, item).click();
     };

@@ -211,22 +211,48 @@ describe('monitoring view', function() {
 
     it('can search content', function() {
         monitoring.showMonitoringSettings();
-        monitoring.toggleStage(0, 0);
-        monitoring.toggleStage(0, 1);
-        monitoring.toggleStage(0, 3);
+        monitoring.toggleDesk(0);
+        monitoring.toggleDesk(1);
+        monitoring.toggleStage(1, 1);
+        monitoring.toggleStage(1, 3);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
-        expect(monitoring.getTextItem(1, 0)).toBe('item1');
-        expect(monitoring.getTextItem(1, 1)).toBe('item2');
-        expect(monitoring.getTextItem(1, 2)).toBe('item5');
+        expect(monitoring.getTextItem(0, 0)).toBe('item3');
+        expect(monitoring.getTextItem(1, 0)).toBe('item4');
+        expect(monitoring.getTextItem(2, 0)).toBe('item1');
+        expect(monitoring.getTextItem(2, 4)).toBe('item3');
 
-        monitoring.searchAction('item6');
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
-        expect(monitoring.getTextItem(1, 0)).toBe('item6');
+        monitoring.searchAction('item3');
+        expect(monitoring.getTextItem(0, 0)).toBe('item3');
+        expect(monitoring.getTextItem(2, 0)).toBe('item3');
+
+        workspace.selectDesk('Sports Desk');
+        expect(monitoring.getTextItem(1, 0)).toBe('item3');
+    });
+
+    it('can filter content by file type', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        expect(monitoring.getTextItem(0, 0)).toBe('package1');
+        expect(monitoring.getTextItem(0, 1)).toBe('item1');
+        expect(monitoring.getTextItem(0, 2)).toBe('item2');
+
+        monitoring.filterAction('composite');
+        expect(monitoring.getTextItem(0, 0)).toBe('package1');
+
+        workspace.selectDesk('Sports Desk');
+        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(2).count()).toBe(0);
+        expect(monitoring.getGroupItems(3).count()).toBe(0);
     });
 
     it('can preview content', function() {
