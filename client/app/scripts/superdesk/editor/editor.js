@@ -135,11 +135,50 @@ function EditorService(spellcheck, $rootScope) {
     });
 
     this.ARROWS = Object.freeze({
-        37: 1,
-        38: 1,
-        39: 1,
-        40: 1
+        33: 1, // page up
+        34: 1, // page down
+        35: 1, // end
+        36: 1, // home
+        37: 1, // left
+        38: 1, // up
+        39: 1, // right
+        40: 1  // down
     });
+
+    this.META = Object.freeze({
+        16: 1, // shift
+        17: 1, // ctrl
+        18: 1, // alt
+        20: 1, // caps lock
+        91: 1, // left meta in webkit
+        93: 1, // right meta in webkit
+        224: 1 // meta in firefox
+    });
+
+    /**
+     * Test if given keyboard event should be ignored as it's not changing content.
+     *
+     * @param {Event} event
+     * @return {boolen}
+     */
+    this.shouldIgnore = function (event) {
+        // ignore arrows
+        if (self.ARROWS[event.keyCode]) {
+            return true;
+        }
+
+        // ignore meta keys (ctrl, shift or meta only)
+        if (self.META[event.keyCode]) {
+            return true;
+        }
+
+        // ignore shift + ctrl/meta + something
+        if (event.shiftKey && (event.ctrlKey || event.metaKey)) {
+            return true;
+        }
+
+        return false;
+    };
 
     var ERROR_CLASS = 'sderror';
     var HILITE_CLASS = 'sdhilite';
@@ -182,12 +221,13 @@ function EditorService(spellcheck, $rootScope) {
      * Render highlights for given scope based on settings
      *
      * @param {Scope} scope
+     * @param {Scope} force force rendering manually - eg. via keyboard
      */
-    this.renderScope = function(scope) {
+    this.renderScope = function(scope, force) {
         self.cleanScope(scope);
         if (self.settings.findreplace) {
             renderFindreplace(scope.node);
-        } else if (self.settings.spellcheck) {
+        } else if (self.settings.spellcheck || force) {
             renderSpellcheck(scope.node);
         }
     };
@@ -614,7 +654,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     ctrlOperations[editor.KEY_CODES.Y] = doRedo;
 
                     editorElem.on('keydown', function(event) {
-                        if (editor.ARROWS[event.keyCode]) {
+                        if (editor.shouldIgnore(event)) {
                             return;
                         }
 
@@ -622,7 +662,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     });
 
                     editorElem.on('keyup', function(event) {
-                        if (editor.ARROWS[event.keyCode]) {
+                        if (editor.shouldIgnore(event)) {
                             return;
                         }
 
@@ -678,9 +718,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     render();
                 };
 
-                function render() {
-                    editor.renderScope(scope);
+                function render($event, event) {
+                    editor.renderScope(scope, $event);
                     scope.node.classList.remove(TYPING_CLASS);
+                    if (event) {
+                        event.preventDefault();
+                    }
                 }
 
                 scope.replace = function(text) {
