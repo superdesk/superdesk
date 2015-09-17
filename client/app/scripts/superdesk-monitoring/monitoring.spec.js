@@ -143,7 +143,7 @@ describe('monitoring', function() {
         beforeEach(inject(function($templateCache) {
             // change template not to require aggregate config but rather render single group
             $templateCache.put('scripts/superdesk-monitoring/views/monitoring-view.html',
-                '<div sd-monitoring-group data-group="{type: \'stage\', _id: \'foo\'}"></div>');
+                '<div id="group" sd-monitoring-group data-group="{type: \'stage\', _id: \'foo\'}"></div>');
         }));
 
         it('can update items on content:update event',
@@ -160,6 +160,23 @@ describe('monitoring', function() {
             scope.$broadcast('content:update', {stage: 'foo'});
             scope.$digest();
             expect(api.query).toHaveBeenCalled();
+        }));
+
+        it('can generate unique track by id',
+        inject(function($rootScope, $compile, $templateCache) {
+            var scope = $rootScope.$new();
+            var $elm = $compile('<div sd-monitoring-view></div>')(scope);
+            scope.$digest();
+            var sdGroupElement = $elm.find('#group');
+            var iScope = sdGroupElement.isolateScope();
+            var item = {state: 'ingested', _id: '123'};
+            expect(iScope.uuid(item)).toBe('123');
+            item = {state: 'foo', _id: '123', _current_version: 'bar'};
+            expect(iScope.uuid(item)).toBe('123:bar');
+            item = {state: 'foo', _id: '456', item_version: 'foo'};
+            expect(iScope.uuid(item)).toBe('456:foo');
+            item = {state: 'foo', _id: '456', item_version: 'foo', _current_version: 'bar'};
+            expect(iScope.uuid(item)).toBe('456:bar');
         }));
     });
 });
