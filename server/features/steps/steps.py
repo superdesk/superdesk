@@ -316,7 +316,17 @@ def step_impl_fetch_from_provider_ingest_using_routing(context, provider_name, g
         fetch_from_provider(context, provider_name, guid, routing_scheme)
 
 
-def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
+@when('we ingest and fetch "{provider_name}" "{guid}" to desk "{desk}" stage "{stage}" using routing_scheme')
+def step_impl_fetch_from_provider_ingest_using_routing_with_desk(context, provider_name, guid, desk, stage):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        _id = apply_placeholders(context, context.text)
+        desk_id = apply_placeholders(context, desk)
+        stage_id = apply_placeholders(context, stage)
+        routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
+        fetch_from_provider(context, provider_name, guid, routing_scheme, desk_id, stage_id)
+
+
+def fetch_from_provider(context, provider_name, guid, routing_scheme=None, desk_id=None, stage_id=None):
     ingest_provider_service = get_resource_service('ingest_providers')
     provider = ingest_provider_service.find_one(name=provider_name, req=None)
     provider['routing_scheme'] = routing_scheme
@@ -331,6 +341,10 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
     for item in items:
         item['versioncreated'] = utcnow()
         item['expiry'] = utcnow() + timedelta(minutes=20)
+
+        if desk_id:
+            from bson.objectid import ObjectId
+            item['task'] = {'desk': ObjectId(desk_id), 'stage': ObjectId(stage_id)}
 
     failed = context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
                                   routing_scheme=provider.get('routing_scheme'))
@@ -1645,10 +1659,11 @@ def when_we_schedule_the_routing_scheme(context, scheme_id):
             'hour_of_day_from': '1600',
             'hour_of_day_to': '2000'
         }
-        rule = res.get('rules')[1]
-        rule['schedule'] = {
-            'day_of_week': [day_of_week[datetime.now().weekday()]]
-        }
+        if len(res.get('rules')) > 1:
+            rule = res.get('rules')[1]
+            rule['schedule'] = {
+                'day_of_week': [day_of_week[datetime.now().weekday()]]
+            }
 
         context.response = context.client.patch(get_prefixed_url(context.app, href),
                                                 data=json.dumps({'rules': res.get('rules', [])}),
