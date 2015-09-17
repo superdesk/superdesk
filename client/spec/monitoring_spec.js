@@ -189,7 +189,7 @@ describe('monitoring view', function() {
         monitoring.saveSettings();
 
         workspace.selectDesk('Politic Desk');
-        expect(monitoring.getTextItem(2, 0)).toBe('item6');
+        expect(monitoring.getTextItem(0, 0)).toBe('item6');
 
         workspace.selectDesk('Sports Desk');
         expect(monitoring.getTextItem(0, 0)).toBe('item3');

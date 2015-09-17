@@ -11,7 +11,7 @@
 				<div class="text">
 					<time sd-datetime data-date="item.versioncreated" class="pull-right"></time>
 					<span class="keywords">{{item.slugline}}</span>
-					<span class="headline">{{item.headline}}</span>
+					<span id="title" class="headline">{{item.headline}}</span>
 				</div>
 				<div class="action" ng-if="allowed">
 					<button ng-click="preview(item); $event.stopPropagation();" tooltip="Preview" tooltip-placement="{{$last ? 'left' : 'bottom'}}"><i class="icon-external"></i></button>
