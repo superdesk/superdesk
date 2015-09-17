@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from enum import Enum
 from datetime import datetime
 from apps.rules.routing_rule_validator import RoutingRuleValidator
 from superdesk import get_resource_service
@@ -19,6 +20,58 @@ from eve.utils import config
 from superdesk.metadata.item import CONTENT_STATE
 
 logger = logging.getLogger(__name__)
+
+
+class Weekdays(Enum):
+    """Weekdays names we use for scheduling."""
+
+    MON = 0
+    TUE = 1
+    WED = 2
+    THU = 3
+    FRI = 4
+    SAT = 5
+    SUN = 6
+
+    @classmethod
+    def is_valid_schedule(cls, list_of_days):
+        """Test if all days in list_of_days are valid day names.
+
+        :param list list_of_days eg. ['mon', 'tue', 'fri']
+        """
+        return all([day.upper() in cls.__members__ for day in list_of_days])
+
+    @classmethod
+    def is_scheduled_day(cls, today, list_of_days):
+        """Test if today's weekday is in schedule.
+
+        :param datetime today
+        :param list list_of_days
+        """
+        return today.weekday() in [cls[day.upper()].value for day in list_of_days]
+
+    @classmethod
+    def dayname(cls, day):
+        """Get name shortcut (MON, TUE, ...) for given day.
+
+        :param datetime day
+        """
+        return cls(day.weekday()).name
+
+
+def set_time(current_datetime, timestr, second=0):
+    """Set time of given datetime according to timestr.
+
+    Time format for timestr is `%H%M`, eg. 1014.
+
+    :param datetime current_datetime
+    :param string timestr
+    :param int second
+    """
+    if timestr is None:
+        timestr = '0000'
+    time = datetime.strptime(timestr, '%H%M')
+    return current_datetime.replace(hour=time.hour, minute=time.minute, second=second)
 
 
 class RoutingRuleSchemeResource(Resource):
@@ -107,7 +160,6 @@ class RoutingRuleSchemeService(BaseService):
     """
     Service class for 'routing_schemes' endpoint.
     """
-    day_of_week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
     def on_create(self, docs):
         """
@@ -217,8 +269,7 @@ class RoutingRuleSchemeService(BaseService):
             raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
 
         if schedule:
-            day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
-            if not (len(set(day_of_week) & set(self.day_of_week)) == len(day_of_week)):
+            if not Weekdays.is_valid_schedule(schedule.get('day_of_week', [])):
                 raise SuperdeskApiError.badRequestError(message="Invalid values for day of week.")
 
             if schedule.get('hour_of_day_from') or schedule.get('hour_of_day_to'):
@@ -256,13 +307,9 @@ class RoutingRuleSchemeService(BaseService):
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '0000')[:2]),
-                                                     minute=int(schedule.get('hour_of_day_from', '0000')[-2:]),
-                                                     second=0)
-                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_to', '2359')[:2]),
-                                                   minute=int(schedule.get('hour_of_day_to', '2359')[-2:]),
-                                                   second=59)
-                if not ((self.day_of_week[current_datetime.weekday()] in schedule.get('day_of_week', []))
+                from_time = set_time(current_datetime, schedule.get('hour_of_day_from', '0000'))
+                to_time = set_time(current_datetime, schedule.get('hour_of_day_to', '2359'), second=59)
+                if not (Weekdays.is_scheduled_day(current_datetime, schedule.get('day_of_week', []))
                         and (from_time < current_datetime < to_time)):
                     is_scheduled = False
 

@@ -387,15 +387,8 @@ function MetadataLocatorsDirective() {
             scope.locators = scope.list;
             scope.selectedTerm = '';
 
-            scope.$watch('item', function(item) {
-                if (angular.isDefined(item)) {
-                    if (angular.isDefined(scope.fieldprefix) && angular.isDefined(item[scope.fieldprefix][scope.field]) &&
-                            !_.isNull(item[scope.fieldprefix][scope.field])) {
-                        scope.selectedTerm = item[scope.fieldprefix][scope.field].city;
-                    } else if (angular.isDefined(item[scope.field]) && !_.isNull(item[scope.field])) {
-                        scope.selectedTerm = item[scope.field].city;
-                    }
-                }
+            scope.$watch('item[fieldprefix][field].city || item[scope.field].city', function(city) {
+                scope.selectedTerm = city || null;
             });
 
             /**

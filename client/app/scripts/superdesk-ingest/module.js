@@ -820,18 +820,8 @@ define([
         composite: 'Package'
     };
 
-    var dayLookup = {
-        MON: 'Monday',
-        TUE: 'Tuesday',
-        WED: 'Wednesday',
-        THU: 'Thursday',
-        FRI: 'Friday',
-        SAT: 'Saturday',
-        SUN: 'Sunday'
-    };
-
-    IngestRoutingGeneral.$inject = ['desks', 'macros'];
-    function IngestRoutingGeneral(desks, macros) {
+    IngestRoutingGeneral.$inject = ['weekdays', 'desks', 'macros'];
+    function IngestRoutingGeneral(weekdays, desks, macros) {
         return {
             scope: {
                 rule: '=',
@@ -840,7 +830,7 @@ define([
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-general.html',
             link: function(scope) {
                 scope.typeLookup = typeLookup;
-                scope.dayLookup = dayLookup;
+                scope.dayLookup = weekdays;
                 scope.macroLookup = {};
 
                 desks.initialize()
@@ -1038,23 +1028,7 @@ define([
     function IngestRoutingSchedule() {
         return {
             scope: {rule: '='},
-            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html',
-            link: function(scope) {
-                scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-                scope.dayLookup = dayLookup;
-
-                scope.isDayChecked = function(rule, day) {
-                    return rule.schedule.day_of_week.indexOf(day) !== -1;
-                };
-
-                scope.toggleDay = function(rule, day) {
-                    if (scope.isDayChecked(rule, day)) {
-                        rule.schedule.day_of_week = _.without(rule.schedule.day_of_week, day);
-                    } else {
-                        rule.schedule.day_of_week.push(day);
-                    }
-                };
-            }
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html'
         };
     }
 

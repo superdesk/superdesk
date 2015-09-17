@@ -121,6 +121,10 @@ def get_res(url, context):
     return json.loads(response.get_data())
 
 
+def parse_date(datestr):
+    return datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%S%z")
+
+
 def assert_200(response):
     """Assert we get status code 200."""
     expect_status_in(response, (200, 201, 204))
@@ -1338,7 +1342,7 @@ def get_content_expiry(context, minutes):
 def get_desk_spike_expiry(context, test_minutes):
     response_data = json.loads(context.response.get_data())
     assert response_data['expiry']
-    response_expiry = datetime.strptime(response_data['expiry'], "%Y-%m-%dT%H:%M:%S%z")
+    response_expiry = parse_date(response_data['expiry'])
     expiry = utc.utcnow() + timedelta(minutes=int(test_minutes))
     assert response_expiry <= expiry
 
@@ -1652,17 +1656,22 @@ def when_we_schedule_the_routing_scheme(context, scheme_id):
         href = get_self_href(res, context)
         headers = if_match(context, res.get('_etag'))
         rule = res.get('rules')[0]
-        day_of_week = get_resource_service('routing_schemes').day_of_week
+
+        from apps.rules.routing_rules import Weekdays
+
         rule['schedule'] = {
-            'day_of_week': [day_of_week[(datetime.now() + timedelta(days=1)).weekday()],
-                            day_of_week[(datetime.now() + timedelta(days=2)).weekday()]],
+            'day_of_week': [
+                Weekdays.dayname(datetime.now() + timedelta(days=1)),
+                Weekdays.dayname(datetime.now() + timedelta(days=2))
+            ],
             'hour_of_day_from': '1600',
             'hour_of_day_to': '2000'
         }
+
         if len(res.get('rules')) > 1:
             rule = res.get('rules')[1]
             rule['schedule'] = {
-                'day_of_week': [day_of_week[datetime.now().weekday()]]
+                'day_of_week': [Weekdays.dayname(datetime.now())]
             }
 
         context.response = context.client.patch(get_prefixed_url(context.app, href),
@@ -1780,7 +1789,7 @@ def validate_published_item_expiry(context, publish_expiry_in_desk):
 
 def assert_expiry(context, item, publish_expiry_in_desk):
     embargo = item.get('embargo')
-    actual = datetime.strptime(item.get('expiry'), '%Y-%m-%dT%H:%M:%S%z')
+    actual = parse_date(item.get('expiry'))
     error_message = 'Published Item Expiry validation fails'
     publish_expiry_in_desk = int(publish_expiry_in_desk)
 
