@@ -262,6 +262,23 @@ describe('monitoring view', function() {
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
 
+    it('updates personal on single item spike-unspike', function() {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.togglePersonal();
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+        expect(monitoring.getGroupItems(0).count()).toBe(3);
+        monitoring.actionOnItem('Spike', 0, 0);
+        expect(monitoring.getGroupItems(0).count()).toBe(2);
+        monitoring.openSpiked();
+        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('package1');
+        monitoring.unspikeItem(0);
+        expect(monitoring.getSpikedItems().count()).toBe(0);
+    });
+
     it('updates item group on multiple item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(1);
         monitoring.selectItem(1, 0);

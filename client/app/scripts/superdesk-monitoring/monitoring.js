@@ -82,7 +82,7 @@
                 params.q = card.query;
             }
 
-            params.spike = (card.type === 'spike');
+            params.spike = (card.type === 'spike' || card.type === 'spike-personal');
 
             var query = search.query(params);
 
@@ -90,6 +90,7 @@
                 case 'search':
                     break;
 
+                case 'spike-personal':
                 case 'personal':
                     query.filter({bool: {
                         must: {term: {original_creator: session.identity._id}},
