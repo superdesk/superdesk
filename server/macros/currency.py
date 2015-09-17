@@ -9,19 +9,17 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
-import re
-import requests
+from . import currency_base
 
 
-USD_TO_AUD = 1.27  # backup
+USD_TO_AUD = 1.40  # backup
 
 
 def get_rate():
     """Get USD to AUD rate."""
     try:
-        r = requests.get('http://rate-exchange.appspot.com/currency?from=USD&to=AUD', timeout=5)
-        return float(r.json()['rate'])
-    except Exception:
+        return currency_base.get_rate('USD', 'AUD')
+    except:
         return USD_TO_AUD
 
 
@@ -32,16 +30,10 @@ def usd_to_aud(item, **kwargs):
     if os.environ.get('BEHAVE_TESTING'):
         rate = USD_TO_AUD
 
-    def convert(match):
-        usd = float(match.group(1))
-        aud = rate * usd
-        return '$%d' % aud
+    return currency_base.do_conversion(item, rate, 'AUD %d', '\$([0-9]+)')
 
-    item['body_html'] = re.sub('\$([0-9]+)', convert, item['body_html'])
-    return item
 
 name = 'usd_to_aud'
 label = 'Convert USD to AUD'
 shortcut = 'c'
 callback = usd_to_aud
-desks = ['SPORTS DESK', 'POLITICS']
