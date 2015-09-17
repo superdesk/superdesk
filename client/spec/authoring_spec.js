@@ -126,7 +126,7 @@ describe('authoring', function() {
         authoring.publish();
         workspace.selectStage('Published');
         workspace.filterItems('composite');
-        content.actionOnItem('View item', 0);
+        content.actionOnItem('Open', 0);
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
         var publishItem = authoring.getHistoryItem(1);
