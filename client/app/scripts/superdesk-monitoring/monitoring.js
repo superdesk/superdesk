@@ -69,14 +69,13 @@
             var params = {};
 
             if (card.type === 'search' && card.search && card.search.filter.query) {
+                params = card.search.filter.query;
                 if (card.query) {
                     if (card.search.filter.query.q) {
                         params.q = '(' + card.query + ') ' + card.search.filter.query.q;
                     } else {
                         params.q = '(' + card.query + ') ';
                     }
-                } else {
-                    params = card.search.filter.query;
                 }
             } else {
                 params.q = card.query;
