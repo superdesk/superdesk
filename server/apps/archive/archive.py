@@ -8,15 +8,13 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-SOURCE = 'archive'
-
 import flask
 from superdesk.resource import Resource
 from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
 from .common import remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, ITEM_DUPLICATE, ITEM_OPERATION, \
-    ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE
+    ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
