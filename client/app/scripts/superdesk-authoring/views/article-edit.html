@@ -72,9 +72,15 @@
   <div class="abstract" ng-if="!_editable">{{item.description}}</div>
 </div>
 <div class="field" ng-if="isMediaType">
-  <div class="full-preview" ng-if="item.type == 'picture'" sd-ratio-calc>
-    <div class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
+
+  <div ng-if="item.type == 'picture'" class="full-preview" sd-ratio-calc>
+      <div sd-item-crops data-item="item"></div>
+      <div>
+          <span translate>Original</span>
+          <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
+      </div>
   </div>
+
   <button id="btnCrop" class="pull-right" ng-click="applyCrop()" ng-if="metadata.crop_sizes" translate>APPLY CROPS</button>
   <div ng-if="item.type == 'audio'">
     <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
