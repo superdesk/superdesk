@@ -1,0 +1,52 @@
+
+@import 'mixins.less';
+@import 'variables.less';
+
+.words-list {
+    max-height: 10em;
+    overflow-y: scroll;
+    background-color: #fff;
+    border: 1px solid #dfdfdf;
+
+    li {
+        padding: 4px 0 4px 9px;
+        margin: 4px;
+
+        &:hover {
+            background-color: #e7f2f7;
+        }
+
+        .btn {
+            background-color: transparent;
+        }
+    }
+}
+
+.vocabularyForm {
+	button.del {
+		width: 30px;
+		padding: 8px 10px;
+	}
+}
+
+.vocabularyField {
+	display: inline;
+
+	label {
+		display: inline;
+	}
+	input {
+		width: 140px;
+		margin: 3px;
+	}
+}
+
+.divider {
+	.nav-divider();
+}
+
+.modal-dialog {
+	width: auto !important;
+	white-space: nowrap;
+	max-width: 800px;
+}

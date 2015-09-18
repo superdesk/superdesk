@@ -14,11 +14,16 @@ import logging
 from flask import current_app as app
 from eve.utils import config
 
+from superdesk import privilege
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
 
 logger = logging.getLogger(__name__)
+
+
+privilege(name="vocabularies", label="Vocabularies Management",
+          description="User can manage vocabularies' contents.")
 
 
 class VocabulariesResource(Resource):
@@ -35,8 +40,9 @@ class VocabulariesResource(Resource):
     }
 
     item_url = 'regex("[\w]+")'
-    item_methods = ['GET']
+    item_methods = ['GET', 'PATCH']
     resource_methods = ['GET']
+    privileges = {'PATCH': 'vocabularies', }
 
 
 class VocabulariesService(BaseService):
