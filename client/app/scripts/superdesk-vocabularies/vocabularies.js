@@ -12,8 +12,8 @@
   'use strict';
 
   VocabularyService
-      .$inject = [ 'api', 'urls', 'session', '$upload', '$q', 'metadata' ];
-  function VocabularyService(api, urls, session, $upload, $q, metadata) {
+      .$inject = [ 'api', 'urls', 'session', '$q'];
+  function VocabularyService(api, urls, session, $q) {
     var service = this;
 
     this.vocabularies = undefined;
@@ -121,7 +121,7 @@
   }
 
   var app = angular.module('superdesk.vocabularies',
-                           [ 'superdesk.activity', 'superdesk.upload' ]);
+                           [ 'superdesk.activity']);
 
   app.config([
     'superdeskProvider',
