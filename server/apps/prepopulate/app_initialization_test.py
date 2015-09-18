@@ -1,3 +1,4 @@
+from flask import current_app as app
 from test_factory import SuperdeskTestCase
 from .app_initialize import AppInitializeWithDataCommand
 from .app_scaffold_data import AppScaffoldDataCommand
@@ -9,19 +10,19 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
     def test_app_initialization(self):
         command = AppInitializeWithDataCommand()
         result = command.run()
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
 
     def test_app_initialization_multiple_loads(self):
         command = AppInitializeWithDataCommand()
         result = command.run()
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
         result = command.run()
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
 
     def data_scaffolding_test(self):
         command = AppInitializeWithDataCommand()
         result = command.run()
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
 
         docs = [{
             '_id': str(x),
@@ -37,10 +38,20 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         existing_desks = 18
         command = AppScaffoldDataCommand()
         result = command.run(stories_per_desk)
-        self.assertEquals(result, 0)
+        self.assertEqual(result, 0)
 
         cursor = get_resource_service('desks').get_from_mongo(None, {})
-        self.assertEquals(cursor.count(), existing_desks)
+        self.assertEqual(cursor.count(), existing_desks)
 
         cursor = get_resource_service('archive').get_from_mongo(None, {})
-        self.assertEquals(cursor.count(), existing_desks * stories_per_desk)
+        self.assertEqual(cursor.count(), existing_desks * stories_per_desk)
+
+    def test_app_initialization_index_creation(self):
+        result = app.data.mongo.pymongo(resource='users').db['users'].index_information()
+        self.assertEqual(result, {})
+        command = AppInitializeWithDataCommand()
+        result = command.run()
+        self.assertEqual(result, 0)
+        result = app.data.mongo.pymongo(resource='users').db['users'].index_information()
+        self.assertTrue('username_1' in result)
+        self.assertTrue('first_name_1_last_name_-1' in result)
