@@ -33,9 +33,9 @@
         pull: {
             label: 'Pull'
         },
-        PublicArchive: {
-            label: 'Public Archive',
-            templateUrl: 'scripts/superdesk-publish/views/public-archive-config.html'
+        http_push: {
+            label: 'HTTP Push',
+            templateUrl: 'scripts/superdesk-publish/views/http-push-config.html'
         }
     });
 

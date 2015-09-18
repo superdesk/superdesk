@@ -330,13 +330,18 @@
             "email": "public_api@test.com",
     		"is_active" : true,
             "sequence_num_settings":{"min" : 1, "max" : 10},
-    		"destinations" : [ { "delivery_type" : "PublicArchive", "format": "ninjs", "name" : "Public" } ]
+    		"destinations" : [{
+    			"delivery_type" : "http_push",
+    			"format": "ninjs",
+    			"name" : "HTTP Push",
+    			"config": { "resource_url": "http://localhost:5050/publish", "assets_url": "http://localhost:5050/assets" }
+    		}]
     	},
     	"resource": "subscribers",
     	"username": "admin",
     	"id_name": "-id subscriber Public API-"
     },
-    
+	
     {
     	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"]}, 
     	"resource": "highlights",
@@ -435,6 +440,7 @@
         "data": {
             "headline": "item5",
             "slugline": "item5 slugline",
+            "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
             "version": "1",
@@ -461,6 +467,7 @@
         "data": {
             "headline": "item6",
             "slugline": "item6 slugline",
+            "body_html" : "<p>item6 text</p>",
             "type": "text",
             "guid": "item6",
             "version": "1",

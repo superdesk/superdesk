@@ -298,6 +298,15 @@ function Monitoring() {
         browser.sleep(100);
     };
 
+    this.openSendMenu = function() {
+        element(by.className('svg-icon-sendto')).click();
+        browser.sleep(100);
+    };
+
+    this.publish = function() {
+        element(by.css('[ng-click="_publish()"]')).click();
+    };
+
     this.startUpload = function() {
         element(by.id('start-upload-btn')).click();
     };
