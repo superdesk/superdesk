@@ -368,6 +368,7 @@
         //expecting $scope.desks to be defined
 
         $scope.modalActive = false;
+        $scope.numberOfUsers = 3;
         $scope.step = {
             current: null
         };
@@ -405,6 +406,14 @@
                     );
                 }
             );
+        };
+
+        $scope.getDeskStages = function(desk) {
+            return desks.deskStages[desk._id];
+        };
+
+        $scope.getDeskUsers = function (desk) {
+            return desks.deskMembers[desk._id];
         };
     }
 
