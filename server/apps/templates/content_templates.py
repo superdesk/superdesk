@@ -11,17 +11,17 @@
 import re
 import datetime
 import superdesk
+from flask import current_app as app
 from superdesk import Resource, Service
 from superdesk.utc import utcnow
 from superdesk.errors import SuperdeskApiError
-from superdesk.metadata.item import metadata_schema
-from apps.rules.routing_rules import Weekdays, set_time
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE
 from superdesk.celery_app import celery
-from flask import current_app as app
+from apps.rules.routing_rules import Weekdays, set_time
+from apps.archive.common import ARCHIVE
 
 
 CONTENT_TEMPLATE_PRIVILEGE = 'content_templates'
-SCHEDULED_ITEM_STATE = 'in_progress'
 
 
 def get_next_run(schedule, now=None):
@@ -142,17 +142,16 @@ def set_template_timestamps(template, now):
     service.update(template['_id'], updates, template)
 
 
-def create_item_from_template(template):
-    """Create item in production using data from given template.
+def get_item_from_template(template):
+    """Get item dict using data from template.
 
     :param dict template
     """
-    production = superdesk.get_resource_service('archive')
     item = {key: value for key, value in template.items() if key in metadata_schema}
-    item['state'] = SCHEDULED_ITEM_STATE
-    item['template'] = template['_id']
+    item[ITEM_STATE] = CONTENT_STATE.SUBMITTED
     item['task'] = {'desk': template.get('template_desk'), 'stage': template.get('template_stage')}
-    production.post([item])
+    item['template'] = item.pop('_id')
+    return item
 
 
 @celery.task(soft_time_limit=120)
@@ -160,9 +159,11 @@ def create_scheduled_content(now=None):
     if now is None:
         now = utcnow()
     templates = get_scheduled_templates(now)
+    production = superdesk.get_resource_service(ARCHIVE)
     for template in templates:
         try:
             set_template_timestamps(template, now)
-            create_item_from_template(template)
+            item = get_item_from_template(template)
+            production.post([item])
         except app.data.OriginalChangedError:
             pass  # ignore template if it changed meanwhile

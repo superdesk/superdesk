@@ -1,7 +1,8 @@
 
 import unittest
 from datetime import datetime
-from .content_templates import get_next_run, Weekdays
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+from .content_templates import get_next_run, Weekdays, get_item_from_template
 
 
 class TemplatesTestCase(unittest.TestCase):
@@ -35,3 +36,13 @@ class TemplatesTestCase(unittest.TestCase):
     def test_next_run_now(self):
         delta = self.get_delta('0905', self.weekdays)
         self.assertEqual(delta.days, 1)
+
+    def test_get_item_from_template(self):
+        template = {'_id': 'foo', 'name': 'test', 'headline': 'Foo',
+                    'template_desk': 'sports', 'template_stage': 'schedule'}
+        item = get_item_from_template(template)
+        self.assertNotIn('_id', item)
+        self.assertEqual('foo', item.get('template'))
+        self.assertEqual('Foo', item.get('headline'))
+        self.assertEqual(CONTENT_STATE.SUBMITTED, item.get(ITEM_STATE))
+        self.assertEqual({'desk': 'sports', 'stage': 'schedule'}, item.get('task'))
