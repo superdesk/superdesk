@@ -13,14 +13,16 @@
       <ng-form name="vocabularyForm" class="vocabularyForm">
 
         <fieldset>
+            <div ng-repeat="(key, value) in model" class="field vocabularyField">
+              <label translate>{{key}}</label>
+            </div>
           <div ng-repeat="item in vocabulary.items track by $index">
             <div ng-repeat="(key, value) in model" class="field vocabularyField">
-              <label for="dict-lang-code" translate>{{key}}</label>
-              <input type="text" ng-model="item[key]" required>
+              <input type="text" ng-model="item[key]">
             </div>
             <button id="del-btn" class="btn del" ng-click="removeItem(item)" translate>x</button>
-            <li class="divider"></li>
           </div>
+          <li class="divider"></li>
           <button id="add-new-btn" class="btn" ng-click="addItem()" translate>Add</button>
         </fieldset>
 
