@@ -11,7 +11,7 @@
 		<ul class="basic-list">
 			<li ng-if="_isInProductionStates">
 				<label ng-if="_editable" translate>Not For Publication</label>
-				<span ng-if="_editable" tooltip="{{ item.marked_for_not_publication ? 'Not For Publication' : 'For Publication'  | translate }}" tooltip-placement="top">
+				<span ng-if="_editable">
 					<span ng-if="_editable" sd-switch ng-model="item.marked_for_not_publication"></span>
 				</span>
 				<label ng-if="!_editable" translate>
@@ -22,7 +22,7 @@
 			<li>
 				<label translate>Usageterms</label>
 				<div class="data">
-					<input type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
+					<input class="line-input" type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
 				</div>
 			</li>
 			<li class="terms-box">
@@ -32,7 +32,7 @@
 			<li>
 				<label translate>Language</label>
 				<div class="data">
-					<input type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
+					<input class="line-input" type="text" ng-model="item.language" ng-disabled="!_editable" ng-change="autosave(item)">
 				</div>
 			</li>
 
@@ -101,7 +101,7 @@
 	        <li>
 				<label translate>Unique name</label>
 				<div class="data">
-					<input type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
+					<input class="line-input" type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
 				</div>
 			</li>
 		</ul>

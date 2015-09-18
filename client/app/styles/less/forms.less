@@ -886,3 +886,25 @@ form.flat, .form-flat {
         .text-normal();
     }
 }
+
+
+
+
+
+input.line-input, 
+textarea.line-input {
+    width: 100%;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.15)!important;
+    background-color: transparent;
+    &:hover {
+        border-color: rgba(0,0,0,0.3) !important;
+        background-color: transparent !important;
+    }
+    &:focus {
+        box-shadow: 0 1px 0 0 @sd-blue !important;
+        border-color: @sd-blue !important;
+        background-color: transparent !important;
+    }
+}
