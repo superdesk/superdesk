@@ -29,7 +29,7 @@
         scope.vocabularies = service.vocabularies;
       }
     };
-  };
+  }
 
   VocabularyConfigController.$inject =
       [ '$scope', 'gettext', 'session', 'modal', 'notify', 'vocabularies' ];
@@ -111,12 +111,12 @@
 
     var model = {};
     _.each(
-      _.sortBy($scope.vocabulary.items, function(item) {return -_.size(item)})[0],
+      _.sortBy($scope.vocabulary.items, function(item) {return -_.size(item);})[0],
       function(v, k) { model[k] = null; }
     );
     $scope.model = model;
     console.log(
-        _.sortBy($scope.vocabulary.items, function(o) { return -_.size(o) })
+        _.sortBy($scope.vocabulary.items, function(o) { return -_.size(o) ;})
     );
   }
 

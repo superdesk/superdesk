@@ -2,9 +2,6 @@
 describe('vocabularies', function() {
     'use strict';
 
-    var USER_ID = 'foo',
-        LANG = 'en';
-
     beforeEach(module('superdesk.vocabularies'));
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('templates'));
@@ -23,7 +20,7 @@ describe('vocabularies', function() {
 
         beforeEach(inject(function($rootScope, $controller) {
             scope = $rootScope.$new();
-            testItem = {foo: 'flareon', bar: 'beedrill'}
+            testItem = {foo: 'flareon', bar: 'beedrill'};
             scope.vocabulary = {items: [testItem]};
             $controller('VocabularyEdit', {$scope: scope});
         }));
@@ -56,7 +53,7 @@ describe('vocabularies', function() {
                 items: [
                     { foo: 'flareon', bar: 'beedrill' },
                     { foo: 'feraligatr', bar: 'bayleef' }
-                ] 
+                ]
             });
         }));
     });
