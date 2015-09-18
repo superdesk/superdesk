@@ -27,7 +27,8 @@ from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, A
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from superdesk.users.services import current_user_has_privilege, is_admin
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE, EMBARGO
+from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
+    CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -392,6 +393,7 @@ class ArchiveService(BaseService):
         new_doc = original_doc.copy()
         del new_doc[config.ID_FIELD]
         del new_doc['guid']
+        new_doc.pop(LINKED_IN_PACKAGES, None)
 
         new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
         item_model = get_model(ItemModel)
