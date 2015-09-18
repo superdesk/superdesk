@@ -917,7 +917,8 @@
                     item: '=',
                     close: '&',
                     openLightbox: '=',
-                    openSingleItem: '='
+                    openSingleItem: '=',
+                    hideActionsMenu: '='
                 },
                 link: function(scope) {
                     scope.tab = 'content';
@@ -925,6 +926,16 @@
                     scope.$watch('item', function(item) {
                         scope.selected = {preview: item || null};
                     });
+
+                    /**
+                     * Return true if the menu actions from
+                     * preview should be hidden
+                     *
+                     * @return {boolean}
+                     */
+                    scope.hideActions = function () {
+                        return scope.hideActionsMenu;
+                    };
                 }
             };
         }])
