@@ -189,3 +189,79 @@ Feature: Duplication of Content within Desk
       """
       {"state": "submitted", "sign_off": "foo", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+
+
+    @auth
+    @provider
+    Scenario: Duplicate a item in the package doesn't keep the package
+      Given empty "ingest"
+      And "desks"
+      """
+      [{"name": "Sports"}]
+      """
+      And empty "archive"
+      When we post to "archive" with success
+          """
+          [{
+              "headline" : "WA:Navy steps in with WA asylum-seeker boat",
+              "guid" : "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916",
+              "state" : "submitted",
+              "type" : "text",
+              "body_html": "item content",
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              }
+          }]
+          """
+
+      When we post to "archive" with success
+          """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916",
+                          "headline": "WA:Navy steps in with WA asylum-seeker boat",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "headline" : "WA:Navy steps in with WA asylum-seeker boat",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+          """
+      When we post to "/archive/tag:localhost:2015:515b895a-b336-48b2-a506-5ffaf561b916/duplicate"
+      """
+      {"desk": "#desks._id#"}
+      """
+      When we get "/archive/#duplicate._id#"
+      Then there is no "linked_in_packages" in response
