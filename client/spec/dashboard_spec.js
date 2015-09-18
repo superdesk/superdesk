@@ -51,4 +51,18 @@ describe('dashboard', function() {
         expect(dashboard.getTextItem(1, 2, 0)).toBe('item6');
     });
 
+    it('configure a label for the view', function() {
+        dashboard.showDashboardSettings();
+        dashboard.addWidget(4);
+        dashboard.doneAction();
+
+        dashboard.showMonitoringSettings(0);
+        monitoring.setLabel('test');
+        monitoring.nextStages();
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        expect(dashboard.getWidgetLabel(0)).toBe('test');
+    });
 });

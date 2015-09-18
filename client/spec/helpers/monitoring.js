@@ -6,7 +6,8 @@ module.exports = new Monitoring();
 
 function Monitoring() {
 
-    var config = element(by.className('aggregate-settings'));
+    this.config = element(by.className('aggregate-settings'));
+    this.label = element(by.model('widget.configuration.label'));
 
     this.openMonitoring = function() {
         openUrl('/#/workspace/monitoring');
@@ -172,6 +173,16 @@ function Monitoring() {
         element.all(by.css('[ng-click="goTo(step)"]')).first().click();
     };
 
+    /**
+     * Set the label for the current monitoring view widget
+     *
+     * @param {string} label
+     */
+    this.setLabel = function(label) {
+        this.label.clear();
+        this.label.sendKeys(label);
+    };
+
     this.nextStages = function() {
         element(by.id('nextStages')).click();
         browser.sleep(500);
@@ -210,16 +221,28 @@ function Monitoring() {
         element(by.css('[ng-click="save()"]')).click();
     };
 
-    this.getDesk = function(desk) {
-        return config.all(by.repeater('desk in desks')).get(desk);
+    /**
+     * Get the desk at the 'index' row
+     *
+     *  @param {index} index
+     *  @return {promise}
+     */
+    this.getDesk = function(index) {
+        return this.config.all(by.repeater('desk in desks')).get(index);
     };
 
     this.getStage = function(desk, stage) {
         return this.getDesk(desk).all(by.repeater('stage in deskStages[desk._id]')).get(stage);
     };
 
-    this.getSearch = function(search) {
-        return config.all(by.repeater('search in currentSavedSearches')).get(search);
+    /**
+     * Get the search at the 'index' row
+     *
+     *  @param {index} index
+     *  @return {promise}
+     */
+    this.getSearch = function(index) {
+        return this.config.all(by.repeater('search in currentSavedSearches')).get(index);
     };
 
     this.getSearchText = function(search) {
