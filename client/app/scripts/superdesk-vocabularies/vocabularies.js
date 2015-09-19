@@ -109,15 +109,11 @@
             $scope.model = null;
         };
 
-        var model = {};
-        _.each(
+        var model = _.mapValues(
           _.sortBy($scope.vocabulary.items, function(item) {return -_.size(item);})[0],
-          function(v, k) { model[k] = null; }
+          function() { return null; }
         );
         $scope.model = model;
-        console.log(
-            _.sortBy($scope.vocabulary.items, function(o) { return -_.size(o) ;})
-        );
     }
 
     var app = angular.module('superdesk.vocabularies',
