@@ -51,8 +51,8 @@ describe('vocabularies', function() {
             $rootScope.$digest();
             expect(api.save).toHaveBeenCalledWith('vocabularies', {
                 items: [
-                    { foo: 'flareon', bar: 'beedrill' },
-                    { foo: 'feraligatr', bar: 'bayleef' }
+                    {foo: 'flareon', bar: 'beedrill'},
+                    {foo: 'feraligatr', bar: 'bayleef'}
                 ]
             });
         }));
