@@ -109,10 +109,11 @@
             $scope.model = null;
         };
 
-        var model = _.mapValues(
-          _.sortBy($scope.vocabulary.items, function(item) {return -_.size(item);})[0],
-          function() { return null; }
-        );
+        var model = _.mapValues(_.indexBy(
+            _.uniq(_.flatten(
+                _.map($scope.vocabulary.items, function(o) { return _.keys(o); })
+            ))
+        ), function() { return null; });
         $scope.model = model;
     }
 
