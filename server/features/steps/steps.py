@@ -1013,7 +1013,7 @@ def step_impl_then_get_file(context):
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
     expect_json_contains(response, 'renditions')
-    expect_json_contains(response, {'mime_type': 'image/jpeg'})
+    expect_json_contains(response, {'mimetype': 'image/jpeg'})
     fetched_data = get_json_data(context.response)
     context.fetched_data = fetched_data
 

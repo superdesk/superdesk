@@ -343,7 +343,7 @@ Feature: News Items Archive
       {"_message": "Cannot delete desk as it has article(s)."}
       """
 
-    @auth @test
+    @auth
     Scenario: Sign-off is updated when multiple users modify the article
         When we post to "/archive"
         """
@@ -436,7 +436,7 @@ Feature: News Items Archive
       {"guid": "321", "type": "text", "byline": "by Context User"}
       """
 
-    @auth @test
+    @auth
     Scenario: Sign-off is updated when other user restores version
         When we post to "/archive"
         """

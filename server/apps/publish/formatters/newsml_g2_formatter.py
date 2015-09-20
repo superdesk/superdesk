@@ -37,7 +37,8 @@ class NewsMLG2Formatter(Formatter):
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             is_package = self._is_package(article)
             self._message_attrib.update(self._debug_message_extra)
-            newsMessage = etree.Element('newsMessage', attrib=self._message_attrib)
+            self.newsMessage = etree.Element('newsMessage', attrib=self._message_attrib)
+            newsMessage = self.newsMessage
             self._format_header(article, newsMessage, pub_seq_num)
             itemSet = self._format_item(newsMessage)
             if is_package:
@@ -71,7 +72,7 @@ class NewsMLG2Formatter(Formatter):
         # MAY NEED TO EXPAND THIS
         SubElement(header, 'transmitId').text = str(pub_seq_num)
         SubElement(header, 'origin').text = article.get('original_source', 'AAP')
-        SubElement(header, 'priority').text = article.get('priority', '5')
+        SubElement(header, 'priority').text = str(article.get('priority', 5))
 
     def _format_item(self, newsMessage):
         return SubElement(newsMessage, 'itemSet')
@@ -272,7 +273,7 @@ class NewsMLG2Formatter(Formatter):
         content_set = SubElement(item, 'contentSet')
         for rendition, value in article.get('renditions', {}).items():
             attrib = {'href': value.get('href'),
-                      'contenttype': value.get('mimetype'),
+                      'contenttype': value.get('mimetype', ''),
                       'rendition': 'rendition:' + rendition
                       }
             if 'height' in value:
