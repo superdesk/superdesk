@@ -450,6 +450,7 @@
             (angular.isDefined(current_item.package_type) && current_item.package_type === 'takes');
 
             var lockedByMe = !lock.isLocked(current_item);
+            action.view = !lockedByMe;
 
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
@@ -464,6 +465,7 @@
                     return angular.extend({}, DEFAULT_ACTIONS);
                 }
 
+                action.view = true;
                 if (current_item.state === 'scheduled') {
                     action.deschedule = true;
                 } else if (current_item.state === 'published' || current_item.state === 'corrected') {
@@ -520,6 +522,9 @@
             } else {
                 // personal
                 action.copy = true;
+                action.view = false;
+                action.package_item = false;
+                action.new_take = false;
             }
 
             return action;
@@ -1960,7 +1965,7 @@
                     privileges: {correct: 1}
                 })
                 .activity('view.item', {
-                    label: gettext('View item'),
+                    label: gettext('Open'),
                     priority: 2000,
                     icon: 'fullscreen',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
@@ -1970,7 +1975,10 @@
                         {action: 'list', type: 'archive'},
                         {action: 'list', type: 'legal_archive'},
                         {action: 'view', type: 'item'}
-                    ]
+                    ],
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).view;
+                    }],
                 })
                 .activity('edit.crop', {
                     label: gettext('EDIT CROP'),

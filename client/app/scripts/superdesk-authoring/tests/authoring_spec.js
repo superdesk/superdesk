@@ -514,8 +514,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'copy', 'view',
-                    'spike', 'package_item', 'multi_edit']);
+            allowedActions(itemActions, ['edit', 'save', 'copy', 'spike', 'multi_edit']);
         }));
 
     it('can perform actions if the item is located on the desk',
@@ -543,7 +542,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -572,7 +571,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                 'mark_item', 'package_item', 'multi_edit']);
         }));
 
@@ -683,7 +682,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
 
             item = {
@@ -700,7 +699,7 @@ describe('authoring actions', function() {
             };
 
             itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'view',
+            allowedActions(itemActions, ['save', 'edit', 'duplicate',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -732,7 +731,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                 'mark_item', 'package_item', 'multi_edit', 'publish']);
 
             item = {
@@ -1012,7 +1011,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -1047,7 +1046,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish']);
         }));
 
@@ -1082,7 +1081,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'view', 'spike',
+            allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
         }));
 });

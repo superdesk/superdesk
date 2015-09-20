@@ -683,8 +683,8 @@
                 }
             })
             .activity('packageitem', {
-                label: gettext('Package item'),
-                priority: 5,
+                label: gettext('Create package'),
+                priority: 50,
                 icon: 'package-plus',
                 controller: ['data', 'packages', 'authoringWorkspace', 'notify', 'gettext',
                 function(data, packages, authoringWorkspace, notify, gettext) {
@@ -706,7 +706,7 @@
                 group: 'packaging'
             })
             .activity('addtopackage', {
-                label: gettext('Add to package'),
+                label: gettext('Add to current'),
                 priority: 5,
                 dropdown: true,
                 icon: 'package-plus',
@@ -714,6 +714,9 @@
                 filters: [
                     {action: 'list', type: 'archive'}
                 ],
+                condition: function(item) {
+                    return item.task && item.task.desk;
+                },
                 additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
                     var pkg = authoringWorkspace.getItem();
                     return pkg && pkg.type === 'composite' && pkg._id !== item._id;
