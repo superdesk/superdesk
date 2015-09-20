@@ -16,62 +16,47 @@
     function VocabularyService(api, urls, session, $q) {
         var service = this;
 
-        this.vocabularies = undefined;
-
-        this.getVocabularies = function(scope) {
+        this.getVocabularies = function() {
             if (typeof service.vocabularies === 'undefined') {
-                api.query('vocabularies')
-            .then(function(result) {
-                service.vocabularies = result;
-                scope.vocabularies = service.vocabularies;
-            });
+                return api.query('vocabularies')
+                .then(function(result) {
+                    service.vocabularies = result;
+                    return $q.when(service.vocabularies);
+                });
             } else {
-                scope.vocabularies = service.vocabularies;
+                return $q.when(service.vocabularies);
             }
         };
     }
 
-    VocabularyConfigController.$inject =
-        [ '$scope', 'gettext', 'session', 'modal', 'notify', 'vocabularies' ];
-    function VocabularyConfigController($scope, gettext, session, modal, notify,
-                                        vocabularies) {
-        $scope.vocabularies = null;
-        $scope.vocabulary = null;
-
-        $scope.createVocabulary = function() {
-            $scope.vocabulary = {
-                is_active: 'true'
-            };
-        };
+    VocabularyConfigController.$inject = ['$scope', 'vocabularies'];
+    function VocabularyConfigController($scope, vocabularies) {
 
         $scope.openVocabulary = function(vocabulary) {
             $scope.vocabulary = vocabulary;
         };
 
-        $scope.closeVocabulary = function() {
-        $scope.vocabulary = null;
-    };
-
-        vocabularies.getVocabularies($scope);
+        vocabularies.getVocabularies().then(function(vocabularies) {
+            $scope.vocabularies = vocabularies;
+        });
     }
 
     VocabularyEditController.$inject = [
       '$scope',
-      'upload',
       'gettext',
       'notify',
-      'modal',
       'api',
-      'vocabularies'
+      'vocabularies',
     ];
-    function VocabularyEditController($scope, upload, gettext, notify, modal, api,
-                                      vocabularies) {
+    function VocabularyEditController($scope, gettext, notify, api, vocabularies) {
+
+        function closeVocabulary() {
+            $scope.vocabulary = null;
+        }
 
         function onSuccess(result) {
-            $scope.closeVocabulary();
-            vocabularies.getVocabularies($scope);
             notify.success(gettext('Vocabulary saved succesfully'));
-            $scope.progress = null;
+            closeVocabulary();
             return result;
         }
 
@@ -104,9 +89,7 @@
         };
 
         $scope.cancel = function() {
-            $scope._errorUniqueness = false;
-            $scope.closeVocabulary();
-            $scope.model = null;
+            closeVocabulary();
         };
 
         var model = _.mapValues(_.indexBy(
@@ -119,35 +102,37 @@
 
     var app = angular.module('superdesk.vocabularies',
                              [ 'superdesk.activity']);
-
     app.config([
       'superdeskProvider',
-    function(superdesk) {
-        superdesk.activity('/settings/vocabularies', {
-            label: gettext('Vocabularies'),
-            controller: VocabularyConfigController,
-            templateUrl: 'scripts/superdesk-vocabularies/views/settings.html',
-            category: superdesk.MENU_SETTINGS,
-            priority: -800,
-            privileges: {vocabularies: 1}
-        });
-    }
-  ])
-      .service('vocabularies', VocabularyService)
-      .controller('VocabularyEdit', VocabularyEditController)
-      .controller('VocabularyConfig', VocabularyConfigController)
-      .directive('sdVocabularyConfig',
-                 function() {
-                     return {
-                         controller: VocabularyConfigController
-                     };
-                 })
-      .directive('sdVocabularyConfigModal', function() {
-          return {
-              controller: 'VocabularyEdit',
-              require: '^sdVocabularyConfig',
-              templateUrl:
-                  'scripts/superdesk-vocabularies/views/vocabulary-config-modal.html'
-          };
-      });
+      function(superdesk) {
+          superdesk.activity('/settings/vocabularies', {
+              label: gettext('Vocabularies'),
+              templateUrl: 'scripts/superdesk-vocabularies/views/settings.html',
+              category: superdesk.MENU_SETTINGS,
+              priority: -800,
+              privileges: {vocabularies: 1}
+          });
+      }
+    ])
+    .service('vocabularies', VocabularyService)
+    .controller('VocabularyEdit', VocabularyEditController)
+    .controller('VocabularyConfig', VocabularyConfigController)
+    .directive('sdVocabularyConfig', function() {
+        return {
+            scope: {
+                vocabulary: '=',
+            },
+            controller: 'VocabularyConfig',
+            templateUrl: 'scripts/superdesk-vocabularies/views/vocabulary-config.html'
+        };
+    })
+    .directive('sdVocabularyConfigModal', function() {
+        return {
+            scope: {
+                vocabulary: '=',
+            },
+            controller: 'VocabularyEdit',
+            templateUrl: 'scripts/superdesk-vocabularies/views/vocabulary-config-modal.html'
+        };
+    });
 })();

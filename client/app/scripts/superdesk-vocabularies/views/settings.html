@@ -1,28 +1,21 @@
 <div sd-settings-view>
 
-  <div class="split-content" sd-vocabulary-config>
+  <div class="split-content">
 
     <div class="header">
       <h2 translate>Vocabularies management</h2>
-      <!--<button id="createDictionary" class="btn btn-info pull-right" ng-click="createVocabulary()">-->
-        <!--<i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Vocabulary' | translate }}-->
-      <!--</button>-->
     </div>
 
-    <div class="content dictionary-settings">
-      <div sd-shadow>
-        <ul class="pills-list">
-          <li ng-repeat="vocabulary in vocabularies._items">
-              <h6>{{ vocabulary._id }}</h6>&nbsp;<em><strong>({{ :: vocabulary.items.length }})</strong></em>
-            <div class="actions">
-              <button ng-click="openVocabulary(vocabulary)" title="{{:: 'Edit vocabulary' | translate }}"><i class="icon-pencil"></i></button>
-              <!--<button ng-click="remove(vocabulary)" title="{{:: 'Remove vocabulary' | translate }}"><i class="icon-trash"></i></button>-->
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <div sd-vocabulary-config
+      class="content dictionary-settings"
+      vocabulary="data.vocabulary"
+    ></div>
 
-    <div sd-vocabulary-config-modal ng-if="vocabulary"></div>
+    <div sd-vocabulary-config-modal
+      ng-if="data.vocabulary"
+      vocabulary="data.vocabulary"
+    ></div>
+
   </div>
+
 </div>
