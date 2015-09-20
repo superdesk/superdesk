@@ -39,11 +39,25 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'state': 'published',
         'urgency': 2,
         'pubstatus': 'usable',
-        'dateline': {'text': 'sample dateline'},
+        'dateline': {
+            'source': 'AAP',
+            'text': 'Los Angeles, Aug 11 AAP -',
+            'located': {
+                'alt_name': '',
+                'state': 'California',
+                'city_code': 'Los Angeles',
+                'city': 'Los Angeles',
+                'dateline': 'city',
+                'country_code': 'US',
+                'country': 'USA',
+                'tz': 'America/Los_Angeles',
+                'state_code': 'CA'
+            }
+        },
         'creditline': 'sample creditline',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
-        'place': 'Australia',
+        'place': [{'qcode': 'Australia', 'name': 'Australia'}],
         'embargo': embargo_ts
     }
 
@@ -331,6 +345,74 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'unique_id': 573
     }
 
+    video = {
+        '_id': 'urn:newsml:localhost:2015-09-20T16:12:57.333001:f3856812-0999-4ed8-b69e-68dcdeb1ed2e',
+        'guid': 'tag:localhost:2015:c11e11c4-cdbc-41ef-b939-2b30dd8365fb',
+        'language': 'en',
+        'family_id': 'urn:newsml:localhost:2015-09-20T16:12:57.333001:f3856812-0999-4ed8-b69e-68dcdeb1ed2e',
+        '_current_version': 3,
+        'versioncreated': '2015-09-20T06:14:11.000Z',
+        'unique_id': 274,
+        'renditions': {
+            'original': {
+                'media': '55fe4e691d41c8cac923ceb2',
+                'href': 'http://192.168.220.176:5000/api/upload/55fe4e691d41c8cac923ceb2/raw?_schema=http',
+                'mimetype': 'video/mp4'
+            }
+        },
+        'state': 'in_progress',
+        'version_creator': '55ee82871d41c86ee1d78c45',
+        'sign_off': 'ADM',
+        'media': '55fe4e691d41c8cac923ceb2',
+        'source': 'AAP',
+        'original_source': 'AAP Video/AAP',
+        'pubstatus': 'usable',
+        'filemeta': {
+            'mime_type': 'video/mp4',
+            'last_modification': '1904-01-01T00:00:00+00:00',
+            'creation_date': '1904-01-01T00:00:00+00:00',
+            'height': '270',
+            'width': '480',
+            'duration': '0:00:10.224000',
+            'comment': 'User volume: 100.0%',
+            'length': 877869,
+            'endian': 'Big endian'
+        },
+        'event_id': 'tag:localhost:2015:f3ae4441-4721-4987-8265-88d747b6a550',
+        'original_creator': '55ee82871d41c86ee1d78c45',
+        'expiry': '2016-12-21T14:14:11.000Z',
+        'firstcreated': '2015-09-20T06:12:57.000Z',
+        '_created': '2015-09-20T06:12:57.000Z',
+        'type': 'video',
+        'unique_name': '#274',
+        'mimetype': 'video/mp4',
+        'version': 2,
+        'headline': 'test',
+        'description': 'testing video',
+        'abstract': 'test video',
+        'slugline': 'test video',
+        'byline': 'test video',
+        'subject': [ 
+            {
+                'qcode': '01001000',
+                'name': 'archaeology',
+                'parent': '01000000'
+            }
+        ],
+        'place': [ 
+            {
+                'qcode': 'ACT',
+                'name': 'ACT'
+            }
+        ],
+        'anpa_category': [ 
+            {
+                'qcode': 'a',
+                'name': 'Australian General News'
+            }
+        ]
+    }
+
     packaged_articles = [{'_id': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
                           'headline': 'package article headline',
                           'slugline': 'slugline',
@@ -388,6 +470,34 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/{http://iptc.org/std/nar/2006-10-01/}headline').text,
             'This is a test headline')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/{http://iptc.org/std/nar/2006-10-01/}urgency').text,
+            '2')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/{http://iptc.org/std/nar/2006-10-01/}dateline').text,
+            'Los Angeles, Aug 11 AAP -')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+            '{http://iptc.org/std/nar/2006-10-01/}located[@type="cptype:city"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}name'
+            ).text, 'Los Angeles')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+            '{http://iptc.org/std/nar/2006-10-01/}located/' +
+            '{http://iptc.org/std/nar/2006-10-01/}broader[@type="cptype:statprov"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}name'
+            ).text, 'California')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+            '{http://iptc.org/std/nar/2006-10-01/}located/' +
+            '{http://iptc.org/std/nar/2006-10-01/}broader[@type="cptype:country"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}name'
+            ).text, 'USA')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/{http://iptc.org/std/nar/2006-10-01/}inlineXML/' +
@@ -462,3 +572,53 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}creditline').text,
             'AAP Image/AAP')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('width'),
+            '3777')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('height'),
+            '2455')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('contenttype'),
+            'image/jpeg')
+
+    def testVideoPublish(self):
+        article = dict(self.video)
+        article['firstcreated'] = self.now
+        article['versioncreated'] = self.now
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}header/{http://iptc.org/std/nar/2006-10-01/}priority').text,
+            '5')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
+            '{http://iptc.org/std/nar/2006-10-01/}creditline').text,
+            'AAP Video/AAP')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('width'),
+            '480')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('height'),
+            '270')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('duration'),
+            '0:00:10.224000')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
+            '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('contenttype'),
+            'video/mp4')
