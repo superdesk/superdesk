@@ -271,6 +271,10 @@
                 delete diff.publish_schedule;
             }
 
+            if (diff.embargo && this.isPublished(orig)) {
+                delete diff.embargo;
+            }
+
             //check if rendition is dirty for real
             if (_.isEqual(orig.renditions, diff.renditions)) {
                 delete diff.renditions;
