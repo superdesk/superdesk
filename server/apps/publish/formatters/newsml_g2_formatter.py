@@ -76,7 +76,7 @@ class NewsMLG2Formatter(Formatter):
         SubElement(header, 'sent').text = self.string_now
         SubElement(header, 'sender').text = NEWSML_PROVIDER_ID
         SubElement(header, 'transmitId').text = str(pub_seq_num)
-        SubElement(header, 'origin').text = article.get('original_source', 'AAP')
+        SubElement(header, 'origin').text = article.get('original_source', article.get('source', ''))
         SubElement(header, 'priority').text = str(article.get('priority', 5))
 
     def _format_item(self, news_message):
@@ -333,7 +333,7 @@ class NewsMLG2Formatter(Formatter):
         :param article:
         :param content_meta:
         """
-        SubElement(content_meta, 'creditline').text = article.get('original_source', '')
+        SubElement(content_meta, 'creditline').text = article.get('original_source', article.get('source', ''))
 
     def _format_groupset(self, article, item):
         """
