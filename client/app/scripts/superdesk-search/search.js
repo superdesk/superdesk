@@ -927,6 +927,10 @@
                         scope.selected = {preview: item || null};
                     });
 
+                    scope.$on('item:spike', scope.close);
+
+                    scope.$on('item:unspike', scope.close);
+
                     /**
                      * Return true if the menu actions from
                      * preview should be hidden
