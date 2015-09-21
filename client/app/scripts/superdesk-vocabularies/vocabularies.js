@@ -1,7 +1,7 @@
 /**
  * This file is part of Superdesk.
  *
- * Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+ * Copyright 2013-2015 Sourcefabric z.u. and contributors.
  *
  * For the full copyright and license information, please see the
  * AUTHORS and LICENSE files distributed with this source code, or
@@ -16,6 +16,11 @@
     function VocabularyService(api, urls, session, $q) {
         var service = this;
 
+        /**
+         * Fetches and caches vocabularies or returns them from the cache.
+         *
+         * @returns {Promise}
+         */
         this.getVocabularies = function() {
             if (typeof service.vocabularies === 'undefined') {
                 return api.query('vocabularies')
@@ -32,10 +37,16 @@
     VocabularyConfigController.$inject = ['$scope', 'vocabularies'];
     function VocabularyConfigController($scope, vocabularies) {
 
+        /**
+         * Opens vocabulary in the edit modal.
+         *
+         * @param {Object} vocabulary
+         */
         $scope.openVocabulary = function(vocabulary) {
             $scope.vocabulary = vocabulary;
         };
 
+        // load the list of vocabularies into component:
         vocabularies.getVocabularies().then(function(vocabularies) {
             $scope.vocabularies = vocabularies;
         });
@@ -51,6 +62,9 @@
     ];
     function VocabularyEditController($scope, gettext, notify, api, vocabularies, metadata) {
 
+        /**
+         * Unload vocabulary/close modal.
+         */
         function closeVocabulary() {
             $scope.vocabulary = null;
         }
@@ -72,24 +86,40 @@
             }
         }
 
-        $scope.addItem = function() {
-            $scope.vocabulary.items.push(model);
-        };
-
-        $scope.removeItem = function(item) {
-            $scope.vocabulary.items.splice($scope.vocabulary.items.indexOf(item), 1);
-        };
-
+        /**
+         * Save current edit modal contents on backend.
+         */
         $scope.save = function() {
             $scope._errorUniqueness = false;
             api.save('vocabularies', $scope.vocabulary).then(onSuccess, onError);
+            // discard metadata cache:
             metadata.initialize();
         };
 
+        /**
+         * Discard changes and close modal.
+         */
         $scope.cancel = function() {
             closeVocabulary();
         };
 
+        /**
+         * Add new blank vocabulary item.
+         */
+        $scope.addItem = function() {
+            $scope.vocabulary.items.push(model);
+        };
+
+        /**
+         * Remove vocabulary item.
+         *
+         * @param (Object) item
+         */
+        $scope.removeItem = function(item) {
+            $scope.vocabulary.items.splice($scope.vocabulary.items.indexOf(item), 1);
+        };
+
+        // try to reproduce data model of vocabulary:
         var model = _.mapValues(_.indexBy(
             _.uniq(_.flatten(
                 _.map($scope.vocabulary.items, function(o) { return _.keys(o); })
