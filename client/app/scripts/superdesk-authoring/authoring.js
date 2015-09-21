@@ -967,10 +967,12 @@
 
                         if (!_.isDate(schedule)) {
                             errorMessage = gettext(fieldName + ' is not a valid date!');
-                        } else if (schedule < _.now()) {
-                            errorMessage = gettext(fieldName + ' cannot be earlier than now!');
                         } else if (!schedule.getTime()) {
                             errorMessage = gettext(fieldName + ' time is invalid!');
+                        } else if (schedule < _.now()) {
+                            if (fieldName !== 'Embargo' || $scope._isInProductionStates) {
+                                errorMessage = gettext(fieldName + ' cannot be earlier than now!');
+                            }
                         }
                     }
 
