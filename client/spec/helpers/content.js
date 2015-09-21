@@ -83,6 +83,13 @@ function Content() {
         return menu;
     };
 
+    this.previewItem = function(item) {
+        this.getItem(item).click();
+
+        var preview = element(by.id('item-preview'));
+        waitFor(preview);
+    };
+
     this.checkMarkedForHighlight = function(highlight, item) {
         var crtItem = this.getItem(item);
         expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();

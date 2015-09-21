@@ -32,6 +32,22 @@ describe('Content', function() {
         browser.sleep(50);
     }
 
+    function setEmbargo() {
+        var embargoTS = new Date();
+        embargoTS.setDate(embargoTS.getDate() + 2);
+        var embargoDate = embargoTS.getDate() + '/' + (embargoTS.getMonth() + 1) + '/' +
+            embargoTS.getFullYear();
+        var embargoTime = embargoTS.toTimeString().slice(0, 8);
+
+        workspace.editItem('item3', 'SPORTS');
+        element(by.id('send-to-btn')).click();
+        element(by.model('item.embargo_date')).element(by.tagName('input')).sendKeys(embargoDate);
+        element(by.model('item.embargo_time')).element(by.tagName('input')).sendKeys(embargoTime);
+
+        element(by.css('[ng-click="save(item)"]')).click();
+        element(by.id('closeAuthoringBtn')).click();
+    }
+
     it('can navigate with keyboard', function() {
         pressKey(protractor.Key.UP);
         expect(selectedHeadline()).toBe('package1');
@@ -176,6 +192,25 @@ describe('Content', function() {
         expect(element(by.className('navigation-tabs')).all(by.repeater('widget in widgets')).count()).toBe(6);
 
         element(by.id('closeAuthoringBtn')).click();
+    });
+
+    it('can display embargo in metadata when set', function() {
+        setEmbargo();
+
+        content.previewItem('item3');
+        element(by.css('[ng-click="tab = \'metadata\'"]')).click();
+        expect(element(by.model('item.embargo')).isDisplayed()).toBe(true);
+    });
+
+    it('cannot display embargo items in search widget of the package', function() {
+        setEmbargo();
+
+        element(by.className('sd-create-btn')).click();
+        element(by.id('create_package')).click();
+
+        element(by.id('Search')).click();
+        element(by.className('search-box')).element(by.model('query')).sendKeys('item3');
+        expect(element.all(by.repeater('pitem in contentItems')).count()).toBe(0);
     });
 
 });
