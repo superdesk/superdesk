@@ -543,7 +543,9 @@
                 });
 
                 scope.open = function(item) {
-                    superdesk.intent('view', 'item', {item: item});
+                    superdesk.intent('view', 'item', item).then(null, function() {
+                        superdesk.intent('edit', 'item', item);
+                    });
                 };
             }
         };

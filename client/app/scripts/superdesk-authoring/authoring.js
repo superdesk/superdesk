@@ -1982,7 +1982,7 @@
                     priority: 2000,
                     icon: 'fullscreen',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
-                        authoringWorkspace.view(data.item);
+                        authoringWorkspace.view(data.item || data);
                     }],
                     filters: [
                         {action: 'list', type: 'archive'},
