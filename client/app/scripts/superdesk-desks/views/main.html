@@ -20,8 +20,6 @@
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
 		</div>
 
-        <div sd-item-preview-container></div>
-
 		<div class="desk-container" ng-if="view === 'tasks'" ng-repeat="desk in desks._items | orderBy: 'name'">
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk-tasks.html'"></div>
 		</div>
