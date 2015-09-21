@@ -11,9 +11,8 @@
 (function() {
     'use strict';
 
-    VocabularyService
-        .$inject = [ 'api', 'urls', 'session', '$q'];
-    function VocabularyService(api, urls, session, $q) {
+    VocabularyService.$inject = ['api', '$q'];
+    function VocabularyService(api, $q) {
         var service = this;
 
         /**
