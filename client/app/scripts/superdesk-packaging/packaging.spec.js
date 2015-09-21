@@ -47,15 +47,28 @@ describe('packaging', function() {
             $templateCache.put('scripts/superdesk-packaging/views/sd-package-item-preview.html', '');
         }));
 
-        it('can open preview', inject(function($rootScope, $compile, superdesk) {
-            var scope = $rootScope.$new();
+        var scope, item;
+
+        beforeEach(inject(function($rootScope, $compile) {
+            scope = $rootScope.$new();
             scope.item = {_id: 'foo'};
+            item = {_id: 'bar'};
             $compile('<div sd-package-item-preview></div>')(scope);
             scope.$digest();
-            spyOn(superdesk, 'intent');
-            var item = {_id: 'bar'};
+        }));
+
+        it('can open preview', inject(function($rootScope, $q, superdesk) {
+            spyOn(superdesk, 'intent').and.returnValue($q.when());
             scope.open(item);
-            expect(superdesk.intent).toHaveBeenCalledWith('view', 'item', {item: item});
+            $rootScope.$apply();
+            expect(superdesk.intent).toHaveBeenCalledWith('view', 'item', item);
+        }));
+
+        it('can edit when you have lock', inject(function($rootScope, $q, superdesk) {
+            spyOn(superdesk, 'intent').and.returnValue($q.reject());
+            scope.open(item);
+            $rootScope.$apply();
+            expect(superdesk.intent.calls.count()).toBe(2);
         }));
     });
 });
