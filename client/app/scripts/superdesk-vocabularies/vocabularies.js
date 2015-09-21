@@ -62,6 +62,8 @@
     ];
     function VocabularyEditController($scope, gettext, notify, api, vocabularies, metadata) {
 
+        var origVocabularyItems = _.cloneDeep($scope.vocabulary.items);
+
         /**
          * Unload vocabulary/close modal.
          */
@@ -100,6 +102,7 @@
          * Discard changes and close modal.
          */
         $scope.cancel = function() {
+            $scope.vocabulary.items = origVocabularyItems;
             closeVocabulary();
         };
 
@@ -113,7 +116,7 @@
         /**
          * Remove vocabulary item.
          *
-         * @param (Object) item
+         * @param {Object} item
          */
         $scope.removeItem = function(item) {
             $scope.vocabulary.items.splice($scope.vocabulary.items.indexOf(item), 1);

@@ -73,9 +73,7 @@ describe('vocabularies', function() {
             it('can save vocabulary', inject(function(api, $q, $rootScope, metadata) {
                 scope.vocabulary.items[0].foo = 'feraligatr';
                 scope.vocabulary.items[0].bar = 'bayleef';
-                scope.closeVocabulary = function() {};
                 spyOn(api, 'save').and.returnValue($q.when());
-                spyOn(scope, 'closeVocabulary').and.returnValue($q.when());
                 spyOn(metadata, 'initialize').and.returnValue($q.when());
                 scope.save();
                 $rootScope.$digest();
@@ -83,6 +81,17 @@ describe('vocabularies', function() {
                     items: [{foo: 'feraligatr', bar: 'bayleef'}]
                 });
                 expect(metadata.initialize).toHaveBeenCalled();
+            }));
+
+            it('can cancel editing vocabulary', inject(function(api, $q, $rootScope, metadata) {
+                var vocabularyLink = scope.vocabulary;
+                scope.vocabulary.items[0].foo = 'furret';
+                scope.vocabulary.items[0].bar = 'buizel';
+                scope.cancel();
+                $rootScope.$digest();
+                expect(vocabularyLink).toEqual({
+                    items: [{foo: 'flareon', bar: 'beedrill'}]
+                });
             }));
         });
     });
