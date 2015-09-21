@@ -1546,8 +1546,15 @@
                  * Returns true if Embargo needs to be displayed, false otherwise.
                  */
                 scope.showEmbargo = function() {
-                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
-                        !scope.item.publish_schedule_date && !scope.item.publish_schedule_time;
+                    var prePublishCondition = scope.mode !== 'ingest' && scope.item &&
+                        scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
+                        !scope.item.publish_schedule_time;
+
+                    if (prePublishCondition && authoring.isPublished(scope.item)) {
+                        return scope.item.embargo;
+                    }
+
+                    return prePublishCondition;
                 };
 
                 /**

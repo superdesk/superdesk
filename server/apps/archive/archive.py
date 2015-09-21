@@ -392,6 +392,7 @@ class ArchiveService(BaseService):
         del new_doc[config.ID_FIELD]
         del new_doc['guid']
         new_doc.pop(LINKED_IN_PACKAGES, None)
+        new_doc.pop(EMBARGO, None)
 
         new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
         item_model = get_model(ItemModel)
