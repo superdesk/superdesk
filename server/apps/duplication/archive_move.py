@@ -11,6 +11,7 @@
 from eve.utils import config
 from eve.versioning import resolve_document_version
 from flask import request
+from copy import deepcopy
 
 import superdesk
 from apps.tasks import send_to
@@ -24,6 +25,7 @@ from apps.archive.common import insert_into_versions, item_operations,\
     ITEM_OPERATION, set_sign_off, get_user
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
+from apps.content import push_content_notification
 
 ITEM_MOVE = 'move'
 item_operations.append(ITEM_MOVE)
@@ -76,10 +78,10 @@ class MoveService(BaseService):
         if not is_workflow_state_transition_valid('submit_to_desk', archived_doc[ITEM_STATE]):
             raise InvalidStateTransitionError()
 
-        original = dict(archived_doc)
+        original = deepcopy(archived_doc)
         user = get_user()
 
-        send_to(doc=archived_doc, desk_id=doc.get('task', {}).get('desc'), stage_id=doc.get('task', {}).get('stage'),
+        send_to(doc=archived_doc, desk_id=doc.get('task', {}).get('desk'), stage_id=doc.get('task', {}).get('stage'),
                 user_id=user.get(config.ID_FIELD))
 
         if archived_doc[ITEM_STATE] not in {CONTENT_STATE.PUBLISHED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.KILLED}:
@@ -93,6 +95,8 @@ class MoveService(BaseService):
         archive_service.update(original[config.ID_FIELD], archived_doc, original)
 
         insert_into_versions(id_=original[config.ID_FIELD])
+
+        push_content_notification([archived_doc, original])
 
         return archived_doc
 

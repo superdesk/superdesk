@@ -31,7 +31,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from superdesk.etree import get_word_count
-from superdesk.notification import push_notification
+from apps.content import push_content_notification
 from copy import copy, deepcopy
 import superdesk
 import logging
@@ -170,7 +170,6 @@ class ArchiveService(BaseService):
         if packages:
             self.packageService.on_created(packages)
 
-        user = get_user()
         for doc in docs:
             subject = get_subject(doc)
             if subject:
@@ -179,7 +178,7 @@ class ArchiveService(BaseService):
                 msg = 'added new {{ type }} item with empty header/title'
             add_activity(ACTIVITY_CREATE, msg,
                          self.datasource, item=doc, type=doc[ITEM_TYPE], subject=subject)
-            push_notification('item:created', item=str(doc['_id']), user=str(user.get('_id')))
+        push_content_notification(docs)
 
     def on_update(self, updates, original):
         updates[ITEM_OPERATION] = ITEM_UPDATE
@@ -259,17 +258,16 @@ class ArchiveService(BaseService):
 
         ArchiveCropService().delete_replaced_crop_files(updates, original)
 
-        user = get_user()
+        updated = copy(original)
+        updated.update(updates)
 
         if config.VERSION in updates:
-            updated = copy(original)
-            updated.update(updates)
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          self.datasource, item=updated,
                          version=updates[config.VERSION], subject=get_subject(updates, original),
                          type=updated[ITEM_TYPE])
 
-        push_notification('item:updated', item=str(original['_id']), user=str(user.get('_id')))
+        push_content_notification([updated, original])
 
     def on_replace(self, document, original):
         document[ITEM_OPERATION] = ITEM_UPDATE
@@ -291,8 +289,7 @@ class ArchiveService(BaseService):
         add_activity(ACTIVITY_UPDATE, 'replaced item {{ type }} about {{ subject }}',
                      self.datasource, item=original,
                      type=original['type'], subject=get_subject(original))
-        user = get_user()
-        push_notification('item:replaced', item=str(original['_id']), user=str(user.get('_id')))
+        push_content_notification([document, original])
 
     def on_delete(self, doc):
         """Delete associated binary files."""
@@ -310,8 +307,7 @@ class ArchiveService(BaseService):
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}',
                      self.datasource, item=doc,
                      type=doc[ITEM_TYPE], subject=get_subject(doc))
-        user = get_user()
-        push_notification('item:deleted', item=str(doc['_id']), user=str(user.get('_id')))
+        push_content_notification([doc])
 
     def replace(self, id, document, original):
         return self.restore_version(id, document, original) or super().replace(id, document, original)

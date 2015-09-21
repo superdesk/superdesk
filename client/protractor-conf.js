@@ -24,7 +24,8 @@ exports.config = {
 
     framework: 'jasmine2',
     jasmineNodeOpts: {
-        showColors: true
+        showColors: true,
+        defaultTimeoutInterval: 55000
     },
 
     capabilities: {

@@ -156,18 +156,20 @@ describe('monitoring', function() {
         }));
 
         it('can update items on content:update event',
-        inject(function($rootScope, $compile, $q, api) {
+        inject(function($rootScope, $compile, $q, api, $timeout) {
             var scope = $rootScope.$new();
             $compile('<div sd-monitoring-view></div>')(scope);
             scope.$digest();
 
             spyOn(api, 'query').and.returnValue($q.when({_items: [], _meta: {total: 0}}));
-            scope.$broadcast('content:update', {stage: 'bar'});
+            scope.$broadcast('content:update', {stages: {'bar': 1}});
             scope.$digest();
+            $timeout.flush(500);
             expect(api.query).not.toHaveBeenCalled();
 
-            scope.$broadcast('content:update', {stage: 'foo'});
+            scope.$broadcast('content:update', {stages: {'foo': 1}});
             scope.$digest();
+            $timeout.flush(500);
             expect(api.query).toHaveBeenCalled();
         }));
 
