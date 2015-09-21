@@ -26,7 +26,7 @@ from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from superdesk.users.services import current_user_has_privilege, is_admin
 from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
-    CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES
+    CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES, PUBLISH_STATES
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -388,6 +388,7 @@ class ArchiveService(BaseService):
         del new_doc[config.ID_FIELD]
         del new_doc['guid']
         new_doc.pop(LINKED_IN_PACKAGES, None)
+        new_doc.pop(EMBARGO, None)
 
         new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
         item_model = get_model(ItemModel)
@@ -530,7 +531,7 @@ class ArchiveService(BaseService):
                 if not isinstance(embargo, datetime.date) or not embargo.time():
                     raise SuperdeskApiError.badRequestError("Invalid Embargo")
 
-                if item[ITEM_STATE] not in [CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED] and embargo <= utcnow():
+                if item[ITEM_STATE] not in PUBLISH_STATES and embargo <= utcnow():
                     raise SuperdeskApiError.badRequestError("Embargo cannot be earlier than now")
         elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not self.takesService.is_takes_package(item):
             if item.get(EMBARGO):

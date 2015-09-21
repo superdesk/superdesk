@@ -198,6 +198,8 @@
             params.ignoreScheduled = true;
 
             var query = search.query(params);
+
+            query.filter({'not': {'exists': {'field': 'embargo'}}});
             query.size(25);
             if ($scope.highlight) {
                 query.filter({term: {'highlights': $scope.highlight.toString()}});

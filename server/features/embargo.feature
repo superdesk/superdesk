@@ -342,3 +342,30 @@ Feature: Embargo Date and Time on an Article (User Story: https://dev.sourcefabr
     """
     {"_message": "Rewrite of an Item having embargo isn't possible"}
     """
+
+  @auth
+  Scenario: Embargo shouldn't be copied while Duplicating an Embargoed Article
+    When we patch "/archive/123"
+    """
+    {"embargo": "#DATE+2#", "headline": "here comes the embargo"}
+    """
+    Then we get response code 200
+    When we post to "/archive/123/duplicate" with success
+    """
+    {"desk": "#desks._id#"}
+    """
+    And we get "/archive/#duplicate._id#"
+    Then there is no "embargo" in response
+
+  @auth
+  Scenario: Embargo shouldn't be copied while Copying an Embargoed Article
+    When we post to "/archive" with success
+    """
+    [{"type":"text", "headline": "test1", "state": "draft", "guid": "text-article-with-embargo", "embargo": "#DATE+2#"}]
+    """
+    When we post to "/archive/text-article-with-embargo/copy" with success
+    """
+    {}
+    """
+    And we get "/archive/#copy._id#"
+    Then there is no "embargo" in response

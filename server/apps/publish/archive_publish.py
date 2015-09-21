@@ -373,7 +373,7 @@ class BasePublishService(BaseService):
 
         if updates.get(EMBARGO, original.get(EMBARGO)) \
                 and updates.get('ednote', original.get('ednote', '')).find('Embargo') == -1:
-            updates['ednote'] = '{}{}'.format(original.get('ednote', ''), ' Embargoed.')
+            updates['ednote'] = '{} {}'.format(original.get('ednote', ''), 'Embargoed.').strip()
 
     def _update_archive(self, original, updates, versioned_doc=None, should_insert_into_versions=True):
         """

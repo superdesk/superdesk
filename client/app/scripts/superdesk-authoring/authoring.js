@@ -271,6 +271,10 @@
                 delete diff.publish_schedule;
             }
 
+            if (diff.embargo && this.isPublished(orig)) {
+                delete diff.embargo;
+            }
+
             //check if rendition is dirty for real
             if (_.isEqual(orig.renditions, diff.renditions)) {
                 delete diff.renditions;
@@ -963,10 +967,12 @@
 
                         if (!_.isDate(schedule)) {
                             errorMessage = gettext(fieldName + ' is not a valid date!');
-                        } else if (schedule < _.now()) {
-                            errorMessage = gettext(fieldName + ' cannot be earlier than now!');
                         } else if (!schedule.getTime()) {
                             errorMessage = gettext(fieldName + ' time is invalid!');
+                        } else if (schedule < _.now()) {
+                            if (fieldName !== 'Embargo' || $scope._isInProductionStates) {
+                                errorMessage = gettext(fieldName + ' cannot be earlier than now!');
+                            }
                         }
                     }
 
@@ -1542,8 +1548,15 @@
                  * Returns true if Embargo needs to be displayed, false otherwise.
                  */
                 scope.showEmbargo = function() {
-                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
-                        !scope.item.publish_schedule_date && !scope.item.publish_schedule_time;
+                    var prePublishCondition = scope.mode !== 'ingest' && scope.item &&
+                        scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
+                        !scope.item.publish_schedule_time;
+
+                    if (prePublishCondition && authoring.isPublished(scope.item)) {
+                        return scope.item.embargo;
+                    }
+
+                    return prePublishCondition;
                 };
 
                 /**
