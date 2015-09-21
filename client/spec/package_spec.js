@@ -131,4 +131,12 @@ describe('Package', function() {
         expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
+    it('create package by combining an item with open item', function() {
+        monitoring.openMonitoring();
+        monitoring.openAction(1, 0);
+        browser.sleep(500);
+        monitoring.actionOnItem('Combine with current', 2, 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(2);
+    });
+
 });
