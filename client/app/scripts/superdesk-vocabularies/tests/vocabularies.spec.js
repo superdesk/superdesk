@@ -70,17 +70,19 @@ describe('vocabularies', function() {
                 expect(scope.vocabulary.items.length).toBe(0);
             });
 
-            it('can save vocabulary', inject(function(api, $q, $rootScope) {
+            it('can save vocabulary', inject(function(api, $q, $rootScope, metadata) {
                 scope.vocabulary.items[0].foo = 'feraligatr';
                 scope.vocabulary.items[0].bar = 'bayleef';
                 scope.closeVocabulary = function() {};
                 spyOn(api, 'save').and.returnValue($q.when());
                 spyOn(scope, 'closeVocabulary').and.returnValue($q.when());
+                spyOn(metadata, 'initialize').and.returnValue($q.when());
                 scope.save();
                 $rootScope.$digest();
                 expect(api.save).toHaveBeenCalledWith('vocabularies', {
                     items: [{foo: 'feraligatr', bar: 'bayleef'}]
                 });
+                expect(metadata.initialize).toHaveBeenCalled();
             }));
         });
     });

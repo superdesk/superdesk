@@ -47,8 +47,9 @@
       'notify',
       'api',
       'vocabularies',
+      'metadata'
     ];
-    function VocabularyEditController($scope, gettext, notify, api, vocabularies) {
+    function VocabularyEditController($scope, gettext, notify, api, vocabularies, metadata) {
 
         function closeVocabulary() {
             $scope.vocabulary = null;
@@ -82,6 +83,7 @@
         $scope.save = function() {
             $scope._errorUniqueness = false;
             api.save('vocabularies', $scope.vocabulary).then(onSuccess, onError);
+            metadata.initialize();
         };
 
         $scope.cancel = function() {
