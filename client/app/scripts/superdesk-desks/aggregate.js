@@ -139,9 +139,7 @@
             }
             initSpikeGroups();
             updateFileTypeCriteria();
-            if (self.searchQuery) {
-                self.search(self.searchQuery);
-            }
+            self.search(self.searchQuery);
         }
 
         /**

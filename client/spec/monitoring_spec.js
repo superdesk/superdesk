@@ -4,6 +4,7 @@
 var authoring = require('./helpers/authoring'),
     monitoring = require('./helpers/monitoring'),
     workspace = require('./helpers/workspace'),
+    dashboard = require('./helpers/dashboard'),
     desks = require('./helpers/desks');
 
 describe('monitoring view', function() {
@@ -231,6 +232,14 @@ describe('monitoring view', function() {
 
         workspace.selectDesk('Sports Desk');
         expect(monitoring.getTextItem(1, 0)).toBe('item3');
+
+        workspace.selectDesk('Politic Desk');
+        dashboard.openDashboard();
+        monitoring.openMonitoring();
+        expect(monitoring.getTextItem(0, 0)).toBe('item3');
+        expect(monitoring.getTextItem(1, 0)).toBe('item4');
+        expect(monitoring.getTextItem(2, 0)).toBe('item1');
+        expect(monitoring.getTextItem(2, 4)).toBe('item3');
     });
 
     it('can filter content by file type', function() {
