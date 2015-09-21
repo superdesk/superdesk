@@ -724,6 +724,34 @@
                     return pkg && pkg.type === 'composite' && pkg._id !== item._id;
                 }],
                 group: 'packaging'
+            })
+            .activity('combineinpackage', {
+                label: gettext('Combine with current'),
+                priority: 5,
+                icon: 'package-plus',
+                controller: ['data', 'packages', 'authoringWorkspace', 'notify', 'gettext',
+                function(data, packages, authoringWorkspace, notify, gettext) {
+                    var openItem = authoringWorkspace.getItem();
+                    packages.createPackageFromItems([data.item, openItem])
+                    .then(function(newPackage) {
+                        authoringWorkspace.edit(newPackage);
+                    }, function(response) {
+                        if (response.status === 403 && response.data && response.data._message) {
+                            notify.error(gettext(response.data._message), 3000);
+                        }
+                    });
+                }],
+                filters: [
+                    {action: 'list', type: 'archive'}
+                ],
+                condition: function(item) {
+                    return item.task && item.task.desk;
+                },
+                additionalCondition:['authoringWorkspace', 'item', function(authoringWorkspace, item) {
+                    var openItem = authoringWorkspace.getItem();
+                    return openItem && openItem.type !== 'composite' && openItem._id !== item._id;
+                }],
+                group: 'packaging'
             });
     }])
     .config(['apiProvider', function(apiProvider) {
