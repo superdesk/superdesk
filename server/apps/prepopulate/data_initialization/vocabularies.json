@@ -197,5 +197,16 @@
             {"is_active": true, "name": "4-3", "width": 800, "height": 600},
             {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
         ]
+    },
+    {
+        "_id": "keywords",
+        "items": [
+            {"is_active": true, "name": "Science and Technology",       "value": "SciTech"},
+            {"is_active": true, "name": "International Health Stories", "value": "Medicine"},
+            {"is_active": true, "name": "Health",                       "value": "Health"},
+            {"is_active": true, "name": "Motoring",                     "value": "Motoring"},
+            {"is_active": true, "name": "Soccer",                       "value": "Soccer"},
+            {"is_active": true, "name": "Property",                     "value": "Property"}
+        ]
     }
 ]

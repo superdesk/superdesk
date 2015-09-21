@@ -84,6 +84,8 @@ tests.push('superdesk-highlights/highlights');
 tests.push('superdesk-monitoring/monitoring');
 tests.push('superdesk-workspace/workspace');
 
+tests.push('superdesk-vocabularies/vocabularies');
+
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-ui');

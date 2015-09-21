@@ -1,0 +1,124 @@
+@import 'mixins.less';
+@import 'variables.less';
+
+.vocabularies-table {
+	border-top: 2px solid #d7d7d7;
+
+	.table-header {
+		background: #fff;
+	}
+
+	.table-title {
+		height: 30px;
+		font-size: 11px;
+		color: #8a8a8a;
+		line-height: 30px;
+		.text-light();
+		text-transform: uppercase;
+	}
+
+	.table-newest {
+		margin: 0 0 30px;
+		background: #fafdf6;
+		border-top: 1px solid #d7d7d7;
+	}
+
+	.table-body {
+		margin-top: -1px;
+	}
+
+	.table-body {
+		background: #fff;
+		border-top: 1px solid #d7d7d7;
+	}
+
+	.table-header, .table-newest, .table-body {
+		> li {
+			height: 40px;
+			border-bottom: 1px solid #ebebeb;
+			position: relative;
+
+			> div:not(.tooltip) {
+				float: left;
+				height: 30px;
+				padding: 5px;
+				line-height: 30px;
+
+				@table-actions-width: 90px;
+				&.row-wrapper {
+					position: absolute;
+					left: 60px;
+					right: @table-actions-width+10;
+					top: 5px;
+					padding: 0;
+					.box-sizing(border-box);
+
+                    > div {
+						color: @sd-text;
+						float: left;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						.box-sizing(border-box);
+						padding: 0 5px;
+						height: 30px;
+						&.name {
+							.text-semibold();
+						}
+						&.name { width: 28%; }
+					}
+				}
+				&.actions {
+					float: right;
+					width: @table-actions-width;
+					line-height: 18px !important;
+				}
+			}
+		}
+	}
+	.table-header {
+		> li > div, .name {
+			color: #000 !important;
+			font-size: 13px !important;
+			.text-semibold() !important;
+		}
+	}
+	.table-body , .table-newest {
+		> li {
+			&:hover {
+				background: #f4f4f4;
+				cursor: pointer;
+			}
+
+			> div {
+				&.actions {
+					padding: 0;
+					height: 40px;
+					.item-functions {
+						display: none;
+						li {
+							height: 40px;
+							width: 40px;
+							line-height: 40px;
+							text-align: center;
+							border-left: 1px solid #d8d8d8;
+							span {
+								display: none;
+							}
+							&:hover {
+								background-color: #e8e8e8;
+							}
+						}
+					}
+				}
+			}
+
+			&:hover {
+				> div.actions .item-functions {
+					display: block;
+				}
+			}
+
+		}
+	}
+}

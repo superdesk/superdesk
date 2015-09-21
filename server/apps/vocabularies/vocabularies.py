@@ -13,6 +13,7 @@ import logging
 
 from flask import current_app as app
 from eve.utils import config
+from apps.vocabularies import filter_inactive_vocabularies
 
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -51,18 +52,11 @@ class VocabulariesService(BaseService):
         """
 
         for item in doc[config.ITEMS]:
-            self._filter_inactive_vocabularies(item)
+            filter_inactive_vocabularies(item)
 
     def on_fetched_item(self, doc):
         """
         Overriding to filter out inactive vocabularies and pops out 'is_active' property from the response.
         """
 
-        self._filter_inactive_vocabularies(doc)
-
-    def _filter_inactive_vocabularies(self, item):
-        vocs = item['items']
-        active_vocs = ({k: voc[k] for k in voc.keys() if k != 'is_active'}
-                       for voc in vocs if voc.get('is_active', True))
-
-        item['items'] = list(active_vocs)
+        filter_inactive_vocabularies(doc)

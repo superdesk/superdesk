@@ -1,0 +1,65 @@
+<div class="split-content">
+	<div class="header">
+        <h2 translate>Keywords</h2>
+        <button class="btn btn-info pull-right" ng-click="edit({})">
+            <i class="icon-plus-sign icon-white"></i> {{:: 'Add New Keyword' | translate}}
+        </button>
+	</div>
+
+	<div class="content user-roles-settings">
+        <div class="vocabularies-table">
+            <ul class="table-header">
+                <li>
+                    <div class="row-wrapper">
+                        <div class="name" translate> {{:: 'Name'}}  </div>
+                        <div class="name" translate> {{:: 'Value'}} </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="table-body">
+                <li ng-repeat="keyword in keywords track by keyword.name">
+                    <div class="row-wrapper">
+                        <div class="name">{{ :: keyword.name }}</div>
+                        <div class="name">{{ :: keyword.value }}</div>
+                    </div>
+                    <div class="actions">
+                        <ul class="item-functions">
+                            <li class="item-field">
+                                <button ng-click="edit(keyword)" title="{{:: 'Edit Keyword' | translate }}"><i class="icon-pencil"></i></button>
+                            </li>
+                            <li class="item-field">
+                                <button ng-click="remove(keyword)" title="{{:: 'Remove Keyword' | translate }}"><i class="icon-trash"></i></button>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="alert alert-info" ng-show="keywords.length == null"><p translate>Loading..</p></li>
+                <li class="alert alert-info" ng-show="keywords.length == 0"><p translate>No keywords defined.</p></li>
+            </ul>
+        </div>
+
+		<div class="new-role-modal mini-modal inline" ng-if="editKeyword">
+			<div class="title" ng-show="editKeyword._id" translate>Edit Keyword</div>
+			<div class="title" ng-show="!editKeyword._id" translate>New Keyword</div>
+			<div class="close" ng-click="cancel()"><i class="icon-close-small"></i></div>
+
+            <div class="content">
+				<form name="keywordVocForm">
+					<fieldset>
+						<div class="field">
+                            <input type="text" class="fullwidth-input" placeholder="{{ 'Name'|translate }}" ng-model="editKeyword.name" required>
+						</div>
+						<div class="field">
+                            <input type="text" class="fullwidth-input" placeholder="{{ 'Value'|translate }}" ng-model="editKeyword.value" required>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="footer">
+				<button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+				<button class="btn btn-primary" ng-click="save()" ng-disabled="!keywordVocForm.$valid" translate>Ok</button>
+			</div>
+		</div>
+
+	</div>
+</div>
