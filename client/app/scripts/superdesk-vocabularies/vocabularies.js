@@ -21,7 +21,7 @@
                 return api.query('vocabularies')
                 .then(function(result) {
                     service.vocabularies = result;
-                    return $q.when(service.vocabularies);
+                    return service.vocabularies;
                 });
             } else {
                 return $q.when(service.vocabularies);

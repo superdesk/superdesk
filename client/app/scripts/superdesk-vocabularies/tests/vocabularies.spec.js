@@ -7,11 +7,18 @@ describe('vocabularies', function() {
     beforeEach(module('templates'));
 
     it('can fetch vocabularies', inject(function(api, vocabularies, $q, $rootScope) {
-        spyOn(api, 'query').and.returnValue($q.when());
-        var scope = $rootScope.$new();
-        vocabularies.getVocabularies(scope);
+        var fixture = {foo: 'bar'};
+        spyOn(api, 'query').and.returnValue($q.when(fixture));
+        var result;
+        vocabularies.getVocabularies().then(
+            function(vocabs) {
+                result = vocabs;
+            }
+        );
         $rootScope.$digest();
         expect(api.query).toHaveBeenCalledWith('vocabularies');
+        expect(result).toBe(fixture);
+        expect(vocabularies.vocabularies).toBe(fixture);
     }));
 
     describe('config modal', function() {
@@ -54,28 +61,25 @@ describe('vocabularies', function() {
             });
 
             it('can remove items', function() {
-                scope.addItem();
+                var testItem2 = {foo: 'flaaffy', bar: 'bidoof'};
+                scope.vocabulary.items.push(testItem2);
                 scope.removeItem(testItem);
                 expect(scope.vocabulary.items.length).toBe(1);
-                expect(scope.vocabulary.items[0]).toEqual({foo: null, bar: null});
-                scope.removeItem({foo: null, bar: null});
+                expect(scope.vocabulary.items[0]).toEqual(testItem2);
+                scope.removeItem(testItem2);
                 expect(scope.vocabulary.items.length).toBe(0);
             });
 
             it('can save vocabulary', inject(function(api, $q, $rootScope) {
-                scope.addItem();
-                scope.vocabulary.items[1].foo = 'feraligatr';
-                scope.vocabulary.items[1].bar = 'bayleef';
+                scope.vocabulary.items[0].foo = 'feraligatr';
+                scope.vocabulary.items[0].bar = 'bayleef';
                 scope.closeVocabulary = function() {};
                 spyOn(api, 'save').and.returnValue($q.when());
                 spyOn(scope, 'closeVocabulary').and.returnValue($q.when());
                 scope.save();
                 $rootScope.$digest();
                 expect(api.save).toHaveBeenCalledWith('vocabularies', {
-                    items: [
-                        {foo: 'flareon', bar: 'beedrill'},
-                        {foo: 'feraligatr', bar: 'bayleef'}
-                    ]
+                    items: [{foo: 'feraligatr', bar: 'bayleef'}]
                 });
             }));
         });
