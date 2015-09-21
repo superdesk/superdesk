@@ -114,6 +114,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'apps.publish.content_purge',
         'schedule': crontab(minute=30)
     },
+    'publish:remove_overdue_scheduled': {
+        'task': 'apps.archive.remove_scheduled',
+        'schedule': crontab(minute=10)
+    },
     'content:schedule': {
         'task': 'apps.templates.content_templates.create_scheduled_content',
         'schedule': crontab(minute='*/5'),

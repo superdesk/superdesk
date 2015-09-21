@@ -489,7 +489,7 @@ class ArchiveService(BaseService):
 
         doc_id = str(doc[config.ID_FIELD])
         super().delete_action({config.ID_FIELD: doc_id})
-        resource_def = self.app.config['DOMAIN']['archive_versions']
+        resource_def = app.config['DOMAIN']['archive_versions']
         get_resource_service('archive_versions').delete(lookup={versioned_id_field(resource_def): doc_id})
 
     def __is_req_for_save(self, doc):
