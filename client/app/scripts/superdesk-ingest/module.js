@@ -1312,7 +1312,7 @@ define([
                 privileges: {ingest_providers: 1}
             })
             .activity('fetchAs', {
-                label: gettext('Fetch As'),
+                label: gettext('Fetch To'),
                 icon: 'fetch-as',
                 controller: ['data', 'send', function(data, send) {
                     send.allAs([data.item]);

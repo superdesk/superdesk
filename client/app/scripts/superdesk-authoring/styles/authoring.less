@@ -397,213 +397,240 @@
 // -------------------------------------------------
 
 .send-to-pane {
-	width: @send-to-pane-width;
-	position: absolute;
-	top: 0; bottom: 0;
-        right: 0;
-	
-	> header {
-		height: @nav-height;
-		border-bottom: 1px solid #424242;
-		padding: 0 20px;
-		h3 {
-			color: @white;
-			line-height: @nav-height;
-			font-size: 20px;
-			.text-light();
-			float: left;
-		}
-		.close {
-			margin-top: 16px;
-		}
-	}
-	.content {
-		width: 100%;
-		position: absolute;
+    width: @send-to-pane-width;
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 0;
+
+    > header {
+        height: @nav-height;
+        border-bottom: 1px solid #424242;
+        padding: 0 20px;
+        h3 {
+            color: @white;
+            line-height: @nav-height;
+            font-size: 20px;
+            .text-light();
+            float: left;
+        }
+        .close {
+            margin-top: 16px;
+        }
+    }
+    .content {
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        top: 50px;
+
+        > header {
+            height: @nav-height;
+            border-bottom: 1px solid #424242;
+            padding: 0 20px;
+            h3 {
+                color: @white;
+                line-height: @nav-height;
+                font-size: 20px;
+                .text-light();
+                float: left;
+            }
+            .close {
+                margin-top: 16px;
+            }
+        }
+    }
+    .content {
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        top: 50px;
+
+        .publish-pane-box {
+            position: absolute;
+            width: 100%;
+            overflow: auto;
+            top: 0;
+            bottom: 125px;
+        }
+
+        .toggle-box {
+            .border-box();
+            padding: 20px 20px 0 20px;
+            .btn-list {
+                padding: 0;
+            }
+            > header {
+                width: 100%;
+            }
+            > header:before{
+                border-bottom: 1px solid #4f4f4f;
+            }
+            > header h6 {
+                margin-left: -5px;
+                background: #3b3b3b;
+                color: #fff;
+            }
+            > header .chevron {
+                background-color: #3b3b3b;
+                i {
+                    background-image: url("../../images/glyphicons-halflings-white.png");
+                }
+            }
+            .publish-label {
+                color: #8D8A8A;
+                font-size: 10px;
+                text-transform: uppercase;
+            }
+            .publish-list {
+                width: 100%;
+                li {
+                    float: left;
+                    width: 48.5%;
+                    &:nth-child(2n) {
+                        margin-left: 3%;
+                    }
+                    input {
+                        background: #4f4f4f;
+                        font-size: 13px;
+                        line-height: 18px;
+                        height: 35px;
+                        border: 2px solid #4f4f4f !important;
+                        border-radius: 3px !important;
+                        color: #fff;
+                    }
+                    button {
+                        background: #4f4f4f;
+                        top: 7px;
+                        .icon-calendar, .icon-time {
+                            background-image: url("../../images/glyphicons-halflings-white.png");
+                        }
+                    }
+                }
+            }
+        }
+
+        .desk-select {
+            padding-bottom: 15px;
+            .dropdown-toggle {
+                width: 100%;
+                text-align: left;
+                background: #4f4f4f;
+                padding: 10px 15px;
+                border-radius: 2px;
+                color: #fff;
+                .caret {
+                    float: right;
+                    margin-top: 8px;
+                }
+            }
+            .dropdown-menu ul {
+                max-height: 290px;
+                overflow: auto;
+            }
+        }
+        .btn-list {
+            padding: 0 20px;
+            &.btn-bottom {
+                position: absolute;
+                width: 100%;
                 bottom: 0;
-                top: 50px;
+                padding-top: 15px;
+                box-sizing: border-box;
+                border-top: 1px solid #424242;
+                li {
+                    &:last-child {
+                        width: 100%;
+                        margin-left: 0;
+                    }
 
-    	.publish-pane-box {
-		    overflow: auto;
-		    bottom: 125px;
-		    top: 0;
-		    position: absolute;
-    	}
+                    button {
+                        text-transform: uppercase;
+                    }
+                }
+            }
+            li {
+                float: left;
+                width: 48.5%;
+                padding: 0 0 3%;
 
-    	.toggle-box {
-    		padding: 20px 10px 0 20px;
-    		.btn-list {
-    			padding: 0;
-    		}
-    		> header {
-    			width: @send-to-pane-width - 40;
-    		}
-    		> header:before{
-    			border-bottom: 1px solid #4f4f4f;
-    		}
-    		> header h6 {
-    			margin-left: -5px;
-    			background: #3b3b3b;
-    			color: #fff;
-    		}
-    		> header .chevron {
-				background-color: #3b3b3b;
-				i {
-					background-image: url("../../images/glyphicons-halflings-white.png");
-				}
-    		}
-    		.publish-label {
-    			color: #8D8A8A;
-    			font-size: 10px;
-    			text-transform: uppercase;
-    		}
-    		.publish-list {
-    			width: @send-to-pane-width - 40;
-    			li {
-					float: left;
-					width: (@send-to-pane-width - 55)/2;
-					&:nth-child(2n) {
-						margin-left: 15px;
-					}
-					input {
-						background: #4f4f4f;
-				    	font-size: 13px;
-				    	line-height: 18px;
-			    	    height: 35px;
-		    	        border: 2px solid #4f4f4f !important;
-	    	            border-radius: 3px !important;
-	    	            color: #fff;
-					}
-					button {
-						background: #4f4f4f;
-						top: 7px;
-						.icon-calendar, .icon-time {
-							background-image: url("../../images/glyphicons-halflings-white.png");
-						}
-					}
-    			}
-    		}
-    	}
+                &:nth-child(2n) {
+                    margin-left: 3%;
+                }
 
-		.desk-select {
-		    padding-bottom: 15px;
-			.dropdown-toggle {
-				width: @send-to-pane-width - 40;
-				text-align: left;
-				background: #4f4f4f;
-				padding: 10px 15px;
-				border-radius: 2px;
-				color: #fff;
-				.caret {
-					float: right;
-					margin-top: 8px;
-				}
-			}
-			.dropdown-menu ul {
-				max-height: 290px;
-				overflow: auto;
-			}
-		}
-		.btn-list {
-			padding: 0 20px;
-			&.btn-bottom {
-			    bottom: 0;
-			    padding-top: 15px;
-			    position: absolute;
-			    border-top: 1px solid #424242;
-			    li {
-			    	&:last-child {
-			    		width: @send-to-pane-width - 40;
-			    	}
+                button {
+                    width: 100%;
+                    padding: 10px 15px;
+                    color: #fff;
+                    background: #496773;
+                    .border-box();
+                    position: relative;
+                    border: none;
+                    .border-radius(3px);
+                    &:hover {
+                        cursor: pointer;
+                        background: #5ea9c8;
+                    }
 
-			    	button {
-			    		text-transform: uppercase;
-			    	}
-			    }
-			}
-			li {
-				float: left;
-				width: (@send-to-pane-width - 55)/2;
-				padding: 0 0 15px;
+                    &.active, &:active {
+                        &:after {
+                            content: "";
+                            position: absolute;
+                            background: url(../../images/checkmark-big-full.png) no-repeat;
+                            background-size: 42px;
+                            background-position: 0 -2px;
+                            .opacity(30);
+                            top: 0;
+                            width: 42px;
+                            bottom: 0;
+                            right: 8px;
+                        }
+                    }
+                    &.active {
+                        background: #5ea9c8;
+                        .box-shadow-both(inset 0 3px 0 0 rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.4));
+                    }
+                    &:active {
+                        background: darken(#5ea9c8, 5%);
+                        .box-shadow(inset 0 2px 2px 0 rgba(0, 0, 0, 0.2));
+                        &:after {
+                            .opacity(10);
+                        }
+                    }
 
-				&:nth-child(2n) {
-					margin-left: 15px;
-				}
+                    &.active:disabled {
+                        opacity: 0.8;
+                    }
 
-				button {
-					width: 100%;
-					padding: 10px 15px;
-					color: #fff;
-					background: #496773;
-					.border-box();
-					position: relative;
-					border: none;
-					.border-radius(3px);
-					&:hover {
-						cursor: pointer;
-						background: #5ea9c8;
-					}
+                    &.cancel {
+                        background: #4f4f4f;
+                        &:hover { background: #333; }
+                    }
 
-					&.active, &:active {
-						&:after {
-							content: "";
-							position: absolute;
-							background: url(../../images/checkmark-big-full.png) no-repeat;
-							background-size: 42px;
-							background-position: 0 -2px;
-							.opacity(30);
-							top: 0;
-							width: 42px;
-							bottom: 0;
-							right: 8px;
-						}
-					}
-					&.active {
-						background: #5ea9c8;
-						.box-shadow-both(inset 0 3px 0 0 rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.4));
-					}
-					&:active {
-						background: darken(#5ea9c8, 5%);
-						.box-shadow(inset 0 2px 2px 0 rgba(0, 0, 0, 0.2));
-						&:after {
-							.opacity(10);
-						}
-					}
+                    &.save {
+                        background: #5ea9c8;
+                    }
 
-					&.active:disabled {
-						opacity: 0.8;
-					}
-
-					&.cancel {
-						background: #4f4f4f;
-						&:hover { background: #333; }
-					}
-
-					&.save {
-						background: #5ea9c8;
-					}
-
-					&.actioning {
-						background-image: url("../../images/loading-large.gif");
-						background-repeat: no-repeat;
-	    				background-position: center;
-					}
-					&.actioning:disabled {
-						opacity: 0.5;
-					}
-					&:disabled {
-						&:not(.active) {
-							background: #496773 !important;
-						}
-						&:hover {
-							cursor: default;
-						}
-						opacity: 0.5;
-					}
-				}
-			}
-		}
-	}
+                    &.actioning {
+                        background-image: url("../../images/loading-large.gif");
+                        background-repeat: no-repeat;
+                        background-position: center;
+                    }
+                    &.actioning:disabled {
+                        opacity: 0.5;
+                    }
+                    &:disabled {
+                        &:not(.active) {
+                            background: #496773 !important;
+                        }
+                        &:hover {
+                            cursor: default;
+                        }
+                        opacity: 0.5;
+                    }
+                }
+            }
+        }
+    }
 }
 
 .pane-holder {
@@ -1057,18 +1084,13 @@ header.header-info {
 	}
 
 .preview-pane {
-  .pane-holder {
-	&.outer-pane {
-	  top: 0;
-	}
-	.send-to-pane {
-	  .content {
-		.btn-list {
-		  &.btn-bottom {
-	  		bottom: -100px;
-		  }
-		}
-	  }
-	}
-  }
+    .pane-holder {
+        width: @sidepreview-width;
+        &.outer-pane {
+            top: 0;
+        }
+        .send-to-pane {
+            width: @sidepreview-width;
+        }
+    }
 }

@@ -1,8 +1,8 @@
 <div class="pane-holder" ng-show="isActive" ng-class="{show: isActive, 'outer-pane': mode === 'authoring'}">
     <div class="send-to-pane">
         <header>
-            <h3 translate ng-show="mode !== 'archive'">Send to / Publish</h3>
-            <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
+            <h3 ng-show="mode === 'authoring'" translate>Send to / Publish</h3>
+            <h3 ng-show="mode !== 'authoring'" translate>Fetch To</h3>
             <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
         </header>
         <div class="content">
