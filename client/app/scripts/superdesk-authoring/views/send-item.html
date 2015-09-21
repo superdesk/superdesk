@@ -1,4 +1,4 @@
-<div class="pane-holder" ng-class="{show: isActive, 'outer-pane': mode === 'authoring'}">
+<div class="pane-holder" ng-show="isActive" ng-class="{show: isActive, 'outer-pane': mode === 'authoring'}">
     <div class="send-to-pane">
         <header>
             <h3 translate ng-show="mode !== 'archive'">Send to / Publish</h3>
