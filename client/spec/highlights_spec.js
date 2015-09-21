@@ -220,7 +220,7 @@ describe('HIGHLIGHTS', function() {
 
             workspace.switchToDesk('SPORTS');
             content.setListView();
-            expect(content.getCount()).toBe(4);
+            expect(content.getCount()).toBe(3);
         });
     });
 
