@@ -51,6 +51,7 @@ function Desks() {
     this.edit = function(name) {
         this.getRow(name).then(function(rows) {
             rows[0].click();
+            rows[0].element(by.className('icon-dots-vertical')).click();
             rows[0].element(by.className('icon-pencil')).click();
             browser.sleep(500);
         });
@@ -63,6 +64,7 @@ function Desks() {
     this.remove = function(name) {
         this.getRow(name).then(function(rows) {
             rows[0].click();
+            rows[0].element(by.className('icon-dots-vertical')).click();
             rows[0].element(by.className('icon-trash')).click();
             browser.sleep(500);
             element(by.buttonText('OK')).click();
