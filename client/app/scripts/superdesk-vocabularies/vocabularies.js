@@ -69,7 +69,6 @@
                     notify.error(gettext('Error. Vocabulary not saved.'));
                 }
             }
-            $scope.progress = null;
         }
 
         $scope.addItem = function() {
@@ -82,9 +81,6 @@
 
         $scope.save = function() {
             $scope._errorUniqueness = false;
-            $scope.progress = {
-                width: 1
-            };
             api.save('vocabularies', $scope.vocabulary).then(onSuccess, onError);
         };
 

@@ -2,8 +2,8 @@
   <ul class="pills-list">
 
     <li ng-repeat="vocabulary in vocabularies._items">
-      <h6>{{ vocabulary._id }}</h6>&nbsp;
-      <em><strong>({{ :: vocabulary.items.length }})</strong></em>
+      <h6>{{ :: vocabulary._id }}</h6>&nbsp;
+      <em><strong>({{ vocabulary.items.length }})</strong></em>
       <div class="actions">
         <button
           ng-click="openVocabulary(vocabulary)"
