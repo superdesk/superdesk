@@ -523,6 +523,7 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
             .widget('metadata', {
                 icon: 'info',
                 label: gettext('Info'),
+                removeHeader: true,
                 template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
                 order: 1,
                 side: 'right',

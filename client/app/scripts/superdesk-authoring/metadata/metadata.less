@@ -9,9 +9,9 @@
 	
 	.widget-content {
 		background: @sd-background;
-		padding: 10px;
+		padding: 0;
 		padding-bottom: @authoring-opened-articles + @scratchpad-closed;
-		overflow: scroll;
+		overflow: auto;
 		margin: 5px 0 20px;
 	}
 	
@@ -24,9 +24,8 @@
 		}
 		> li, .sublist > ul > li {
 			padding: 10px 0;
-			border-bottom: 1px dotted #ddd;
 			text-align: right;
-			height: 18px;
+			height: 28px;
 			line-height: 18px;
 			.lbl, label {
 				float: left;
@@ -49,13 +48,7 @@
 					margin-top: -5px;
 					margin-right: -5px;
 					text-align: right;
-					border-color: #f8f8f8 !important;
-					background: #f8f8f8;
 					font-size: 13px;
-					&:focus {
-						background: #fff;
-						border-color: #d0d0d0 !important;  
-					}
 				}
 				select {
 					margin: -4px -4px 0 0;
@@ -110,15 +103,6 @@
 							width: 70px;
 							min-width: 0;
 						}
-					}
-				}
-			}
-
-			&:hover {
-				.data {
-					input, select, .dropdown-toggle {
-						background: #fff;
-						border-color: #d0d0d0 !important;  
 					}
 				}
 			}
