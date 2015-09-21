@@ -376,6 +376,15 @@
     }
 }
 
+.modal {
+    left: 0;
+    right: 0;
+    overflow: auto;
+    .modal-dialog {
+        max-height: none;
+    }
+}
+
 .aggregate-widget-config {
     .modal-body {
         overflow: visible;
@@ -388,8 +397,6 @@
         top: 48px;
         .content {
             padding: 20px;
-            max-height: 450px;
-            overflow: auto;
             background-color: #fcfcfc;
         }
         .modal-footer {
