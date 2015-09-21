@@ -82,13 +82,15 @@
             if (self.widget) {
                 return workspaces.readActive()
                 .then(function(workspace) {
-                    var configuration = [];
+                    var groups = [];
+                    self.widget.configuration = self.widget.configuration || {groups: [], label: ''};
                     _.each(workspace.widgets, function(widget) {
-                        if (self.widget._id === widget._id && self.widget.multiple_id === widget.multiple_id) {
-                            configuration = widget.configuration;
+                        if (widget.configuration && self.widget._id === widget._id && self.widget.multiple_id === widget.multiple_id) {
+                            groups = widget.configuration.groups || groups;
+                            self.widget.configuration.label = widget.configuration.label || '';
                         }
                     });
-                    return configuration;
+                    return groups;
                 });
             } else {
                 return workspaces.getActiveId()
@@ -522,7 +524,11 @@
                             var widgets =  angular.copy(workspace.widgets);
                             _.each(widgets, function(widget) {
                                 if (scope.widget._id === widget._id && scope.widget.multiple_id === widget.multiple_id) {
-                                    widget.configuration = groups;
+                                    widget.configuration = {};
+                                    widget.configuration.groups = groups;
+                                    if (scope.widget.configuration.label) {
+                                        widget.configuration.label = scope.widget.configuration.label;
+                                    }
                                 }
                             });
                             workspaces.save(workspace, {'widgets': widgets})

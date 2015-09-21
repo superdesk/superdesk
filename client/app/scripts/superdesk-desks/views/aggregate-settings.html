@@ -7,7 +7,13 @@
 
     <div sd-wizard-step data-title="{{ :: 'Desks' | translate }}" data-code="desks">
         <div class="content">
-
+            <div ng-if="widget">
+	            <span class="pull-right" sd-character-count data-item="widget.configuration.label" data-limit="30"></span>
+	            <div class="field">
+	                <label translate>View name</label>
+	                <input type="text" class="fullwidth-input" ng-model="widget.configuration.label" ng-keyup="handleEdit($event);" required>
+	            </div>
+            </div>
             <div class="legend" translate>Select desks for view</div>
             <div class="desk" ng-repeat="desk in desks | orderBy: 'name'">
                 <div class="desk-title">

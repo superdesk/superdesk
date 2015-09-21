@@ -78,6 +78,17 @@ function Dashboard() {
     };
 
     /**
+     * Get the label for widget at index 'index'
+     * from the current dashboard.
+     *
+     * @param {number} index
+     * @return {text} label
+     */
+    this.getWidgetLabel = function(index) {
+        return this.getWidget(index).all(by.css('.widget-title')).first().getText();
+    };
+
+    /**
      * Show the monitoring settings for 'index' widget
      *
      * @param {number} index
