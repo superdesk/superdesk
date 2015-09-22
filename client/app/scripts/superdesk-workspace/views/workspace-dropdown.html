@@ -2,6 +2,7 @@
     <button id="selected-desk" data-toggle="dropdown" class="dropdown-toggle {{workspaceType}} pull-left">
         <span class="name" ng-if="selected.name">{{ selected.name | uppercase }}</span>
         <span class="name" ng-if="!selected" translate>Select Workspace</span>
+        <span class="name" ng-if="!selected.name && workspaceType">{{ :: 'Untitled' | translate }}</span>
         <span class="caret"></span>
     </button>
 
@@ -19,6 +20,7 @@
             <button ng-click="selectWorkspace(workspace)"
                     ng-disabled="workspace._id === selected._id">
                 {{ :: workspace.name }}
+                <span ng-if="!workspace.name">{{ :: 'Untitled' | translate }}</span>
             </button>
         </li>
         <li>
