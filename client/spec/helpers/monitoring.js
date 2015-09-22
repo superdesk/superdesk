@@ -113,6 +113,14 @@ function Monitoring() {
         .getText();
     };
 
+    this.setOrder = function(field, switchDir) {
+        element(by.id('order_button')).click();
+        element(by.id('order_selector')).element(by.partialLinkText(field)).click();
+        if (switchDir !== undefined && switchDir) {
+            element(by.css('[ng-click="toggleDir()"]')).click();
+        }
+    };
+
     this.openAction = function(group, item) {
         browser.actions().doubleClick(
                 this.getItem(group, item)

@@ -224,7 +224,7 @@ describe('monitoring view', function() {
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
         expect(monitoring.getTextItem(1, 0)).toBe('item4');
         expect(monitoring.getTextItem(2, 0)).toBe('item1');
-        expect(monitoring.getTextItem(2, 4)).toBe('item3');
+        expect(monitoring.getTextItem(2, 4)).toBe('item7');
 
         monitoring.searchAction('item3');
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
@@ -239,7 +239,7 @@ describe('monitoring view', function() {
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
         expect(monitoring.getTextItem(1, 0)).toBe('item4');
         expect(monitoring.getTextItem(2, 0)).toBe('item1');
-        expect(monitoring.getTextItem(2, 4)).toBe('item3');
+        expect(monitoring.getTextItem(2, 4)).toBe('item7');
     });
 
     it('can filter content by file type', function() {
@@ -262,6 +262,18 @@ describe('monitoring view', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(0);
         expect(monitoring.getGroupItems(2).count()).toBe(0);
         expect(monitoring.getGroupItems(3).count()).toBe(0);
+    });
+
+    it('can order content', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        expect(monitoring.getTextItem(1, 1)).toBe('item9');
+        expect(monitoring.getTextItem(1, 2)).toBe('item7');
+        expect(monitoring.getTextItem(1, 3)).toBe('item8');
+        monitoring.setOrder('Slugline', true);
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        expect(monitoring.getTextItem(1, 1)).toBe('item7');
+        expect(monitoring.getTextItem(1, 2)).toBe('item8');
+        expect(monitoring.getTextItem(1, 3)).toBe('item9');
     });
 
     it('can preview content', function() {
@@ -288,9 +300,9 @@ describe('monitoring view', function() {
     });
 
     it('updates item group on single item spike-unspike', function() {
-        expect(monitoring.getGroupItems(1).count()).toBe(1);
+        expect(monitoring.getGroupItems(1).count()).toBe(4);
         monitoring.actionOnItem('Spike', 1, 0);
-        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(3);
         monitoring.openSpiked();
         expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
         monitoring.unspikeItem(0);
@@ -315,10 +327,10 @@ describe('monitoring view', function() {
     });
 
     it('updates item group on multiple item spike-unspike', function() {
-        expect(monitoring.getGroupItems(1).count()).toBe(1);
+        expect(monitoring.getGroupItems(1).count()).toBe(4);
         monitoring.selectItem(1, 0);
         monitoring.spikeMultipleItems();
-        expect(monitoring.getGroupItems(1).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(3);
         monitoring.openSpiked();
         expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
         monitoring.selectSpikedItem(0);
