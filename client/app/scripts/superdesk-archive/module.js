@@ -407,13 +407,13 @@ define([
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).new_take;
                     }],
-                    controller: ['data', '$rootScope', 'desks', 'authoring', 'notify', 'superdesk',
-                        function(data, $rootScope, desks, authoring, notify, superdesk) {
+                    controller: ['data', '$rootScope', 'desks', 'authoring', 'authoringWorkspace', 'notify', 'superdesk',
+                        function(data, $rootScope, desks, authoring, authoringWorkspace, notify, superdesk) {
                             authoring.linkItem(data.item, null, desks.getCurrentDeskId())
                                 .then(function(item) {
                                     notify.success(gettext('New take created.'));
                                     $rootScope.$broadcast('item:take');
-                                    superdesk.intent('author', 'article', item);
+                                    authoringWorkspace.edit(item);
                                 }, function(response) {
                                     data.item.error = response;
                                     notify.error(gettext('Failed to generate new take.'));
@@ -432,15 +432,15 @@ define([
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).re_write;
                     }],
-                    controller: ['data', '$location', 'api', 'notify', 'session', 'desks', 'superdesk',
-                        function(data, $location, api, notify, session, desks, superdesk) {
+                    controller: ['data', '$location', 'api', 'notify', 'authoringWorkspace', 'session', 'desks', 'superdesk',
+                        function(data, $location, api, notify, session, authoringWorkspace, desks, superdesk) {
                             session.getIdentity()
                                 .then(function(user) {
                                     return api.save('archive_rewrite', {}, {}, data.item);
                                 })
                                 .then(function(new_item) {
                                     notify.success(gettext('Update Created.'));
-                                    superdesk.intent('author', 'article', new_item._id);
+                                    authoringWorkspace.edit(new_item);
                                 }, function(response) {
                                     if (angular.isDefined(response.data._message)) {
                                         notify.error(gettext('Failed to generate update: ' + response.data._message));
