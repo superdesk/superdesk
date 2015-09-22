@@ -706,7 +706,9 @@ define([
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-content.html',
             link: function(scope) {
-                var _orig = null;
+                var filtersStartPage = 1,  // the fetch results page to start from
+                    _orig = null;
+
                 scope.editScheme = null;
                 scope.rule = null;
                 scope.ruleIndex = null;
@@ -718,8 +720,6 @@ define([
                     scope.schemes = result._items;
                 });
 
-                ///// TODO: tests for this (initializing contentFilters list)
-                var filtersStartPage = 1;  // TODO: explain what to fetch
                 scope.contentFilters = [];
 
                 contentFilters.getAllContentFilters(
@@ -728,7 +728,6 @@ define([
                 .then(function (filters) {
                     scope.contentFilters = filters;
                 });
-                //////// end TODO /////
 
                 function confirm(context) {
                     if (context === 'scheme') {
@@ -770,17 +769,7 @@ define([
                     });
                 };
 
-                /**
-                 * Cancels editing an ingest routing scheme without saving any
-                 * changes by reseting all auxiliary values used for editing.
-                 *
-                 * @method cancel
-                 */
-                // TODO: tests
                 scope.cancel = function () {
-                    if (scope.rule) {
-                        delete scope.rule.filterName;
-                    }
                     scope.editScheme = null;
                     scope.rule = null;
                 };
@@ -834,7 +823,6 @@ define([
                  * @method editRule
                  * @param {Object} rule - routing scheme rule's config data
                  */
-                // TODO: tests
                 scope.editRule = function (rule) {
                     var filter;
 
@@ -902,6 +890,15 @@ define([
          * Creates an utility method on the built-in RegExp object used for
          * escaping arbitrary strings so that they can be safely used in
          * dynamically created regular expressions patterns.
+         *
+         * The idea is to find all characters in the given string that have a
+         * special meaning in regex definition, and replace them with their
+         * escaped versions. For example:
+         *     '^' becomes '\\^', '*' becomes '\\*', etc.
+         *
+         * Usage example (creating a new regex pattern):
+         *
+         *     var regex = new RegExp(RegExp.escape(unsafeString));
          *
          * Taken from http://stackoverflow.com/a/3561711/5040035
          *

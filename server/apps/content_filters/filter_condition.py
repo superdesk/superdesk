@@ -308,7 +308,7 @@ class FilterConditionParametersService(BaseService):
                            {'field': 'priority',
                             'operators': ['in', 'nin'],
                             'values': values['priority'],
-                            'value_field': 'qcode'
+                            'value_field': 'value'
                             },
                            {'field': 'keywords',
                             'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']

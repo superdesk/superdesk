@@ -220,7 +220,7 @@
 
                 _.each(values, function(value) {
                     var v = _.find(all_values, function(val) {
-                        return val[value_field] === value;
+                        return val[value_field].toString() === value;
                     });
 
                     $scope.filterCondition.values.push(v);
@@ -652,12 +652,13 @@
 
             _.each(values, function(value) {
                 var v = _.find(all_values, function(val) {
-                    return val[value_field] === value;
+                    return val[value_field].toString() === value;
                 });
 
                 $scope.filterCondition.values.push(v);
             });
         }
+
         function getFilterValue() {
             if ($scope.isListValue()) {
                 var values = [];
