@@ -385,10 +385,7 @@ class ArchiveService(BaseService):
         """
 
         new_doc = original_doc.copy()
-        del new_doc[config.ID_FIELD]
-        del new_doc['guid']
-        new_doc.pop(LINKED_IN_PACKAGES, None)
-        new_doc.pop(EMBARGO, None)
+        self._remove_after_copy(new_doc)
 
         new_doc[ITEM_OPERATION] = ITEM_DUPLICATE
         item_model = get_model(ItemModel)
@@ -401,6 +398,17 @@ class ArchiveService(BaseService):
         self._duplicate_versions(original_doc['guid'], new_doc)
 
         return new_doc['guid']
+
+    def _remove_after_copy(self, copied_item):
+        """
+        Removes the properties which doesn't make sense to have for an item after copy.
+        """
+
+        del copied_item[config.ID_FIELD]
+        del copied_item['guid']
+        copied_item.pop(LINKED_IN_PACKAGES, None)
+        copied_item.pop(EMBARGO, None)
+        copied_item.pop('publish_schedule', None)
 
     def _duplicate_versions(self, old_id, new_doc):
         """
