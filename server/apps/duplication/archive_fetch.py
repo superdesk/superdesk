@@ -111,19 +111,19 @@ class FetchService(BaseService):
 
     def __fetch_items_in_package(self, dest_doc, desk, stage, state):
         for ref in [ref for group in dest_doc.get('groups', [])
-                    for ref in group.get('refs', []) if 'residRef' in ref]:
+                    for ref in group.get('refs', []) if ref.get('residRef')]:
             ref['location'] = ARCHIVE
 
         refs = [{'_id': ref.get('residRef'), 'desk': desk,
                  'stage': stage, 'state': state}
                 for group in dest_doc.get('groups', [])
-                for ref in group.get('refs', []) if 'residRef' in ref]
+                for ref in group.get('refs', []) if ref.get('residRef')]
 
         if refs:
             new_ref_guids = self.fetch(refs, id=None, notify=False)
             count = 0
             for ref in [ref for group in dest_doc.get('groups', [])
-                        for ref in group.get('refs', []) if 'residRef' in ref]:
+                        for ref in group.get('refs', []) if ref.get('residRef')]:
                 ref['residRef'] = ref['guid'] = new_ref_guids[count]
                 count += 1
 

@@ -158,7 +158,12 @@ class PackageService():
     def get_associated_item(self, assoc, throw_if_not_found=True):
         endpoint = assoc.get('location', 'archive')
         item_id = assoc[ITEM_REF]
+
+        if not item_id:
+            raise SuperdeskApiError.badRequestError("Package contains empty ResidRef!")
+
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
+
         if not item and throw_if_not_found:
             message = 'Invalid item reference: ' + assoc[ITEM_REF]
             logger.error(message)
