@@ -54,6 +54,7 @@ def get_item_ref(item):
         'location': 'archive',
         'itemClass': 'icls:' + item.get('type', 'text'),
         'renditions': item.get('renditions', {}),
+        'firstcreated': item.get('firstcreated')
     }
 
 

@@ -294,10 +294,17 @@ class NewsMLG2Formatter(Formatter):
         :param dict article:
         :param Element content_meta:
         """
-        for location in article.get('place', []):
-            if location.get('name'):
-                subject = SubElement(content_meta, 'subject', attrib={'type': 'cpnat:geoArea'})
-                SubElement(subject, 'name').text = location.get('name', '')
+        for place in article.get('place', []):
+            if place.get('country') or place.get('state') or place.get('world_region'):
+                if place.get('state'):
+                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cptype:statprov'})
+                    SubElement(subject, 'name').text = place.get('state')
+                if place.get('country'):
+                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cptype:country'})
+                    SubElement(subject, 'name').text = place.get('country')
+                if place.get('world_region'):
+                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cpnat:geoArea'})
+                    SubElement(subject, 'name').text = place.get('world_region')
 
     def _format_located(self, article, content_meta):
         """
