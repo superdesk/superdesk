@@ -12,6 +12,7 @@
 import os
 from datetime import datetime, timedelta
 from superdesk.io.commands.update_ingest import LAST_ITEM_UPDATE
+import superdesk
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -312,11 +313,29 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
         fetch_from_provider(context, provider_name, guid)
 
 
+def embed_routing_scheme_rules(scheme):
+    """Fetch all content filters referenced by the given routing scheme and
+    embed them into the latter (replacing the plain references to filters).
+
+    :param dict scheme: routing scheme configuration
+    """
+    filters_service = superdesk.get_resource_service('content_filters')
+
+    rules_filters = (
+        (rule, str(rule['filter']))
+        for rule in scheme['rules'] if rule.get('filter'))
+
+    for rule, filter_id in rules_filters:
+        content_filter = filters_service.find_one(_id=filter_id, req=None)
+        rule['filter'] = content_filter
+
+
 @when('we fetch from "{provider_name}" ingest "{guid}" using routing_scheme')
 def step_impl_fetch_from_provider_ingest_using_routing(context, provider_name, guid):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         _id = apply_placeholders(context, context.text)
         routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
+        embed_routing_scheme_rules(routing_scheme)
         fetch_from_provider(context, provider_name, guid, routing_scheme)
 
 
@@ -327,6 +346,7 @@ def step_impl_fetch_from_provider_ingest_using_routing_with_desk(context, provid
         desk_id = apply_placeholders(context, desk)
         stage_id = apply_placeholders(context, stage)
         routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
+        embed_routing_scheme_rules(routing_scheme)
         fetch_from_provider(context, provider_name, guid, routing_scheme, desk_id, stage_id)
 
 

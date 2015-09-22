@@ -485,12 +485,34 @@ Feature: Stages
 
         Then we get 2 visible stages
 
-    @auth
+    @auth @vocabulary
     Scenario: Cannot delete stage if it is refered to by a routing scheme
         Given empty "stages"
         Given "desks"
         """
         [{"name": "Sports Desk"}]
+        """
+        Given we have "/filter_conditions" with "FCOND_ID" and success
+        """
+        [{
+            "name": "Sports Content",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        And we have "/content_filters" with "FILTER_ID" and success
+        """
+        [{
+          "name": "Sports Content",
+          "content_filter": [
+              {
+                  "expression": {
+                      "fc": ["#FCOND_ID#"]
+                  }
+              }
+          ]
+        }]
         """
 
         When we post to "/stages"
@@ -514,9 +536,7 @@ Feature: Stages
             "rules": [
               {
                 "name": "Sports Rule",
-                "filter": {
-                  "category": [{"name": "Overseas Sport", "qcode": "S"}]
-                },
+                "filter": "#FILTER_ID#",
                 "actions": {
                   "fetch": [
                               {"desk": "#desks._id#",

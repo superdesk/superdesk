@@ -47,8 +47,6 @@ class AppInitializeWithDataCommandTestCase(SuperdeskTestCase):
         self.assertEqual(cursor.count(), existing_desks * stories_per_desk)
 
     def test_app_initialization_index_creation(self):
-        result = app.data.mongo.pymongo(resource='users').db['users'].index_information()
-        self.assertEqual(result, {})
         command = AppInitializeWithDataCommand()
         result = command.run()
         self.assertEqual(result, 0)

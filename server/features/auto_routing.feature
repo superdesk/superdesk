@@ -1,8 +1,50 @@
 Feature: Auto Routing
 
-    @auth @provider @test
+    @auth @provider @test @vocabulary
     Scenario: Content is fetched based on subject metadata
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Finance Content",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        },
+        {
+            "_id": "2222222222bbbb2222222222",
+            "name": "Sports Content",
+            "field": "subject",
+            "operator": "in",
+            "value": "15000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "0987654321dcba0987654321",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        },
+        {
+            "_id": "1234567890abcd1234567890",
+            "name": "Sports Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
         When we post to "/desks"
         """
           {
@@ -18,9 +60,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Sports Rule",
-                "filter": {
-                  "subject": [{"qcode": "15000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [
                     {
@@ -46,9 +86,7 @@ Feature: Auto Routing
         """
            {
               "name": "Finance Rule",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "0987654321dcba0987654321",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                 "exit": false
@@ -93,9 +131,33 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
+    @auth @provider @vocabulary
     Scenario: Package is routed automatically
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Syria in Slugline",
+            "field": "slugline",
+            "operator": "like",
+            "value": "syria"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Syria Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        }]
+        """
         When we post to "/desks"
         """
           {
@@ -111,9 +173,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Syria Rule",
-                "filter": {
-                  "slugline": "syria"
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -136,13 +196,38 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider @test
+    @auth @provider @test @vocabulary
     Scenario: Content is fetched and published to different stages 1
         Given the "validators"
         """
           [{"_id": "publish_text", "act": "publish", "type": "text", "schema":{}}]
         """
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -158,9 +243,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Finance Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -232,9 +315,34 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
+    @auth @provider @vocabulary
     Scenario: Content is fetched and published to different stages 2
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -250,9 +358,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Finance Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "exit": false
@@ -278,9 +384,7 @@ Feature: Auto Routing
         """
            {
               "name": "Finance Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "1234567890abcd1234567890",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#stages._id#"}],
                 "exit": false
@@ -309,9 +413,34 @@ Feature: Auto Routing
         """
 
 
-    @auth @provider
+    @auth @provider @vocabulary
     Scenario: Content is fetched to desk in the ingested item
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "2222222222bbbb2222222222",
+            "name": "Finance Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Finance Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["2222222222bbbb2222222222"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -327,9 +456,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Finance Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
                   "preserve_desk": true,
@@ -356,9 +483,34 @@ Feature: Auto Routing
         """
 
 
-    @auth @provider @clean
+    @auth @provider @clean @vocabulary
     Scenario: Content is fetched and transformed different stages
         Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "3333333333cccc3333333333",
+            "name": "Politics Subject",
+            "field": "subject",
+            "operator": "in",
+            "value": "04000000"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Politics Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["3333333333cccc3333333333"]
+                    }
+                }
+            ]
+        }]
+        """
+
         When we post to "/desks"
         """
           {
@@ -375,9 +527,7 @@ Feature: Auto Routing
             "rules": [
               {
                 "name": "Politics Rule 1",
-                "filter": {
-                  "subject": [{"qcode": "04000000"}]
-                },
+                "filter": "1234567890abcd1234567890",
                 "actions": {
                   "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "update_fields"}],
                   "exit": false
@@ -403,9 +553,7 @@ Feature: Auto Routing
         """
            {
               "name": "Politics Rule 2",
-              "filter": {
-                "subject": [{"qcode": "04000000"}]
-              },
+              "filter": "1234567890abcd1234567890",
               "actions": {
                 "fetch": [{"desk": "#desks._id#", "stage": "#stages._id#", "macro": "update_fields"}],
                 "exit": false
