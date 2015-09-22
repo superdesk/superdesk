@@ -11,6 +11,8 @@ function Authoring() {
     this.kill_button = element(by.buttonText('kill'));
     this.close_button = element(by.buttonText('CLOSE'));
     this.save_button = element(by.buttonText('SAVE'));
+    this.edit_correct_button = element(by.buttonText('Edit and Correct'));
+    this.edit_kill_button = element(by.buttonText('Edit and Kill'));
 
     this.navbarMenuBtn = element(by.css('.dropdown-toggle.sd-create-btn'));
     this.newPlainArticleLink = element(by.id('create_text_article'));
@@ -79,6 +81,11 @@ function Authoring() {
     this.publish = function() {
         this.sendToButton.click();
         return this.publish_button.click();
+    };
+
+    this.correct = function() {
+        this.sendToButton.click();
+        return this.correct_button.click();
     };
 
     this.save = function() {
