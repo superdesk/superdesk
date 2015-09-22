@@ -139,6 +139,6 @@ function Content() {
     };
 
     function send() {
-        return element(by.id('send-item-btn')).click();
+        return element(by.css('[ng-click="send()"]')).click();
     }
 }

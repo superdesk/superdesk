@@ -306,6 +306,103 @@ a:hover {
     }
 }
 
+// Slide pane
+// ---------------------------------------------
+
+//Variables
+@slide-pane-width: 400px;
+
+.slide-pane {
+    position: absolute;
+    top: 1px; bottom: 0;
+    right: -@slide-pane-width;
+
+    width: @slide-pane-width;
+    background-color: @white;
+    z-index: @zindexSlidePane;
+    .border-box();
+
+    &.slide-pane--inset { 
+        top: @nav-height * 2; 
+        bottom: 30px; 
+    }
+    &.open { right: 0; }
+
+    > .slide-pane__header {
+        height: @nav-height;
+        border-bottom: 1px solid #424242;
+        padding: 0 20px;
+        h3 {
+            font-size: 20px;
+            line-height: @nav-height;
+            color: @black;
+            .text-light();
+            float: left;
+        }
+        .close {
+            margin-top: 14px;
+        }
+    }
+
+    > .slide-pane__content {
+        position: absolute;
+        width: 100%;
+        top: @nav-height;
+        overflow: auto;
+        padding: 20px 15px 0 20px;
+        .border-box();
+
+        .dropdown {
+            margin-bottom: 20px;
+            .dropdown-toggle, .dropdown-menu {
+                width: 100%;
+            }
+        }
+    }
+
+    > .slide-pane__footer {
+        position: absolute;
+        width: 100%;
+        padding: 15px 15px 0 15px;
+        bottom: 0;
+        border-top: 1px solid #424242;
+        .border-box();
+
+        button {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+        }
+        
+        .btn-list li { padding-bottom: 0; }
+    }
+
+    .btn-list {
+        font-size: 0;
+        li {
+            display: inline-block;
+            vertical-align: middle;
+            width: 48.5%;
+            padding: 0 0 3%;
+            &:nth-child(2n) { margin-left: 3%; }
+            &.full-width { width: 100%; margin-left: 0; }
+            input { min-height: 35px; }
+            .btn__check { width: 100%; }
+        }
+    }
+
+    // Stylings for slide pane
+    &.slide-pane--dark {
+        background-color: #3b3b3b;
+        > .slide-pane__header {
+            h3 {
+                color: @white;
+            }
+        }
+    }
+}
+
 // Split content
 // ------------------------------------
 .split-content {

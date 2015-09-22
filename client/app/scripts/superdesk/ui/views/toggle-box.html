@@ -1,11 +1,8 @@
-<div class="toggle-box {{mode}}" ng-class="{'hidden': !isOpen}">
-	<header ng-click="toggleModule()">
-		<span class="chevron">
-			<i class="icon-chevron-right-thin"></i>
-		</span>
-		
-		<i class="box-icon {{icon}}"></i>
-		<h6>{{title}}</h6>
-	</header>
-	<div class="toggle-content" ng-if="isOpen" ng-transclude></div>
+<div class="toggle-box toggle-box--{{style}} {{mode}}" ng-class="{'hidden': !isOpen}">
+    <div class="toggle-box__header" ng-click="toggleModule()">
+        <div class="toggle-box__chevron"><i class="icon-chevron-right-thin"></i></div>
+        <div class="toggle-box__label">{{title}}</div>
+        <div class="toggle-box__line"></div>
+    </div>
+    <div class="toggle-box__content" ng-if="isOpen" ng-transclude></div>
 </div>

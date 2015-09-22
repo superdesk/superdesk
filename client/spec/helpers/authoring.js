@@ -55,8 +55,8 @@ function Authoring() {
     };
 
     this.sendToSidebarOpened = function(desk, stage) {
-        var sidebar = element.all(by.css('.send-to-pane')).last(),
-            dropdown = sidebar.element(by.css('.desk-select .dropdown-toggle'));
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle'));
 
         dropdown.waitReady();
         dropdown.click();

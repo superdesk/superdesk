@@ -1541,7 +1541,7 @@
 
                 scope.send = function (open) {
                     var spellcheckErrors = spellcheck.countErrors();
-                    if (spellcheckErrors > 0) {
+                    if (scope.mode === 'authoring' && spellcheckErrors > 0) {
                         confirm.confirmSpellcheck(spellcheckErrors)
                                 .then(angular.bind(this, function send() {
                                     return runSend(open);
@@ -1562,6 +1562,17 @@
                         return scope.mode === 'ingest' ||
                                 scope.mode === 'monitoring' ||
                                 (scope.mode === 'authoring' && scope.isSendEnabled() && scope.itemActions.send);
+                    }
+                };
+
+                /*
+                 * Returns true if Send and Send and Continue button needs to be disabled, false othervise.
+                 * @returns {Boolean}
+                 */
+                scope.disableSendButton = function () {
+                    if (scope.item && scope.item.task) {
+                        return !scope.selectedDesk ||
+                                (scope.mode !== 'ingest' && scope.selectedStage._id === scope.item.task.stage);
                     }
                 };
 
@@ -1608,7 +1619,8 @@
                         return scope.config.resolve({
                             desk: deskId,
                             stage: stageId,
-                            macro: scope.selectedMacro ? scope.selectedMacro.name : null
+                            macro: scope.selectedMacro ? scope.selectedMacro.name : null,
+                            open: open
                         });
                     } else if (scope.mode === 'ingest') {
                         return sendIngest(deskId, stageId, scope.selectedMacro, open);
@@ -1769,7 +1781,7 @@
                     }).then(function(finalItem) {
                         notify.success(gettext('Item fetched.'));
                         if (open) {
-                            $location.url('/authoring/' + finalItem._id);
+                            authoringWorkspace.edit(finalItem);
                         } else {
                             $rootScope.$broadcast('item:fetch');
                         }
@@ -2033,7 +2045,7 @@
                     ],
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).view;
-                    }],
+                    }]
                 })
                 .activity('edit.crop', {
                     label: gettext('EDIT CROP'),

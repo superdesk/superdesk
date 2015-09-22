@@ -395,4 +395,18 @@ describe('monitoring view', function() {
 
         expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
     });
+
+    it('can fetch as and open item', function () {
+        monitoring.showMonitoringSettings();
+        monitoring.toggleDesk(0);
+        monitoring.nextStages();
+        monitoring.toggleSearch(3);
+        monitoring.nextSearches();
+        monitoring.nextReorder();
+        monitoring.saveSettings();
+
+        monitoring.fetchAndOpen(0, 0);
+
+        expect(authoring.save_button.isDisplayed()).toBe(true);
+    });
 });

@@ -369,7 +369,12 @@ function Monitoring() {
 
     this.fetchAs = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
-        return element(by.id('send-item-btn')).click();
+        return element(by.css('[ng-click="send()"]')).click();
+    };
+
+    this.fetchAndOpen = function(group, item) {
+        this.actionOnItem('Fetch To', group, item);
+        return element(by.css('[ng-click="send(true)"]')).click();
     };
 
     /**
