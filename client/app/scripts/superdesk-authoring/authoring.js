@@ -126,17 +126,21 @@
          * Autosave an item
          */
         this.save = function saveAutosave(item) {
-            this.stop(item);
-            timeouts[item._id] = $timeout(function() {
-                var diff = extendItem({_id: item._id}, item);
+            if (item._editable && item._locked) {
+                this.stop(item);
 
-                return api.save(RESOURCE, {}, diff).then(function(_autosave) {
-                    extendItem(item, _autosave);
-                    var orig = Object.getPrototypeOf(item);
-                    orig._autosave = _autosave;
-                });
-            }, AUTOSAVE_TIMEOUT);
-            return timeouts[item._id];
+                timeouts[item._id] = $timeout(function() {
+                    var diff = extendItem({_id: item._id}, item);
+
+                    return api.save(RESOURCE, {}, diff).then(function(_autosave) {
+                        extendItem(item, _autosave);
+                        var orig = Object.getPrototypeOf(item);
+                        orig._autosave = _autosave;
+                    });
+                }, AUTOSAVE_TIMEOUT);
+
+                return timeouts[item._id];
+            }
         };
 
         /**
@@ -465,7 +469,9 @@
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
                 //if not the last published version
-                if ((angular.isDefined(item.archive_item) && item._current_version !== item.archive_item._current_version)) {
+                if ((angular.isDefined(item.archive_item) &&
+                    item._current_version !== item.archive_item._current_version) ||
+                    (this._versionToFetch && this._versionToFetch !== item._current_version)) {
                     return angular.extend({}, DEFAULT_ACTIONS);
                 }
 
@@ -532,6 +538,14 @@
             }
 
             return action;
+        };
+
+        /**
+         * Sometimes the fetched version and user selected version are different. Use this method to set the version
+         * selected by user. This happens when user selects "Open" action.
+         */
+        this.setItemVersion = function(version) {
+            this._versionToFetch = version;
         };
     }
 
@@ -992,11 +1006,6 @@
 
                     var errorMessage;
                     if (item.embargo_date || item.embargo_time) {
-                        if (_.contains(['scheduled', 'killed', 'corrected'], item.state)) {
-                            notify.error(gettext('Embargo isn\'t applicable after publishing'));
-                            return false;
-                        }
-
                         errorMessage = validateTimestamp(item.embargo_date, item.embargo_time, item.embargo, 'Embargo');
                         if (errorMessage !== '') {
                             notify.error(errorMessage);
@@ -1071,7 +1080,7 @@
                 $scope.publish = function() {
                     if (validatePublishScheduleAndEmbargo($scope.item)) {
                         if ($scope.dirty) { // save dialog & then publish if confirm
-                            var message = $scope.action === 'kill' ? $scope.action : 'publish';
+                            var message = $scope.action ? $scope.action : 'publish';
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
                             .then(function(res) {
                                 if (res) {
@@ -2143,6 +2152,7 @@
          * @param {Object} item
          */
         this.view = function(item) {
+            authoring.setItemVersion(item._current_version);
             self.edit(item, 'view');
         };
 

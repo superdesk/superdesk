@@ -184,4 +184,28 @@ describe('authoring', function() {
         element(by.id('closeAuthoringBtn')).click();
     });
 
+    it('can show correct and kill buttons for latest version only', function() {
+        workspace.open();
+        workspace.switchToDesk('SPORTS DESK');
+        workspace.editItem('item5', 'Politic');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.publish();
+
+        workspace.selectStage('Published');
+        workspace.filterItems('text');
+
+        content.actionOnItem('Correct item', 0);
+        authoring.correct();
+
+        content.actionOnItem('Open', 0);
+        expect(authoring.edit_correct_button.isDisplayed()).toBe(true);
+        expect(authoring.edit_kill_button.isDisplayed()).toBe(true);
+        element(by.id('closeAuthoringBtn')).click();
+
+        content.actionOnItem('Open', 1);
+        expect(authoring.edit_correct_button.isDisplayed()).toBe(false);
+        expect(authoring.edit_kill_button.isDisplayed()).toBe(false);
+        element(by.id('closeAuthoringBtn')).click();
+    });
 });

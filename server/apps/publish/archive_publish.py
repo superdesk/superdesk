@@ -160,18 +160,20 @@ class BasePublishService(BaseService):
                     if package:
                         queued_digital = self._publish_takes_package(package, updates, original, last_updated)
                     else:
-                        # if text or preformatted item is going to be sent to digital subscribers, package it as a take
-                        if self.sending_to_digital_subscribers(original):
-                            # takes packages are only created for these types
-                            if original[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
-                                updated = copy(original)
-                                updated.update(updates)
-                                # create a takes package
-                                package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
-                                updates[LINKED_IN_PACKAGES] = updated[LINKED_IN_PACKAGES]
-                                package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
-                                queued_digital = self._publish_takes_package(package, updates,
-                                                                             original, last_updated)
+                        '''
+                        If type of the item is text or preformatted then item need to be sent to digital subscribers.
+                        So, package the item as a take.
+                        '''
+                        updated = copy(original)
+                        updated.update(updates)
+
+                        if original[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED] and \
+                                self.sending_to_digital_subscribers(updated):
+                            # create a takes package
+                            package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
+                            updates[LINKED_IN_PACKAGES] = updated[LINKED_IN_PACKAGES]
+                            package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
+                            queued_digital = self._publish_takes_package(package, updates, original, last_updated)
 
                 # queue only text items
                 queued_wire = \

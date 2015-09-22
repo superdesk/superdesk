@@ -87,7 +87,8 @@ describe('authoring', function() {
     }));
 
     it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
-        var $scope = startAuthoring({guid: GUID, _id: GUID, task: 'desk:1'}, 'edit'),
+        var $scope = startAuthoring({guid: GUID, _id: GUID, task: 'desk:1', _locked: true, _editable: true},
+                                    'edit'),
             headline = 'test headline';
 
         expect($scope.dirty).toBe(false);
@@ -387,7 +388,7 @@ describe('autosave', function() {
     }));
 
     it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
-        var item = {_id: 1, _etag: 'x'};
+        var item = {_id: 1, _etag: 'x', _locked: true, _editable: true};
         var edit = Object.create(item);
         edit.headline = 'test';
         spyOn(api, 'save').and.returnValue($q.when({_id: 2}));
@@ -402,8 +403,8 @@ describe('autosave', function() {
     }));
 
     it('can save multiple items', inject(function(autosave, api, $q, $timeout, $rootScope) {
-        var item1 = {_id: 1, _etag: '1'},
-            item2 = {_id: 2, _etag: '2'};
+        var item1 = {_id: 1, _etag: '1', _locked: true, _editable: true},
+            item2 = {_id: 2, _etag: '2', _locked: true, _editable: true};
         spyOn(api, 'save').and.returnValue($q.when({}));
 
         autosave.save(_.create(item1));
