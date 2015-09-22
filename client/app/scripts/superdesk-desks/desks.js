@@ -101,7 +101,9 @@
                 };
 
                 scope.edit = function(item) {
-                    superdesk.intent('edit', 'item', item);
+                    superdesk.intent('edit', 'item', item).then(null, function() {
+                        superdesk.intent('view', 'item', item);
+                    });
                 };
 
                 function queryItems(queryString) {
