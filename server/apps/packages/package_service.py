@@ -53,8 +53,7 @@ def get_item_ref(item):
         'slugline': item.get('slugline'),
         'location': 'archive',
         'itemClass': 'icls:' + item.get('type', 'text'),
-        'renditions': item.get('renditions', {}),
-        'firstcreated': item.get('firstcreated')
+        'renditions': item.get('renditions', {})
     }
 
 

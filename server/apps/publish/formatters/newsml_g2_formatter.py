@@ -103,7 +103,7 @@ class NewsMLG2Formatter(Formatter):
                                                        'xml:lang': article.get('language', 'en'),
                                                        'conformance': 'power'})
         SubElement(item, 'catalogRef',
-                   attrib={'href': 'http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml”'})
+                   attrib={'href': 'http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml'})
         self._format_rights(item, article)
         item_meta = SubElement(item, 'itemMeta')
         self._format_itemClass(article, item_meta)
@@ -136,20 +136,19 @@ class NewsMLG2Formatter(Formatter):
             self._format_creditline(article, content_meta)
         return item
 
-    def _format_content(self, article, newsItem, nitf):
+    def _format_content(self, article, news_item, nitf):
         """
         Adds the content set to the xml
-        :param article:
-        :param newsItem:
-        :param nitf:
-        :return: xml with the nitf content appended
+        :param dict article:
+        :param Element newsItem:
+        :param Element nitf:
         """
-        contentSet = SubElement(newsItem, 'contentSet')
+        content_set = SubElement(news_item, 'contentSet')
         if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
-            inline = SubElement(contentSet, 'inlineData',
-                                attrib={'contenttype': 'text/plain'}).text = article.get('body_html')
+            SubElement(content_set, 'inlineData',
+                       attrib={'contenttype': 'text/plain'}).text = article.get('body_html')
         elif article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.COMPOSITE]:
-            inline = SubElement(contentSet, 'inlineXML',
+            inline = SubElement(content_set, 'inlineXML',
                                 attrib={'contenttype': 'application/nitf+xml'})
             inline.append(nitf)
 
@@ -290,7 +289,7 @@ class NewsMLG2Formatter(Formatter):
         for category in article.get('anpa_category', []):
             subject = SubElement(content_meta, 'subject',
                                  attrib={'type': 'cpnat:abstract', 'qcode': 'cat:' + category['qcode']})
-            SubElement(subject, 'name', attrib={'xml:lang': 'en'}).text = category['name']
+            SubElement(subject, 'name', attrib={'xml:lang': 'en'}).text = category.get('name', '')
 
     def _format_slugline(self, article, content_meta):
         """

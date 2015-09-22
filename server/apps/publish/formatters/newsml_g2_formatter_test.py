@@ -21,7 +21,12 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
     article = {
         'guid': 'tag:aap.com.au:20150613:12345',
         '_current_version': 1,
-        'anpa_category': [{'qcode': 'a'}],
+        'anpa_category': [
+            {
+                'qcode': 'a',
+                'name': 'Australian General News'
+            }
+        ],
         'source': 'AAP',
         'headline': 'This is a test headline',
         'byline': 'joe',
@@ -30,7 +35,6 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
                     {'qcode': '02011002', 'name': 'extradition'}],
         'anpa_take_key': 'take_key',
         'unique_id': '1',
-        'type': 'preformatted',
         'body_html': 'The story body',
         'type': 'text',
         'word_count': '1',
@@ -57,7 +61,9 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'creditline': 'sample creditline',
         'keywords': ['traffic'],
         'abstract': 'sample abstract',
-        'place': [{'qcode': 'Australia', 'name': 'Australia'}],
+        'place': [{'qcode': 'Australia', 'name': 'Australia',
+                   'state': '', 'country': 'Australia',
+                   'world_region': 'Oceania'}],
         'embargo': embargo_ts
     }
 
@@ -481,21 +487,21 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
-            '{http://iptc.org/std/nar/2006-10-01/}located[@type="cptype:city"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}located[@qcode="loctyp:City"]/' +
             '{http://iptc.org/std/nar/2006-10-01/}name'
             ).text, 'Los Angeles')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}located/' +
-            '{http://iptc.org/std/nar/2006-10-01/}broader[@type="cptype:statprov"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}broader[@qcode="loctyp:CountryArea"]/' +
             '{http://iptc.org/std/nar/2006-10-01/}name'
             ).text, 'California')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}located/' +
-            '{http://iptc.org/std/nar/2006-10-01/}broader[@type="cptype:country"]/' +
+            '{http://iptc.org/std/nar/2006-10-01/}broader[@qcode="loctyp:Country"]/' +
             '{http://iptc.org/std/nar/2006-10-01/}name'
             ).text, 'USA')
         self.assertEqual(xml.find(
