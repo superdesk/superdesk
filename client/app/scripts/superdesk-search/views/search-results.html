@@ -30,16 +30,16 @@
         </div>
 
         <div sd-item-preview
-            data-item="selected.preview"
-            data-close="preview()"
-            data-open-lightbox="openLightbox"
-            data-open-single-item="openSingleItem"
-            ></div>
+             data-item="selected.preview"
+             data-close="preview()"
+             data-open-lightbox="openLightbox"
+             data-open-single-item="openSingleItem">
         </div>
 
-    <div class="preview-pane content-item-preview"
-        sd-send-item
-        ng-show="selected.fetch"
-        data-item="selected.fetch"
-        data-mode="{{type}}"></div>
+        <div sd-send-item 
+             class="content-item-preview"
+             data-item="selected.fetch"
+             data-mode="monitoring">
+        </div>
+    </div>
 </div>

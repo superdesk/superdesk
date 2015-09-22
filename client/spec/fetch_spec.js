@@ -56,7 +56,7 @@ describe('Fetch', function() {
 
     it('can fetch as', function() {
         workspace.openIngest();
-        content.actionOnItem('Fetch As', 0);
+        content.actionOnItem('Fetch To', 0);
         content.send();
         workspace.openContent();
         expect(content.count()).toBe(3);

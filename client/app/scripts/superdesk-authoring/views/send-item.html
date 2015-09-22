@@ -1,14 +1,14 @@
-<div class="pane-holder outer-pane" ng-class="{show: isActive}">    
+<div class="pane-holder" ng-show="isActive" ng-class="{show: isActive, 'outer-pane': mode === 'authoring'}">
     <div class="send-to-pane">
         <header>
-            <h3 translate ng-show="mode !== 'archive'">Send to / Publish</h3>
-            <h3 translate ng-show="mode === 'archive'">Duplicate</h3>
+            <h3 ng-show="mode === 'authoring'" translate>Send to / Publish</h3>
+            <h3 ng-show="mode !== 'authoring'" translate>Fetch To</h3>
             <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
         </header>
         <div class="content">
             <div class="publish-pane-box">
                 <div sd-toggle-box data-title="{{ 'Destination' | translate }}" data-open="true"
-                     ng-if="mode === 'ingest' || (mode === 'authoring' && $root.isActionAllowed(item, 'move') && itemActions.send)">
+                     ng-if="showSendButtonAndDestination()">
                     <div class="dropdown desk-select" dropdown>
                         <button class="dropdown-toggle" dropdown-toggle>
                             <span ng-show="!selectedDesk" translate>Select desk</span>
@@ -61,7 +61,7 @@
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send and continue</button>
                 </li>
-                <li ng-if="mode === 'ingest' || (mode === 'authoring' && isSendEnabled() && itemActions.send)">
+                <li ng-if="showSendButtonAndDestination()">
                     <button id="send-item-btn" class="send" ng-click="send()"
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
