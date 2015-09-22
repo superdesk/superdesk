@@ -1647,8 +1647,9 @@
                             return authoring.linkItem(scope.item, null, activeDeskId);
                         })
                         .then(function (item) {
+                            authoringWorkspace.close();
                             notify.success(gettext('New take created.'));
-                            $location.url('/authoring/' + item._id);
+                            authoringWorkspace.edit(item);
                         }, function(err) {
                             notify.error(gettext('Failed to send and continue.'));
                         });
