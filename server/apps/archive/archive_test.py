@@ -12,7 +12,7 @@
 from test_factory import SuperdeskTestCase
 from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
-from apps.archive.commands import RemoveExpiredSpikeContent
+from apps.archive.commands import RemoveExpiredSpikeContent, get_overdue_scheduled_items
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
 from datetime import timedelta
@@ -148,6 +148,18 @@ class RemoveSpikedContentTestCase(SuperdeskTestCase):
             now = date_to_str(utcnow())
             expiredItems = RemoveExpiredSpikeContent().get_expired_items(now)
             self.assertEquals(2, expiredItems.count())
+
+    def test_query_getting_overdue_scheduled_content(self):
+        with self.app.app_context():
+            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'published'}])
+            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(-10), 'state': 'scheduled'}])
+            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(0), 'state': 'spiked'}])
+            self.app.data.insert(ARCHIVE, [{'publish_schedule': get_expiry_date(10), 'state': 'scheduled'}])
+            self.app.data.insert(ARCHIVE, [{'unique_id': 97, 'state': 'spiked'}])
+
+            now = date_to_str(utcnow())
+            overdueItems = get_overdue_scheduled_items(now, 'archive')
+            self.assertEquals(1, overdueItems.count())
 
 
 class ArchiveTestCase(SuperdeskTestCase):
