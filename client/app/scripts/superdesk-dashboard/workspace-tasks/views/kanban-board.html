@@ -1,7 +1,7 @@
 <div class="board">
-	<header class="{{status}}">{{title}}</header>
+	<header class="in_progress">{{ stage.name }}</header>
 	<ul class="card-list">
-		<li ng-repeat="item in items | filter: { task: {status: status}}"
+		<li ng-repeat="item in stageItems"
 			ng-class="{selected: item === selected.preview}"
 			ng-click="preview(item)">
 			<div sd-assignee-view data-task="item.task" data-avatar-size="small"></div>

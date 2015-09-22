@@ -102,6 +102,21 @@ describe('desks service', function() {
         expect(active).toBe(desks.active);
     }));
 
+    it('can get stages for given desk', inject(function(desks, api, $q, $rootScope) {
+        spyOn(api, 'query').and.returnValue($q.when({
+            _items: [{'desk': 'foo'}, {'desk': 'bar'}],
+            _links: {}
+        }));
+
+        var stages;
+        desks.fetchDeskStages('foo').then(function(_stages) {
+            stages = _stages;
+        });
+
+        $rootScope.$apply();
+        expect(stages.length).toBe(1);
+    }));
+
     describe('getCurrentDeskId() method', function () {
         var desks;
 

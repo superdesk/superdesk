@@ -60,7 +60,7 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
 
         return api('tasks').query({
             source: {
-                size: 25,
+                size: 200,
                 sort: [{_updated: 'desc'}],
                 filter: filter
             }
@@ -83,9 +83,18 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, function() {
-        fetchTasks();
+    }, function(desk) {
+        if (desk) {
+            fetchStages();
+            fetchTasks();
+        }
     });
+
+    function fetchStages() {
+        desks.fetchDeskStages(desks.getCurrentDeskId()).then(function(stages) {
+            $scope.stages = stages;
+        });
+    }
 
     function fetchTasks() {
         $timeout.cancel(timeout);
@@ -206,14 +215,21 @@ function TaskKanbanBoardDirective() {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html',
         scope: {
             items: '=',
-            status: '@',
-            title: '@',
+            stage: '=',
             selected: '='
         },
         link: function(scope) {
             scope.preview = function(item) {
                 scope.selected.preview = item;
             };
+
+            scope.$watch('items', function(items) {
+                if (items) {
+                    scope.stageItems = items.filter(function(item) {
+                        return item.task.stage === scope.stage._id;
+                    });
+                }
+            });
         }
     };
 }
