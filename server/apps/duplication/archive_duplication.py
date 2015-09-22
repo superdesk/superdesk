@@ -13,12 +13,14 @@ from apps.tasks import send_to
 
 from superdesk import get_resource_service
 import superdesk
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
+from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.metadata.utils import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.workflow import is_workflow_state_transition_valid
 
 
 class DuplicateResource(Resource):
@@ -55,6 +57,9 @@ class DuplicateService(BaseService):
             if current_desk_of_item is None or str(current_desk_of_item) != str(doc.get('desk')):
                 raise SuperdeskApiError.preconditionFailedError(message='Duplicate is allowed within the same desk.')
 
+            if not is_workflow_state_transition_valid('duplicate', archived_doc[ITEM_STATE]):
+                raise InvalidStateTransitionError()
+
             send_to(doc=archived_doc, desk_id=doc.get('desk'))
             new_guid = archive_service.duplicate_content(archived_doc)
             guid_of_duplicated_items.append(new_guid)
@@ -73,13 +78,7 @@ class DuplicateService(BaseService):
 
 
 superdesk.workflow_action(
-    name='fetch_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published', 'scheduled'],
-    privileges=['archive']
-)
-
-superdesk.workflow_action(
-    name='fetch_as_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in_progress', 'published', 'scheduled'],
-    privileges=['archive']
+    name='duplicate',
+    exclude_states=[CONTENT_STATE.SPIKED, CONTENT_STATE.KILLED],
+    privileges=['archive', 'duplicate']
 )

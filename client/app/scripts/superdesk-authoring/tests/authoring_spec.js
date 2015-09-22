@@ -893,7 +893,7 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['view']);
         }));
 
-    it('Can only view and deschedule if the item is scheduled',
+    it('Can only view, duplicate and deschedule if the item is scheduled',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
                 '_id': 'test',
@@ -933,7 +933,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['view', 'deschedule']);
+            allowedActions(itemActions, ['view', 'duplicate', 'deschedule']);
         }));
 
     it('Can only package if the item is not a take package',

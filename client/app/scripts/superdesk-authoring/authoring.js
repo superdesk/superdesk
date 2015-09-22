@@ -528,7 +528,10 @@
                 if (!desk) {
                     action = angular.extend({}, DEFAULT_ACTIONS);
                 }
-                action.duplicate = user_privileges.duplicate && !is_read_only_state;
+
+                action.duplicate = user_privileges.duplicate &&
+                    !_.contains(['spiked', 'killed'], current_item.state) &&
+                    (angular.isUndefined(current_item.package_type) || current_item.package_type !== 'takes');
             } else {
                 // personal
                 action.copy = true;
