@@ -33,6 +33,14 @@ class NewsMLG2Formatter(Formatter):
     http://www.iptc.org/std/NewsML-G2/2.18/specification/NewsML-G2_2.18-spec-All-Power.xsd'}
 
     def format(self, article, subscriber):
+        """
+        Create article in NewsML G2 format
+        :param dict article:
+        :param dict subscriber:
+        :return [(int, str)]: return a List of tuples. A tuple consist of
+            publish sequence number and formatted article string.
+        :raises FormatterError: if the formatter fails to format an article
+        """
         try:
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             is_package = self._is_package(article)
@@ -121,6 +129,7 @@ class NewsMLG2Formatter(Formatter):
         self._format_slugline(article, content_meta)
         self._format_headline(article, content_meta)
         self._format_place(article, content_meta)
+        self._format_category(article, content_meta)
 
         if article[ITEM_TYPE] in {CONTENT_TYPE.PICTURE, CONTENT_TYPE.AUDIO, CONTENT_TYPE.VIDEO}:
             self._format_description(article, content_meta)
@@ -272,6 +281,17 @@ class NewsMLG2Formatter(Formatter):
                 genre = SubElement(content_meta, 'genre')
                 SubElement(genre, 'name', attrib={'xml:lang': 'en'}).text = g.get('name', '')
 
+    def _format_category(self, article, content_meta):
+        """
+        Appends the subject element to the contentMeta element
+        :param dict article:
+        :param Element content_meta:
+        """
+        for category in article.get('anpa_category', []):
+            subject = SubElement(content_meta, 'subject',
+                                 attrib={'type': 'cpnat:abstract', 'qcode': 'cat:' + category['qcode']})
+            SubElement(subject, 'name', attrib={'xml:lang': 'en'}).text = category['name']
+
     def _format_slugline(self, article, content_meta):
         """
         Appends the slugline element to the contentMeta element
@@ -297,14 +317,17 @@ class NewsMLG2Formatter(Formatter):
         for place in article.get('place', []):
             if place.get('country') or place.get('state') or place.get('world_region'):
                 if place.get('state'):
-                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cptype:statprov'})
+                    subject = SubElement(content_meta, 'subject',
+                                         attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
                     SubElement(subject, 'name').text = place.get('state')
-                if place.get('country'):
-                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cptype:country'})
-                    SubElement(subject, 'name').text = place.get('country')
-                if place.get('world_region'):
-                    subject = SubElement(content_meta, 'subject', attrib={'type': 'cpnat:geoArea'})
-                    SubElement(subject, 'name').text = place.get('world_region')
+                    if place.get('country'):
+                        broader = SubElement(subject, 'broader',
+                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
+                        SubElement(broader, 'name').text = place.get('country')
+                    if place.get('world_region'):
+                        broader = SubElement(subject, 'subject',
+                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:WorldArea'})
+                        SubElement(broader, 'name').text = place.get('world_region')
 
     def _format_located(self, article, content_meta):
         """
@@ -314,13 +337,16 @@ class NewsMLG2Formatter(Formatter):
         """
         located = article.get('dateline', {}).get('located', {})
         if located and located.get('city'):
-            located_elm = SubElement(content_meta, 'located', attrib={'type': 'cptype:city'})
+            located_elm = SubElement(content_meta, 'located',
+                                     attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:City'})
             SubElement(located_elm, "name").text = located.get('city')
             if located.get('state'):
-                broader = SubElement(located_elm, "broader", attrib={'type': 'cptype:statprov'})
+                broader = SubElement(located_elm, "broader",
+                                     attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
                 SubElement(broader, "name").text = located.get('state')
             if located.get('country'):
-                broader = SubElement(located_elm, "broader", attrib={'type': 'cptype:country'})
+                broader = SubElement(located_elm, "broader",
+                                     attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
                 SubElement(broader, "name").text = located.get('country')
 
         if article.get('dateline', {}).get('text', {}):
