@@ -19,7 +19,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, LAST_TAKE, \
-    ASSOCIATIONS, ITEM_REF, GROUPS, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP, ROLE, ROOT_ROLE, MAIN_ROLE, GROUP_ID
+    REFS, RESIDREF, GROUPS, ID_REF, MAIN_GROUP, SEQUENCE, ROOT_GROUP, ROLE, ROOT_ROLE, MAIN_ROLE, GROUP_ID
 from apps.archive.common import insert_into_versions
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow
@@ -37,8 +37,8 @@ def create_root_group(docs):
         if len(doc.get(GROUPS, [])):
             continue
         doc[GROUPS] = [
-            {GROUP_ID: ROOT_GROUP, ROLE: ROOT_ROLE, ASSOCIATIONS: [{ID_REF: MAIN_GROUP}]},
-            {GROUP_ID: MAIN_GROUP, ROLE: MAIN_ROLE, ASSOCIATIONS: []}
+            {GROUP_ID: ROOT_GROUP, ROLE: ROOT_ROLE, REFS: [{ID_REF: MAIN_GROUP}]},
+            {GROUP_ID: MAIN_GROUP, ROLE: MAIN_ROLE, REFS: []}
         ]
 
 
@@ -48,7 +48,7 @@ def get_item_ref(item):
     :param item: item dict
     """
     return {
-        ITEM_REF: item.get('_id'),
+        RESIDREF: item.get('_id'),
         'headline': item.get('headline'),
         'slugline': item.get('slugline'),
         'location': 'archive',
@@ -82,10 +82,10 @@ class PackageService():
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
-        to_add = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)
-                  if assoc.get(ITEM_REF) and updates.get(GROUPS)}
+        to_add = {assoc.get(RESIDREF): assoc for assoc in self._get_associations(updates)
+                  if assoc.get(RESIDREF) and updates.get(GROUPS)}
         to_remove = (assoc for assoc in self._get_associations(original)
-                     if assoc.get(ITEM_REF) not in to_add)
+                     if assoc.get(RESIDREF) not in to_add)
         for assoc in to_remove:
             self.update_link(original, assoc, delete=True)
         for assoc in to_add.keys():
@@ -120,7 +120,7 @@ class PackageService():
 
     def check_that_all_groups_are_referenced_in_root(self, root, groups):
         rest = [group.get(GROUP_ID) for group in groups if group.get(GROUP_ID) != ROOT_GROUP]
-        refs = [ref.get(ID_REF) for group in groups for ref in group.get(ASSOCIATIONS, [])
+        refs = [ref.get(ID_REF) for group in groups for ref in group.get(REFS, [])
                 if ref.get(ID_REF)]
 
         rest_counter = Counter(rest)
@@ -141,7 +141,7 @@ class PackageService():
 
     def check_package_associations(self, docs):
         for (doc, group) in ((doc, group) for doc in docs for group in doc.get(GROUPS, [])):
-            associations = group.get(ASSOCIATIONS, [])
+            associations = group.get(REFS, [])
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
                 self.extract_default_association_data(group, assoc)
@@ -157,7 +157,7 @@ class PackageService():
 
     def get_associated_item(self, assoc, throw_if_not_found=True):
         endpoint = assoc.get('location', 'archive')
-        item_id = assoc[ITEM_REF]
+        item_id = assoc[RESIDREF]
 
         if not item_id:
             raise SuperdeskApiError.badRequestError("Package contains empty ResidRef!")
@@ -165,7 +165,7 @@ class PackageService():
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
 
         if not item and throw_if_not_found:
-            message = 'Invalid item reference: ' + assoc[ITEM_REF]
+            message = 'Invalid item reference: ' + assoc[RESIDREF]
             logger.error(message)
             raise SuperdeskApiError.notFoundError(message=message)
         return item, item_id, endpoint
@@ -196,7 +196,7 @@ class PackageService():
     def check_for_duplicates(self, package, associations):
         counter = Counter()
         package_id = package[config.ID_FIELD]
-        for itemRef in [assoc[ITEM_REF] for assoc in associations if assoc.get(ITEM_REF)]:
+        for itemRef in [assoc[RESIDREF] for assoc in associations if assoc.get(RESIDREF)]:
             if itemRef == package_id:
                 message = 'Trying to self reference as an association.'
                 logger.error(message)
@@ -247,15 +247,15 @@ class PackageService():
         groups_to_be_removed = set()
         non_root_groups = [group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP]
         for non_rg in non_root_groups:
-            refs = [r for r in non_rg.get(ASSOCIATIONS, []) if r.get(ITEM_REF, '') != ref_id]
+            refs = [r for r in non_rg.get(REFS, []) if r.get(RESIDREF, '') != ref_id]
             if len(refs) == 0:
                 groups_to_be_removed.add(non_rg.get(GROUP_ID))
-            non_rg[ASSOCIATIONS] = refs
+            non_rg[REFS] = refs
 
         if len(groups_to_be_removed) > 0:
             root_group = [group for group in package.get(GROUPS, []) if group.get(GROUP_ID) == ROOT_GROUP][0]
-            refs = [r for r in root_group.get(ASSOCIATIONS, []) if r.get(ID_REF) not in groups_to_be_removed]
-            root_group[ASSOCIATIONS] = refs
+            refs = [r for r in root_group.get(REFS, []) if r.get(ID_REF) not in groups_to_be_removed]
+            root_group[REFS] = refs
             removed_groups = [group for group in package.get(GROUPS, [])
                               if group.get(GROUP_ID) not in groups_to_be_removed]
             package[GROUPS] = removed_groups
@@ -274,9 +274,9 @@ class PackageService():
         :param new_ref_id: New reference id
         """
         non_root_groups = (group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP)
-        for g in (ref for group in non_root_groups for ref in group.get(ASSOCIATIONS, [])):
-            if g.get(ITEM_REF, '') == old_ref_id:
-                g[ITEM_REF] = new_ref_id
+        for g in (ref for group in non_root_groups for ref in group.get(REFS, [])):
+            if g.get(RESIDREF, '') == old_ref_id:
+                g[RESIDREF] = new_ref_id
                 g['guid'] = new_ref_id
 
     def update_field_in_package(self, package, ref_id, field, field_value):
@@ -288,8 +288,8 @@ class PackageService():
         :param field_value: value to be used
         """
         non_root_groups = (group for group in package.get(GROUPS, []) if group.get(GROUP_ID) != ROOT_GROUP)
-        for g in (ref for group in non_root_groups for ref in group.get(ASSOCIATIONS, [])):
-            if g.get(ITEM_REF, '') == ref_id:
+        for g in (ref for group in non_root_groups for ref in group.get(REFS, [])):
+            if g.get(RESIDREF, '') == ref_id:
                 g[field] = field_value
 
     def remove_refs_in_package(self, package, ref_id_to_remove, processed_packages=None):
@@ -306,20 +306,20 @@ class PackageService():
             processed_packages = []
 
         sub_package_ids = [ref['guid'] for group in groups
-                           for ref in group[ASSOCIATIONS] if ref.get('type') == CONTENT_TYPE.COMPOSITE]
+                           for ref in group[REFS] if ref.get('type') == CONTENT_TYPE.COMPOSITE]
         for sub_package_id in sub_package_ids:
             if sub_package_id not in processed_packages:
                 sub_package = self.find_one(req=None, _id=sub_package_id)
                 return self.remove_refs_in_package(sub_package, ref_id_to_remove)
 
         new_groups = [{GROUP_ID: group[GROUP_ID], ROLE: group.get(ROLE),
-                       ASSOCIATIONS: [ref for ref in group[ASSOCIATIONS] if ref.get('guid') != ref_id_to_remove]}
+                       REFS: [ref for ref in group[REFS] if ref.get('guid') != ref_id_to_remove]}
                       for group in groups]
         new_root_refs = [{ID_REF: group[GROUP_ID]} for group in new_groups if group[GROUP_ID] != ROOT_GROUP]
 
         for group in new_groups:
             if group[GROUP_ID] == ROOT_GROUP:
-                group[ASSOCIATIONS] = new_root_refs
+                group[REFS] = new_root_refs
                 break
 
         updates = {config.LAST_UPDATED: utcnow(), GROUPS: new_groups}
@@ -336,12 +336,12 @@ class PackageService():
             else:
                 updates[SEQUENCE] = new_sequence
                 last_take_group = next(reference for reference in
-                                       next(new_group.get(ASSOCIATIONS) for new_group in new_groups if
+                                       next(new_group.get(REFS) for new_group in new_groups if
                                             new_group[GROUP_ID] == MAIN_GROUP)
                                        if reference.get(SEQUENCE) == new_sequence)
 
                 if last_take_group:
-                    updates[LAST_TAKE] = last_take_group.get(ITEM_REF)
+                    updates[LAST_TAKE] = last_take_group.get(RESIDREF)
 
         if not delete_package:
             resolve_document_version(updates, ARCHIVE, 'PATCH', package)
@@ -353,7 +353,7 @@ class PackageService():
 
     def _get_associations(self, doc):
         return [assoc for group in doc.get(GROUPS, [])
-                for assoc in group.get(ASSOCIATIONS, [])]
+                for assoc in group.get(REFS, [])]
 
     def remove_spiked_refs_from_package(self, doc_id):
         packages = self.get_packages(doc_id)
@@ -371,8 +371,8 @@ class PackageService():
         :param package:
         :return: list of residref
         """
-        return [ref.get(ITEM_REF) for group in package.get(GROUPS, [])
-                for ref in group.get(ASSOCIATIONS, []) if ITEM_REF in ref]
+        return [ref.get(RESIDREF) for group in package.get(GROUPS, [])
+                for ref in group.get(REFS, []) if RESIDREF in ref]
 
     def check_if_any_item_in_package_has_embargo(self, package):
         """

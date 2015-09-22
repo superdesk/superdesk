@@ -5,4 +5,4 @@ behave==1.2.5
 wooper==0.4.2
 
 git+git://github.com/superdesk/eve@75aa97d#egg=Eve==0.6.0-dev
--e git+git://github.com/superdesk/superdesk-core@a39803c#egg=Superdesk-Core==0.0.1-dev
+-e git+git://github.com/superdesk/superdesk-core@7676f6a#egg=Superdesk-Core==0.0.1-dev

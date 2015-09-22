@@ -18,7 +18,8 @@ from superdesk.metadata.utils import item_url
 from apps.archive.common import generate_unique_id_and_name, remove_unwanted, \
     set_original_creator, insert_into_versions, ITEM_OPERATION, item_operations
 from superdesk.metadata.utils import generate_guid
-from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import GUID_TAG, INGEST_ID, FAMILY_ID, ITEM_STATE, \
+    CONTENT_STATE, GUID_FIELD
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.resource import Resource, build_custom_hateoas
@@ -26,9 +27,9 @@ from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk import get_resource_service
+from superdesk.metadata.packages import RESIDREF, REFS, GROUPS
 
 custom_hateoas = {'self': {'title': 'Archive', 'href': '/archive/{_id}'}}
-STATE_FETCHED = 'fetched'
 ITEM_FETCH = 'fetch'
 item_operations.extend([ITEM_FETCH])
 
@@ -60,7 +61,7 @@ class FetchService(BaseService):
         id_of_fetched_items = []
 
         for doc in docs:
-            id_of_item_to_be_fetched = doc.get('_id') if id is None else id
+            id_of_item_to_be_fetched = doc.get(config.ID_FIELD) if id is None else id
 
             desk_id = doc.get('desk')
             stage_id = doc.get('stage')
@@ -84,14 +85,14 @@ class FetchService(BaseService):
             dest_doc = dict(ingest_doc)
             new_id = generate_guid(type=GUID_TAG)
             id_of_fetched_items.append(new_id)
-            dest_doc['_id'] = new_id
-            dest_doc['guid'] = new_id
+            dest_doc[config.ID_FIELD] = new_id
+            dest_doc[GUID_FIELD] = new_id
             generate_unique_id_and_name(dest_doc)
 
             dest_doc[config.VERSION] = 1
             send_to(doc=dest_doc, desk_id=desk_id, stage_id=stage_id)
             dest_doc[ITEM_STATE] = doc.get(ITEM_STATE, CONTENT_STATE.FETCHED)
-            dest_doc[INGEST_ID] = dest_doc[FAMILY_ID] = ingest_doc['_id']
+            dest_doc[INGEST_ID] = dest_doc[FAMILY_ID] = ingest_doc[config.ID_FIELD]
             dest_doc[ITEM_OPERATION] = ITEM_FETCH
 
             remove_unwanted(dest_doc)
@@ -110,25 +111,25 @@ class FetchService(BaseService):
         return id_of_fetched_items
 
     def __fetch_items_in_package(self, dest_doc, desk, stage, state):
-        for ref in [ref for group in dest_doc.get('groups', [])
-                    for ref in group.get('refs', []) if ref.get('residRef')]:
+        for ref in [ref for group in dest_doc.get(GROUPS, [])
+                    for ref in group.get(REFS, []) if ref.get(RESIDREF)]:
             ref['location'] = ARCHIVE
 
-        refs = [{'_id': ref.get('residRef'), 'desk': desk,
-                 'stage': stage, 'state': state}
-                for group in dest_doc.get('groups', [])
-                for ref in group.get('refs', []) if ref.get('residRef')]
+        refs = [{config.ID_FIELD: ref.get(RESIDREF), 'desk': desk,
+                 'stage': stage, ITEM_STATE: state}
+                for group in dest_doc.get(GROUPS, [])
+                for ref in group.get(REFS, []) if ref.get(RESIDREF)]
 
         if refs:
             new_ref_guids = self.fetch(refs, id=None, notify=False)
             count = 0
-            for ref in [ref for group in dest_doc.get('groups', [])
-                        for ref in group.get('refs', []) if ref.get('residRef')]:
-                ref['residRef'] = ref['guid'] = new_ref_guids[count]
+            for ref in [ref for group in dest_doc.get(GROUPS, [])
+                        for ref in group.get(REFS, []) if ref.get(RESIDREF)]:
+                ref[RESIDREF] = ref[GUID_FIELD] = new_ref_guids[count]
                 count += 1
 
 
-superdesk.workflow_state(STATE_FETCHED)
+superdesk.workflow_state(CONTENT_STATE.FETCHED)
 superdesk.workflow_action(
     name='fetch_from_ingest',
     include_states=['ingested'],

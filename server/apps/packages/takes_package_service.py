@@ -16,7 +16,7 @@ from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
-    LAST_TAKE, ASSOCIATIONS, MAIN_GROUP, SEQUENCE, ITEM_REF
+    LAST_TAKE, REFS, MAIN_GROUP, SEQUENCE, RESIDREF
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE, EMBARGO
 from apps.archive.common import insert_into_versions
 from .package_service import get_item_ref, create_root_group
@@ -62,12 +62,12 @@ class TakesPackageService():
             target_ref[SEQUENCE] = sequence
             takes_package[SEQUENCE] = target_ref[SEQUENCE]
             takes_package[LAST_TAKE] = target[config.ID_FIELD]
-            main_group[ASSOCIATIONS].append(target_ref)
+            main_group[REFS].append(target_ref)
 
         if link is not None:
             link_ref = get_item_ref(link)
             link_ref[SEQUENCE] = self.__next_sequence__(sequence)
-            main_group[ASSOCIATIONS].append(link_ref)
+            main_group[REFS].append(link_ref)
             takes_package[SEQUENCE] = link_ref[SEQUENCE]
             takes_package[LAST_TAKE] = link[config.ID_FIELD]
             link[SEQUENCE] = link_ref[SEQUENCE]
@@ -195,7 +195,7 @@ class TakesPackageService():
                     try:
                         ref = next(ref for ref in refs if ref.get(SEQUENCE) == sequence)
                         updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
-                        spike_service.patch(ref[ITEM_REF], updates)
+                        spike_service.patch(ref[RESIDREF], updates)
                     except InvalidStateTransitionError:
                         # for published items it will InvalidStateTransitionError
                         break
@@ -217,9 +217,9 @@ class TakesPackageService():
             refs = self._get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
-                            and ref.get(ITEM_REF, '') != item.get(config.ID_FIELD, '')), None)
+                            and ref.get(RESIDREF, '') != item.get(config.ID_FIELD, '')), None)
                 if ref:
-                    return ref.get(ITEM_REF, None)
+                    return ref.get(RESIDREF, None)
 
         return None
 
@@ -246,7 +246,7 @@ class TakesPackageService():
         """
         refs = self._get_package_refs(package)
         if refs:
-            takes = [ref.get(ITEM_REF) for ref in refs if ref.get(SEQUENCE) < sequence]
+            takes = [ref.get(RESIDREF) for ref in refs if ref.get(SEQUENCE) < sequence]
             # elastic filter for the archive resource filters out the published items
             archive_service = get_resource_service(ARCHIVE)
             query = {'query': {'filtered': {'filter': {'terms': {'_id': takes}}}}}
@@ -267,7 +267,7 @@ class TakesPackageService():
         if not refs:
             return []
 
-        takes = [ref.get(ITEM_REF) for ref in refs]
+        takes = [ref.get(RESIDREF) for ref in refs]
 
         query = {'$and':
                  [
