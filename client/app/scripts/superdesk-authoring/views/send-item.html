@@ -68,7 +68,7 @@
                 </li>
                 <li ng-if="mode === 'authoring'">
                     <button type="submit"
-                    ng-show="_editable"
+                    ng-show="_editable  && item.state !== 'draft'"
                     ng-click="_publish()"
                     translate>{{_action === "edit" ? "publish": _action}}</button>
                 </li>
