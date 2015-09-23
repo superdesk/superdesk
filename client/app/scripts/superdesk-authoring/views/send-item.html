@@ -66,7 +66,7 @@
                     ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send</button>
                 </li>
-                <li ng-if="mode === 'authoring'">
+                <li ng-if="mode === 'authoring' && (itemActions.publish || itemActions.kill || itemActions.correct)">
                     <button type="submit"
                     ng-show="_editable"
                     ng-click="_publish()"

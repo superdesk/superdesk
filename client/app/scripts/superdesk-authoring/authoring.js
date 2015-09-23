@@ -500,7 +500,7 @@
                 action.save = current_item.state !== 'spiked';
                 action.publish = !current_item.marked_for_not_publication &&
                         current_item.task && current_item.task.desk &&
-                        user_privileges.publish;
+                        user_privileges.publish && current_item.state !== 'draft';
 
                 action.edit = !(current_item.type === 'composite' && current_item.package_type === 'takes') &&
                                 current_item.state !== 'spiked' && lockedByMe;
