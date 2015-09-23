@@ -251,6 +251,7 @@
                 scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
                 scope.$on('item:unspike', queryItems);
+                scope.$on('$routeUpdate', queryItems);
 
                 scope.$on('content:update', function(event, data) {
                     if (cards.shouldUpdate(scope.group, data)) {
