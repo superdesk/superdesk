@@ -94,6 +94,7 @@
             $scope._errorUniqueness = false;
             api.save('vocabularies', $scope.vocabulary).then(onSuccess, onError);
             // discard metadata cache:
+            metadata.loaded = null;
             metadata.initialize();
         };
 
