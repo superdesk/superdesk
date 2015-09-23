@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<div sd-wizard-step data-title="{{ 'Stages' | translate }}" data-code="stages">
+		<div sd-wizard-step data-title="{{ :: 'Stages' | translate }}" data-code="stages">
 			<div sd-deskedit-stages>
 				<div class="content stages">
 					<div class="col">
@@ -54,12 +54,12 @@
 						<div class="header" translate>Work stages</div>
 						<div class="content">
 							<div class="stages-list clearfix" ng-class="{'edit-mode': editStage}">
-								<div ng-repeat="stage in stages">
+								<div ng-repeat="stage in stages track by stage._id">
 									<span ng-if="isActive(stage)" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
 									<div class="stage" ng-click="select(stage)"
 										ng-class="{active: selected === stage, editable: isActive(stage)}">
 										<span ng-if="!isActive(stage)">{{ stage.name }}
-											<label class="label globalread" ng-if="!(stage.is_visible || stage.is_visible == null)">GLOBAL READ OFF</label>
+											<label class="label globalread" ng-if="!(stage.is_visible || stage.is_visible == null)" translate>GLOBAL READ OFF</label>
 										</span>
 
 										<span ng-if="isActive(stage)">
@@ -94,23 +94,6 @@
 						</div>
 					</div>
 					<div class="col">
-						<div class="row">
-							<div class="header" translate>Statuses</div>
-							<div class="content status-list" >
-								<div ng-repeat="status in statuses">
-									<div class="status {{status._id}}" ng-click="setStatus(status)"
-										ng-class="{'active': status._id === editStage.task_status}"
-										ng-if="editStage">
-										{{ status.name }}
-									</div>
-									<div class="status active {{selected.task_status}}"
-										ng-if="!editStage && selected.task_status && selected.task_status === status._id">
-										{{ status.name }}
-									</div>
-								</div>
-							</div>
-						</div>
-
 						<div class="row" ng-if="selected && !editStage">
 							<div class="header"  translate>Stage Details</div>
 							<label translate>Global Read: <label class="label globalread">

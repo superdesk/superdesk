@@ -14,7 +14,6 @@ Feature: Stages
         """
         {
         "name": "New",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "desk_order": 1
         }
@@ -26,7 +25,6 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -41,7 +39,6 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "in_progress",
         "desk": "#desks._id#",
         "desk_order": 2
         }
@@ -60,7 +57,6 @@ Feature: Stages
         """
         {
         "name": "New",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "desk_order": 1
         }
@@ -70,7 +66,6 @@ Feature: Stages
         {
         "name": "new",
         "description": "Show content items created by the current logged user",
-        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -80,7 +75,6 @@ Feature: Stages
         {
         "name": "newer",
         "description": "Show content items created by the current logged user",
-        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -112,7 +106,7 @@ Feature: Stages
         """
         {
         "_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"},
-        "_issues": {"name": {"required": 1}, "task_status": {"required": 1}, "desk": {"required": 1}}, "_status": "ERR"
+        "_issues": {"name": {"required": 1}, "desk": {"required": 1}}, "_status": "ERR"
         }
         """
 
@@ -129,7 +123,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -138,7 +131,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "desk_order": 2
         }
@@ -147,7 +139,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -155,7 +146,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -173,7 +163,6 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -183,7 +172,6 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -213,7 +201,6 @@ Feature: Stages
         """
         {
         "name": "update expiry",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "content_expiry": 10
         }
@@ -253,7 +240,6 @@ Feature: Stages
         """
         {
         "name": "update expiry",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "content_expiry": 0
         }
@@ -327,7 +313,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -363,7 +348,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -401,7 +385,6 @@ Feature: Stages
         """
         {
         "name": "stage visibility",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "is_visible" : true
         }
@@ -432,7 +415,6 @@ Feature: Stages
         """
         {
         "name": "invisible1",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "is_visible" : false
         }
@@ -442,7 +424,6 @@ Feature: Stages
         """
         {
         "name": "invisible2",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "is_visible" : false
         }
@@ -466,7 +447,6 @@ Feature: Stages
         """
         {
         "name": "invisible1",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "is_visible" : false
         }
@@ -476,7 +456,6 @@ Feature: Stages
         """
         {
         "name": "invisible2",
-        "task_status": "todo",
         "desk": "#desks._id#",
         "is_visible" : true
         }
@@ -519,7 +498,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -566,7 +544,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
@@ -590,7 +567,6 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo",
         "desk": "#desks._id#"
         }
         """
