@@ -18,7 +18,10 @@ function Authoring() {
     this.newPlainArticleLink = element(by.id('create_text_article'));
     this.newEmptyPackageLink = element(by.id('create_package'));
     this.infoIconsBox = element(by.css('.info-icons'));
+
     this.sendToButton = element(by.id('send-to-btn'));
+    this.sendAndContinueBtn = element(by.buttonText('send and continue'));
+    this.sendBtn = element(by.buttonText('send'));
 
     this.setCategoryBtn = element(by.id('category-setting'))
         .element(by.tagName('button'));
@@ -61,7 +64,7 @@ function Authoring() {
         if (stage !== undefined) {
             sidebar.element(by.buttonText(stage)).click();
         }
-        sidebar.element(by.buttonText('send')).click();
+        this.sendBtn.click();
     };
 
     this.markAction = function() {
