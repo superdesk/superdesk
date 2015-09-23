@@ -22,7 +22,7 @@ describe('monitoring view', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
+        expect(monitoring.getTextItem(0, 2)).toBe('item6');
     });
 
     it('configure personal and show it on monitoring view', function() {
@@ -59,7 +59,7 @@ describe('monitoring view', function() {
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
+        expect(monitoring.getTextItem(0, 2)).toBe('item6');
         expect(monitoring.getTextItem(1, 0)).toBe('item1');
     });
 
@@ -97,7 +97,7 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('item1');
-        expect(monitoring.getTextItem(1, 0)).toBe('item6');
+        expect(monitoring.getTextItem(1, 2)).toBe('item6');
 
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
@@ -122,7 +122,7 @@ describe('monitoring view', function() {
         monitoring.setMaxItems(2, 1);
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 0)).toBe('package1');
-        expect(monitoring.getTextItem(1, 0)).toBe('item6');
+        expect(monitoring.getTextItem(1, 2)).toBe('item6');
         expect(monitoring.getTextItem(2, 0)).toBe('item1');
     });
 
@@ -190,7 +190,7 @@ describe('monitoring view', function() {
         monitoring.saveSettings();
 
         workspace.selectDesk('Politic Desk');
-        expect(monitoring.getTextItem(0, 0)).toBe('item6');
+        expect(monitoring.getTextItem(0, 2)).toBe('item6');
 
         workspace.selectDesk('Sports Desk');
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
@@ -277,7 +277,7 @@ describe('monitoring view', function() {
     });
 
     it('can preview content', function() {
-        monitoring.previewAction(2, 0);
+        monitoring.previewAction(2, 2);
         expect(monitoring.getPreviewTitle()).toBe('item6');
     });
 

@@ -633,6 +633,48 @@
     	}
     },
     {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "package2",
+            "type": "composite",
+            "guid": "package2",
+            "versioncreated": "NOW()",
+            "_current_version" : 1,
+            "original_creator": "-id user admin-",
+            "unique_id": 2,
+            "unique_name": "package1",
+            "groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}],
+             "task" : {
+                "desk" : "-id desk Politic Desks-",
+                "user" : "-id user admin2-",
+                "status": "in_progress",
+                "stage": "-id stage two Politic Desks-"
+            }
+        }
+    },
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "package3",
+            "type": "composite",
+            "guid": "package3",
+            "versioncreated": "NOW()",
+            "_current_version" : 1,
+            "original_creator": "-id user admin-",
+            "unique_id": 2,
+            "unique_name": "package1",
+            "groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}],
+             "task" : {
+                "desk" : "-id desk Politic Desks-",
+                "user" : "-id user admin2-",
+                "status": "in_progress",
+                "stage": "-id stage two Politic Desks-"
+            }
+        }
+    },
+    {
         "resource":"ingest_providers",
         "username": "admin",
         "data": {
