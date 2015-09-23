@@ -1227,9 +1227,6 @@
                     if ($scope.item._id === data.item && !_closing &&
                         session.sessionId !== data.lock_session) {
                         authoring.lock($scope.item, data.user);
-                        if ($scope.action !== 'view') {
-                            $location.url($scope.referrerUrl);
-                        }
                     }
                 });
 
@@ -1241,9 +1238,6 @@
                         $scope.origItem._locked = $scope.item._locked = false;
                         $scope.origItem.lock_session = $scope.item.lock_session = null;
                         $scope.origItem.lock_user = $scope.item.lock_user = null;
-                        if ($scope.action !== 'view') {
-                            $location.url($scope.referrerUrl);
-                        }
                     }
                 });
 
