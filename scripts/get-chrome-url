@@ -11,5 +11,11 @@ VERSIONS_URL = 'https://omahaproxy.appspot.com/all.json'
 payload = {'os': OS, 'channel': CHANNEL}
 r = requests.get(VERSIONS_URL, params=payload)
 build = r.json()[0]['versions'][0]['branch_base_position']
+
+if build == 'unknown':
+	# The latest passing build
+	build = '338390'
+
 print(BUILDS_URL.format(build))
 
+cd 
