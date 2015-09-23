@@ -116,7 +116,9 @@ class BasePublishService(BaseService):
             get_resource_service(ARCHIVE).validate_embargo(updated)
 
         # validate the publish schedule
-        validate_schedule(updated.get('publish_schedule'), takes_package.get(SEQUENCE, 1))
+        if self.publish_type == 'publish':
+            validate_schedule(updated.get('publish_schedule'), takes_package.get(SEQUENCE, 1))
+
         validation_errors = get_resource_service('validate').post([validate_item])
 
         if validation_errors[0]:
