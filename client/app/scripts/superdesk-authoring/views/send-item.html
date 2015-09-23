@@ -58,7 +58,7 @@
             <ul class="btn-list btn-bottom">
                 <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send">
                     <button class="send" ng-click="sendAndContinue()"
-                    ng-disabled="!selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
+                    ng-disabled="item.embargo || !selectedDesk || (mode !== 'ingest' && selectedStage._id === item.task.stage)"
                     translate>send and continue</button>
                 </li>
                 <li ng-if="showSendButtonAndDestination()">

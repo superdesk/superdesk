@@ -48,6 +48,6 @@
         "space-after-keywords": [2, "always"],
         "space-before-blocks": [2, "always"],
         "space-in-parens": [2, "never"],
-        "max-len": [2, 111, 4]
+        "max-len": [2, 120, 4]
     }
 }

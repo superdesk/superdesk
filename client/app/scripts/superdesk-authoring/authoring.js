@@ -1083,7 +1083,11 @@
                 $scope.publish = function() {
                     if (validatePublishScheduleAndEmbargo($scope.item)) {
                         if ($scope.dirty) { // save dialog & then publish if confirm
-                            var message = $scope.action ? $scope.action : 'publish';
+                            var message = 'publish';
+                            if ($scope.action && $scope.action !== 'edit') {
+                                message = $scope.action;
+                            }
+
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
                             .then(function(res) {
                                 if (res) {
@@ -1805,7 +1809,18 @@
                 function fetchStages() {
                     if (scope.selectedDesk) {
                         scope.stages = desks.deskStages[scope.selectedDesk._id];
-                        scope.selectedStage = _.find(scope.stages, {_id: scope.selectedDesk.incoming_stage});
+
+                        var stage = null;
+
+                        if (scope.item.task && scope.item.task.stage) {
+                            stage = _.find(scope.stages, {_id: scope.item.task.stage});
+                        }
+
+                        if (!stage) {
+                            stage = _.find(scope.stages, {_id: scope.selectedDesk.incoming_stage});
+                        }
+
+                        scope.selectedStage = stage;
                     }
                 }
 
