@@ -1407,8 +1407,8 @@ define([
         });
     }]);
 
-    SendService.$inject = ['desks', 'api', '$q'];
-    function SendService(desks, api, $q) {
+    SendService.$inject = ['desks', 'api', '$q', 'notify'];
+    function SendService(desks, api, $q, notify) {
         this.one = sendOne;
         this.all = sendAll;
 
@@ -1435,6 +1435,11 @@ define([
                         item.archived = archiveItem._created;
                         return archiveItem;
                     }, function(response) {
+                        var message = 'Failed to fetch the item';
+                        if (angular.isDefined(response.data._message)) {
+                            message = message + ': ' + response.data._message;
+                        }
+                        notify.error(gettext(message));
                         item.error = response;
                     })
                 ['finally'](function() {

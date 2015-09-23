@@ -22,7 +22,7 @@ from apps.packages.takes_package_service import TakesPackageService
 from apps.publish.archive_publish import ArchivePublishService, DIGITAL, WIRE
 from apps.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
-from superdesk.metadata.packages import ITEM_REF
+from superdesk.metadata.packages import RESIDREF
 from test_factory import SuperdeskTestCase
 from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
 from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME
@@ -198,13 +198,13 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                                                  'location': ARCHIVE,
                                                  'guid': '5',
                                                  ITEM_TYPE: CONTENT_TYPE.TEXT,
-                                                 ITEM_REF: '5'
+                                                 RESIDREF: '5'
                                              },
                                              {
                                                  'location': ARCHIVE,
                                                  'guid': '4',
                                                  ITEM_TYPE: CONTENT_TYPE.TEXT,
-                                                 ITEM_REF: '4'
+                                                 RESIDREF: '4'
                                              }
                                          ],
                                          'role': 'grpRole:main'}],
@@ -289,7 +289,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                           ITEM_TYPE: CONTENT_TYPE.COMPOSITE,
                           'groups': [{'id': 'root', 'refs': [{'idRef': 'main'}], 'role': 'grpRole:NEP'},
                                      {'id': 'main',
-                                      'refs': [{'location': ARCHIVE, ITEM_TYPE: CONTENT_TYPE.COMPOSITE, ITEM_REF: '6'}],
+                                      'refs': [{'location': ARCHIVE, ITEM_TYPE: CONTENT_TYPE.COMPOSITE, RESIDREF: '6'}],
                                       'role': 'grpRole:main'}],
                           'firstcreated': utcnow(),
                           'expiry': utcnow() + timedelta(minutes=20),

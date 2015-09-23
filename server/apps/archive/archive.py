@@ -42,7 +42,7 @@ from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
-from superdesk.metadata.packages import ITEM_REF, SEQUENCE
+from superdesk.metadata.packages import RESIDREF, SEQUENCE
 
 
 logger = logging.getLogger(__name__)
@@ -370,9 +370,9 @@ class ArchiveService(BaseService):
                 if groups.get('id') != 'root':
                     associations = groups.get('refs', [])
                     for assoc in associations:
-                        if assoc.get(ITEM_REF):
+                        if assoc.get(RESIDREF):
                             item, _item_id, _endpoint = self.packageService.get_associated_item(assoc)
-                            assoc[ITEM_REF] = assoc['guid'] = self.duplicate_content(item)
+                            assoc[RESIDREF] = assoc['guid'] = self.duplicate_content(item)
 
         return self._duplicate_item(original_doc)
 
