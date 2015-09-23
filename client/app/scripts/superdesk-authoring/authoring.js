@@ -1083,7 +1083,11 @@
                 $scope.publish = function() {
                     if (validatePublishScheduleAndEmbargo($scope.item)) {
                         if ($scope.dirty) { // save dialog & then publish if confirm
-                            var message = $scope.action ? $scope.action : 'publish';
+                            var message = 'publish';
+                            if ($scope.action && $scope.action !== 'edit') {
+                                message = $scope.action;
+                            }
+
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
                             .then(function(res) {
                                 if (res) {
