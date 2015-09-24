@@ -9,6 +9,9 @@
         <button class="navbtn strict" ng-click="action.createPackage()" title="{{ :: 'Create Package' | translate }}">
             <i class="big-icon-package-create"></i>
         </button>
+        <button class="navbtn strict" ng-if="isOpenItemType('composite')" ng-click="action.addToPackage()" title="{{ :: 'Add to Current Package' | translate }}">
+            <i class="big-icon-package-add"></i>
+        </button>
     </div>
     
     <div class="dropdown strict highlights-dropdown pull-right" ng-if="type === 'archive'" title="{{ :: 'Mark item' | translate }}" dropdown>
