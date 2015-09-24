@@ -50,7 +50,6 @@
         this.exit = function(item) {
             this.items = [];
             this.updateItems();
-            superdesk.intent('author', 'dashboard');
         };
 
         this.open = function () {
@@ -90,8 +89,8 @@
         }
     }
 
-    MultieditController.$inject = ['$scope', 'multiEdit'];
-    function MultieditController($scope, multiEdit) {
+    MultieditController.$inject = ['$scope', 'multiEdit', '$location', 'lock', 'workqueue'];
+    function MultieditController($scope, multiEdit, $location, lock, workqueue) {
 
         $scope.$watch(function() {
             return multiEdit.items;
@@ -103,6 +102,15 @@
 
         $scope.closeBoard = function(board) {
             multiEdit.close(board);
+        };
+
+        $scope.closeMulti = function() {
+            _.forEach(multiEdit.items, function(item) {
+                lock.unlock(_.find(workqueue.items, {_id: item.article}));
+            });
+
+            multiEdit.exit();
+            $location.url('/workspace/monitoring');
         };
     }
 

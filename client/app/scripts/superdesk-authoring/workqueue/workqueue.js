@@ -44,8 +44,8 @@ function WorkqueueService(session, api) {
     };
 }
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
-function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'authoringWorkspace', 'multiEdit', 'superdesk', 'lock', '$location'];
+function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit, superdesk, lock, $location) {
 
     $scope.active = null;
     $scope.workqueue = workqueue;
@@ -78,7 +78,15 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     };
 
     $scope.closeItem = function(item) {
-        lock.unlock(item).then(updateWorkqueue);
+        multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));
+        lock.unlock(item);
+        if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
+            authoringWorkspace.close();
+        }
+        if ($scope.isMultiedit && multiEdit.items.length == 0){
+            $scope.isMultiedit = false;
+            $location.url('/workspace/monitoring');
+        }
     };
 
     $scope.openMulti = function() {
@@ -86,12 +94,20 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     };
 
     $scope.closeMulti = function() {
+        _.forEach(multiEdit.items, function(item) {
+            lock.unlock(_.find(workqueue.items, {_id: item.article}));
+        });
+        
         multiEdit.exit();
+        if($scope.isMultiedit){
+            $scope.isMultiedit = false;
+            $location.url('/workspace/monitoring');
+        }
     };
 }
 
-WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace'];
-function WorkqueueListDirective($rootScope, authoringWorkspace) {
+WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace', '$location'];
+function WorkqueueListDirective($rootScope, authoringWorkspace, $location) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         controller: 'Workqueue',
@@ -101,6 +117,11 @@ function WorkqueueListDirective($rootScope, authoringWorkspace) {
                 if (!event.ctrlKey) {
                     scope.active = item;
                     authoringWorkspace.edit(item);
+                    if(scope.isMultiedit){
+                        scope.isMultiedit = false;
+                        $location.url('/workspace/monitoring');
+                    }
+
                     event.preventDefault();
                 }
             };
