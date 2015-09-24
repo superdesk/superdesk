@@ -145,7 +145,7 @@ class ArchiveCropService():
                                               resource='upload',
                                               metadata=metadata)
             crop['media'] = file_id
-            crop['mime_type'] = content_type
+            crop['mimetype'] = content_type
             crop['href'] = url_for_media(file_id)
             crop['CropTop'] = doc.get('CropTop', None)
             crop['CropLeft'] = doc.get('CropLeft', None)

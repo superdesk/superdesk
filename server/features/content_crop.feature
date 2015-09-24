@@ -213,7 +213,7 @@ Feature: Cropping the Image Articles
           "4-3": {
                     "CropLeft":0, "CropRight":800,
                     "CropTop":0,"CropBottom":600,
-                    "mime_type": "image/jpeg",
+                    "mimetype": "image/jpeg",
                     "href": "#rendition.4-3.href#"
                  },
           "16-9": {
@@ -221,7 +221,7 @@ Feature: Cropping the Image Articles
                     "CropRight":1280,
                     "CropTop":0,
                     "CropBottom":720,
-                    "mime_type": "image/jpeg",
+                    "mimetype": "image/jpeg",
                     "href": "#rendition.16-9.href#"
                   }
         }
@@ -250,7 +250,7 @@ Feature: Cropping the Image Articles
           "4-3": {
                     "CropLeft":10, "CropRight":810,
                     "CropTop":10,"CropBottom":610,
-                    "mime_type": "image/jpeg",
+                    "mimetype": "image/jpeg",
                     "href": "#rendition.4-3.href#"
                  },
           "16-9": {
@@ -258,7 +258,7 @@ Feature: Cropping the Image Articles
                     "CropRight":1280,
                     "CropTop":0,
                     "CropBottom":720,
-                    "mime_type": "image/jpeg",
+                    "mimetype": "image/jpeg",
                     "href": "#rendition.16-9.href#"
                   }
         }
