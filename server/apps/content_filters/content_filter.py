@@ -80,17 +80,69 @@ class ContentFilterService(BaseService):
         super().update(id, updates, original)
 
     def delete(self, lookup):
-        referenced_filters = self._get_content_filters_by_content_filter(lookup.get('_id'))
+        filter_id = lookup.get('_id')
+
+        # check if the filter is referenced by any subscribers...
+        subscribers = self._get_referencing_subscribers(filter_id)
+        if subscribers.count() > 0:
+            references = ','.join(s['name'] for s in subscribers)
+            raise SuperdeskApiError.badRequestError(
+                'Content filter has been referenced by '
+                'subscriber(s) {}'.format(references)
+            )
+
+        # check if the filter is referenced by any routing schemes...
+        schemes = self._get_referencing_routing_schemes(filter_id)
+        if schemes.count() > 0:
+            references = ','.join(s['name'] for s in schemes)
+            raise SuperdeskApiError.badRequestError(
+                'Content filter has been referenced by '
+                'routing scheme(s) {}'.format(references)
+            )
+
+        # check if the filter is referenced by any other content filters...
+        referenced_filters = self._get_content_filters_by_content_filter(filter_id)
         if referenced_filters.count() > 0:
             references = ','.join([pf['name'] for pf in referenced_filters])
             raise SuperdeskApiError.badRequestError(
                 'Content filter has been referenced in {}'.format(references))
+
         return super().delete(lookup)
 
     def _get_content_filters_by_content_filter(self, content_filter_id):
         lookup = {'content_filter.expression.pf': {'$in': [content_filter_id]}}
         content_filters = get_resource_service('content_filters').get(req=None, lookup=lookup)
         return content_filters
+
+    def _get_referencing_subscribers(self, filter_id):
+        """Fetch all subscribers from database that contain a reference to the
+        given filter.
+
+        :param str filter_id: the referenced filter's ID
+
+        :return: DB cursor over the results
+        :rtype: :py:class:`pymongo.cursor.Cursor`
+        """
+        subscribers_service = get_resource_service('subscribers')
+        subscribers = subscribers_service.get(
+            req=None,
+            lookup={'content_filter.filter_id': filter_id})
+        return subscribers
+
+    def _get_referencing_routing_schemes(self, filter_id):
+        """Fetch all routing schemes from database that contain a reference to
+        the given filter.
+
+        :param str filter_id: the referenced filter's ID
+
+        :return: DB cursor over the results
+        :rtype: :py:class:`pymongo.cursor.Cursor`
+        """
+        routing_schemes_service = get_resource_service('routing_schemes')
+        schemes = routing_schemes_service.get(
+            req=None,
+            lookup={'rules.filter': filter_id})
+        return schemes
 
     def get_content_filters_by_filter_condition(self, filter_condition_id):
         lookup = {'content_filter.expression.fc': {'$in': [filter_condition_id]}}

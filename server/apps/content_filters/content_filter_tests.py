@@ -16,6 +16,7 @@ import json
 import os
 import superdesk
 from settings import URL_PREFIX
+from superdesk.errors import SuperdeskApiError
 from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
@@ -94,7 +95,31 @@ class ContentFilterTests(SuperdeskTestCase):
             self.app.data.insert('subscribers',
                                  [{"_id": 2,
                                    "content_filter": {"filter_id": 1, "filter_type": "blocking"},
-                                   "name": "sub1"}])
+                                   "name": "sub2"}])
+
+            self.app.data.insert('routing_schemes', [
+                {
+                    "_id": 1,
+                    "name": "routing_scheme_1",
+                    "rules": [{
+                        "filter": 4,
+                        "name": "routing_rule_4",
+                        "schedule": {
+                            "day_of_week": ["MON"],
+                            "hour_of_day_from": "0000",
+                            "hour_of_day_to": "2355",
+                        },
+                        "actions": {
+                            "fetch": [],
+                            "publish": [],
+                            "exit": False
+                        }
+                    }]
+                }
+            ])
+
+
+class RetrievingDataTests(ContentFilterTests):
 
     def test_build_mongo_query_using_like_filter_single_fc(self):
         doc = {'content_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
@@ -391,3 +416,19 @@ class ContentFilterTests(SuperdeskTestCase):
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition2)) == 0)
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition3)) == 2)
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition4)) == 1)
+
+
+class DeleteMethodTestCase(ContentFilterTests):
+    """Tests for the delete() method."""
+
+    def test_raises_error_if_filter_referenced_by_subscribers(self):
+        with self.assertRaises(SuperdeskApiError) as ctx:
+            self.f.delete({'_id': 1})
+
+        self.assertEqual(ctx.exception.status_code, 400)  # bad request error
+
+    def test_raises_error_if_filter_referenced_by_routing_rules(self):
+        with self.assertRaises(SuperdeskApiError) as ctx:
+            self.f.delete({'_id': 4})
+
+        self.assertEqual(ctx.exception.status_code, 400)  # bad request error
