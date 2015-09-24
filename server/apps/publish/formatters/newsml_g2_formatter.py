@@ -46,8 +46,7 @@ class NewsMLG2Formatter(Formatter):
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
             is_package = self._is_package(article)
             self._message_attrib.update(self._debug_message_extra)
-            self.news_message = etree.Element('newsMessage', attrib=self._message_attrib)
-            news_message = self.news_message
+            news_message = etree.Element('newsMessage', attrib=self._message_attrib)
             self._format_header(article, news_message, pub_seq_num)
             item_set = self._format_item(news_message)
             if is_package:

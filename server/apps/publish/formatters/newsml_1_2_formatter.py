@@ -57,7 +57,6 @@ class NewsML12Formatter(Formatter):
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
             newsml = etree.Element("NewsML")
-            self.test_newsml = newsml
             SubElement(newsml, "Catalog", {'Href': 'http://www.iptc.org/std/catalog/catalog.IptcMasterCatalog.xml'})
             news_envelope = SubElement(newsml, "NewsEnvelope")
             news_item = SubElement(newsml, "NewsItem")
