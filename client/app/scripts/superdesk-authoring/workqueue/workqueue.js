@@ -67,8 +67,8 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
             var route = $route.current || {_id: null, params: {}};
             $scope.isMultiedit = route._id === 'multiedit';
             $scope.active = null;
-            if (route.params.edit) {
-                $scope.active = _.find(workqueue.items, {_id: route.params.edit});
+            if (route.params.item) {
+                $scope.active = _.find(workqueue.items, {_id: route.params.item});
             }
         });
     }
@@ -77,13 +77,19 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
         superdesk.intent('author', 'dashboard');
     };
 
+    /**
+     * Closes item. If item is opened, close authoring workspace.
+     * Updates multiedit items, if item is part of multiedit. 
+     * When closing last item that was in multiedit(no more items in multiedit), redirects to monitoring.
+     */
     $scope.closeItem = function(item) {
-        multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));
         lock.unlock(item);
         if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
             authoringWorkspace.close();
         }
-        if (multiEdit.items.length == 0){
+
+        multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));
+        if (multiEdit.items.length === 0){
             $scope.redirectOnCloseMulti();
         }
     };
@@ -93,15 +99,21 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
         multiEdit.open();
     };
 
+    /**
+     * Close multiedit and all items that were in multiedit.
+     */
     $scope.closeMulti = function() {
+        multiEdit.exit();
         _.forEach(multiEdit.items, function(item) {
             lock.unlock(_.find(workqueue.items, {_id: item.article}));
         });
         
-        multiEdit.exit();
         $scope.redirectOnCloseMulti();
     };
 
+    /**
+     * If multi edit screen is opened, redirect to monitoring.
+     */
     $scope.redirectOnCloseMulti = function() {
         if(this.isMultiedit){
             this.isMultiedit = false;
