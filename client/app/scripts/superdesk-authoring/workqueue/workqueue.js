@@ -90,6 +90,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
     };
 
     $scope.openMulti = function() {
+        $scope.isMultiedit = true;
         multiEdit.open();
     };
 
