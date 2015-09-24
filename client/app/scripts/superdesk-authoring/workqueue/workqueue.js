@@ -79,7 +79,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
 
     /**
      * Closes item. If item is opened, close authoring workspace.
-     * Updates multiedit items, if item is part of multiedit. 
+     * Updates multiedit items, if item is part of multiedit.
      * When closing last item that was in multiedit(no more items in multiedit), redirects to monitoring.
      */
     $scope.closeItem = function(item) {
@@ -107,7 +107,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
         _.forEach(multiEdit.items, function(item) {
             lock.unlock(_.find(workqueue.items, {_id: item.article}));
         });
-        
+
         $scope.redirectOnCloseMulti();
     };
 
@@ -115,7 +115,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
      * If multi edit screen is opened, redirect to monitoring.
      */
     $scope.redirectOnCloseMulti = function() {
-        if(this.isMultiedit){
+        if (this.isMultiedit){
             this.isMultiedit = false;
             $location.url('/workspace/monitoring');
         }
