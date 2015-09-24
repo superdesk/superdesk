@@ -2,7 +2,7 @@
     <h3 class="page-nav-title" ng-hide="multiSelectCount > 0" translate>Publish Queue</h3>
 
     <div class="multi-action-bar">
-        <button class="btn" ng-click="cancelSelection()" ng-show="multiSelectCount > 0">{{ :: 'Cancel' | translate}}</button>
+        <button class="btn" ng-click="cancelSelection(false)" ng-show="multiSelectCount > 0">{{ :: 'Cancel' | translate}}</button>
         <span id="multi-select-count"
               ng-show="multiSelectCount > 0"
               translate
