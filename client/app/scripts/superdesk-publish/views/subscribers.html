@@ -74,17 +74,17 @@
                         </div>
 
                         <div class="field">
-                            <label translate class="right">Publish Filter</label>
-                            <select class="input" ng-model="subscriber.publish_filter.filter_id">
+                            <label translate class="right">Content Filter</label>
+                            <select class="input" ng-model="subscriber.content_filter.filter_id">
                                 <option value=""></option>
-                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.publish_filter.filter_id" ng-repeat="filter in publishFilters track by filter._id">{{:: filter.name}}</option>
+                                <option value="{{filter._id}}" ng-selected="filter._id === subscriber.content_filter.filter_id" ng-repeat="filter in contentFilters track by filter._id">{{:: filter.name}}</option>
                             </select>
                         </div>
 
-                        <div class="field" ng-if="subscriber.publish_filter.filter_id">
+                        <div class="field" ng-if="subscriber.content_filter.filter_id">
                             <label translate>Publish Filter Type</label>
-                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.publish_filter.filter_type" value="permitting">Permitting</label>
-                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.publish_filter.filter_type" value="blocking">Blocking</label>
+                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.content_filter.filter_type" value="permitting">Permitting</label>
+                            <label class="inline-label" translate><input type="radio" ng-model="subscriber.content_filter.filter_type" value="blocking">Blocking</label>
                         </div>
 
                         <div class="field">

@@ -508,16 +508,16 @@ Feature: Take Package Publishing
       """
       [{"name": "sport", "field": "headline", "operator": "like", "value": "soccer"}]
       """
-      And "publish_filters"
+      And "content_filters"
       """
-      [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+      [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
       """
       When we post to "/subscribers" with "First_Wire_Subscriber" and success
       """
       [{
         "name":"Soccer Client1","media_type":"media", "subscriber_type": "wire",
         "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
         "destinations":[
             {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
           ]
@@ -528,7 +528,7 @@ Feature: Take Package Publishing
       [{
         "name":"Soccer Client Digital","media_type":"media", "subscriber_type": "digital",
         "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
         "destinations":[
             {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
           ]
@@ -617,7 +617,7 @@ Feature: Take Package Publishing
       [{
         "name":"Soccer Client2","media_type":"media", "subscriber_type": "wire",
         "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-        "publish_filter":{"filter_id":"#publish_filters._id#", "filter_type": "permitting"},
+        "content_filter":{"filter_id":"#content_filters._id#", "filter_type": "permitting"},
         "destinations":[
             {"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}
           ]
@@ -1136,15 +1136,15 @@ Feature: Take Package Publishing
         [{"field" : "anpa_category", "name" : "Overseas Sport Content", "value" : "S", "operator" : "in"}]
         """
         Then we get OK response
-        Given empty "publish_filters"
-        When we post to "/publish_filters" with "DomesticSportFilter" and success
+        Given empty "content_filters"
+        When we post to "/content_filters" with "DomesticSportFilter" and success
         """
-        [{"publish_filter": [{"expression": {"fc": ["#DomesticSport#"]}}], "name": "domestic-sport"}]
+        [{"content_filter": [{"expression": {"fc": ["#DomesticSport#"]}}], "name": "domestic-sport"}]
         """
         Then we get OK response
-        When we post to "/publish_filters" with "OverseasSportFilter" and success
+        When we post to "/content_filters" with "OverseasSportFilter" and success
         """
-        [{"publish_filter": [{"expression": {"fc": ["#OverseasSport#"]}}], "name": "overseas-sport"}]
+        [{"content_filter": [{"expression": {"fc": ["#OverseasSport#"]}}], "name": "overseas-sport"}]
         """
         Then we get OK response
         When we post to "/subscribers" with "DomesticSportSubscriber" and success
@@ -1152,7 +1152,7 @@ Feature: Take Package Publishing
         {
           "name":"DomesticSportSubscriber","media_type":"media", "subscriber_type": "digital",
           "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-          "publish_filter" : {
+          "content_filter" : {
             "filter_type" : "permitting",
             "filter_id" : "#DomesticSportFilter#"
           },
@@ -1166,7 +1166,7 @@ Feature: Take Package Publishing
         {
           "name":"OverseasSportSubscriber","media_type":"media", "subscriber_type": "digital",
           "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
-          "publish_filter" : {
+          "content_filter" : {
             "filter_type" : "permitting",
             "filter_id" : "#OverseasSportFilter#"
           },

@@ -1,5 +1,5 @@
-<div ng-controller="FilterSearchController">
-    <div class="panel-search" ng-if="filterCondition">
+<div ng-controller="FilterSearchCtrl">
+    <div class="panel-search">
         <form name="searchForm" ng-submit="search()">
         <fieldset>
             <div class="field">
@@ -27,9 +27,12 @@
         </fieldset>
         </form>
     </div>
+
     <div class="panel-search-result" ng-if="searchResult">
-        <div sd-filtersearch-result></div>
+        <div ng-include="'scripts/superdesk-content-filters/views/filter-search-result.html'"></div>
+
         <div sd-admin-pub-subscribers></div>
-        <div sd-publish-filter></div>
+
+        <div sd-manage-filters-tab></div>
     </div>
 </div>

@@ -29,11 +29,11 @@
                                 <ul class="pills-list provider-list">
                                     <li ng-repeat="subscriber in searchResult track by subscriber._id" class="clearfix">
                                         <div class="header">
-                                            <h6>{{:: publishFiltersLookup[subscriber.publish_filter.filter_id].name }}</h6>
-                                            <i>{{:: subscriber.global_filters[subscriber.publish_filter.filter_id]?'[Global]':'' }}</i>
-                                            <i>{{:: subscriber.publish_filter.filter_id != null?'':'[Global]' }}</i>
+                                            <h6>{{:: contentFiltersLookup[subscriber.content_filter.filter_id].name }}</h6>
+                                            <i>{{:: subscriber.global_filters[subscriber.content_filter.filter_id]?'[Global]':'' }}</i>
+                                            <i>{{:: subscriber.content_filter.filter_id != null?'':'[Global]' }}</i>
                                             <div class="actions">
-                                                <button ng-show="subscriber.publish_filter.filter_id != null" ng-click="editFilter(getFilter(subscriber.publish_filter.filter_id))" title="{{:: 'Edit Publish Filter' | translate }}"><i class="icon-pencil"></i></button>
+                                                <button ng-show="subscriber.content_filter.filter_id != null" ng-click="editFilter(getFilter(subscriber.content_filter.filter_id))" title="{{:: 'Edit Content Filter' | translate }}"><i class="icon-pencil"></i></button>
                                             </div>
                                         </div>
                                     </li>

@@ -412,8 +412,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
         self.assertEqual(0, queue_items.count())
 
-    def _add_publish_filters(self, subscriber, is_global=False):
-        subscriber['publish_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
+    def _add_content_filters(self, subscriber, is_global=False):
+        subscriber['content_filter'] = {'filter_id': 1, 'filter_type': 'blocking'}
         self.app.data.insert('filter_conditions',
                              [{'_id': 1,
                                'field': 'headline',
@@ -439,8 +439,8 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                                'value': '2,3,4',
                                'name': 'test-4'}])
 
-        get_resource_service('publish_filters').post([{'_id': 1, 'name': 'pf-1', 'is_global': is_global,
-                                                       'publish_filter': [{"expression": {"fc": [4, 3]}},
+        get_resource_service('content_filters').post([{'_id': 1, 'name': 'pf-1', 'is_global': is_global,
+                                                       'content_filter': [{"expression": {"fc": [4, 3]}},
                                                                           {"expression": {"fc": [1, 2]}}]
                                                        }])
 
@@ -702,23 +702,23 @@ class ArchivePublishTestCase(SuperdeskTestCase):
     def test_can_publish_article(self):
         with self.app.test_request_context(URL_PREFIX):
             subscriber = self.subscribers[0]
-            self._add_publish_filters(subscriber, is_global=False)
+            self._add_content_filters(subscriber, is_global=False)
 
             archive_publish_service = get_resource_service(ARCHIVE_PUBLISH)
-            can_it = archive_publish_service.conforms_publish_filter(subscriber, self.articles[8])
+            can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
             self.assertFalse(can_it)
-            subscriber['publish_filter']['filter_type'] = 'permitting'
+            subscriber['content_filter']['filter_type'] = 'permitting'
 
-            can_it = archive_publish_service.conforms_publish_filter(subscriber, self.articles[8])
+            can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
             self.assertTrue(can_it)
-            subscriber.pop('publish_filter')
+            subscriber.pop('content_filter')
 
     def test_can_publish_article_with_global_filters(self):
         with self.app.test_request_context(URL_PREFIX):
             subscriber = self.subscribers[0]
-            self._add_publish_filters(subscriber, is_global=True)
+            self._add_content_filters(subscriber, is_global=True)
 
-            service = get_resource_service('publish_filters')
+            service = get_resource_service('content_filters')
             req = ParsedRequest()
             req.args = {'is_global': True}
             global_filters = service.get(req=req, lookup=None)
@@ -731,7 +731,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
             can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
             self.assertTrue(can_it)
 
-            subscriber.pop('publish_filter')
+            subscriber.pop('content_filter')
 
     def test_targeted_for_excludes_digital_subscribers(self):
         with self.app.app_context():

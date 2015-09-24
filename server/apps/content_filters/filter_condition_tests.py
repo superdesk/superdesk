@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from test_factory import SuperdeskTestCase
-from apps.publish.publish_filters.filter_condition import FilterConditionService
+from apps.content_filters.filter_condition import FilterConditionService
 from eve.utils import ParsedRequest
 import json
 import superdesk
@@ -73,9 +73,9 @@ class FilterConditionTests(SuperdeskTestCase):
                                    'operator': 'in',
                                    'value': '2,5',
                                    'name': 'test-2'}])
-            self.app.data.insert('publish_filters',
+            self.app.data.insert('content_filters',
                                  [{"_id": 1,
-                                   "publish_filter": [{"expression": {"fc": [1]}}],
+                                   "content_filter": [{"expression": {"fc": [1]}}],
                                    "name": "soccer-only"}])
 
     def _setup_elastic_args(self, elastic_translation, search_type='filter'):

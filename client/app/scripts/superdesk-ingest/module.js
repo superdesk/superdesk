@@ -691,12 +691,24 @@ define([
         };
     }
 
-    IngestRoutingContent.$inject = ['api', 'gettext', 'notify', 'modal'];
-    function IngestRoutingContent(api, gettext, notify, modal) {
+    /**
+     * @memberof superdesk.ingest
+     * @ngdoc directive
+     * @name sdIngestRoutingContent
+     * @description
+     *   Creates the main page for adding or editing routing rules (in the
+     *   modal for editing ingest routing schemes).
+     */
+    IngestRoutingContent.$inject = [
+        'api', 'gettext', 'notify', 'modal', 'contentFilters'
+    ];
+    function IngestRoutingContent(api, gettext, notify, modal, contentFilters) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-content.html',
             link: function(scope) {
-                var _orig = null;
+                var filtersStartPage = 1,  // the fetch results page to start from
+                    _orig = null;
+
                 scope.editScheme = null;
                 scope.rule = null;
                 scope.ruleIndex = null;
@@ -706,6 +718,15 @@ define([
                 .query()
                 .then(function(result) {
                     scope.schemes = result._items;
+                });
+
+                scope.contentFilters = [];
+
+                contentFilters.getAllContentFilters(
+                    filtersStartPage, scope.contentFilters
+                )
+                .then(function (filters) {
+                    scope.contentFilters = filters;
                 });
 
                 function confirm(context) {
@@ -724,12 +745,16 @@ define([
 
                 scope.save = function() {
                     if (scope.rule) {
+                        // filterName was only needed to display it in the UI
+                        delete scope.rule.filterName;
+
                         if (scope.ruleIndex === -1) {
                             scope.editScheme.rules.push(scope.rule);
                         } else {
                             scope.editScheme.rules[scope.ruleIndex] = scope.rule;
                         }
                     }
+
                     scope.editScheme.rules = _.reject(scope.editScheme.rules, {name: null});
                     var _new = scope.editScheme._id ? false : true;
                     api('routing_schemes').save(_orig, scope.editScheme)
@@ -744,7 +769,7 @@ define([
                     });
                 };
 
-                scope.cancel = function() {
+                scope.cancel = function () {
                     scope.editScheme = null;
                     scope.rule = null;
                 };
@@ -776,15 +801,7 @@ define([
                 scope.addRule = function() {
                     var rule = {
                         name: null,
-                        filter: {
-                            type: [],
-                            headline: '',
-                            slugline: '',
-                            body: '',
-                            subject: [],
-                            category: [],
-                            genre: []
-                        },
+                        filter: null,
                         actions: {
                             fetch: [],
                             publish: [],
@@ -800,8 +817,22 @@ define([
                     scope.editRule(rule);
                 };
 
-                scope.editRule = function(rule) {
+                /**
+                 * Opens the given routing scheme rule for editing.
+                 *
+                 * @method editRule
+                 * @param {Object} rule - routing scheme rule's config data
+                 */
+                scope.editRule = function (rule) {
+                    var filter;
+
                     scope.rule = rule;
+
+                    filter = _.find(scope.contentFilters, {_id: rule.filter});
+                    if (filter) {
+                        // filterName needed to display it in the UI
+                        scope.rule.filterName = filter.name;
+                    }
                 };
 
                 scope.reorder = function(start, end) {
@@ -810,15 +841,6 @@ define([
             }
         };
     }
-
-    var typeLookup = {
-        text: 'Text',
-        preformatted: 'Preformatted text',
-        picture: 'Picture',
-        audio: 'Audio',
-        video: 'Video',
-        composite: 'Package'
-    };
 
     IngestRoutingGeneral.$inject = ['weekdays', 'desks', 'macros'];
     function IngestRoutingGeneral(weekdays, desks, macros) {
@@ -829,7 +851,6 @@ define([
             },
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-general.html',
             link: function(scope) {
-                scope.typeLookup = typeLookup;
                 scope.dayLookup = weekdays;
                 scope.macroLookup = {};
 
@@ -854,118 +875,104 @@ define([
         };
     }
 
-    IngestRoutingFilter.$inject = ['api', 'subjectService'];
-    function IngestRoutingFilter(api, subjectService) {
+    /**
+     * @memberof superdesk.ingest
+     * @ngdoc directive
+     * @name sdIngestRoutingFilter
+     * @description
+     *   Creates the Filter tab used for defining a content filter for routing
+     *   rules (found in the modal for editing ingest routing schemes).
+     */
+    IngestRoutingFilter.$inject = [];
+    function IngestRoutingFilter() {
+
+        /**
+         * Creates an utility method on the built-in RegExp object used for
+         * escaping arbitrary strings so that they can be safely used in
+         * dynamically created regular expressions patterns.
+         *
+         * The idea is to find all characters in the given string that have a
+         * special meaning in regex definition, and replace them with their
+         * escaped versions. For example:
+         *     '^' becomes '\\^', '*' becomes '\\*', etc.
+         *
+         * Usage example (creating a new regex pattern):
+         *
+         *     var regex = new RegExp(RegExp.escape(unsafeString));
+         *
+         * Taken from http://stackoverflow.com/a/3561711/5040035
+         *
+         * @method escape
+         * @param {string} s - the string to escape
+         * @return {string} - an escaped version of the given string
+         */
+        // XXX: should probably be moved into some utils module - but where?
+        RegExp.escape = function (s) {
+            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        };
+
         return {
-            scope: {rule: '='},
-            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-filter.html',
+            scope: {
+                rule: '=',
+                filters: '=contentFilters'
+            },
+            templateUrl: 'scripts/superdesk-ingest/views/settings' +
+                         '/ingest-routing-filter.html',
             link: function(scope) {
-                scope.typeList = [
-                    'text',
-                    'preformatted',
-                    'picture',
-                    'audio',
-                    'video',
-                    'composite'
-                ];
-                scope.typeLookup = typeLookup;
-                scope.subjects = [];
-                scope.subjectTerm = '';
-                scope.filteredSubjects = [];
+                var currFilter;
 
-                scope.categories = [];
-                scope.categoryTerm = '';
-                scope.filteredCategories = [];
+                scope.matchingFilters = [];  // used for filter search
+                scope.filterSearchTerm = null;
 
-                scope.genres = [];
-                scope.genreTerm = '';
-                scope.filteredGenres = [];
+                currFilter = _.find(scope.filters, {_id: scope.rule.filter});
+                if (currFilter) {
+                    scope.selectedFilter = currFilter;
+                } else {
+                    scope.selectedFilter = null;
+                }
 
-                subjectService
-                .initialize()
-                .then(function(subjects) {
-                    scope.subjects = subjects;
-                });
+                /**
+                 * Finds a subset of all content filters whose names contain
+                 * the given search term. The search is case-insensitive.
+                 * As a result, the matchingFilters list is updated.
+                 *
+                 * @method searchFilters
+                 * @param {string} term - the string to search for
+                 */
+                scope.searchFilters = function (term) {
+                    var regex = new RegExp(RegExp.escape(term), 'i');
 
-                api.get('vocabularies')
-                .then(function(result) {
-                    scope.categories = _.find(result._items, {_id: 'categories'}).items;
-                    scope.genres = _.find(result._items, {_id: 'genre'}).items;
-                });
-
-                scope.isTypeChecked = function(rule, type) {
-                    return rule.filter.type.indexOf(type) !== -1;
+                    scope.matchingFilters = _.filter(
+                        scope.filters,
+                        function (filter) {
+                            return regex.test(filter.name);
+                        }
+                    );
                 };
 
-                scope.toggleType = function(rule, type) {
-                    if (scope.isTypeChecked(rule, type)) {
-                        rule.filter.type = _.without(rule.filter.type, type);
-                    } else {
-                        rule.filter.type.push(type);
-                    }
+                /**
+                 * Sets the given filter as the content filter for the routing
+                 * rule.
+                 *
+                 * @method selectFilter
+                 * @param {Object} filter - the content filter to select
+                 */
+                scope.selectFilter = function (filter) {
+                    scope.selectedFilter = filter;
+                    scope.rule.filter = filter._id;
+                    scope.rule.filterName = filter.name;
+                    scope.filterSearchTerm = null;
                 };
 
-                scope.removeSubject = function(subject) {
-                    _.remove(scope.rule.filter.subject, function(s) {
-                        return s.qcode === subject.qcode;
-                    });
-                };
-
-                scope.selectSubject = function(item) {
-                    scope.rule.filter.subject.push({qcode: item.qcode, name: item.name});
-                    scope.subjectTerm = '';
-                };
-
-                scope.searchSubjects = function(term) {
-                    var regex = new RegExp(term, 'i');
-                    scope.filteredSubjects = _.filter(scope.subjects, function(subject) {
-                        return (
-                            regex.test(subject.name) &&
-                            _.findIndex(scope.rule.filter.subject, {qcode: subject.qcode}) === -1
-                        );
-                    });
-                };
-
-                scope.removeCategory = function(category) {
-                    _.remove(scope.rule.filter.category, function(c) {
-                        return c.qcode === category.qcode;
-                    });
-                };
-
-                scope.selectCategory = function(item) {
-                    scope.rule.filter.category.push({qcode: item.qcode, name: item.name});
-                    scope.categoryTerm = '';
-                };
-
-                scope.searchCategories = function(term) {
-                    var regex = new RegExp(term, 'i');
-                    scope.filteredCategories = _.filter(scope.categories, function(category) {
-                        return (
-                            regex.test(category.name) &&
-                            _.findIndex(scope.rule.filter.category, {qcode: category.qcode}) === -1
-                        );
-                    });
-                };
-
-                scope.removeGenre = function(genre) {
-                    _.remove(scope.rule.filter.genre, function(g) {
-                        return g === genre;
-                    });
-                };
-
-                scope.selectGenre = function(item) {
-                    scope.rule.filter.genre.push(item.value);
-                    scope.genreTerm = '';
-                };
-
-                scope.searchGenres = function(term) {
-                    var regex = new RegExp(term, 'i');
-                    scope.filteredGenres = _.filter(scope.genres, function(genre) {
-                        return (
-                            regex.test(genre.name) &&
-                            scope.rule.filter.genre.indexOf(genre.value) === -1
-                        );
-                    });
+                /**
+                 * Clears the routing rule's content filter.
+                 *
+                 * @method clearSelectedFilter
+                 */
+                scope.clearSelectedFilter = function () {
+                    scope.selectedFilter = null;
+                    scope.rule.filter = null;
+                    scope.rule.filterName = null;
                 };
             }
         };

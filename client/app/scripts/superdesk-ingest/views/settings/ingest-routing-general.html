@@ -13,48 +13,15 @@
                 <div class="multiple summary">
                     <div class="field">
                         <label translate>Filter</label>
-                        <div ng-show="rule.filter.headline">
-                            <span class="title" translate>Headline</span>: {{rule.filter.headline}}
+                        <div ng-show="rule.filter">
+                            <span class="title" translate>Name</span>:
+                            {{rule.filterName}}
                         </div>
-                        <div ng-show="rule.filter.slugline">
-                            <span class="title" translate>Slugline</span>: {{rule.filter.slugline}}
-                        </div>
-                        <div ng-show="rule.filter.body">
-                            <span class="title" translate>Body</span>: {{rule.filter.body}}
-                        </div>
-                        <div ng-show="rule.filter.subject">
-                            <span class="title" translate>Subjects</span>:
-                            <ul>
-                                <li ng-repeat="subject in rule.filter.subject">
-                                    - {{subject.name}}
-                                </li>
-                            </ul>
-                        </div>
-                        <div ng-show="rule.filter.category">
-                            <span class="title" translate>Categories</span>:
-                            <ul>
-                                <li ng-repeat="category in rule.filter.category">
-                                    - {{category.name}}
-                                </li>
-                            </ul>
-                        </div>
-                        <div ng-show="rule.filter.genre">
-                            <span class="title" translate>Genres</span>:
-                            <ul>
-                                <li ng-repeat="genre in rule.filter.genre">
-                                    - {{genre}}
-                                </li>
-                            </ul>
-                        </div>
-                        <div ng-show="rule.filter.type">
-                            <span class="title" translate>Item types</span>:
-                            <ul>
-                                <li ng-repeat="itemType in rule.filter.type">
-                                    - <span translate>{{typeLookup[itemType]}}</span>
-                                </li>
-                            </ul>
+                        <div ng-show="!rule.filter">
+                            <span translate>[none]</span>
                         </div>
                     </div>
+
                     <div class="field">
                         <label translate>Action</label>
                         <div ng-show="rule.actions.fetch">
@@ -79,6 +46,7 @@
                             <span ng-hide="rule.actions.exit" translate>Off</span>
                         </div>
                     </div>
+
                     <div class="field">
                         <label translate>Schedule</label>
                         <div ng-show="rule.schedule.day_of_week">

@@ -64,9 +64,9 @@ class FilterConditionResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
-    privileges = {'POST': 'publish_filters',
-                  'PATCH': 'publish_filters',
-                  'DELETE': 'publish_filters'}
+    privileges = {'POST': 'content_filters',
+                  'PATCH': 'content_filters',
+                  'DELETE': 'content_filters'}
 
 
 class FilterConditionService(BaseService):
@@ -88,9 +88,9 @@ class FilterConditionService(BaseService):
         return super().delete(lookup)
 
     def _get_referenced_filter_conditions(self, id):
-        lookup = {'publish_filter.expression.fc': [id]}
-        publish_filters = get_resource_service('publish_filters').get(req=None, lookup=lookup)
-        return publish_filters
+        lookup = {'content_filter.expression.fc': [id]}
+        content_filters = get_resource_service('content_filters').get(req=None, lookup=lookup)
+        return content_filters
 
     def _check_parameters(self, docs):
         parameters = get_resource_service('filter_condition_parameters').get(req=None, lookup=None)
@@ -308,7 +308,7 @@ class FilterConditionParametersService(BaseService):
                            {'field': 'priority',
                             'operators': ['in', 'nin'],
                             'values': values['priority'],
-                            'value_field': 'qcode'
+                            'value_field': 'value'
                             },
                            {'field': 'keywords',
                             'operators': ['in', 'nin', 'like', 'notlike', 'startswith', 'endswith']

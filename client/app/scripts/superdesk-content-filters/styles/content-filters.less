@@ -1,5 +1,5 @@
-// publish.less
-// Styling for the superdesk publish module
+// content-filters.less
+// Styling for the superdesk content filters module
 // ----------------------------------------------------------------------------------------
 
 @import 'mixins.less';
@@ -60,6 +60,57 @@ div {
     }
 }
 
+.content-filter-modal {
+    position: absolute;
+    .content {
+        .field {
+            margin-bottom: 10px;
+            textarea {
+                height: 22px;
+            }
+        }
+    }
+
+    .modal-body {
+        .filter-tags {
+            margin-bottom: 10px;
+            overflow: hidden;
+            padding: 12px;
+            .shadow-box;
+            .row {
+                width: 100%;
+                float: left;
+                padding-left: 5px;
+                li {
+                    float: left;
+                }
+                .row-50 {
+                    width: 50%;
+                    float: left;
+                    select {
+                        width: 70%;
+                    }
+                }
+                .meta-row {
+                    min-height: 200px;
+                }
+            }
+            
+        }
+        .test-row {
+            width: 100%;
+            float: left;
+            input {
+                width: 70%;
+            }
+        }
+    }
+    .preview {
+        float: left;
+        wifth: 100%;
+    }
+}
+
 .destination-box {
     margin: 0 0 12px 0;
     padding: 12px 12px 0;
@@ -104,45 +155,6 @@ div {
         max-width: 100%;
         li {
             margin: 0 5px 5px 0;
-        }
-    }
-}
-
-// Publish Queue
-.multi-action-bar {
-    #multi-select-count {
-        margin-left: 15px;
-    }
-}
-
-.subnav {
-    &.active {
-        background-color: @white;
-    }
-}
-
-.publish-queue {
-    header {
-        .sortbar {
-            margin-left: 10px;
-        }
-        .refresh-box {
-            span {
-                font-style: italic;
-                padding: 16px 0;
-                line-height: 16px;
-                margin-right: 20px;
-            }
-            button {
-                background: none;
-                border: 0;
-                padding: 15px 16px;
-                border-left: 1px solid #dfdfdf;
-                .opacity(60);
-                &:hover {
-                    .opacity(80);
-                }
-            }
         }
     }
 }

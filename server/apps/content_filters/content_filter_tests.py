@@ -9,23 +9,24 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from test_factory import SuperdeskTestCase
-from apps.publish.publish_filters.publish_filter import PublishFilterService
+from apps.content_filters.content_filter import ContentFilterService
 from apps.publish import SubscribersService
 from eve.utils import ParsedRequest
 import json
 import os
 import superdesk
 from settings import URL_PREFIX
+from superdesk.errors import SuperdeskApiError
 from apps.vocabularies.command import VocabulariesPopulateCommand
 
 
-class PublishFilterTests(SuperdeskTestCase):
+class ContentFilterTests(SuperdeskTestCase):
 
     def setUp(self):
         super().setUp()
         self.req = ParsedRequest()
         with self.app.test_request_context(URL_PREFIX):
-            self.f = PublishFilterService(datasource='publish_filters', backend=superdesk.get_backend())
+            self.f = ContentFilterService(datasource='content_filters', backend=superdesk.get_backend())
             self.s = SubscribersService(datasource='subscribers', backend=superdesk.get_backend())
 
             self.articles = [{'_id': '1', 'urgency': 1, 'headline': 'story', 'state': 'fetched'},
@@ -67,37 +68,61 @@ class PublishFilterTests(SuperdeskTestCase):
                                    'value': 'sto',
                                    'name': 'test-5'}])
 
-            self.app.data.insert('publish_filters',
+            self.app.data.insert('content_filters',
                                  [{"_id": 1,
-                                   "publish_filter": [{"expression": {"fc": [1]}}],
+                                   "content_filter": [{"expression": {"fc": [1]}}],
                                    "name": "soccer-only"}])
 
-            self.app.data.insert('publish_filters',
+            self.app.data.insert('content_filters',
                                  [{"_id": 2,
-                                   "publish_filter": [{"expression": {"fc": [4, 3]}}],
+                                   "content_filter": [{"expression": {"fc": [4, 3]}}],
                                    "name": "soccer-only2"}])
 
-            self.app.data.insert('publish_filters',
+            self.app.data.insert('content_filters',
                                  [{"_id": 3,
-                                   "publish_filter": [{"expression": {"pf": [1], "fc": [2]}}],
+                                   "content_filter": [{"expression": {"pf": [1], "fc": [2]}}],
                                    "name": "soccer-only3"}])
 
-            self.app.data.insert('publish_filters',
+            self.app.data.insert('content_filters',
                                  [{"_id": 4,
-                                   "publish_filter": [{"expression": {"fc": [3]}}, {"expression": {"fc": [5]}}],
+                                   "content_filter": [{"expression": {"fc": [3]}}, {"expression": {"fc": [5]}}],
                                    "name": "soccer-only4"}])
 
             self.app.data.insert('subscribers',
                                  [{"_id": 1,
-                                   "publish_filter": {"filter_id": 3, "filter_type": "blocking"},
+                                   "content_filter": {"filter_id": 3, "filter_type": "blocking"},
                                    "name": "sub1"}])
             self.app.data.insert('subscribers',
                                  [{"_id": 2,
-                                   "publish_filter": {"filter_id": 1, "filter_type": "blocking"},
-                                   "name": "sub1"}])
+                                   "content_filter": {"filter_id": 1, "filter_type": "blocking"},
+                                   "name": "sub2"}])
+
+            self.app.data.insert('routing_schemes', [
+                {
+                    "_id": 1,
+                    "name": "routing_scheme_1",
+                    "rules": [{
+                        "filter": 4,
+                        "name": "routing_rule_4",
+                        "schedule": {
+                            "day_of_week": ["MON"],
+                            "hour_of_day_from": "0000",
+                            "hour_of_day_to": "2355",
+                        },
+                        "actions": {
+                            "fetch": [],
+                            "publish": [],
+                            "exit": False
+                        }
+                    }]
+                }
+            ])
+
+
+class RetrievingDataTests(ContentFilterTests):
 
     def test_build_mongo_query_using_like_filter_single_fc(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -109,7 +134,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_single_pf(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -121,7 +146,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_filter_condition(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -133,7 +158,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('5' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_pf(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -145,7 +170,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('5' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_filter_condition2(self):
-        doc = {'publish_filter': [{"expression": {"fc": [3, 4]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [3, 4]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -155,7 +180,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_pf2(self):
-        doc = {'publish_filter': [{"expression": {"pf": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -165,7 +190,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_condition3(self):
-        doc = {'publish_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -175,7 +200,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_mongo_query_using_like_filter_multi_pf3(self):
-        doc = {'publish_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = self.f.build_mongo_query(doc)
             docs = superdesk.get_resource_service('archive').\
@@ -185,7 +210,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_elastic_query_using_like_filter_single_filter_condition(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -196,8 +221,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('2' in doc_ids)
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_single_publish_filter(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_single_content_filter(self):
+        doc = {'content_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -209,7 +234,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
 
     def test_build_elastic_query_using_like_filter_multi_filter_condition(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -221,8 +246,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('3' in doc_ids)
             self.assertTrue('5' in doc_ids)
 
-    def test_build_mongo_query_using_like_filter_multi_publish_filter(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+    def test_build_mongo_query_using_like_filter_multi_content_filter(self):
+        doc = {'content_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -235,7 +260,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue('5' in doc_ids)
 
     def test_build_elastic_query_using_like_filter_multi_filter_condition2(self):
-        doc = {'publish_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -244,8 +269,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_publish_filter2(self):
-        doc = {'publish_filter': [{"expression": {"fc": [4, 3]}},
+    def test_build_elastic_query_using_like_filter_multi_content_filter2(self):
+        doc = {'content_filter': [{"expression": {"fc": [4, 3]}},
                                   {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
@@ -255,8 +280,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_publish_filter3(self):
-        doc = {'publish_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_content_filter3(self):
+        doc = {'content_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [1], "fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -265,8 +290,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_publish_filter4(self):
-        doc = {'publish_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [3]}}], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_content_filter4(self):
+        doc = {'content_filter': [{"expression": {"pf": [2]}}, {"expression": {"pf": [3]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -275,8 +300,8 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_build_elastic_query_using_like_filter_multi_publish_filter4(self):
-        doc = {'publish_filter': [{"expression": {"pf": [4], "fc": [4]}}], 'name': 'pf-1'}
+    def test_build_elastic_query_using_like_filter_multi_content_filter4(self):
+        doc = {'content_filter': [{"expression": {"pf": [4], "fc": [4]}}], 'name': 'pf-1'}
         with self.app.app_context():
             query = {'query': {'filtered': {'query': self.f._get_elastic_query(doc)}}}
             self.req.args = {'source': json.dumps(query)}
@@ -284,9 +309,13 @@ class PublishFilterTests(SuperdeskTestCase):
             doc_ids = [d['_id'] for d in docs]
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
+
+    def test_does_match_returns_false_for_nonexisting_filter(self):
+        for article in self.articles:
+            self.assertFalse(self.f.does_match(None, article))
 
     def test_does_match_using_like_filter_single_fc(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertTrue(self.f.does_match(doc, self.articles[0]))
             self.assertTrue(self.f.does_match(doc, self.articles[1]))
@@ -296,7 +325,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_single_pf(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [1]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertTrue(self.f.does_match(doc, self.articles[0]))
             self.assertTrue(self.f.does_match(doc, self.articles[1]))
@@ -306,7 +335,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_fc(self):
-        doc = {'publish_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertTrue(self.f.does_match(doc, self.articles[0]))
             self.assertTrue(self.f.does_match(doc, self.articles[1]))
@@ -316,7 +345,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_pf(self):
-        doc = {'publish_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [1]}}, {"expression": {"fc": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertTrue(self.f.does_match(doc, self.articles[0]))
             self.assertTrue(self.f.does_match(doc, self.articles[1]))
@@ -326,7 +355,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_fc2(self):
-        doc = {'publish_filter': [{"expression": {"fc": [3, 4]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [3, 4]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertFalse(self.f.does_match(doc, self.articles[0]))
             self.assertFalse(self.f.does_match(doc, self.articles[1]))
@@ -336,7 +365,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_pf2(self):
-        doc = {'publish_filter': [{"expression": {"pf": [2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertFalse(self.f.does_match(doc, self.articles[0]))
             self.assertFalse(self.f.does_match(doc, self.articles[1]))
@@ -346,7 +375,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_fc3(self):
-        doc = {'publish_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"fc": [3, 4]}}, {"expression": {"fc": [1, 2]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertFalse(self.f.does_match(doc, self.articles[0]))
             self.assertFalse(self.f.does_match(doc, self.articles[1]))
@@ -356,7 +385,7 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertFalse(self.f.does_match(doc, self.articles[5]))
 
     def test_does_match_using_like_filter_multi_pf3(self):
-        doc = {'publish_filter': [{"expression": {"pf": [4], "fc": [4]}}], 'name': 'pf-1'}
+        doc = {'content_filter': [{"expression": {"pf": [4], "fc": [4]}}], 'name': 'pf-1'}
         with self.app.app_context():
             self.assertFalse(self.f.does_match(doc, self.articles[0]))
             self.assertFalse(self.f.does_match(doc, self.articles[1]))
@@ -367,14 +396,14 @@ class PublishFilterTests(SuperdeskTestCase):
 
     def test_if_pf_is_used(self):
         with self.app.app_context():
-            self.assertTrue(self.f._get_publish_filters_by_publish_filter(1).count() == 1)
-            self.assertTrue(self.f._get_publish_filters_by_publish_filter(4).count() == 0)
+            self.assertTrue(self.f._get_content_filters_by_content_filter(1).count() == 1)
+            self.assertTrue(self.f._get_content_filters_by_content_filter(4).count() == 0)
 
     def test_if_fc_is_used(self):
         with self.app.app_context():
-            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(1)) == 2)
-            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(3)) == 2)
-            self.assertTrue(len(self.f.get_publish_filters_by_filter_condition(2)) == 1)
+            self.assertTrue(len(self.f.get_content_filters_by_filter_condition(1)) == 2)
+            self.assertTrue(len(self.f.get_content_filters_by_filter_condition(3)) == 2)
+            self.assertTrue(len(self.f.get_content_filters_by_filter_condition(2)) == 1)
 
     def test_get_subscribers_by_filter_condition(self):
         filter_condition1 = {'field': 'urgency', 'operator': 'in', 'value': '2'}
@@ -391,3 +420,19 @@ class PublishFilterTests(SuperdeskTestCase):
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition2)) == 0)
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition3)) == 2)
             self.assertTrue(len(self.s._get_subscribers_by_filter_condition(filter_condition4)) == 1)
+
+
+class DeleteMethodTestCase(ContentFilterTests):
+    """Tests for the delete() method."""
+
+    def test_raises_error_if_filter_referenced_by_subscribers(self):
+        with self.assertRaises(SuperdeskApiError) as ctx:
+            self.f.delete({'_id': 1})
+
+        self.assertEqual(ctx.exception.status_code, 400)  # bad request error
+
+    def test_raises_error_if_filter_referenced_by_routing_rules(self):
+        with self.assertRaises(SuperdeskApiError) as ctx:
+            self.f.delete({'_id': 4})
+
+        self.assertEqual(ctx.exception.status_code, 400)  # bad request error

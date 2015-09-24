@@ -1,8 +1,8 @@
-Feature: Publish Filter Tests
+Feature: Content Filter Tests
 
   @auth
   @vocabulary
-  Scenario: Test existing publish filter to get matching articles
+  Scenario: Test existing content filter to get matching articles
     Given empty "archive"
     When we post to "/archive"
     """
@@ -14,14 +14,14 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
-    When we post to "/publish_filters/test"
+    When we post to "/content_filters/test"
     """
-    [{"return_matching": true, "filter_id": "#publish_filters._id#"}]
+    [{"return_matching": true, "filter_id": "#content_filters._id#"}]
     """
     Then we get existing resource
     """
@@ -32,7 +32,7 @@ Feature: Publish Filter Tests
 
   @auth
   @vocabulary
-  Scenario: Test in-memory publish filter to get matching articles
+  Scenario: Test in-memory content filter to get matching articles
     Given empty "archive"
     When we post to "/archive"
     """
@@ -44,10 +44,10 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters/test"
+    Given empty "content_filters"
+    When we post to "/content_filters/test"
     """
-    [{"return_matching": true, "filter": {"publish_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]}}]
+    [{"return_matching": true, "filter": {"content_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]}}]
     """
     Then we get existing resource
     """
@@ -58,7 +58,7 @@ Feature: Publish Filter Tests
 
   @auth
   @vocabulary
-  Scenario: Test publish filter to get non-matching articles
+  Scenario: Test content filter to get non-matching articles
     Given empty "archive"
     When we post to "/archive"
     """
@@ -70,14 +70,14 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
-    When we post to "/publish_filters/test"
+    When we post to "/content_filters/test"
     """
-    [{"return_matching": false, "filter_id": "#publish_filters._id#"}]
+    [{"return_matching": false, "filter_id": "#content_filters._id#"}]
     """
     Then we get existing resource
     """
@@ -88,7 +88,7 @@ Feature: Publish Filter Tests
 
   @auth
   @vocabulary
-  Scenario: Test in-memory publish filter to get non-matching articles
+  Scenario: Test in-memory content filter to get non-matching articles
     Given empty "archive"
     When we post to "/archive"
     """
@@ -100,10 +100,10 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters/test"
+    Given empty "content_filters"
+    When we post to "/content_filters/test"
     """
-    [{"return_matching": false, "filter": {"publish_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]}}]
+    [{"return_matching": false, "filter": {"content_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]}}]
     """
     Then we get existing resource
     """
@@ -126,14 +126,14 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters" with success
+    Given empty "content_filters"
+    When we post to "/content_filters" with success
     """
-    [{"publish_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
+    [{"content_filter": [{"expression": {"fc": ["#filter_conditions._id#"]}}], "name": "soccer-only"}]
     """
-    When we post to "/publish_filters/test"
+    When we post to "/content_filters/test"
     """
-    [{"filter_id": "#publish_filters._id#", "article_id":"#archive._id#"}]
+    [{"filter_id": "#content_filters._id#", "article_id":"#archive._id#"}]
     """
     Then we get existing resource
     """
@@ -144,7 +144,7 @@ Feature: Publish Filter Tests
 
   @auth
   @vocabulary
-  Scenario: Test in-memory publish filter to single article
+  Scenario: Test in-memory content filter to single article
     Given empty "archive"
     When we post to "/archive"
     """
@@ -156,10 +156,10 @@ Feature: Publish Filter Tests
     [{"name": "sport", "field": "urgency", "operator": "in", "value": "1,2,3"}]
     """
     Then we get latest
-    Given empty "publish_filters"
-    When we post to "/publish_filters/test"
+    Given empty "content_filters"
+    When we post to "/content_filters/test"
     """
-    [{"filter": {"publish_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]},
+    [{"filter": {"content_filter": [{"expression" : {"fc" : ["#filter_conditions._id#"]}}]},
       "article_id": "#archive._id#"}]
     """
     Then we get existing resource
