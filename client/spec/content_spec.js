@@ -228,8 +228,8 @@ describe('Content', function() {
         expect(authoring.sendAndContinueBtn.isEnabled()).toBe(false);
         expect(authoring.sendBtn.isEnabled()).toBe(false);
 
-        var sidebar = element.all(by.css('.send-to-pane')).last(),
-            dropdown = sidebar.element(by.css('.desk-select .dropdown-toggle'));
+        var sidebar = element.all(by.css('.slide-pane')).last(),
+            dropdown = sidebar.element(by.css('.dropdown--dark .dropdown-toggle'));
 
         dropdown.waitReady();
 

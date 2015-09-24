@@ -1414,8 +1414,8 @@ define([
         });
     }]);
 
-    SendService.$inject = ['desks', 'api', '$q', 'notify'];
-    function SendService(desks, api, $q, notify) {
+    SendService.$inject = ['desks', 'api', '$q', 'notify', 'authoringWorkspace'];
+    function SendService(desks, api, $q, notify, authoringWorkspace) {
         this.one = sendOne;
         this.all = sendAll;
 
@@ -1479,6 +1479,9 @@ define([
             var data = getData(config);
             return api.save('fetch', {}, data, item).then(function(archived) {
                 item.archived = archived._created;
+                if (config.open) {
+                    authoringWorkspace.edit(archived);
+                }
                 return archived;
             });
 

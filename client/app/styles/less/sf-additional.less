@@ -378,238 +378,256 @@
 // ---------------------------------------------
 
 .sd-typeahead {
-	position: relative;
-	input {
+    position: relative;
+    input {
 
-	}
-	.item-list {
-		min-width: 190px;
-		height:auto;
-		max-height: 170px;
-		overflow-y: auto;
-		overflow-x: hidden;
-		.box-sizing(border-box);
-		background: #fff;
-		border: 1px #bbb;
-		.box-shadow(0 0 3px 0 #ccc);
-		position: absolute;
-		right: -5px;
-		top:24px;
-		z-index: 1;
-		ul {
-			li {
-				padding: 5px 10px;
-				&.active {
-					background: #f0f0f0;
-				}
+    }
+    .item-list {
+        min-width: 190px;
+        height:auto;
+        max-height: 170px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        .box-sizing(border-box);
+        background: #fff;
+        border: 1px #bbb;
+        .box-shadow(0 0 3px 0 #ccc);
+        position: absolute;
+        right: -5px;
+        top:24px;
+        z-index: 1;
+        ul {
+            li {
+                padding: 5px 10px;
+                &.active {
+                    background: #f0f0f0;
+                }
 
                 .country_state_info {
-                  padding-left:  10px;
-                  font-size: 12px;
-                  font-weight: bold;
+                    padding-left:  10px;
+                    font-size: 12px;
+                    font-weight: bold;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 
 // Datepicker - wrapper for angular ui datepicker
 // ---------------------------------------------
 .datepicker-input, .timepicker-input {
-	position: relative;
-	width: auto;
-	min-width: 130px;
-	input {
-		width: 100%;
-		padding-right: 30px;
-		&.ng-invalid {
-			border-color: #b61818 !important;
-		}
-	}
-	.btn {
-		background: #fff;
-		border: 0;
-		position: absolute;
-		right: 2px; top: 2px;
-		padding: 0 5px;
-		height: 24px;
-		i {
-			margin-right: 0;
-		}
-		&:hover, &:active, &:focus {
-			.box-shadow(none);
-		}
-	}
+    position: relative;
+    width: auto;
+    min-width: 130px;
+    input {
+        width: 100%;
+        padding-right: 30px;
+        &.ng-invalid {
+            border-color: #b61818 !important;
+        }
+    }
+    .btn {
+        background: #fff;
+        border: 0;
+        position: absolute;
+        right: 2px; top: 2px;
+        padding: 0 5px;
+        height: 24px;
+        i {
+            margin-right: 0;
+        }
+        &:hover, &:active, &:focus {
+            .box-shadow(none);
+        }
+    }
+}
+
+.datepicker-input--dark, .timepicker-input--dark {
+    input {
+        background: #4f4f4f;
+        font-size: 13px;
+        line-height: 18px;
+        color: @white;
+        border: 2px solid #4f4f4f !important;
+    }
+    .btn {
+        background: #4f4f4f;
+        top: 50%;
+        margin-top: -12px;
+    }
+    .icon-calendar, .icon-time {
+        background-image: url("@{iconWhiteSpritePath}");
+    }
 }
 
 .datepicker-wrapper {
-	position: absolute;
-	top: 0; left: 0;
-	z-index: 2000;
-	background: #fff;
-	padding: 10px;
-	.box-shadow(0 0 5px 0 rgba(0,0,0,0.45));
-	.border-radius(3px);
-	width: 260px;
-	.border-box();
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 2000;
+    background: #fff;
+    padding: 10px;
+    .box-shadow(0 0 5px 0 rgba(0,0,0,0.45));
+    .border-radius(3px);
+    width: 260px;
+    .border-box();
 
-	.btn {
-		&:hover {
-			.box-shadow(none);
-		}
-	}
-	.datepicker-additional {
-		margin-bottom: 5px;
-		table {
-			width: 100%;
-		}
-		.btn {
-			width: 100%;
-		}
-	}
-	.datepicker-core {
-		table {
-			width: 100%;
+    .btn {
+        &:hover {
+            .box-shadow(none);
+        }
+    }
+    .datepicker-additional {
+        margin-bottom: 5px;
+        table {
+            width: 100%;
+        }
+        .btn {
+            width: 100%;
+        }
+    }
+    .datepicker-core {
+        table {
+            width: 100%;
 
-			thead {
-				tr {
-					th {
-						.btn {
-							background: none;
-							padding: 0;
-						}
-					}
-					&:last-child {
-						th {
-							small {
-								.text-semibold();
-							}
-						}
-					}
-					&:first-child {
-						th {
-							.btn strong {
-								font-weight: normal;
-								font-size: 14px;
-							}
-							.btn i {
-								display: inline-block;
-								width: 14px;
-								height: 14px;
-								background-image: url("@{iconSpritePath}");
-								background-repeat: no-repeat;
-							}
-							&:first-child .btn i {
-								margin-left: 3px;
-								background-position: -189px -165px;
-							}
-							&:last-child .btn i {
-								margin-right: 3px;
-								background-position: -213px -165px;
-							}
-						}
-					}
-				}
+            thead {
+                tr {
+                    th {
+                        .btn {
+                            background: none;
+                            padding: 0;
+                        }
+                    }
+                    &:last-child {
+                        th {
+                            small {
+                                .text-semibold();
+                            }
+                        }
+                    }
+                    &:first-child {
+                        th {
+                            .btn strong {
+                                font-weight: normal;
+                                font-size: 14px;
+                            }
+                            .btn i {
+                                display: inline-block;
+                                width: 14px;
+                                height: 14px;
+                                background-image: url("@{iconSpritePath}");
+                                background-repeat: no-repeat;
+                            }
+                            &:first-child .btn i {
+                                margin-left: 3px;
+                                background-position: -189px -165px;
+                            }
+                            &:last-child .btn i {
+                                margin-right: 3px;
+                                background-position: -213px -165px;
+                            }
+                        }
+                    }
+                }
 
-			}
-			tbody {
-				tr:first-child td {
-					padding-top: 5px;
-				}
-				td {
-					padding: 0 2px;
-					.btn {
-						width: 100% !important;
-						min-width: 28px !important;
-						padding: 0;
-						background: none;
-						color: #333;
-						.box-shadow(none);
-						.text-muted {
-							color: #999;
-						}
-						&:hover, &.active {
-							color: #333;
-							.box-shadow(inset 0 0 1px 0 @sd-blue);
-							background: @sd-hover;
-						}
+            }
+            tbody {
+                tr:first-child td {
+                    padding-top: 5px;
+                }
+                td {
+                    padding: 0 2px;
+                    .btn {
+                        width: 100% !important;
+                        min-width: 28px !important;
+                        padding: 0;
+                        background: none;
+                        color: #333;
+                        .box-shadow(none);
+                        .text-muted {
+                            color: #999;
+                        }
+                        &:hover, &.active {
+                            color: #333;
+                            .box-shadow(inset 0 0 1px 0 @sd-blue);
+                            background: @sd-hover;
+                        }
 
-						&.btn-info, &.btn-info.active {
-							//selected date
-							color: #fff;
-							background: @sd-blue;
-							.text-muted {
-								color: #fff;
-							}
-						}
+                        &.btn-info, &.btn-info.active {
+                            //selected date
+                            color: #fff;
+                            background: @sd-blue;
+                            .text-muted {
+                                color: #fff;
+                            }
+                        }
 
 
-					}
-				}
-			}
-		}
-	}
+                    }
+                }
+            }
+        }
+    }
 }
 
 .timepicker-popup {
-	position: absolute;
-	top: 0; left: 0;
-	z-index: 2000;
-	background: #fff;
-	padding: 10px;
-	.box-shadow(0 0 5px 0 rgba(0,0,0,0.45));
-	.border-radius(3px);
-	width: 200px;
-	height: 310px;
-	.border-box();
-	.timepicker-additional {
-		margin-bottom: 5px;
-		table {
-			width: 100%;
-		}
-		.btn {
-			width: 100%;
-		}
-	}
-	.timepicker-core {
-		.select-area {
-			margin-top: 15px;
-			border-top: 1px solid #ddd;
-			.header {
-				margin-top: -10px;
-				float: left;
-				background: @white;
-				text-transform: uppercase;
-				color: #adadad;
-				font-size: 11px;
-				padding-right: 10px;
-			}
-			ul {
-				padding-top: 15px;
-				.clearfix();
-				> li {
-					float: left;
-					.border-box();
-					width: 28px;
-					height: 28px;
-					line-height: 28px;
-					text-align: center;
-					margin: 0 2px 2px 0;
-					.user-select(none);
-					.border-radius(2px);
-					&:hover {
-						background: @sd-hover;
-						cursor: pointer;
-					}
-					&.active {
-						background: @sd-blue;
-						color: @white;
-					}
-				}
-			}
-		}
-	}
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 2000;
+    background: #fff;
+    padding: 10px;
+    .box-shadow(0 0 5px 0 rgba(0,0,0,0.45));
+    .border-radius(3px);
+    width: 200px;
+    height: 310px;
+    .border-box();
+    .timepicker-additional {
+        margin-bottom: 5px;
+        table {
+            width: 100%;
+        }
+        .btn {
+            width: 100%;
+        }
+    }
+    .timepicker-core {
+        .select-area {
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
+            .header {
+                margin-top: -10px;
+                float: left;
+                background: @white;
+                text-transform: uppercase;
+                color: #adadad;
+                font-size: 11px;
+                padding-right: 10px;
+            }
+            ul {
+                padding-top: 15px;
+                .clearfix();
+                > li {
+                    float: left;
+                    .border-box();
+                    width: 28px;
+                    height: 28px;
+                    line-height: 28px;
+                    text-align: center;
+                    margin: 0 2px 2px 0;
+                    .user-select(none);
+                    .border-radius(2px);
+                    &:hover {
+                        background: @sd-hover;
+                        cursor: pointer;
+                    }
+                    &.active {
+                        background: @sd-blue;
+                        color: @white;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /*
@@ -1573,75 +1591,54 @@ header .sortbar {
 // ---------------------------------------------
 
 .toggle-box {
-	margin-bottom: 30px;
-	position: relative;
+    position: relative;
+    margin-bottom: 30px;
 
-	> header {
-		.user-select(none);
-		position: relative;
-		margin-bottom: 10px;
-		&:before {
-			content: " ";
-			position: absolute;
-			border-bottom: 1px solid #dcdcdc;
-			height: 1px;
-			top:9px;
-			left:0;
-			right: 0px;
-		}
-		.chevron {
-			padding: 2px;
-			background-color: @tabpane-background;
-			position: relative;
-			bottom: 2px;
-			i {
-				.transition(all 0.2s ease);
-				.rotate(90deg);
-			}
-		}
-		h6 {
-			background: @tabpane-background;
-			padding: 0 5px;
-			font-size: 11px;
-			text-transform: uppercase;
-			color: #666;
-			position: relative;
-			display: inline-block;
-		}
-		&:hover {
-			cursor: pointer;
-		}
+    > .toggle-box__header {
+        display: flex;
+        cursor: pointer;
+        margin-bottom: 10px;
 
-	}
-
-	> .toggle-content {
-		.clearfix();
-		.checklist-selection li {
-				font-weight: normal;
-		}
-	}
-
-	&.hidden {
-		> header .chevron i {
-			.rotate(0);
-		}
-	}
-
-	&.pane {
-		> header {
-			text-align: center;
-		}
-		.chevron i {
-			.rotate(-90deg);
-
-		}
-		&.hidden {
-			> header .chevron i {
-				.rotate(90deg);
-			}
-		}
-	}
-
+        .toggle-box__chevron {
+            padding: 2px;
+            i {
+                .transition(all .3s);
+                .rotate(90deg);
+            }
+        }
+        .toggle-box__label {
+            font-size: 11px;
+            line-height: 27px;
+            padding: 0 10px 0 5px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .toggle-box__line {
+            flex: 1;
+            height: 1px;
+            margin: auto 4px auto 0;
+            background: #dcdcdc;
+        }
+    }
+    &.hidden {
+        .toggle-box__chevron {
+            i {
+                .rotate(0);
+            }
+        }
+    }
+    // Stylings
+    &.toggle-box--dark {
+        .toggle-box__chevron {
+            i { background-image: url("@{iconWhiteSpritePath}"); }
+        }
+        .toggle-box__label {
+            color: @white;
+        }
+        .toggle-box__line {
+            background: #4f4f4f;
+        }
+    }
 }
 
 
