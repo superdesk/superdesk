@@ -519,7 +519,7 @@
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
                 !current_item.embargo && current_item.package_type !== 'takes' && current_item.state !== 'killed';
 
-            action.multi_edit = _.contains(['text', 'preformatted'], item.type) && !is_read_only_state;
+            action.multi_edit = !is_read_only_state;
 
             //check for desk membership for edit rights.
             if (current_item.task && current_item.task.desk) {
