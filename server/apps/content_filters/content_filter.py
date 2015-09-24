@@ -231,6 +231,9 @@ class ContentFilterService(BaseService):
         return {'bool': expressions}
 
     def does_match(self, content_filter, article):
+        if not content_filter:
+            return False  # a non-existing filter does not match anything
+
         filter_condition_service = get_resource_service('filter_conditions')
         expressions = []
         for expression in content_filter.get('content_filter', []):
