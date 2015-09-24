@@ -127,9 +127,32 @@ function Monitoring() {
         ).perform();
     };
 
+    /**
+     * Perform the 'action' operation on the
+     * 'item' element from 'group'
+     *
+     * @param {string} action
+     * @param {number} group
+     * @param {number} item
+     */
     this.actionOnItem = function(action, group, item) {
         var menu = this.openItemMenu(group, item);
-        return menu.element(by.partialLinkText(action)).click();
+        menu.element(by.partialLinkText(action)).click();
+    };
+
+    /**
+     * Perform 'submenu' operation on the 'action' menu from
+     * 'item' element from 'group'
+     *
+     * @param {string} action
+     * @param {string} submenu
+     * @param {number} group
+     * @param {number} item
+     */
+    this.actionOnItemSubmenu = function(action, submenu, group, item) {
+        var menu = this.openItemMenu(group, item);
+        browser.actions().mouseMove(menu.element(by.partialLinkText(action))).perform();
+        menu.element(by.css('[option="' + submenu + '"]')).click();
     };
 
     this.selectItem = function(group, item) {
@@ -347,5 +370,12 @@ function Monitoring() {
     this.fetchAs = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
         return element(by.id('send-item-btn')).click();
+    };
+
+    /**
+     * Create a package and include selected items
+     */
+    this.createPackageFromItems = function() {
+        element(by.css('[ng-click="action.createPackage()"]')).click();
     };
 }

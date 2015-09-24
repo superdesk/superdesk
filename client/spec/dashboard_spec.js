@@ -32,9 +32,9 @@ describe('dashboard', function() {
         expect(dashboard.getGroups(0).count()).toBe(4);
 
         expect(dashboard.getTextItem(0, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(0, 2, 0)).toBe('item6');
+        expect(dashboard.getTextItem(0, 2, 2)).toBe('item6');
         expect(dashboard.getTextItem(1, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(1, 2, 0)).toBe('item6');
+        expect(dashboard.getTextItem(1, 2, 2)).toBe('item6');
 
         dashboard.showMonitoringSettings(0);
         monitoring.toggleDesk(0);
@@ -48,7 +48,7 @@ describe('dashboard', function() {
         expect(dashboard.getTextItem(0, 0, 0)).toBe('item3');
         expect(dashboard.getTextItem(0, 1, 0)).toBe('item4');
         expect(dashboard.getTextItem(1, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(1, 2, 0)).toBe('item6');
+        expect(dashboard.getTextItem(1, 2, 2)).toBe('item6');
     });
 
     it('configure a label for the view', function() {

@@ -244,6 +244,11 @@
             getPackageItems();
         }, true);
 
+        /**
+         * Add a content item to a given group
+         * @param {Object} group
+         * @param {Object} item
+         */
         $scope.addItemToGroup = function(group, item) {
             packages.addItemsToPackage($scope.item, group, [item]);
             $scope.autosave($scope.item);
