@@ -398,20 +398,20 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         'abstract': 'test video',
         'slugline': 'test video',
         'byline': 'test video',
-        'subject': [ 
+        'subject': [
             {
                 'qcode': '01001000',
                 'name': 'archaeology',
                 'parent': '01000000'
             }
         ],
-        'place': [ 
+        'place': [
             {
                 'qcode': 'ACT',
                 'name': 'ACT'
             }
         ],
-        'anpa_category': [ 
+        'anpa_category': [
             {
                 'qcode': 'a',
                 'name': 'Australian General News'
@@ -668,22 +668,19 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}located[@qcode="loctyp:City"]/' +
-            '{http://iptc.org/std/nar/2006-10-01/}name'
-            ).text, 'Los Angeles')
+            '{http://iptc.org/std/nar/2006-10-01/}name').text, 'Los Angeles')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}located/' +
             '{http://iptc.org/std/nar/2006-10-01/}broader[@qcode="loctyp:CountryArea"]/' +
-            '{http://iptc.org/std/nar/2006-10-01/}name'
-            ).text, 'California')
+            '{http://iptc.org/std/nar/2006-10-01/}name').text, 'California')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentMeta/' +
             '{http://iptc.org/std/nar/2006-10-01/}located/' +
             '{http://iptc.org/std/nar/2006-10-01/}broader[@qcode="loctyp:Country"]/' +
-            '{http://iptc.org/std/nar/2006-10-01/}name'
-            ).text, 'USA')
+            '{http://iptc.org/std/nar/2006-10-01/}name').text, 'USA')
         self.assertEqual(xml.find(
             '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}newsItem/' +
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/{http://iptc.org/std/nar/2006-10-01/}inlineXML/' +

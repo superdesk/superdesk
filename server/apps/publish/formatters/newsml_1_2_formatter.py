@@ -18,8 +18,7 @@ from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO, ITEM_STATE, CONTENT_STATE
-from superdesk.metadata.packages import PACKAGE_TYPE, GROUPS, GROUP_ID, REFS, RESIDREF, ROLE, ROOT_GROUP
-from apps.archive.common import ARCHIVE
+from superdesk.metadata.packages import PACKAGE_TYPE, GROUP_ID, REFS, RESIDREF, ROLE, ROOT_GROUP
 from superdesk.utc import utcnow
 from settings import NEWSML_PROVIDER_ID
 
