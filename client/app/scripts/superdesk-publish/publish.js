@@ -195,7 +195,7 @@
             api.publish_queue.save([], queueItems).then(
                 function(response) {
                     $scope.reload();
-                    $scope.cancelSelection();
+                    $scope.cancelSelection(false);
                 },
                 function(response) {
                     if (angular.isDefined(response.data._issues)) {
@@ -262,8 +262,11 @@
             $scope.multiSelectCount = $scope.selectedQueueItems.length;
         };
 
-        $scope.cancelSelection = function() {
-            $scope.selectedFilterSubscriber = null;
+        $scope.cancelSelection = function(resetSubscribersFilter) {
+            if (angular.isUndefined(resetSubscribersFilter) || _.isNull(resetSubscribersFilter) || resetSubscribersFilter) {
+                $scope.selectedFilterSubscriber = null;
+            }
+
             $scope.selectedQueueItems = [];
             $scope.multiSelectCount = 0;
             $scope.filterSchedule();
