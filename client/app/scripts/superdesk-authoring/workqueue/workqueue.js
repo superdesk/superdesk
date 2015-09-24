@@ -83,9 +83,8 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
         if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
             authoringWorkspace.close();
         }
-        if ($scope.isMultiedit && multiEdit.items.length == 0){
-            $scope.isMultiedit = false;
-            $location.url('/workspace/monitoring');
+        if (multiEdit.items.length == 0){
+            $scope.redirectOnCloseMulti();
         }
     };
 
@@ -100,8 +99,12 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
         });
         
         multiEdit.exit();
-        if($scope.isMultiedit){
-            $scope.isMultiedit = false;
+        $scope.redirectOnCloseMulti();
+    };
+
+    $scope.redirectOnCloseMulti = function() {
+        if(this.isMultiedit){
+            this.isMultiedit = false;
             $location.url('/workspace/monitoring');
         }
     };
@@ -118,10 +121,7 @@ function WorkqueueListDirective($rootScope, authoringWorkspace, $location) {
                 if (!event.ctrlKey) {
                     scope.active = item;
                     authoringWorkspace.edit(item);
-                    if(scope.isMultiedit){
-                        scope.isMultiedit = false;
-                        $location.url('/workspace/monitoring');
-                    }
+                    scope.redirectOnCloseMulti();
 
                     event.preventDefault();
                 }
