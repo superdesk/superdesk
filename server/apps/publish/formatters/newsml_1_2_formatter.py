@@ -18,7 +18,8 @@ from apps.publish.formatters import Formatter
 import superdesk
 from superdesk.errors import FormatterError
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO, ITEM_STATE, CONTENT_STATE
-from superdesk.metadata.packages import PACKAGE_TYPE
+from superdesk.metadata.packages import PACKAGE_TYPE, GROUPS, GROUP_ID, REFS, RESIDREF, ROLE, ROOT_GROUP
+from apps.archive.common import ARCHIVE
 from superdesk.utc import utcnow
 from settings import NEWSML_PROVIDER_ID
 
@@ -56,6 +57,7 @@ class NewsML12Formatter(Formatter):
             pub_seq_num = superdesk.get_resource_service('subscribers').generate_sequence_number(subscriber)
 
             newsml = etree.Element("NewsML")
+            self.test_newsml = newsml
             SubElement(newsml, "Catalog", {'Href': 'http://www.iptc.org/std/catalog/catalog.IptcMasterCatalog.xml'})
             news_envelope = SubElement(newsml, "NewsEnvelope")
             news_item = SubElement(newsml, "NewsItem")
@@ -95,8 +97,8 @@ class NewsML12Formatter(Formatter):
         SubElement(news_identifier, 'NewsItemId').text = article[config.ID_FIELD]
         SubElement(news_identifier, 'RevisionId', attrib=revision).text = str(article.get(config.VERSION, ''))
         SubElement(news_identifier, 'PublicIdentifier').text = \
-            self._generate_public_identifier(article[config.ID_FIELD],
-                                             article.get(config.VERSION, ''), revision.get('Update', ''))
+            self._generate_public_identifier(article[config.ID_FIELD], article.get(config.VERSION, ''),
+                                             revision.get('Update', ''))
         SubElement(identification, "DateLabel").text = self.now.strftime("%A %d %B %Y")
 
     def _generate_public_identifier(self, item_id, version, update):
@@ -116,7 +118,7 @@ class NewsML12Formatter(Formatter):
         :return: dict
         """
         revision = {'PreviousRevision': '0', 'Update': 'N'}
-        if article[ITEM_STATE] in {CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED}:
+        if article.get(ITEM_STATE) in {CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED}:
             revision['PreviousRevision'] = str(article.get(config.VERSION) - 1)
         return revision
 
@@ -163,7 +165,7 @@ class NewsML12Formatter(Formatter):
         self._format_descriptive_metadata(article, main_news_component)
         if article.get(ITEM_TYPE) == CONTENT_TYPE.COMPOSITE and article.get(PACKAGE_TYPE, '') == '':
             self._format_package(article, main_news_component)
-        if article.get(ITEM_TYPE) in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE}:
+        elif article.get(ITEM_TYPE) in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED, CONTENT_TYPE.COMPOSITE}:
             self._format_abstract(article, main_news_component)
             self._format_body(article, main_news_component)
         elif article.get(ITEM_TYPE) in {CONTENT_TYPE.VIDEO, CONTENT_TYPE.AUDIO, CONTENT_TYPE.PICTURE}:
@@ -185,7 +187,6 @@ class NewsML12Formatter(Formatter):
         SubElement(news_lines, 'CreditLine').text = article.get('original_source', article.get('source', ''))
         if article.get('slugline', ''):
             SubElement(news_lines, 'KeywordLine').text = article.get('slugline', '')
-        self._format_dateline(article, news_lines)
         # TODO: may be we need to create our own catalog for the NewsLineType
         if article.get('ednote'):
             news_line = SubElement(news_lines, 'NewsLine')
@@ -232,8 +233,6 @@ class NewsML12Formatter(Formatter):
             for category in article.get('anpa_category', []):
                 SubElement(descriptive_metadata, 'Property',
                            {'FormalName': 'Category', 'Value': category['qcode']})
-        else:
-            raise Exception('anpa category is missing')
 
         self._format_dateline(article, descriptive_metadata)
         self._format_place(article, descriptive_metadata)
@@ -327,7 +326,7 @@ class NewsML12Formatter(Formatter):
             content_item = SubElement(news_component, "ContentItem",
                                       attrib={'Href': value.get('href', '')})
             SubElement(content_item, 'MediaType', {'FormalName': media_type})
-            SubElement(content_item, 'Format', {'FormalName': value.get('mimetype', value.get('mime_type'))})
+            SubElement(content_item, 'Format', {'FormalName': value.get('mimetype', '')})
             characteristics = SubElement(content_item, 'Characteristics')
             if rendition == 'original' and 'filemeta' in article and 'length' in article['filemeta']:
                 SubElement(characteristics, 'SizeInBytes').text = str(article.get('filemeta').get('length'))
@@ -355,26 +354,21 @@ class NewsML12Formatter(Formatter):
 
     def _format_package(self, article, main_news_component):
         """
-        Constructs the
+        Constructs the NewsItemRef for packages.
         :param dict article:
         :param Element main_news_component:
         """
         news_component = SubElement(main_news_component, 'NewsComponent')
         SubElement(news_component, 'Role', {'FormalName': 'root'})
-        for group in [group for group in article.get('groups', []) if group.get('id') != 'root']:
+        for group in [group for group in article.get('groups', []) if group.get(GROUP_ID) != ROOT_GROUP]:
             sub_news_component = SubElement(news_component, 'NewsComponent')
-            SubElement(sub_news_component, 'Role', attrib={'FormalName': group.get('id', '')})
-            for ref in group.get('refs', []):
-                if 'residRef' in ref:
-                    # get the current archive item being referred to
-                    archive_item = superdesk.get_resource_service('archive').find_one(req=None,
-                                                                                      _id=ref.get('residRef'))
-                    if archive_item:
-                        revision = self._process_revision(article)
-                        item_ref = self._generate_public_identifier(ref.get('residRef'),
-                                                                    ref.get(config.VERSION),
-                                                                    revision.get('Update', ''))
-                        SubElement(sub_news_component, 'NewsItemRef', attrib={'NewsItem': item_ref})
+            SubElement(sub_news_component, 'Role', attrib={'FormalName': group.get(ROLE, '')})
+            for ref in group.get(REFS, []):
+                if RESIDREF in ref:
+                    revision = self._process_revision({})
+                    item_ref = self._generate_public_identifier(ref.get(RESIDREF), ref.get(config.VERSION),
+                                                                revision.get('Update', ''))
+                    SubElement(sub_news_component, 'NewsItemRef', attrib={'NewsItem': item_ref})
 
     def _get_total_duration(self, duration):
         """

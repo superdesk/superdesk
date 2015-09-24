@@ -18,7 +18,8 @@ import superdesk
 from superdesk.errors import FormatterError
 from settings import NEWSML_PROVIDER_ID
 from apps.publish.formatters.nitf_formatter import NITFFormatter
-from superdesk.metadata.packages import PACKAGE_TYPE
+from apps.archive.common import ARCHIVE
+from superdesk.metadata.packages import PACKAGE_TYPE, REFS, RESIDREF, ROLE, GROUPS, GROUP_ID, ID_REF
 
 
 class NewsMLG2Formatter(Formatter):
@@ -375,21 +376,22 @@ class NewsMLG2Formatter(Formatter):
         :return: groupSet appended to the item
         """
         groupSet = SubElement(item, 'groupSet', attrib={'root': 'root'})
-        for group in article.get('groups', []):
-            group_Elem = SubElement(groupSet, 'group', attrib={'id': group.get('id'), 'role': group.get('role')})
-            for ref in group.get('refs', {}):
-                if 'idRef' in ref:
-                    SubElement(group_Elem, 'groupRef', attrib={'idref': ref.get('idRef')})
+        for group in article.get(GROUPS, []):
+            group_Elem = SubElement(groupSet, 'group', attrib={'id': group.get(GROUP_ID),
+                                                               'role': group.get(ROLE)})
+            for ref in group.get(REFS, []):
+                if ID_REF in ref:
+                    SubElement(group_Elem, 'groupRef', attrib={'idref': ref.get(ID_REF)})
                 else:
-                    if 'residRef' in ref:
+                    if RESIDREF in ref:
                         # get the current archive item being refered to
-                        archive_item = superdesk.get_resource_service('archive').find_one(req=None,
-                                                                                          _id=ref.get('residRef'))
+                        archive_item = superdesk.get_resource_service(ARCHIVE).find_one(req=None,
+                                                                                        _id=ref.get(RESIDREF))
                         if archive_item:
                             itemRef = SubElement(group_Elem, 'itemRef',
-                                                 attrib={'residref': ref.get('guid'),
+                                                 attrib={'residref': ref.get(RESIDREF),
                                                          'contenttype': 'application/vnd.iptc.g2.newsitem+xml'})
-                            SubElement(itemRef, 'itemClass', attrib={'qcode': 'ninat:' + ref.get('type', 'text')})
+                            SubElement(itemRef, 'itemClass', attrib={'qcode': 'ninat:' + ref.get(ITEM_TYPE, 'text')})
                             self._format_pubstatus(archive_item, itemRef)
                             self._format_headline(archive_item, itemRef)
                             self._format_slugline(archive_item, itemRef)
@@ -404,7 +406,7 @@ class NewsMLG2Formatter(Formatter):
         content_set = SubElement(item, 'contentSet')
         for rendition, value in article.get('renditions', {}).items():
             attrib = {'href': value.get('href'),
-                      'contenttype': value.get('mimetype', value.get('mime_type', '')),
+                      'contenttype': value.get('mimetype', ''),
                       'rendition': 'rendition:' + rendition
                       }
             if article.get(ITEM_TYPE) == CONTENT_TYPE.PICTURE:

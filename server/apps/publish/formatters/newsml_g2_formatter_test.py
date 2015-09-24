@@ -419,6 +419,186 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         ]
     }
 
+    picture_text_package = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police',
+                        '_current_version': 4
+                    },
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
+    picture_text_package_multi_group = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {'idRef': 'main'}, {'idRef': 'picture'}
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            },
+            {
+                'refs': [
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'picture',
+                'role': 'grpRole:picture'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
     packaged_articles = [{'_id': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
                           'headline': 'package article headline',
                           'slugline': 'slugline',
@@ -548,6 +728,11 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
             'slugline')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
+            '{http://iptc.org/std/nar/2006-10-01/}itemRef').get('residref'),
+            'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b')
 
     def testPicturePackagePublish(self):
         article = dict(self.picture_package)
@@ -563,6 +748,11 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
             '{http://iptc.org/std/nar/2006-10-01/}itemRef/{http://iptc.org/std/nar/2006-10-01/}slugline').text,
             'slugline')
+        self.assertEqual(xml.find(
+            '{http://iptc.org/std/nar/2006-10-01/}itemSet/{http://iptc.org/std/nar/2006-10-01/}packageItem/' +
+            '{http://iptc.org/std/nar/2006-10-01/}groupSet/{http://iptc.org/std/nar/2006-10-01/}group/' +
+            '{http://iptc.org/std/nar/2006-10-01/}itemRef').get('residref'),
+            'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037')
 
     def testPicturePublish(self):
         article = dict(self.picture)
@@ -628,3 +818,54 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
             '{http://iptc.org/std/nar/2006-10-01/}contentSet/' +
             '{http://iptc.org/std/nar/2006-10-01/}remoteContent[@rendition="rendition:original"]').get('contenttype'),
             'video/mp4')
+
+    def testPictureTextPackage(self):
+        article = dict(self.picture_text_package)
+        article['firstcreated'] = self.now
+        article['versioncreated'] = self.now
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        item_refs = xml.findall('.//{http://iptc.org/std/nar/2006-10-01/}itemRef')
+        self.assertEqual(len(item_refs), 2)
+        self.assertEqual(item_refs[0].get('residref'), 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b')
+        self.assertEqual(item_refs[0].find('{http://iptc.org/std/nar/2006-10-01/}itemClass').get('qcode'),
+                         'ninat:text')
+        self.assertEqual(item_refs[0].find('{http://iptc.org/std/nar/2006-10-01/}pubStatus').get('qcode'),
+                         'stat:usable')
+        self.assertEqual(item_refs[1].get('residref'), 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037')
+        self.assertEqual(item_refs[1].find('{http://iptc.org/std/nar/2006-10-01/}itemClass').get('qcode'),
+                         'ninat:picture')
+        self.assertEqual(item_refs[1].find('{http://iptc.org/std/nar/2006-10-01/}pubStatus').get('qcode'),
+                         'stat:usable')
+
+    def testPictureTextPackageMultiGroup(self):
+        article = dict(self.picture_text_package_multi_group)
+        article['firstcreated'] = self.now
+        article['versioncreated'] = self.now
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        item_refs = xml.findall('.//{http://iptc.org/std/nar/2006-10-01/}itemRef')
+        self.assertEqual(len(item_refs), 2)
+        self.assertEqual(item_refs[0].get('residref'), 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b')
+        self.assertEqual(item_refs[0].find('{http://iptc.org/std/nar/2006-10-01/}itemClass').get('qcode'),
+                         'ninat:text')
+        self.assertEqual(item_refs[0].find('{http://iptc.org/std/nar/2006-10-01/}pubStatus').get('qcode'),
+                         'stat:usable')
+        self.assertEqual(item_refs[1].get('residref'), 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037')
+        self.assertEqual(item_refs[1].find('{http://iptc.org/std/nar/2006-10-01/}itemClass').get('qcode'),
+                         'ninat:picture')
+        self.assertEqual(item_refs[1].find('{http://iptc.org/std/nar/2006-10-01/}pubStatus').get('qcode'),
+                         'stat:usable')
+        groups = xml.findall('.//{http://iptc.org/std/nar/2006-10-01/}group')
+        self.assertEqual(len(groups), 3)
+        self.assertEqual(groups[0].get('id'), 'root')
+        self.assertEqual(groups[0].get('role'), 'grpRole:NEP')
+        self.assertEqual(groups[1].get('id'), 'main')
+        self.assertEqual(groups[1].get('role'), 'grpRole:main')
+        self.assertEqual(groups[2].get('id'), 'picture')
+        self.assertEqual(groups[2].get('role'), 'grpRole:picture')
+
+        group_ref = xml.findall('.//{http://iptc.org/std/nar/2006-10-01/}groupRef')
+        self.assertEqual(len(group_ref), 2)
+        self.assertEqual(group_ref[0].get('idref'), 'main')
+        self.assertEqual(group_ref[1].get('idref'), 'picture')

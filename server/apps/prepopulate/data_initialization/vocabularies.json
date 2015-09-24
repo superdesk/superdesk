@@ -196,7 +196,7 @@
                 "state": "Northern Territory",
                 "country": "Australia", "world_region": "Oceania"},
             {"is_active": true, "name": "NZ", "qcode": "NZ",
-                "state": "", "country": "New Zealand", "world_region": "Ocenia"},
+                "state": "", "country": "New Zealand", "world_region": "Oceania"},
             {"is_active": true, "name": "PAC", "qcode": "PAC",
                 "state": "", "country": "", "world_region": "Pacific Island Nations"},
             {"is_active": true, "name": "QLD", "qcode": "QLD",

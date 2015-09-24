@@ -14,8 +14,6 @@ from test_factory import SuperdeskTestCase
 from apps.publish.formatters.newsml_1_2_formatter import NewsML12Formatter
 import xml.etree.ElementTree as etree
 import datetime
-from nose.tools import assert_raises
-from superdesk.errors import FormatterError
 from apps.publish import init_app
 
 
@@ -308,17 +306,356 @@ class Newsml12FormatterTest(SuperdeskTestCase):
                                               'copyrightNotice': 'default copy right notice',
                                               'usageTerms': 'default terms'}]}]
 
+    package = {
+        '_id': 'urn:newsml:localhost:2015-08-12T11:59:58.457029:7e90d257-92f6-406d-9186-95653b211701',
+        'type': 'composite',
+        '_current_version': 1,
+        'groups': [
+            {
+                'role': 'grpRole:NEP',
+                'id': 'root',
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ]
+            },
+            {
+                'role': 'grpRole:main',
+                'id': 'main',
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police',
+                        '_current_version': 4
+                    }
+                ]
+            }
+        ],
+        'pubstatus': 'usable',
+        'state': 'published',
+        'marked_for_not_publication': False,
+        'guid': 'urn:newsml:localhost:2015-08-12T11:59:58.457029:7e90d257-92f6-406d-9186-95653b211701',
+        'dateline': {
+            'located': {
+                'alt_name': '',
+                'state': 'California',
+                'city_code': 'Los Angeles',
+                'city': 'Los Angeles',
+                'dateline': 'city',
+                'country_code': 'US',
+                'country': 'USA',
+                'tz': 'America/Los_Angeles',
+                'state_code': 'CA'
+            },
+            'date': '2015-08-12T01:59:58.000Z',
+            'source': 'AAP',
+            'text': 'Los Angeles, Aug 11 AAP -'
+        },
+        'language': 'en',
+        'headline': 'Cop sacked over student shooting',
+        'source': 'AAP',
+        'slugline': 'US Police',
+        'anpa_category': [
+            {
+                'name': 'International News',
+                'qcode': 'I'
+            }
+        ],
+        'subject': [
+            {
+                'name': 'police',
+                'parent': '02000000',
+                'qcode': '02003000'
+            }
+        ]
+    }
+
+    picture_package = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
+    picture_text_package = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {
+                        'idRef': 'main'
+                    }
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police',
+                        '_current_version': 4
+                    },
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
+    picture_text_package_multi_group = {
+        '_id': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'guid': 'urn:newsml:localhost:2015-08-13T14:07:59.846466:c659e21b-1ea2-48b7-9b35-e971ae9d1e6e',
+        'language': 'en',
+        'pubstatus': 'usable',
+        'groups': [
+            {
+                'refs': [
+                    {'idRef': 'main'}, {'idRef': 'picture'}
+                ],
+                'id': 'root',
+                'role': 'grpRole:NEP'
+            },
+            {
+                'refs': [
+                    {
+                        'type': 'text',
+                        'renditions': {},
+                        'itemClass': 'icls:text',
+                        'guid': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'residRef': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                        'location': 'archive',
+                        'headline': 'US:US cop sacked over student shooting',
+                        'slugline': 'US Police',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'main',
+                'role': 'grpRole:main'
+            },
+            {
+                'refs': [
+                    {
+                        'guid': '20150813001165688150',
+                        'headline': 'Prison Riot',
+                        'residRef': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                        'location': 'archive',
+                        'type': 'picture',
+                        'slugline': 'Prison Riot',
+                        'renditions': {
+                            'baseImage': {
+                                'height': 1400,
+                                'mimetype': 'image/jpeg',
+                                'width': 1120,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650a/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650a'
+                            },
+                            'thumbnail': {
+                                'height': 120,
+                                'mimetype': 'image/jpeg',
+                                'width': 96,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650c/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650c'
+                            },
+                            'viewImage': {
+                                'height': 640,
+                                'mimetype': 'image/jpeg',
+                                'width': 512,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b650e/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b650e'
+                            },
+                            'original': {
+                                'height': 800,
+                                'mimetype': 'image/jpeg',
+                                'width': 640,
+                                'href': 'http://localhost:5000/api/upload/55cc03731d41c8cea12b6508/raw?_schema=http',
+                                'media': '55cc03731d41c8cea12b6508'
+                            }
+                        },
+                        'itemClass': 'icls:picture',
+                        '_current_version': 4
+                    }
+                ],
+                'id': 'picture',
+                'role': 'grpRole:picture'
+            }
+        ],
+        'type': 'composite',
+        'state': 'published',
+        'slugline': 'Prison Riot',
+        'description': 'This Jan. 21, 2015 photo is of something)',
+        'source': 'AAP',
+        'headline': 'Prison Riot',
+        '_current_version': 1,
+        'dateline': {
+            'date': '2015-08-13T04:07:59.000Z',
+            'source': 'AAP'
+        },
+        'marked_for_not_publication': False,
+        'sign_off': 'mar',
+    }
+
+    packaged_articles = [{'_id': 'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b',
+                          'headline': 'package article headline',
+                          'slugline': 'slugline',
+                          '_current_version': 4,
+                          'state': 'published',
+                          'pubStatus': 'usable'},
+                         {'_id': 'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037',
+                          'headline': 'package article headline',
+                          'slugline': 'slugline',
+                          '_current_version': 4,
+                          'state': 'published',
+                          'pubStatus': 'usable'}]
+
     now = datetime.datetime(2015, 6, 13, 11, 45, 19, 0)
 
     def setUp(self):
         super().setUp()
         self.article['state'] = 'published'
-        self.article['firstcreated'] = self.now
-        self.article['versioncreated'] = self.now
-        self.picture['firstcreated'] = self.now
-        self.picture['versioncreated'] = self.now
-        self.video['firstcreated'] = self.now
-        self.video['versioncreated'] = self.now
+        self._setup_dates([self.article, self.video, self.picture,
+                           self.package, self.picture_package,
+                           self.preformatted, self.picture_text_package,
+                           self.picture_text_package_multi_group])
         self.newsml = etree.Element("NewsML")
         self.formatter = NewsML12Formatter()
         self.formatter.now = self.now
@@ -326,12 +663,12 @@ class Newsml12FormatterTest(SuperdeskTestCase):
         with self.app.app_context():
             init_app(self.app)
             self.app.data.insert('vocabularies', self.vocab)
+            self.app.data.insert('archive', self.packaged_articles)
 
-    def test_newsml_formatter_raises_error(self):
-        with assert_raises(FormatterError):
-            doc = self.article.copy()
-            doc.pop('anpa_category', None)
-            self.formatter.format(doc, {'name': 'Test Subscriber'})
+    def _setup_dates(self, item_list):
+        for item in item_list:
+            item['firstcreated'] = self.now
+            item['versioncreated'] = self.now
 
     def test_format_news_envelope(self):
         self.formatter._format_news_envelope(self.article, self.newsml, 7)
@@ -490,3 +827,57 @@ class Newsml12FormatterTest(SuperdeskTestCase):
                              str(doc.get('filemeta', {}).get('height')))
             self.assertEqual(content_item.find('Characteristics/Property[@FormalName="TotalDuration"]').get('Value'),
                              '10')
+
+    def test_format_package(self):
+        doc = self.package.copy()
+        seq, xml_str = self.formatter.format(doc, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(xml_str)
+        self.assertEqual(xml.find('.//Role[@FormalName="root"]/../NewsComponent/Role').get('FormalName'),
+                         'grpRole:main')
+        self.assertEqual(xml.find('.//Role[@FormalName="root"]/../NewsComponent/NewsItemRef').get('NewsItem'),
+                         'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b:4N')
+
+    def test_format_picture_package(self):
+        doc = self.picture_package.copy()
+        seq, xml_str = self.formatter.format(doc, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(xml_str)
+        self.assertEqual(xml.find('.//Role[@FormalName="root"]/../NewsComponent/Role').get('FormalName'),
+                         'grpRole:main')
+        self.assertEqual(xml.find('.//Role[@FormalName="root"]/../NewsComponent/NewsItemRef').get('NewsItem'),
+                         'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037:4N')
+
+    def test_format_picture_text_package(self):
+        doc = self.picture_text_package.copy()
+        seq, xml_str = self.formatter.format(doc, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(xml_str)
+        news_component = xml.find('.//Role[@FormalName="root"]/../NewsComponent')
+        self.assertEqual(news_component.find('Role').get('FormalName'), 'grpRole:main')
+        news_item_refs = news_component.findall('NewsItemRef')
+        self.assertEqual(news_item_refs[0].get('NewsItem'),
+                         'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b:4N')
+        self.assertEqual(news_item_refs[1].get('NewsItem'),
+                         'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037:4N')
+
+    def test_format_picture_text_package(self):
+        doc = self.picture_text_package.copy()
+        seq, xml_str = self.formatter.format(doc, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(xml_str)
+        news_component = xml.find('.//Role[@FormalName="root"]/../NewsComponent')
+        self.assertEqual(news_component.find('Role').get('FormalName'), 'grpRole:main')
+        news_item_refs = news_component.findall('NewsItemRef')
+        self.assertEqual(news_item_refs[0].get('NewsItem'),
+                         'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b:4N')
+        self.assertEqual(news_item_refs[1].get('NewsItem'),
+                         'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037:4N')
+
+    def test_format_picture_text_package(self):
+        doc = self.picture_text_package_multi_group.copy()
+        seq, xml_str = self.formatter.format(doc, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(xml_str)
+        news_components = xml.findall('.//Role[@FormalName="root"]/../NewsComponent')
+        self.assertEqual(news_components[0].find('Role').get('FormalName'), 'grpRole:main')
+        self.assertEqual(news_components[0].find('NewsItemRef').get('NewsItem'),
+                         'tag:localhost:2015:5838657b-b3ec-4e5a-9b39-36039e16400b:4N')
+        self.assertEqual(news_components[1].find('Role').get('FormalName'), 'grpRole:picture')
+        self.assertEqual(news_components[1].find('NewsItemRef').get('NewsItem'),
+                         'tag:localhost:2015:0c12aa0a-82ef-4c58-a363-c5bd8a368037:4N')
