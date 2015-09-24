@@ -694,7 +694,7 @@
             .activity('packageitem', {
                 label: gettext('Create package'),
                 priority: 50,
-                icon: 'package-plus',
+                icon: 'package-create',
                 controller: ['data', 'packages', 'authoringWorkspace', 'notify', 'gettext',
                 function(data, packages, authoringWorkspace, notify, gettext) {
                     packages.createPackageFromItems([data.item])
@@ -734,7 +734,7 @@
             })
             .activity('combineinpackage', {
                 label: gettext('Combine with current'),
-                priority: 5,
+                priority: 49,
                 icon: 'package-plus',
                 controller: ['data', 'packages', 'authoringWorkspace', 'notify', 'gettext',
                 function(data, packages, authoringWorkspace, notify, gettext) {

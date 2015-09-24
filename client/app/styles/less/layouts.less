@@ -718,6 +718,9 @@ a:hover {
             color: rgba(0,0,0,.5);
             letter-spacing: 0.04em;
             margin-bottom: 4px;
+            &.with-value {
+            	margin-bottom: 0;
+            }
             .label {
                 float: right;
                 box-sizing: border-box;
@@ -732,6 +735,14 @@ a:hover {
                 letter-spacing: .06em;
                 font-weight: 400;
             }
+            .value-label {
+            	float: right;
+            	font-size: 13px;
+            	color: #333;
+            	font-weight: 400;
+            	text-transform: none;
+            	letter-spacing: 0em;
+            }
         }
 
     }
@@ -745,6 +756,16 @@ a:hover {
             &:last-child {
                 border: none;
             }
+        }
+        .creation-time {
+        	display: block;
+        	font-size: 12px;
+        	color: #999;
+        	i {
+        		display: inline-block;
+        		opacity: 0.5;
+        		margin-top: -2px;
+        	}
         }
         .button__view-all {
             border-bottom: 1px dotted #5598B4;
