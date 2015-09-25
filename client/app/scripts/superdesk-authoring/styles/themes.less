@@ -191,6 +191,31 @@ body, html {
 
 	.field {
 		margin-bottom: 10px;
+
+	  	.dateline {
+		  	display: flex;
+		  	input, select, option {
+			  	color: #333 !important;
+                font-size: 16px;
+                font-weight: 300 !important;
+                text-transform: uppercase;
+			}
+
+            select {
+              width: 20%;
+            }
+
+            .dateline-city {
+                display: flex;
+                font-size: 16px;
+                line-height: 27px;
+                padding-right: 20px;
+            }
+
+		  	.dateline-date {
+                width: 100%;
+			}
+		}
 	}
 
 	//labels
@@ -229,16 +254,26 @@ body, html {
 		}
 	}
 
-	.text-editor, .headline, .abstract, input {
+	.text-editor, .headline, .abstract, input, select {
 		border-color: transparent !important;
 		background-color: transparent !important;
 	}
 
-	.text-editor:hover, .headline:hover, .abstract:hover, input:hover {
+    select {
+      -moz-appearance: none;
+      -webkit-appearance: none;
+    }
+
+	.text-editor:hover, .headline:hover, .abstract:hover, input:hover, select:hover {
 		border-color: rgba(150, 150, 150, 0.25) !important;
 	}
 
-	.text-editor:focus, .headline:focus, .abstract:focus, input:focus {
+    select:hover {
+      -moz-appearance: menulist-button;
+      -webkit-appearance: menulist-button;
+    }
+
+	.text-editor:focus, .headline:focus, .abstract:focus, input:focus, select:focus {
 		.box-shadow(none) !important;
 		border-color: rgba(94, 169, 200, 0.4) !important;
 	}
@@ -351,22 +386,6 @@ body, html {
 			font-style: italic;
 		}
 	}
-
-    .dateline-info {
-    	display: flex;
-    	font-size: 16px;
-    	line-height: 27px;
-    	.text-light();
-        .term-editor {
-            float: left;
-            font-size: 16px;
-        }
-        input {
-        	font-size: 16px;
-        	.text-normal();
-        	text-transform: uppercase;
-        }
-    }
 
     .body {
       clear: left;

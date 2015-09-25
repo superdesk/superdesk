@@ -43,9 +43,12 @@ class TakesPackageService():
 
     def get_take_package(self, item):
         package_id = self.get_take_package_id(item)
+        takes_package = None
+
         if package_id:
             takes_package = get_resource_service(ARCHIVE).find_one(req=None, _id=package_id)
-            return takes_package
+
+        return takes_package
 
     def enhance_with_package_info(self, item):
         package = self.get_take_package(item)

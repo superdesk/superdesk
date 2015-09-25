@@ -1,5 +1,5 @@
 <div class="term-editor data visible locators" ng-show="!header">
-    <div sd-typeahead items="locators" term="selectedTerm" search="searchLocator(term)" select="selectLocator(item)" data-disabled="disabled">
+    <div sd-typeahead items="locators" term="selectedTerm" search="searchLocator(term)" select="selectLocator(item)" data-blur="selectLocator(item)" data-disabled="disabled">
         <ul>
             <li typeahead-item="t" ng-repeat="t in locators ">
                 {{ :: t.city }}

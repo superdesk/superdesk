@@ -126,7 +126,7 @@
          * Autosave an item
          */
         this.save = function saveAutosave(item) {
-            if (item._editable && item._locked) {
+            if (item._editable && !item._locked) {
                 this.stop(item);
 
                 timeouts[item._id] = $timeout(function() {
@@ -267,24 +267,37 @@
             return promise;
         };
 
+        /**
+         * Removes certain properties which are irrelevant for publish actions depending on the orig.item.state.
+         * If not removed the API will throw errors.
+         */
+        this.cleanUpdatesBeforePublishing = function (original, updates) {
+            if (!updates.publish_schedule) {
+                delete updates.publish_schedule;
+            }
+
+            if (this.isPublished(original)) {
+                delete updates.dateline;
+
+                if (updates.embargo) {
+                    delete updates.embargo;
+                }
+            }
+
+            //check if rendition is dirty for real
+            if (_.isEqual(original.renditions, updates.renditions)) {
+                delete updates.renditions;
+            }
+
+            stripHtml(updates);
+        };
+
         this.publish = function publish(orig, diff, action) {
             action = action || 'publish';
             diff = extendItem({}, diff);
 
-            if (!diff.publish_schedule) {
-                delete diff.publish_schedule;
-            }
+            this.cleanUpdatesBeforePublishing(orig, diff);
 
-            if (diff.embargo && this.isPublished(orig)) {
-                delete diff.embargo;
-            }
-
-            //check if rendition is dirty for real
-            if (_.isEqual(orig.renditions, diff.renditions)) {
-                delete diff.renditions;
-            }
-
-            stripHtml(diff);
             var endpoint = 'archive_' + action;
             return api.update(endpoint, orig, diff)
             .then(function(result) {
@@ -1863,13 +1876,29 @@
                 scope.errorMessage = null;
                 var mainEditScope = scope.$parent.$parent;
 
-                scope.$watch('item', function(item) {
-                    if (angular.isDefined(item)) {
-                        item._datelinedate = '';
+                /* Start: Dateline related properties */
 
-                        if (item.dateline && item.dateline.located != null) {
-                            item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, item.dateline.date);
+                scope.monthNames = {'Jan': '0', 'Feb': '1', 'Mar': '2', 'Apr': '3', 'May': '4', 'Jun': '5',
+                                    'Jul': '6', 'Aug': '7', 'Sept': '8', 'Oct': '9', 'Nov': '10', 'Dec': '11'};
+                scope.datelineMonth = '';
+                scope.datelineDay = '';
+
+                /* End: Dateline related properties */
+
+                /* Creates a copy of dateline object from item.__proto__.dateline */
+                scope.$watch('item', function(item) {
+                    if (item) {
+                        var updates = {'dateline': {'source': item.dateline.source, 'date': item.dateline.date,
+                            'located': item.dateline.located, 'text': item.dateline.text}};
+
+                        if (item.dateline.located) {
+                            var monthAndDay = $filter('formatDatelineToMMDD')(item.dateline.date, item.dateline.located);
+                            scope.datelineMonth = monthAndDay.month;
+                            scope.datelineDay = monthAndDay.day;
+                            scope.resetNumberOfDays(false);
                         }
+
+                        _.extend(item, updates);
                     }
                 });
 
@@ -1885,11 +1914,55 @@
                     if (city === '') {
                         item.dateline.located = null;
                         item.dateline.text = '';
-                        item._datelinedate = '';
+
+                        scope.datelineMonth = '';
+                        scope.datelineDay = '';
                     } else {
-                        item._datelinedate = $filter('formatDatelinesDate')(item.dateline.located, scope.origItem.dateline.date);
-                        item.dateline.text = $filter('previewDateline')(item.dateline.located,
-                            scope.origItem.dateline.source, scope.origItem.dateline.date);
+                        var monthAndDay = $filter('formatDatelineToMMDD')(item.dateline.date, item.dateline.located);
+
+                        scope.datelineMonth = monthAndDay.month;
+                        scope.datelineDay = monthAndDay.day;
+                        scope.resetNumberOfDays(false);
+
+                        item.dateline.text = $filter('formatDatelineToLocMMMDDSrc')(item.dateline.located,
+                            _.findKey(scope.monthNames, function(m) { return m === scope.datelineMonth; }),
+                            scope.datelineDay, item.dateline.source);
+                    }
+                };
+
+                /**
+                 * Invoked when user changes a month in the datelineMonth.
+                 * Populates the datelineDay field with the days in the selected month.
+                 *
+                 * @param {Boolean} resetDatelineDate if true resets the dateline.date to be relative to selected date.
+                 */
+                scope.resetNumberOfDays = function(resetDatelineDate) {
+                    if (scope.datelineMonth !== '') {
+                        scope.daysInMonth = $filter('daysInAMonth')(parseInt(scope.datelineMonth));
+
+                        if (resetDatelineDate) {
+                            scope.modifyDatelineDate();
+                        }
+                    } else {
+                        scope.daysInMonth = [];
+                        scope.datelineDay = '';
+                    }
+                };
+
+                /**
+                 * Invoked when user selects a different day in dateline day list. This method calculates the
+                 * relative UTC based on the new values of month and day and sets to dateline.date.
+                 */
+                scope.modifyDatelineDate = function() {
+                    if (scope.datelineMonth !== '' && scope.datelineDay !== '') {
+                        scope.item.dateline.date = $filter('relativeUTCTimestamp')(scope.item.dateline.located,
+                                parseInt(scope.datelineMonth), parseInt(scope.datelineDay));
+
+                        scope.item.dateline.text = $filter('formatDatelineToLocMMMDDSrc')(scope.item.dateline.located,
+                            _.findKey(scope.monthNames, function(m) { return m === scope.datelineMonth; }),
+                            scope.datelineDay, scope.item.dateline.source);
+
+                        autosave.save(scope.item);
                     }
                 };
 
@@ -1927,7 +2000,6 @@
                         scope.item.renditions = _.merge(orig, diff);
                     });
                 };
-
             }
         };
     }
