@@ -383,7 +383,9 @@
                     var next = [],
                         olditems = scope.items || [];
                     angular.forEach(newItems, function(item) {
-                        var old = _.find(olditems, {_id: item._id});
+                        var filter = (item.state === 'ingested') ?
+                                        {_id: item._id} : {_id: item._id, _current_version: item._current_version};
+                        var old = _.find(olditems, filter);
                         next.push(old ? angular.extend(old, item) : item);
                     });
 
@@ -453,7 +455,7 @@
         };
 
         function uuid(item) {
-            return (item.state === 'ingested') ? item._id : item._id + ':' + (item._current_version || item.item_version);
+            return (item.state === 'ingested') ? item._id : item._id + ':' + item._current_version;
         }
     }
 

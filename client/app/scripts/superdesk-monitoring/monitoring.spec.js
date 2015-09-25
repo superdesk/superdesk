@@ -180,14 +180,10 @@ describe('monitoring', function() {
             scope.$digest();
             var sdGroupElement = $elm.find('#group');
             var iScope = sdGroupElement.isolateScope();
-            var item = {state: 'ingested', _id: '123'};
+            var item = {state: 'ingested', _id: '123', '_current_version': 'dddd'};
             expect(iScope.uuid(item)).toBe('123');
-            item = {state: 'foo', _id: '123', _current_version: 'bar'};
-            expect(iScope.uuid(item)).toBe('123:bar');
-            item = {state: 'foo', _id: '456', item_version: 'foo'};
-            expect(iScope.uuid(item)).toBe('456:foo');
-            item = {state: 'foo', _id: '456', item_version: 'foo', _current_version: 'bar'};
-            expect(iScope.uuid(item)).toBe('456:bar');
+            item = {state: 'foo', _id: 'test', _current_version: '123'};
+            expect(iScope.uuid(item)).toBe('test:123');
         }));
     });
 });
