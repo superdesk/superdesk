@@ -105,10 +105,6 @@
         };
 
         $scope.closeMulti = function() {
-            _.forEach(multiEdit.items, function(item) {
-                lock.unlock(_.find(workqueue.items, {_id: item.article}));
-            });
-
             multiEdit.exit();
             $location.url('/workspace/monitoring');
         };
