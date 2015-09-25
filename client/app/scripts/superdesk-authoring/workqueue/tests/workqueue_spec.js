@@ -52,7 +52,7 @@ describe('workqueue', function() {
     function(api, $location, $controller, $q, $rootScope) {
         spyOn(api, 'query').and.returnValue($q.when({_items: [{_id: 'foo'}]}));
         $location.path('/mock');
-        $location.search('edit', 'foo');
+        $location.search('item', 'foo');
         $rootScope.$digest();
 
         var scope = $rootScope.$new();

@@ -44,8 +44,8 @@ function WorkqueueService(session, api) {
     };
 }
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
-function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'authoringWorkspace', 'multiEdit', 'superdesk', 'lock', '$location'];
+function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit, superdesk, lock, $location) {
 
     $scope.active = null;
     $scope.workqueue = workqueue;
@@ -67,8 +67,8 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
             var route = $route.current || {_id: null, params: {}};
             $scope.isMultiedit = route._id === 'multiedit';
             $scope.active = null;
-            if (route.params.edit) {
-                $scope.active = _.find(workqueue.items, {_id: route.params.edit});
+            if (route.params.item) {
+                $scope.active = _.find(workqueue.items, {_id: route.params.item});
             }
         });
     }
@@ -77,21 +77,53 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
         superdesk.intent('author', 'dashboard');
     };
 
+    /**
+     * Closes item. If item is opened, close authoring workspace.
+     * Updates multiedit items, if item is part of multiedit.
+     * When closing last item that was in multiedit(no more items in multiedit), redirects to monitoring.
+     */
     $scope.closeItem = function(item) {
-        lock.unlock(item).then(updateWorkqueue);
+        lock.unlock(item);
+        if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
+            authoringWorkspace.close();
+        }
+
+        multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));
+        if (multiEdit.items.length === 0){
+            $scope.redirectOnCloseMulti();
+        }
     };
 
     $scope.openMulti = function() {
+        $scope.isMultiedit = true;
         multiEdit.open();
     };
 
+    /**
+     * Close multiedit and all items that were in multiedit.
+     */
     $scope.closeMulti = function() {
         multiEdit.exit();
+        _.forEach(multiEdit.items, function(item) {
+            lock.unlock(_.find(workqueue.items, {_id: item.article}));
+        });
+
+        $scope.redirectOnCloseMulti();
+    };
+
+    /**
+     * If multi edit screen is opened, redirect to monitoring.
+     */
+    $scope.redirectOnCloseMulti = function() {
+        if (this.isMultiedit){
+            this.isMultiedit = false;
+            $location.url('/workspace/monitoring');
+        }
     };
 }
 
-WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace'];
-function WorkqueueListDirective($rootScope, authoringWorkspace) {
+WorkqueueListDirective.$inject = ['$rootScope', 'authoringWorkspace', '$location'];
+function WorkqueueListDirective($rootScope, authoringWorkspace, $location) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         controller: 'Workqueue',
@@ -101,6 +133,8 @@ function WorkqueueListDirective($rootScope, authoringWorkspace) {
                 if (!event.ctrlKey) {
                     scope.active = item;
                     authoringWorkspace.edit(item);
+                    scope.redirectOnCloseMulti();
+
                     event.preventDefault();
                 }
             };
