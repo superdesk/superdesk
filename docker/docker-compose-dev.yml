@@ -53,8 +53,27 @@ backend:
    - ./Procfile:/opt/superdesk/Procfile
   ports:
    - "5000:5000"
-   - "5050:5050"
    - "5100:5100"
+
+pubapi:
+  extends:
+    file: common.yml
+    service: pubapi
+  links:
+   - mongodb
+   - redis
+   - elastic
+   - logstash
+   - postfix
+  environment:
+   - SUPERDESK_RELOAD=True
+   - SUPERDESK_URL=http://localhost:5000/api
+   - SUPERDESK_CLIENT_URL=http://localhost:9000
+  volumes:
+   - ../superdesk-content-api:/opt/superdesk-content-api/
+   #- ./Procfile:/opt/superdesk/Procfile
+  ports:
+   - "5050:5050"
 
 frontend:
   extends:
@@ -62,6 +81,7 @@ frontend:
     service: frontend
   links:
    - backend
+   - pubapi
   command: sh -c "grunt --force server --server='http://localhost:5000/api' --ws='ws://localhost:5100'"
   volumes:
    - ../client:/opt/superdesk-client/

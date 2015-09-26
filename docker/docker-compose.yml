@@ -45,12 +45,24 @@ backend:
    - logstash
    - postfix
 
+pubapi:
+  extends:
+    file: common.yml
+    service: pubapi
+  links:
+   - mongodb
+   - redis
+   - elastic
+   - logstash
+   - postfix
+
 frontend:
   extends:
     file: common.yml
     service: frontend
   links:
    - backend
+   - pubapi
   ports:
    - "443:443"
    - "80:80"
