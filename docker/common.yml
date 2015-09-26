@@ -65,7 +65,7 @@ backend:
 
 pubapi:
   build: ../superdesk-content-api
-  command: sh /opt/superdesk-content-api/fig_wrapper.sh honcho start
+  command: sh /opt/superdesk-content-api/scripts/fig_wrapper.sh honcho start
   environment:
    - MONGO_URI=mongodb://mongodb/test
    - PUBLICAPI_MONGO_URI=mongodb://mongodb/test
