@@ -1377,8 +1377,8 @@
             };
         })
 
-        .directive('sdMultiActionBar', ['asset', 'multi',
-        function(asset, multi) {
+        .directive('sdMultiActionBar', ['asset', 'multi', 'authoringWorkspace',
+        function(asset, multi, authoringWorkspace) {
             return {
                 controller: 'MultiActionBar',
                 controllerAs: 'action',
@@ -1387,6 +1387,11 @@
                 link: function(scope) {
                     scope.multi = multi;
                     scope.$watch(multi.getItems, detectType);
+
+                    scope.isOpenItemType = function(type) {
+                        var openItem = authoringWorkspace.getItem();
+                        return openItem.type === type;
+                    };
 
                     /**
                      * Detects type of all selected items and assign it to scope,
@@ -1445,6 +1450,10 @@
                     notify.error(gettext(response.data._message), 3000);
                 }
             });
+        };
+
+        this.addToPackage = function() {
+            $rootScope.$broadcast('package:addItems', {items: multi.getItems(), group: 'main'});
         };
 
         /**
