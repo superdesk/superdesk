@@ -132,6 +132,7 @@ class BasePublishService(BaseService):
             raise ValidationError(package_validation_errors)
 
         self._set_updates(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
+        updates[ITEM_OPERATION] = ITEM_PUBLISH
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original[config.ID_FIELD])
@@ -215,6 +216,7 @@ class BasePublishService(BaseService):
                                              package=package)
 
         self._set_updates(package, package_updates, last_updated)
+        package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
         self._update_archive(package, package_updates)
 
         '''
@@ -256,17 +258,15 @@ class BasePublishService(BaseService):
         if items:
             archive_publish = get_resource_service('archive_publish')
             for guid in items:
-                package_item = super().find_one(req=None, _id=guid)
+                package_item = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
 
                 if not package_item:
                     raise SuperdeskApiError.badRequestError(
                         "Package item with id: {} does not exist.".format(guid))
 
-                if package_item[ITEM_STATE] not in PUBLISH_STATES:
-                    # if the item is not published then publish it
-
+                if package_item[ITEM_STATE] not in PUBLISH_STATES:  # if the item is not published then publish it
+                    # if the item is a package do recursion to publish
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                        # if the item is a package do recursion to publish
                         sub_updates = {i: updates[i] for i in ['state', 'operation'] if i in updates}
                         sub_updates['groups'] = list(package_item['groups'])
                         self._publish_package_items(package_item, sub_updates)
@@ -460,6 +460,12 @@ class BasePublishService(BaseService):
 
             for metadata in metadata_tobe_copied:
                 package_updates[metadata] = metadata_from.get(metadata)
+
+            package_updates['groups'] = groups
+            self.package_service.update_field_in_package(package_updates,
+                                                         original_of_take_to_be_published[config.ID_FIELD],
+                                                         config.VERSION,
+                                                         updates_of_take_to_be_published[config.VERSION])
 
         return package_updates
 
@@ -842,7 +848,7 @@ class ArchivePublishService(BasePublishService):
         :param dict original: original document
         :param dict updates: updates related to original document
         """
-        updates[ITEM_OPERATION] = ITEM_PUBLISH
+        updates.setdefault(ITEM_OPERATION, ITEM_PUBLISH)
         if original.get('publish_schedule') or updates.get('publish_schedule'):
             updates[ITEM_STATE] = CONTENT_STATE.SCHEDULED
         else:
@@ -924,8 +930,8 @@ class KillPublishService(BasePublishService):
         if is_item_in_package(original):
             raise SuperdeskApiError.badRequestError(message='This item is in a package' +
                                                             ' it needs to be removed before the item can be killed')
-        updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
+        updates[ITEM_OPERATION] = ITEM_KILL
         self.takes_package_service.process_killed_takes_package(original)
 
     def update(self, id, updates, original):
@@ -1005,9 +1011,9 @@ class CorrectPublishService(BasePublishService):
     published_state = 'corrected'
 
     def on_update(self, updates, original):
-        updates[ITEM_OPERATION] = ITEM_CORRECT
         ArchiveCropService().validate_multiple_crops(updates, original)
         super().on_update(updates, original)
+        updates[ITEM_OPERATION] = ITEM_CORRECT
         set_sign_off(updates, original)
 
     def on_updated(self, updates, original):

@@ -15,7 +15,7 @@ Feature: Legal archive
     Scenario: Get archive items with published state
         Given "legal_archive"
         """
-        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
+        [{"_id": "tag:example.com,0000:newsml_BRE9A605", "guid": "tag:example.com,0000:newsml_BRE9A605", "state": "published"}]
         """
         Given "roles"
         """
@@ -32,7 +32,8 @@ Feature: Legal archive
     Scenario: User can't fetch from legal archive without a privilege
       Given "legal_archive"
       """
-      [{"_id": "tag:example.com,0000:newsml_BRE9A605", "headline": "test", "_current_version": 1, "state": "published"}]
+      [{"_id": "tag:example.com,0000:newsml_BRE9A605", "guid": "tag:example.com,0000:newsml_BRE9A605",
+        "headline": "test", "_current_version": 1, "state": "published"}]
       """
       And we login as user "foo" with password "bar" and user type "user"
       """

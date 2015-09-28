@@ -392,3 +392,13 @@ class PackageService():
 
             if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self.check_if_any_item_in_package_has_embargo(doc)
+
+    def get_item_refs(self, package):
+        """
+        Returns all item references in the package.
+
+        :param package:
+        :return: list of item references
+        """
+
+        return [ref for group in package.get(GROUPS, []) for ref in group.get(REFS, []) if RESIDREF in ref]

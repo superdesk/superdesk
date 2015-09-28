@@ -8,41 +8,45 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from copy import copy, deepcopy
+import logging
+import datetime
+
 import flask
+
+from flask import current_app as app
+
+from eve.versioning import resolve_document_version, versioned_id_field
+
+from eve.utils import parse_request, config
+
 from superdesk.resource import Resource
 from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
-from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
-    is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
-    handle_existing_data, item_schema, validate_schedule, is_item_in_package, ITEM_DUPLICATE, ITEM_OPERATION, \
-    ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE
+from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, on_create_item, \
+    is_update_allowed, on_duplicate_item, get_user, update_version, set_sign_off, is_normal_package, item_schema, \
+    handle_existing_data, validate_schedule, is_item_in_package, ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, \
+    ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE
 from .archive_crop import ArchiveCropService
-from flask import current_app as app
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
-from eve.versioning import resolve_document_version, versioned_id_field
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from superdesk.users.services import current_user_has_privilege, is_admin
-from superdesk.metadata.item import metadata_schema, ITEM_STATE, CONTENT_STATE, \
-    CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES, PUBLISH_STATES
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, CONTENT_TYPE, ITEM_TYPE, EMBARGO, LINKED_IN_PACKAGES, \
+    PUBLISH_STATES
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from superdesk.etree import get_word_count
 from apps.content import push_content_notification
-from copy import copy, deepcopy
 import superdesk
-import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
 from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
-import datetime
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
 from superdesk.metadata.packages import RESIDREF, SEQUENCE
-
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +85,7 @@ def private_content_filter():
 
 
 class ArchiveVersionsResource(Resource):
-    schema = metadata_schema
+    schema = item_schema()
     extra_response_fields = extra_response_fields
     item_url = item_url
     resource_methods = []
@@ -534,7 +538,7 @@ class ArchiveService(BaseService):
 
                 if item[ITEM_STATE] not in PUBLISH_STATES and embargo <= utcnow():
                     raise SuperdeskApiError.badRequestError("Embargo cannot be earlier than now")
-        elif item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and not self.takesService.is_takes_package(item):
+        elif is_normal_package(item):
             if item.get(EMBARGO):
                 raise SuperdeskApiError.badRequestError("A Package doesn't support Embargo")
 

@@ -18,22 +18,73 @@ from .resource import LEGAL_ARCHIVE_NAME
 
 from superdesk import Service, get_resource_privileges
 from superdesk.errors import SuperdeskApiError
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, GUID_FIELD
+from superdesk.metadata.packages import GROUPS, REFS, RESIDREF
 from superdesk.utils import ListCursor
 
 logger = logging.getLogger(__name__)
 
 
 class LegalService(Service):
+    """
+    Base Service Class for Legal Archive related services
+    """
+
+    def on_create(self, docs):
+        """
+        Overriding to replace the location of each item in the package to legal archive instead of archive,
+        if doc is a pacakge.
+        """
+
+        super().on_create(docs)
+        for doc in docs:
+            if ITEM_TYPE in doc:
+                doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
+                if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                    self._change_location_of_items_in_package(doc)
+
+    def on_replace(self, document, original):
+        """
+        Overriding to replace the location of each item in the package to legal archive instead of archive,
+        if doc is a pacakge.
+        """
+
+        super().on_replace(document, original)
+        if ITEM_TYPE in document and document[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+            self._change_location_of_items_in_package(document)
 
     def get(self, req, lookup):
+        """
+        Overriding to check if user is authorized to perform get operation on Legal Archive resources. If authorized
+        then request is forwarded otherwise throws forbidden error.
+
+        :return: list of docs matching query in req and lookup
+        :raises: SuperdeskApiError.forbiddenError() if user is unauthorized to access the Legal Archive resources.
+        """
+
         self.check_get_access_privilege()
         return super().get(req, lookup)
 
     def find_one(self, req, **lookup):
+        """
+        Overriding to check if user is authorized to perform get operation on Legal Archive resources. If authorized
+        then request is forwarded otherwise throws forbidden error.
+
+        :return: doc if there is one matching the query in req and lookup
+        :raises: SuperdeskApiError.forbiddenError() if user is unauthorized to access the Legal Archive resources.
+        """
+
         self.check_get_access_privilege()
         return super().find_one(req, **lookup)
 
     def check_get_access_privilege(self):
+        """
+        Checks if user is authorized to perform get operation on Legal Archive resources. If authorized then request is
+        forwarded otherwise throws forbidden error.
+
+        :raises: SuperdeskApiError.forbiddenError() if user is unauthorized to access the Legal Archive resources.
+        """
+
         if not hasattr(g, 'user'):
             return
 
@@ -54,6 +105,16 @@ class LegalService(Service):
         else:
             legal_archive_docs['_type'] = LEGAL_ARCHIVE_NAME
 
+    def _change_location_of_items_in_package(self, package):
+        """
+        Changes location of each item in the package to legal archive instead of archive.
+        """
+
+        for group in package.get(GROUPS, []):
+            for ref in group.get(REFS, []):
+                if RESIDREF in ref:
+                    ref['location'] = LEGAL_ARCHIVE_NAME
+
 
 class LegalArchiveService(LegalService):
     def on_fetched(self, docs):
@@ -72,14 +133,35 @@ class LegalArchiveService(LegalService):
 
 
 class LegalPublishQueueService(LegalService):
-    pass
+    def create(self, docs, **kwargs):
+        """
+        Overriding this from preventing the transmission details again. This happens when an item in a package expires
+        at later point of time. In this case, the call to insert transmission details happens twice once when the
+        package expires and once when the item expires.
+        """
+
+        ids = []
+        for doc in docs:
+            doc_if_exists = self.find_one(req=None, _id=doc['_id'])
+            if doc_if_exists is None:
+                ids.extend(super().create([doc]))
+
+        return ids
 
 
 class LegalArchiveVersionsService(LegalService):
     def create(self, docs, **kwargs):
+        """
+        Overriding this from preventing the same version again. This happens when an item is published more than once.
+        """
+
         ids = []
         for doc in docs:
-            doc_if_exists = self.find_one(req=None, _id=doc['_id'])
+            doc_if_exists = None
+
+            if config.ID_FIELD in doc:  # This happens when inserting docs from pre-populate script
+                doc_if_exists = self.find_one(req=None, _id=doc[config.ID_FIELD])
+
             if doc_if_exists is None:
                 ids.extend(super().create([doc]))
 
@@ -101,7 +183,6 @@ class LegalArchiveVersionsService(LegalService):
 
         for doc in version_history:
             doc[config.ID_FIELD] = doc[id_field]
-            del doc[id_field]
             self.enhance(doc)
 
         return ListCursor(version_history)

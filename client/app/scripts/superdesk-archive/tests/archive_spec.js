@@ -87,8 +87,7 @@ describe('content', function() {
             item._type = 'legal_archive';
             item._links = {collection: {href: '/legal_archive'}};
             archiveService.getVersionHistory(item, {}, 'versions');
-            expect(api.legal_archive_versions.getByUrl)
-                .toHaveBeenCalledWith('/legal_archive_versions?_id=123');
+            expect(api.find).toHaveBeenCalledWith('legal_archive', '123', {version: 'all'});
         }));
     });
 

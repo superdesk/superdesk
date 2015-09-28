@@ -138,6 +138,15 @@ function Content() {
         browser.sleep(500);
     };
 
+    this.getWidgets = function() {
+        return element(by.className('navigation-tabs')).all(by.repeater('widget in widgets'));
+    };
+
+    this.getItemType = function(itemType) {
+        var itemTypeClass = 'filetype-icon-' + itemType;
+        return element(by.className('authoring-header__general-info')).all(by.className(itemTypeClass)).first();
+    };
+
     function send() {
         return element(by.css('[ng-click="send()"]')).click();
     }
