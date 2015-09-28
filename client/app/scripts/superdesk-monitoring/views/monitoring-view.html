@@ -27,17 +27,15 @@
 
         <div class="button-stack right-stack">
             <div class="pull-left-10x" ng-if="type === 'highlights'" sd-create-highlights-button data-highlight="monitoring.queryParam.highlight"></div>
-            <div class="dropdown navbtn strict" dropdown>
+            <div class="dropdown navbtn strict" ng-if="type === 'monitoring'" dropdown>
                 <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
-                <div class="dropdown-menu pull-right">
-                    <ul>
-                        <li ng-if="type === 'monitoring'">
-                            <button ng-click="aggregate.edit()">
-                                <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                <ul class="dropdown-menu pull-right">
+                    <li>
+                        <button ng-click="aggregate.edit()">
+                            <i class="icon-settings"></i> {{ :: 'Settings' | translate }}
+                        </button>
+                    </li>
+                </ul>
             </div>
 
             <div class="dropdown navbtn strict" ng-if="!state.opened" title="{{ :: 'Create' | translate }}" dropdown>
