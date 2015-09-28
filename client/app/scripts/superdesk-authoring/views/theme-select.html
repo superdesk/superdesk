@@ -8,8 +8,14 @@
                 <i class="theme-status" ng-class="{active: key === 'theme'}"></i>
                 <div class="menu-label" translate>Choose Normal Theme</div>
             </li>
+            <li>
+                <div class="btn-group">
+                    <button type="button" class="btn active" translate>Normal font</button>
+                    <button type="button" class="btn" translate>Large font</button>
+                </div>
+            </li>
             <li ng-repeat="t in themes">
-                <button ng-click="changeTheme('theme', t)" class="{{t.cssClass}}">
+                <button ng-click="changeTheme('theme', t)" class="theme-btn {{t.cssClass}}">
                     {{:: t.label}}
                     <i class="icon-ok" ng-if="theme === t"></i>
                 </button>
@@ -20,8 +26,14 @@
                 <i class="theme-status" ng-class="{active: key === 'proofreadTheme'}"></i>
                 <div class="menu-label" translate>Choose Proofread Theme</div>
             </li>
+            <li>
+                <div class="btn-group">
+                    <button type="button" class="btn active" translate>Normal font</button>
+                    <button type="button" class="btn" translate>Large font</button>
+                </div>
+            </li>
             <li ng-repeat="t in themes">
-                <button ng-click="changeTheme('proofreadTheme', t)" class="{{t.cssClass}}">
+                <button ng-click="changeTheme('proofreadTheme', t)" class="theme-btn {{t.cssClass}}">
                     {{:: t.label}}
                     <i class="icon-ok" ng-if="proofreadTheme === t"></i>
                 </button>

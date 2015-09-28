@@ -1364,37 +1364,37 @@
         service.availableThemes = [
             {
                 cssClass: '',
-                label: 'Default Theme normal',
+                label: 'Default',
                 key: 'default-normal'
             },
             {
-                cssClass: 'large-text',
-                label: 'Default Theme large',
-                key: 'default-large'
-            },
-            {
                 cssClass: 'dark-theme',
-                label: 'Dark Theme normal',
+                label: 'Dark',
                 key: 'dark-normal'
             },
             {
-                cssClass: 'dark-theme large-text',
-                label: 'Dark Theme large',
-                key: 'dark-large'
-            },
-            {
                 cssClass: 'natural-theme',
-                label: 'Natural Theme normal',
+                label: 'Natural',
                 key: 'natural-normal'
             },
             {
-                cssClass: 'natural-theme large-text',
-                label: 'Natural Theme large',
-                key: 'natural-large'
+                cssClass: 'dark-blue-theme',
+                label: 'Dark blue',
+                key: 'dark-blue'
+            },
+            {
+                cssClass: 'dark-turquoise-theme',
+                label: 'Dark turquoise',
+                key: 'dark-turquoise'
+            },
+            {
+                cssClass: 'dark-khaki-theme',
+                label: 'Dark khaki',
+                key: 'dark-khaki'
             },
             {
                 cssClass: 'dark-theme-mono',
-                label: 'Dark Theme monospace',
+                label: 'Dark monospace',
                 key: 'dark-mono'
             }
 
