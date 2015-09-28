@@ -866,3 +866,49 @@ class NewsMLG2FormatterTest(SuperdeskTestCase):
         self.assertEqual(len(group_ref), 2)
         self.assertEqual(group_ref[0].get('idref'), 'main')
         self.assertEqual(group_ref[1].get('idref'), 'picture')
+
+    def testPlace(self):
+        article = self.article.copy()
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        content_meta = xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
+                                '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
+                                '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+        subject = content_meta.find('{http://iptc.org/std/nar/2006-10-01/}subject[@qcode="loctyp:Country"]')
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}name').text, "Australia")
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}broader' +
+                                      '[@qcode="loctyp:WorldArea"]/' +
+                                      '{http://iptc.org/std/nar/2006-10-01/}name').text, "Oceania")
+        self.assertIsNone(content_meta.find('{http://iptc.org/std/nar/2006-10-01/}'
+                                            'subject[@qcode="loctyp:CountryArea"]'))
+        article['place'] = [{"name": "ACT", "qcode": "ACT",
+                             "state": "Australian Capital Territory",
+                             "country": "Australia", "world_region": "Oceania"}]
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        content_meta = xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
+                                '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
+                                '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+        subject = content_meta.find('{http://iptc.org/std/nar/2006-10-01/}subject[@qcode="loctyp:CountryArea"]')
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}name').text,
+                         "Australian Capital Territory")
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}broader' +
+                                      '[@qcode="loctyp:Country"]/' +
+                                      '{http://iptc.org/std/nar/2006-10-01/}name').text, "Australia")
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}broader' +
+                                      '[@qcode="loctyp:WorldArea"]/' +
+                                      '{http://iptc.org/std/nar/2006-10-01/}name').text, "Oceania")
+
+        article['place'] = [{"name": "EUR", "qcode": "EUR",
+                             "state": "", "country": "", "world_region": "Europe"}]
+        seq, doc = self.formatter.format(article, {'name': 'Test Subscriber'})[0]
+        xml = etree.fromstring(doc)
+        content_meta = xml.find('{http://iptc.org/std/nar/2006-10-01/}itemSet'
+                                '/{http://iptc.org/std/nar/2006-10-01/}newsItem/'
+                                '{http://iptc.org/std/nar/2006-10-01/}contentMeta')
+        subject = content_meta.find('{http://iptc.org/std/nar/2006-10-01/}subject[@qcode="loctyp:WorldArea"]')
+        self.assertEqual(subject.find('{http://iptc.org/std/nar/2006-10-01/}name').text, "Europe")
+        self.assertIsNone(content_meta.find('{http://iptc.org/std/nar/2006-10-01/}'
+                                            'subject[@qcode="loctyp:CountryArea"]'))
+        self.assertIsNone(content_meta.find('{http://iptc.org/std/nar/2006-10-01/}'
+                                            'subject[@qcode="loctyp:Country"]'))

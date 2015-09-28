@@ -411,8 +411,7 @@ define([
                         function(data, $rootScope, desks, authoring, authoringWorkspace, notify) {
                             // get the desk of the item to create the new take.
                             var deskId = null;
-                            if (data.item.task !== null && angular.isDefined(data.item.task) &&
-                                data.item.task.desk !== null && angular.isDefined(data.item.task.desk)) {
+                            if (data.item.task && data.item.task.desk) {
                                 deskId = data.item.task.desk;
                             }
 

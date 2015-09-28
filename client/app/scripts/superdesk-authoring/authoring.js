@@ -1680,8 +1680,7 @@
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
                             var itemDeskId = null;
-                            if (scope.item.task !== null && angular.isDefined(scope.item.task) &&
-                                scope.item.task.desk !== null && angular.isDefined(scope.item.task.desk)) {
+                            if (scope.item.task && scope.item.task.desk) {
                                 itemDeskId = scope.item.task.desk;
                             }
                             return authoring.linkItem(scope.item, null, itemDeskId);
