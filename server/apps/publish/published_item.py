@@ -25,7 +25,7 @@ from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.metadata.item import not_analyzed, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, EMBARGO
-from apps.archive.common import handle_existing_data, item_schema
+from apps.archive.common import handle_existing_data, item_schema, remove_media_files
 from superdesk.metadata.utils import aggregations
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.utc import utcnow, get_expiry_date
@@ -268,6 +268,7 @@ class PublishedItemService(BaseService):
             doc = self.find_one(req=None, item_id=_id)
 
         self.delete(lookup={config.ID_FIELD: doc[config.ID_FIELD]})
+        remove_media_files(doc)
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)

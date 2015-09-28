@@ -11,13 +11,12 @@
 import flask
 from superdesk.resource import Resource
 from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
-from .common import remove_unwanted, update_state, set_item_expiry, \
+from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, ITEM_DUPLICATE, ITEM_OPERATION, \
     ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
-from werkzeug.exceptions import NotFound
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from eve.versioning import resolve_document_version, versioned_id_field
@@ -203,8 +202,9 @@ class ArchiveService(BaseService):
             else:
                 # validate the schedule
                 if is_item_in_package(original):
-                    raise SuperdeskApiError.badRequestError(message='This item is in a package' +
-                                                            ' it needs to be removed before the item can be scheduled!')
+                    raise SuperdeskApiError.\
+                        badRequestError(message='This item is in a package' +
+                                                ' it needs to be removed before the item can be scheduled!')
                 package = TakesPackageService().get_take_package(original) or {}
                 validate_schedule(updates.get('publish_schedule'), package.get(SEQUENCE, 1))
 
@@ -291,19 +291,12 @@ class ArchiveService(BaseService):
                      type=original['type'], subject=get_subject(original))
         push_content_notification([document, original])
 
-    def on_delete(self, doc):
-        """Delete associated binary files."""
-        if doc and doc.get('renditions'):
-            for file_id in [rend.get('media') for rend in doc.get('renditions', {}).values()
-                            if rend.get('media')]:
-                try:
-                    app.media.delete(file_id)
-                except (NotFound):
-                    pass
-
     def on_deleted(self, doc):
         if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_deleted(doc)
+
+        remove_media_files(doc)
+
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}',
                      self.datasource, item=doc,
                      type=doc[ITEM_TYPE], subject=get_subject(doc))
@@ -496,9 +489,9 @@ class ArchiveService(BaseService):
             "Article state is %s. Only Spiked Articles can be removed" % doc[ITEM_STATE]
 
         doc_id = str(doc[config.ID_FIELD])
-        super().delete_action({config.ID_FIELD: doc_id})
         resource_def = app.config['DOMAIN']['archive_versions']
         get_resource_service('archive_versions').delete(lookup={versioned_id_field(resource_def): doc_id})
+        super().delete_action({config.ID_FIELD: doc_id})
 
     def __is_req_for_save(self, doc):
         """
