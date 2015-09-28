@@ -13,12 +13,19 @@ Feature: Link content in takes
             "type": "text",
             "headline": "test1",
             "slugline": "comics",
+            "abstract" : "abstract",
             "anpa_take_key": "Take",
             "guid": "123",
             "state": "draft",
             "task": {
                 "user": "#CONTEXT_USER_ID#"
-            }
+            },
+            "priority": 1,
+            "urgency": 1,
+            "ednote": "ednote",
+            "place": [{"is_active": true, "name": "ACT", "qcode": "ACT",
+                  "state": "Australian Capital Territory",
+                  "country": "Australia", "world_region": "Oceania"}]
         }]
         """
         And we post to "/archive/123/move"
@@ -37,7 +44,14 @@ Feature: Link content in takes
             "headline": "test1",
             "slugline": "comics",
             "anpa_take_key": "Take=2",
+            "abstract" : "abstract",
             "state": "draft",
+            "priority": 1,
+            "urgency": 1,
+            "ednote": "ednote",
+            "place": [{"is_active": true, "name": "ACT", "qcode": "ACT",
+                  "state": "Australian Capital Territory",
+                  "country": "Australia", "world_region": "Oceania"}],
             "original_creator": "#CONTEXT_USER_ID#",
             "takes": {
                 "_id": "#TAKE_PACKAGE#",
@@ -713,3 +727,77 @@ Feature: Link content in takes
         }
         """
 
+    @auth @test
+    Scenario: If the user is the member of a desk then New Take on a desk is allowed
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we post to "archive"
+        """
+        [{
+            "guid": "123",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "abstract" : "abstract",
+            "anpa_take_key": "Take",
+            "guid": "123",
+            "state": "draft",
+            "task": {
+                "user": "#CONTEXT_USER_ID#"
+            },
+            "priority": 1,
+            "urgency": 1,
+            "ednote": "ednote",
+            "place": [{"is_active": true, "name": "ACT", "qcode": "ACT",
+                  "state": "Australian Capital Territory",
+                  "country": "Australia", "world_region": "Oceania"}]
+        }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{"desk": "#desks._id#"}]
+        """
+        Then we get error 403
+        """
+        {"_message": "No privileges to create new take on requested desk.", "_status": "ERR"}
+        """
+        When we patch "desks/#desks._id#"
+        """
+        {"members": [{"user": "#CONTEXT_USER_ID#"}]}
+        """
+        Then we get OK response
+        When we post to "archive/123/link"
+        """
+        [{"desk": "#desks._id#"}]
+        """
+        Then we get next take as "TAKE2"
+        """
+        {
+            "_id": "#TAKE2#",
+            "type": "text",
+            "headline": "test1",
+            "slugline": "comics",
+            "anpa_take_key": "Take=2",
+            "abstract" : "abstract",
+            "original_creator": "#CONTEXT_USER_ID#",
+            "takes": {
+                "_id": "#TAKE_PACKAGE#",
+                "package_type": "takes",
+                "type": "composite"
+            },
+            "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}],
+            "priority": 1,
+            "urgency": 1,
+            "ednote": "ednote",
+            "place": [{"is_active": true, "name": "ACT", "qcode": "ACT",
+                  "state": "Australian Capital Territory",
+                  "country": "Australia", "world_region": "Oceania"}]
+        }
+        """

@@ -313,20 +313,21 @@ class NewsMLG2Formatter(Formatter):
         :param dict article:
         :param Element content_meta:
         """
-        for place in article.get('place', []):
-            if place.get('country') or place.get('state') or place.get('world_region'):
-                if place.get('state'):
-                    subject = SubElement(content_meta, 'subject',
-                                         attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
-                    SubElement(subject, 'name').text = place.get('state')
-                    if place.get('country'):
-                        broader = SubElement(subject, 'broader',
-                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
-                        SubElement(broader, 'name').text = place.get('country')
-                    if place.get('world_region'):
-                        broader = SubElement(subject, 'subject',
-                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:WorldArea'})
-                        SubElement(broader, 'name').text = place.get('world_region')
+        if article.get('place'):
+            for place in article.get('place', []):
+                if place.get('country') or place.get('state') or place.get('world_region'):
+                    if place.get('state'):
+                        subject = SubElement(content_meta, 'subject',
+                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
+                        SubElement(subject, 'name').text = place.get('state')
+                        if place.get('country'):
+                            broader = SubElement(subject, 'broader',
+                                                 attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
+                            SubElement(broader, 'name').text = place.get('country')
+                        if place.get('world_region'):
+                            broader = SubElement(subject, 'subject',
+                                                 attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:WorldArea'})
+                            SubElement(broader, 'name').text = place.get('world_region')
 
     def _format_located(self, article, content_meta):
         """
