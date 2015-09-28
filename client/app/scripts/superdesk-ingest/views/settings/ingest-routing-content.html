@@ -48,9 +48,12 @@
                                     <label translate>Scheme rules</label>
                                 </div>
                                 <ul sd-sortrules class="pills-list rule-list">
-                                    <li ng-repeat="rule in editScheme.rules" class="clearfix" ng-click="editRule(rule)">
+                                    <li ng-repeat="schemeRule in editScheme.rules"
+                                        class="clearfix"
+                                        ng-class="{highlight: schemeRule === rule}"
+                                        ng-click="editRule(schemeRule)">
                                         <div class="header">
-                                            <h6>{{rule.name}}</h6>
+                                            <h6>{{schemeRule.name}}</h6>
                                         </div>
                                     </li>
                                 </ul>
