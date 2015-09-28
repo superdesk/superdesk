@@ -1669,6 +1669,9 @@
                     }
                 };
 
+                /**
+                 * Send the current item to different desk or stage and create a new take and open for editing.
+                 */
                 function runSendAndContinue() {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
@@ -1678,7 +1681,7 @@
                         .then(function() {
                             var itemDeskId = null;
                             if (scope.item.task !== null && angular.isDefined(scope.item.task) &&
-                                scope.item.task !== null && angular.isDefined(scope.item.task.desk)) {
+                                scope.item.task.desk !== null && angular.isDefined(scope.item.task.desk)) {
                                 itemDeskId = scope.item.task.desk;
                             }
                             return authoring.linkItem(scope.item, null, itemDeskId);
