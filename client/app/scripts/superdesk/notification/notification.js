@@ -13,6 +13,10 @@
     WebSocketProxy.$inject = ['$rootScope', 'config', 'desks'];
     function WebSocketProxy($rootScope, config, desks, session) {
 
+        var ws = null;
+        var connectTimer = -1;
+        var TIMEOUT = 5500;
+
         var ReloadEvents = [
             'user_disabled',
             'user_inactivated',
@@ -30,19 +34,67 @@
             return;
         }
 
-        var ws = new WebSocket(config.server.ws);
-
-        ws.onmessage = function(event) {
-            var msg = angular.fromJson(event.data);
-            $rootScope.$broadcast(msg.event, msg.extra);
-            if (_.contains(ReloadEvents, msg.event)) {
-                $rootScope.$broadcast('reload', msg);
-            }
+        var connect = function() {
+            ws = new WebSocket(config.server.ws);
+            bindEvents();
         };
 
-        ws.onerror = function(event) {
-            console.error(event);
+        var bindEvents = function() {
+            ws.onmessage = function(event) {
+                var msg = angular.fromJson(event.data);
+                $rootScope.$broadcast(msg.event, msg.extra);
+                if (_.contains(ReloadEvents, msg.event)) {
+                    $rootScope.$broadcast('reload', msg);
+                }
+            };
+
+            ws.onerror = function(event) {
+                console.error('in error ws.onerror');
+                console.error(event);
+            };
+
+            ws.onopen = function(event) {
+                clearInterval(connectTimer);
+                $rootScope.$broadcast('connected');
+            };
+
+            ws.onclose = function(event) {
+                $rootScope.$broadcast('disconnected');
+                clearInterval(connectTimer);
+                connectTimer = setInterval(function() {
+                    if (ws) {
+                        connect();  // Retry to connect for every TIMEOUT interval.
+                    }
+                }, TIMEOUT);
+            };
         };
+
+        connect();
+    }
+
+    /**
+     * Service for notifying user when websocket connection disconnected or connected.
+     */
+    NotifyConnectionService.$inject = ['$rootScope', 'notify', 'gettext', '$timeout'];
+    function NotifyConnectionService($rootScope, notify, gettext, $timeout) {
+        var successTimeout, alertTimeout;
+        var _this = this;
+        _this.message = null;
+
+        $rootScope.$on('disconnected', function(event) {
+            _this.message = 'websocket connection lost, attempting to reconnect ...';
+            $timeout.cancel(alertTimeout);
+            alertTimeout = $timeout(function() {
+                notify.error(gettext(_this.message));
+            }, 100);
+        });
+        $rootScope.$on('connected', function(event) {
+            _this.message = 'Connected!!!';
+            $timeout.cancel(successTimeout);
+            successTimeout = $timeout(function() {
+                notify.success(gettext(_this.message));
+            }, 100);
+        });
     }
 
     ReloadService.$inject = ['$window', '$rootScope', 'session', 'desks', 'gettext'];
@@ -145,5 +197,6 @@
 
     return angular.module('superdesk.notification', ['superdesk.desks'])
         .service('reloadService', ReloadService)
+        .service('notifyConnectionService', NotifyConnectionService)
         .run(WebSocketProxy);
 })();

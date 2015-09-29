@@ -227,8 +227,10 @@
         }
     }
 
-    WorkspaceDropdownDirective.$inject = ['desks', 'workspaces', '$route', 'preferencesService', '$location', 'reloadService'];
-    function WorkspaceDropdownDirective(desks, workspaces, $route, preferencesService, $location, reloadService) {
+    WorkspaceDropdownDirective.$inject = ['desks', 'workspaces', '$route', 'preferencesService', '$location', 'reloadService',
+    'notifyConnectionService'];
+    function WorkspaceDropdownDirective(desks, workspaces, $route, preferencesService, $location, reloadService,
+        notifyConnectionService) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-dropdown.html',
             link: function(scope) {
