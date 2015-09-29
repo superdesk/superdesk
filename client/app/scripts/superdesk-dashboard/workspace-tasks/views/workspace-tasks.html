@@ -1,15 +1,15 @@
 <div class="subnav">
-	<div class="button-stack right-stack">
+    <div class="button-stack right-stack">
         <button class="navbtn sd-create-btn" ng-click="create()"></button>
     </div>
 </div>
 
 <section class="main-section workspace-tasks">
-	<div class="preview-layout" ng-class="{closed: !selected.preview}">
-		<div class="list-pane task-list">
-			<header>
-			</header>
-			<div class="content">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
+        <div class="list-pane task-list">
+            <header>
+            </header>
+            <div class="content">
                 <div class="stages">
                     <div class="board-holder"
                         ng-repeat="stage in stages track by stage._id"
@@ -18,10 +18,10 @@
                         data-stage="stage"
                         data-selected="selected"></div>
                 </div>
-			</div>
-		</div>
-		<div class="preview-pane" ng-if="selected.preview" sd-task-preview data-item="selected.preview" data-onclose="preview()"></div>
-	</div>
+            </div>
+        </div>
+        <div class="preview-pane" ng-if="selected.preview" sd-task-preview data-item="selected.preview" data-onclose="preview()"></div>
+    </div>
 </section>
 
 <div sd-modal data-model="newTask" class="create-task-popup modal-static modal-body-grey">
@@ -30,42 +30,42 @@
         <h3 translate>Create New Task</h3>
     </div>
 
-	<div class="modal-body" ng-if="newTask">
-		<form>
-	    	<fieldset class="full">
-	    		<textarea
-					sd-autoexpand
-					class="title"
-	                ng-model="newTask.slugline"
-	                placeholder="{{ :: 'Add content slugline' | translate}}"
-	                tabindex="1"
-	                sd-autofocus
-	            ></textarea>
-	    	</fieldset>
+    <div class="modal-body" ng-if="newTask">
+        <form>
+            <fieldset class="full">
+                <textarea
+                    sd-autoexpand
+                    class="title"
+                    ng-model="newTask.slugline"
+                    placeholder="{{ :: 'Add content slugline' | translate}}"
+                    tabindex="1"
+                    sd-autofocus
+                ></textarea>
+            </fieldset>
 
             <fieldset>
-				<textarea
-					sd-autoexpand
-					class="description"
-	                ng-model="newTask.description_text"
-	                placeholder="{{ :: 'Add task description' | translate}}"
-	                tabindex="2"
-	            ></textarea>
+                <textarea
+                    sd-autoexpand
+                    class="description"
+                    ng-model="newTask.description_text"
+                    placeholder="{{ :: 'Add task description' | translate}}"
+                    tabindex="2"
+                ></textarea>
 
-	            <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
-	        </fieldset>
+                <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
+            </fieldset>
 
-	       	<fieldset class="due">
-	       		<div class="break"></div>
-				<label translate>Due</label>
-				<div class="clear field">
-					<div sd-datepicker ng-model="newTask.task.due_date"></div>
-				</div>
-				<div class="field">
-					<div sd-timepicker ng-model="newTask.task.due_time">
-				</div>
-			</fieldset>
-		</form>
+            <fieldset class="due">
+                <div class="break"></div>
+                <label translate>Due</label>
+                <div class="clear field">
+                    <div sd-datepicker ng-model="newTask.task.due_date"></div>
+                </div>
+                <div class="field">
+                    <div sd-timepicker ng-model="newTask.task.due_time">
+                </div>
+            </fieldset>
+        </form>
     </div>
 
     <div class="modal-footer">
