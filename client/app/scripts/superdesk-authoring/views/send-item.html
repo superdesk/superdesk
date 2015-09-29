@@ -1,7 +1,8 @@
 <div class="slide-pane slide-pane--dark" ng-show="isActive" ng-class="{open: isActive, 'slide-pane--inset': mode === 'authoring'}">
 
     <div class="slide-pane__header">
-        <h3 ng-show="mode === 'authoring'" translate>Send to / Publish</h3>
+        <h3 ng-show="mode === 'authoring' && itemActions.publish" translate>Send to / Publish</h3>
+        <h3 ng-show="mode === 'authoring' && !itemActions.publish" translate>Send to</h3>
         <h3 ng-show="mode !== 'authoring'" translate>Fetch To</h3>
         <div class="close" ng-click="close()"><i class="icon-close-small icon-white"></i></div>
     </div>

@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div class="dropdown dropright dropdown-bigger" dropdown sd-dropdown-position>
+<div class="dropdown dropright dropdown-bigger dropdown-terms" dropdown sd-dropdown-position>
     <button class="dropdown-toggle" dropdown-toggle ng-disabled="disabled" ng-if="header && !disabled">
         <i class="icon-white icon-plus-large"></i>
     </button>
@@ -34,7 +34,7 @@
     </ul>
 </div>
 
-<div class="terms" ng-if="item[field].length">
+<div class="terms-list" ng-if="item[field].length">
     <ul>
         <li ng-if="!disabled" class="pull-left" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ :: t.name}}<i class="icon-close-small"></i></li>
         <li ng-if="disabled" class="pull-left disabled" ng-repeat="t in item[field]">{{ :: t.name}}</li>

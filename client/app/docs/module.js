@@ -17,7 +17,7 @@
     MainDocsView.$inject = ['$location', '$anchorScroll'];
     function MainDocsView($location, $anchorScroll) {
         return {
-            templateUrl: '../docs/views/main.html',
+            templateUrl: '/views/main.html',
             link: function(scope, elem, attrs) {
                 scope.scrollTo = function(id) {
                     $location.hash(id);

@@ -33,27 +33,38 @@
          id="byline"
          ng-model="item.byline"
          ng-change="autosave(item)"
-         ng-if="_editable"
-         >
+         ng-if="_editable">
   <div ng-if="!_editable">{{item.byline}}</div>
 </div>
 
 <div class="field">
     <label translate>Dateline</label>
     <div class="dateline">
-        <div sd-meta-locators class="dateline-city" ng-show="_editable"
-             data-list="metadata.cities" data-item="item" data-fieldprefix="dateline" data-field="located"
-             data-postprocessing="updateDateline(item, city)" data-change="autosave(item)">
+        <div sd-meta-locators
+             class="dateline-city"
+             ng-show="_editable"
+             data-list="metadata.cities"
+             data-item="item"
+             data-fieldprefix="dateline"
+             data-field="located"
+             data-postprocessing="updateDateline(item, city)"
+             data-change="autosave(item)">
         </div>
 
         <div class="dateline-date">
-            <select id="datelineMonth" ng-disabled="!item.dateline.located || !_editable" ng-change="resetNumberOfDays(true)" ng-model="datelineMonth">
+            <select id="datelineMonth"
+                    ng-options="monthName for (monthName, monthValue) in monthNames"
+                    ng-disabled="!item.dateline.located || !_editable"
+                    ng-change="resetNumberOfDays(true)"
+                    ng-model="datelineMonth">
                 <option value=""></option>
-                <option value="{{monthValue}}" ng-repeat="(monthName, monthValue) in monthNames track by monthName">{{monthName}}</option>
             </select>
-            <select id="datelineDay" ng-disabled="!item.dateline.located || !_editable" ng-change="modifyDatelineDate()" ng-model="datelineDay">
+            <select id="datelineDay"
+                    ng-options="datelineDay as day for day in daysInMonth"
+                    ng-disabled="!item.dateline.located || !_editable"
+                    ng-change="modifyDatelineDate()"
+                    ng-model="datelineDay">
                 <option value=""></option>
-                <option value="{{day}}" ng-selected="datelineDay === day" ng-repeat="day in daysInMonth track by day">{{day}}</option>
             </select>
         </div>
 
@@ -64,12 +75,14 @@
 <div class="field body" ng-if="!isMediaType">
   <label translate>Body</label>
     <span sd-word-count data-item="item.body_html" data-html="true"></span>
-    <div id="bodyhtml" sd-text-editor
-        ng-model="item.body_html"
-        ng-if="_editable"
-        ng-change="autosave(item)"
-        data-language="item.language"
-        data-type="item.type"></div>
+    <div id="bodyhtml" 
+         sd-text-editor
+         ng-model="item.body_html"
+         ng-if="_editable"
+         ng-change="autosave(item)"
+         data-language="item.language"
+         data-type="item.type">
+    </div>
     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
 </div>
 

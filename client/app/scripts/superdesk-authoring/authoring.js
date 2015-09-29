@@ -2235,23 +2235,6 @@
                         scope.activateWidget = function () {
                             WidgetsManagerCtrl.activate(relatedItemWidget[0]);
                         };
-
-                        /*
-                         * Slider for Urgency and Priority
-                         */
-                        scope.sliderUpdate = function(item, field) {
-
-                            var o = {};
-
-                            if (angular.isDefined(item)) {
-                                o[field] = item.value;
-                            } else {
-                                o[field] = null;
-                            }
-
-                            _.extend(scope.item, o);
-                            authoring.autosave(scope.item);
-                        };
                     }
 
                 });
