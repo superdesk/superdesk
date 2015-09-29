@@ -85,25 +85,53 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
         return desks.getCurrentDeskId();
     }, function(desk) {
         if (desk) {
-            fetchStages();
             fetchTasks();
+            fetchStages();
+            fetchPublished();
         }
     });
 
+    /**
+     * Fetch stages of current desk
+     */
     function fetchStages() {
         desks.fetchDeskStages(desks.getCurrentDeskId()).then(function(stages) {
             $scope.stages = stages;
         });
     }
 
+    /**
+     * Fetch items for current desk
+     */
     function fetchTasks() {
         $timeout.cancel(timeout);
         timeout = $timeout(function() {
             var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
             tasks.fetch(status).then(function(list) {
-                $scope.tasks = list;
+                $scope.stageItems = _.groupBy(list._items, function(item) {
+                    return item.task.stage;
+                });
             });
         }, 300, false);
+    }
+
+    /**
+     * Fetch content published from a desk
+     */
+    function fetchPublished() {
+        var filter = {bool: {
+            must: {
+                term: {'task.desk': desks.getCurrentDeskId()}
+            },
+            must_not: {
+                term: {package_type: 'takes'}
+            }
+        }};
+
+        api.query('published', {source: {filter: filter}})
+            .then(function(results) {
+                $scope.published = results;
+            });
     }
 
     $scope.preview = function(item) {
@@ -215,21 +243,14 @@ function TaskKanbanBoardDirective() {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html',
         scope: {
             items: '=',
-            stage: '=',
+            label: '@',
+            cssClass: '@',
             selected: '='
         },
         link: function(scope) {
             scope.preview = function(item) {
                 scope.selected.preview = item;
             };
-
-            scope.$watch('items', function(items) {
-                if (items) {
-                    scope.stageItems = items.filter(function(item) {
-                        return item.task.stage === scope.stage._id;
-                    });
-                }
-            });
         }
     };
 }

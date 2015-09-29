@@ -14,8 +14,16 @@
                     <div class="board-holder"
                         ng-repeat="stage in stages track by stage._id"
                         sd-task-kanban-board
-                        data-items="tasks._items"
-                        data-stage="stage"
+                        data-items="stageItems[stage._id]"
+                        data-label="{{ :: stage.name }}"
+                        data-css-class="in_progress"
+                        data-selected="selected"></div>
+
+                    <div class="board-holder"
+                        sd-task-kanban-board
+                        data-items="published._items"
+                        data-label="{{ :: 'Done' | translate }}"
+                        data-css-class="done"
                         data-selected="selected"></div>
                 </div>
             </div>
