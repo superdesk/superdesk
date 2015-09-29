@@ -59,15 +59,16 @@ describe('Package', function() {
         expect(authoring.getGroupItems('STORY').count()).toBe(0);
     });
 
-    it('create package from published item', function() {
+    fit('create package from published item', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('some text');
         authoring.save();
         authoring.publish();
         search.openGlobalSearch();
-        search.setListView();
-        search.actionOnItem('Create package', 0);
-        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
+        search.setListView().then(function() {
+            search.actionOnItem('Create package', 0);
+            expect(authoring.getGroupItems('MAIN').count()).toBe(1);
+        });
     });
 
     it('create package by combining an item with open item', function() {
