@@ -59,7 +59,7 @@ describe('Package', function() {
         expect(authoring.getGroupItems('STORY').count()).toBe(0);
     });
 
-    fit('create package from published item', function() {
+    it('create package from published item', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('some text');
         authoring.save();

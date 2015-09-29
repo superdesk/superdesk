@@ -1085,6 +1085,78 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['new_take', 'save', 'edit', 'duplicate', 'spike',
                     'mark_item', 'package_item', 'multi_edit', 'publish', 'send']);
         }));
+
+    it('Cannot do new take for embargo item.',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'in_progress',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 1,
+                'embargo': Date()
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': true,
+                'move': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
+                    'mark_item', 'multi_edit', 'publish', 'send']);
+        }));
+
+    it('Cannot do new take for scheduled item.',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'in_progress',
+                'marked_for_not_publication': false,
+                'type': 'text',
+                'task': {
+                    'desk': 'desk1'
+                },
+                'more_coming': false,
+                '_current_version': 1,
+                'publish_schedule': Date()
+            };
+
+            var userPrivileges = {
+                'duplicate': true,
+                'mark_item': false,
+                'spike': true,
+                'unspike': true,
+                'mark_for_highlights': true,
+                'unlock': true,
+                'publish': true,
+                'correct': true,
+                'kill': true,
+                'package_item': true,
+                'move': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['save', 'edit', 'duplicate', 'spike',
+                    'mark_item', 'multi_edit', 'publish', 'send']);
+        }));
 });
 
 describe('authoring workspace', function() {
@@ -1278,4 +1350,116 @@ describe('authoring themes', function () {
         $rootScope.$digest();
         expect(proofreadTheme).not.toBe(null);
     }));
+});
+
+describe('send item directive', function() {
+    beforeEach(module('superdesk.authoring'));
+    beforeEach(module('templates'));
+
+    beforeEach(inject(function($templateCache) {
+        $templateCache.put('scripts/superdesk-authoring/views/send-item.html', '');
+    }));
+
+    it('can hide embargo and publish schedule if take items more than one',
+        inject(function($compile, $rootScope) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: 'foo',
+                type: 'text',
+                state: 'in-progress',
+                takes: {
+                    sequence: 2
+                }
+            };
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+            scope.$digest();
+            iscope = elem.isolateScope();
+            expect(iscope.showPublishSchedule()).toBe(false);
+            expect(iscope.showEmbargo()).toBe(false);
+        }));
+
+    it('can show embargo and publish schedule if only one take item',
+        inject(function($compile, $rootScope) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: 'foo',
+                type: 'text',
+                state: 'in-progress',
+                takes: {
+                    sequence: 1
+                }
+            };
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+            scope.$digest();
+            iscope = elem.isolateScope();
+            expect(iscope.showPublishSchedule()).toBe(true);
+            expect(iscope.showEmbargo()).toBe(true);
+        }));
+
+    it('can show embargo and publish schedule if not a take item',
+        inject(function($compile, $rootScope) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: 'foo',
+                type: 'text',
+                state: 'in-progress'
+            };
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+            scope.$digest();
+            iscope = elem.isolateScope();
+            expect(iscope.showPublishSchedule()).toBe(true);
+            expect(iscope.showEmbargo()).toBe(true);
+        }));
+
+    it('can show embargo date',
+        inject(function($compile, $rootScope) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: 'foo',
+                type: 'text',
+                state: 'in-progress',
+                embargo_date: Date()
+            };
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+            scope.$digest();
+            iscope = elem.isolateScope();
+            expect(iscope.showPublishSchedule()).toBe(false);
+            expect(iscope.showEmbargo()).toBe(true);
+        }));
+
+    it('can show published schedule date',
+        inject(function($compile, $rootScope) {
+
+            var scope, elem, iscope;
+            scope = $rootScope.$new();
+            scope.item = {
+                _id: 'foo',
+                type: 'text',
+                state: 'in-progress',
+                publish_schedule_date: Date()
+            };
+            scope.action = 'edit';
+            elem = $compile('<div sd-send-item data-item="item" data-mode="authoring" ' +
+                'data-action="action"></div>')(scope);
+            scope.$digest();
+            iscope = elem.isolateScope();
+            expect(iscope.showPublishSchedule()).toBe(true);
+            expect(iscope.showEmbargo()).toBe(false);
+        }));
 });
