@@ -1669,15 +1669,21 @@
                     }
                 };
 
+                /**
+                 * Send the current item to different desk or stage and create a new take and open for editing.
+                 */
                 function runSendAndContinue() {
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
-                    var activeDeskId = desks.getCurrentDeskId();
 
                     scope.item.more_coming = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
-                            return authoring.linkItem(scope.item, null, activeDeskId);
+                            var itemDeskId = null;
+                            if (scope.item.task && scope.item.task.desk) {
+                                itemDeskId = scope.item.task.desk;
+                            }
+                            return authoring.linkItem(scope.item, null, itemDeskId);
                         })
                         .then(function (item) {
                             authoringWorkspace.close();

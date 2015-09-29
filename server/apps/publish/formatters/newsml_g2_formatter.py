@@ -313,20 +313,46 @@ class NewsMLG2Formatter(Formatter):
         :param dict article:
         :param Element content_meta:
         """
+        if not article.get('place'):
+            return
+
         for place in article.get('place', []):
-            if place.get('country') or place.get('state') or place.get('world_region'):
-                if place.get('state'):
-                    subject = SubElement(content_meta, 'subject',
-                                         attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
-                    SubElement(subject, 'name').text = place.get('state')
-                    if place.get('country'):
-                        broader = SubElement(subject, 'broader',
-                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
-                        SubElement(broader, 'name').text = place.get('country')
-                    if place.get('world_region'):
-                        broader = SubElement(subject, 'subject',
-                                             attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:WorldArea'})
-                        SubElement(broader, 'name').text = place.get('world_region')
+            if place.get('state'):
+                subject = self._create_subject_element(content_meta, place.get('state'), 'loctyp:CountryArea')
+                self._create_broader_element(subject, place.get('country'), 'loctyp:Country')
+                self._create_broader_element(subject, place.get('world_region'), 'loctyp:WorldArea')
+            elif place.get('country'):
+                subject = self._create_subject_element(content_meta, place.get('country'), 'loctyp:Country')
+                self._create_broader_element(subject, place.get('world_region'), 'loctyp:WorldArea')
+            elif place.get('world_region'):
+                self._create_subject_element(content_meta, place.get('world_region'), 'loctyp:WorldArea')
+
+    def _create_broader_element(self, parent, broader_name, qcode, concept_type='cpnat:abstract'):
+        """
+        Create broader element.
+        :param element parent: parent element under which the broader element is created
+        :param str broader_name: value for the name element
+        :param str qcode:
+        :param str concept_type:
+        """
+        if broader_name:
+            broader_elm = SubElement(parent, 'broader',
+                                     attrib={'type': concept_type, 'qcode': qcode})
+            SubElement(broader_elm, 'name').text = broader_name
+
+    def _create_subject_element(self, parent, subject_name, qcode, concept_type='cpnat:abstract'):
+        """
+        Create a subject element
+        :param element parent:
+        :param str subject_name: value for the name element
+        :param str qcode:
+        :param str concept_type:
+        :return: returns the subject element.
+        """
+        subject_elm = SubElement(parent, 'subject',
+                                 attrib={'type': concept_type, 'qcode': qcode})
+        SubElement(subject_elm, 'name').text = subject_name
+        return subject_elm
 
     def _format_located(self, article, content_meta):
         """
@@ -339,14 +365,8 @@ class NewsMLG2Formatter(Formatter):
             located_elm = SubElement(content_meta, 'located',
                                      attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:City'})
             SubElement(located_elm, "name").text = located.get('city')
-            if located.get('state'):
-                broader = SubElement(located_elm, "broader",
-                                     attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:CountryArea'})
-                SubElement(broader, "name").text = located.get('state')
-            if located.get('country'):
-                broader = SubElement(located_elm, "broader",
-                                     attrib={'type': 'cpnat:abstract', 'qcode': 'loctyp:Country'})
-                SubElement(broader, "name").text = located.get('country')
+            self._create_broader_element(located_elm, located.get('state'), 'loctyp:CountryArea')
+            self._create_broader_element(located_elm, located.get('country'), 'loctyp:Country')
 
         if article.get('dateline', {}).get('text', {}):
             SubElement(content_meta, 'dateline').text = article.get('dateline', {}).get('text', {})

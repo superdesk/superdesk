@@ -15,6 +15,7 @@ from superdesk.metadata.item import EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.packages import TakesPackageService
 from apps.archive.common import CUSTOM_HATEOAS
+from apps.auth import get_user
 from superdesk.metadata.utils import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
@@ -49,8 +50,17 @@ class ArchiveLinkService(Service):
         service = get_resource_service(ARCHIVE)
         target = service.find_one(req=None, _id=target_id)
         self._validate_link(target, target_id)
+        link = {}
 
-        link = {'task': {'desk': desk_id}} if desk_id else {}
+        if desk_id:
+            link = {'task': {'desk': desk_id}}
+            user = get_user()
+            lookup = {'_id': desk_id, 'members.user': user['_id']}
+            desk = get_resource_service('desks').find_one(req=None, **lookup)
+            if not desk:
+                raise SuperdeskApiError.forbiddenError("No privileges to create new take on requested desk.")
+
+            link['task']['stage'] = desk['incoming_stage']
 
         if link_id:
             link = service.find_one(req=None, _id=link_id)

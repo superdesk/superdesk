@@ -241,15 +241,22 @@ class NewsML12Formatter(Formatter):
         :param dict article:
         :param Element descriptive_metadata:
         """
-        for place in article.get('place', []):
+        if not article.get('place'):
+            return
+
+        for place in article.get('place'):
             if place.get('country') or place.get('state') or place.get('world_region'):
-                location = SubElement(descriptive_metadata, 'Location', attrib={'HowPresent': 'RelatesTo'})
+                location = SubElement(descriptive_metadata,
+                                      'Location', attrib={'HowPresent': 'RelatesTo'})
                 if place.get('state'):
-                    SubElement(location, 'Property', {'FormalName': 'CountryArea'}).text = place.get('state')
+                    SubElement(location, 'Property',
+                               {'FormalName': 'CountryArea'}).text = place.get('state')
                 if place.get('country'):
-                    SubElement(location, 'Property', {'FormalName': 'Country'}).text = place.get('country')
+                    SubElement(location, 'Property',
+                               {'FormalName': 'Country'}).text = place.get('country')
                 if place.get('world_region'):
-                    SubElement(location, 'Property', {'FormalName': 'WorldRegion'}).text = place.get('world_region')
+                    SubElement(location, 'Property',
+                               {'FormalName': 'WorldRegion'}).text = place.get('world_region')
 
     def _format_dateline(self, article, descriptive_metadata):
         """

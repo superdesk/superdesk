@@ -26,7 +26,9 @@ logger = logging.getLogger(__name__)
 
 class TakesPackageService():
     # metadata field of take
-    fields_for_creating_take = ['anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline']
+    fields_for_creating_take = ['headline', 'anpa_category', 'pubstatus',
+                                'slugline', 'urgency', 'subject', 'dateline',
+                                'place', 'priority', 'abstract', 'ednote']
 
     def get_take_package_id(self, item):
         """
@@ -83,10 +85,8 @@ class TakesPackageService():
         # if target is the first take hence default sequence is for first take.
         sequence = package.get(SEQUENCE, 1) if package else 1
         sequence = self.__next_sequence__(sequence)
-        headline = self.__strip_take_info__(target.get('headline', ''))
         take_key = self.__strip_take_info__(target.get('anpa_take_key', ''))
         to['event_id'] = target.get('event_id')
-        to['headline'] = headline
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(ITEM_STATE) in PUBLISH_STATES:
             to['anpa_take_key'] = '{} (reopens)'.format(take_key)
@@ -110,7 +110,7 @@ class TakesPackageService():
         takes_package[ITEM_TYPE] = CONTENT_TYPE.COMPOSITE
         takes_package[PACKAGE_TYPE] = TAKES_PACKAGE
         fields_for_creating_takes_package = self.fields_for_creating_take.copy()
-        fields_for_creating_takes_package.extend(['abstract', 'publish_schedule', 'event_id', 'rewrite_of', 'task',
+        fields_for_creating_takes_package.extend(['publish_schedule', 'event_id', 'rewrite_of', 'task',
                                                   EMBARGO])
 
         for field in fields_for_creating_takes_package:

@@ -408,8 +408,14 @@ define([
                         return authoring.itemActions(item).new_take;
                     }],
                     controller: ['data', '$rootScope', 'desks', 'authoring', 'authoringWorkspace', 'notify', 'superdesk',
-                        function(data, $rootScope, desks, authoring, authoringWorkspace, notify, superdesk) {
-                            authoring.linkItem(data.item, null, desks.getCurrentDeskId())
+                        function(data, $rootScope, desks, authoring, authoringWorkspace, notify) {
+                            // get the desk of the item to create the new take.
+                            var deskId = null;
+                            if (data.item.task && data.item.task.desk) {
+                                deskId = data.item.task.desk;
+                            }
+
+                            authoring.linkItem(data.item, null, deskId)
                                 .then(function(item) {
                                     notify.success(gettext('New take created.'));
                                     $rootScope.$broadcast('item:take');
