@@ -118,49 +118,81 @@ define([
                 return merged.join(', ');
             };
         })
-        .filter('formatDatelinesDate', function() {
-            return function(located, date_to_format) {
-                var momentizedTimestamp = angular.isDefined(date_to_format) ? moment.utc(date_to_format) : moment.utc();
+        .filter('previewDateline', ['$filter', function($filter) {
+            return function(located, source, datelineDate) {
+                if (_.isObject(located) && angular.isDefined(located.city)) {
+                    var momentizedTimestamp = angular.isDefined(datelineDate) ? moment.utc(datelineDate) : moment.utc();
+                    var _month = '';
+
+                    if (angular.isDefined(located) && located.tz !== 'UTC') {
+                        momentizedTimestamp = momentizedTimestamp.tz(located.tz);
+                    }
+
+                    var currentMonth = momentizedTimestamp.month() + 1;
+
+                    if (currentMonth === 9) {
+                        _month = 'Sept ';
+                    } else if (currentMonth >= 3 && currentMonth <= 7) {
+                        _month = momentizedTimestamp.format('MMMM');
+                    } else {
+                        _month = momentizedTimestamp.format('MMM');
+                    }
+
+                    return $filter('formatDatelineToLocMMMDDSrc')(located, _month, momentizedTimestamp.format('DD'), source);
+                } else {
+                    return '';
+                }
+            };
+        }])
+        .filter('daysInAMonth', function() {
+            return function (month) {
+                var _timeStamp = month ? moment((month + 1), 'MM') : moment();
+                var daysInCurrMonth = [];
+
+                for (var i = _timeStamp.startOf('month').date(); i <= _timeStamp.endOf('month').date(); i++) {
+                    daysInCurrMonth.push(i < 10 ? ('0' + i) : i.toString());
+                }
+
+                return daysInCurrMonth;
+            };
+        })
+        .filter('formatDatelineToMMDD', function() {
+            return function (date_to_format, located) {
+                var momentizedTimestamp = moment.utc(date_to_format);
 
                 if (angular.isDefined(located) && located.tz !== 'UTC') {
                     momentizedTimestamp = momentizedTimestamp.tz(located.tz);
                 }
 
-                var currentMonth = momentizedTimestamp.month() + 1;
-
-                if (currentMonth === 9) {
-                    return 'Sept '.concat(momentizedTimestamp.date());
-                } else if ((momentizedTimestamp.month() + 1) >= 3 && (momentizedTimestamp.month() + 1) <= 7) {
-                    return momentizedTimestamp.format('MMMM DD');
-                } else {
-                    return momentizedTimestamp.format('MMM DD');
-                }
+                return {'month': momentizedTimestamp.month().toString(), 'day': momentizedTimestamp.date().toString()};
             };
         })
-        .filter('previewDateline', ['$filter', function($filter) {
-            return function(located, source, datelineDate) {
-                if (angular.isUndefined(source)) {
+        .filter('formatDatelineToLocMMMDDSrc', function() {
+            return function(located, month, date, source) {
+                if (!source) {
                     source = '';
                 }
 
-                if (_.isObject(located) && angular.isDefined(located.city)) {
-                    var currentDateTime = $filter('formatDatelinesDate')(located, datelineDate);
+                var dateline = located.city_code;
+                var datelineFields = located.dateline.split(',');
 
-                    var dateline = located.city_code;
-                    var datelineFields = located.dateline.split(',');
-
-                    if (_.indexOf(datelineFields, 'state')) {
-                        dateline.concat(', ', located.state_code);
-                    }
-
-                    if (_.indexOf(datelineFields, 'country')) {
-                        dateline.concat(', ', located.country_code);
-                    }
-
-                    return dateline.concat(', ', currentDateTime, ' ', source, ' -');
-                } else {
-                    return '';
+                if (_.indexOf(datelineFields, 'state')) {
+                    dateline.concat(', ', located.state_code);
                 }
+
+                if (_.indexOf(datelineFields, 'country')) {
+                    dateline.concat(', ', located.country_code);
+                }
+
+                return dateline.concat(', ', month, ' ', date, ' ', source, ' -');
             };
-        }]);
+        })
+        .filter('relativeUTCTimestamp', function() {
+            return function (located, month, date) {
+                var currentTSInLocated = located.tz === 'UTC' ? moment.utc() : moment().tz(located.tz);
+                currentTSInLocated.month(month).date(date);
+
+                return currentTSInLocated.toISOString();
+            };
+        });
 });

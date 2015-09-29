@@ -94,7 +94,8 @@ def set_dateline(doc, repo_type):
 
     if repo_type == ARCHIVE and 'dateline' not in doc:
         current_date_time = dateline_ts = utcnow()
-        doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION}
+        doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
+                           'text': None}
 
         user = get_user()
         if user and user.get('user_preferences', {}).get('dateline:located'):

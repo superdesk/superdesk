@@ -38,9 +38,9 @@ class NINJSFormatter(Formatter):
             except:
                 pass
 
-            located = article.get('dateline', {}).get('located', {}).get('city')
+            located = article.get('dateline', {}).get('located', {})
             if located:
-                ninjs['located'] = article.get('dateline', {}).get('located', {}).get('city', '')
+                ninjs['located'] = located.get('city', '')
 
             for copy_property in self.direct_copy_properties:
                 if copy_property in article:

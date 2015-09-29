@@ -34,7 +34,8 @@ define(['angular'], function(angular) {
                     items: '=',
                     term: '=',
                     alwaysVisible: '=',
-                    disabled: '='
+                    disabled: '=',
+                    blur: '&'
                 },
                 controller: ['$scope', function($scope) {
                     $scope.items = [];
@@ -90,7 +91,12 @@ define(['angular'], function(angular) {
                     });
 
                     $input.bind('blur', function() {
-                        scope.$apply(function() { scope.focused = false; });
+                        scope.$apply(function() {
+                            scope.focused = false;
+                            if (typeof scope.blur === 'function') {
+                                scope.blur({item: scope.active});
+                            }
+                        });
                     });
 
                     $list.bind('mouseover', function() {

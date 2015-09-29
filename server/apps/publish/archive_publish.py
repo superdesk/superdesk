@@ -89,8 +89,7 @@ class BasePublishService(BaseService):
 
     def on_update(self, updates, original):
         if original.get('marked_for_not_publication', False):
-            raise SuperdeskApiError.badRequestError(
-                message='Cannot publish an item which is marked as Not for Publication')
+            raise SuperdeskApiError.badRequestError('Cannot publish an item which is marked as Not for Publication')
 
         if not is_workflow_state_transition_valid(self.publish_type, original[ITEM_STATE]):
             error_message = "Can't {} as item state is {}" if original[ITEM_TYPE] == CONTENT_TYPE.TEXT else \
@@ -99,28 +98,30 @@ class BasePublishService(BaseService):
 
         updated = original.copy()
         updated.update(updates)
-        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updated}
 
-        takes_package = self.takes_package_service.get_take_package(original) or {}
-        # validate if take can be published
-        if self.publish_type == 'publish' and takes_package \
-            and not self.takes_package_service.can_publish_take(takes_package,
-                                                                updates.get(SEQUENCE, original.get(SEQUENCE, 1))):
-            raise PublishQueueError.previous_take_not_published_error(
-                Exception("Previous takes are not published."))
+        takes_package = self.takes_package_service.get_take_package(original)
 
-        if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE:
-            if updates.get(EMBARGO) and self.publish_type in ['correct', 'kill']:
+        if self.publish_type == 'publish':
+            # validate if take can be published
+            if takes_package and not self.takes_package_service.can_publish_take(
+                    takes_package, updates.get(SEQUENCE, original.get(SEQUENCE, 1))):
+                raise PublishQueueError.previous_take_not_published_error(
+                    Exception("Previous takes are not published."))
+
+            validate_schedule(updated.get('publish_schedule'), takes_package.get(SEQUENCE, 1) if takes_package else 1)
+
+            if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE and updates.get(EMBARGO):
+                get_resource_service(ARCHIVE).validate_embargo(updated)
+
+        if self.publish_type in ['correct', 'kill']:
+            if updates.get(EMBARGO):
                 raise SuperdeskApiError.badRequestError("Embargo can't be set after publishing")
 
-            get_resource_service(ARCHIVE).validate_embargo(updated)
+            if updates.get('dateline'):
+                raise SuperdeskApiError.badRequestError("Dateline can't be modified after publishing")
 
-        # validate the publish schedule
-        if self.publish_type == 'publish':
-            validate_schedule(updated.get('publish_schedule'), takes_package.get(SEQUENCE, 1))
-
+        validate_item = {'act': self.publish_type, 'type': original['type'], 'validate': updated}
         validation_errors = get_resource_service('validate').post([validate_item])
-
         if validation_errors[0]:
             raise ValidationError(validation_errors)
 

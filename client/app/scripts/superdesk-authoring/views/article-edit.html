@@ -40,13 +40,25 @@
 
 <div class="field">
     <label translate>Dateline</label>
-    <div sd-meta-locators class="dateline-info" ng-show="_editable"
-         data-list="metadata.cities" data-item="item" data-fieldprefix="dateline" data-field="located"
-         data-postprocessing="updateDateline(item, city)" data-change="autosave(item)">
-    </div>
-    <div class="dateline-info" ng-show="_editable"> {{item._datelinedate}} </div>
+    <div class="dateline">
+        <div sd-meta-locators class="dateline-city" ng-show="_editable"
+             data-list="metadata.cities" data-item="item" data-fieldprefix="dateline" data-field="located"
+             data-postprocessing="updateDateline(item, city)" data-change="autosave(item)">
+        </div>
 
-    <div ng-show="!_editable">{{ item.dateline.text }}</div>
+        <div class="dateline-date">
+            <select id="datelineMonth" ng-disabled="!item.dateline.located || !_editable" ng-change="resetNumberOfDays(true)" ng-model="datelineMonth">
+                <option value=""></option>
+                <option value="{{monthValue}}" ng-repeat="(monthName, monthValue) in monthNames track by monthName">{{monthName}}</option>
+            </select>
+            <select id="datelineDay" ng-disabled="!item.dateline.located || !_editable" ng-change="modifyDatelineDate()" ng-model="datelineDay">
+                <option value=""></option>
+                <option value="{{day}}" ng-selected="datelineDay === day" ng-repeat="day in daysInMonth track by day">{{day}}</option>
+            </select>
+        </div>
+
+        <div ng-show="!_editable">{{ item.dateline.text }}</div>
+    </div>
 </div>
 
 <div class="field body" ng-if="!isMediaType">
