@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    AggregateCtrl.$inject = ['$scope', 'api', 'desks', 'workspaces', 'preferencesService', 'storage', 'gettext'];
-    function AggregateCtrl($scope, api, desks, workspaces, preferencesService, storage, gettext) {
+    AggregateCtrl.$inject = ['$scope', 'api', 'desks', 'workspaces', 'preferencesService', 'storage', 'gettext', 'multi'];
+    function AggregateCtrl($scope, api, desks, workspaces, preferencesService, storage, gettext, multi) {
         var PREFERENCES_KEY = 'agg:view';
         var defaultMaxItems = 10;
         var self = this;
@@ -235,6 +235,7 @@
          * param {string} fileType
          */
         this.setFileType = function(fileType) {
+            multi.reset();
             if (fileType === 'all') {
                 this.selectedFileType = [];
             } else {
