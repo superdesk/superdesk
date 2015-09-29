@@ -475,7 +475,7 @@
 
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
-                !current_item.embargo &&
+                !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
 
@@ -530,7 +530,8 @@
 
             // allow all stories to be packaged if it doesn't have Embargo
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
-                !current_item.embargo && current_item.package_type !== 'takes' && current_item.state !== 'killed';
+                !current_item.embargo && current_item.package_type !== 'takes' &&
+                current_item.state !== 'killed' && !current_item.publish_schedule;
 
             action.multi_edit = !is_read_only_state;
 
@@ -562,6 +563,16 @@
          */
         this.setItemVersion = function(version) {
             this._versionToFetch = version;
+        };
+
+        /**
+         * Check whether the item is a Take or not.
+         * @param {object} item
+         * @returns {boolean} True if a "Valid Take" else False
+         */
+        this.isTakeItem = function(item) {
+            return (_.contains(['text', 'preformatted'], item.type) &&
+                item.takes && item.takes.sequence > 1);
         };
     }
 
@@ -1595,6 +1606,7 @@
                 scope.showPublishSchedule = function() {
                     return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
                         !scope.item.embargo_date && !scope.item.embargo_time &&
+                        !authoring.isTakeItem(scope.item) &&
                         ['published', 'killed', 'corrected'].indexOf(scope.item.state) === -1;
                 };
 
@@ -1604,7 +1616,7 @@
                 scope.showEmbargo = function() {
                     var prePublishCondition = scope.mode !== 'ingest' && scope.item &&
                         scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
-                        !scope.item.publish_schedule_time;
+                        !scope.item.publish_schedule_time && !authoring.isTakeItem(scope.item);
 
                     if (prePublishCondition && authoring.isPublished(scope.item)) {
                         return scope.item.embargo;
