@@ -6,6 +6,7 @@ exports.content = require('./content');
 exports.authoring = require('./authoring');
 exports.ingestProvider = new IngestProvider();
 exports.ingestDashboard = new IngestDashboard();
+exports.ingestSettings = new IngestSettings();
 
 require('./waitReady');
 
@@ -81,5 +82,41 @@ function IngestDashboard() {
 
     this.getDashboardIngestCount = function(dashboard) {
         return dashboard.element(by.css('.ingested-count'));
+    };
+}
+
+/**
+ * Constructor for the "class" representing the ingest settings page.
+ *
+ * Contains pre-defined ElementLocator objects, representing the varios UI
+ * elements on the page used in tests.
+ *
+ */
+function IngestSettings() {
+    // the main navigation tabs on the ingest settings page
+    this.tabs = {
+        routingTab: element(by.buttonText('Routing'))
+    };
+
+    this.newSchemeBtn = element(by.partialButtonText('New Routing Scheme'));
+
+    this.newRoutingRuleBtn = element(by.partialButtonText('New Rule'));
+
+    // the settings pane for routing rule (in a modal)
+    this.routingRuleSettings = {
+        tabAction: element(by.buttonText('Action')),
+
+        // NOTE: several elements appear twice - under the FETCH settings
+        // and under the PUBLISH settings, hence the need to locate them all
+        // and select them by index, e.g. .get(0)
+        showFetchBtn: $$('.icon-plus-small').get(0),
+        fetchDeskList: element.all(by.name('desk')).get(0),
+        fetchStageList: element.all(by.name('stage')).get(0),
+        fetchMacroList: element.all(by.name('macro')).get(0),
+
+        showPublishBtn: $$('.icon-plus-small').get(1),
+        publishDeskList: element.all(by.name('desk')).get(1),
+        publishStageList: element.all(by.name('stage')).get(1),
+        publishMacroList: element.all(by.name('macro')).get(1)
     };
 }

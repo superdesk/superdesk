@@ -7,6 +7,7 @@ module.exports.changeUrl = changeUrl;
 module.exports.printLogs = printLogs;
 module.exports.waitForSuperdesk = waitForSuperdesk;
 module.exports.nav = nav;
+module.exports.getListOption = getListOption;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -151,4 +152,18 @@ function route(location) {
     return function() {
         nav(location);
     };
+}
+
+/**
+ * Finds and returns the n-th <option> element of the given dropdown list
+ *
+ * @param {ElementFinder} dropdown - the <select> element to pick the option from
+ * @param {number} n - the option's position in the dropdown's list of options,
+ *   must be an integer (NOTE: list positions start with 1!)
+ *
+ * @return {ElementFinder} the option element itself (NOTE: might not exist)
+ */
+function getListOption(dropdown, n) {
+    var cssSelector = 'option:nth-child(' + n + ')';
+    return dropdown.$(cssSelector);
 }
