@@ -96,18 +96,15 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
 
     $scope.openMulti = function() {
         $scope.isMultiedit = true;
+        updateWorkqueue();
         multiEdit.open();
     };
 
     /**
-     * Close multiedit and all items that were in multiedit.
+     * Close multiedit.
      */
     $scope.closeMulti = function() {
         multiEdit.exit();
-        _.forEach(multiEdit.items, function(item) {
-            lock.unlock(_.find(workqueue.items, {_id: item.article}));
-        });
-
         $scope.redirectOnCloseMulti();
     };
 
