@@ -187,6 +187,13 @@
                 return this;
             };
 
+            this.clear_filters = function clearFilters() {
+                filters = [];
+                post_filters = [];
+                buildFilters({}, this);
+                return this;
+            };
+
             /**
              * Set size
              *

@@ -77,14 +77,14 @@ describe('authoring', function() {
     it('view item history spike-unspike operations', function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
-        workspace.actionOnItem('Spike', 'item5', 'Politic');
-        workspace.actionOnItem('Unspike Item', 'item5', 'Politic', 'Spiked');
-        workspace.editItem('item5', 'Politic');
+        workspace.actionOnItem('Spike', 'item6', 'Politic');
+        workspace.actionOnItem('Unspike Item', 'item6', 'Politic', 'Spiked');
+        workspace.editItem('item6', 'Politic');
 
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(3);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/one by .*/);
-        expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/one by .*/);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/two by .*/);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/two by .*/);
     });
 
     it('view item history move operation', function() {
@@ -207,5 +207,16 @@ describe('authoring', function() {
         expect(authoring.edit_correct_button.isDisplayed()).toBe(false);
         expect(authoring.edit_kill_button.isDisplayed()).toBe(false);
         element(by.id('closeAuthoringBtn')).click();
+    });
+
+    it('can edit packages in which the item was linked', function() {
+        monitoring.openMonitoring();
+        monitoring.openAction(1, 0);
+        authoring.showPackages();
+        expect(authoring.getPackages().count()).toBe(1);
+        expect(authoring.getPackage(0).getText()).toMatch('PACKAGE2');
+        authoring.getPackage(0).click();
+        authoring.showInfo();
+        expect(authoring.getGUID().getText()).toMatch('package2');
     });
 });

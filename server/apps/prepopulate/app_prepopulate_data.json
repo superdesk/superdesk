@@ -636,21 +636,62 @@
         "resource": "archive",
         "username": "admin",
         "data": {
-            "headline": "package2",
-            "type": "composite",
             "guid": "package2",
-            "versioncreated": "NOW()",
-            "_current_version" : 1,
-            "original_creator": "-id user admin-",
             "unique_id": 2,
             "unique_name": "package1",
-            "groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}],
-             "task" : {
+		    "firstcreated": "NOW()",
+            "original_creator": "-id user admin-",
+            "versioncreated": "NOW()",
+		    "version_creator": "-id user admin-",
+            "_current_version" : 1,
+		    "urgency": 2,
+		    "priority": 1,
+		    "version": 1,
+		    "state": "in_progress",
+            "type": "composite",
+		    "slugline": "PACKAGE2 SLUGLINE",
+            "headline": "package2",
+		    "operation": "create",
+		    "pubstatus": "usable",
+		    "subject": [{"name": "archaeology", "parent": "01000000", "qcode": "01001000"}],
+		    "language": "en",
+            "task" : {
                 "desk" : "-id desk Politic Desks-",
                 "user" : "-id user admin2-",
                 "status": "in_progress",
                 "stage": "-id stage two Politic Desks-"
-            }
+            },
+		    "groups": [{
+		            "id": "root",
+		            "refs": [{"idRef": "main"}, {"idRef": "story"}]
+		        },
+		        {
+		            "id": "main",
+		            "refs": [
+		                {
+		                    "guid": "item5",
+		                    "headline": "item5",
+		                    "location": "archive",
+		                    "residRef": "item5",
+		                    "slugline": "item5 slugline",
+		                    "type": "text"
+		                }
+		            ]
+		        },
+		        {
+		            "id": "story",
+		            "refs": [
+		                {
+		                    "guid": "item9",
+		                    "headline": "item9",
+		                    "location": "archive",
+		                    "residRef": "item9",
+		                    "slugline": "item9 slugline",
+		                    "type": "text"
+		                }
+		            ]
+		        }
+		    ]
         }
     },
     {

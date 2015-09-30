@@ -119,6 +119,26 @@ function Authoring() {
         return element(by.css('[ng-click="tab = \'history\'"]')).click();
     };
 
+    this.showInfo = function() {
+        return element(by.id('Info')).click();
+    };
+
+    this.showPackages = function() {
+        return element(by.id('Packages')).click();
+    };
+
+    this.getGUID = function() {
+        return element(by.id('guid'));
+    };
+
+    this.getPackages = function() {
+        return element.all(by.repeater('pitem in contentItems'));
+    };
+
+    this.getPackage = function(index) {
+        return this.getPackages().get(index);
+    };
+
     this.getHistoryItems = function() {
         return element.all(by.repeater('version in versions'));
     };
