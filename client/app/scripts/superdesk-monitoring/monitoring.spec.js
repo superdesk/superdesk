@@ -201,7 +201,7 @@ describe('monitoring', function() {
             iScope.edit(item1, true);
             expect(authoringWorkspace.edit).not.toHaveBeenCalled();
 
-            iScope.edit(item2, true)
+            iScope.edit(item2, true);
             expect(authoringWorkspace.edit).toHaveBeenCalled();
         }));
     });
