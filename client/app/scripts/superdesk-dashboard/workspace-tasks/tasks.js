@@ -68,8 +68,8 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
     };
 }
 
-TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter'];
-function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
+TasksController.$inject = ['$scope', '$timeout', 'api', 'notify', 'desks', 'tasks', '$filter', 'moment'];
+function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, moment) {
 
     var KANBAN_VIEW = 'kanban',
         timeout;
@@ -88,6 +88,7 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
             fetchTasks();
             fetchStages();
             fetchPublished();
+            fetchScheduled();
         }
     });
 
@@ -132,6 +133,34 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter) {
             .then(function(results) {
                 $scope.published = results;
             });
+    }
+
+    /**
+     * Fetch templates scheduled for today on current desk
+     */
+    function fetchScheduled() {
+        var startTime = moment().hours(0).minutes(0).seconds(0);
+        var endTime = moment().hours(23).minutes(59).seconds(59);
+
+        var filter = {
+            'template_desk': desks.getCurrentDeskId(),
+            'next_run': {$gte: toServerTime(startTime), $lte: toServerTime(endTime)}
+        };
+
+        api.query('content_templates', {where: filter, sort: 'next_run'}).then(function(results) {
+            $scope.scheduled = results;
+        });
+
+        /**
+         * Get UTC datetime matching server format for given moment date object
+         *
+         * @param {Moment} d
+         * @return {string}
+         */
+        function toServerTime(d) {
+            d.milliseconds(0); // set it to zero so it will match in replace
+            return d.toISOString().replace('.000Z', '+0000');
+        }
     }
 
     $scope.preview = function(item) {
@@ -229,8 +258,10 @@ function TaskPreviewDirective(tasks, desks, notify, $filter) {
                 scope.editmode = false;
                 scope.task = _.create(scope.item);
                 scope.task_details = _.extend({}, scope.item.task);
-                scope.task_details.due_date = $filter('formatDateTimeString')(scope.item.task.due_date);
-                scope.task_details.due_time = $filter('formatDateTimeString')(scope.item.task.due_date, 'HH:mm:ss');
+                scope.task_details.due_date = scope.task_details.due_date ?
+                    $filter('formatDateTimeString')(scope.task_details.due_date) : null;
+                scope.task_details.due_time = scope.task_details.due_time ?
+                    $filter('formatDateTimeString')(scope.task_details.due_time, 'HH:mm:ss') : null;
                 _orig = scope.item;
             };
         }
@@ -249,7 +280,9 @@ function TaskKanbanBoardDirective() {
         },
         link: function(scope) {
             scope.preview = function(item) {
-                scope.selected.preview = item;
+                if (scope.selected) {
+                    scope.selected.preview = item;
+                }
             };
         }
     };
