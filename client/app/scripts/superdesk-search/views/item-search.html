@@ -39,7 +39,7 @@
             </label>
         </div>
     </fieldset>
-    <fieldset>
+    <fieldset ng-show="repo.search === 'local'">
         <div class="field">
             <label for="search-headline">
                 {{:: 'Headline' | translate}}
@@ -52,7 +52,6 @@
         <div class="field">
             <label for="search-slugline">
                 {{:: 'Slugline' | translate}}
-
             </label>
             <div class="control">
                 <input type="text" id="search-slugline" ng-model="meta.slugline">
@@ -90,6 +89,32 @@
             </div>
         </div>
     </fieldset>
+    <fieldset ng-show="repo.search === 'aapmm'">      
+        <div class="field">
+            <label for="search-slugline">
+                {{:: 'Slugline' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-slugline" ng-model="meta.slugline">
+            </div>
+        </div>       
+        <div class="field">
+            <label for="search-decsription">
+                {{:: 'Description' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-description" ng-model="meta.description">
+            </div>
+        </div>
+            <div class="field">
+            <label for="search-aapkeyword">
+                {{:: 'AAP Image Keyword' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-aapkeyword" ng-model="meta.aapkeyword">
+            </div>
+        </div>       
+    </fieldset>    
 </form>
 <div class="actions">
     <button class="btn btn-info pull-right" ng-click="search()" translate>Go</button>
