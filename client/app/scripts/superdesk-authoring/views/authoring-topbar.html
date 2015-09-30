@@ -34,10 +34,10 @@
         <button class="btn btn-medium pull-left" id="closeAuthoringBtn" ng-click="close()" translate>CLOSE</button>
 
         <button class="btn btn-medium btn-info pull-left" type="submit"
-            ng-click="save(item)"
+            ng-click="saveTopbar(item)"
             ng-show="_editable"
             ng-if = "itemActions.save && action === 'edit'"
-            ng-disabled="!save_enabled()"
+            ng-disabled="!save_enabled() || saveDisabled"
             translate>SAVE</button>
 
         <button id="export" class="btn btn-medium btn-info pull-left"

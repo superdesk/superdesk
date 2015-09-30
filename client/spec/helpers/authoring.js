@@ -92,7 +92,7 @@ function Authoring() {
     };
 
     this.save = function() {
-        element(by.css('[ng-click="save(item)"]')).click();
+        element(by.css('[ng-click="saveTopbar(item)"]')).click();
         return browser.wait(function() {
             return element(by.buttonText('SAVE')).getAttribute('disabled');
         });
