@@ -30,24 +30,37 @@ describe('tasks', function() {
             expect(scope.newTask.task.due_time).not.toBeNull();
         }));
 
-        it('can fetch published/scheduled', inject(function($rootScope, $q, api, moment) {
+        describe('kanban', function() {
+
             var result = {_items: []};
-            spyOn(api, 'query').and.returnValue($q.when(result));
-            $rootScope.$digest();
-            expect(api.query.calls.count()).toBe(2);
 
-            expect(scope.published).toBe(result);
-            var publishedArgs = api.query.calls.argsFor(0);
-            expect(publishedArgs[0]).toBe('published');
-            expect(publishedArgs[1].source.filter.bool.must.term).toEqual({'task.desk': 1});
-            expect(publishedArgs[1].source.filter.bool.must_not.term).toEqual({package_type: 'takes'});
+            beforeEach(inject(function($rootScope, $q, api) {
+                spyOn(api, 'query').and.returnValue($q.when(result));
+                $rootScope.$digest();
+            }));
 
-            expect(scope.scheduled).toBe(result);
-            var scheduledArgs = api.query.calls.argsFor(1);
-            expect(scheduledArgs[0]).toBe('content_templates');
-            expect(scheduledArgs[1].where.template_desk).toBe(1);
-            expect(moment(scheduledArgs[1].where.next_run.$gte).unix()).toBeLessThan(moment().unix());
-            expect(moment(scheduledArgs[1].where.next_run.$lte).unix()).toBeGreaterThan(moment().unix());
-        }));
+            it('can get published', inject(function(api) {
+                expect(scope.published).toBe(result);
+                var publishedArgs = api.query.calls.argsFor(0);
+                expect(publishedArgs[0]).toBe('published');
+                expect(publishedArgs[1].source.filter.bool.must.term).toEqual({'task.desk': 1});
+                expect(publishedArgs[1].source.filter.bool.must_not.term).toEqual({package_type: 'takes'});
+            }));
+
+            it('can get scheduled', inject(function(api, moment) {
+                expect(scope.scheduled).toBe(result);
+                var scheduledArgs = api.query.calls.argsFor(1);
+                expect(scheduledArgs[0]).toBe('content_templates');
+                expect(scheduledArgs[1].where.template_desk).toBe(1);
+                expect(moment(scheduledArgs[1].where.next_run.$gte).unix()).toBeLessThan(moment().unix());
+                expect(moment(scheduledArgs[1].where.next_run.$lte).unix()).toBeGreaterThan(moment().unix());
+            }));
+
+            it('can fetch tasks', inject(function(api, $timeout) {
+                $timeout.flush(500);
+                var tasksArgs = api.query.calls.argsFor(2);
+                expect(tasksArgs[0]).toBe('tasks');
+            }));
+        });
     });
 });

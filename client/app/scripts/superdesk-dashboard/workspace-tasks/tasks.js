@@ -55,8 +55,10 @@ function TasksService(desks, $rootScope, api, datetimeHelper) {
         return and_filter;
     };
 
-    this.fetch = function(status) {
-        var filter = this.buildFilter(status);
+    this.fetch = function(status, filter) {
+        if (!filter) {
+            filter = this.buildFilter(status);
+        }
 
         return api('tasks').query({
             source: {
@@ -102,14 +104,28 @@ function TasksController($scope, $timeout, api, notify, desks, tasks, $filter, m
     }
 
     /**
-     * Fetch items for current desk
+     * Fetch items for current desk which are not published or spiked
      */
     function fetchTasks() {
         $timeout.cancel(timeout);
         timeout = $timeout(function() {
-            var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
-            tasks.fetch(status).then(function(list) {
-                $scope.stageItems = _.groupBy(list._items, function(item) {
+            var filter = {bool: {
+                must: {
+                    term: {'task.desk': desks.getCurrentDeskId()}
+                },
+                must_not: {
+                    terms: {state: ['published', 'spiked']}
+                }
+            }};
+
+            var source = {source: {
+                size: 200,
+                sort: [{_updated: 'desc'}],
+                filter: filter
+            }};
+
+            api.query('tasks', source).then(function(result) {
+                $scope.stageItems = _.groupBy(result._items, function(item) {
                     return item.task.stage;
                 });
             });
