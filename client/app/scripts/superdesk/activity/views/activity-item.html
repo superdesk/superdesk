@@ -5,6 +5,7 @@
     <i class="icon-{{ :: activity.icon }} {{!activity.monitor|| !item.actioning[activity._id] || 'actioning'}}" ng-show=":: activity.icon"></i>
     <span>{{ :: activity.label | translate }}</span>
 </a>
+<li class="divider" ng-if="activity._id === 'mark.item'"></li>
 <div ng-if=":: activity.dropdown" class="dropdown dropdown-noarrow" dropdown>
     <a class="dropdown-toggle" title="{{ :: activity.label | translate }}" dropdown-toggle>
         <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>

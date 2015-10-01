@@ -7,17 +7,43 @@
   </div>
 
   <div class="content">
-    <ul class="pills-list provider-list">
-      <li ng-repeat="template in content_templates._items" class="clearfix">
-        <div class="header">
-          <h6>{{ template.template_name }}</h6>
-          <div class="actions">
-            <button ng-click="edit(template)" title="{{:: 'Edit Template' | translate }}"><i class="icon-pencil"></i></button>
-            <button ng-click="remove(template)" title="{{:: 'Remove Template' | translate }}"><i class="icon-trash"></i></button>
+      <div class="flex-grid box wrap-items small-2 medium-4 large-6">
+          <div class="flex-item card-box" ng-repeat="template in content_templates._items track by template._id" ng-if="desks">
+              <div class="card-box__header">
+                  <div class="dropdown" dropdown>
+                      <button class="dropdown-toggle" dropdown-toggle>
+                          <i class="icon-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu more-activity-menu pull-right">
+                          <li><div class="menu-label" translate>Actions</div></li>
+                          <li class="divider"></li>
+                          <li><button ng-click="edit(template)" title="{{:: 'Edit Template' | translate }}"><i class="icon-pencil"></i>{{:: 'Edit'| translate}}</button></li>
+                          <li><button ng-click="remove(template)" title="{{:: 'Remove Template' | translate }}"><i class="icon-trash"></i>{{:: 'Remove'| translate}}</button></li>
+                      </ul>
+                  </div>            
+                  <div class="card-box__heading">{{ template.template_name }}</div>
+              </div>
+              <div class="card-box__content">
+                  <ul class="card-box__content-list">
+                      <li>
+                          <h4 class="with-value">{{ :: 'Template type' | translate }} <span class="value-label">{{ template.template_type }}</span></h4>
+                      </li>
+                      <li>
+                          <h4>{{ :: 'Desk / Stage' | translate }}</h4>
+                          <span>{{getTemplateDesk(template).name}} / {{getTemplateStage(template).name}}</span>
+                      </li>
+                      <li>
+                          <h4>{{ :: 'Automated item creation' | translate }}</h4>
+                          <span ng-repeat="day in template.schedule.day_of_week">
+                              {{ :: weekdays[day] }}
+                              <span ng-if="$index < template.schedule.day_of_week.length-1">, </span>
+                          </span>
+                          <span class="creation-time"> <i class="icon-time"></i> at {{getTime(template.schedule.create_at).getHours()}}:{{getTime(template.schedule.create_at).getMinutes()}}<span>
+                      </li>
+                  </ul>             
+              </div>
           </div>
-        </div>
-      </li>
-    </ul>
+      </div>
   </div>
 </div>
 

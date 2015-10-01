@@ -319,7 +319,7 @@ define([
                 })
                 .activity('spike', {
                     label: gettext('Spike Item'),
-                    icon: 'remove',
+                    icon: 'trash',
                     monitor: true,
                     controller: ['spike', 'data', '$rootScope', function spikeActivity(spike, data, $rootScope) {
                         return spike.spike(data.item).then(function(item) {
@@ -398,7 +398,7 @@ define([
                 })
                 .activity('newtake', {
                     label: gettext('New Take'),
-                    icon: 'plus-small',
+                    icon: 'new-doc',
                     filters: [{action: 'list', type: 'archive'}],
                     privileges: {archive: 1},
                     condition: function(item) {
