@@ -478,8 +478,7 @@
                     page = page || 1;
                     items = items || [];
 
-                    return api(endpoint)
-                    .query({max_results: 200, page: page})
+                    return api.query(endpoint, {max_results: 200, page: page})
                     .then(function(result) {
                         items = items.concat(result._items);
                         if (result._links.next) {
@@ -551,6 +550,21 @@
                                 self.stageLookup[item._id] = item;
                             });
                         });
+                    },
+                    fetchDeskStages: function(desk) {
+                        var self = this;
+
+                        if (self.deskStages[desk]) {
+                            return $q.when().then(returnDeskStages);
+                        } else {
+                            return self.fetchStages()
+                                .then(angular.bind(self, self.generateDeskStages))
+                                .then(returnDeskStages);
+                        }
+
+                        function returnDeskStages() {
+                            return self.deskStages[desk];
+                        }
                     },
                     generateDeskMembers: function() {
                         var self = this;

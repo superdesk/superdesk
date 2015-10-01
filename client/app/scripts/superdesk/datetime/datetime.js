@@ -43,6 +43,8 @@ define([
             };
         })
 
+        .constant('moment', moment)
+
         .factory('weekdays', ['gettext', function(gettext) {
             return Object.freeze({
                 MON: gettext('Monday'),

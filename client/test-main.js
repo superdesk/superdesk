@@ -39,6 +39,7 @@ tests.push('superdesk/list/list');
 tests.push('superdesk/keyboard/keyboard');
 tests.push('superdesk/services/storage');
 tests.push('superdesk/beta/beta');
+tests.push('superdesk/filters');
 
 // apps
 tests.push('superdesk-authoring/authoring');

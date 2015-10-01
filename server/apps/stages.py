@@ -50,7 +50,6 @@ class StagesResource(Resource):
         'task_status': {
             'type': 'string',
             'allowed': task_statuses,
-            'required': True
         },
         'desk_order': {
             'type': 'integer',

@@ -1,17 +1,23 @@
 <div class="board">
-	<header class="{{status}}">{{title}}</header>
+	<header class="{{ :: cssClass }}">{{ label }}</header>
 	<ul class="card-list">
-		<li ng-repeat="item in items | filter: { task: {status: status}}"
+		<li ng-repeat="item in items"
 			ng-class="{selected: item === selected.preview}"
 			ng-click="preview(item)">
 			<div sd-assignee-view data-task="item.task" data-avatar-size="small"></div>
-			<div class="title">{{ item.slugline }}</div>
+			<div class="title">{{ item.slugline || item.headline }}</div>
 			<div class="info">
         		<ul class="task-labels clearfix">
-					<li ng-if="item.task.due_date"><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
+					<li ng-if="item.task.due_date">
+						<i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time>
+					</li>
+					<li ng-if="item.next_run">
+						<i class="icon-desk-time"></i> <time sd-datetime data-date="item.next_run"></time>
+					</li>
 				</ul>
         	</div>
-        	<div class="action">
+        	<div class="action"
+        		ng-if="!item.next_run && item.state !== 'published'">
 	        	<ul class="item-functions"
 	                sd-activity-list
 	                data-item="item"

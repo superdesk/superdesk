@@ -1,66 +1,41 @@
 <div class="subnav">
-	<div class="button-stack right-stack">
+    <div class="button-stack right-stack">
         <button class="navbtn sd-create-btn" ng-click="create()"></button>
     </div>
 </div>
 
 <section class="main-section workspace-tasks">
-	<div class="preview-layout" ng-class="{closed: !selected.preview}">
-		<div class="list-pane task-list">
-			<header>
-				<div class="switch-view">
-					<button ng-click="setView('kanban')" ng-class="{active: view === 'kanban'}">
-						<i class="icon-kanban-view"></i>
-					</button>
-					<button ng-click="setView('list')" ng-class="{active: view === 'list'}">
-						<i class="icon-list-view"></i>
-					</button>
-				</div>
-				<ul class="nav nav-tabs status-tabs" ng-if="view === 'list'">
-                    <li ng-repeat="status in statuses" ng-class="{active: status._id === activeStatus}">
-                        <button class="{{status._id}}" ng-click="selectStatus(status._id)"  translate>{{status.name}}</button>
-                    </li>
-                </ul>
-			</header>
-			<div class="content">
-				<div sd-shadow>
-					<div
-						ng-if="view === 'list'"
-		            	sd-list-view
-		                data-items="tasks._items"
-		                data-select="preview(item)">
-		                <div class="card" ng-class="{selected: item === selected}">
-		                	<span class="marker {{ item.task.status }}"></span>
-							<div class="header">
-                                <div sd-assignee-view data-task="item.task" data-name="true"></div>
-								<div class="title">{{ item.slugline }}</div>
-							</div>
-		                	<div class="info">
-		                		<ul class="task-labels clearfix">
-									<li ng-if="item.task.due_date"><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
-								</ul>
-		                	</div>
-                            <div class="action">
-                                <ul class="item-functions"
-                                    sd-activity-list
-                                    data-item="item"
-                                    data-type="task"
-                                    data-action="edit">
-                                </ul>
-                            </div>
-		                </div>
-		            </div>
-		            <div
-		            	ng-if="view === 'kanban'">
-		            	<div sd-task-kanban-board data-items="tasks._items" data-status="todo" data-title="To Do" data-selected="selected"></div>
-		            	<div sd-task-kanban-board data-items="tasks._items" data-status="in_progress" data-title="In Progress" data-selected="selected"></div>
-		            	<div sd-task-kanban-board data-items="tasks._items" data-status="done" data-title="Done" data-selected="selected"></div>
-		            </div>
-				</div>
-			</div>
-		</div>
-		<div class="preview-pane" ng-if="selected.preview" sd-task-preview data-item="selected.preview" data-onclose="preview(null)"></div>
-	</div>
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
+        <div class="list-pane task-list">
+            <header>
+            </header>
+            <div class="content">
+                <div class="stages">
+                    <div class="board-holder"
+                        sd-task-kanban-board
+                        data-items="scheduled._items"
+                        data-label="{{ :: 'UPCOMING' | translate }}"
+                        data-css-class="todo"></div>
+
+                    <div class="board-holder"
+                        ng-repeat="stage in stages track by stage._id"
+                        sd-task-kanban-board
+                        data-items="stageItems[stage._id]"
+                        data-label="{{ :: stage.name }}"
+                        data-css-class="in_progress"
+                        data-selected="selected"></div>
+
+                    <div class="board-holder"
+                        sd-task-kanban-board
+                        data-items="published._items"
+                        data-label="{{ :: 'DONE' | translate }}"
+                        data-css-class="done"
+                        data-selected="selected"></div>
+                </div>
+            </div>
+        </div>
+        <div class="preview-pane" ng-if="selected.preview" sd-task-preview data-item="selected.preview" data-onclose="preview()"></div>
+    </div>
 </section>
 
 <div sd-modal data-model="newTask" class="create-task-popup modal-static modal-body-grey">
@@ -69,42 +44,42 @@
         <h3 translate>Create New Task</h3>
     </div>
 
-	<div class="modal-body" ng-if="newTask">
-		<form>
-	    	<fieldset class="full">
-	    		<textarea
-					sd-autoexpand
-					class="title"
-	                ng-model="newTask.slugline"
-	                placeholder="{{ :: 'Add content slugline' | translate}}"
-	                tabindex="1"
-	                sd-autofocus
-	            ></textarea>
-	    	</fieldset>
+    <div class="modal-body" ng-if="newTask">
+        <form>
+            <fieldset class="full">
+                <textarea
+                    sd-autoexpand
+                    class="title"
+                    ng-model="newTask.slugline"
+                    placeholder="{{ :: 'Add content slugline' | translate}}"
+                    tabindex="1"
+                    sd-autofocus
+                ></textarea>
+            </fieldset>
 
             <fieldset>
-				<textarea
-					sd-autoexpand
-					class="description"
-	                ng-model="newTask.description_text"
-	                placeholder="{{ :: 'Add task description' | translate}}"
-	                tabindex="2"
-	            ></textarea>
+                <textarea
+                    sd-autoexpand
+                    class="description"
+                    ng-model="newTask.description_text"
+                    placeholder="{{ :: 'Add task description' | translate}}"
+                    tabindex="2"
+                ></textarea>
 
-	            <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
-	        </fieldset>
+                <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
+            </fieldset>
 
-	       	<fieldset class="due">
-	       		<div class="break"></div>
-				<label translate>Due</label>
-				<div class="clear field">
-					<div sd-datepicker ng-model="newTask.task.due_date"></div>
-				</div>
-				<div class="field">
-					<div sd-timepicker ng-model="newTask.task.due_time">
-				</div>
-			</fieldset>
-		</form>
+            <fieldset class="due">
+                <div class="break"></div>
+                <label translate>Due</label>
+                <div class="clear field">
+                    <div sd-datepicker ng-model="newTask.task.due_date"></div>
+                </div>
+                <div class="field">
+                    <div sd-timepicker ng-model="newTask.task.due_time">
+                </div>
+            </fieldset>
+        </form>
     </div>
 
     <div class="modal-footer">

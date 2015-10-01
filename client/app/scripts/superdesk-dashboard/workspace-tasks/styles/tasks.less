@@ -118,6 +118,12 @@ TASK PAGE
 }
 
 .task-list {
+	white-space: nowrap;
+	.content {
+		padding: 20px;
+		white-space: nowrap;
+		overflow: auto;
+	}
 	.card {
 		.title {
 			.text-semibold();
@@ -138,10 +144,13 @@ TASK PAGE
 			}
 		}
 	}
+	.board-holder {
+		width: 300px;
+		display: inline-block;
+		vertical-align: top;
+	}
 	.board {
-		float: left;
-		width: 30%;
-		max-width: 400px;
+		min-height: 500px;
 		margin-right: 20px;
 		header {
 			text-transform: uppercase;
