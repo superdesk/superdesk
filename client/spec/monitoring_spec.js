@@ -196,7 +196,7 @@ describe('monitoring view', function() {
         expect(monitoring.getTextItem(0, 0)).toBe('item3');
     });
 
-    it('configure a stage and then delete the stage', function() {
+    xit('configure a stage and then delete the stage', function() {
         expect(monitoring.getGroups().count()).toBe(4);
 
         desks.openDesksSettings();
