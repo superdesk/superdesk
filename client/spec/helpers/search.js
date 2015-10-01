@@ -87,4 +87,17 @@ function GlobalSearch() {
         var menu = this.openItemMenu(index);
         menu.element(by.partialLinkText(action)).click();
     };
+
+    /**
+     * Check if on search view an item is marked for highlight
+     *
+     * @param {string} highlight
+     * @param {number} item
+     */
+    this.checkMarkedForHighlight = function(highlight, item) {
+        var crtItem = this.getItem(item);
+        expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
+        expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe'))
+            .toContain(highlight);
+    };
 }

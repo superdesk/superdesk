@@ -2,7 +2,6 @@
 'use strict';
 
 var openUrl = require('./utils').open;
-var content = require('./content');
 
 module.exports = new Highlights();
 
@@ -140,11 +139,6 @@ function Highlights() {
         element(by.id('create')).click();
     };
 
-    this.switchHighlightFilter = function(name) {
-        element(by.id('search-highlights')).element(by.className('icon-dots-vertical')).click();
-        element(by.id('search-highlights')).element(by.css('[option="' + name + '"]')).click();
-    };
-
     this.exportHighlights = function() {
         element(by.id('export')).click();
     };
@@ -155,11 +149,5 @@ function Highlights() {
         browser.sleep(200);
         elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name + '"]')).click();
         browser.sleep(200);
-    };
-
-    this.mark = function(highlight, item) {
-        var menu = content.openItemMenu(item);
-        browser.actions().mouseMove(element(by.css('[title="Mark for highlight"]'))).perform();
-        return menu.element(by.partialButtonText(highlight)).click();
     };
 }
