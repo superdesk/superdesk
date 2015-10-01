@@ -17,6 +17,13 @@ module.exports = {
             '<%= appDir %>/scripts/superdesk*/**/*.js'
         ]
     },
+    ngtemplates: {
+        options: {livereload: true},
+        tasks: [],
+        files: [
+            '<%= appDir %>/scripts/superdesk*/views/*.html'
+        ]
+    },
     assets: {
         options: {livereload: true},
         tasks: [],

@@ -1,0 +1,34 @@
+
+@import 'mixins.less';
+@import 'variables.less';
+
+.vocabularyForm {
+	button.del {
+		width: 30px;
+		padding: 8px 10px;
+	}
+}
+
+.vocabularyField {
+	display: inline;
+
+	label {
+		width: 140px;
+		display: inline-block;
+		padding-left: 6px;
+	}
+	input {
+		width: 140px;
+		margin: 3px;
+	}
+}
+
+.divider {
+	.nav-divider();
+}
+
+.modal-dialog {
+	width: auto !important;
+	white-space: nowrap;
+	max-width: 800px;
+}
