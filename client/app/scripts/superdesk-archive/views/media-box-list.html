@@ -17,30 +17,28 @@
         <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
     </div>
 
-    <div class="list-field word-count-box">
-        <span class="word-count">{{ item.word_count }}</span>
-		<div ng-if="item.highlights" sd-highlights-title data-item="item"></div>
-        <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
-    </div>
+
     <div class="item-info">
         <div class="line">
-            <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}" ng-hide="viewType">{{item.state}}</div>
-            <div class="headline">
-                <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | limitTo: 40}}</span>
-                <span id="title" title="{{ item.headline }}">{{ item.headline | limitTo: 90 || item.type }}</span> 
-                <span sd-item-container data-item="item" title="{{ item.container }}" class="container" ng-hide="viewType"></span>
-            </div>
+            <span class="word-count">{{ item.word_count }}</span>
+            <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | limitTo: 40}}</span>
+            <div class="highlights-box" ng-if="item.highlights" sd-highlights-title data-item="item"></div>
+            <span class="item-heading" id="title" title="{{ item.headline }}">{{ item.headline | limitTo: 90 || item.type }}</span> 
+            <!-- <div class="headline"></div> -->
             <time sd-datetime data-date="item.versioncreated"></time>
         </div>
         <div class="line">
             <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
+            <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
+            <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}" ng-hide="viewType">{{item.state}}</div>
+            <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
             <div class="category" ng-if="item['anpa_category'].name">{{ item['anpa_category'].name }}</div>
             <div class="provider" sd-meta-ingest data-item="item"></div>
-            <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not For Publication</div>
             <div class="expires" ng-if="item.is_spiked"><span translate>expires</span> {{ item.expiry | reldate }}</div>
             <div ng-if="item.archived"><div sd-fetched-desks data-item="item"></div></div>
+            <span sd-item-container data-item="item" title="{{ item.container }}" class="container" ng-hide="viewType"></span>
         </div>
     </div>
 </div>
 
-<div class="item-right" sd-item-actions-menu data-item="item" data-active="focused"></div>
+<div class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused"></div>
