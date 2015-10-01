@@ -69,17 +69,17 @@ class AAPMMDatalayer(DataLayer):
             query_keywords = query_keywords.replace('description:', 'captionabstract:')
 
         fields = {}
-        for filter in req.get('post_filter', {}).get('and', {}):
+        for criterion in req.get('post_filter', {}).get('and', {}):
             # parse out the date range if possible
-            if 'range' in filter:
+            if 'range' in criterion:
                 start = None
                 end = None
                 daterange = None
-                if 'firstcreated' in filter.get('range', {}):
-                    if 'gte' in filter['range']['firstcreated']:
-                        start = filter['range']['firstcreated']['gte'][0:10]
-                    if 'lte' in filter['range']['firstcreated']:
-                        end = filter['range']['firstcreated']['lte'][0:10]
+                if 'firstcreated' in criterion.get('range', {}):
+                    if 'gte' in criterion['range']['firstcreated']:
+                        start = criterion['range']['firstcreated']['gte'][0:10]
+                    if 'lte' in criterion['range']['firstcreated']:
+                        end = criterion['range']['firstcreated']['lte'][0:10]
                 # if there is a special start and no end it's one of the date buttons
                 if start and not end:
                     if start == 'now-24H':
@@ -94,14 +94,14 @@ class AAPMMDatalayer(DataLayer):
                 if daterange:
                     fields.update(daterange)
 
-            if 'terms' in filter:
-                if 'type' in filter.get('terms', {}):
-                    fields.update({'MediaTypes': filter['terms']['type']})
-                if 'credit' in filter.get('terms', {}):
-                    fields.update({'Credits': filter['terms']['credit']})
-                if 'anpa_category.name' in filter.get('terms', {}):
+            if 'terms' in criterion:
+                if 'type' in criterion.get('terms', {}):
+                    fields.update({'MediaTypes': criterion['terms']['type']})
+                if 'credit' in criterion.get('terms', {}):
+                    fields.update({'Credits': criterion['terms']['credit']})
+                if 'anpa_category.name' in criterion.get('terms', {}):
                     cat_list = []
-                    for cat in filter['terms']['anpa_category.name']:
+                    for cat in criterion['terms']['anpa_category.name']:
                         qcode = [key for key, value in subject_codes.items() if value == cat]
                         if qcode:
                             for code in qcode:
