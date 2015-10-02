@@ -173,17 +173,36 @@ describe('monitoring', function() {
             expect(api.query).toHaveBeenCalled();
         }));
 
-        it('can generate unique track by id',
-        inject(function($rootScope, $compile, $templateCache) {
-            var scope = $rootScope.$new();
-            var $elm = $compile('<div sd-monitoring-view></div>')(scope);
+        it('can generate unique track by id', inject(function($rootScope, $compile) {
+            var scope = $rootScope.$new(),
+                $elm = $compile('<div sd-monitoring-view></div>')(scope);
             scope.$digest();
-            var sdGroupElement = $elm.find('#group');
-            var iScope = sdGroupElement.isolateScope();
-            var item = {state: 'ingested', _id: '123', '_current_version': 'dddd'};
+
+            var sdGroupElement = $elm.find('#group'),
+                iScope = sdGroupElement.isolateScope(),
+                item = {state: 'ingested', _id: '123', '_current_version': 'dddd'};
+
             expect(iScope.uuid(item)).toBe('123');
             item = {state: 'foo', _id: 'test', _current_version: '123'};
             expect(iScope.uuid(item)).toBe('test:123');
+        }));
+
+        it('can edit non spiked item', inject(function($controller, $rootScope, $compile, authoringWorkspace) {
+            var scope = $rootScope.$new(),
+                $elm = $compile('<div sd-monitoring-view></div>')(scope);
+            scope.$digest();
+            spyOn(authoringWorkspace, 'edit');
+
+            var sdGroupElement = $elm.find('#group'),
+                iScope = sdGroupElement.isolateScope(),
+                item1 = {state: 'spiked'},
+                item2 = {state: 'fetched'};
+
+            iScope.edit(item1, true);
+            expect(authoringWorkspace.edit).not.toHaveBeenCalled();
+
+            iScope.edit(item2, true);
+            expect(authoringWorkspace.edit).toHaveBeenCalled();
         }));
     });
 });

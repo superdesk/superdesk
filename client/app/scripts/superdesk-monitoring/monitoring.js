@@ -285,18 +285,20 @@
                     moveTimeout;
 
                 function edit(item, lock) {
-                    if (item._type === 'ingest') {
-                        var intent = {action: 'list', type: 'ingest'},
-                        activity = superdesk.findActivities(intent, item)[0];
+                    if (item.state !== 'spiked'){
+                        if (item._type === 'ingest') {
+                            var intent = {action: 'list', type: 'ingest'},
+                            activity = superdesk.findActivities(intent, item)[0];
 
-                        activityService.start(activity, {data: {item: item}})
-                            .then(function (item) {
-                                authoringWorkspace.edit(item, !lock);
-                                monitoring.preview(null);
-                            });
-                    } else {
-                        authoringWorkspace.edit(item, !lock);
-                        monitoring.preview(null);
+                            activityService.start(activity, {data: {item: item}})
+                                .then(function (item) {
+                                    authoringWorkspace.edit(item, !lock);
+                                    monitoring.preview(null);
+                                });
+                        } else {
+                            authoringWorkspace.edit(item, !lock);
+                            monitoring.preview(null);
+                        }
                     }
                 }
 
