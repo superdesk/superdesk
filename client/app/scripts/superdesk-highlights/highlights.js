@@ -165,77 +165,49 @@
     function HighlightsTitleDirective(highlightsService, $timeout) {
         return {
             scope: {
-                item: '=item',
-                orientation: '=?'
+                item: '=item'
             },
             templateUrl: 'scripts/superdesk-highlights/views/highlights_title_directive.html',
             // todo(petr): refactor to use popover-template once angular-bootstrap 0.13 is out
             link: function(scope, elem) {
-                var unmarkBox = elem.find('.unmark').hide(),
-                    icon = elem.find('i'),
-                    isOpen,
-                    closeTimeout;
 
-                scope.orientation = scope.orientation || 'right';
+                /*
+                 * Set 'open' class on dropdown menu element
+                 * @param {string} isOpen
+                 */
+                scope.toggleActions = function (isOpen) {
+                    scope.open = isOpen;
+                };
 
-                scope.$watch('item.highlights', function(_ids) {
-                    if (_ids) {
+                scope.$watch('item.highlights', function(items) {
+                    if (items) {
                         highlightsService.get().then(function(result) {
                             scope.highlights = _.filter(result._items, function(highlight) {
-                                return _ids.indexOf(highlight._id) >= 0;
-                            });
-                            // it has to first update the template before we use its html
-                            scope.$applyAsync(function() {
-                                scope.htmlTooltip = unmarkBox.html();
+                                return items.indexOf(highlight._id) >= 0;
                             });
                         });
                     }
                 });
 
-                scope.openTooltip = function() {
-                    $timeout.cancel(closeTimeout);
-                    closeTimeout = null;
-                    if (!isOpen) {
-                        toggle();
-                        isOpen = true;
-                    }
-                };
-
-                scope.closeTooltip = function() {
-                    if (isOpen && !closeTimeout) {
-                        closeTimeout = $timeout(function() {
-                            toggle();
-                            isOpen = false;
-                        }, 100, false);
-                    }
-                };
-
-                function toggle() {
-                    $timeout(function() { // need to timeout because tooltip is not expecting $digest
-                        icon[0].dispatchEvent(new CustomEvent('toggle'));
-                    }, 0, false);
-                }
-
-                // ng-click is not working because of tooltip
-                elem.on('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var btn = e.target.nodeName === 'BUTTON' ? e.target : e.target.parentNode;
-                    var highlight = btn.attributes['data-highlight'];
-                    if (highlight) {
-                        unmarkHighlight(highlight.value);
+                elem.on({
+                    click: function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    },
+                    mouseenter: function () {
+                        $(this).find('.dropdown-toggle').click();
                     }
                 });
 
                 /*
-                 * Removing higghlight from an item
+                 * Removing highlight from an item
                  * @param {string} highlight
                  */
-                function unmarkHighlight(highlight) {
+                scope.unmarkHighlight = function unmarkHighlight(highlight) {
                     highlightsService.markItem(highlight, scope.item._id).then(function() {
                         scope.item.highlights = _.without(scope.item.highlights, highlight);
                     });
-                }
+                };
             }
         };
     }
