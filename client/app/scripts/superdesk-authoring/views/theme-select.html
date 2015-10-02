@@ -10,8 +10,8 @@
             </li>
             <li>
                 <div class="btn-group">
-                    <button type="button" class="btn active" translate>Normal font</button>
-                    <button type="button" class="btn" translate>Large font</button>
+                    <button type="button" class="btn" ng-class="{active: large.theme === false}" ng-click="changeSize('theme', false)" translate>Normal font</button>
+                    <button type="button" class="btn" ng-class="{active: large.theme === true}" ng-click="changeSize('theme', true)" translate>Large font</button>
                 </div>
             </li>
             <li ng-repeat="t in themes">
@@ -28,8 +28,8 @@
             </li>
             <li>
                 <div class="btn-group">
-                    <button type="button" class="btn active" translate>Normal font</button>
-                    <button type="button" class="btn" translate>Large font</button>
+                    <button type="button" class="btn" ng-class="{active: large.proofreadTheme === false}" ng-click="changeSize('proofreadTheme', false)" translate>Normal font</button>
+                    <button type="button" class="btn" ng-class="{active: large.proofreadTheme  === true}" ng-click="changeSize('proofreadTheme', true)" translate>Large font</button>
                 </div>
             </li>
             <li ng-repeat="t in themes">
