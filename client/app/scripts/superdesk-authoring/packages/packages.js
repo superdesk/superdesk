@@ -7,7 +7,8 @@
         $scope.contentItems = [];
 
         function fetchPackages() {
-            var query = search.query($location.search());
+            var query = search.query();
+            query.clear_filters();
             var filter = [];
             _.forEach($scope.item.linked_in_packages, function(packageRef) {
                 filter.push(packageRef['package']);
@@ -19,6 +20,10 @@
                 $scope.contentItems = result._items;
             });
         }
+
+        $scope.openPackage = function(packageItem) {
+            superdesk.intent('edit', 'item', packageItem);
+        };
 
         if ($scope.item && $scope.item.linked_in_packages && $scope.item.linked_in_packages.length > 0) {
             fetchPackages();

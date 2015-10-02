@@ -301,10 +301,10 @@ describe('monitoring view', function() {
 
     it('updates item group on single item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(4);
-        monitoring.actionOnItem('Spike', 1, 0);
+        monitoring.actionOnItem('Spike', 1, 2);
         expect(monitoring.getGroupItems(1).count()).toBe(3);
         monitoring.openSpiked();
-        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
+        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item7');
         monitoring.unspikeItem(0);
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
@@ -328,11 +328,11 @@ describe('monitoring view', function() {
 
     it('updates item group on multiple item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(4);
-        monitoring.selectItem(1, 0);
+        monitoring.selectItem(1, 2);
         monitoring.spikeMultipleItems();
         expect(monitoring.getGroupItems(1).count()).toBe(3);
         monitoring.openSpiked();
-        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item5');
+        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item7');
         monitoring.selectSpikedItem(0);
         monitoring.unspikeMultipleItems();
         expect(monitoring.getSpikedItems().count()).toBe(0);

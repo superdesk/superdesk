@@ -6,7 +6,7 @@
                 <div class="package-preview">
                     <i class="filetype-icon-composite"></i>
                     <div class="title" ng-show="pitem.headline || pitem.slugline">
-                        <a ng-href="#/packaging/{{ pitem.guid }}" title="{{ pitem.headline || pitem.slugline}}">
+                        <a ng-click="openPackage(pitem)" title="{{ pitem.headline || pitem.slugline}}">
                             <div ng-show="pitem.headline || pitem.slugline">
                                 {{ pitem.headline || pitem.slugline | uppercase}}
                             </div>
