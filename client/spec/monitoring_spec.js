@@ -279,6 +279,7 @@ describe('monitoring view', function() {
     it('can preview content', function() {
         monitoring.previewAction(2, 2);
         expect(monitoring.getPreviewTitle()).toBe('item6');
+        monitoring.closePreview();
     });
 
     it('can open read only content', function() {

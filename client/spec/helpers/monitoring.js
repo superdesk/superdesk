@@ -107,6 +107,10 @@ function Monitoring() {
         this.getItem(group, item).click();
     };
 
+    this.closePreview = function() {
+        element(by.className('close-preview')).click();
+    };
+
     this.getPreviewTitle = function() {
         return element(by.css('.content-container'))
         .element(by.binding('selected.preview.headline'))
