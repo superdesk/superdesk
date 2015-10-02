@@ -14,7 +14,7 @@ from io import StringIO
 
 from bs4 import BeautifulSoup
 
-from apps.publish.formatters import Formatter
+from superdesk.publish.formatters import Formatter
 from apps.publish.formatters.aap_formatter_common import map_priority, set_subject
 
 import superdesk

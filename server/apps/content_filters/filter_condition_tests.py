@@ -16,7 +16,7 @@ import superdesk
 import re
 import os
 from settings import URL_PREFIX
-from apps.vocabularies.command import VocabulariesPopulateCommand
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
 
 
 class FilterConditionTests(SuperdeskTestCase):

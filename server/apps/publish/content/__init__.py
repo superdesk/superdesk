@@ -8,8 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import apps.publish.formatters.aap_ipnews_formatter  # NOQA
-import apps.publish.formatters.anpa_formatter  # NOQA
-import apps.publish.formatters.newsml_g2_formatter  # NOQA
-import apps.publish.formatters.aap_bulletinbuilder_formatter  # NOQA
-import apps.publish.formatters.aap_sms_formatter  # NOQA
+from .publish import ArchivePublishResource, ArchivePublishService  # NOQA
+from .kill import KillPublishResource, KillPublishService  # NOQA
+from .correct import CorrectPublishResource, CorrectPublishService  # NOQA

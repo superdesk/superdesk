@@ -10,14 +10,14 @@
 
 from test_factory import SuperdeskTestCase
 from apps.content_filters.content_filter import ContentFilterService
-from apps.publish import SubscribersService
+from superdesk.publish import SubscribersService
 from eve.utils import ParsedRequest
 import json
 import os
 import superdesk
 from settings import URL_PREFIX
 from superdesk.errors import SuperdeskApiError
-from apps.vocabularies.command import VocabulariesPopulateCommand
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
 
 
 class ContentFilterTests(SuperdeskTestCase):

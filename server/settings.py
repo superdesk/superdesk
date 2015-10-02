@@ -162,6 +162,7 @@ INSTALLED_APPS.extend([
     'superdesk.upload',
     'superdesk.notification',
     'superdesk.activity',
+    'superdesk.vocabularies',
     'apps.comments',
 
     'superdesk.io',
@@ -183,7 +184,6 @@ INSTALLED_APPS.extend([
     'apps.spikes',
     'apps.groups',
     'apps.prepopulate',
-    'apps.vocabularies',
     'apps.legal_archive',
     'apps.search',
     'apps.privilege',
