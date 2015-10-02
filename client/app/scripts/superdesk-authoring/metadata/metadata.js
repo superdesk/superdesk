@@ -175,6 +175,8 @@ function MetadataDropdownDirective() {
             disabled: '=ngDisabled',
             item: '=',
             field: '@',
+            icon: '@',
+            label: '@',
             change: '&'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',

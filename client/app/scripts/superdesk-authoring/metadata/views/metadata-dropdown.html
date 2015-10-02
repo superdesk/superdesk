@@ -1,14 +1,28 @@
-<div class="dropdown" dropdown>
-	<div class="dropdown-toggle" dropdown-toggle ng-if="field !== 'place'">
+<div class="dropdown" ng-class="{'dropright': icon, 'dropdown-noarrow': !icon}" dropdown sd-dropdown-position>
+    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="field !== 'place' && !icon">
         {{ item[field].name || item[field] ? item[field].name || item[field] : "none" | translate }}
         <b class="caret"></b>
-    </div>
-	<div class="dropdown-toggle" dropdown-toggle ng-if="field === 'place'">
+    </button>
+    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="field === 'place' && !icon">
         {{ item[field].length > 0 ? item[field][0].name : "none" | translate }}
         <b class="caret"></b>
-    </div>
-	<ul class="dropdown-menu pull-left">
-		<li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
-		<li ng-repeat="o in list" ng-click="select(o)"><button ng-disabled="disabled">{{::o.name}}</button></li>
-	</ul>
+    </button>
+    <button class="dropdown-toggle line-input" dropdown-toggle ng-if="icon">
+        <i class="{{icon}}-{{item[field]}}">
+            <span ng-if="field === 'urgency'">{{item[field] ? item[field] : 0}}</span>
+        </i>
+         <b class="caret"></b>
+    </button>
+    <ul class="dropdown-menu">
+        <li ng-if="label"><div class="menu-label">{{label}}</div></li>
+        <li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
+        <li ng-repeat="item in list" ng-click="select(item)">
+            <button ng-disabled="disabled">
+                <i ng-if="icon" class="{{icon}}-{{item.name}}">
+                    <span ng-if="field === 'urgency'">{{item.name}}</span>
+                </i> 
+                {{::item.name}}
+            </button>
+        </li>
+    </ul>
 </div>

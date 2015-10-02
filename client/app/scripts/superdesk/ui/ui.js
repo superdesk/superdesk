@@ -218,7 +218,7 @@ define([
     function AutofocusDirective() {
         return {
             link: function(scope, element) {
-                _.defer(function() {
+                _.defer (function() {
                     element.focus();
                 });
             }
