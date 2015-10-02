@@ -1,20 +1,33 @@
 <div class="multiple">
-	<div class="field">
-		<label for="desk">Desk</label>
-		<select id="desk" ng-model="desk" name="desk">
-		    <option ng-repeat="d in desks" value="{{d._id}}" ng-selected="d._id === desk">{{d.name}}</option>
-		</select>
-	</div>
-	<div class="field">
-		<label for="stage">Stage</label>
-		<select id="stage" ng-model="stage" name="stage">
-		    <option ng-repeat="s in deskStages[desk]" value="{{s._id}}" ng-selected="s._id === stage">{{s.name}}</option>
-		</select>
-	</div>
-	<div class="field">
-		<label for="macro">Macro</label>
-		<select id="macro" ng-model="macro" name="macro">
-		    <option ng-repeat="m in deskMacros" value="{{m.name}}" ng-selected="m.name === macro">{{m.label}}</option>
-		</select>
-	</div>
+
+    <div class="field">
+        <label for="desk" translate>Desk</label>
+        <select
+            id="desk" name="desk"
+            ng-options="d._id as d.name for d in desks"
+            ng-model="desk">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="stage" translate>Stage</label>
+        <select
+            id="stage" name="stage"
+            ng-options="s._id as s.name for s in deskStages[desk]"
+            ng-model="stage">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="macro" translate>Macro</label>
+        <select
+            id="macro" name="macro"
+            ng-options="m.name as m.label for m in deskMacros"
+            ng-model="macro">
+            <option value=""></option>
+        </select>
+    </div>
+
 </div>

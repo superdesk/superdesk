@@ -18,6 +18,7 @@
   "trailing": true,
   "globals": {
     "$": false,
+    "$$": false,
     "_": false,
     "angular": false,
     "define": false,
