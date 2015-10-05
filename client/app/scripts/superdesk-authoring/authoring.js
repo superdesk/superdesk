@@ -1359,50 +1359,49 @@
         var service = {};
 
         var PREFERENCES_KEY = 'editor:theme';
-        var THEME_DEFAULT = 'default-normal';
+        var THEME_DEFAULT = 'default';
 
         service.availableThemes = [
             {
                 cssClass: '',
-                label: 'Default Theme normal',
-                key: 'default-normal'
-            },
-            {
-                cssClass: 'large-text',
-                label: 'Default Theme large',
-                key: 'default-large'
+                label: 'Default',
+                key: 'default'
             },
             {
                 cssClass: 'dark-theme',
-                label: 'Dark Theme normal',
-                key: 'dark-normal'
-            },
-            {
-                cssClass: 'dark-theme large-text',
-                label: 'Dark Theme large',
-                key: 'dark-large'
+                label: 'Dark',
+                key: 'dark'
             },
             {
                 cssClass: 'natural-theme',
-                label: 'Natural Theme normal',
-                key: 'natural-normal'
+                label: 'Natural',
+                key: 'natural'
             },
             {
-                cssClass: 'natural-theme large-text',
-                label: 'Natural Theme large',
-                key: 'natural-large'
+                cssClass: 'dark-blue-theme',
+                label: 'Dark blue',
+                key: 'dark-blue'
+            },
+            {
+                cssClass: 'dark-turquoise-theme',
+                label: 'Dark turquoise',
+                key: 'dark-turquoise'
+            },
+            {
+                cssClass: 'dark-khaki-theme',
+                label: 'Dark khaki',
+                key: 'dark-khaki'
             },
             {
                 cssClass: 'dark-theme-mono',
-                label: 'Dark Theme monospace',
+                label: 'Dark monospace',
                 key: 'dark-mono'
             }
-
         ];
 
-        service.save = function(key, theme) {
+        service.save = function(key, themeScope) {
             return preferencesService.get().then(function(result) {
-                result[PREFERENCES_KEY][key] = theme.key;
+                result[PREFERENCES_KEY][key] = themeScope[key].key + (themeScope.large[key] ? '-large' : '');
                 return preferencesService.update(result);
             });
         };
@@ -1410,7 +1409,7 @@
         service.get = function(key) {
             return preferencesService.get().then(function(result) {
                 var theme = result[PREFERENCES_KEY] && result[PREFERENCES_KEY][key] ? result[PREFERENCES_KEY][key] : THEME_DEFAULT;
-                return _.find(service.availableThemes, {key: theme});
+                return theme;
             });
         };
 
@@ -1428,17 +1427,18 @@
                 var DEFAULT_CLASS = 'main-article theme-container';
 
                 scope.themes = authThemes.availableThemes;
+                scope.large = {};
                 authThemes.get('theme').then(function(theme) {
-                    scope.theme = theme;
-                    if (scope.key === 'theme') {
-                        applyTheme(theme);
-                    }
+                    var selectedTheme = _.find(authThemes.availableThemes, {key: themeKey(theme)});
+                    scope.theme = selectedTheme;
+                    scope.large.theme = themeLarge(theme);
+                    applyTheme('theme');
                 });
                 authThemes.get('proofreadTheme').then(function(theme) {
-                    scope.proofreadTheme = theme;
-                    if (scope.key === 'proofreadTheme') {
-                        applyTheme(theme);
-                    }
+                    var selectedTheme = _.find(authThemes.availableThemes, {key: themeKey(theme)});
+                    scope.proofreadTheme = selectedTheme;
+                    scope.large.proofreadTheme = themeLarge(theme);
+                    applyTheme('proofreadTheme');
                 });
 
                 /*
@@ -1449,22 +1449,43 @@
                  */
                 scope.changeTheme = function(key, theme) {
                     scope[key] = theme;
-                    authThemes.save(key, theme);
-                    if (scope.key === key) {
-                        applyTheme(theme);
-                    }
+                    authThemes.save(key, scope);
+                    applyTheme(key);
+                };
+
+                /*
+                 * Changing predefined size for proofread and normal mode
+                 *
+                 * @param {string} key Type of theme (proofread or normal)
+                 * @param {object} size New size
+                 */
+                scope.changeSize = function(key, size) {
+                    scope.large[key] = size;
+                    authThemes.save(key, scope);
+                    applyTheme(key);
                 };
 
                 /*
                  * Applying a theme for currently selected mode
                  *
-                 * @param {object} theme New theme
+                 * @param {string} key Type of theme (proofread or normal)
                  */
-                function applyTheme(theme) {
-                    elem.closest('.page-content-container')
-                        .children('.theme-container')
-                        .attr('class', DEFAULT_CLASS)
-                        .addClass(theme && theme.cssClass);
+                function applyTheme(key) {
+                    if (scope.key === key) {
+                        elem.closest('.page-content-container')
+                            .children('.theme-container')
+                            .attr('class', DEFAULT_CLASS)
+                            .addClass(scope[key].cssClass)
+                            .addClass(scope.large[key] && 'large-text');
+                    }
+                }
+
+                function themeKey(theme){
+                    return theme.indexOf('-large') !== -1 ? theme.slice(0, theme.indexOf('-large')) : theme;
+                }
+
+                function themeLarge(theme){
+                    return theme.indexOf('-large') !== -1 ? true : false;
                 }
             }
         };
