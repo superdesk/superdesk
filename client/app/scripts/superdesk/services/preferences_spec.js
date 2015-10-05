@@ -125,4 +125,30 @@ describe('Preferences Service', function() {
         $rootScope.$digest();
         expect(privileges.privilege1).toBe(1);
     }));
+
+});
+
+describe('preferences error handling', function() {
+
+    beforeEach(module('superdesk.preferences'));
+    beforeEach(module('superdesk.api'));
+
+    beforeEach(inject(function(session, urls, $q, $httpBackend) {
+        spyOn(session, 'getIdentity').and.returnValue($q.when());
+        session.sessionId = 'sess1';
+        spyOn(urls, 'resource').and.returnValue($q.when('/preferences'));
+        $httpBackend.expectGET('/preferences/sess1').respond(404, {});
+        $httpBackend.expectGET('/preferences/sess2').respond({});
+    }));
+
+    it('can reload on session expiry', inject(function(preferencesService, session, $rootScope, $httpBackend) {
+        var success = jasmine.createSpy('success');
+        var error = jasmine.createSpy('error');
+        preferencesService.get().then(success, error);
+        $rootScope.$digest();
+        session.sessionId = 'sess2';
+        $httpBackend.flush();
+        expect(success).toHaveBeenCalled();
+        expect(error).not.toHaveBeenCalled();
+    }));
 });

@@ -53,17 +53,35 @@ define(['angular'], function(angular) {
                  * On next call it will remove local copy and fetch again.
                  */
                 function getPreferences() {
+                    var api = $injector.get('api');
                     preferences = null;
                     preferencesPromise = session.getIdentity()
-                        .then(function() {
-                            var api = $injector.get('api');
-                            return api.find('preferences', session.sessionId, null, true)
-                                .then(function(_preferences) {
-                                    preferences = _preferences;
-                                    initPreferences(preferences);
-                                    return preferences;
-                                });
-                        });
+                        .then(fetchPreferences)
+                        .then(null, function(response) {
+                            if (response && response.status === 404) {
+                                return fetchPreferences();
+                            } else {
+                                return $q.reject(response);
+                            }
+                        }).then(setPreferences);
+
+                    /**
+                     * Fetch preferences for current session
+                     *
+                     * @return {Promise}
+                     */
+                    function fetchPreferences() {
+                        return api.find('preferences', session.sessionId, null, true);
+                    }
+
+                    /**
+                     * Set preferences to memory for further usage
+                     */
+                    function setPreferences(_preferences) {
+                        preferences = _preferences;
+                        initPreferences(preferences);
+                        return preferences;
+                    }
                 }
 
                 /**
