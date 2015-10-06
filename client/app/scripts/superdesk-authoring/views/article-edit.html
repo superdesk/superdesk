@@ -60,7 +60,7 @@
                 <option value=""></option>
             </select>
             <select id="datelineDay"
-                    ng-options="datelineDay as day for day in daysInMonth"
+                    ng-options="day for day in daysInMonth"
                     ng-disabled="!item.dateline.located || !_editable"
                     ng-change="modifyDatelineDate()"
                     ng-model="datelineDay">
