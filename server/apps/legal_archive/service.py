@@ -50,7 +50,7 @@ class LegalService(Service):
         """
 
         super().on_replace(document, original)
-        if ITEM_TYPE in document and document[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+        if document.get(ITEM_TYPE) == CONTENT_TYPE.COMPOSITE:
             self._change_location_of_items_in_package(document)
 
     def get(self, req, lookup):

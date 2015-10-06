@@ -193,7 +193,7 @@
          * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
         this.open = function openAuthoring(_id, read_only, repo) {
-            if (repo && repo === 'legal_archive') {
+            if (repo === 'legal_archive') {
                 return api.find('legal_archive', _id).then(function(item) {
                     item._editable = false;
                     return item;

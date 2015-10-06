@@ -267,7 +267,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
             self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
             self.assertEqual(article_versions_in_legal_archive.count(), 5)
 
-            self.assertEquals(queue_items.count(), 1)
+            self.assertEqual(queue_items.count(), 1)
 
             # Setting the expiry date of the killed article to 1 hr back from now and running the job again
             published_service.update_published_items(
@@ -294,7 +294,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                 self.assertEqual(queue_item['item_id'], original[config.ID_FIELD])
                 self.assertEqual(queue_item['item_version'], published_version_number)
 
-            self.assertEquals(queue_items.count(), 1)
+            self.assertEqual(queue_items.count(), 1)
 
     def test_remove_takes_package(self):
         """
@@ -315,27 +315,27 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
             self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
             self.assertEqual(article_versions_in_legal_archive.count(), version_count)
 
-            self.assertEquals(queue_items.count(), item_count_in_pub_queue)
+            self.assertEqual(queue_items.count(), item_count_in_pub_queue)
 
             legal_archive_service = get_resource_service(LEGAL_ARCHIVE_NAME)
             item_ref = self.package_service.get_item_refs(article_in_legal_archive)
             item_ref = item_ref[0]
 
-            self.assertEquals(item_ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
+            self.assertEqual(item_ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
 
             query = {'$and': [{config.ID_FIELD: item_ref[RESIDREF]}, {config.VERSION: item_ref[config.VERSION]}]}
             package_item_in_legal_archive = legal_archive_service.get_from_mongo(req=None, lookup=query)
 
-            self.assertEquals(package_item_in_legal_archive.count(), 1)
+            self.assertEqual(package_item_in_legal_archive.count(), 1)
             for item in package_item_in_legal_archive:
                 package_item_in_legal_archive = item
 
             if published_takes_pkg[ITEM_STATE] == CONTENT_STATE.PUBLISHED:
-                self.assertEquals(published_takes_pkg[ITEM_OPERATION], 'publish')
-                self.assertEquals(package_item_in_legal_archive[ITEM_OPERATION], 'publish')
+                self.assertEqual(published_takes_pkg[ITEM_OPERATION], 'publish')
+                self.assertEqual(package_item_in_legal_archive[ITEM_OPERATION], 'publish')
             elif published_takes_pkg[ITEM_STATE] == CONTENT_STATE.KILLED:
-                self.assertEquals(published_takes_pkg[ITEM_OPERATION], 'kill')
-                self.assertEquals(package_item_in_legal_archive[ITEM_OPERATION], 'kill')
+                self.assertEqual(published_takes_pkg[ITEM_OPERATION], 'kill')
+                self.assertEqual(package_item_in_legal_archive[ITEM_OPERATION], 'kill')
 
         with self.app.test_request_context(URL_PREFIX):
             doc = self.articles[0].copy()
@@ -355,7 +355,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
 
             published_service = get_resource_service(PUBLISHED)
             items_in_published_repo = list(published_service.get_from_mongo(req=None, lookup=None))
-            self.assertEquals(len(items_in_published_repo), 4)
+            self.assertEqual(len(items_in_published_repo), 4)
 
             # Expiring the Takes Package whose state is Published
             published_takes_pkg = [g for g in items_in_published_repo if is_takes_package(g) and
@@ -392,7 +392,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                 published_service.update_published_items(item['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
 
             RemoveExpiredPublishContent().run()
-            self.assertEquals(published_service.get(req=None, lookup=None).count(), 0)
+            self.assertEqual(published_service.get(req=None, lookup=None).count(), 0)
 
             article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
                 self._get_legal_archive_details(package[config.ID_FIELD])
@@ -400,7 +400,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
 
             item_refs = self.package_service.get_item_refs(article_in_legal_archive)
             for ref in item_refs:
-                self.assertEquals(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
+                self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
 
     def test_remove_when_only_package_expires(self):
         """
@@ -421,7 +421,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
 
             RemoveExpiredPublishContent().run()
             items_in_published_repo = published_service.get(req=None, lookup=None)
-            self.assertEquals(items_in_published_repo.count(), 2)
+            self.assertEqual(items_in_published_repo.count(), 2)
 
             for item in items_in_published_repo:
                 self.assertTrue(item['allow_post_publish_actions'])
@@ -432,7 +432,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
 
             item_refs = self.package_service.get_item_refs(article_in_legal_archive)
             for ref in item_refs:
-                self.assertEquals(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
+                self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
 
     def _publish_package_and_assert_published_collection(self, package):
         # Please make sure that groups has only text items
@@ -459,7 +459,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         get_resource_service(ARCHIVE_PUBLISH).patch(id=package[config.ID_FIELD], updates=updates)
 
         items_in_published_repo = get_resource_service(PUBLISHED).get_from_mongo(req=None, lookup=None)
-        self.assertEquals(items_in_published_repo.count(), 3)
+        self.assertEqual(items_in_published_repo.count(), 3)
 
         return items_in_published_repo
 
