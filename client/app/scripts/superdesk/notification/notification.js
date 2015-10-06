@@ -49,7 +49,6 @@
             };
 
             ws.onerror = function(event) {
-                console.error('in error ws.onerror');
                 console.error(event);
             };
 
@@ -61,11 +60,11 @@
             ws.onclose = function(event) {
                 $rootScope.$broadcast('disconnected');
                 $interval.cancel(connectTimer);
-                connectTimer = $interval(function() {
+                connectTimer = $interval(function() { console.log('$interval');
                     if (ws) {
                         connect();  // Retry to connect for every TIMEOUT interval.
                     }
-                }, TIMEOUT);
+                }, TIMEOUT, 0, false);  // passed invokeApply = false to prevent triggering digest cycle
             };
         };
 
