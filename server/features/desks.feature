@@ -22,7 +22,7 @@ Feature: Desks
         And we get "/desks"
         Then we get list with 1 items
             """
-            {"_items": [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]}
+            {"_items": [{"name": "Sports Desk", "members": [{"user": "#users._id#"}], "desk_type": "authoring"}]}
             """
         Then we get notifications
             """
@@ -41,13 +41,16 @@ Feature: Desks
 	    Given empty "desks"
 		When we post to "/desks"
             """
-            {"name": "Sports Desk"}
+            {"name": "Sports Desk", "desk_type": "production"}
             """
 		And we patch latest
 			 """
             {"name": "Sports Desk modified"}
              """
 		Then we get updated response
+            """
+            {"name": "Sports Desk modified", "desk_type": "production"}
+            """
         Then we get notifications
             """
             [{"event": "desk", "extra": {"updated": 1, "desk_id": "#desks._id#"}}]
