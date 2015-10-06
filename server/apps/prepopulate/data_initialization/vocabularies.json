@@ -151,6 +151,8 @@
     {
         "_id": "subscriber_types",
         "items": [
+            {"is_active": true, "name": "All", "value": "all",
+                "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"}]},
             {"is_active": true, "name": "Digital/Internet", "value": "digital",
                 "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
                             {"name": "AAP Bulletin Builder", "value": "AAP BULLETIN BUILDER"}]},

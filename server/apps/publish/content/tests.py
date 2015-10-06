@@ -19,12 +19,14 @@ from eve.versioning import versioned_id_field
 from apps.archive.common import insert_into_versions
 from apps.packages.package_service import PackageService
 from apps.packages.takes_package_service import TakesPackageService
-from apps.publish.archive_publish import ArchivePublishService, DIGITAL, WIRE
-from apps.publish.subscribers import SUBSCRIBER_TYPES
+from apps.publish.content import ArchivePublishService
+from apps.publish.content.common import DIGITAL, WIRE
+from superdesk.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
 from superdesk.metadata.packages import RESIDREF
 from test_factory import SuperdeskTestCase
-from apps.publish import init_app, publish_queue, RemoveExpiredPublishContent
+from apps.publish import init_app, RemoveExpiredPublishContent
+from superdesk.publish import publish_queue
 from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, LEGAL_PUBLISH_QUEUE_NAME
 from superdesk.utc import utcnow
 from superdesk import get_resource_service

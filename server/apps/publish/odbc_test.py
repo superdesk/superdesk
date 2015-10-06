@@ -12,8 +12,8 @@ from superdesk.publish import SUBSCRIBER_TYPES
 
 from test_factory import SuperdeskTestCase
 import superdesk
-from apps.publish import init_app
-from superdesk.publish.odbc import ODBCPublishService
+from superdesk.publish import init_app
+from superdesk.publish.transmitters.odbc import ODBCPublishService
 
 
 class ODBCTests(SuperdeskTestCase):

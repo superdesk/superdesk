@@ -14,7 +14,7 @@ from unittest import mock
 from apps.archive.archive_crop import ArchiveCropService
 from nose.tools import assert_raises
 from superdesk.errors import SuperdeskApiError
-from apps.vocabularies.command import VocabulariesPopulateCommand
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
 
 
 class ArchiveCropTestCase(SuperdeskTestCase):

@@ -11,13 +11,13 @@
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
-from apps.publish.formatters import Formatter
+from superdesk.publish.formatters import Formatter
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, EMBARGO
 from superdesk.utc import utcnow
 import superdesk
 from superdesk.errors import FormatterError
 from settings import NEWSML_PROVIDER_ID
-from apps.publish.formatters.nitf_formatter import NITFFormatter
+from superdesk.publish.formatters.nitf_formatter import NITFFormatter
 from apps.archive.common import ARCHIVE
 from superdesk.metadata.packages import PACKAGE_TYPE, REFS, RESIDREF, ROLE, GROUPS, GROUP_ID, ID_REF
 

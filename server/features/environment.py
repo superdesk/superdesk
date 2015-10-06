@@ -15,7 +15,7 @@ from settings import LDAP_SERVER
 from features.steps.steps import get_macro_path
 from flask import json
 from app import get_app
-from apps.vocabularies.command import VocabulariesPopulateCommand
+from superdesk.vocabularies.command import VocabulariesPopulateCommand
 from test_factory import setup_auth_user
 
 

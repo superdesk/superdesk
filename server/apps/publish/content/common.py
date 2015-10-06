@@ -19,26 +19,23 @@ from eve.validation import ValidationError
 
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES, EMBARGO
-from superdesk.metadata.packages import SEQUENCE, PACKAGE_TYPE, TAKES_PACKAGE, LINKED_IN_PACKAGES
-from apps.publish.subscribers import SUBSCRIBER_TYPES
-from apps.archive.archive_crop import ArchiveCropService
+from superdesk.metadata.packages import SEQUENCE, LINKED_IN_PACKAGES
+from superdesk.publish import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
-from superdesk.emails import send_article_killed_email
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError, PublishQueueError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule, is_item_in_package
+from apps.archive.common import validate_schedule
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
-from apps.publish.formatters import get_formatter
+from superdesk.publish.formatters import get_formatter
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from superdesk.metadata.utils import item_url
-from apps.archive.common import get_user, insert_into_versions, \
-    set_sign_off, item_operations, ITEM_OPERATION
+from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
@@ -87,14 +84,19 @@ class BasePublishService(BaseService):
     takes_package_service = TakesPackageService()
     package_service = PackageService()
 
-    def on_update(self, updates, original):
+    def raise_if_not_marked_for_publication(self, original):
         if original.get('marked_for_not_publication', False):
             raise SuperdeskApiError.badRequestError('Cannot publish an item which is marked as Not for Publication')
 
+    def raise_if_invalid_state_transition(self, original):
         if not is_workflow_state_transition_valid(self.publish_type, original[ITEM_STATE]):
             error_message = "Can't {} as item state is {}" if original[ITEM_TYPE] == CONTENT_TYPE.TEXT else \
                 "Can't {} as either package state or one of the items state is {}"
             raise InvalidStateTransitionError(error_message.format(self.publish_type, original[ITEM_STATE]))
+
+    def on_update(self, updates, original):
+        self.raise_if_not_marked_for_publication(original)
+        self.raise_if_invalid_state_transition(original)
 
         updated = original.copy()
         updated.update(updates)
@@ -229,7 +231,9 @@ class BasePublishService(BaseService):
             queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
         else:
             package.update(package_updates)
-            queued_digital = ArchivePublishService().publish(doc=package, updates=None, target_media_type=DIGITAL)
+            queued_digital = get_resource_service('archive_publish').publish(doc=package,
+                                                                             updates=None,
+                                                                             target_media_type=DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
         return queued_digital
@@ -821,282 +825,6 @@ class BasePublishService(BaseService):
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
-
-
-class ArchivePublishResource(BasePublishResource):
-    def __init__(self, endpoint_name, app, service):
-        super().__init__(endpoint_name, app, service, 'publish')
-
-
-class ArchivePublishService(BasePublishService):
-    publish_type = 'publish'
-    published_state = 'published'
-
-    def on_update(self, updates, original):
-        super().on_update(updates, original)
-        set_sign_off(updates, original)
-
-    def set_state(self, original, updates):
-        """
-        Set the state of the document to schedule if the publish_schedule is specified.
-        :param dict original: original document
-        :param dict updates: updates related to original document
-        """
-        updates[ITEM_OPERATION] = ITEM_PUBLISH
-        if original.get('publish_schedule') or updates.get('publish_schedule'):
-            updates[ITEM_STATE] = CONTENT_STATE.SCHEDULED
-        else:
-            super().set_state(original, updates)
-
-    def get_subscribers(self, doc, target_media_type):
-        """
-        Get the subscribers for this document based on the target_media_type for publishing.
-        1. If the item has embargo and is a future date then fetch active Wire Subscribers.
-           Otherwise get all active subscribers.
-            a. Get the list of takes subscribers if Takes Package
-        2. If targeted_for is set then exclude internet/digital subscribers.
-        3. If takes package then subsequent takes are sent to same wire subscriber as first take.
-        4. Filter the subscriber list based on the publish filter and global filters (if configured).
-            a. Publish to takes package subscribers if the takes package is received by the subscriber.
-        :param dict doc: Document to publish/correct/kill
-        :param str target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
-                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
-                then the doc being queues is an Individual Article.
-        :return: (list, list) List of filtered subscriber,
-                List of subscribers that have not received item previously (empty list in this case).
-        """
-        subscribers, subscribers_yet_to_receive, takes_subscribers = [], [], []
-        first_take = None
-
-        # Step 1
-        query = {'is_active': True}
-        if doc.get(EMBARGO) and doc.get(EMBARGO) > utcnow():
-            query['subscriber_type'] = SUBSCRIBER_TYPES.WIRE
-
-        subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
-
-        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.COMPOSITE] and doc.get(PACKAGE_TYPE) == TAKES_PACKAGE:
-            # Step 1a
-            query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                              {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
-            takes_subscribers = self._get_subscribers_for_previously_sent_items(query)
-
-        # Step 2
-        if doc.get('targeted_for'):
-            subscribers = list(self.non_digital(subscribers))
-
-        # Step 3
-        if doc.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
-            first_take = self.takes_package_service.get_first_take_in_takes_package(doc)
-            if first_take:
-                # if first take is published then subsequent takes should to same subscribers.
-                query = {'$and': [{'item_id': first_take},
-                                  {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED]}}]}
-                subscribers = self._get_subscribers_for_previously_sent_items(query)
-
-        # Step 4
-        if not first_take:
-            subscribers = self.filter_subscribers(doc, subscribers,
-                                                  WIRE if doc.get('targeted_for') else target_media_type)
-
-        if takes_subscribers:
-            # Step 4a
-            subscribers_ids = set(s[config.ID_FIELD] for s in takes_subscribers)
-            subscribers = takes_subscribers + [s for s in subscribers if s[config.ID_FIELD] not in subscribers_ids]
-
-        return subscribers, subscribers_yet_to_receive
-
-
-class KillPublishResource(BasePublishResource):
-    def __init__(self, endpoint_name, app, service):
-        super().__init__(endpoint_name, app, service, 'kill')
-
-
-class KillPublishService(BasePublishService):
-    publish_type = 'kill'
-    published_state = 'killed'
-
-    def __init__(self, datasource=None, backend=None):
-        super().__init__(datasource=datasource, backend=backend)
-
-    def on_update(self, updates, original):
-        # check if we are trying to kill and item that is contained in normal non takes package
-        if is_item_in_package(original):
-            raise SuperdeskApiError.badRequestError(message='This item is in a package' +
-                                                            ' it needs to be removed before the item can be killed')
-        updates[ITEM_OPERATION] = ITEM_KILL
-        super().on_update(updates, original)
-        self.takes_package_service.process_killed_takes_package(original)
-
-    def update(self, id, updates, original):
-        """
-        Kill will broadcast kill email notice to all subscriber in the system and then kill the item.
-        If item is a take then all the takes are killed as well.
-        """
-        self._broadcast_kill_email(original)
-        super().update(id, updates, original)
-        self._publish_kill_for_takes(updates, original)
-
-    def _broadcast_kill_email(self, original):
-        """
-        Sends the broadcast email to all subscribers (including in-active subscribers)
-        :param original: Document to kill
-        """
-        # Get all subscribers
-        subscribers = list(get_resource_service('subscribers').get(req=None, lookup=None))
-        recipients = [s.get('email') for s in subscribers if s.get('email')]
-        # send kill email.
-        send_article_killed_email(original, recipients, utcnow())
-
-    def _publish_kill_for_takes(self, updates, original):
-        """
-        Kill all the takes in a takes package.
-        :param updates: Updates of the original document
-        :param original: Document to kill
-        """
-        package = self.takes_package_service.get_take_package(original)
-        last_updated = updates.get(config.LAST_UPDATED, utcnow())
-        if package:
-            for ref in[ref for group in package.get('groups', []) if group['id'] == 'main'
-                       for ref in group.get('refs')]:
-                if ref[GUID_FIELD] != original[config.ID_FIELD]:
-                    original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
-                    updates_data = copy(updates)
-                    queued = self.publish(doc=original_data, updates=updates_data, target_media_type=WIRE)
-                    # we need to update the archive item and not worry about queued as we could have
-                    # a takes only going to digital client.
-                    self._set_updates(original_data, updates_data, last_updated)
-                    self._update_archive(original=original_data, updates=updates_data,
-                                         should_insert_into_versions=True)
-                    self.update_published_collection(published_item_id=original_data['_id'])
-
-                    if not queued:
-                        logger.exception("Could not publish the kill for take {} with headline {}".
-                                         format(original_data.get(config.ID_FIELD), original_data.get('headline')))
-
-    def get_subscribers(self, doc, target_media_type):
-        """
-        Get the subscribers for this document based on the target_media_type for kill.
-        Kill is sent to all subscribers that have received the item previously (published or corrected)
-        :param doc: Document to kill
-        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
-                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
-                then the doc being queued is an Individual Article.
-        :return: (list, list) List of filtered subscribers,
-                List of subscribers that have not received item previously (empty list in this case).
-        """
-
-        subscribers, subscribers_yet_to_receive = [], []
-        query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                          {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
-        subscribers = self._get_subscribers_for_previously_sent_items(query)
-
-        return subscribers, subscribers_yet_to_receive
-
-
-class CorrectPublishResource(BasePublishResource):
-
-    def __init__(self, endpoint_name, app, service):
-        super().__init__(endpoint_name, app, service, 'correct')
-
-
-class CorrectPublishService(BasePublishService):
-    publish_type = 'correct'
-    published_state = 'corrected'
-
-    def on_update(self, updates, original):
-        updates[ITEM_OPERATION] = ITEM_CORRECT
-        ArchiveCropService().validate_multiple_crops(updates, original)
-        super().on_update(updates, original)
-        set_sign_off(updates, original)
-
-    def on_updated(self, updates, original):
-        """
-        Locates the published or corrected non-take packages containing the corrected item
-        and corrects them
-        :param updates: correction
-        :param original: original story
-        """
-        original_updates = dict()
-        original_updates['operation'] = updates['operation']
-        original_updates[ITEM_STATE] = updates[ITEM_STATE]
-        super().on_updated(updates, original)
-        ArchiveCropService().delete_replaced_crop_files(updates, original)
-        packages = self.package_service.get_packages(original[config.ID_FIELD])
-        if packages and packages.count() > 0:
-            archive_correct = get_resource_service('archive_correct')
-            processed_packages = []
-            for package in packages:
-                if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED] and \
-                        package.get(PACKAGE_TYPE, '') == '' and \
-                        str(package[config.ID_FIELD]) not in processed_packages:
-                    original_updates['groups'] = package['groups']
-
-                    if updates.get('headline'):
-                        self.package_service.update_field_in_package(original_updates, original[config.ID_FIELD],
-                                                                     'headline', updates.get('headline'))
-
-                    if updates.get('slugline'):
-                        self.package_service.update_field_in_package(original_updates, original[config.ID_FIELD],
-                                                                     'slugline', updates.get('slugline'))
-
-                    archive_correct.patch(id=package[config.ID_FIELD], updates=original_updates)
-                    insert_into_versions(id_=package[config.ID_FIELD])
-                    processed_packages.append(package[config.ID_FIELD])
-
-    def update(self, id, updates, original):
-        ArchiveCropService().create_multiple_crops(updates, original)
-        super().update(id, updates, original)
-
-    def get_subscribers(self, doc, target_media_type):
-        """
-        Get the subscribers for this document based on the target_media_type for article Correction.
-        1. The article is sent to Subscribers (digital and wire) who has received the article previously.
-        2. For subsequent takes, only published to previously published wire clients. Digital clients don't get
-           individual takes but digital client takes package.
-        3. If the item has embargo and is a future date then fetch active Wire Subscribers.
-           Otherwise fetch Active Subscribers. After fetching exclude those who received the article previously from
-           active subscribers list.
-        4. If article has 'targeted_for' property then exclude subscribers of type Internet from Subscribers list.
-        5. Filter the subscriber that have not received the article previously against publish filters
-        and global filters for this document.
-        :param doc: Document to correct
-        :param target_media_type: dictate if the doc being queued is a Takes Package or an Individual Article.
-                Valid values are - Wire, Digital. If Digital then the doc being queued is a Takes Package and if Wire
-                then the doc being queues is an Individual Article.
-        :return: (list, list) List of filtered subscribers, List of subscribers that have not received item previously
-        """
-        subscribers, subscribers_yet_to_receive = [], []
-        # step 1
-        query = {'$and': [{'item_id': doc[config.ID_FIELD]},
-                          {'publishing_action': {'$in': [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]}}]}
-
-        subscribers = self._get_subscribers_for_previously_sent_items(query)
-
-        if subscribers:
-            # step 2
-            if not self.takes_package_service.get_take_package_id(doc):
-                # Step 3
-                query = {'is_active': True}
-                if doc.get(EMBARGO) and doc.get(EMBARGO) > utcnow():
-                    query['subscriber_type'] = SUBSCRIBER_TYPES.WIRE
-
-                active_subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
-                subscribers_yet_to_receive = [a for a in active_subscribers
-                                              if not any(a[config.ID_FIELD] == s[config.ID_FIELD]
-                                                         for s in subscribers)]
-
-            if len(subscribers_yet_to_receive) > 0:
-                # Step 4
-                if doc.get('targeted_for'):
-                    subscribers_yet_to_receive = list(self.non_digital(subscribers_yet_to_receive))
-                # Step 5
-                subscribers_yet_to_receive = \
-                    self.filter_subscribers(doc, subscribers_yet_to_receive,
-                                            WIRE if doc.get('targeted_for') else target_media_type)
-
-        return subscribers, subscribers_yet_to_receive
-
 
 superdesk.workflow_state('published')
 superdesk.workflow_action(

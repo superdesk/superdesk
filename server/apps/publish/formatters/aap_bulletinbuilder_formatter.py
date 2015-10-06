@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from apps.publish.formatters import Formatter
+from superdesk.publish.formatters import Formatter
 import superdesk
 from superdesk.utils import json_serialize_datetime_objectId
 from superdesk.errors import FormatterError
