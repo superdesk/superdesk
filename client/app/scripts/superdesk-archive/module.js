@@ -208,7 +208,7 @@ define([
          */
         this.getVersionHistory = function(item, desks, historyType) {
             if (this.isLegal(item)) {
-                return api.legal_archive_versions.getByUrl(item._links.collection.href + '_versions?_id=' + item._id)
+                return api.find('legal_archive', item._id, {version: 'all'})
                     .then(function(result) {
                         _.each(result._items, function(version) {
                             version.desk = version.task.desk;

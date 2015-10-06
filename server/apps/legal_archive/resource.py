@@ -8,46 +8,41 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.metadata.utils import item_url
+from apps.archive.archive import ArchiveResource, ArchiveVersionsResource
+from apps.publish.publish_queue import PublishQueueResource
+
 from superdesk.resource import Resource
-from superdesk.metadata.item import metadata_schema
 
-
-MONGO_PREFIX = 'LEGAL_ARCHIVE'
 LEGAL_ARCHIVE_NAME = 'legal_archive'
 LEGAL_ARCHIVE_VERSIONS_NAME = 'legal_archive_versions'
 LEGAL_PUBLISH_QUEUE_NAME = 'legal_publish_queue'
 
 
 class LegalResource(Resource):
-    schema = {}
     resource_methods = ['GET']
     item_methods = ['GET']
     privileges = {'GET': LEGAL_ARCHIVE_NAME}
-    mongo_prefix = MONGO_PREFIX
+    mongo_prefix = 'LEGAL_ARCHIVE'
 
 
-class LegalArchiveResource(LegalResource):
+class LegalArchiveResource(LegalResource, ArchiveResource):
     endpoint_name = LEGAL_ARCHIVE_NAME
     resource_title = endpoint_name
-    schema = dict(metadata_schema)
-    item_url = item_url
+
+    datasource = {'source': LEGAL_ARCHIVE_NAME}
 
 
-class LegalArchiveVersionsResource(LegalResource):
+class LegalArchiveVersionsResource(LegalResource, ArchiveVersionsResource):
     endpoint_name = LEGAL_ARCHIVE_VERSIONS_NAME
     resource_title = endpoint_name
-    doc_schema = {'_id_document': {'type': 'string'}}
-    doc_schema.update(metadata_schema)
-    schema = doc_schema
+
+    datasource = {'source': LEGAL_ARCHIVE_VERSIONS_NAME,
+                  'projection': {'old_version': 0, 'last_version': 0}
+                  }
 
 
-class LegalPublishQueueResource(LegalResource):
+class LegalPublishQueueResource(LegalResource, PublishQueueResource):
     endpoint_name = LEGAL_PUBLISH_QUEUE_NAME
     resource_title = endpoint_name
-    doc_schema = {
-        'item_id': {'type': 'string'},
-        'item_version': {'type': 'string'}
-    }
-    doc_schema.update(metadata_schema)
-    schema = doc_schema
+
+    datasource = {'source': LEGAL_PUBLISH_QUEUE_NAME}

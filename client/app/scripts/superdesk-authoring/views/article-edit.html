@@ -42,7 +42,7 @@
     <div class="dateline">
         <div sd-meta-locators
              class="dateline-city"
-             ng-show="_editable"
+             ng-disabled="!_editable"
              data-list="metadata.cities"
              data-item="item"
              data-fieldprefix="dateline"
@@ -67,8 +67,6 @@
                 <option value=""></option>
             </select>
         </div>
-
-        <div ng-show="!_editable">{{ item.dateline.text }}</div>
     </div>
 </div>
 

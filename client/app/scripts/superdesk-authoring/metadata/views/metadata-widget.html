@@ -126,11 +126,11 @@
 				</li>
 				<li ng-if="item.task.desk">
 					<label translate>Desk</label>
-					<div class="data">{{deskLookup[item.task.desk].name}}</div>
+					<div class="data">{{deskLookup[item.task.desk].name || item.task.desk}}</div>
 				</li>
 				<li ng-if="item.task.user">
 					<label translate>Assignee</label>
-					<div class="data">{{userLookup[item.task.user].display_name}}</div>
+					<div class="data">{{userLookup[item.task.user].display_name || item.task.user}}</div>
 				</li>
 			</ul>
     </div>

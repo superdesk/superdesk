@@ -117,7 +117,9 @@ class TakesPackageService():
                                                   EMBARGO])
 
         for field in fields_for_creating_takes_package:
-            takes_package[field] = target.get(field)
+            if field in target:
+                takes_package[field] = target.get(field)
+
         takes_package.setdefault(config.VERSION, 1)
 
         create_root_group([takes_package])
@@ -280,11 +282,3 @@ class TakesPackageService():
         request = ParsedRequest()
         request.sort = SEQUENCE
         return list(get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query))
-
-    def is_takes_package(self, package):
-        """
-        Returns True if the passed package and is of type takes. Otherwise, returns False.
-        :return: True if it's a Takes Package, False otherwise.
-        """
-
-        return package[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and package.get(PACKAGE_TYPE, '') == TAKES_PACKAGE

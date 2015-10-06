@@ -11,6 +11,7 @@ function Authoring() {
     this.kill_button = element(by.buttonText('kill'));
     this.close_button = element(by.buttonText('CLOSE'));
     this.save_button = element(by.buttonText('SAVE'));
+    this.edit_button = element(by.id('Edit'));
     this.edit_correct_button = element(by.buttonText('Edit and Correct'));
     this.edit_kill_button = element(by.buttonText('Edit and Kill'));
 
@@ -22,6 +23,8 @@ function Authoring() {
     this.sendToButton = element(by.id('send-to-btn'));
     this.sendAndContinueBtn = element(by.buttonText('send and continue'));
     this.sendBtn = element(by.buttonText('send'));
+
+    this.multieditOption = element(by.css('.big-icon-multiedit'));
 
     this.setCategoryBtn = element(by.id('category-setting'))
         .element(by.tagName('button'));

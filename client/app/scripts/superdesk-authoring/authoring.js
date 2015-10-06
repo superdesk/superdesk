@@ -190,10 +190,10 @@
          *
          * @param {string} _id Item _id.
          * @param {boolean} read_only
-         * @param {string} itemType
+         * @param {string} repo - repository where an item whose identifier is _id can be found.
          */
-        this.open = function openAuthoring(_id, read_only, itemType) {
-            if (angular.isDefined(itemType) && itemType === 'legal_archive') {
+        this.open = function openAuthoring(_id, read_only, repo) {
+            if (repo === 'legal_archive') {
                 return api.find('legal_archive', _id).then(function(item) {
                     item._editable = false;
                     return item;
@@ -845,10 +845,12 @@
         '$timeout',
         '$q',
         '$window',
-        'modal'
+        'modal',
+        'archiveService'
     ];
     function AuthoringDirective(superdesk, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
-                                privileges, content, $location, referrer, macros, $timeout, $q, $window, modal) {
+                                privileges, content, $location, referrer, macros, $timeout, $q, $window, modal,
+                                archiveService) {
         return {
             link: function($scope, elem, attrs) {
                 var _closing;
@@ -916,13 +918,18 @@
                 $scope.referrerUrl = referrer.getReferrerUrl();
 
                 if ($scope.origItem.task && $scope.origItem.task.stage) {
-                    api('stages').getById($scope.origItem.task.stage)
-                    .then(function(result) {
-                        $scope.stage = result;
-                    });
-                    desks.fetchDeskById($scope.origItem.task.desk).then(function (desk) {
-                        $scope.deskName = desk.name;
-                    });
+                    if (archiveService.isLegal($scope.origItem)) {
+                        $scope.deskName = $scope.origItem.task.desk;
+                        $scope.stage = {'name': $scope.origItem.task.stage};
+                    } else {
+                        api('stages').getById($scope.origItem.task.stage)
+                            .then(function(result) {
+                                $scope.stage = result;
+                            });
+                        desks.fetchDeskById($scope.origItem.task.desk).then(function (desk) {
+                            $scope.deskName = desk.name;
+                        });
+                    }
                 }
 
                 /*
@@ -2279,7 +2286,7 @@
          */
         this.edit = function(item, action) {
             if (item) {
-                authoringOpen(item._id, action || 'edit');
+                authoringOpen(item._id, action || 'edit', item._type || null);
             } else {
                 self.close();
             }
@@ -2372,8 +2379,8 @@
         /**
          * Fetch item by id and start editing it
          */
-        function authoringOpen(itemId, action) {
-            return authoring.open(itemId, action === 'view')
+        function authoringOpen(itemId, action, repo) {
+            return authoring.open(itemId, action === 'view', repo)
                 .then(function(item) {
                     self.item = item;
                     self.action = action;
