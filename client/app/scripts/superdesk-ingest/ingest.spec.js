@@ -111,4 +111,35 @@ describe('ingest', function() {
         });
     });
 
+    describe('sdIngestRoutingSchedule directive', function () {
+        var isoScope;  // the directive's isolate scope
+
+        beforeEach(module('superdesk.ingest'));
+        beforeEach(module('templates'));
+
+        beforeEach(module(function($provide) {
+            $provide.constant('config', {
+                server: {
+                    timezone: 'FOO (UTC+3.141592)'
+                }
+            });
+        }));
+
+        beforeEach(inject(function ($compile, $rootScope) {
+            var element,
+                html = '<div sd-ingest-routing-schedule></div>',
+                scope;
+
+            scope = $rootScope.$new();
+            element = $compile(html)(scope);
+            scope.$digest();
+
+            isoScope = element.isolateScope();
+        }));
+
+        it('initializes server timezone in scope', function () {
+            expect(isoScope.serverTimezone).toEqual('FOO (UTC+3.141592)');
+        });
+    });
+
 });

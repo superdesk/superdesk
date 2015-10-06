@@ -1031,11 +1031,14 @@ define([
         };
     }
 
-    IngestRoutingSchedule.$inject = [];
-    function IngestRoutingSchedule() {
+    IngestRoutingSchedule.$inject = ['config'];
+    function IngestRoutingSchedule(config) {
         return {
             scope: {rule: '='},
-            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html'
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html',
+            link: function (scope, element, attrs) {
+                scope.serverTimezone = config.server.timezone;
+            }
         };
     }
 
