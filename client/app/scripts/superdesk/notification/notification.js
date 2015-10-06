@@ -10,8 +10,8 @@
 (function() {
     'use strict';
 
-    WebSocketProxy.$inject = ['$rootScope', 'config', 'desks'];
-    function WebSocketProxy($rootScope, config, desks, session) {
+    WebSocketProxy.$inject = ['$rootScope', 'config', '$interval'];
+    function WebSocketProxy($rootScope, config, $interval) {
 
         var ws = null;
         var connectTimer = -1;
@@ -54,14 +54,14 @@
             };
 
             ws.onopen = function(event) {
-                clearInterval(connectTimer);
+                $interval.cancel(connectTimer);
                 $rootScope.$broadcast('connected');
             };
 
             ws.onclose = function(event) {
                 $rootScope.$broadcast('disconnected');
-                clearInterval(connectTimer);
-                connectTimer = setInterval(function() {
+                $interval.cancel(connectTimer);
+                connectTimer = $interval(function() {
                     if (ws) {
                         connect();  // Retry to connect for every TIMEOUT interval.
                     }
