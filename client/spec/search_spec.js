@@ -59,4 +59,16 @@ describe('Search', function() {
         expect(element.all(by.repeater('parameter in tags.selectedParameters')).count()).toBe(1);
         expect(element.all(by.repeater('item in items._items')).count()).toBe(0);
     });
+
+    it('can search by priority field', function () {
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
+        expect(element.all(by.repeater('items._items')).count()).toBe(2);
+
+        var filterPanelButton = element(by.css('.filter-trigger'));
+        filterPanelButton.click();
+        expect(element.all(by.repeater('(key,value) in aggregations.priority')).count()).toBe(1);
+        var priority3 = element.all(by.repeater('(key,value) in aggregations.priority')).first();
+        priority3.click();
+        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+    });
 });

@@ -442,6 +442,7 @@
             "slugline": "item3 slugline",
             "type": "text",
             "guid": "item3",
+            "priority": 3,
             "versioncreated": "2015-01-01T10:10:10+0000",
             "_current_version" : 1,
             "original_creator": "-id user admin-",
