@@ -246,31 +246,31 @@ ADMINS = [MAIL_USERNAME]
 SUPERDESK_TESTING = (env('SUPERDESK_TESTING', 'false').lower() == 'true')
 
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
-SESSION_EXPIRY_MINUTES = 240
+SESSION_EXPIRY_MINUTES = int(env('SESSION_EXPIRY_MINUTES', 240))
 
 # The number of minutes before spiked items purged
-SPIKE_EXPIRY_MINUTES = 300
+SPIKE_EXPIRY_MINUTES = int(env('SPIKE_EXPIRY_MINUTES', 300))
 
 # The number of minutes before content items purged
 # akin.tolga 06/01/2014: using a large value (30 days) for the time being
-CONTENT_EXPIRY_MINUTES = 43200
+CONTENT_EXPIRY_MINUTES = int(env('CONTENT_EXPIRY_MINUTES', 43200))
 
 # The number of minutes before ingest items purged
 # 2880 = 2 days in minutes
-INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', '2880'))
+INGEST_EXPIRY_MINUTES = int(env('INGEST_EXPIRY_MINUTES', 2880))
 
 # The number of minutes before published items purged
 # 4320 = 3 days in minutes
-PUBLISHED_ITEMS_EXPIRY_MINUTES = 4320
+PUBLISHED_ITEMS_EXPIRY_MINUTES = int(env('PUBLISHED_ITEMS_EXPIRY_MINUTES', 4320))
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.
 # If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
 # to 200 (1000/5).
-MAX_SEARCH_DEPTH = -1
+MAX_SEARCH_DEPTH = int(env('MAX_SEARCH_DEPTH', -1))
 
 # Defines the maximum value of Ingest Sequence Number after which the value will start from 1
-MAX_VALUE_OF_INGEST_SEQUENCE = 9999
+MAX_VALUE_OF_INGEST_SEQUENCE = int(env('MAX_VALUE_OF_INGEST_SEQUENCE', 9999))
 
 DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
 
@@ -280,7 +280,7 @@ WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
 
 # Defines the maximum value of Publish Sequence Number after which the value will start from 1
-MAX_VALUE_OF_PUBLISH_SEQUENCE = 9999
+MAX_VALUE_OF_PUBLISH_SEQUENCE = int(env('MAX_VALUE_OF_PUBLISH_SEQUENCE', 9999))
 
 # Defines default value for Source to be set for manually created articles
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = env('DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES', 'AAP')
@@ -294,6 +294,5 @@ ODBC_TEST_CONNECTION_STRING = env('ODBC_TEST_CONNECTION_STRING',
 
 # This value gets injected into NewsML 1.2 and G2 output documents.
 NEWSML_PROVIDER_ID = env('NEWSML_PROVIDER_ID', 'sourcefabric.org')
-
-ORGANIZATION_NAME = "Superdesk Associated Press"
-ORGANIZATION_NAME_ABBREVIATION = "SAP"
+ORGANIZATION_NAME = env('ORGANIZATION_NAME', 'Superdesk Associated Press')
+ORGANIZATION_NAME_ABBREVIATION = env('ORGANIZATION_NAME_ABBREVIATION', 'SAP')
