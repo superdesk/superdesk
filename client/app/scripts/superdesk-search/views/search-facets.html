@@ -24,7 +24,7 @@
                         <i class="filetype-icon-{{key}}"></i>
                         <span class="sd-checkbox" ng-checked="hasFilter('type',key)"></span>
                     </span>
-                    <span>{{ key | translate}} <i>{{ value }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
                 </li>
             </ul>
         </div>
@@ -33,7 +33,7 @@
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.desk" ng-click="toggleFilter('desk', value.id)">
                     <span class="sd-checkbox" ng-checked="hasFilter('desk', value.id)"></span>
-                    <span>{{key | translate}} <i>{{ value.count }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value.count }}</i></span>
                 </li>
             </ul>
         </div>
@@ -42,7 +42,7 @@
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.stage" ng-click="toggleFilter('stage', value.id)">
                     <span class="sd-checkbox" ng-checked="hasFilter('stage', key)"></span>
-                    <span>{{key | translate}} <i>{{ value.count }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value.count }}</i></span>
                 </li>
             </ul>
         </div>
@@ -51,7 +51,7 @@
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.source" ng-click="toggleFilter('source', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('source',key)"></span>
-                    <span>{{key | translate}} <i>{{ value }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
                 </li>
             </ul>
         </div>
@@ -60,7 +60,7 @@
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.category" ng-click="toggleFilter('category', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('category',key)"></span>
-                    <span>{{key | translate}} <i>{{ value }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
                 </li>
             </ul>
         </div>
@@ -69,7 +69,16 @@
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.urgency" ng-click="toggleFilter('urgency', key)">
                     <span class="sd-checkbox" ng-checked="hasFilter('urgency',key)"></span>
-                    <span>{{key | translate}} <i>{{ value }}</i></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Priority' | FacetLabels }}" ng-hide="isEmpty('priority')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.priority" ng-click="toggleFilter('priority', key)">
+                    <span class="sd-checkbox" ng-checked="hasFilter('priority',key)"></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
                 </li>
             </ul>
         </div>

@@ -122,6 +122,10 @@
                     query.post_filter({terms: {urgency: JSON.parse(params.urgency)}});
                 }
 
+                if (params.priority) {
+                    query.post_filter({terms: {priority: JSON.parse(params.priority)}});
+                }
+
                 if (params.source) {
                     query.post_filter({terms: {source: JSON.parse(params.source)}});
                 }
@@ -256,6 +260,7 @@
             'type': 1,
             'category': 1,
             'urgency': 1,
+            'priority': 1,
             'source': 1,
             'day': 1,
             'week': 1,
@@ -421,7 +426,8 @@
                             'date': {},
                             'source': {},
                             'category': {},
-                            'urgency': {}
+                            'urgency': {},
+                            'priority': {}
                         };
                     };
 
@@ -449,6 +455,10 @@
 
                             _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
                                 scope.aggregations.urgency[urgency.key] = urgency.doc_count;
+                            });
+
+                            _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
+                                scope.aggregations.priority[priority.key] = priority.doc_count;
                             });
 
                             _.forEach(scope.items._aggregations.source.buckets, function(source) {

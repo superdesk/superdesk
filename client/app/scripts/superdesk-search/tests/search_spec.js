@@ -156,6 +156,7 @@ describe('sdSearchFacets directive', function () {
                     type: {buckets: []},
                     category: {buckets: []},
                     urgency: {buckets: []},
+                    priority: {buckets: []},
                     source: {buckets: []},
                     day: {buckets: []},
                     week: {buckets: []},
