@@ -1,8 +1,9 @@
 
 var route = require('./helpers/utils').route,
-    workspace = require('./helpers/workspace'),
-    content = require('./helpers/content'),
+    monitoring = require('./helpers/monitoring'),
+    search = require('./helpers/search'),
     authoring = require('./helpers/authoring'),
+    workspace = require('./helpers/workspace'),
     highlights = require('./helpers/highlights');
 
 describe('HIGHLIGHTS', function() {
@@ -11,7 +12,8 @@ describe('HIGHLIGHTS', function() {
     describe('add highlights configuration:', function() {
         beforeEach(route('/settings/highlights'));
 
-        it('add highlights configuration with one desk', function() {
+        it('highlights management', function() {
+            //add highlights configuration with one desk
             highlights.add();
             highlights.setName('highlight new');
             highlights.toggleDesk('Sports Desk');
@@ -19,233 +21,175 @@ describe('HIGHLIGHTS', function() {
             expect(highlights.getRow('highlight new').count()).toBe(1);
             highlights.edit('highlight new');
             highlights.expectDeskSelection('Sports Desk', true);
-        });
+            highlights.cancel();
 
-        it('add highlights configuration with the same name', function() {
+            //add highlights configuration with the same name'
             highlights.add();
             highlights.setName('Highlight one');
             highlights.save();
             highlights.cancel();
             expect(highlights.getRow('Highlight one').count()).toBe(1);
-        });
 
-        it('add highlights configuration with no desk', function() {
+            //add highlights configuration with no desk
             highlights.add();
-            highlights.setName('highlight new');
+            highlights.setName('highlight no desk');
             highlights.save();
-            expect(highlights.getRow('highlight new').count()).toBe(1);
-        });
+            expect(highlights.getRow('highlight no desk').count()).toBe(1);
 
-        it('add highlights configuration with no group', function() {
+            //add highlights configuration with no group
             highlights.add();
-            highlights.setName('highlight new');
+            highlights.setName('highlight no group');
             highlights.save();
-            highlights.edit('highlight new');
+            highlights.edit('highlight no group');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('main').count()).toBe(1);
-        });
+            highlights.cancel();
 
-        it('add highlights configuration with group first', function() {
+            //add highlights configuration with group first
             highlights.add();
-            highlights.setName('highlight new');
+            highlights.setName('highlight first group');
             highlights.addGroup('first');
             highlights.save();
-            highlights.edit('highlight new');
+            highlights.edit('highlight first group');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('first').count()).toBe(1);
-        });
-    });
+            highlights.cancel();
 
-    describe('edit highlights configuration:', function() {
-        beforeEach(route('/settings/highlights'));
-
-        it('change the name of highlight configuration', function() {
+            //change the name of highlight configuration
             highlights.edit('highlight one');
-            highlights.setName('highlight new');
+            highlights.setName('highlight new name');
             highlights.save();
-            expect(highlights.getRow('highlight new').count()).toBe(1);
+            expect(highlights.getRow('highlight new name').count()).toBe(1);
             expect(highlights.getRow('highlight one').count()).toBe(0);
-        });
 
-        it('add a desk to highlight configuration', function() {
-            highlights.edit('highlight one');
+            //add a desk to highlight configuration
+            highlights.edit('highlight new name');
+            highlights.expectDeskSelection('Politic Desk', false);
             highlights.toggleDesk('Politic Desk');
             highlights.save();
-            highlights.edit('highlight one');
+            highlights.edit('highlight new name');
             highlights.expectDeskSelection('Politic Desk', true);
-        });
+            highlights.cancel();
 
-        it('delete a desk from highlight configuration', function() {
-            highlights.edit('highlight one');
-            highlights.toggleDesk('Sports Desk');
+            //delete a desk from highlight configuration
+            highlights.edit('highlight three');
+            highlights.expectDeskSelection('Politic Desk', true);
+            highlights.toggleDesk('Politic Desk');
             highlights.save();
-            highlights.edit('highlight one');
-            highlights.expectDeskSelection('Sports Desk', false);
-        });
+            highlights.edit('highlight three');
+            highlights.expectDeskSelection('Politic Desk', false);
+            highlights.cancel();
 
-        it('add a group to highlight configuration', function() {
-            highlights.edit('highlight one');
+            //add a group to highlight configuration
+            highlights.edit('highlight three');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('main').count()).toBe(1);
             highlights.addGroup('last');
             highlights.save();
-            highlights.edit('highlight one');
+            highlights.edit('highlight three');
             expect(highlights.groups.count()).toBe(2);
             expect(highlights.getGroup('main').count()).toBe(1);
             expect(highlights.getGroup('last').count()).toBe(1);
-        });
+            highlights.cancel();
 
-        it('edit group from highlight configuration', function() {
-            highlights.edit('highlight one');
+            //edit group from highlight configuration
+            highlights.edit('highlight four');
+            expect(highlights.groups.count()).toBe(1);
+            expect(highlights.getGroup('main').count()).toBe(1);
             highlights.editGroup('main', 'first');
             highlights.save();
-            highlights.edit('highlight one');
+            highlights.edit('highlight four');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('first').count()).toBe(1);
-        });
+            highlights.cancel();
 
-        it('delete the single group from highlight configuration', function() {
-            highlights.edit('highlight one');
-            highlights.editGroup('main', 'first');
-            highlights.save();
-            highlights.edit('highlight one');
+            //delete the single group from highlight configuration
+            highlights.edit('highlight four');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('first').count()).toBe(1);
             highlights.deleteGroup('first');
             highlights.save();
-            highlights.edit('highlight one');
+            highlights.edit('highlight four');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('main').count()).toBe(1);
-        });
+            highlights.cancel();
 
-        it('delete one group from highlight configuration', function() {
-            highlights.edit('highlight one');
-            highlights.addGroup('last');
-            highlights.save();
-            highlights.edit('highlight one');
+            //delete one group from highlight configuration
+            highlights.edit('highlight three');
             expect(highlights.groups.count()).toBe(2);
             expect(highlights.getGroup('main').count()).toBe(1);
             expect(highlights.getGroup('last').count()).toBe(1);
             highlights.deleteGroup('main');
             highlights.save();
-            highlights.edit('highlight one');
+            highlights.edit('highlight three');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('last').count()).toBe(1);
-        });
-    });
+            highlights.cancel();
 
-    describe('delete highlights configuration:', function() {
-        beforeEach(route('/settings/highlights'));
-
-        it('delete highlight configuration', function() {
-            expect(highlights.getRow('highlight one').count()).toBe(1);
-            highlights.remove('highlight one');
-            expect(highlights.getRow('highlight one').count()).toBe(0);
+            //delete highlight configuration'
+            expect(highlights.getRow('highlight four').count()).toBe(1);
+            highlights.remove('highlight four');
+            expect(highlights.getRow('highlight four').count()).toBe(0);
         });
     });
 
     describe('mark for highlights in a desk:', function() {
-        beforeEach(route('/workspace/content'));
-
-        it('mark for highlights in list view', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            highlights.mark('Highlight one', 0);
-            content.checkMarkedForHighlight('Highlight one', 0);
-        });
-
-        it('mark for highlights in edit article screen', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.editItem(0);
-            authoring.markForHighlights();
-            expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(2);
-            highlights.selectHighlight(authoring.getSubnav(), 'Highlight one');
-            authoring.checkMarkedForHighlight('Highlight one');
-            authoring.close();
-            workspace.switchToDesk('PERSONAL');
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.checkMarkedForHighlight('Highlight one', 0);
-        });
+        beforeEach(route('/workspace/monitoring'));
 
         it('create highlight package', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            highlights.mark('Highlight two', 0);
+            //mark for highlight in monitoring
+            monitoring.actionOnItemSubmenu('Mark for highlight', 'Highlight two', 1, 0);
+            monitoring.actionOnItemSubmenu('Mark for highlight', 'Highlight three', 1, 2);
+            monitoring.checkMarkedForHighlight('Highlight two', 1, 0);
+            monitoring.checkMarkedForHighlight('Highlight three', 1, 2);
+
+            //mark for highlight in authoring
+            monitoring.actionOnItem('Edit', 1, 1);
+            authoring.markForHighlights();
+            expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(3);
+            highlights.selectHighlight(authoring.getSubnav(), 'Highlight two');
+            authoring.checkMarkedForHighlight('Highlight two');
+            search.openGlobalSearch();
+            monitoring.openMonitoring();
+            monitoring.checkMarkedForHighlight('Highlight two', 1, 1);
+
+            //multi mark for highlights
+            monitoring.selectItem(1, 3);
+            monitoring.selectItem(2, 0);
+            highlights.multiMarkHighlight('Highlight two');
+            monitoring.checkMarkedForHighlight('Highlight two', 1, 3);
+            monitoring.checkMarkedForHighlight('Highlight two', 2, 0);
+
+            //multi mark for highlights, in case of partial mark for selected items
+            monitoring.selectItem(2, 0);
+            monitoring.selectItem(2, 1);
+            highlights.multiMarkHighlight('Highlight two');
+            monitoring.checkMarkedForHighlight('Highlight two', 2, 0);
+            monitoring.checkMarkedForHighlight('Highlight two', 2, 1);
+
+            //create the highlight and add a item to it
             highlights.createHighlightsPackage('Highlight two');
-            authoring.showSearch();
-            authoring.addToGroup(0, 'ONE');
-            expect(authoring.getGroupItems('ONE').count()).toBe(1);
-            authoring.showSearch();
+            workspace.actionOnItemSubmenu('Add to current', 'main', 3);
+            expect(authoring.getGroupItems('main').count()).toBe(1);
+
+            //from monitoring add an item to highlight package
+            workspace.showList('Monitoring');
+            monitoring.actionOnItemSubmenu('Add to current', 'story', 2, 2);
+            expect(authoring.getGroupItems('story').count()).toBe(1);
+
+            //show highlist three and add an item to highlight package
+            workspace.showHighlightList('Highlight three');
+            workspace.actionOnItemSubmenu('Add to current', 'sidebars', 0);
+            expect(authoring.getGroupItems('sidebars').count()).toBe(1);
+
+            //export highlight
             authoring.save();
-            route('/workspace/content')();
-            expect(content.getCount()).toBe(3);
-        });
-
-        it('filter by highlights in highlight package', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            highlights.mark('Highlight one', 0);
-
-            highlights.mark('Highlight one', 1);
-            highlights.mark('Highlight two', 1);
-
-            highlights.createHighlightsPackage('Highlight one');
-            authoring.showSearch();
-            expect(authoring.getSearchItemCount()).toBe(2);
-
-            highlights.switchHighlightFilter('Highlight two');
-            expect(authoring.getSearchItemCount()).toBe(1);
-        });
-
-        it('export highlight package', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-
-            highlights.mark('Highlight two', 0);
-            highlights.mark('Highlight two', 1);
-
-            highlights.createHighlightsPackage('Highlight two');
-            authoring.showSearch();
-            expect(authoring.getSearchItemCount()).toBe(2);
-
-            authoring.addToGroup(0, 'ONE');
-            authoring.addToGroup(1, 'TWO');
-            expect(authoring.getGroupItems('ONE').count()).toBe(1);
-            expect(authoring.getGroupItems('TWO').count()).toBe(1);
-            authoring.save();
-
             highlights.exportHighlights();
-            authoring.save();
-            authoring.close();
 
-            workspace.switchToDesk('SPORTS');
-            content.setListView();
-            expect(content.getCount()).toBe(3);
-        });
-    });
-
-    describe('multi mark for highlights:', function() {
-        beforeEach(route('/workspace/content'));
-
-        it('multi mark for highlights', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            content.selectItem(0);
-            content.selectItem(1);
-            highlights.multiMarkHighlight('Highlight one');
-            content.checkMarkedForHighlight('Highlight one', 0);
-            content.checkMarkedForHighlight('Highlight one', 1);
-        });
-
-        it('multi mark for highlights, in case of partial mark for selected items', function() {
-            workspace.switchToDesk('SPORTS DESK');
-            content.setListView();
-            highlights.mark('Highlight one', 0);
-            content.selectItem(0);
-            content.selectItem(1);
-            highlights.multiMarkHighlight('Highlight one');
-            content.checkMarkedForHighlight('Highlight one', 0);
-            content.checkMarkedForHighlight('Highlight one', 1);
+            //check that the new highlight package and generated list are on personal
+            workspace.showList('Personal');
+            expect(workspace.getItemText(0)).toBe('Highlight two');
+            expect(workspace.getItemText(1)).toBe('Highlight two');
         });
     });
 });
