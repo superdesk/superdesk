@@ -68,3 +68,27 @@ describe('Reload Service', function() {
         expect(reloadService.result.reload).toBe(true);
     }));
 });
+describe('Notify Connection Service', function() {
+    beforeEach(module('superdesk.notification'));
+    beforeEach(module('templates'));
+
+    var rootScope, msg;
+    beforeEach(function() {
+        inject(function($rootScope) {
+            rootScope = $rootScope;
+        });
+    });
+
+    it('can show disconnection message when websocket disconnected', inject(function(notifyConnectionService) {
+        msg = 'Disconnected to Notification Server, attempting to reconnect ...';
+        rootScope.$broadcast('disconnected');
+        expect(notifyConnectionService.message).toEqual(msg);
+    }));
+
+    it('can show success message when websocket connected', inject(function(notifyConnectionService) {
+        msg = 'Connected to Notification Server!';
+        rootScope.$broadcast('connected');
+        expect(notifyConnectionService.message).toEqual(msg);
+    }));
+
+});
