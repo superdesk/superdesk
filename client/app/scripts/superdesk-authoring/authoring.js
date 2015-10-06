@@ -222,12 +222,16 @@
             var promise = $q.when();
             if (this.isEditable(diff)) {
                 if (isDirty) {
-                    promise = confirm.confirm()
-                        .then(angular.bind(this, function save() {
-                            return this.save(orig, diff);
-                        }), function() { // ignore saving
-                            return $q.when('ignore');
-                        });
+                    if (!_.contains(['published', 'corrected'], orig.state)) {
+                        promise = confirm.confirm()
+                            .then(angular.bind(this, function save() {
+                                return this.save(orig, diff);
+                            }), function() { // ignore saving
+                                return $q.when('ignore');
+                            });
+                    } else {
+                        promise = $q.when('ignore');
+                    }
                 }
 
                 promise = promise.then(function unlock(cancelType) {
@@ -1106,12 +1110,13 @@
                  */
                 $scope.publish = function() {
                     if (validatePublishScheduleAndEmbargo($scope.item)) {
-                        if ($scope.dirty) { // save dialog & then publish if confirm
-                            var message = 'publish';
-                            if ($scope.action && $scope.action !== 'edit') {
-                                message = $scope.action;
-                            }
+                        var message = 'publish';
+                        if ($scope.action && $scope.action !== 'edit') {
+                            message = $scope.action;
+                        }
 
+                        if ($scope.dirty && message === 'publish') {
+                            //confirmation only required for publish
                             authoring.publishConfirmation($scope.origItem, $scope.item, $scope.dirty, message)
                             .then(function(res) {
                                 if (res) {
@@ -1120,7 +1125,7 @@
                             }, function(response) {
                                 notify.error(gettext('Error. Item not published.'));
                             });
-                        } else { // Publish
+                        } else {
                             publishItem($scope.origItem, $scope.item);
                         }
                     }

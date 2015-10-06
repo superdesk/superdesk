@@ -307,6 +307,36 @@ describe('authoring', function() {
             expect(api.save).toHaveBeenCalledWith('archive', {}, edit);
 
         }));
+
+        it('close the published dirty item without confirmation',
+        inject(function(authoring, api, confirm, lock, autosave, $q, $rootScope) {
+            var publishedItem = Object.create(ITEM);
+            publishedItem.state = 'published';
+            var edit = Object.create(publishedItem);
+            edit.headline = 'test';
+            spyOn(authoring, 'isEditable').and.returnValue(true);
+            spyOn(autosave, 'drop').and.returnValue($q.when({}));
+            authoring.close(edit, publishedItem, true, false);
+            $rootScope.$digest();
+            expect(confirm.confirm).not.toHaveBeenCalled();
+            expect(lock.unlock).toHaveBeenCalled();
+            expect(autosave.drop).toHaveBeenCalled();
+        }));
+
+        it('close the corrected dirty item without confirmation',
+        inject(function(authoring, api, confirm, lock, autosave, $q, $rootScope) {
+            var publishedItem = Object.create(ITEM);
+            publishedItem.state = 'corrected';
+            var edit = Object.create(publishedItem);
+            edit.headline = 'test';
+            spyOn(authoring, 'isEditable').and.returnValue(true);
+            spyOn(autosave, 'drop').and.returnValue($q.when({}));
+            authoring.close(edit, publishedItem, true, false);
+            $rootScope.$digest();
+            expect(confirm.confirm).not.toHaveBeenCalled();
+            expect(lock.unlock).toHaveBeenCalled();
+            expect(autosave.drop).toHaveBeenCalled();
+        }));
     });
 });
 
