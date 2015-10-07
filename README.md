@@ -28,6 +28,7 @@ and make sure you can run [docker without sudo](http://askubuntu.com/questions/4
 ```sh
 $ git clone https://github.com/superdesk/superdesk.git
 $ cd superdesk
+$ git clone https://github.com/superdesk/superdesk-content-api.git
 $ ./scripts/docker-local-demo.sh
 ```
 
