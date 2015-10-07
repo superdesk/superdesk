@@ -21,7 +21,6 @@ from apps.packages.takes_package_service import TakesPackageService
 from .common import WIRE
 from superdesk.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
-from settings import URL_PREFIX
 from superdesk.metadata.packages import RESIDREF, GROUPS
 from test_factory import SuperdeskTestCase
 from apps.publish import init_app, RemoveExpiredPublishContent
@@ -31,12 +30,7 @@ from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 
-ARCHIVE_PUBLISH = 'archive_publish'
-ARCHIVE_CORRECT = 'archive_correct'
-ARCHIVE_KILL = 'archive_kill'
-
-PUBLISH_QUEUE = 'publish_queue'
-PUBLISHED = 'published'
+from .tests import ARCHIVE_PUBLISH, ARCHIVE_KILL, PUBLISHED
 
 
 class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
@@ -73,228 +67,221 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         Tests if can_remove_production() returns true if the item is published only once.
         """
 
-        with self.app.app_context():
-            doc = self.articles[0].copy()
+        doc = self.articles[0].copy()
 
-            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
-            get_resource_service(ARCHIVE).patch(id=doc[config.ID_FIELD], updates=updates)
+        updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
+        get_resource_service(ARCHIVE).patch(id=doc[config.ID_FIELD], updates=updates)
 
-            published_version_number = doc[config.VERSION] + 1
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: published_version_number})
+        published_version_number = doc[config.VERSION] + 1
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: published_version_number})
 
-            self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertTrue)
+        self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertTrue)
 
     def test_can_remove_from_production_fails_when_published_and_then_killed(self):
         """
         Tests if can_remove_production() returns false if the item is published more than once.
         """
 
-        with self.app.app_context():
-            doc = self.articles[0].copy()
+        doc = self.articles[0].copy()
 
-            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
-            get_resource_service(ARCHIVE).patch(id=doc[config.ID_FIELD], updates=updates)
+        updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
+        get_resource_service(ARCHIVE).patch(id=doc[config.ID_FIELD], updates=updates)
 
-            published_version_number = doc[config.VERSION] + 1
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: published_version_number})
+        published_version_number = doc[config.VERSION] + 1
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: published_version_number})
 
-            published_item = self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD],
-                                                                                          self.assertTrue)
+        published_item = self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD],
+                                                                                      self.assertTrue)
 
-            published_version_number += 1
-            get_resource_service(ARCHIVE_KILL).patch(id=doc['_id'],
-                                                     updates={ITEM_STATE: CONTENT_STATE.KILLED,
-                                                              config.VERSION: published_version_number})
-            self.assertFalse(get_resource_service(PUBLISHED).can_remove_from_production(published_item))
+        published_version_number += 1
+        get_resource_service(ARCHIVE_KILL).patch(id=doc['_id'],
+                                                 updates={ITEM_STATE: CONTENT_STATE.KILLED,
+                                                          config.VERSION: published_version_number})
+        self.assertFalse(get_resource_service(PUBLISHED).can_remove_from_production(published_item))
 
     def test_can_remove_from_production_second_rule(self):
         """
         Test if can_remove_production() returns false when the expired published item is part of a package.
         """
 
-        with self.app.app_context():
-            doc = self.articles[0].copy()
+        doc = self.articles[0].copy()
 
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: doc[config.VERSION] + 1})
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: doc[config.VERSION] + 1})
 
-            item_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=doc[config.ID_FIELD])
-            self.assertIsNotNone(TakesPackageService().get_take_package_id(item_in_production))
+        item_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=doc[config.ID_FIELD])
+        self.assertIsNotNone(TakesPackageService().get_take_package_id(item_in_production))
 
-            self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertFalse)
+        self._move_to_archived_and_assert_can_remove_from_production(doc[config.ID_FIELD], self.assertFalse)
 
     def test_can_remove_from_production_third_rule(self):
         """
         Test if can_remove_production() returns false when the expired published item is a package.
         """
 
-        with self.app.app_context():
-            published_articles = [self.articles[1].copy(), self.articles[2].copy(), self.articles[3].copy(),
-                                  self.articles[4].copy()]
+        published_articles = [self.articles[1].copy(), self.articles[2].copy(), self.articles[3].copy(),
+                              self.articles[4].copy()]
 
-            for published_article in published_articles:
-                published_article[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+        for published_article in published_articles:
+            published_article[ITEM_STATE] = CONTENT_STATE.PUBLISHED
 
-            published_service = get_resource_service(PUBLISHED)
-            published_service.post(published_articles)
+        published_service = get_resource_service(PUBLISHED)
+        published_service.post(published_articles)
 
-            published_package = self._move_to_archived_and_assert_can_remove_from_production(
-                self.articles[4][config.ID_FIELD], self.assertFalse)
+        published_package = self._move_to_archived_and_assert_can_remove_from_production(
+            self.articles[4][config.ID_FIELD], self.assertFalse)
 
-            self._move_to_archived_and_assert_can_remove_from_production(self.articles[3][config.ID_FIELD],
-                                                                         self.assertFalse, published_package)
+        self._move_to_archived_and_assert_can_remove_from_production(self.articles[3][config.ID_FIELD],
+                                                                     self.assertFalse, published_package)
 
-            self._move_to_archived_and_assert_can_remove_from_production(self.articles[2][config.ID_FIELD],
-                                                                         self.assertFalse, published_package)
-            self._move_to_archived_and_assert_can_remove_from_production(self.articles[1][config.ID_FIELD],
-                                                                         self.assertTrue, published_package)
+        self._move_to_archived_and_assert_can_remove_from_production(self.articles[2][config.ID_FIELD],
+                                                                     self.assertFalse, published_package)
+        self._move_to_archived_and_assert_can_remove_from_production(self.articles[1][config.ID_FIELD],
+                                                                     self.assertTrue, published_package)
 
     def test_cannot_remove_scheduled_content(self):
-        with self.app.app_context():
-            published_service = get_resource_service(PUBLISHED)
-            original = self.articles[0].copy()
+        published_service = get_resource_service(PUBLISHED)
+        original = self.articles[0].copy()
 
-            original[ITEM_STATE] = CONTENT_STATE.SCHEDULED
-            original['publish_schedule'] = utcnow() + timedelta(days=2)
+        original[ITEM_STATE] = CONTENT_STATE.SCHEDULED
+        original['publish_schedule'] = utcnow() + timedelta(days=2)
 
-            published_service.post([original])
-            published_items = published_service.get_other_published_items(original['item_id'])
-            self.assertEqual(1, published_items.count())
+        published_service.post([original])
+        published_items = published_service.get_other_published_items(original['item_id'])
+        self.assertEqual(1, published_items.count())
 
-            RemoveExpiredPublishContent().run()
-            published_items = published_service.get_other_published_items(original['item_id'])
-            self.assertEqual(1, published_items.count())
+        RemoveExpiredPublishContent().run()
+        published_items = published_service.get_other_published_items(original['item_id'])
+        self.assertEqual(1, published_items.count())
 
     def test_remove_published_expired_content(self):
-        with self.app.app_context():
-            original = self.articles[0].copy()
-            original[ITEM_STATE] = CONTENT_STATE.PUBLISHED
-            self._create_and_insert_into_versions(original, True)
+        original = self.articles[0].copy()
+        original[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+        self._create_and_insert_into_versions(original, True)
 
-            published_service = get_resource_service(PUBLISHED)
-            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+        published_service = get_resource_service(PUBLISHED)
+        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
 
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, WIRE)
-            archive_publish.queue_transmission(original, subscribers)
-            published_service.post([original])
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(original, WIRE)
+        archive_publish.queue_transmission(original, subscribers)
+        published_service.post([original])
 
-            published_items = published_service.get(req=None, lookup=None)
-            self.assertEqual(1, published_items.count())
+        published_items = published_service.get(req=None, lookup=None)
+        self.assertEqual(1, published_items.count())
 
-            published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
-            RemoveExpiredPublishContent().run()
-            published_items = published_service.get_other_published_items(str(original['item_id']))
-            self.assertEqual(0, published_items.count())
+        published_service.update_published_items(original['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
+        RemoveExpiredPublishContent().run()
+        published_items = published_service.get_other_published_items(str(original['item_id']))
+        self.assertEqual(0, published_items.count())
 
-            archived_item = get_resource_service('archived').find_one(req=None, _id=str(original[config.ID_FIELD]))
-            self.assertEqual(archived_item['item_id'], self.articles[0][config.ID_FIELD])
-            self.assertFalse(archived_item['allow_post_publish_actions'])
-            self.assertFalse(archived_item['can_be_removed'])
+        archived_item = get_resource_service('archived').find_one(req=None, _id=str(original[config.ID_FIELD]))
+        self.assertEqual(archived_item['item_id'], self.articles[0][config.ID_FIELD])
+        self.assertFalse(archived_item['allow_post_publish_actions'])
+        self.assertFalse(archived_item['can_be_removed'])
 
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(original['item_id'])
+        article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+            self._get_legal_archive_details(original['item_id'])
 
-            self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
+        self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
 
-            self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
-            self.assertEqual(article_versions_in_legal_archive.count(), 4)
+        self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
+        self.assertEqual(article_versions_in_legal_archive.count(), 4)
 
-            self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
-            for queue_item in queue_items:
-                self.assertEqual(queue_item['item_id'], self.articles[0]['_id'])
-                self.assertEqual(queue_item['item_version'], original[config.VERSION])
+        self.assertGreaterEqual(queue_items.count(), 1, 'Publish Queue Items must be greater than or equal to 1')
+        for queue_item in queue_items:
+            self.assertEqual(queue_item['item_id'], self.articles[0]['_id'])
+            self.assertEqual(queue_item['item_version'], original[config.VERSION])
 
     def test_remove_published_and_killed_content_separately(self):
-        with self.app.app_context():
-            doc = self.articles[0]
-            original = doc.copy()
+        doc = self.articles[0]
+        original = doc.copy()
 
-            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
-            get_resource_service(ARCHIVE).patch(id=original[config.ID_FIELD], updates=updates)
+        updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
+        get_resource_service(ARCHIVE).patch(id=original[config.ID_FIELD], updates=updates)
 
-            original.update(updates)
-            self._create_and_insert_into_versions(original, False)
+        original.update(updates)
+        self._create_and_insert_into_versions(original, False)
 
-            published_version_number = original[config.VERSION] + 1
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: published_version_number})
+        published_version_number = original[config.VERSION] + 1
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: published_version_number})
 
-            published_service = get_resource_service(PUBLISHED)
-            published_items = published_service.get(req=None, lookup=None)
-            self.assertEqual(1, published_items.count())
+        published_service = get_resource_service(PUBLISHED)
+        published_items = published_service.get(req=None, lookup=None)
+        self.assertEqual(1, published_items.count())
 
-            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
-            self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
-            self.assertEqual(article_in_production[config.VERSION], published_version_number)
-            insert_into_versions(doc=article_in_production)
+        article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
+        self.assertIsNotNone(article_in_production)
+        self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
+        self.assertEqual(article_in_production[config.VERSION], published_version_number)
+        insert_into_versions(doc=article_in_production)
 
-            # Setting the expiry date of the published article to 1 hr back from now
-            published_service.update_published_items(
-                original[config.ID_FIELD], 'expiry', utcnow() + timedelta(minutes=-60))
+        # Setting the expiry date of the published article to 1 hr back from now
+        published_service.update_published_items(
+            original[config.ID_FIELD], 'expiry', utcnow() + timedelta(minutes=-60))
 
-            # Killing the published article and inserting into archive_versions as unittests use service directly
-            published_version_number += 1
-            get_resource_service(ARCHIVE_KILL).patch(id=doc[config.ID_FIELD],
-                                                     updates={ITEM_STATE: CONTENT_STATE.KILLED,
-                                                              config.VERSION: published_version_number})
+        # Killing the published article and inserting into archive_versions as unittests use service directly
+        published_version_number += 1
+        get_resource_service(ARCHIVE_KILL).patch(id=doc[config.ID_FIELD],
+                                                 updates={ITEM_STATE: CONTENT_STATE.KILLED,
+                                                          config.VERSION: published_version_number})
 
-            # Executing the Expiry Job for the Published Article and asserting the collections
-            RemoveExpiredPublishContent().run()
+        # Executing the Expiry Job for the Published Article and asserting the collections
+        RemoveExpiredPublishContent().run()
 
-            published_items = published_service.get(req=None, lookup=None)
-            self.assertEqual(1, published_items.count())
+        published_items = published_service.get(req=None, lookup=None)
+        self.assertEqual(1, published_items.count())
 
-            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
-            self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.KILLED)
-            self.assertEqual(article_in_production[config.VERSION], published_version_number)
-            insert_into_versions(doc=article_in_production)
+        article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
+        self.assertIsNotNone(article_in_production)
+        self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.KILLED)
+        self.assertEqual(article_in_production[config.VERSION], published_version_number)
+        insert_into_versions(doc=article_in_production)
 
-            # Validate the collections in Legal Archive
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(original[config.ID_FIELD])
+        # Validate the collections in Legal Archive
+        article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+            self._get_legal_archive_details(original[config.ID_FIELD])
 
-            self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
-            self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.PUBLISHED)
+        self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
+        self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.PUBLISHED)
 
-            self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
-            self.assertEqual(article_versions_in_legal_archive.count(), 5)
+        self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
+        self.assertEqual(article_versions_in_legal_archive.count(), 5)
 
-            self.assertEqual(queue_items.count(), 1)
+        self.assertEqual(queue_items.count(), 1)
 
-            # Setting the expiry date of the killed article to 1 hr back from now and running the job again
-            published_service.update_published_items(
-                original[config.ID_FIELD], 'expiry', utcnow() + timedelta(minutes=-60))
-            RemoveExpiredPublishContent().run()
+        # Setting the expiry date of the killed article to 1 hr back from now and running the job again
+        published_service.update_published_items(
+            original[config.ID_FIELD], 'expiry', utcnow() + timedelta(minutes=-60))
+        RemoveExpiredPublishContent().run()
 
-            published_items = published_service.get_other_published_items(str(original[config.ID_FIELD]))
-            self.assertEqual(0, published_items.count())
+        published_items = published_service.get_other_published_items(str(original[config.ID_FIELD]))
+        self.assertEqual(0, published_items.count())
 
-            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
-            self.assertIsNone(article_in_production)
+        article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
+        self.assertIsNone(article_in_production)
 
-            # Validate the collections in Legal Archive
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(original[config.ID_FIELD], publishing_action='killed')
+        # Validate the collections in Legal Archive
+        article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+            self._get_legal_archive_details(original[config.ID_FIELD], publishing_action='killed')
 
-            self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
-            self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.KILLED)
+        self.assertIsNotNone(article_in_legal_archive, 'Article cannot be none in Legal Archive')
+        self.assertEqual(article_in_legal_archive[ITEM_STATE], CONTENT_STATE.KILLED)
 
-            self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
-            self.assertEqual(article_versions_in_legal_archive.count(), 6)
+        self.assertIsNotNone(article_versions_in_legal_archive, 'Article Versions cannot be none in Legal Archive')
+        self.assertEqual(article_versions_in_legal_archive.count(), 6)
 
-            for queue_item in queue_items:
-                self.assertEqual(queue_item['item_id'], original[config.ID_FIELD])
-                self.assertEqual(queue_item['item_version'], published_version_number)
+        for queue_item in queue_items:
+            self.assertEqual(queue_item['item_id'], original[config.ID_FIELD])
+            self.assertEqual(queue_item['item_version'], published_version_number)
 
-            self.assertEqual(queue_items.count(), 1)
+        self.assertEqual(queue_items.count(), 1)
 
     def test_remove_takes_package(self):
         """
@@ -337,35 +324,34 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                 self.assertEqual(published_takes_pkg[ITEM_OPERATION], 'kill')
                 self.assertEqual(package_item_in_legal_archive[ITEM_OPERATION], 'kill')
 
-        with self.app.test_request_context(URL_PREFIX):
-            doc = self.articles[0].copy()
-            self._create_and_insert_into_versions(doc, False)
+        doc = self.articles[0].copy()
+        self._create_and_insert_into_versions(doc, False)
 
-            published_version_number = doc[config.VERSION] + 1
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: published_version_number})
-            insert_into_versions(id_=doc[config.ID_FIELD])
+        published_version_number = doc[config.VERSION] + 1
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: published_version_number})
+        insert_into_versions(id_=doc[config.ID_FIELD])
 
-            published_version_number += 1
-            get_resource_service(ARCHIVE_KILL).patch(id=doc[config.ID_FIELD],
-                                                     updates={ITEM_STATE: CONTENT_STATE.KILLED,
-                                                              config.VERSION: published_version_number})
-            insert_into_versions(id_=doc[config.ID_FIELD])
+        published_version_number += 1
+        get_resource_service(ARCHIVE_KILL).patch(id=doc[config.ID_FIELD],
+                                                 updates={ITEM_STATE: CONTENT_STATE.KILLED,
+                                                          config.VERSION: published_version_number})
+        insert_into_versions(id_=doc[config.ID_FIELD])
 
-            published_service = get_resource_service(PUBLISHED)
-            items_in_published_repo = list(published_service.get_from_mongo(req=None, lookup=None))
-            self.assertEqual(len(items_in_published_repo), 4)
+        published_service = get_resource_service(PUBLISHED)
+        items_in_published_repo = list(published_service.get_from_mongo(req=None, lookup=None))
+        self.assertEqual(len(items_in_published_repo), 4)
 
-            # Expiring the Takes Package whose state is Published
-            published_takes_pkg = [g for g in items_in_published_repo if is_takes_package(g) and
-                                   g[ITEM_STATE] == CONTENT_STATE.PUBLISHED]
-            expire_and_assert_legal_archive(published_takes_pkg[0], 2, 1)
+        # Expiring the Takes Package whose state is Published
+        published_takes_pkg = [g for g in items_in_published_repo if is_takes_package(g) and
+                               g[ITEM_STATE] == CONTENT_STATE.PUBLISHED]
+        expire_and_assert_legal_archive(published_takes_pkg[0], 2, 1)
 
-            # Expiring the Takes Package whose state is Killed
-            published_takes_pkg = [g for g in items_in_published_repo if is_takes_package(g) and
-                                   g[ITEM_STATE] == CONTENT_STATE.KILLED]
-            expire_and_assert_legal_archive(published_takes_pkg[0], 3, 2)
+        # Expiring the Takes Package whose state is Killed
+        published_takes_pkg = [g for g in items_in_published_repo if is_takes_package(g) and
+                               g[ITEM_STATE] == CONTENT_STATE.KILLED]
+        expire_and_assert_legal_archive(published_takes_pkg[0], 3, 2)
 
     def test_remove_when_package_and_items_in_package_expire(self):
         """
@@ -374,33 +360,32 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         order they are created, the creation order of items in this test is: items in the package and then the package.
         """
 
-        with self.app.test_request_context(URL_PREFIX):
-            package = self.articles[3].copy()
+        package = self.articles[3].copy()
 
-            items_in_published_repo = self._publish_package_and_assert_published_collection(package)
-            published_service = get_resource_service(PUBLISHED)
+        items_in_published_repo = self._publish_package_and_assert_published_collection(package)
+        published_service = get_resource_service(PUBLISHED)
 
-            # Validate if version is available for each item in the package after publishing
-            for item in items_in_published_repo:
-                if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
-                    items_in_package = self.package_service.get_item_refs(package)
-                    for item_in_pkg in items_in_package:
-                        if config.VERSION not in item_in_pkg:
-                            self.fail('version is not found for item in the package. Item Id: %s' % item_in_pkg['guid'])
+        # Validate if version is available for each item in the package after publishing
+        for item in items_in_published_repo:
+            if item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
+                items_in_package = self.package_service.get_item_refs(package)
+                for item_in_pkg in items_in_package:
+                    if config.VERSION not in item_in_pkg:
+                        self.fail('version is not found for item in the package. Item Id: %s' % item_in_pkg['guid'])
 
-                # Expiring the published items
-                published_service.update_published_items(item['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
+            # Expiring the published items
+            published_service.update_published_items(item['item_id'], 'expiry', utcnow() + timedelta(minutes=-60))
 
-            RemoveExpiredPublishContent().run()
-            self.assertEqual(published_service.get(req=None, lookup=None).count(), 0)
+        RemoveExpiredPublishContent().run()
+        self.assertEqual(published_service.get(req=None, lookup=None).count(), 0)
 
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(package[config.ID_FIELD])
-            self.assertIsNotNone(article_in_legal_archive)
+        article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+            self._get_legal_archive_details(package[config.ID_FIELD])
+        self.assertIsNotNone(article_in_legal_archive)
 
-            item_refs = self.package_service.get_item_refs(article_in_legal_archive)
-            for ref in item_refs:
-                self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
+        item_refs = self.package_service.get_item_refs(article_in_legal_archive)
+        for ref in item_refs:
+            self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
 
     def test_remove_when_only_package_expires(self):
         """
@@ -409,30 +394,29 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
         the creation order of items in this test is: items in the package and then the package.
         """
 
-        with self.app.test_request_context(URL_PREFIX):
-            package = self.articles[3].copy()
+        package = self.articles[3].copy()
 
-            self._publish_package_and_assert_published_collection(package)
-            published_service = get_resource_service(PUBLISHED)
+        self._publish_package_and_assert_published_collection(package)
+        published_service = get_resource_service(PUBLISHED)
 
-            # Expiring the package
-            published_service.update_published_items(package[config.ID_FIELD], 'expiry',
-                                                     utcnow() + timedelta(minutes=-60))
+        # Expiring the package
+        published_service.update_published_items(package[config.ID_FIELD], 'expiry',
+                                                 utcnow() + timedelta(minutes=-60))
 
-            RemoveExpiredPublishContent().run()
-            items_in_published_repo = published_service.get(req=None, lookup=None)
-            self.assertEqual(items_in_published_repo.count(), 2)
+        RemoveExpiredPublishContent().run()
+        items_in_published_repo = published_service.get(req=None, lookup=None)
+        self.assertEqual(items_in_published_repo.count(), 2)
 
-            for item in items_in_published_repo:
-                self.assertTrue(item['allow_post_publish_actions'])
+        for item in items_in_published_repo:
+            self.assertTrue(item['allow_post_publish_actions'])
 
-            article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
-                self._get_legal_archive_details(package[config.ID_FIELD])
-            self.assertIsNotNone(article_in_legal_archive)
+        article_in_legal_archive, article_versions_in_legal_archive, queue_items = \
+            self._get_legal_archive_details(package[config.ID_FIELD])
+        self.assertIsNotNone(article_in_legal_archive)
 
-            item_refs = self.package_service.get_item_refs(article_in_legal_archive)
-            for ref in item_refs:
-                self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
+        item_refs = self.package_service.get_item_refs(article_in_legal_archive)
+        for ref in item_refs:
+            self.assertEqual(ref.get('location', ARCHIVE), LEGAL_ARCHIVE_NAME)
 
     def _publish_package_and_assert_published_collection(self, package):
         # Please make sure that groups has only text items
@@ -483,7 +467,7 @@ class RemoveExpiredFromPublishedCollection(SuperdeskTestCase):
                              "destinations": [{"name": "dest1", "format": "nitf", "delivery_type": "ftp",
                                                "config": {"address": "127.0.0.1", "username": "test"}}]
                              },
-                            {"_id": "2", "name": "sub3", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.DIGITAL,
+                            {"_id": "2", "name": "sub2", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.DIGITAL,
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "email": "test@test.com",
                              "destinations": [{"name": "dest1", "format": "newsmlg2", "delivery_type": "ftp",

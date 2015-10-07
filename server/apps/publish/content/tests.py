@@ -28,7 +28,6 @@ from superdesk.utc import utcnow
 from superdesk import get_resource_service
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from settings import URL_PREFIX
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
@@ -426,214 +425,202 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                                                        }])
 
     def test_publish(self):
-        with self.app.app_context():
-            doc = self.articles[3].copy()
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
-            published_doc = get_resource_service(ARCHIVE).find_one(req=None, _id=doc['_id'])
-            self.assertIsNotNone(published_doc)
-            self.assertEqual(published_doc[config.VERSION], doc[config.VERSION] + 1)
-            self.assertEqual(published_doc[ITEM_STATE], ArchivePublishService().published_state)
+        doc = self.articles[3].copy()
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+        published_doc = get_resource_service(ARCHIVE).find_one(req=None, _id=doc['_id'])
+        self.assertIsNotNone(published_doc)
+        self.assertEqual(published_doc[config.VERSION], doc[config.VERSION] + 1)
+        self.assertEqual(published_doc[ITEM_STATE], ArchivePublishService().published_state)
 
     def test_versions_across_collections_after_publish(self):
-        with self.app.app_context():
-            self.app.data.insert('archive_versions', self.article_versions)
+        self.app.data.insert('archive_versions', self.article_versions)
 
-            # Publishing an Article
-            doc = self.articles[7]
-            original = doc.copy()
+        # Publishing an Article
+        doc = self.articles[7]
+        original = doc.copy()
 
-            published_version_number = original[config.VERSION] + 1
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
-                                                                 config.VERSION: published_version_number})
+        published_version_number = original[config.VERSION] + 1
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED,
+                                                             config.VERSION: published_version_number})
 
-            article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
-            self.assertIsNotNone(article_in_production)
-            self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
-            self.assertEqual(article_in_production[config.VERSION], published_version_number)
+        article_in_production = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
+        self.assertIsNotNone(article_in_production)
+        self.assertEqual(article_in_production[ITEM_STATE], CONTENT_STATE.PUBLISHED)
+        self.assertEqual(article_in_production[config.VERSION], published_version_number)
 
-            lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
-            queue_items = list(get_resource_service(PUBLISH_QUEUE).get(req=None, lookup=lookup))
-            assert len(queue_items) > 0, \
-                "Transmission Details are empty for published item %s" % original[config.ID_FIELD]
+        lookup = {'item_id': original[config.ID_FIELD], 'item_version': published_version_number}
+        queue_items = list(get_resource_service(PUBLISH_QUEUE).get(req=None, lookup=lookup))
+        assert len(queue_items) > 0, \
+            "Transmission Details are empty for published item %s" % original[config.ID_FIELD]
 
-            lookup = {'item_id': original[config.ID_FIELD], config.VERSION: published_version_number}
-            items_in_published_collection = list(get_resource_service(PUBLISHED).get(req=None, lookup=lookup))
-            assert len(items_in_published_collection) > 0, \
-                "Item not found in published collection %s" % original[config.ID_FIELD]
+        lookup = {'item_id': original[config.ID_FIELD], config.VERSION: published_version_number}
+        items_in_published_collection = list(get_resource_service(PUBLISHED).get(req=None, lookup=lookup))
+        assert len(items_in_published_collection) > 0, \
+            "Item not found in published collection %s" % original[config.ID_FIELD]
 
     def test_queue_transmission(self):
-        with self.app.app_context():
-            self._is_publish_queue_empty()
+        self._is_publish_queue_empty()
 
-            doc = copy(self.articles[9])
-            schedule_date = utcnow() + timedelta(hours=2)
-            get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED,
-                                                                                'task': {}})
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(5, queue_items.count())
+        doc = copy(self.articles[9])
+        schedule_date = utcnow() + timedelta(hours=2)
+        get_resource_service(ARCHIVE).patch(id=doc['_id'], updates={'publish_schedule': schedule_date, 'task': {}})
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED,
+                                                                            'task': {}})
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(5, queue_items.count())
 
-            for item in queue_items:
-                self.assertEqual(schedule_date, item["publish_schedule"])
+        for item in queue_items:
+            self.assertEqual(schedule_date, item["publish_schedule"])
 
     def test_queue_transmission_for_digital_channels(self):
-        with self.app.app_context():
-            self._is_publish_queue_empty()
+        self._is_publish_queue_empty()
 
-            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-            doc = copy(self.articles[1])
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
-            archive_publish.queue_transmission(doc, subscribers)
+        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+        doc = copy(self.articles[1])
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
+        archive_publish.queue_transmission(doc, subscribers)
 
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(1, queue_items.count())
-            self.assertEqual('3', queue_items[0]["subscriber_id"])
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(1, queue_items.count())
+        self.assertEqual('3', queue_items[0]["subscriber_id"])
 
     def test_queue_transmission_for_wire_channels(self):
-        with self.app.app_context():
-            self._is_publish_queue_empty()
+        self._is_publish_queue_empty()
 
-            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-            doc = copy(self.articles[1])
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
-            archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+        doc = copy(self.articles[1])
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
+        archive_publish.queue_transmission(doc, subscribers)
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
 
-            self.assertEqual(4, queue_items.count())
-            expected_subscribers = ['1', '2']
-            self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
-            self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
-            self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
+        self.assertEqual(4, queue_items.count())
+        expected_subscribers = ['1', '2']
+        self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
+        self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
+        self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
 
     def test_queue_transmission_wrong_article_type_fails(self):
-        with self.app.app_context():
-            self._is_publish_queue_empty()
+        self._is_publish_queue_empty()
 
-            doc = copy(self.articles[0])
-            doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
+        doc = copy(self.articles[0])
+        doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
 
-            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
-            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(0, queue_items.count())
-            self.assertEqual(1, len(no_formatters))
-            self.assertFalse(queued)
+        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
+        no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(0, queue_items.count())
+        self.assertEqual(1, len(no_formatters))
+        self.assertFalse(queued)
 
-            subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
-            no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(0, queue_items.count())
-            self.assertEqual(0, len(no_formatters))
-            self.assertFalse(queued)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
+        no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(0, queue_items.count())
+        self.assertEqual(0, len(no_formatters))
+        self.assertFalse(queued)
 
     def test_delete_from_queue_by_article_id(self):
-        with self.app.app_context():
-            self._is_publish_queue_empty()
+        self._is_publish_queue_empty()
 
-            doc = copy(self.articles[7])
+        doc = copy(self.articles[7])
 
-            archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-            archive_publish.patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+        archive_publish = get_resource_service(ARCHIVE_PUBLISH)
+        archive_publish.patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(4, queue_items.count())
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(4, queue_items.count())
 
-            # this will delete queue transmission for the wire article not the takes package.
-            publish_queue.PublishQueueService(PUBLISH_QUEUE, superdesk.get_backend()).delete_by_article_id(doc['_id'])
-            self._is_publish_queue_empty()
+        # this will delete queue transmission for the wire article not the takes package.
+        publish_queue.PublishQueueService(PUBLISH_QUEUE, superdesk.get_backend()).delete_by_article_id(doc['_id'])
+        self._is_publish_queue_empty()
 
     def test_can_publish_article(self):
-        with self.app.test_request_context(URL_PREFIX):
-            subscriber = self.subscribers[0]
-            self._add_content_filters(subscriber, is_global=False)
+        subscriber = self.subscribers[0]
+        self._add_content_filters(subscriber, is_global=False)
 
-            archive_publish_service = get_resource_service(ARCHIVE_PUBLISH)
-            can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
-            self.assertFalse(can_it)
-            subscriber['content_filter']['filter_type'] = 'permitting'
+        archive_publish_service = get_resource_service(ARCHIVE_PUBLISH)
+        can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
+        self.assertFalse(can_it)
+        subscriber['content_filter']['filter_type'] = 'permitting'
 
-            can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
-            self.assertTrue(can_it)
-            subscriber.pop('content_filter')
+        can_it = archive_publish_service.conforms_content_filter(subscriber, self.articles[8])
+        self.assertTrue(can_it)
+        subscriber.pop('content_filter')
 
     def test_can_publish_article_with_global_filters(self):
-        with self.app.test_request_context(URL_PREFIX):
-            subscriber = self.subscribers[0]
-            self._add_content_filters(subscriber, is_global=True)
+        subscriber = self.subscribers[0]
+        self._add_content_filters(subscriber, is_global=True)
 
-            service = get_resource_service('content_filters')
-            req = ParsedRequest()
-            req.args = {'is_global': True}
-            global_filters = service.get(req=req, lookup=None)
+        service = get_resource_service('content_filters')
+        req = ParsedRequest()
+        req.args = {'is_global': True}
+        global_filters = service.get(req=req, lookup=None)
 
-            publish_service = get_resource_service(ARCHIVE_PUBLISH)
-            can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
-            self.assertFalse(can_it)
+        publish_service = get_resource_service(ARCHIVE_PUBLISH)
+        can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
+        self.assertFalse(can_it)
 
-            subscriber['global_filters'] = {'1': False}
-            can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
-            self.assertTrue(can_it)
+        subscriber['global_filters'] = {'1': False}
+        can_it = publish_service.conforms_global_filter(subscriber, global_filters, self.articles[8])
+        self.assertTrue(can_it)
 
-            subscriber.pop('content_filter')
+        subscriber.pop('content_filter')
 
     def test_targeted_for_excludes_digital_subscribers(self):
-        with self.app.app_context():
-            ValidatorsPopulateCommand().run(self.filename)
-            updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
-            doc_id = self.articles[9][config.ID_FIELD]
-            get_resource_service(ARCHIVE).patch(id=doc_id, updates=updates)
+        ValidatorsPopulateCommand().run(self.filename)
+        updates = {'targeted_for': [{'name': 'New South Wales', 'allow': True}]}
+        doc_id = self.articles[9][config.ID_FIELD]
+        get_resource_service(ARCHIVE).patch(id=doc_id, updates=updates)
 
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc_id, updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc_id, updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(4, queue_items.count())
-            expected_subscribers = ['1', '2']
-            self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
-            self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
-            self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(4, queue_items.count())
+        expected_subscribers = ['1', '2']
+        self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
+        self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
+        self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
 
     def test_maintain_latest_version_for_published(self):
-        with self.app.app_context():
+        def get_publish_items(item_id, last_version):
+            query = {'query': {'filtered': {'filter': {'and': [
+                    {'term': {'item_id': item_id}}, {'term': {LAST_PUBLISHED_VERSION: last_version}}
+            ]}}}}
+            request = ParsedRequest()
+            request.args = {'source': json.dumps(query)}
+            return self.app.data.find(PUBLISHED, req=request, lookup=None)
 
-            def get_publish_items(item_id, last_version):
-                query = {'query': {'filtered': {'filter': {'and': [
-                        {'term': {'item_id': item_id}}, {'term': {LAST_PUBLISHED_VERSION: last_version}}
-                ]}}}}
-                request = ParsedRequest()
-                request.args = {'source': json.dumps(query)}
-                return self.app.data.find(PUBLISHED, req=request, lookup=None)
+        ValidatorsPopulateCommand().run(self.filename)
+        get_resource_service(ARCHIVE).patch(id=self.articles[1][config.ID_FIELD],
+                                            updates={'publish_schedule': None, 'task': {}})
 
-            ValidatorsPopulateCommand().run(self.filename)
-            get_resource_service(ARCHIVE).patch(id=self.articles[1][config.ID_FIELD],
-                                                updates={'publish_schedule': None, 'task': {}})
+        doc = get_resource_service(ARCHIVE).find_one(req=None, _id=self.articles[1][config.ID_FIELD])
+        get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
-            doc = get_resource_service(ARCHIVE).find_one(req=None, _id=self.articles[1][config.ID_FIELD])
-            get_resource_service(ARCHIVE_PUBLISH).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(5, queue_items.count())
+        published_items = self.app.data.find(PUBLISHED, None, None)
+        self.assertEqual(2, published_items.count())
+        published_digital_doc = next((item for item in published_items
+                                      if item.get(PACKAGE_TYPE) == TAKES_PACKAGE), None)
+        published_doc = next((item for item in published_items
+                              if item.get('item_id') == doc[config.ID_FIELD]), None)
+        self.assertEqual(published_doc[LAST_PUBLISHED_VERSION], True)
+        self.assertEqual(published_digital_doc[LAST_PUBLISHED_VERSION], True)
 
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(5, queue_items.count())
-            published_items = self.app.data.find(PUBLISHED, None, None)
-            self.assertEqual(2, published_items.count())
-            published_digital_doc = next((item for item in published_items
-                                          if item.get(PACKAGE_TYPE) == TAKES_PACKAGE), None)
-            published_doc = next((item for item in published_items
-                                  if item.get('item_id') == doc[config.ID_FIELD]), None)
-            self.assertEqual(published_doc[LAST_PUBLISHED_VERSION], True)
-            self.assertEqual(published_digital_doc[LAST_PUBLISHED_VERSION], True)
-
-            get_resource_service(ARCHIVE_CORRECT).patch(id=doc[config.ID_FIELD],
-                                                        updates={ITEM_STATE: CONTENT_STATE.CORRECTED})
-            queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-            self.assertEqual(10, queue_items.count())
-            published_items = self.app.data.find(PUBLISHED, None, None)
-            self.assertEqual(4, published_items.count())
-            last_published_digital = get_publish_items(published_digital_doc['item_id'], True)
-            self.assertEqual(1, last_published_digital.count())
-            last_published = get_publish_items(published_doc['item_id'], True)
-            self.assertEqual(1, last_published.count())
+        get_resource_service(ARCHIVE_CORRECT).patch(id=doc[config.ID_FIELD],
+                                                    updates={ITEM_STATE: CONTENT_STATE.CORRECTED})
+        queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
+        self.assertEqual(10, queue_items.count())
+        published_items = self.app.data.find(PUBLISHED, None, None)
+        self.assertEqual(4, published_items.count())
+        last_published_digital = get_publish_items(published_digital_doc['item_id'], True)
+        self.assertEqual(1, last_published_digital.count())
+        last_published = get_publish_items(published_doc['item_id'], True)
+        self.assertEqual(1, last_published.count())
 
     def test_added_removed_in_a_package(self):
         package = {"groups": [{"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
@@ -720,8 +707,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                    "state": "submitted",
                    "type": "composite"}
 
-        with self.app.app_context():
-            items = PackageService().get_residrefs(package)
-            removed_items, added_items = ArchivePublishService()._get_changed_items(items, updates)
-            self.assertEqual(len(removed_items), 1)
-            self.assertEqual(len(added_items), 1)
+        items = PackageService().get_residrefs(package)
+        removed_items, added_items = ArchivePublishService()._get_changed_items(items, updates)
+        self.assertEqual(len(removed_items), 1)
+        self.assertEqual(len(added_items), 1)

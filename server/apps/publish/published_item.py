@@ -458,9 +458,7 @@ class PublishedItemService(BaseService):
         # Step 1 - Get Version History
         req = ParsedRequest()
         req.sort = '[("%s", 1)]' % config.VERSION
-        resource_def = app.config['DOMAIN']['archive']
-        version_id = versioned_id_field(resource_def)
-        lookup = {'$and': [{version_id: legal_archive_doc[config.ID_FIELD]},
+        lookup = {'$and': [{version_id_field: legal_archive_doc[config.ID_FIELD]},
                            {config.VERSION: {'$lte': legal_archive_doc[config.VERSION]}}]}
 
         version_history = list(get_resource_service('archive_versions').get(req=req, lookup=lookup))

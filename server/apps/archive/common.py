@@ -500,7 +500,7 @@ def is_normal_package(doc):
     :return: True if it's a Package and not a Takes Package, False otherwise.
     """
 
-    return doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and doc.get(PACKAGE_TYPE, '') != TAKES_PACKAGE
+    return not is_takes_package(doc)
 
 
 def is_takes_package(doc):
