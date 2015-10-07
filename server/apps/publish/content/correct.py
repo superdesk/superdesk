@@ -23,9 +23,9 @@ class CorrectPublishService(BasePublishService):
     published_state = 'corrected'
 
     def on_update(self, updates, original):
-        updates[ITEM_OPERATION] = ITEM_CORRECT
         ArchiveCropService().validate_multiple_crops(updates, original)
         super().on_update(updates, original)
+        updates[ITEM_OPERATION] = ITEM_CORRECT
         set_sign_off(updates, original)
 
     def on_updated(self, updates, original):

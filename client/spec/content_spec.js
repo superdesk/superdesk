@@ -160,9 +160,8 @@ describe('Content', function() {
         element(by.id('searchItemByNameBtn')).click();
         browser.sleep(500);
 
-        expect(element(by.className('authoring-header__general-info')).all(by.className('filetype-icon-text'))
-            .first().isDisplayed()).toBe(true);
-        expect(element(by.className('navigation-tabs')).all(by.repeater('widget in widgets')).count()).toBe(7);
+        expect(content.getItemType('text').isDisplayed()).toBe(true);
+        expect(content.getWidgets().count()).toBe(7);
 
         element(by.id('closeAuthoringBtn')).click();
     });
@@ -182,9 +181,8 @@ describe('Content', function() {
         element(by.id('searchItemByNameBtn')).click();
         browser.sleep(500);
 
-        expect(element(by.className('authoring-header__general-info')).all(by.className('filetype-icon-composite'))
-            .first().isDisplayed()).toBe(true);
-        expect(element(by.className('navigation-tabs')).all(by.repeater('widget in widgets')).count()).toBe(6);
+        expect(content.getItemType('composite').isDisplayed()).toBe(true);
+        expect(content.getWidgets().count()).toBe(6);
 
         element(by.id('closeAuthoringBtn')).click();
     });

@@ -11,9 +11,11 @@
 import os
 import json
 import flask
+from apps.archive.common import ITEM_OPERATION
 import superdesk
 
 from superdesk import get_resource_service
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.tests import drop_elastic, drop_mongo
@@ -80,8 +82,42 @@ def prepopulate_data(file_name, default_user=get_default_user()):
                     raise Exception()
                 if id_name:
                     placeholders[id_name] = str(ids[0])
+
             if app.config['VERSION'] in data:
-                insert_versioning_documents(resource, data)
+                number_of_versions_to_insert = data[app.config['VERSION']]
+                doc_versions = []
+
+                if data[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED]:
+                    while number_of_versions_to_insert != 0:
+                        doc_versions.append(data.copy())
+                        number_of_versions_to_insert -= 1
+                else:
+                    if data[ITEM_STATE] in [CONTENT_STATE.KILLED, CONTENT_STATE.CORRECTED]:
+                        latest_version = data.copy()
+                        doc_versions.append(latest_version)
+
+                        published_version = data.copy()
+                        published_version[ITEM_STATE] = CONTENT_STATE.PUBLISHED
+                        published_version[ITEM_OPERATION] = 'publish'
+                        published_version[app.config['VERSION']] = number_of_versions_to_insert - 1
+                        doc_versions.append(published_version)
+
+                        number_of_versions_to_insert -= 2
+                    elif data[ITEM_STATE] == CONTENT_STATE.PUBLISHED:
+                        published_version = data.copy()
+                        doc_versions.append(published_version)
+                        number_of_versions_to_insert -= 1
+
+                    while number_of_versions_to_insert != 0:
+                        doc = data.copy()
+                        doc[ITEM_STATE] = CONTENT_STATE.PROGRESS
+                        doc.pop(ITEM_OPERATION, '')
+                        doc[app.config['VERSION']] = number_of_versions_to_insert
+                        doc_versions.append(doc)
+
+                        number_of_versions_to_insert -= 1
+
+                insert_versioning_documents(resource, doc_versions if doc_versions else data)
 
 
 prepopulate_schema = {
