@@ -1,6 +1,8 @@
 [
     {
         "_id": "categories",
+        "display_name": "Categories",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "Australian General News", "qcode": "a"},
             {"is_active": true, "name": "Australian Weather", "qcode": "b", "subject": "17000000"},
@@ -32,6 +34,8 @@
     },
     {
         "_id": "default_categories",
+        "display_name": "Default Categories",
+        "type": "manageable",
         "items": [
             {"is_active": true, "qcode": "a"},
             {"is_active": true, "qcode": "e"},
@@ -44,6 +48,8 @@
     },
     {
         "_id": "genre",
+        "display_name": "Genre",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "Article (news)", "value": "Article"},
             {"is_active": true, "name": "Sidebar", "value": "Sidebar"},
@@ -72,6 +78,8 @@
     },
     {
         "_id": "urgency",
+        "display_name": "Urgency",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "1", "value": 1},
             {"is_active": true, "name": "2", "value": 2},
@@ -82,6 +90,8 @@
     },
     {
         "_id": "priority",
+        "display_name": "Priority",
+        "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "1", "value": 1},
             {"is_active": true, "name": "2", "value": 2},
@@ -96,6 +106,8 @@
     },
     {
         "_id": "type",
+        "display_name": "Article Type",
+        "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "text", "value": "text"},
             {"is_active": true, "name": "preformatted", "value": "preformatted"},
@@ -108,6 +120,8 @@
     },
     {
         "_id": "signal",
+        "display_name": "Signal",
+        "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "Correction", "value": "Correction"},
             {"is_active": true, "name": "Update", "value": "Update"},
@@ -118,6 +132,8 @@
     },
     {
         "_id": "rightsinfo",
+        "display_name": "Copyrights",
+        "type": "manageable",
         "items": [
             {
                 "is_active": true,
@@ -137,6 +153,8 @@
     },
     {
         "_id": "geographical_restrictions",
+        "display_name": "Geographical Restrictions",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "New South Wales", "value": "NSW"},
             {"is_active": true, "name": "Victoria", "value": "VIC"},
@@ -150,6 +168,8 @@
     },
     {
         "_id": "subscriber_types",
+        "display_name": "Subscriber Types",
+        "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "All", "value": "all",
                 "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"}]},
@@ -166,6 +186,8 @@
     },
     {
         "_id": "locators",
+        "display_name": "Locators",
+        "type": "unmanageable",
         "items": [
             {"is_active": true, "name": "ACT", "qcode": "ACT",
                 "state": "Australian Capital Territory",
@@ -220,9 +242,24 @@
     },
     {
         "_id": "crop_sizes",
+        "display_name": "Image Crop Sizes",
+        "type": "manageable",
         "items": [
             {"is_active": true, "name": "4-3", "width": 800, "height": 600},
             {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+        ]
+    },
+    {
+        "_id": "keywords",
+        "display_name": "Keywords for Articles",
+        "type": "manageable",
+        "items": [
+            {"is_active": true, "name": "Science and Technology",       "value": "SciTech"},
+            {"is_active": true, "name": "International Health Stories", "value": "Medicine"},
+            {"is_active": true, "name": "Health",                       "value": "Health"},
+            {"is_active": true, "name": "Motoring",                     "value": "Motoring"},
+            {"is_active": true, "name": "Soccer",                       "value": "Soccer"},
+            {"is_active": true, "name": "Property",                     "value": "Property"}
         ]
     }
 ]

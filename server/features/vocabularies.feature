@@ -64,3 +64,21 @@ Feature: Vocabularies
           ]
       }
       """
+
+  @auth
+  @vocabulary
+  Scenario: Fetch all when type is not specified and fetch based on type when specified
+    When we get "/vocabularies"
+    Then we get existing resource
+    """
+    {"_items" :[{"_id": "locators"}, {"_id": "categories"}]}
+    """
+    When we get "/vocabularies?where={"type":"manageable"}"
+    Then we get existing resource
+    """
+    {"_items": [{"_id": "crop_sizes", "display_name": "Image Crop Sizes", "type": "manageable",
+     "items": [{"is_active": true, "name": "4-3", "width": 800, "height": 600},
+               {"is_active": true, "name": "16-9", "width": 1280, "height": 720}]
+     }]}
+    """
+    And there is no "locators" in response

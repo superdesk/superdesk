@@ -294,6 +294,8 @@
     {
         "data": {
             "_id": "subscriber_types",
+            "display_name": "Subscriber Types",
+            "type": "unmanageable",
             "items": [
                 {"is_active": true, "name": "Digital/Internet", "value": "digital",
                     "formats": [{"name": "NINJS", "value": "ninjs"}, {"name": "AAP NewsML 1.2", "value": "newsml12"}, {"name": "NewsML G2", "value": "newsmlg2"},
@@ -313,6 +315,8 @@
     {
         "data": {
             "_id": "categories",
+            "display_name": "Categories",
+            "type": "manageable",
             "items": [
                 {"is_active": true, "name": "Australian General News", "qcode": "a"},
                 {"is_active": true, "name": "Australian Weather", "qcode": "b", "subject": "17000000"},
@@ -349,6 +353,8 @@
     {
         "data": {
             "_id": "default_categories",
+            "display_name": "Default Categories",
+            "type": "manageable",
             "items" : [
                 {"qcode" : "a", "is_active" : true},
                 {"qcode" : "e", "is_active" : true},

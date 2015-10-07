@@ -22,11 +22,12 @@
          */
         this.getVocabularies = function() {
             if (typeof service.vocabularies === 'undefined') {
-                return api.query('vocabularies')
-                .then(function(result) {
-                    service.vocabularies = result;
-                    return service.vocabularies;
-                });
+                return api.query('vocabularies', {where: {type: 'manageable'}}).then(
+                    function(result) {
+                        service.vocabularies = result;
+                        return service.vocabularies;
+                    }
+                );
             } else {
                 return $q.when(service.vocabularies);
             }
@@ -110,16 +111,11 @@
          * Add new blank vocabulary item.
          */
         $scope.addItem = function() {
-            $scope.vocabulary.items.push(model);
-        };
+            var newVocabulary = {};
+            _.extend(newVocabulary, $scope.model);
+            newVocabulary.is_active = true;
 
-        /**
-         * Remove vocabulary item.
-         *
-         * @param {Object} item
-         */
-        $scope.removeItem = function(item) {
-            $scope.vocabulary.items.splice($scope.vocabulary.items.indexOf(item), 1);
+            $scope.vocabulary.items.push(newVocabulary);
         };
 
         // try to reproduce data model of vocabulary:
