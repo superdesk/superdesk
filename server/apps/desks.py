@@ -8,7 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 from superdesk.errors import SuperdeskApiError
-from collections import namedtuple
 from superdesk.resource import Resource
 from superdesk import config
 from superdesk.utils import SuperdeskBaseEnum

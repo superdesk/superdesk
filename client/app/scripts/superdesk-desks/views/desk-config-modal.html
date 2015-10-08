@@ -28,6 +28,14 @@
                             </div>
                             <div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry" data-header="Spike Expiry"></div>
                             <div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="published_item_expiry" data-header="Published Item Expiry"></div>
+                            <div class="field">
+                                <label translate>Desk Type</label>
+                                <select id="deskType" ng-model="desk.edit.desk_type"
+                                        ng-options="deskType.value as deskType.name for deskType in deskTypes"
+                                        required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
                         </fieldset>
                         <p ng-if="message">{{ message }}</p>
                         <span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>

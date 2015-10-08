@@ -370,13 +370,14 @@
         });
     }
 
-    DeskConfigController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
-    function DeskConfigController ($scope, gettext, notify, desks, WizardHandler, modal) {
+    DeskConfigController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal', 'metadata'];
+    function DeskConfigController ($scope, gettext, notify, desks, WizardHandler, modal, metadata) {
 
         //expecting $scope.desks to be defined
 
         $scope.modalActive = false;
         $scope.numberOfUsers = 3;
+        $scope.deskTypes = [];
         $scope.step = {
             current: null
         };
@@ -423,6 +424,15 @@
         $scope.getDeskUsers = function (desk) {
             return desks.deskMembers[desk._id];
         };
+
+        if (metadata.values.desk_types) {
+            $scope.deskTypes = metadata.values.desk_types;
+        } else {
+             metadata.fetchMetadataValues()
+                 .then(function() {
+                     $scope.deskTypes = metadata.values.desk_types;
+                 })
+        }
     }
 
     var app = angular.module('superdesk.desks', [
