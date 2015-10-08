@@ -37,16 +37,59 @@ describe('superdesk ui', function() {
     });
 
     describe('sd-timepicker-alt directive', function() {
+        var $compile,
+            $rootScope;
+
         function format(num) {
             return ('00' + num.toString(10)).slice(-2);
         }
 
-        it('can render local time and set utc time', inject(function($compile, $rootScope) {
-            var now = new Date();
-            var scope = $rootScope.$new();
-            scope.schedule = {at: format(now.getUTCHours()) + format(now.getUTCMinutes())};
-            var elem = $compile('<div sd-timepicker-alt data-model="schedule.at"></div>')(scope);
+        /**
+         * Compiles the directive under test and links it with a new scope
+         * containing the provided scope values.
+         *
+         * @function compileDirective
+         * @param {Object} scopeValues - values in the current scope of the DOM
+         *   element the directive will be applied to
+         * @param {boolean} [noUtcConvert=false] - whether or not to compile
+         *   the directive with the noUtcConvert option enabled
+         * @return {Object} - the root DOM node of the compiled directive
+         *   element
+         */
+        function compileDirective(scopeValues, noUtcConvert) {
+            var html,
+                scope,  // the scope of the element the directive is applied to
+                $element;
+
+            scope = $rootScope.$new();
+            angular.extend(scope, scopeValues);
+
+            html = [
+                '<div sd-timepicker-alt data-model="schedule.at" ',
+                    noUtcConvert ? 'no-utc-convert="true"' : '',
+                '></div>'
+            ].join('');
+
+            $element = $compile(html)(scope);
             scope.$digest();
+
+            return $element;
+        }
+
+        beforeEach(inject(function(_$compile_, _$rootScope_) {
+            $compile = _$compile_;
+            $rootScope = _$rootScope_;
+        }));
+
+        it('can render local time and set utc time', function() {
+            var now = new Date();
+
+            var scopeValues = {
+                schedule: {
+                    at: format(now.getUTCHours()) + format(now.getUTCMinutes())
+                }
+            };
+            var elem = compileDirective(scopeValues);
             var iscope = elem.isolateScope();
 
             expect(iscope.hours).toBe(now.getHours());
@@ -61,6 +104,49 @@ describe('superdesk ui', function() {
             iscope.setMinutes(now.getMinutes());
             expect(iscope.minutes).toBe(now.getMinutes());
             expect(iscope.model.substr(2, 2)).toBe(format(now.getUTCMinutes()));
-        }));
+        });
+
+        describe('converting to UTC disabled', function () {
+            var isoScope,
+                parentModel,
+                $elem;
+
+            beforeEach(function () {
+                var fakeNow = new Date('2015-09-22T15:45:07+05:30');
+
+                fakeNow = new Date('2015-09-22T15:45:07+05:30');  // 10:15 UTC
+                jasmine.clock().mockDate(fakeNow);
+
+                parentModel = {
+                    schedule: {at: '1850'}
+                };
+                $elem = compileDirective(parentModel, true);
+                isoScope = $elem.isolateScope();
+            });
+
+            it('initializes scope variables to model values', function () {
+                expect(isoScope.hours).toEqual(18);
+                expect(isoScope.minutes).toEqual(50);
+                expect(parentModel.schedule.at).toEqual('1850');
+            });
+
+            describe('setHours() scope method', function () {
+                it('updates hours to given value (in local TZ)', function () {
+                    isoScope.hours = 10;
+                    isoScope.setHours(22);
+                    expect(isoScope.hours).toEqual(22);
+                    expect(isoScope.model).toEqual('2250');
+                });
+            });
+
+            describe('setMinutes() scope method', function () {
+                it('updates minutes to given value (in local TZ)', function () {
+                    isoScope.minutes = 6;
+                    isoScope.setMinutes(37);
+                    expect(isoScope.minutes).toEqual(37);
+                    expect(isoScope.model).toEqual('1837');
+                });
+            });
+        });
     });
 });

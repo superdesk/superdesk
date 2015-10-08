@@ -824,7 +824,21 @@ define([
     }
 
     /**
-     * Timepicker directive saving utc time to model but rendering local time.
+     * @memberof superdesk.ui
+     * @ngdoc directive
+     * @name sdTimepickerAlt
+     * @description
+     *   Timepicker directive saving utc time to model by defualt, and
+     *   rendering local time.
+     *
+     *   Optionally, saving the UTC time to the model can be disabled by
+     *   setting the no-utc-convert="true" attribute on the directive's DOM
+     *   element. If this option is set, local time will be stored in the model
+     *   (i.e. as picked by the user in the UI).
+     *
+     *   NOTE: the no-utc-convert attribute is only evaluated once, in the
+     *   directive linking phase. Subsequent changes of the attribute value
+     *   have no effect.
      */
     function TimepickerAltDirective() {
         var STEP = 5;
@@ -839,11 +853,19 @@ define([
         }
 
         return {
-            scope: {model: '='},
+            scope: {
+                model: '=',
+                noUtcConvert: '@'
+            },
             templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
             link: function(scope) {
 
-                var d = new Date();
+                var d = new Date(),
+                    hours,
+                    minutes,
+                    utcConvert;
+
+                utcConvert = (scope.noUtcConvert || '').toLowerCase() !== 'true';
 
                 scope.open = false;
                 scope.hoursRange = range(0, 23);
@@ -877,8 +899,16 @@ define([
                 };
 
                 if (scope.model) {
-                    d.setUTCHours(scope.model.substr(0, 2));
-                    d.setUTCMinutes(scope.model.substr(2, 2));
+                    hours = scope.model.substr(0, 2);
+                    minutes = scope.model.substr(2, 2);
+
+                    if (utcConvert) {
+                        d.setUTCHours(hours);
+                        d.setUTCMinutes(minutes);
+                    } else {
+                        d.setHours(hours);
+                        d.setMinutes(minutes);
+                    }
                 } else {
                     d.setHours(0);
                     d.setMinutes(0);
@@ -892,7 +922,7 @@ define([
                 function update() {
                     scope.hours = d.getHours();
                     scope.minutes = d.getMinutes();
-                    scope.model = utc();
+                    scope.model = utcConvert ? utc() : noUtcTime(d);
                 }
 
                 /**
@@ -904,6 +934,20 @@ define([
                     var hours = d.getUTCHours().toString();
                     var minutes = d.getUTCMinutes().toString();
                     return ('00' + hours).slice(-2) + ('00' + minutes).slice(-2);
+                }
+
+                /**
+                 * Returns the '%H%M' time string (i.e. double-digit hour and
+                 * minute parts) from the given Date object using local time.
+                 *
+                 * @function noUtcTime
+                 * @param {Date} d
+                 * @return {string}
+                 */
+                function noUtcTime(d) {
+                    var hours = ('00' + d.getHours()).slice(-2),
+                        minutes = ('00' + d.getMinutes()).slice(-2);
+                    return hours + minutes;
                 }
             }
         };
