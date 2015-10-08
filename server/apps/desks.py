@@ -10,7 +10,8 @@
 from superdesk.errors import SuperdeskApiError
 from collections import namedtuple
 from superdesk.resource import Resource
-from eve.utils import config
+from superdesk import config
+from superdesk.utils import SuperdeskBaseEnum
 from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
@@ -18,8 +19,11 @@ from apps.tasks import default_status
 from superdesk.notification import push_notification
 from superdesk.activity import add_activity, ACTIVITY_UPDATE
 
-desk_types = ['authoring', 'production']
-DESK_TYPES = namedtuple('DESK_TYPES', ['AUTHORING', 'PRODUCTION'])(*desk_types)
+
+class DeskTypes(SuperdeskBaseEnum):
+    authoring = 'authoring'
+    production = 'production'
+
 
 desks_schema = {
     'name': {
@@ -72,8 +76,8 @@ desks_schema = {
     },
     'desk_type': {
         'type': 'string',
-        'default': DESK_TYPES.AUTHORING,
-        'allowed': desk_types
+        'default': DeskTypes.authoring.value,
+        'allowed': DeskTypes.values()
     }
 }
 
