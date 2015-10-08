@@ -370,14 +370,13 @@
         });
     }
 
-    DeskConfigController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal', 'metadata'];
-    function DeskConfigController ($scope, gettext, notify, desks, WizardHandler, modal, metadata) {
+    DeskConfigController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
+    function DeskConfigController ($scope, gettext, notify, desks, WizardHandler, modal) {
 
         //expecting $scope.desks to be defined
 
         $scope.modalActive = false;
         $scope.numberOfUsers = 3;
-        $scope.deskTypes = [];
         $scope.step = {
             current: null
         };
@@ -424,15 +423,6 @@
         $scope.getDeskUsers = function (desk) {
             return desks.deskMembers[desk._id];
         };
-
-        if (metadata.values.desk_types) {
-            $scope.deskTypes = metadata.values.desk_types;
-        } else {
-             metadata.fetchMetadataValues()
-                 .then(function() {
-                     $scope.deskTypes = metadata.values.desk_types;
-                 })
-        }
     }
 
     var app = angular.module('superdesk.desks', [
@@ -846,12 +836,14 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', function(gettext, desks, WizardHandler) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata',
+            function(gettext, desks, WizardHandler, metadata) {
             return {
 
                 link: function(scope, elem, attrs) {
 
                     scope.limits = limits;
+                    scope.deskTypes = [];
 
                     scope.$watch('step.current', function(step) {
                         if (step === 'general') {
@@ -907,6 +899,15 @@
                             scope._errorLimits = scope.desk.edit.name.length > scope.limits.desk ? true : null;
                         }
                     };
+
+                    if (metadata.values.desk_types) {
+                        scope.deskTypes = metadata.values.desk_types;
+                    } else {
+                        metadata.fetchMetadataValues()
+                            .then(function() {
+                                scope.deskTypes = metadata.values.desk_types;
+                            });
+                    }
 
                 }
             };
