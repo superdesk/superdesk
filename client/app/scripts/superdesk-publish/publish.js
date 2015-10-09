@@ -122,8 +122,8 @@
         $scope.reload ();
     }
 
-    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify', '$location', 'search'];
-    function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify, $location, search) {
+    PublishQueueController.$inject = ['$scope', 'adminPublishSettingsService', 'api', '$q', 'notify', '$location'];
+    function PublishQueueController($scope, adminPublishSettingsService, api, $q, notify, $location) {
         $scope.subscribers = null;
         $scope.subscriberLookup = {};
         $scope.publish_queue = [];

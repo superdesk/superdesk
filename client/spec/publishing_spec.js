@@ -44,7 +44,7 @@ describe('publish queue', function() {
         publishQueue.searchAction(_uniqueName);
         expect(publishQueue.getItemCount()).toBe(1);
     });
-    it('can open item inside the composite item', function() {
+    it('can open item from inside the composite item', function() {
         monitoring.openMonitoring();
         monitoring.openAction(1, 0);
         monitoring.openSendMenu();
