@@ -12,7 +12,6 @@
         <button class="btn btn-info pull-right" ng-click="scheduleToSend()" ng-show="multiSelectCount > 0 && showResendBtn">{{ :: 'Resend' | translate}}</button>
     </div>
 </div>
-
 <section class="main-section publish-queue">
     <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="list-pane">
@@ -31,12 +30,33 @@
                             </li>
                         </ul>
                     </div>
+                    <span class="lab pull-left" translate>Status:</span>
+                    <div class="dropdown pull-left" dropdown>
+                        <button class="dropdown-toggle" dropdown-toggle> {{ selectedFilterStatus }} <b class="caret"></b>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="" ng-click="filterStatus(null, 'status')">{{ :: 'None' | translate}}</a>
+                            </li>
+                            <li ng-repeat="status in publish_queue_statuses track by $index">
+                                <a href="" ng-click="filterStatus(status, 'status')">{{ status }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: queueSearch}">
+                        <div class="search-handler">
+                            <label for="search-input" class="trigger-icon" ng-click="queueSearch = !queueSearch"></label>
+                            <input id="search-input" type="text" placeholder="{{ :: 'Search' | translate }}" ng-model="query" ng-model-options="{debounce: 500}" ng-change="search(query)">
+                            <button class="search-close" ng-click="search(query = null)" ng-class="{visible: query}"><i class="icon-close-small"></i></button>
+                        </div>
+                        <div class="separator-handler"></div>
+                    </div>
                 </div>
-
                 <div class="refresh-box">
                     <button ng-click="reload()" class="pull-right" tooltip="{{:: 'Refresh' | translate}}" tooltip-placement="left"><i class="icon-refresh"></i></button>
                     <span class="pull-right" translate>Last refreshed at: {{ lastRefreshedAt | date:'dd-MM-yyyy HH:mm:ss' }}</span>
                 </div>
+                <div sd-pagination-alt class="pagination-box" data-page="page" data-max-page="maxPage"></div>
             </header>
             <div class="content">
                 <div sd-shadow>
@@ -88,4 +108,3 @@
         <div sd-item-preview data-item="selected.preview" data-hide-actions-menu="true" data-close="preview(null)"></div>
     </div>
 </section>
-

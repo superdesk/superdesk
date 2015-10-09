@@ -113,7 +113,20 @@ div {
     #multi-select-count {
         margin-left: 15px;
     }
+    .btn.btn-info {
+        margin-top: 10px !important;
+    }
 }
+/*
+#workspace-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 30px;
+    left: 0px;
+    background-color: #f8f8f8;
+}
+*/
 
 .subnav {
     &.active {
@@ -125,6 +138,9 @@ div {
     header {
         .sortbar {
             margin-left: 10px;
+            .flat-searchbar.monitoring-flat-searchbar {
+                margin-top: -12px !important;
+            }
         }
         .refresh-box {
             span {
@@ -142,6 +158,14 @@ div {
                 &:hover {
                     .opacity(80);
                 }
+            }
+        }
+        .pagination-box {
+            .page-info {
+                float: left;
+            }
+            .btn-group {
+                position: inherit !important;
             }
         }
     }
