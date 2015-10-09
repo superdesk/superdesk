@@ -138,9 +138,7 @@
         $scope.pageSize = 25;
         $scope.page = 1;
 
-        $scope.$watch('page', function(meta) {
-            $scope.reload();
-        });
+        $scope.$watch('page', $scope.reload);
 
         var promises = [];
 
@@ -168,7 +166,7 @@
                 $scope.publish_queue = queuedItems;
                 $scope.lastRefreshedAt = new Date();
                 $scope.showResendBtn = false;
-                $scope.showCacnelBtn = false;
+                $scope.showCancelBtn = false;
                 $scope.maxPage =  Math.ceil(queue._meta.total / $scope.pageSize);
             });
         }

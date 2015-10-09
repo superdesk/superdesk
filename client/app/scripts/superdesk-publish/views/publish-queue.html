@@ -23,7 +23,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="" ng-click="filterSchedule(null, 'subscriber')">{{ :: 'None' | translate}}</a>
+                                <a href="" ng-click="filterSchedule(null, 'subscriber')" translate>None</a>
                             </li>
                             <li ng-repeat="subscriber in subscribers track by subscriber._id">
                                 <a href="" ng-click="filterSchedule(subscriber, 'subscriber')">{{ subscriber.name }}</a>
@@ -36,7 +36,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="" ng-click="filterStatus(null, 'status')">{{ :: 'None' | translate}}</a>
+                                <a href="" ng-click="filterStatus(null, 'status')" translate>None</a>
                             </li>
                             <li ng-repeat="status in publish_queue_statuses track by $index">
                                 <a href="" ng-click="filterStatus(status, 'status')">{{ status }}</a>
