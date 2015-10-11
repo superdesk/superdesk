@@ -9,7 +9,9 @@ from eve_elastic.elastic import ElasticCursor
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.errors import SuperdeskApiError
+from superdesk.io.iptc import subject_codes
 from flask import url_for
+import urllib
 
 import logging
 
@@ -29,7 +31,7 @@ class AAPMMDatalayer(DataLayer):
             url = app.config['AAP_MM_SEARCH_URL'] + '/Users/AnonymousToken'
             r = self._http.request('GET', url, redirect=False)
 
-        self._headers = {'cookie': r.getheader('set-cookie')}
+        self._headers = {'cookie': r.getheader('set-cookie'), 'Content-Type': 'application/json'}
 
     def set_credentials(self, user, password):
         if user != self._username and user != '' and password != self._password and password != '':
@@ -47,6 +49,15 @@ class AAPMMDatalayer(DataLayer):
         self._http = urllib3.PoolManager()
 
     def find(self, resource, req, lookup):
+        """
+        Called to execute a search against the AAP Mulitmedia API. It attempts to translate the search request
+        passed in req to a suitable form for a search request against the API. It parses the response into a
+        suitable ElasticCursor, the front end will never know.
+        :param resource:
+        :param req:
+        :param lookup:
+        :return:
+        """
         if self._headers is None:
             self.__set_auth_cookie(self._app)
 
@@ -54,13 +65,59 @@ class AAPMMDatalayer(DataLayer):
         query_keywords = '*:*'
         if 'query' in req['query']['filtered']:
             query_keywords = req['query']['filtered']['query']['query_string']['query']
+            query_keywords = query_keywords.replace('slugline:', 'objectname:')
+            query_keywords = query_keywords.replace('description:', 'captionabstract:')
+
+        fields = {}
+        for criterion in req.get('post_filter', {}).get('and', {}):
+            # parse out the date range if possible
+            if 'range' in criterion:
+                start = None
+                end = None
+                daterange = None
+                if 'firstcreated' in criterion.get('range', {}):
+                    if 'gte' in criterion['range']['firstcreated']:
+                        start = criterion['range']['firstcreated']['gte'][0:10]
+                    if 'lte' in criterion['range']['firstcreated']:
+                        end = criterion['range']['firstcreated']['lte'][0:10]
+                # if there is a special start and no end it's one of the date buttons
+                if start and not end:
+                    if start == 'now-24H':
+                        daterange = {'Dates': ['[NOW/HOUR-24HOURS TO NOW/HOUR]']}
+                    if start == 'now-1w':
+                        daterange = {'Dates': ['[NOW/DAY-7DAYS TO NOW/DAY]']}
+                    if start == 'now-1M':
+                        daterange = {'Dates': ['[NOW/DAY-1MONTH TO NOW/DAY]']}
+                # we've got something but no daterange set above
+                if (start or end) and not daterange:
+                    daterange = {'DateRange': [{'Start': start, 'End': end}], 'DateCreatedFilter': 'true'}
+                if daterange:
+                    fields.update(daterange)
+
+            if 'terms' in criterion:
+                if 'type' in criterion.get('terms', {}):
+                    fields.update({'MediaTypes': criterion['terms']['type']})
+                if 'credit' in criterion.get('terms', {}):
+                    fields.update({'Credits': criterion['terms']['credit']})
+                if 'anpa_category.name' in criterion.get('terms', {}):
+                    cat_list = []
+                    for cat in criterion['terms']['anpa_category.name']:
+                        qcode = [key for key, value in subject_codes.items() if value == cat]
+                        if qcode:
+                            for code in qcode:
+                                cat_list.append(code)
+                        else:
+                            cat_list.append(cat)
+                    fields.update({'Categories': cat_list})
 
         size = int(req.get('size', '25')) if int(req.get('size', '25')) > 0 else 25
-        fields = {'query': query_keywords, 'pageSize': str(size),
-                  'pageNumber': str(int(req.get('from', '0')) // size + 1)}
-        r = self._http.request('GET', url, fields=fields, headers=self._headers)
+        query = {'Query': query_keywords, 'pageSize': str(size),
+                 'pageNumber': str(int(req.get('from', '0')) // size + 1)}
+
+        r = self._http.urlopen('POST', url + '?' + urllib.parse.urlencode(query),
+                               body=json.dumps(fields), headers=self._headers)
         hits = self._parse_hits(json.loads(r.data.decode('UTF-8')))
-        return ElasticCursor(docs=hits['docs'], hits={'hits': hits})
+        return ElasticCursor(docs=hits['docs'], hits={'hits': hits, 'aggregations': self._parse_aggregations(hits)})
 
     def _parse_doc(self, doc):
         new_doc = {}
@@ -107,6 +164,59 @@ class AAPMMDatalayer(DataLayer):
         for doc in hits['docs']:
             self._parse_doc(doc)
         return hits
+
+    def _parse_aggregation(self, aggregations, facet, aggregation, hits):
+        """
+        Converts the "facet" to the "aggregate" based on the FacetResults in hits returns the equivalent
+        aggregation in aggregations
+        :param aggregations:
+        :param facet:
+        :param aggregation:
+        :param hits:
+        :return:
+        """
+        if 'FacetResults' in hits and facet in hits.get('FacetResults', {}):
+            buckets = []
+            name_set = set()
+            for cat in hits.get('FacetResults', {}).get(facet, {}):
+                if cat['DisplayName'] in name_set:
+                    buckets.append({'doc_count': cat['Count'], 'key': cat['DisplayName'] + '/' + cat['Name'],
+                                    'qcode': cat['Name']})
+                else:
+                    buckets.append({'doc_count': cat['Count'], 'key': cat['DisplayName'], 'qcode': cat['Name']})
+                    name_set.add(cat['DisplayName'])
+            aggregations[aggregation] = {'buckets': buckets}
+
+    def _parse_aggregation_dates(self, aggregations, hits):
+        """
+        Extract the date related facets and convert into aggregations
+        :param aggregations:
+        :param hits:
+        :return:
+        """
+        if 'FacetResults' in hits and 'Dates' in hits.get('FacetResults', {}):
+            for date in hits.get('FacetResults', {}).get('Dates', {}):
+                if date['Name'] == '[NOW/HOUR-24HOURS TO NOW/HOUR]':
+                    aggregations['day'] = {'buckets': [{'doc_count': date['Count'], 'key': date['Name']}]}
+                if date['Name'] == '[NOW/DAY-7DAYS TO NOW/DAY]':
+                    aggregations['week'] = {'buckets': [{'doc_count': date['Count'], 'key': date['Name']}]}
+                if date['Name'] == '[NOW/DAY-1MONTH TO NOW/DAY]':
+                    aggregations['month'] = {'buckets': [{'doc_count': date['Count'], 'key': date['Name']}]}
+
+    def _parse_aggregations(self, hits):
+        """
+        Given the hits returned from the AAP Mulitmedia API it will convert them to the same format as the
+        Aggregations returned from the superdesk search against Elastic
+        :param hits:
+        :return: The converted aggregations
+        """
+        aggregations = {}
+        self._parse_aggregation(aggregations, 'Categories', 'category', hits)
+        self._parse_aggregation(aggregations, 'MediaTypes', 'type', hits)
+        self._parse_aggregation(aggregations, 'Credits', 'credit', hits)
+        self._parse_aggregation_dates(aggregations, hits)
+        hits.pop('FacetResults')
+        return aggregations
 
     def _datetime(self, string):
         try:
