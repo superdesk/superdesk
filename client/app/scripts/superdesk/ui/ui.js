@@ -840,7 +840,8 @@ define([
      *   directive linking phase. Subsequent changes of the attribute value
      *   have no effect.
      */
-    function TimepickerAltDirective() {
+    TimepickerAltDirective.$inject = ['tzdata'];
+    function TimepickerAltDirective(tzdata) {
         var STEP = 5;
 
         function range(min, max, step) {
@@ -870,6 +871,13 @@ define([
                 scope.open = false;
                 scope.hoursRange = range(0, 23);
                 scope.minutesRange = range(0, 59, STEP);
+
+                tzdata.$promise.then(function () {
+                    scope.timeZones = _.union(
+                        _.keys(tzdata.zones),
+                        _.keys(tzdata.links)
+                    );
+                });
 
                 /**
                  * Set local hours
@@ -1044,7 +1052,7 @@ define([
         };
     }
 
-    return angular.module('superdesk.ui', [])
+    return angular.module('superdesk.ui', ['superdesk.dashboard.world-clock'])
 
         .directive('sdShadow', ShadowDirective)
         .directive('sdAutoHeight', require('./autoheight-directive'))
