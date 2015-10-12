@@ -193,6 +193,7 @@ INSTALLED_APPS.extend([
     'apps.content_filters',
     'apps.dictionaries',
     'apps.duplication',
+    'apps.aap.import_text_archive',
     'apps.aap_mm',
     'apps.spellcheck',
     'apps.templates',

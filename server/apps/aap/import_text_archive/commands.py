@@ -19,6 +19,7 @@ from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE, ITEM_STATE, CONTENT
 from superdesk.utc import utc
 from superdesk.io.commands.update_ingest import process_iptc_codes
 from superdesk.etree import get_text_word_count
+from apps.archive.common import generate_unique_id_and_name
 
 # The older content does not contain an anpa category, so we derive it from the
 # publication name
@@ -56,7 +57,7 @@ pubnames = {
 class AppImportTextArchiveCommand(superdesk.Command):
 
     option_list = (
-        superdesk.Option('--start', '-strt', dest='start_id', required=False),
+        superdesk.Option('--start', '-strt', dest='start_id', required=True),
         superdesk.Option('--user', '-usr', dest='user', required=True),
         superdesk.Option('--password', '-pwd', dest='password', required=True),
         superdesk.Option('--url_root', '-url', dest='url', required=True),
@@ -152,7 +153,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
             item['firstcreated'] = utc.normalize(value) if value.tzinfo else value
             item['versioncreated'] = item['firstcreated']
 
-            item['unique_id'] = doc.find('dcdossier').get('unique')
+            generate_unique_id_and_name(item)
             item['ingest_id'] = id
 
             item['source'] = self._get_head_value(doc, 'Agency')
@@ -244,6 +245,7 @@ class AppImportTextArchiveCommand(superdesk.Command):
             res = superdesk.get_resource_service('published')
             original = res.find_one(req=None, guid=item['guid'])
             if not original:
+                item['_id'] = item['guid']
                 res.post([item])
             else:
                 res.patch(original['_id'], item)
