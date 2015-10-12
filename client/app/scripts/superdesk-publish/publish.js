@@ -132,7 +132,13 @@
         $scope.selectedQueueItems = [];
         $scope.showResendBtn = false;
         $scope.showCancelBtn = false;
+        $scope.queueSearch = false;
         $scope.selected = {};
+        $scope.publish_queue_statuses = ['pending', 'in-progress', 'success', 'error'];
+        $scope.pageSize = 25;
+        $scope.page = 1;
+
+        $scope.$watch('page', $scope.reload);
 
         var promises = [];
 
@@ -143,12 +149,68 @@
             });
         }));
 
+        /*
+        * Get search input from search box to search for headline or unique_name,
+        * and perfrom reload function to populate publish queue.
+        */
+        $scope.search = function(query) {
+            $scope.searchQuery = query;
+            $scope.page = 1;
+            $scope.reload();
+        };
+
+        /*
+        * Populates the publish queue and update the flags after fetch operation.
+        */
+        function populatePublishQueue () {
+            fetchPublishQueue().then(function(queue) {
+                var queuedItems = queue._items;
+
+                _.forEach(queuedItems, function(item) {
+                    angular.extend(item, {'selected': false});
+                });
+
+                $scope.publish_queue = queuedItems;
+                $scope.lastRefreshedAt = new Date();
+                $scope.showResendBtn = false;
+                $scope.showCancelBtn = false;
+                $scope.maxPage =  Math.ceil(queue._meta.total / $scope.pageSize);
+            });
+        }
+        /*
+        * Fetch the publish queue on the basis of built criteria.
+        */
         function fetchPublishQueue () {
             var criteria = criteria || {};
-            criteria.max_results = 200;
+            criteria.max_results = $scope.pageSize;
+            criteria.page = $scope.page;
 
-            if ($scope.selectedFilterSubscriber !== null) {
-                criteria.where = {'subscriber_id': $scope.selectedFilterSubscriber._id};
+            var orTerms = null;
+            if (!_.isEmpty($scope.searchQuery)) {
+                orTerms = {'$or': [{'headline': $scope.searchQuery}, {'unique_name': $scope.searchQuery}]};
+            }
+
+            var filterTerms = [];
+            if ($scope.selectedFilterSubscriber != null) {
+                filterTerms.push({'subscriber_id': $scope.selectedFilterSubscriber._id});
+            }
+            if ($scope.selectedFilterStatus != null) {
+                filterTerms.push({'state': $scope.selectedFilterStatus});
+            }
+
+            var andTerms = [];
+            _.each(filterTerms, function(term) {
+                andTerms.push(term);
+            });
+
+            if (orTerms !== null) {
+                andTerms.push(orTerms);
+            }
+
+            if (!_.isEmpty(andTerms)) {
+                criteria.where = JSON.stringify ({
+                    '$and': andTerms
+                });
             }
 
             return api.publish_queue.query(criteria);
@@ -156,20 +218,8 @@
 
         $scope.reload = function() {
             $q.all(promises).then(function() {
-                fetchPublishQueue().then(function(queue) {
-                    var queuedItems = queue._items;
-
-                    _.forEach(queuedItems, function(item) {
-                        angular.extend(item, {'selected': false});
-                    });
-
-                    $scope.publish_queue = queuedItems;
-                    $scope.lastRefreshedAt = new Date();
-                    $scope.showResendBtn = false;
-                    $scope.showCacnelBtn = false;
-
-                    previewItem();
-                });
+                populatePublishQueue();
+                previewItem();
             });
         };
 
@@ -213,21 +263,19 @@
             if (type === 'subscriber') {
                 $scope.selectedFilterSubscriber = item;
             }
-
+            populatePublishQueue();
             $scope.multiSelectCount = 0;
-            fetchPublishQueue().then(function(queue) {
-                var queuedItems = queue._items;
-
-                _.forEach(queuedItems, function(item) {
-                    angular.extend(item, {'selected': false});
-                });
-
-                $scope.publish_queue = queuedItems;
-                $scope.lastRefreshedAt = new Date();
-                $scope.showResendBtn = false;
-                $scope.showCancelBtn = false;
-                $scope.selectedQueueItems = [];
-            });
+            $scope.selectedQueueItems = [];
+            $scope.page = 1;
+        };
+        $scope.filterStatus = function(item, type) {
+            if (type === 'status') {
+                $scope.selectedFilterStatus = item;
+            }
+            populatePublishQueue();
+            $scope.multiSelectCount = 0;
+            $scope.selectedQueueItems = [];
+            $scope.page = 1;
         };
 
         $scope.selectQueuedItem = function(queuedItem) {
@@ -552,6 +600,8 @@
                 .activity('/publish_queue', {
                     label: gettext('Publish Queue'),
                     templateUrl: 'scripts/superdesk-publish/views/publish-queue.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     controller: PublishQueueController,
                     category: superdesk.MENU_MAIN,
                     adminTools: false,

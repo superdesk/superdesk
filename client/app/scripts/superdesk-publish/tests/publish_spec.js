@@ -99,7 +99,10 @@ describe('publish queue', function() {
             'transmit_started_at': '2015-05-19T08:56:49+0000',
             'unique_name': '#57537'
         }
-    ]};
+    ],
+    '_meta': {
+        total: 3
+    }};
 
     var $scope;
 
@@ -192,6 +195,25 @@ describe('publish queue', function() {
         $scope.selectedFilterSubscriber = null;
         $scope.filterSchedule(subscriberValue, 'subscriber');
         expect($scope.selectedFilterSubscriber).toEqual(subscriberValue);
+    }));
+
+    it('sets the selected filter status', inject(function() {
+        var statusValue = 'success';
+        $scope.selectedFilterStatus = null;
+        $scope.filterStatus(statusValue, 'status');
+        expect($scope.selectedFilterStatus).toEqual(statusValue);
+    }));
+
+    it('can search by headline', inject(function($rootScope) {
+        $scope.search(publishQueue._items[0].headline);
+        $scope.$digest();
+        expect($scope.publish_queue[0].headline).toEqual(publishQueue._items[0].headline);
+    }));
+
+    it('can search by unique name', inject(function($rootScope) {
+        $scope.search(publishQueue._items[0].unique_name);
+        $scope.$digest();
+        expect($scope.publish_queue[0].unique_name).toEqual(publishQueue._items[0].unique_name);
     }));
 
     it('can resend single publish queue item', inject(function($rootScope, api, $q) {
