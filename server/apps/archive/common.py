@@ -101,19 +101,39 @@ def set_dateline(doc, repo_type):
         if user and user.get('user_preferences', {}).get('dateline:located'):
             located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
             if located:
-                if located['tz'] != 'UTC':
-                    dateline_ts = datetime.fromtimestamp(dateline_ts.timestamp(), tz=timezone(located['tz']))
-
-                if dateline_ts.month == 9:
-                    formatted_date = 'Sept {}'.format(dateline_ts.strftime('%d'))
-                elif 3 <= dateline_ts.month <= 7:
-                    formatted_date = dateline_ts.strftime('%B %d')
-                else:
-                    formatted_date = dateline_ts.strftime('%b %d')
-
                 doc['dateline']['located'] = located
-                doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
-                                                               ORGANIZATION_NAME_ABBREVIATION)
+                doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
+
+
+def format_dateline_to_locmmmddsrc(located, current_timestamp):
+    """
+    Formats dateline to "Location, Month Date Source -"
+
+    :return: formatted dateline string
+    """
+
+    dateline_location = "{city_code}"
+    dateline_location_format_fields = located.get('dateline', 'city')
+    dateline_location_format_fields = dateline_location_format_fields.split(',')
+    if 'country' in dateline_location_format_fields and 'state' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {state_code}, {country_code}"
+    elif 'state' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {state_code}"
+    elif 'country' in dateline_location_format_fields:
+        dateline_location = "{city_code}, {country_code}"
+    dateline_location = dateline_location.format(**located)
+
+    if located['tz'] != 'UTC':
+        current_timestamp = datetime.fromtimestamp(current_timestamp.timestamp(), tz=timezone(located['tz']))
+    if current_timestamp.month == 9:
+        formatted_date = 'Sept {}'.format(current_timestamp.strftime('%d'))
+    elif 3 <= current_timestamp.month <= 7:
+        formatted_date = current_timestamp.strftime('%B %d')
+    else:
+        formatted_date = current_timestamp.strftime('%b %d')
+
+    return "{location} {mmmdd} {source} -".format(location=dateline_location.upper(), mmmdd=formatted_date,
+                                                  source=ORGANIZATION_NAME_ABBREVIATION)
 
 
 def set_byline(doc, repo_type=ARCHIVE):

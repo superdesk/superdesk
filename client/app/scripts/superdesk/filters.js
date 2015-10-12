@@ -184,7 +184,7 @@ define([
                     dateline.concat(', ', located.country_code);
                 }
 
-                return dateline.concat(', ', month, ' ', date, ' ', source, ' -');
+                return dateline.toUpperCase().concat(', ', month, ' ', date, ' ', source, ' -');
             };
         })
         .filter('relativeUTCTimestamp', function() {
