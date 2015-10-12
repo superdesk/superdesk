@@ -10,7 +10,7 @@
 
 <div class="terms" ng-if="item[field].length">
     <ul>
-        <li ng-if="!disabled" ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t }}<i class="icon-close-small"></i></li>
-        <li ng-if="disabled" ng-repeat="t in item[field]">{{ t }}</li>
+        <li ng-if="!disabled" ng-repeat="t in item[field] track by t" ng-click="removeTerm(t)">{{ t }}<i class="icon-close-small"></i></li>
+        <li ng-if="disabled" ng-repeat="t in item[field] track by t">{{ t }}</li>
     </ul>
 </div>
