@@ -15,8 +15,10 @@ from superdesk.utc import get_expiry_date, utcnow
 from apps.archive.commands import RemoveExpiredSpikeContent, get_overdue_scheduled_items
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
-from datetime import timedelta
-from apps.archive.common import validate_schedule, remove_media_files
+from datetime import timedelta, datetime
+from pytz import timezone
+from apps.archive.common import validate_schedule, remove_media_files, format_dateline_to_locmmmddsrc
+from settings import ORGANIZATION_NAME_ABBREVIATION
 
 
 class RemoveSpikedContentTestCase(SuperdeskTestCase):
@@ -222,3 +224,45 @@ class ArchiveTestCase(SuperdeskTestCase):
 
     def test_validate_schedule_date_with_datetime_in_past_raises_superdeskApiError(self):
         self.assertRaises(SuperdeskApiError, validate_schedule, utcnow() + timedelta(hours=-2))
+
+    def _get_located_and_current_utc_ts(self):
+        current_ts = utcnow()
+        located = {"dateline": "city", "city_code": "Sydney", "state": "NSW", "city": "Sydney", "state_code": "NSW",
+                   "country_code": "AU", "tz": "Australia/Sydney", "country": "Australia"}
+
+        current_timestamp = datetime.fromtimestamp(current_ts.timestamp(), tz=timezone(located['tz']))
+        if current_timestamp.month == 9:
+            formatted_date = 'Sept {}'.format(current_timestamp.strftime('%d'))
+        elif 3 <= current_timestamp.month <= 7:
+            formatted_date = current_timestamp.strftime('%B %d')
+        else:
+            formatted_date = current_timestamp.strftime('%b %d')
+
+        return located, formatted_date, current_ts
+
+    def test_format_dateline_to_format_when_only_city_is_present(self):
+        located, formatted_date, current_ts = self._get_located_and_current_utc_ts()
+        formatted_dateline = format_dateline_to_locmmmddsrc(located, current_ts)
+        self.assertEqual(formatted_dateline, 'SYDNEY %s %s -' % (formatted_date, ORGANIZATION_NAME_ABBREVIATION))
+
+    def test_format_dateline_to_format_when_only_city_and_state_are_present(self):
+        located, formatted_date, current_ts = self._get_located_and_current_utc_ts()
+
+        located['dateline'] = "city,state"
+        formatted_dateline = format_dateline_to_locmmmddsrc(located, current_ts)
+        self.assertEqual(formatted_dateline, 'SYDNEY, NSW %s %s -' % (formatted_date, ORGANIZATION_NAME_ABBREVIATION))
+
+    def test_format_dateline_to_format_when_only_city_and_country_are_present(self):
+        located, formatted_date, current_ts = self._get_located_and_current_utc_ts()
+
+        located['dateline'] = "city,country"
+        formatted_dateline = format_dateline_to_locmmmddsrc(located, current_ts)
+        self.assertEqual(formatted_dateline, 'SYDNEY, AU %s %s -' % (formatted_date, ORGANIZATION_NAME_ABBREVIATION))
+
+    def test_format_dateline_to_format_when_city_state_and_country_are_present(self):
+        located, formatted_date, current_ts = self._get_located_and_current_utc_ts()
+
+        located['dateline'] = "city,state,country"
+        formatted_dateline = format_dateline_to_locmmmddsrc(located, current_ts)
+        self.assertEqual(formatted_dateline, 'SYDNEY, NSW, AU %s %s -' % (formatted_date,
+                                                                          ORGANIZATION_NAME_ABBREVIATION))
