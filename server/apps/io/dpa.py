@@ -46,18 +46,12 @@ class DPAIngestService(FileIngestService):
                     stat = os.lstat(filepath)
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('last_updated')):
-                        item = self.parser.parse_file(filepath)
+                        item = self.parser.parse_file(filepath, provider)
 
                         self.move_file(self.path, filename, provider=provider, success=True)
                         yield [item]
                     else:
                         self.move_file(self.path, filename, provider=provider, success=True)
-            except ParserError.IPTC7901ParserError() as ex:
-                logger.exception("Ingest Type: DPA - File: {0} could not be processed".format(filename))
-                self.move_file(self.path, filename, provider=provider, success=False)
-                raise ParserError.IPTC7901ParserError(ex, provider)
-            except ParserError as ex:
-                self.move_file(self.path, filename, provider=provider, success=False)
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
-                raise ProviderError.ingestError(ex, provider)
+                raise ParserError.parseFileError('DPA', filename, ex, provider)
