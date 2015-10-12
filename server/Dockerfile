@@ -1,5 +1,5 @@
 # import base image
-FROM ubuntu:trusty
+FROM ubuntu:vivid
 
 # install python3 and the build-time dependencies for c modules
 RUN apt-get update && \
@@ -8,6 +8,7 @@ python3 python3-dev python3-pip python3-lxml \
 build-essential libffi-dev git \
 libtiff5-dev libjpeg8-dev zlib1g-dev \
 libfreetype6-dev liblcms2-dev libwebp-dev \
+libmagic-dev \
 curl
 
 # setup the environment

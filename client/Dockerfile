@@ -1,10 +1,10 @@
 # import base image
-FROM ubuntu:trusty
+FROM ubuntu:vivid
 
 # install system-wide dependencies
 RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-libfreetype6 libfontconfig nodejs npm nginx git \
+build-essential libfreetype6 libfontconfig nodejs npm nginx git \
 && echo "\ndaemon off;" >> /etc/nginx/nginx.conf \
 && rm /etc/nginx/sites-enabled/default \
 && ln --symbolic /usr/bin/nodejs /usr/bin/node
