@@ -270,11 +270,14 @@ body, html {
 
 	  	.dateline {
 		  	display: flex;
+            input {
+              text-transform: uppercase;
+            }
+
 		  	input, select, option {
 			  	color: #333 !important;
                 font-size: 16px;
                 font-weight: 300 !important;
-                text-transform: uppercase;
 			}
 
             select {
@@ -502,7 +505,8 @@ body, html {
 		.text-editor, 
 		.headline, 
 		.abstract, 
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input, 
 		.text-editor p {
 			color: @dark-theme-text !important;
@@ -525,7 +529,8 @@ body, html {
 		.text-editor, 
 		.headline, 
 		.abstract, 
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input, 
 		.text-editor p {
 			color: @dark-theme-text !important;
@@ -550,7 +555,8 @@ body, html {
 		.text-editor, 
 		.headline, 
 		.abstract, 
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input, 
 		.text-editor p {
 			color: @dark-blue-theme-text !important;
@@ -573,7 +579,8 @@ body, html {
 		.text-editor,
 		.headline,
 		.abstract,
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input {
 			color: @natural-theme-text !important;
 		}
@@ -586,7 +593,8 @@ body, html {
 		.text-editor,
 		.headline,
 		.abstract,
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input {
 			color: @dark-khaki-theme-text !important;
 		}
@@ -599,7 +607,8 @@ body, html {
 		.text-editor,
 		.headline,
 		.abstract,
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input {
 			color: @dark-turquoise-theme-text !important;
 		}
@@ -612,13 +621,10 @@ body, html {
 		.text-editor,
 		.headline,
 		.abstract,
-		.dateline-info input,
+		.dateline input,
+        .dateline select,
 		input {
 			color: @pale-yellow-theme-text !important;
 		}
 	}
 }
-
-
-
-

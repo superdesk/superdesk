@@ -112,7 +112,7 @@ def set_dateline(doc, repo_type):
                     formatted_date = dateline_ts.strftime('%b %d')
 
                 doc['dateline']['located'] = located
-                doc['dateline']['text'] = '{}, {} {} -'.format(located['city'], formatted_date,
+                doc['dateline']['text'] = '{}, {} {} -'.format(located['city'].upper(), formatted_date,
                                                                ORGANIZATION_NAME_ABBREVIATION)
 
 
