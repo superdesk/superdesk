@@ -149,12 +149,19 @@
             });
         }));
 
+        /*
+        * Get search input from search box to search for headline or unique_name,
+        * and perfrom reload function to populate publish queue.
+        */
         $scope.search = function(query) {
             $scope.searchQuery = query;
             $scope.page = 1;
             $scope.reload();
         };
 
+        /*
+        * Populates the publish queue and update the flags after fetch operation.
+        */
         function populatePublishQueue () {
             fetchPublishQueue().then(function(queue) {
                 var queuedItems = queue._items;
@@ -170,7 +177,9 @@
                 $scope.maxPage =  Math.ceil(queue._meta.total / $scope.pageSize);
             });
         }
-
+        /*
+        * Fetch the publish queue on the basis of built criteria.
+        */
         function fetchPublishQueue () {
             var criteria = criteria || {};
             criteria.max_results = $scope.pageSize;
