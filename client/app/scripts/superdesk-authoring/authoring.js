@@ -1154,6 +1154,13 @@
                     });
                 };
 
+                /*
+                 * Minimize an item
+                 */
+                $scope.minimize = function () {
+                    authoringWorkspace.close();
+                };
+
                 $scope.closeOpenNew = function(createFunction, paramValue) {
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.dirty, true).then(function() {
