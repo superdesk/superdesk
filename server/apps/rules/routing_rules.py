@@ -13,6 +13,7 @@ import superdesk
 
 from enum import Enum
 from datetime import datetime
+from pytz import all_timezones_set
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -140,6 +141,10 @@ class RoutingRuleSchemeResource(Resource):
                             },
                             'hour_of_day_to': {
                                 'type': 'string'
+                            },
+                            'time_zone': {
+                                'type': 'string',
+                                'nullable': True
                             }
                         }
                     }
@@ -262,9 +267,16 @@ class RoutingRuleSchemeService(BaseService):
                     'publish') is None and actions.get('exit') is None):
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have actions")
             else:
-                self.__validate_schedule(schedule)
+                self._validate_schedule(schedule)
 
-    def __validate_schedule(self, schedule):
+    def _validate_schedule(self, schedule):
+        """Check if the given routing schedule configuration is valid and raise
+        an error if this is not the case.
+
+        :param dict schedule: the routing schedule configuration to validate
+
+        :raises SuperdeskApiError: if `schedule` validation fails
+        """
         if schedule is not None \
                 and (len(schedule) == 0
                      or (schedule.get('day_of_week') is None
@@ -288,6 +300,12 @@ class RoutingRuleSchemeService(BaseService):
 
                 if from_time > to_time:
                     raise SuperdeskApiError.badRequestError(message="From time should be less than To Time.")
+
+            time_zone = schedule.get('time_zone')
+
+            if time_zone and (time_zone not in all_timezones_set):
+                msg = 'Unknown time zone {}'.format(time_zone)
+                raise SuperdeskApiError.badRequestError(message=msg)
 
     def __check_if_rule_name_is_unique(self, routing_scheme):
         """

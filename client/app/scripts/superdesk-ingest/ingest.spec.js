@@ -112,33 +112,155 @@ describe('ingest', function() {
     });
 
     describe('sdIngestRoutingSchedule directive', function () {
-        var isoScope;  // the directive's isolate scope
+        var fakeTzData,
+            getTzDataDeferred,
+            isoScope;  // the directive's isolate scope
 
         beforeEach(module('superdesk.ingest'));
         beforeEach(module('templates'));
 
         beforeEach(module(function($provide) {
+            var childDirectives = [
+                'sdWeekdayPicker', 'sdTimepickerAlt', 'sdTypeahead'
+            ];
+
             $provide.constant('config', {
                 server: {
                     timezone: 'FOO (UTC+3.141592)'
                 }
             });
+
+            fakeTzData = {
+                $promise: null,
+                zones: {},
+                links: {}
+            };
+            $provide.constant('tzdata', fakeTzData);
+
+            // Mock child directives to test the directive under test in
+            // isolation, avoiding the need to create more complex fixtures
+            // that satisfy any special child directives' requirements.
+            childDirectives.forEach(function (directiveName) {
+                // Internally, Angular appends the "Directive" suffix to
+                // directive name, thus we need to do the same for mocking.
+                directiveName += 'Directive';
+                $provide.factory(directiveName, function () {
+                    return {};
+                });
+            });
         }));
 
-        beforeEach(inject(function ($compile, $rootScope) {
+        beforeEach(inject(function ($compile, $rootScope, $q, tzdata) {
             var element,
                 html = '<div sd-ingest-routing-schedule></div>',
                 scope;
+
+            getTzDataDeferred = $q.defer();
+            fakeTzData.$promise = getTzDataDeferred.promise;
 
             scope = $rootScope.$new();
             element = $compile(html)(scope);
             scope.$digest();
 
             isoScope = element.isolateScope();
+
+            // the (mocked) routing rule being edited
+            isoScope.rule = {
+                schedule: {}
+            };
         }));
 
         it('initializes server timezone in scope', function () {
             expect(isoScope.serverTimezone).toEqual('FOO (UTC+3.141592)');
+        });
+
+        it('initially clears the time zone search term', function () {
+            expect(isoScope.tzSearchTerm).toEqual('');
+        });
+
+        it('initializes the list of matching time zones to an empty list',
+            function () {
+                expect(isoScope.matchingTimeZones).toEqual([]);
+            }
+        );
+
+        it('initializes the list of all available time zones', function () {
+            var serverTzData = {
+                zones: {
+                    'Europe/Rome': ['1 - CET'],
+                    'Australia/Sydney': ['10 ADN EST']
+                },
+                links: {
+                    'Foo/Bar': []
+                }
+            };
+            fakeTzData.zones = serverTzData.zones;
+            fakeTzData.links = serverTzData.links;
+
+            isoScope.timeZones = [];
+
+            getTzDataDeferred.resolve(serverTzData);
+            isoScope.$digest();
+
+            expect(isoScope.timeZones).toEqual([
+                'Europe/Rome', 'Australia/Sydney', 'Foo/Bar'
+            ]);
+        });
+
+        describe('scope\'s searchTimeZones() method', function () {
+            it('sets the time zone search term to the given term ',
+                function () {
+                    isoScope.tzSearchTerm = 'foo';
+                    isoScope.searchTimeZones('bar');
+                    expect(isoScope.tzSearchTerm).toEqual('bar');
+                }
+            );
+
+            it('sets the matching time zones to an empty list if given ' +
+                'an empty search term',
+                function () {
+                    isoScope.matchingTimeZones = ['foo', 'bar'];
+                    isoScope.searchTimeZones('');
+                    expect(isoScope.matchingTimeZones).toEqual([]);
+                }
+            );
+
+            it('sets the matching time zones to those matching the given ' +
+                'search term',
+                function () {
+                    isoScope.timeZones = [
+                        'Foo/City', 'Asia/FooBar', 'EU_f/oo', 'bar_fOo', 'xyz'
+                    ];
+                    isoScope.searchTimeZones('fOO');
+                    expect(isoScope.matchingTimeZones).toEqual([
+                        'Foo/City', 'Asia/FooBar', 'bar_fOo'
+                    ]);
+                }
+            );
+        });
+
+        describe('scope\'s selectTimeZone() method', function () {
+            it('sets the routing rule\'s time zone to the one given',
+                function () {
+                    isoScope.rule.schedule.time_zone = null;
+                    isoScope.selectTimeZone('foo');
+                    expect(isoScope.rule.schedule.time_zone).toEqual('foo');
+                }
+            );
+
+            it('clears the time zone search term', function () {
+                isoScope.tzSearchTerm = 'Europe';
+                isoScope.selectTimeZone('foo');
+                expect(isoScope.tzSearchTerm).toEqual('');
+            });
+        });
+
+        describe('scope\'s clearSelectedTimeZone() method', function () {
+            it('clears the routing rule\'s time zone', function () {
+                isoScope.rule.schedule.time_zone = 'foo';
+                isoScope.clearSelectedTimeZone();
+                expect(isoScope.rule.schedule.time_zone).toBe(null);
+            });
         });
     });
 

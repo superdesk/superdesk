@@ -9,11 +9,22 @@ describe('sdIngestRoutingContent directive', function () {
 
     var contentFilters,
         fakeGetFilters,
+        fakeTzData,
+        getTzDataDeferred,
         scope;
 
     beforeEach(module('templates'));
     beforeEach(module('superdesk.ingest'));
     beforeEach(module('superdesk.content_filters'));
+
+    beforeEach(module(function($provide) {
+        fakeTzData = {
+            $promise: null,
+            zones: {},
+            links: {}
+        };
+        $provide.constant('tzdata', fakeTzData);
+    }));
 
     beforeEach(inject(function ($compile, $rootScope, $q, _contentFilters_) {
         var html;
@@ -23,6 +34,9 @@ describe('sdIngestRoutingContent directive', function () {
         fakeGetFilters = $q.defer();
         spyOn(contentFilters, 'getAllContentFilters')
             .and.returnValue(fakeGetFilters.promise);
+
+        getTzDataDeferred = $q.defer();
+        fakeTzData.$promise = getTzDataDeferred.promise;
 
         scope = $rootScope.$new();
         html = '<div sd-ingest-routing-content></div>';

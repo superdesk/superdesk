@@ -358,6 +358,7 @@ Feature: Routing Scheme and Routing Rules
       ]
       """
       Then we get response code 400
+
       When we post to "/routing_schemes"
       """
       [
@@ -381,6 +382,7 @@ Feature: Routing Scheme and Routing Rules
       ]
       """
       Then we get response code 400
+
       When we post to "/routing_schemes"
       """
       [
@@ -404,6 +406,7 @@ Feature: Routing Scheme and Routing Rules
       ]
       """
       Then we get response code 400
+
       When we post to "/routing_schemes"
       """
       [
@@ -427,6 +430,7 @@ Feature: Routing Scheme and Routing Rules
       ]
       """
       Then we get response code 400
+
       When we post to "/routing_schemes"
       """
       [
@@ -442,7 +446,33 @@ Feature: Routing Scheme and Routing Rules
               "schedule": {
                 "day_of_week": ["FRI", "TUE"],
                 "hour_of_day_from": "0400",
-                "hour_of_day_to": "0600"
+                "hour_of_day_to": "0600",
+                "time_zone": "Timezone/Invalid"
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": "#FILTER_ID#",
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["FRI", "TUE"],
+                "hour_of_day_from": "0400",
+                "hour_of_day_to": "0600",
+                "time_zone": "Europe/Rome"
               }
             }
           ]
