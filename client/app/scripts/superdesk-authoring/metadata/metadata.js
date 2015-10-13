@@ -197,44 +197,77 @@ function MetadataDropdownDirective() {
     };
 }
 
-MetadataWordsListEditingDirective.$inject = [];
-function MetadataWordsListEditingDirective() {
+MetadataWordsListEditingDirective.$inject = ['$timeout'];
+function MetadataWordsListEditingDirective($timeout) {
     return {
         scope: {
             item: '=',
             field: '@',
             disabled: '=',
             list: '=',
-            change: '&'
+            change: '&',
+            header: '@'
         },
         templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-words-list.html',
-        link: function(scope) {
+        link: function(scope, element) {
+            scope.words = [];
+            scope.selectedTerm = '';
 
-            var ENTER = 13;
+            $timeout(function() {
+                element.find('input, select').addClass('line-input');
 
-            scope.selectTerm = function($event) {
-                if ($event.keyCode === ENTER && _.trim(scope.term) !== '') {
-
-                    //instead of simple push, extend the item[field] in order to trigger dirty $watch
-                    var t = _.clone(scope.item[scope.field]) || [];
-                    var index = _.findIndex(t, function(word) {
-                        return word.toLowerCase() === scope.term.toLowerCase();
-                    });
-
-                    if (index < 0) {
-                        t.push(_.trim(scope.term));
-
-                        //build object
-                        var o = {};
-                        o[scope.field] = t;
-                        _.extend(scope.item, o);
-                        scope.change({item: scope.item});
-                    }
-
-                    scope.term = '';
+                if (scope.list) {
+                    scope.words = scope.list;
                 }
+            });
+
+            /**
+             * sdTypeahead directive invokes this method and is responsible for searching word(s) where the word.name
+             * matches word_to_find.
+             *
+             * @return {Array} list of word(s)
+             */
+            scope.search = function(word_to_find) {
+                if (!word_to_find) {
+                    scope.words = scope.list;
+                } else {
+                    scope.words = _.filter(scope.list, function (t) {
+                        return ((t.name.toLowerCase().indexOf(word_to_find.toLowerCase()) !== -1));
+                    });
+                }
+
+                scope.selectedTerm = word_to_find;
+                return scope.words;
             };
 
+            /**
+             * sdTypeahead directive invokes this method and is responsible for updating the item with user selected
+             * word.
+             *
+             * @param {Object} item selected word object
+             */
+            scope.select = function(item) {
+                var keyword = item ? item.value : scope.selectedTerm;
+                var t = _.clone(scope.item[scope.field]) || [];
+                var index = _.findIndex(t, function (word) {
+                    return word.toLowerCase() === keyword.toLowerCase();
+                });
+
+                if (index < 0) {
+                    t.push(keyword);
+
+                    var o = {};
+                    o[scope.field] = t;
+                    _.extend(scope.item, o);
+                    scope.change({item: scope.item});
+                }
+
+                scope.selectedTerm = '';
+            };
+
+            /**
+             * Removes the term from the user selected terms
+             */
             scope.removeTerm = function(term) {
                 var temp = _.without(scope.item[scope.field], term);
 
@@ -246,7 +279,6 @@ function MetadataWordsListEditingDirective() {
 
                 scope.change({item: scope.item});
             };
-
         }
     };
 }
