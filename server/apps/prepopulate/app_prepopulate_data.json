@@ -455,7 +455,7 @@
         }
     },
 
-	    {
+    {
         "resource": "archive",
         "username": "admin",
         "data": {
@@ -714,6 +714,98 @@
                 "status": "in_progress",
                 "stage": "-id stage two Politic Desks-"
             }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item1 in legal archive",
+            "slugline": "item1 slugline",
+            "type": "text",
+            "state": "published",
+            "operation": "publish",
+            "guid": "item1-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "done",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item2 in legal archive",
+            "slugline": "item2 slugline",
+            "type": "text",
+            "state": "killed",
+            "operation": "kill",
+            "guid": "item2-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 3,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "done",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "item3 in legal archive",
+            "slugline": "item3 slugline",
+            "type": "text",
+            "state": "published",
+            "operation": "publish",
+            "guid": "item3-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "todo",
+		        "stage": "one"
+		    }
+        }
+    },
+    {
+        "resource": "legal_archive",
+        "username": "admin",
+        "data": {
+            "headline": "package1 in legal archive",
+            "slugline": "package1 slugline",
+            "type": "composite",
+            "state": "published",
+            "operation": "publish",
+            "guid": "package1-in-legal-archive",
+            "versioncreated": "2015-01-01T10:10:100000",
+            "_current_version" : 2,
+            "original_creator": "admin",
+            "groups": [{"refs" : [{"idRef" : "main"}], "id" : "root", "role" : "grpRole:NEP"},
+                       {"refs" : [{"renditions" : {}, "type" : "text", "slugline" : "item1 slugline", "headline" : "item1 in legal archive",
+                                   "guid" : "item1-in-legal-archive", "residRef" : "item1-in-legal-archive",
+                                   "itemClass" : "icls:text", "_current_version" : 2, "location" : "legal_archive"},
+	   		                      {"renditions" : {}, "type" : "text", "slugline" : "item3 slugline", "headline" : "item3 in legal archive",
+                                   "guid" : "item3-in-legal-archive", "residRef" : "item3-in-legal-archive",
+                                   "itemClass" : "icls:text",  "_current_version" : 2, "location" : "archive"
+                                  }], "id" : "main", "role" : "grpRole:main"}],
+            "task" : {
+		        "desk" : "Sports Desk",
+		        "user" : "administrator",
+		        "status": "todo",
+		        "stage": "one"
+		    }
         }
     },
     {

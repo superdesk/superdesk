@@ -20,6 +20,7 @@ from apps.legal_archive import LEGAL_ARCHIVE_NAME, LEGAL_ARCHIVE_VERSIONS_NAME, 
 from apps.packages.package_service import PackageService
 import superdesk
 from apps.packages import TakesPackageService
+from superdesk.metadata.packages import GROUPS, REFS, RESIDREF
 from superdesk.users.services import get_display_name
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
@@ -116,7 +117,7 @@ class PublishedItemService(BaseService):
         """
 
         for doc in docs:
-            doc['_created'] = utcnow()
+            doc[config.LAST_UPDATED] = doc[config.DATE_CREATED] = utcnow()
             self.set_defaults(doc)
 
     def set_defaults(self, doc):
@@ -290,52 +291,79 @@ class PublishedItemService(BaseService):
     def remove_expired(self, doc):
         """
         Removes the expired published article from 'published' collection. Below is the workflow:
-            1.  Update allow_post_publish_actions, can_be_removed flags.
-            2.  Inserts/updates the article in Legal Archive repository
-                (a) All references to master data like users, desks ... is de-normalized and then
-                    inserted into Legal Archive. Same is done to each version of the article.
-                (b) Inserts Formatted Items
-                (c) Inserts Transmission Details (fetched from publish_queue collection)
-            3.  Removes the item from publish_queue and published collections, if can_be_removed is True
-            4.  Remove the article and its versions from archive collection if all of the below conditions are met:
-                (a) Article hasn't been published/corrected/killed again
-                (b) Article isn't part of a package
+            1.  If doc is a package then recursively move the items in the package to legal archive if the item wasn't
+                moved before. And then run the package through the expiry workflow.
+            2.  Check if doc has expired. This is needed because when doc is a package and expired but the items in the
+                package are not expired. If expired then update allow_post_publish_actions, can_be_removed flags.
+            3.  Insert/update the doc in Legal Archive repository
+                (a) All references to master data like users, desks ... are de-normalized before inserting into
+                    Legal Archive. Same is done to each version of the article.
+                (b) Inserts Transmission Details (fetched from publish_queue collection)
+            4.  If the doc has expired then remove the transmission details from Publish Queue collection.
+            5.  If the doc has expired  and is eligible to be removed from production then remove the article and
+                its versions from archive and archive_versions collections respectively.
+            6.  Removes the item from published collection, if can_be_removed is True
 
         :param doc: doc in 'published' collection
         """
 
-        logging.info("Starting the workflow for removing the expired publish item with id: %s" % doc['item_id'])
+        log_msg_format = "{{'_id': {item_id}, 'unique_name': {unique_name}, 'version': {_current_version}, " \
+                         "'expired_on': {expiry}}}."
+        log_msg = log_msg_format.format(**doc)
 
+        version_id_field = versioned_id_field(app.config['DOMAIN'][ARCHIVE])
         can_be_removed = doc['can_be_removed']
 
         if not can_be_removed:
-            # Step 1
-            updates = self._update_flags(doc)
-            doc.update(updates)
-            can_be_removed = updates.get('can_be_removed', can_be_removed)
+            if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:  # Step 1
+                logging.info('Starting the workflow for removal of the expired package ' + log_msg)
+                self._handle_expired_package(doc)
 
-            # Step 2
-            publish_queue_items = self._upsert_into_legal_archive(doc)
-            for publish_queue_item in publish_queue_items:
-                get_resource_service('publish_queue').delete_action(
-                    lookup={config.ID_FIELD: publish_queue_item[config.ID_FIELD]})
+            logging.info('Starting the workflow for removal of the expired item ' + log_msg)
+            is_expired = doc['expiry'] <= utcnow()
 
-            # Step 4
-            if self.can_remove_from_production(doc):
-                resource_def = app.config['DOMAIN']['archive']
-                lookup = {'$and': [{versioned_id_field(resource_def): doc['item_id']},
+            if is_expired:  # Step 2
+                updates = self._update_flags(doc, log_msg)
+                doc.update(updates)
+                can_be_removed = updates.get('can_be_removed', can_be_removed)
+
+            # Step 3
+            publish_queue_items = self._upsert_into_legal_archive(doc, version_id_field, log_msg_format, log_msg)
+            if is_expired:  # Step 4
+                logging.info('Removing the transmission details for expired item ' + log_msg)
+                for publish_queue_item in publish_queue_items:
+                    get_resource_service('publish_queue').delete_action(
+                        lookup={config.ID_FIELD: publish_queue_item[config.ID_FIELD]})
+
+            if is_expired and self.can_remove_from_production(doc):  # Step 5
+                logging.info('Removing the expired item from production ' + log_msg)
+                lookup = {'$and': [{version_id_field: doc['item_id']},
                                    {config.VERSION: {'$lte': doc[config.VERSION]}}]}
                 get_resource_service('archive_versions').delete(lookup)
 
                 get_resource_service(ARCHIVE).delete_action({config.ID_FIELD: doc['item_id']})
 
-        if can_be_removed:
-            # Step 3
+        if can_be_removed:  # Step 6
+            logging.info('Removing the expired item from published collection ' + log_msg)
             self.delete_by_article_id(_id=doc['item_id'], doc=doc)
 
-        logging.info("Completed the workflow for removing the expired publish item with id: %s" % doc['item_id'])
+        logging.info('Completed the workflow for removing the expired publish item ' + log_msg)
 
-    def _update_flags(self, doc):
+    def _handle_expired_package(self, package):
+        """
+        Recursively moves the items in the package to legal archive if the item wasn't moved before.
+        """
+
+        item_refs = (ref for group in package.get(GROUPS, []) for ref in group.get(REFS, []) if RESIDREF in ref)
+        for ref in item_refs:
+            query = {'$and': [{'item_id': ref[RESIDREF]}, {config.VERSION: ref[config.VERSION]}]}
+            items = self.get_from_mongo(req=None, lookup=query)
+            for item in items:
+                # If allow_post_publish_actions is False then the item has been copied to Legal Archive already
+                if item['allow_post_publish_actions']:
+                    self.remove_expired(item)
+
+    def _update_flags(self, doc, log_msg):
         """
         Update allow_post_publish_actions to False. Also, update can_be_removed to True if item is killed.
 
@@ -370,85 +398,84 @@ class PublishedItemService(BaseService):
             update_can_be_removed = (items.count() > 0)
 
         if update_can_be_removed:
-            get_resource_service('archived').delete_action({config.ID_FIELD: doc[config.ID_FIELD]})
+            get_resource_service('archived').delete({config.ID_FIELD: doc[config.ID_FIELD]})
             flag_updates['can_be_removed'] = True
 
-        logger.info('Updated flags for the published item {} with headline {} and version {} and expiry {}.'.format(
-            doc['item_id'], doc.get('headline'), doc[config.VERSION], doc['expiry']))
+        logger.info('Updated flags for the published item ' + log_msg)
 
         return flag_updates
 
-    def _upsert_into_legal_archive(self, doc):
+    def _upsert_into_legal_archive(self, doc, version_id_field, log_msg_format, log_msg):
         """
         For the expired published article represented by doc, do the below:
             1.  Fetch version history of article so that version_history_doc[config.VERSION] <= doc[config.VERSION].
             2.  De-normalize the expired article and each version of the article
             3.  Fetch Transmission Details so that queued_item['item_version'] == doc[config.VERSION]
             4.  De-normalize the Transmission Details
-            5.  An article can be published more than time before it's removed from production database, it's important
+            5.  An article can be published more than once before it's removed from production database, it's important
                 to check if the article already exists in Legal Archive DB. If exists then replace the article in
                 Legal Archive DB, otherwise create.
             6.  Create the Version History of the article in Legal Archive DB.
             7.  Create the Transmission Details in Legal Archive DB.
-
-        :param: doc - expired doc from 'published' collection.
+        :param doc: - expired doc from 'published' collection.
+        :param versioned_id_field:
+        :param log_msg_format:
+        :param log_msg:
         :return: transmission details
         """
 
+        logging.info('Preparing Article to be inserted into Legal Archive ' + log_msg)
         legal_archive_doc = doc.copy()
-        logging.info('Preparing Article to be inserted into Legal Archive %s' % legal_archive_doc.get('unique_name'))
 
         # Removing Irrelevant properties
         legal_archive_doc[config.ID_FIELD] = legal_archive_doc['item_id']
         del legal_archive_doc[config.ETAG]
         del legal_archive_doc['item_id']
 
-        logging.info('Removed Irrelevant properties from the article %s' % legal_archive_doc.get('unique_name'))
+        logging.info('Removed irrelevant properties from the article ' + log_msg)
 
         # Step 3 - Fetch Publish Queue Items
         lookup = {'item_id': legal_archive_doc[config.ID_FIELD], 'item_version': legal_archive_doc[config.VERSION]}
         queue_items = list(get_resource_service('publish_queue').get(req=None, lookup=lookup))
-        assert len(queue_items) > 0, \
-            "Transmission Details are empty for published item %s" % legal_archive_doc[config.ID_FIELD]
-        logging.info('Fetched transmission details for article %s' % legal_archive_doc.get('unique_name'))
+        logging.info('Fetched transmission details for article ' + log_msg + ' Number of queued items: ' +
+                     str(len(queue_items)))
 
         # Step 4
-        subscriber_ids = list({str(queue_item['subscriber_id']) for queue_item in queue_items})
-        query = {'$and': [{config.ID_FIELD: {'$in': subscriber_ids}}]}
-        subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
-        subscribers = {str(subscriber[config.ID_FIELD]): subscriber for subscriber in subscribers}
+        if queue_items:
+            subscriber_ids = list({str(queue_item['subscriber_id']) for queue_item in queue_items})
+            query = {'$and': [{config.ID_FIELD: {'$in': subscriber_ids}}]}
+            subscribers = list(get_resource_service('subscribers').get(req=None, lookup=query))
+            subscribers = {str(subscriber[config.ID_FIELD]): subscriber for subscriber in subscribers}
 
-        for queue_item in queue_items:
-            del queue_item[config.ETAG]
-            queue_item['subscriber_id'] = subscribers[str(queue_item['subscriber_id'])]['name']
-        logging.info(
-            'De-normalized the Transmission Detail records of article %s' % legal_archive_doc.get('unique_name'))
+            for queue_item in queue_items:
+                del queue_item[config.ETAG]
+                queue_item['subscriber_id'] = subscribers[str(queue_item['subscriber_id'])]['name']
+            logging.info('De-normalized the Transmission Detail records of article ' + log_msg)
 
         # Step 2 - De-normalizing the legal archive doc
-        self._denormalize_user_desk(legal_archive_doc)
+        self._denormalize_user_desk(legal_archive_doc, log_msg)
 
         # Step 1 - Get Version History
         req = ParsedRequest()
         req.sort = '[("%s", 1)]' % config.VERSION
-        resource_def = app.config['DOMAIN']['archive']
-        version_id = versioned_id_field(resource_def)
-        lookup = {'$and': [{version_id: legal_archive_doc[config.ID_FIELD]},
+        lookup = {'$and': [{version_id_field: legal_archive_doc[config.ID_FIELD]},
                            {config.VERSION: {'$lte': legal_archive_doc[config.VERSION]}}]}
 
         version_history = list(get_resource_service('archive_versions').get(req=req, lookup=lookup))
         legal_archive_doc_versions = []
         for versioned_doc in version_history:
-            self._denormalize_user_desk(versioned_doc)
+            self._denormalize_user_desk(versioned_doc, log_msg_format.format(item_id=versioned_doc[version_id_field],
+                                                                             **versioned_doc))
             del versioned_doc[config.ETAG]
             legal_archive_doc_versions.append(versioned_doc)
-        logging.info('Fetched version history for article %s' % legal_archive_doc.get('unique_name'))
+        logging.info('Fetched and de-normalized version history for article ' + log_msg)
 
         legal_archive_service = get_resource_service(LEGAL_ARCHIVE_NAME)
         legal_archive_versions_service = get_resource_service(LEGAL_ARCHIVE_VERSIONS_NAME)
         legal_publish_queue_service = get_resource_service(LEGAL_PUBLISH_QUEUE_NAME)
 
         # Step 5 - Upserting Legal Archive
-        logging.info('Upserting Legal Archive Repo with article %s' % legal_archive_doc.get('unique_name'))
+        logging.info('Upserting Legal Archive Repo with article ' + log_msg)
 
         article_in_legal_archive = legal_archive_service.find_one(_id=legal_archive_doc[config.ID_FIELD],
                                                                   req=ParsedRequest())
@@ -460,14 +487,19 @@ class PublishedItemService(BaseService):
         # Step 6
         if legal_archive_doc_versions:
             legal_archive_versions_service.post(legal_archive_doc_versions)
-        # Step 7
-        legal_publish_queue_service.post(queue_items)
 
-        logging.info('Upsert completed for article %s' % legal_archive_doc.get('unique_name'))
+        # Step 7
+        if queue_items:
+            legal_publish_queue_service.post(queue_items)
+
+        logging.info('Upsert completed for article ' + log_msg)
 
         return queue_items
 
-    def _denormalize_user_desk(self, legal_archive_doc):
+    def _denormalize_user_desk(self, legal_archive_doc, log_msg):
+        """
+        De-normalizes user , desk and stage details in legal_archive_doc.
+        """
 
         # De-normalizing User Details
         if legal_archive_doc.get('original_creator'):
@@ -475,19 +507,20 @@ class PublishedItemService(BaseService):
 
         if legal_archive_doc.get('version_creator'):
             legal_archive_doc['version_creator'] = self.__get_user_name(legal_archive_doc['version_creator'])
-        logging.info('De-normalized User Details for article %s' % legal_archive_doc.get('unique_name'))
+
+        logging.info('De-normalized User Details for article ' + log_msg)
 
         # De-normalizing Desk and Stage details
         if legal_archive_doc.get('task'):
             if legal_archive_doc['task'].get('desk'):
                 desk = get_resource_service('desks').find_one(req=None, _id=str(legal_archive_doc['task']['desk']))
                 legal_archive_doc['task']['desk'] = desk['name']
-                logging.info('De-normalized desk details for article %s' % legal_archive_doc.get('unique_name'))
+                logging.info('De-normalized Desk Details for article ' + log_msg)
 
             if legal_archive_doc['task'].get('stage'):
                 stage = get_resource_service('stages').find_one(req=None, _id=str(legal_archive_doc['task']['stage']))
                 legal_archive_doc['task']['stage'] = stage['name']
-                logging.info('De-normalized stage details for article %s' % legal_archive_doc.get('unique_name'))
+                logging.info('De-normalized Stage Details for article ' + log_msg)
 
             if legal_archive_doc['task'].get('user'):
                 legal_archive_doc['task']['user'] = self.__get_user_name(legal_archive_doc['task']['user'])

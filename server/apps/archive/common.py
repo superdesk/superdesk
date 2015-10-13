@@ -491,3 +491,23 @@ def is_item_in_package(item):
     """
     return item.get(LINKED_IN_PACKAGES, None) \
         and sum(1 for x in item.get(LINKED_IN_PACKAGES, []) if x.get(PACKAGE_TYPE, '') == '')
+
+
+def is_normal_package(doc):
+    """
+    Returns True if the passed doc is a package and not a takes package. Otherwise, returns False.
+
+    :return: True if it's a Package and not a Takes Package, False otherwise.
+    """
+
+    return not is_takes_package(doc)
+
+
+def is_takes_package(doc):
+    """
+    Returns True if the passed doc is a takes package. Otherwise, returns False.
+
+    :return: True if it's a Takes Package, False otherwise.
+    """
+
+    return doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and doc.get(PACKAGE_TYPE, '') == TAKES_PACKAGE

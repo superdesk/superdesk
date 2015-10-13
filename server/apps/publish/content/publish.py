@@ -30,7 +30,8 @@ class ArchivePublishService(BasePublishService):
         :param dict original: original document
         :param dict updates: updates related to original document
         """
-        updates[ITEM_OPERATION] = ITEM_PUBLISH
+
+        updates.setdefault(ITEM_OPERATION, ITEM_PUBLISH)
         if original.get('publish_schedule') or updates.get('publish_schedule'):
             updates[ITEM_STATE] = CONTENT_STATE.SCHEDULED
         else:

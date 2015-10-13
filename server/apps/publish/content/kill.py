@@ -29,8 +29,8 @@ class KillPublishService(BasePublishService):
         if is_item_in_package(original):
             raise SuperdeskApiError.badRequestError(message='This item is in a package' +
                                                             ' it needs to be removed before the item can be killed')
-        updates[ITEM_OPERATION] = ITEM_KILL
         super().on_update(updates, original)
+        updates[ITEM_OPERATION] = ITEM_KILL
         self.takes_package_service.process_killed_takes_package(original)
 
     def update(self, id, updates, original):

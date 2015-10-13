@@ -19,7 +19,7 @@ from eve.validation import ValidationError
 
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES, EMBARGO
-from superdesk.metadata.packages import SEQUENCE, LINKED_IN_PACKAGES
+from superdesk.metadata.packages import SEQUENCE, LINKED_IN_PACKAGES, GROUPS
 from superdesk.publish import SUBSCRIBER_TYPES
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 import superdesk
@@ -28,7 +28,7 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule
+from apps.archive.common import validate_schedule, ITEM_OPERATION
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.publish.formatters import get_formatter
@@ -134,6 +134,7 @@ class BasePublishService(BaseService):
             raise ValidationError(package_validation_errors)
 
         self._set_updates(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
+        updates[ITEM_OPERATION] = ITEM_PUBLISH
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original[config.ID_FIELD])
@@ -217,6 +218,7 @@ class BasePublishService(BaseService):
                                              package=package)
 
         self._set_updates(package, package_updates, last_updated)
+        package_updates.setdefault(ITEM_OPERATION, updates.get(ITEM_OPERATION, ITEM_PUBLISH))
         self._update_archive(package, package_updates)
 
         '''
@@ -266,9 +268,7 @@ class BasePublishService(BaseService):
                     raise SuperdeskApiError.badRequestError(
                         "Package item with id: {} does not exist.".format(guid))
 
-                if package_item[ITEM_STATE] not in PUBLISH_STATES:
-                    # if the item is not published then publish it
-
+                if package_item[ITEM_STATE] not in PUBLISH_STATES:  # if the item is not published then publish it
                     if package_item[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                         # if the item is a package do recursion to publish
                         sub_updates = {i: updates[i] for i in ['state', 'operation'] if i in updates}
@@ -429,7 +429,7 @@ class BasePublishService(BaseService):
         body_html = updates_of_take_to_be_published.get('body_html', original_of_take_to_be_published['body_html'])
         package_updates = {}
 
-        groups = package.get('groups', [])
+        groups = package.get(GROUPS, [])
         if groups:
             take_refs = [ref for group in groups if group['id'] == 'main' for ref in group.get('refs')]
             sequence_num_of_take_to_be_published = 0
@@ -464,6 +464,12 @@ class BasePublishService(BaseService):
 
             for metadata in metadata_tobe_copied:
                 package_updates[metadata] = metadata_from.get(metadata)
+
+            package_updates[GROUPS] = groups
+            self.package_service.update_field_in_package(package_updates,
+                                                         original_of_take_to_be_published[config.ID_FIELD],
+                                                         config.VERSION,
+                                                         updates_of_take_to_be_published[config.VERSION])
 
         return package_updates
 

@@ -15,7 +15,7 @@ from eve.utils import ParsedRequest, date_to_str, config
 import superdesk
 from superdesk.celery_task_utils import is_task_running, mark_task_as_not_running
 from superdesk.utc import utcnow
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, ITEM_TYPE
 from apps.archive.commands import get_overdue_scheduled_items
 
 logger = logging.getLogger(__name__)
@@ -53,8 +53,9 @@ class RemoveExpiredPublishContent(superdesk.Command):
         items = self.get_expired_items(now)
 
         for item in items:
-            logger.info('deleting article of type {} with id {} and headline {} -- expired on: {} now: {}'.
-                        format(item['type'], item[config.ID_FIELD], item['headline'], item['expiry'], now))
+            logger.info('Removing article {{id: {}, version: {}, type: {}, headline: {}, expired_on: {} }}'.
+                        format(item[config.ID_FIELD], item[config.VERSION], item[ITEM_TYPE], item.get('headline', ''),
+                               item['expiry']))
 
             superdesk.get_resource_service('published').remove_expired(item)
 
