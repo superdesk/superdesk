@@ -1,7 +1,7 @@
 <div class="highlights-list dropdown" 
      dropdown
      dropdown-append-to-body
-     on-toggle="toggleActions(open)">
+     on-toggle="toggleClass(open)">
 
     <button class="dropdown-toggle" dropdown-toggle>
         <i ng-class="{'icon-star-color': highlights.length === 1, 'icon-multi-star-color': highlights.length > 1}"></i>
@@ -14,8 +14,8 @@
                 <i class="icon-close-small icon-white"></i>
             </button>
         </li>
-        <li ng-repeat="highlight in highlights">
-            {{ highlight.name }}
+        <li ng-repeat="highlight in highlights track by highlight._id">
+            {{ :: highlight.name }}
             <button class="btn btn-mini" ng-click="unmarkHighlight(highlight._id)" translate>REMOVE</button>
         </li>
         <li class="none" ng-show="highlights.length === 0" translate>None</li>

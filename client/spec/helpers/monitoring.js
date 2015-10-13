@@ -393,7 +393,9 @@ function Monitoring() {
     this.checkMarkedForHighlight = function(highlight, group, item) {
         var crtItem = this.getItem(group, item);
         expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe'))
-            .toContain(highlight);
+        browser.actions().mouseMove(crtItem.element(by.className('icon-star-color'))).perform();
+        element.all(by.css('.dropdown-menu.open li')).then(function (items) {
+            expect(items[1].getText()).toContain(highlight);
+        });
     };
 }

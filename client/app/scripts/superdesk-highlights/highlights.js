@@ -172,10 +172,10 @@
             link: function(scope, elem) {
 
                 /*
-                 * Set 'open' class on dropdown menu element
+                 * Toggle 'open' class on dropdown menu element
                  * @param {string} isOpen
                  */
-                scope.toggleActions = function (isOpen) {
+                scope.toggleClass = function (isOpen) {
                     scope.open = isOpen;
                 };
 
@@ -203,7 +203,7 @@
                  * Removing highlight from an item
                  * @param {string} highlight
                  */
-                scope.unmarkHighlight = function unmarkHighlight(highlight) {
+                scope.unmarkHighlight = function (highlight) {
                     highlightsService.markItem(highlight, scope.item._id).then(function() {
                         scope.item.highlights = _.without(scope.item.highlights, highlight);
                     });
