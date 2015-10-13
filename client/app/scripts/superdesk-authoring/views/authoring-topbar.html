@@ -9,7 +9,7 @@
     </div>
 
     <div class="button-stack right-stack">
-        <button class="btn btn-medium pull-left" ng-if="item._locked && can_unlock() && itemActions.save" ng-click="unlock()" ng-disabled="unlockClicked" translate>Unlock</button>
+        <button class="btn btn-medium pull-left" ng-if="item._locked && !item.more_coming && can_unlock() && itemActions.save" ng-click="unlock()" ng-disabled="unlockClicked" translate>Unlock</button>
 
         <button id="Edit" class="btn btn-medium pull-left" ng-if="item._type !== 'legal_archive'"
             ng-show="action === 'view' && !item._locked && itemActions.edit"

@@ -1189,7 +1189,7 @@
                     });
 
                     scope.add = function(user) {
-                        scope.deskMembers.push(user);
+                        scope.deskMembers.unshift(user);
                     };
 
                     scope.remove = function(user) {
