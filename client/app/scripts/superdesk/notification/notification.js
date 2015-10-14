@@ -80,13 +80,6 @@
         var _this = this;
         _this.message = null;
 
-        $rootScope.$on('disconnected', function(event) {
-            _this.message = 'Disconnected to Notification Server, attempting to reconnect ...';
-            $timeout.cancel(alertTimeout);
-            alertTimeout = $timeout(function() {
-                notify.error(gettext(_this.message));
-            }, 100);
-        });
         $rootScope.$on('connected', function(event) {
             _this.message = 'Connected to Notification Server!';
             $timeout.cancel(successTimeout);
