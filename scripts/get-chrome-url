@@ -18,3 +18,4 @@ if build == 'unknown':
 
 print(BUILDS_URL.format(build))
 
+cd
