@@ -12,9 +12,14 @@ payload = {'os': OS, 'channel': CHANNEL}
 r = requests.get(VERSIONS_URL, params=payload)
 build = r.json()[0]['versions'][0]['branch_base_position']
 
+if build != 'unknown':
+    r = requests.head(BUILDS_URL.format(build))
+    if r.status_code != requests.codes.ok:
+        build = 'unknown'
+
 if build == 'unknown':
 	# The latest passing build
-	build = '338390'
+	build = '353893'
 
 print(BUILDS_URL.format(build))
 
