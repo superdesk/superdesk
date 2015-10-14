@@ -52,3 +52,6 @@ def get_user(required=False):
     if '_id' not in user and required:
         raise SuperdeskApiError.notFoundError('Invalid user.')
     return user
+
+
+superdesk.command('session:gc', RemoveExpiredSessions())

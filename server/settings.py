@@ -100,7 +100,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'session:gc': {
         'task': 'apps.auth.session_purge',
-        'schedule': crontab(minute=20)
+        'schedule': timedelta(minutes=20)
     },
     'spike:gc': {
         'task': 'apps.archive.content_purge',
@@ -174,6 +174,7 @@ INSTALLED_APPS.extend([
     'superdesk.commands',
     'superdesk.locators.locators',
 
+    'apps.auth',
     'apps.archive',
     'apps.stages',
     'apps.desks',
