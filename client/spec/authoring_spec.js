@@ -149,6 +149,7 @@ describe('authoring', function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');
         workspace.editItem('item6', 'Politic');
+        element(by.className('close-preview')).click();
         authoring.changeNormalTheme('dark-theme');
 
         expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme')).toBe(true);
