@@ -167,8 +167,8 @@ function MetadataCtrl(
     resolvePublishScheduleAndEmbargoTS();
 }
 
-MetadataDropdownDirective.$inject = [];
-function MetadataDropdownDirective() {
+MetadataDropdownDirective.$inject = ['$timeout'];
+function MetadataDropdownDirective($timeout) {
     return {
         scope: {
             list: '=',
@@ -193,6 +193,12 @@ function MetadataDropdownDirective() {
                 _.extend(scope.item, o);
                 scope.change({item: scope.item});
             };
+
+            $timeout(function() {
+                if (scope.list && scope.field === 'place') {
+                    scope.places = _.groupBy(scope.list, 'group');
+                }
+            });
         }
     };
 }

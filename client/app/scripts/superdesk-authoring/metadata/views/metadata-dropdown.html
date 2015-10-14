@@ -16,13 +16,19 @@
     <ul class="dropdown-menu">
         <li ng-if="label"><div class="menu-label">{{label}}</div></li>
         <li ng-click="select()" translate><button ng-disabled="disabled">None</button></li>
-        <li ng-repeat="item in list" ng-click="select(item)">
+
+        <li ng-repeat="item in list" ng-click="select(item)" ng-if="field !== 'place'">
             <button ng-disabled="disabled">
                 <i ng-if="icon" class="{{icon}}-{{item.name}}">
                     <span ng-if="field === 'urgency'">{{item.name}}</span>
                 </i> 
                 {{::item.name}}
             </button>
+        </li>
+
+        <li class="place-dropdown" ng-repeat="(region, placelist) in places" ng-if="field === 'place'">
+            {{ ::region }}
+            <button ng-repeat="item in placelist" ng-click="select(item)">{{ ::item.name }}</button>
         </li>
     </ul>
 </div>
