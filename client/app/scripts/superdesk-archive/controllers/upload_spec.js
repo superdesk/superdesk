@@ -59,7 +59,11 @@ define(['./upload'], function(UploadController) {
             expect(scope.items[0].meta).not.toBe(undefined);
             expect(scope.items[0].progress).toBe(0);
 
-            scope.items[0].meta.Description = 'test';
+            // mandatory fields
+            scope.items[0].meta.byline = 'by';
+            scope.items[0].meta.headline = 'headline text';
+            scope.items[0].meta.slugline = 'slugline text';
+            scope.items[0].meta.description = 'description';
 
             scope.save();
             $rootScope.$digest();
@@ -84,6 +88,69 @@ define(['./upload'], function(UploadController) {
             $rootScope.$digest();
 
             expect(resolve).toHaveBeenCalledWith([{}]);
+        }));
+
+        it('can display error message if any of metadata field missing',
+            inject(function($controller, $rootScope, $q, api, upload) {
+            var scope = $rootScope.$new(true);
+
+            $controller(UploadController, {$scope: scope});
+            $rootScope.$digest();
+            expect(scope.items.length).toBe(0);
+
+            scope.addFiles(files);
+            $rootScope.$digest();
+
+            scope.errorMessage = null;
+
+            // missed meta.description field on purpose
+            scope.items[0].meta.byline = 'by';
+            scope.items[0].meta.headline = 'headline text';
+            scope.items[0].meta.slugline = 'slugline text';
+
+            expect(scope.errorMessage).toBe(null);
+
+            scope.save();
+            $rootScope.$digest();
+            expect(scope.errorMessage).toBe('Required field(s) are missing');
+        }));
+        it('can try again to upload when try again is clicked',
+            inject(function($controller, $rootScope, $q, api, upload) {
+            var scope = $rootScope.$new(true);
+
+            spyOn(upload, 'start').and.callThrough();
+
+            scope.resolve = function() {};
+
+            $controller(UploadController, {$scope: scope});
+            $rootScope.$digest();
+            expect(scope.items.length).toBe(0);
+
+            scope.addFiles(files);
+            $rootScope.$digest();
+
+            expect(scope.items.length).toBe(1);
+            expect(scope.items[0].file.type).toBe('text/plain');
+            expect(scope.items[0].meta).not.toBe(undefined);
+            expect(scope.items[0].progress).toBe(0);
+
+            // mandatory fields
+            scope.items[0].meta.byline = 'by';
+            scope.items[0].meta.headline = 'headline text';
+            scope.items[0].meta.slugline = 'slugline text';
+            scope.items[0].meta.description = 'description';
+
+            scope.failed = true;
+            scope.tryAgain();
+            $rootScope.$digest();
+
+            expect(upload.start).toHaveBeenCalledWith({
+                method: 'POST',
+                url: UPLOAD_URL,
+                data: {media: files[0]},
+                headers: api.archive.getHeaders()
+            });
+
         }));
     });
 

@@ -60,7 +60,7 @@
             ws.onclose = function(event) {
                 $rootScope.$broadcast('disconnected');
                 $interval.cancel(connectTimer);
-                connectTimer = $interval(function() { console.log('$interval');
+                connectTimer = $interval(function() {
                     if (ws) {
                         connect();  // Retry to connect for every TIMEOUT interval.
                     }
