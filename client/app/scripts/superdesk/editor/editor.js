@@ -125,8 +125,8 @@ function HistoryStack(initialValue) {
     };
 }
 
-EditorService.$inject = ['spellcheck', '$rootScope'];
-function EditorService(spellcheck, $rootScope) {
+EditorService.$inject = ['spellcheck', '$rootScope', '$timeout'];
+function EditorService(spellcheck, $rootScope, $timeout) {
     this.settings = {spellcheck: true};
 
     this.KEY_CODES = Object.freeze({
@@ -317,15 +317,22 @@ function EditorService(spellcheck, $rootScope) {
      * @param {Node} node
      * @param {Array} tokens
      * @param {string} className
+     * @param {Boolean} preventStore
      */
-    function hilite(node, tokens, className) {
-        self.storeSelection(node);
+    function hilite(node, tokens, className, preventStore) {
+        if (!tokens.length) {
+            self.resetSelection(node);
+            return;
+        }
 
-        angular.forEach(tokens, function(token) {
-            hiliteToken(node, token, className);
-        });
-
-        self.resetSelection(node);
+        if (!preventStore) {
+            self.storeSelection(node);
+        }
+        var token = tokens.shift();
+        hiliteToken(node, token, className);
+        $timeout(function() {
+            hilite(node, tokens, className, true);
+        }, 0);
     }
 
     /**
@@ -462,7 +469,9 @@ function EditorService(spellcheck, $rootScope) {
         while (spans.length) {
             var span = spans.item(0);
             span.parentNode.removeChild(span);
-            span.parentNode.normalize();
+            if (span.parentNode.normalize) {
+                span.parentNode.normalize();
+            }
         }
 
         return node;
