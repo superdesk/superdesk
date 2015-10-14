@@ -196,9 +196,7 @@ function MetadataDropdownDirective($timeout) {
 
             $timeout(function() {
                 if (scope.list && scope.field === 'place') {
-                    scope.places = _.groupBy(scope.list, function(place) {
-                        return place.country === 'Australia' ? 'Australia' : 'Rest of World';
-                    });
+                    scope.places = _.groupBy(scope.list, 'group');
                 }
             });
         }
