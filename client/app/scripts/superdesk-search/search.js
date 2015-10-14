@@ -698,6 +698,8 @@
                     scope.context = 'search';
                     scope.$on('item:deleted:archived', itemDelete);
                     scope.$on('item:published:no_post_publish_actions', itemDelete);
+                    scope.$on('item:spike', queryItems);
+                    scope.$on('item:unspike', queryItems);
                     scrollElem.on('scroll', handleScroll);
 
                     scope.$watch('view', function(newValue, oldValue) {
