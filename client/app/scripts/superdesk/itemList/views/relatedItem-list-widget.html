@@ -69,7 +69,7 @@
                     <div class="basic item-block" 
                         ng-click="view(item)">
                         <div class="content">
-                            <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}}</p>
+                            <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}} {{item.anpa_take_key}}</p>
                         </div>
                     </div>
                    <!--  <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 

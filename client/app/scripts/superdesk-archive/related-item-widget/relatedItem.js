@@ -27,9 +27,9 @@ define([
             $scope.type = 'archiveWidget';
             $scope.itemListOptions = {
                 endpoint: 'search',
-                repo: 'archive',
+                repo: ['archive', 'published'],
                 notStates: ['spiked'],
-                types: ['text', 'picture', 'audio', 'video', 'composite'],
+                types: ['text', 'picture', 'audio', 'video'],
                 page: 1,
                 modificationDateAfter: before24HrDateTime
             };
@@ -56,6 +56,10 @@ define([
                         $scope.origItem = $scope.options.item;
                         $scope.options.item.subject = item.subject;
                         $scope.options.item.anpa_category = item.anpa_category;
+                        $scope.options.item.headline = item.headline;
+                        $scope.options.item.urgency = item.urgency;
+                        $scope.options.item.priority = item.priority;
+                        $scope.options.item.slugline = item.slugline;
                         $scope.options.item.related_to = item._id;
                         api.save('archive', $scope.origItem, $scope.options.item).then(function(_item) {
                             notify.success(gettext('item updated.'));
