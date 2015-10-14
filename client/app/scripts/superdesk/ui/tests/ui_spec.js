@@ -97,6 +97,38 @@ describe('superdesk ui', function() {
             tzdataMock.links = {};
         }));
 
+        it('sets the hasValue flag if the model has a value', function () {
+            var elem,
+                isoScope,
+                parentModel;
+
+            parentModel = {
+                schedule: {at: '0000'}
+            };
+
+            elem = compileDirective(parentModel);
+            isoScope = elem.isolateScope();
+
+            expect(isoScope.hasValue).toBe(true);
+        });
+
+        it('clears the hasValue flag if the model does not have a value',
+            function () {
+                var elem,
+                    isoScope,
+                    parentModel;
+
+                parentModel = {
+                    schedule: {at: ''}
+                };
+
+                elem = compileDirective(parentModel);
+                isoScope = elem.isolateScope();
+
+                expect(isoScope.hasValue).toBe(false);
+            }
+        );
+
         it('can render local time and set utc time', function() {
             var now = new Date();
 
@@ -120,6 +152,40 @@ describe('superdesk ui', function() {
             iscope.setMinutes(now.getMinutes());
             expect(iscope.minutes).toBe(now.getMinutes());
             expect(iscope.model.substr(2, 2)).toBe(format(now.getUTCMinutes()));
+        });
+
+        describe('clearValue() scope method', function () {
+            var isoScope;
+
+            beforeEach(function () {
+                var elem,
+                    parentModel;
+
+                parentModel = {
+                    schedule: {at: '0000'}
+                };
+
+                elem = compileDirective(parentModel);
+                isoScope = elem.isolateScope();
+            });
+
+            it('clears the hasValue flag', function () {
+                isoScope.hasValue = true;
+                isoScope.clearValue();
+                expect(isoScope.hasValue).toBe(false);
+            });
+
+            it('resets the model value', function () {
+                isoScope.hours = 10;
+                isoScope.minutes = 20;
+                isoScope.model = '1020';
+
+                isoScope.clearValue();
+
+                expect(isoScope.hours).toEqual(0);
+                expect(isoScope.minutes).toEqual(0);
+                expect(isoScope.model).toEqual('');
+            });
         });
 
         describe('converting to UTC disabled', function () {
@@ -176,6 +242,12 @@ describe('superdesk ui', function() {
                     expect(isoScope.hours).toEqual(22);
                     expect(isoScope.model).toEqual('2250');
                 });
+
+                it('sets the hasValue flag', function () {
+                    isoScope.hasValue = false;
+                    isoScope.setHours(1);
+                    expect(isoScope.hasValue).toBe(true);
+                });
             });
 
             describe('setMinutes() scope method', function () {
@@ -184,6 +256,12 @@ describe('superdesk ui', function() {
                     isoScope.setMinutes(37);
                     expect(isoScope.minutes).toEqual(37);
                     expect(isoScope.model).toEqual('1837');
+                });
+
+                it('sets the hasValue flag', function () {
+                    isoScope.hasValue = false;
+                    isoScope.setMinutes(1);
+                    expect(isoScope.hasValue).toBe(true);
                 });
             });
         });

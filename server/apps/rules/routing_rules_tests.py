@@ -55,7 +55,7 @@ class ValidateScheduleMethodTestCase(RoutingRuleSchemeServiceTest):
         'apps.rules.routing_rules.all_timezones_set',
         {'Foo/Bar', 'Foo/Baz', 'Here/There'}
     )
-    def test_foo(self):
+    def test_raises_error_on_unknown_time_zone(self):
         from superdesk.errors import SuperdeskApiError
 
         self.schedule['time_zone'] = 'Invalid/Zone'
@@ -68,3 +68,14 @@ class ValidateScheduleMethodTestCase(RoutingRuleSchemeServiceTest):
         msg = msg.lower() if msg else ''
         self.assertIn('time zone', msg)
         self.assertIn('invalid/zone', msg)
+
+    def test_allows_empty_end_time(self):
+        self.schedule['hour_of_day_from'] = '1030'
+        self.schedule['hour_of_day_to'] = ''
+
+        try:
+            self.instance._validate_schedule(self.schedule)
+        except Exception as ex:
+            self.fail(
+                "Unexpected exception on empty hour_of_day_to: {}".format(ex)
+            )

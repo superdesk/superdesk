@@ -239,7 +239,7 @@ Feature: Routing Scheme and Routing Rules
 
 
     @auth @test
-    Scenario: Create an valid Routing Scheme with an empty filter
+    Scenario: Create a valid Routing Scheme with an empty filter
       Given empty "desks"
 
       When we post to "/desks"
@@ -471,7 +471,7 @@ Feature: Routing Scheme and Routing Rules
               "schedule": {
                 "day_of_week": ["FRI", "TUE"],
                 "hour_of_day_from": "0400",
-                "hour_of_day_to": "0600",
+                "hour_of_day_to": "",
                 "time_zone": "Europe/Rome"
               }
             }

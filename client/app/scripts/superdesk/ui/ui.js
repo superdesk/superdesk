@@ -879,33 +879,6 @@ define([
                     );
                 });
 
-                /**
-                 * Set local hours
-                 *
-                 * @param {int} hours
-                 */
-                scope.setHours = function(hours) {
-                    d.setHours(hours);
-                    update();
-                };
-
-                /**
-                 * Set local minutes
-                 *
-                 * @param {int} minutes
-                 */
-                scope.setMinutes = function(minutes) {
-                    d.setMinutes(minutes);
-                    update();
-                };
-
-                /**
-                 * Toggle time picker on/off
-                 */
-                scope.toggle = function() {
-                    scope.open = !scope.open;
-                };
-
                 if (scope.model) {
                     hours = scope.model.substr(0, 2);
                     minutes = scope.model.substr(2, 2);
@@ -922,15 +895,65 @@ define([
                     d.setMinutes(0);
                 }
 
+                // whether or not the model actually has a value
+                scope.hasValue = !!scope.model;
+
+                /**
+                 * Set local hours
+                 *
+                 * @param {int} hours
+                 */
+                scope.setHours = function(hours) {
+                    d.setHours(hours);
+                    scope.hasValue = true;
+                    update();
+                };
+
+                /**
+                 * Set local minutes
+                 *
+                 * @param {int} minutes
+                 */
+                scope.setMinutes = function(minutes) {
+                    d.setMinutes(minutes);
+                    scope.hasValue = true;
+                    update();
+                };
+
+                /**
+                 * Toggle time picker on/off
+                 */
+                scope.toggle = function() {
+                    scope.open = !scope.open;
+                };
+
+                /**
+                 * Clears the model value (marking it as "no value selected").
+                 *
+                 * @method clearValue
+                 */
+                scope.clearValue = function () {
+                    d.setHours(0);
+                    d.setMinutes(0);
+                    scope.hasValue = false;
+                    update();
+                }
+
                 update();
 
                 /**
                  * Update scope using local time and model using utc time
                  */
                 function update() {
-                    scope.hours = d.getHours();
-                    scope.minutes = d.getMinutes();
-                    scope.model = utcConvert ? utc() : noUtcTime(d);
+                    if (scope.hasValue) {
+                        scope.hours = d.getHours();
+                        scope.minutes = d.getMinutes();
+                        scope.model = utcConvert ? utc() : noUtcTime(d);
+                    } else {
+                        scope.hours = 0;
+                        scope.minutes = 0;
+                        scope.model = '';
+                    }
                 }
 
                 /**

@@ -275,7 +275,7 @@ class RoutingRuleSchemeService(BaseService):
 
         :param dict schedule: the routing schedule configuration to validate
 
-        :raises SuperdeskApiError: if `schedule` validation fails
+        :raises SuperdeskApiError: if validation of `schedule` fails
         """
         if schedule is not None \
                 and (len(schedule) == 0
@@ -293,13 +293,19 @@ class RoutingRuleSchemeService(BaseService):
                 except:
                     raise SuperdeskApiError.badRequestError(message="Invalid value for from time.")
 
-                try:
-                    to_time = datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
-                except:
-                    raise SuperdeskApiError.badRequestError(message="Invalid value for to time.")
+                to_time = schedule.get('hour_of_day_to', '')
+                if to_time:
+                    try:
+                        to_time = datetime.strptime(to_time, '%H%M')
+                    except:
+                        raise SuperdeskApiError.badRequestError(
+                            message="Invalid value for hour_of_day_to "
+                                    "(expected %H%M).")
 
-                if from_time > to_time:
-                    raise SuperdeskApiError.badRequestError(message="From time should be less than To Time.")
+                    if from_time > to_time:
+                        raise SuperdeskApiError.badRequestError(
+                            message="From time should be less than To Time."
+                        )
 
             time_zone = schedule.get('time_zone')
 
