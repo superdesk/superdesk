@@ -1301,7 +1301,19 @@
     }
 
     function AuthoringTopbarDirective() {
-        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html'};
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html',
+            link: function(scope) {
+                scope.saveDisabled = false;
+                scope.saveTopbar = function(item) {
+                    scope.saveDisabled = true;
+                    return scope.save(item)
+                    ['finally'](function() {
+                        scope.saveDisabled = false;
+                    });
+                };
+            }
+        };
     }
 
     function DashboardCard() {
@@ -1940,14 +1952,15 @@
                 /* Creates a copy of dateline object from item.__proto__.dateline */
                 scope.$watch('item', function(item) {
                     if (item) {
-                        var updates = {'dateline': {'source': item.dateline.source, 'date': item.dateline.date,
-                            'located': item.dateline.located, 'text': item.dateline.text}};
-
-                        if (item.dateline.located) {
-                            var monthAndDay = $filter('formatDatelineToMMDD')(item.dateline.date, item.dateline.located);
-                            scope.datelineMonth = monthAndDay.month;
-                            scope.datelineDay = monthAndDay.day;
-                            scope.resetNumberOfDays(false);
+                        var updates = {dateline: {}};
+                        if (item.dateline) {
+                            updates.dateline = _.pick(item.dateline, ['source', 'date', 'located', 'text']);
+                            if (item.dateline.located) {
+                                var monthAndDay = $filter('formatDatelineToMMDD')(item.dateline.date, item.dateline.located);
+                                scope.datelineMonth = monthAndDay.month;
+                                scope.datelineDay = monthAndDay.day;
+                                scope.resetNumberOfDays(false);
+                            }
                         }
 
                         _.extend(item, updates);

@@ -193,7 +193,7 @@ describe('Content', function() {
 
         setEmbargo();
 
-        element(by.css('[ng-click="save(item)"]')).click();
+        element(by.css('[ng-click="saveTopbar(item)"]')).click();
         element(by.id('closeAuthoringBtn')).click();
 
         content.previewItem('item3');
@@ -207,7 +207,7 @@ describe('Content', function() {
 
         setEmbargo();
 
-        element(by.css('[ng-click="save(item)"]')).click();
+        element(by.css('[ng-click="saveTopbar(item)"]')).click();
         element(by.id('closeAuthoringBtn')).click();
 
         element(by.className('sd-create-btn')).click();
