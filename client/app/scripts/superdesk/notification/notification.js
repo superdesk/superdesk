@@ -42,7 +42,7 @@
         var bindEvents = function() {
             ws.onmessage = function(event) {
                 var msg = angular.fromJson(event.data);
-                $rootScope.$broadcast(msg.event, msg.extra);
+                //$rootScope.$broadcast(msg.event, msg.extra);
                 if (_.contains(ReloadEvents, msg.event)) {
                     $rootScope.$broadcast('reload', msg);
                 }
@@ -60,7 +60,7 @@
             ws.onclose = function(event) {
                 $rootScope.$broadcast('disconnected');
                 $interval.cancel(connectTimer);
-                connectTimer = $interval(function() { console.log('$interval');
+                connectTimer = $interval(function() {
                     if (ws) {
                         connect();  // Retry to connect for every TIMEOUT interval.
                     }
