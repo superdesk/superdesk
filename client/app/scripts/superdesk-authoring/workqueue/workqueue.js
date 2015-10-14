@@ -53,6 +53,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
 
     $scope.$on('item:lock', updateWorkqueue);
     $scope.$on('item:unlock', updateWorkqueue);
+    $scope.$on('$locationChangeSuccess', updateWorkqueue);
     $scope.$on('media_archive', function(e, data) {
         workqueue.updateItem(data.item);
     });

@@ -47,14 +47,23 @@
 			 ng-if="highlight"
 			 translate>Export</button>
 
-        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit" class="navbtn dropdown strict multiedit-dropdown pull-left" title="{{ :: 'Multiedit' | translate }}" dropdown>
+        <button class="navbtn navbtn-hover strict" title="{{ :: 'Minimize' | translate }}" ng-click="minimize()">
+            <i class="big-icon-minimize"></i>
+        </button>
+
+        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit"
+             class="navbtn dropdown strict multiedit-dropdown pull-left strict"
+             title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="big-icon-multiedit"></i>
             </button>
             <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
         </div>
 
-        <div id="authoring-extra-dropdown" ng-if="item._type !== 'legal_archive'" class="navbtn dropdown pull-left" dropdown>
+        <div id="authoring-extra-dropdown"
+             ng-if="item._type !== 'legal_archive'"
+             class="navbtn dropdown pull-left strict"
+             title="{{ :: 'More actions' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
                 <i class="icon-dots-vertical"></i>
             </button>
