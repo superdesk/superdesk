@@ -24,7 +24,6 @@
             <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | limitTo: 40}}</span>
             <div class="highlights-box" ng-if="item.highlights" sd-highlights-title data-item="item"></div>
             <span class="item-heading" id="title" title="{{ item.headline }}">{{ item.headline | limitTo: 90 || item.type }}</span> 
-            <!-- <div class="headline"></div> -->
             <time sd-datetime data-date="item.versioncreated"></time>
         </div>
         <div class="line">

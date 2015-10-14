@@ -1,18 +1,23 @@
-<div class="highlights-title" ng-mouseenter="openTooltip()" ng-mouseleave="closeTooltip()">
-	<i ng-class="{'icon-star-color': highlights.length === 1, 'icon-multi-star-color': highlights.length > 1}"
-		tooltip-html-unsafe="{{ htmlTooltip }}"
-		tooltip-placement="{{ orientation }}"
-		tooltip-trigger="toggle"></i>
+<div class="highlights-list dropdown" 
+     dropdown
+     dropdown-append-to-body
+     on-toggle="toggleClass(open)">
 
-	<div class="unmark">
-		<h5 translate>MARKED FOR</h5>
-		<ul class="marked">
-			<li ng-repeat="highlight in highlights">
-				{{ highlight.name }}
-				<button class="btn btn-light btn-mini"
-					data-highlight="{{ highlight._id }}" translate>REMOVE</button>
-			</li>
-			<li ng-show="highlights.length === 0" translate>None</li>
-		</ul>
-	</div>
+    <button class="dropdown-toggle" dropdown-toggle>
+        <i ng-class="{'icon-star-color': highlights.length === 1, 'icon-multi-star-color': highlights.length > 1}"></i>
+    </button>
+
+    <ul class="dropdown-menu highlights-list-menu" ng-class="{open: open}" ng-click="$event.stopPropagation()">
+        <li>
+            <div class="menu-label" translate>Marked For</div>
+            <button class="close-button" dropdown-toggle>
+                <i class="icon-close-small icon-white"></i>
+            </button>
+        </li>
+        <li ng-repeat="highlight in highlights track by highlight._id">
+            {{ :: highlight.name }}
+            <button class="btn btn-mini" ng-click="unmarkHighlight(highlight._id)" translate>REMOVE</button>
+        </li>
+        <li class="none" ng-show="highlights.length === 0" translate>None</li>
+    </ul>
 </div>
