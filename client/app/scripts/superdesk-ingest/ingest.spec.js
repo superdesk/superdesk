@@ -124,12 +124,6 @@ describe('ingest', function() {
                 'sdWeekdayPicker', 'sdTimepickerAlt', 'sdTypeahead'
             ];
 
-            $provide.constant('config', {
-                server: {
-                    timezone: 'FOO (UTC+3.141592)'
-                }
-            });
-
             fakeTzData = {
                 $promise: null,
                 zones: {},
@@ -169,10 +163,6 @@ describe('ingest', function() {
                 schedule: {}
             };
         }));
-
-        it('initializes server timezone in scope', function () {
-            expect(isoScope.serverTimezone).toEqual('FOO (UTC+3.141592)');
-        });
 
         it('initially clears the time zone search term', function () {
             expect(isoScope.tzSearchTerm).toEqual('');

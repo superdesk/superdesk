@@ -35,6 +35,7 @@
                     ng-repeat="tz in matchingTimeZones track by tz"
                     >{{ ::tz }}</li>
                 <li ng-show="tzSearchTerm && matchingTimeZones.length === 0"
+                    class="no-match"
                     translate>(no matches)</li>
             </ul>
 

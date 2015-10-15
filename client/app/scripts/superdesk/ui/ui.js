@@ -937,7 +937,7 @@ define([
                     d.setMinutes(0);
                     scope.hasValue = false;
                     update();
-                }
+                };
 
                 update();
 

@@ -25,8 +25,8 @@ describe('dashboard', function() {
 
     it('add multiple monitoring widgets', function() {
         dashboard.showDashboardSettings();
-        dashboard.addWidget(4);
-        dashboard.addWidget(4);
+        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.addWidget(3);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(2);
         expect(dashboard.getGroups(0).count()).toBe(4);
@@ -53,7 +53,7 @@ describe('dashboard', function() {
 
     it('configure a label for the view', function() {
         dashboard.showDashboardSettings();
-        dashboard.addWidget(4);
+        dashboard.addWidget(3);  // the monitoring widget
         dashboard.doneAction();
 
         dashboard.showMonitoringSettings(0);
