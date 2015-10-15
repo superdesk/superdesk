@@ -35,6 +35,9 @@ define(['./upload'], function(UploadController) {
                 };
             });
         }));
+        beforeEach(inject(function (session) {
+            session.identity = {_id: 'user:1', byline: 'Admin'};
+        }));
 
         it('can upload files when added', inject(function($controller, $rootScope, $q, api, upload) {
             var scope = $rootScope.$new(true);
@@ -60,7 +63,6 @@ define(['./upload'], function(UploadController) {
             expect(scope.items[0].progress).toBe(0);
 
             // mandatory fields
-            scope.items[0].meta.byline = 'by';
             scope.items[0].meta.headline = 'headline text';
             scope.items[0].meta.slugline = 'slugline text';
             scope.items[0].meta.description = 'description';
@@ -104,7 +106,6 @@ define(['./upload'], function(UploadController) {
             scope.errorMessage = null;
 
             // missed meta.description field on purpose
-            scope.items[0].meta.byline = 'by';
             scope.items[0].meta.headline = 'headline text';
             scope.items[0].meta.slugline = 'slugline text';
 
@@ -135,7 +136,6 @@ define(['./upload'], function(UploadController) {
             expect(scope.items[0].progress).toBe(0);
 
             // mandatory fields
-            scope.items[0].meta.byline = 'by';
             scope.items[0].meta.headline = 'headline text';
             scope.items[0].meta.slugline = 'slugline text';
             scope.items[0].meta.description = 'description';

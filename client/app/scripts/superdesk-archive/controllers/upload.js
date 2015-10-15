@@ -1,14 +1,16 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService'];
-    function UploadController($scope, $q, upload, api, archiveService) {
+    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService', 'session'];
+    function UploadController($scope, $q, upload, api, archiveService, session) {
 
         $scope.items = [];
         $scope.saving = false;
         $scope.failed = false;
         $scope.enableSave = false;
-        var requiredFields = ['headline', 'description', 'byline', 'slugline'];
+        $scope.currentUser =  session.identity;
+
+        var requiredFields = ['headline', 'description', 'slugline'];
 
         var uploadFile = function(item) {
             var handleError = function(reason) {
@@ -68,7 +70,7 @@ define(['lodash'], function(_) {
             _.each(files, function(file) {
                 var item = {
                     file: file,
-                    meta: {},
+                    meta: {byline: $scope.currentUser.byline},  // initialize meta.byline from user profile
                     progress: 0
                 };
                 item.cssType = item.file.type.split('/')[0];
