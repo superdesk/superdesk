@@ -85,7 +85,10 @@ function GlobalSearch() {
      */
     this.actionOnItem = function(action, index) {
         var menu = this.openItemMenu(index);
-        menu.element(by.partialLinkText(action)).click();
+        menu.element(by.partialLinkText(action)).waitReady()
+        .then(function(elem) {
+            elem.click();
+        });
     };
 
     /**

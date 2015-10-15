@@ -1,12 +1,16 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService'];
-    function UploadController($scope, $q, upload, api, archiveService) {
+    UploadController.$inject = ['$scope', '$q', 'upload', 'api', 'archiveService', 'session'];
+    function UploadController($scope, $q, upload, api, archiveService, session) {
 
         $scope.items = [];
         $scope.saving = false;
         $scope.failed = false;
+        $scope.enableSave = false;
+        $scope.currentUser =  session.identity;
+
+        var requiredFields = ['headline', 'description', 'slugline'];
 
         var uploadFile = function(item) {
             var handleError = function(reason) {
@@ -42,6 +46,20 @@ define(['lodash'], function(_) {
             $scope.failed = _.some($scope.items, {model: false});
         };
 
+        var validateFields = function () {
+            $scope.errorMessage = null;
+            if (!_.isEmpty($scope.items)) {
+                _.each($scope.items, function(item) {
+                    _.each(requiredFields, function(key) {
+                        if (item.meta[key] == null || _.isEmpty(item.meta[key])) {
+                            $scope.errorMessage = 'Required field(s) are missing';
+                            return false;
+                        }
+                    });
+                });
+            }
+        };
+
         $scope.setAllMeta = function(field, val) {
             _.each($scope.items, function(item) {
                 item.meta[field] = val;
@@ -52,11 +70,12 @@ define(['lodash'], function(_) {
             _.each(files, function(file) {
                 var item = {
                     file: file,
-                    meta: {},
+                    meta: {byline: $scope.currentUser.byline},  // initialize meta.byline from user profile
                     progress: 0
                 };
                 item.cssType = item.file.type.split('/')[0];
                 $scope.items.unshift(item);
+                $scope.enableSave = true;
             });
         };
 
@@ -64,6 +83,7 @@ define(['lodash'], function(_) {
             var promises = [];
             _.each($scope.items, function(item) {
                 if (!item.model && !item.progress) {
+                    item.upload = null;
                     promises.push(uploadFile(item));
                 }
             });
@@ -74,19 +94,22 @@ define(['lodash'], function(_) {
         };
 
         $scope.save = function() {
-            $scope.saving = true;
-            return $scope.upload().then(function(results) {
-                $q.all(_.map($scope.items, function(item) {
-                    archiveService.addTaskToArticle(item.meta);
-                    return api.archive.update(item.model, item.meta);
-                })).then(function(results) {
-                    $scope.resolve(results);
+            validateFields();
+            if ($scope.errorMessage == null) {
+                $scope.saving = true;
+                return $scope.upload().then(function(results) {
+                    $q.all(_.map($scope.items, function(item) {
+                        archiveService.addTaskToArticle(item.meta);
+                        return api.archive.update(item.model, item.meta);
+                    })).then(function(results) {
+                        $scope.resolve(results);
+                    });
+                })
+                ['finally'](function() {
+                    $scope.saving = false;
+                    checkFail();
                 });
-            })
-            ['finally'](function() {
-                $scope.saving = false;
-                checkFail();
-            });
+            }
         };
 
         $scope.cancel = function() {
@@ -94,14 +117,24 @@ define(['lodash'], function(_) {
             $scope.reject();
         };
 
+        $scope.tryAgain = function() {
+            $scope.failed = null;
+            $scope.upload();
+        };
+
         $scope.cancelItem = function(item, index) {
-            if (item.model) {
-                api.archive.remove(item.model);
-            } else if (item.upload && item.upload.abort) {
-                item.upload.abort();
+            if (item != null) {
+                if (item.model) {
+                    api.archive.remove(item.model);
+                } else if (item.upload && item.upload.abort) {
+                    item.upload.abort();
+                }
             }
             if (index !== undefined) {
                 $scope.items.splice(index, 1);
+            }
+            if (_.isEmpty($scope.items)) {
+                $scope.enableSave = false;
             }
             checkFail();
         };
