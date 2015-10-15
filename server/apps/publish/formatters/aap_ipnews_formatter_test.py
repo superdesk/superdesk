@@ -13,6 +13,7 @@ from superdesk.publish.subscribers import SUBSCRIBER_TYPES
 from test_factory import SuperdeskTestCase
 from apps.publish import init_app
 from apps.publish.formatters.aap_ipnews_formatter import AAPIpNewsFormatter
+from apps.publish.formatters.aap_formatter_common import set_subject
 
 
 class AapIpNewsFormatterTest(SuperdeskTestCase):
@@ -196,3 +197,114 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         expected_codes_str += ' px8 0fh px7 px4 pn4 pn5 pn6 pn7 px0'
         expected_codes = set(expected_codes_str.split(' '))
         self.assertSetEqual(codes, expected_codes)
+
+    def testIpNewsFormatterNoSubject(self):
+        article = {
+            'source': 'AAP',
+            'anpa_category': [{'qcode': 'a'}],
+            'headline': 'This is a test headline',
+            'byline': 'joe',
+            'slugline': 'slugline',
+            'subject': [],
+            'anpa_take_key': 'take_key',
+            'unique_id': '1',
+            'type': 'text',
+            'body_html': 'body',
+            'word_count': '1',
+            'priority': 1,
+            'task': {'desk': 1},
+            'urgency': 1,
+            'place': [{'qcode': 'VIC', 'name': 'VIC'}]
+        }
+        subscriber = self.app.data.find('subscribers', None, None)[0]
+
+        f = AAPIpNewsFormatter()
+        seq, doc = f.format(article, subscriber)[0]
+        self.assertEqual(doc['subject_reference'], '00000000')
+        self.assertEqual(doc['headline'], 'VIC:This is a test headline')
+
+        article = {
+            'source': 'AAP',
+            'anpa_category': [{'qcode': 'a'}],
+            'headline': 'This is a test headline',
+            'byline': 'joe',
+            'slugline': 'slugline',
+            'subject': None,
+            'anpa_take_key': 'take_key',
+            'unique_id': '1',
+            'type': 'text',
+            'body_html': 'body',
+            'word_count': '1',
+            'priority': 1,
+            'task': {'desk': 1},
+            'urgency': 1,
+            'place': None
+        }
+
+        seq, doc = f.format(article, subscriber)[0]
+        self.assertEqual(doc['subject_reference'], '00000000')
+        self.assertEqual(doc['headline'], 'This is a test headline')
+
+class DefaultSubjectTest(SuperdeskTestCase):
+    
+    def setUp(self):
+        super().setUp()
+        vocabularies = [{
+            '_id': 'categories',
+            'display_name': 'Categories',
+            'type': 'manageable',
+            'items': [
+                {'is_active': True, 'name': 'Australian General News', 'qcode': 'a'},
+                {'is_active': True, 'name': 'Australian Weather', 'qcode': 'b', 'subject': '17000000'},
+                {'is_active': True, 'name': 'General Features', 'qcode': 'c'},
+                {'is_active': False, 'name': 'Reserved (obsolete/unused)', 'qcode': 'd'},
+                {'is_active': True, 'name': 'Entertainment', 'qcode': 'e', 'subject': '01000000'},
+                {'is_active': True, 'name': 'Finance', 'qcode': 'f', 'subject': '04000000'},
+                {'is_active': False, 'name': 'SportSet', 'qcode': 'g'},
+                {'is_active': True, 'name': 'FormGuide', 'qcode': 'h'},
+                {'is_active': True, 'name': 'International News', 'qcode': 'i'},
+                {'is_active': False, 'name': 'Reserved (obsolete/unused)', 'qcode': 'k'},
+                {'is_active': True, 'name': 'Press Release Service', 'qcode': 'j'},
+                {'is_active': True, 'name': 'Lotteries', 'qcode': 'l'},
+                {'is_active': True, 'name': 'Line Check Messages', 'qcode': 'm'},
+                {'is_active': False, 'name': 'Reserved', 'qcode': 'n'},
+                {'is_active': True, 'name': 'State Parliaments', 'qcode': 'o', 'subject': '11000000'},
+                {'is_active': True, 'name': 'Federal Parliament', 'qcode': 'p', 'subject': '11000000'},
+                {'is_active': True, 'name': 'Stockset', 'qcode': 'q', 'subject': '04000000'},
+                {'is_active': True, 'name': 'Racing (Turf)', 'qcode': 'r', 'subject': '15000000'},
+                {'is_active': True, 'name': 'Overseas Sport', 'qcode': 's', 'subject': '15000000'},
+                {'is_active': True, 'name': 'Domestic Sport', 'qcode': 't', 'subject': '15000000'},
+                {'is_active': False, 'name': 'Reserved (Obsolete/unused)', 'qcode': 'u'},
+                {'is_active': True, 'name': 'Advisories', 'qcode': 'v'},
+                {'is_active': False, 'name': 'Reserved (Obsolete/unused)', 'qcode': 'w'},
+                {'is_active': True, 'name': 'Special Events (olympics/ Aus elections)', 'qcode': 'x'},
+                {'is_active': False, 'name': 'Special Events (obsolete/unused)', 'qcode': 'y'},
+                {'is_active': False, 'name': 'Supplementary Traffic', 'qcode': 'z'}
+            ]
+        }]
+
+        self.app.data.insert('vocabularies', vocabularies)
+        init_app(self.app)
+    
+    def test_subject(self):
+        article = {
+            'anpa_category': [{'qcode': 'a'},{'qcode': 's'}],
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+        }
+
+        self.assertEqual(set_subject({'qcode': 'a'}, article), '04001005')
+        self.assertEqual(set_subject({'qcode': 's'}, article), '15011002')
+        article = {
+            'anpa_category': [{'qcode': 'a'},{'qcode': 's'}],
+            'subject': None,
+        }
+
+        self.assertEqual(set_subject({'qcode': 'a'}, article), None)
+        self.assertEqual(set_subject({'qcode': 's'}, article), None)
+
+        article = {
+            'anpa_category': None,
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+        }
+
+        self.assertEqual(set_subject(None, article), '04001005')
