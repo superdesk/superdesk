@@ -134,7 +134,7 @@
             switch (card.type) {
             case 'stage':
                 // refresh stage if it matches updated stage
-                return !!data.stages[card._id];
+                return !!data.stage[card._id];
 
             case 'personal':
                 return data.user === session.identity._id;
@@ -316,6 +316,7 @@
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;
+                    monitoring.preview(null);
                     return apiquery().then(function(items) {
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
