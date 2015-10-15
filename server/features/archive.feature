@@ -343,6 +343,34 @@ Feature: News Items Archive
       {"_message": "Cannot delete desk as it has article(s)."}
       """
 
+    @auth @test
+    Scenario: Cannot delete desk when it is still referenced in archive version
+      Given empty "desks"
+      And empty "archive"
+      When we post to "/desks" with "SPORTS_DESK_ID" and success
+      """
+      {"name": "Sports", "desk_type": "authoring"}
+      """
+      And we post to "/archive"
+      """
+      [{"guid": "123", "type": "text", "body_html": "<p>content</p>", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we post to "/desks"
+      """
+      {"name": "National", "desk_type": "authoring"}
+      """
+      And we post to "/archive/123/move"
+      """
+      [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      Then we get OK response
+      When we delete "/desks/#SPORTS_DESK_ID#"
+      Then we get error 412
+      """
+      {"_message": "Cannot delete desk as it referenced by article(s) versions."}
+      """
+
     @auth
     Scenario: Sign-off is updated when multiple users modify the article
         When we post to "/archive"

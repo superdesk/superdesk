@@ -4,7 +4,7 @@ Feature: Move or Send Content to another desk
     Scenario: Send Content from personal to another desk
         Given "desks"
         """
-        [{"name": "Sports"}]
+        [{"name": "Sports", "desk_type": "production"}]
         """
         When we post to "archive"
         """
@@ -23,12 +23,14 @@ Feature: Move or Send Content to another desk
         { "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
           "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
         """
+        Then there is no "last_production_desk" in task
+        Then there is no "last_authoring_desk" in task
 
     @auth
     Scenario: Send Content from one desk to another desk and validate metadata set by API
-        Given "desks"
+        Given we have "desks" with "SPORTS_DESK_ID" and success
         """
-        [{"name": "Sports"}]
+        [{"name": "Sports", "desk_type": "authoring"}]
         """
         When we post to "archive"
         """
@@ -40,9 +42,9 @@ Feature: Move or Send Content to another desk
         """
         {"headline": "test1", "sign_off": "abc"}
         """
-        When we post to "/desks"
+        When we post to "/desks" with "FINANCE_DESK_ID" and success
         """
-        [{"name": "Finance"}]
+        [{"name": "Finance", "desk_type": "production" }]
         """
         And we switch user
         And we post to "/archive/123/move"
@@ -54,7 +56,94 @@ Feature: Move or Send Content to another desk
         Then we get existing resource
         """
         { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2, "sign_off": "abc/foo",
-          "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
+          "task": {
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#",
+            "last_production_desk": "#FINANCE_DESK_ID#",
+            "last_authoring_desk": "#SPORTS_DESK_ID#"
+            }
+        }
+        """
+
+    @auth @test
+    Scenario: Send Content from one desk to another desk with same desk_type does not change the last_production_desk and last_authoring_desk
+        Given we have "desks" with "SPORTS_DESK_ID" and success
+        """
+        [{"name": "Sports", "desk_type": "authoring"}]
+        """
+        When we post to "archive"
+        """
+        [{  "type":"text", "headline": "test1", "guid": "123", "state": "submitted",
+            "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
+        """
+        And we get "/archive/123"
+        Then we get existing resource
+        """
+        {"headline": "test1", "sign_off": "abc"}
+        """
+        When we post to "/desks" with "FINANCE_DESK_ID" and success
+        """
+        [{"name": "Finance", "desk_type": "production" }]
+        """
+        And we switch user
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we get "/archive/123"
+        Then we get existing resource
+        """
+        { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2, "sign_off": "abc/foo",
+          "task": {
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#",
+            "last_production_desk": "#FINANCE_DESK_ID#",
+            "last_authoring_desk": "#SPORTS_DESK_ID#"
+            }
+        }
+        """
+        When we post to "/desks" with "NATIONAL_DESK_ID" and success
+        """
+        [{"name": "National", "desk_type": "production" }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we get "/archive/123"
+        Then we get existing resource
+        """
+        { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 3, "sign_off": "abc/foo",
+          "task": {
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#",
+            "last_production_desk": "#FINANCE_DESK_ID#",
+            "last_authoring_desk": "#SPORTS_DESK_ID#"
+            }
+        }
+        """
+        When we post to "/desks" with "ENTERTAINMENT_DESK_ID" and success
+        """
+        [{"name": "Entertainment", "desk_type": "authoring" }]
+        """
+        And we post to "/archive/123/move"
+        """
+        [{"task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+        """
+        Then we get OK response
+        When we get "/archive/123"
+        Then we get existing resource
+        """
+        { "operation": "move", "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 4, "sign_off": "abc/foo",
+          "task": {
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#",
+            "last_production_desk": "#NATIONAL_DESK_ID#",
+            "last_authoring_desk": "#ENTERTAINMENT_DESK_ID#"
+            }
+        }
         """
 
     @auth

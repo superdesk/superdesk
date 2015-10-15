@@ -7,6 +7,8 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+import json
+from eve.utils import ParsedRequest
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk import config
@@ -104,6 +106,7 @@ class DesksService(BaseService):
 
     def create(self, docs, **kwargs):
         for doc in docs:
+            doc.setdefault('desk_type', DeskTypes.authoring.value)
             if not doc.get('incoming_stage', None):
                 stage = {'name': 'New', 'default_incoming': True, 'desk_order': 1, 'task_status': default_status}
                 superdesk.get_resource_service('stages').post([stage])
@@ -131,18 +134,49 @@ class DesksService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as it is assigned as default desk to user(s).')
 
-        routing_rules_query = {'$or': [{'rules.actions.fetch.desk': desk[config.ID_FIELD]},
-                                       {'rules.actions.publish.desk': desk[config.ID_FIELD]}]
-                               }
+        routing_rules_query = {
+            '$or': [
+                {'rules.actions.fetch.desk': desk[config.ID_FIELD]},
+                {'rules.actions.publish.desk': desk[config.ID_FIELD]}
+            ]
+        }
         routing_rules = superdesk.get_resource_service('routing_schemes').get(req=None, lookup=routing_rules_query)
         if routing_rules and routing_rules.count():
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as routing scheme(s) are associated with the desk')
 
-        items = superdesk.get_resource_service('archive').get(req=None,
-                                                              lookup={'task.desk': str(desk[config.ID_FIELD])})
+        archive_query = {
+            'query': {
+                'filtered': {
+                    'filter': {
+                        'or': [
+                            {'term': {'task.desk': str(desk[config.ID_FIELD])}},
+                            {'term': {'task.last_authoring_desk': str(desk[config.ID_FIELD])}},
+                            {'term': {'task.last_production_desk': str(desk[config.ID_FIELD])}}
+                        ]
+                    }
+                }
+            }
+        }
+
+        request = ParsedRequest()
+        request.args = {'source': json.dumps(archive_query)}
+        items = superdesk.get_resource_service('archive').get(req=request, lookup=None)
         if items and items.count():
             raise SuperdeskApiError.preconditionFailedError(message='Cannot delete desk as it has article(s).')
+
+        archive_versions_query = {
+            '$or': [
+                {'task.desk': str(desk[config.ID_FIELD])},
+                {'task.last_authoring_desk': str(desk[config.ID_FIELD])},
+                {'task.last_production_desk': str(desk[config.ID_FIELD])}
+            ]
+        }
+
+        items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
+        if items and items.count():
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Cannot delete desk as it referenced by article(s) versions.')
 
     def delete(self, lookup):
         """
