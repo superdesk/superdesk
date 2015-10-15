@@ -199,6 +199,7 @@ describe('Content', function() {
         content.previewItem('item3');
         element(by.css('[ng-click="tab = \'metadata\'"]')).click();
         expect(element(by.model('item.embargo')).isDisplayed()).toBe(true);
+        content.closePreview();
     });
 
     it('cannot display embargo items in search widget of the package', function() {
