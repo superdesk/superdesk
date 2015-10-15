@@ -185,7 +185,7 @@ function MetadataDropdownDirective($timeout) {
                 var o = {};
 
                 if (angular.isDefined(item)) {
-                    o[scope.field] = (scope.field === 'place') ? [item] : item.name;
+                    o[scope.field] = (scope.field === 'place' || scope.field === 'genre') ? [item] : item.name;
                 } else {
                     o[scope.field] = null;
                 }

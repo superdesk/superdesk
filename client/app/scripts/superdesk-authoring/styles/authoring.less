@@ -526,7 +526,7 @@
             padding-left: 10px;
             text-transform: lowercase;
         }
-        b {
+        .word-count b {
             font-size: 12px;
             line-height: 12px;
             color: #575656;
@@ -537,6 +537,9 @@
             height: 13px; 
             padding-left: 16px;
             .opacity(50);
+        }
+        .dropdown-toggle {
+            line-height: 13px;
         }
     }
 
@@ -574,6 +577,7 @@
                 padding: 0 15px 0 5px;
                 line-height: 24px;
                 text-align: left;
+                min-height: 25px;
                 .box-sizing(border-box);
                 .transition(all .3s);
                 .caret {
@@ -583,6 +587,11 @@
                     margin-top: -3px;
                 }
                 i { vertical-align: middle; }
+                &.line-input {
+                    + .dropdown-menu {
+                        top: -11px;
+                    }
+                }
             }
             &.open {
                 .dropdown-toggle {

@@ -26,6 +26,17 @@
             <label translate>RELATED</label>
             <div class="data"><a href="" ng-click="activateWidget()">{{relatedItems._items.length}}</a></div>
         </div>
+        <div>
+            <label translate>GENRE</label>
+            <div sd-meta-dropdown
+                 class="data"
+                 data-item="item"
+                 data-field="genre"
+                 data-list="metadata.genre"
+                 ng-disabled="!_editable"
+                 data-change="autosave(item)">
+            </div>
+        </div>
     </div>
 
     <div class="authoring-header__detailed">
