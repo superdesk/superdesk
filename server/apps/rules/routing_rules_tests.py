@@ -79,3 +79,117 @@ class ValidateScheduleMethodTestCase(RoutingRuleSchemeServiceTest):
             self.fail(
                 "Unexpected exception on empty hour_of_day_to: {}".format(ex)
             )
+
+
+class GetScheduledRoutingRulesMethodTestCase(RoutingRuleSchemeServiceTest):
+    """Tests for the _get_scheduled_routing_rules() method."""
+
+    def test_returns_only_the_rules_scheduled_at_current_time(self):
+        rules = [{
+            'name': 'rule_1',
+            'schedule': {
+                'day_of_week': ['SAT'],
+                'hour_of_day_from': '0100',
+                'hour_of_day_to': '2300',
+                'time_zone': 'UTC',
+            }
+        }, {
+            'name': 'rule_2',
+            'schedule': {
+                'day_of_week': ['MON', 'TUE', 'WED'],
+                'hour_of_day_from': '2100',
+                'hour_of_day_to': '2200',
+                'time_zone': 'UTC',
+            }
+        }, {
+            'name': 'rule_3',
+            'schedule': {
+                'day_of_week': ['TUE'],
+                'hour_of_day_from': '2200',
+                'hour_of_day_to': '2300',
+                'time_zone': 'UTC',
+            }
+        }]
+
+        now = datetime(2015, 8, 18, 21, 30)  # Tuesday
+
+        result = self.instance._get_scheduled_routing_rules(rules, now)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], rules[1])
+
+    def test_takes_rule_time_zone_into_account(self):
+        rules = [{
+            'name': 'rule_berlin',
+            'schedule': {
+                'day_of_week': ['TUE'],
+                'hour_of_day_from': '1400',
+                'hour_of_day_to': '1500',
+                'time_zone': 'Europe/Berlin',  # UTC +01:00/+02:00
+            }
+        }, {
+            'name': 'rule_singapore',
+            'schedule': {
+                'day_of_week': ['TUE'],
+                'hour_of_day_from': '2200',
+                'hour_of_day_to': '2300',
+                'time_zone': 'Asia/Singapore',  # always UTC +08:00
+            }
+        }]
+
+        now = datetime(2015, 9, 15, 14, 30)  # Tuesday
+
+        result = self.instance._get_scheduled_routing_rules(rules, now)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], rules[1])
+
+    def test_assumes_utc_time_zone_if_none_set(self):
+        rules = [{
+            'name': 'rule_berlin',
+            'schedule': {
+                'day_of_week': ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                'hour_of_day_from': '1450',
+                'hour_of_day_to': '1455',
+                'time_zone': None,
+            }
+        }]
+
+        now = datetime(2015, 9, 15, 14, 52)  # Tuesday
+
+        result = self.instance._get_scheduled_routing_rules(rules, now)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], rules[0])
+
+    def test_assumes_from_the_start_of_the_day_if_start_time_not_set(self):
+        rules = [{
+            'name': 'rule_berlin',
+            'schedule': {
+                'day_of_week': ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                'hour_of_day_from': None,
+                'hour_of_day_to': '2030',
+                'time_zone': 'UTC',
+            }
+        }]
+        now = datetime(2015, 9, 15, 0, 0, 0, 0)  # Tuesday
+
+        result = self.instance._get_scheduled_routing_rules(rules, now)
+
+        self.assertEqual(result, rules)
+
+    def test_assumes_until_the_end_of_the_day_if_end_time_not_set(self):
+        rules = [{
+            'name': 'rule_berlin',
+            'schedule': {
+                'day_of_week': ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                'hour_of_day_from': '1845',
+                'hour_of_day_to': None,
+                'time_zone': 'UTC',
+            }
+        }]
+        now = datetime(2015, 9, 15, 23, 59, 59, 999999)  # Tuesday
+
+        result = self.instance._get_scheduled_routing_rules(rules, now)
+
+        self.assertEqual(result, rules)

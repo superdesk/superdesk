@@ -11,9 +11,11 @@
 import logging
 import superdesk
 
-from enum import Enum
-from datetime import datetime
+import pytz
 from pytz import all_timezones_set
+
+from enum import Enum
+from datetime import datetime, timedelta
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -215,7 +217,9 @@ class RoutingRuleSchemeService(BaseService):
 
         filters_service = superdesk.get_resource_service('content_filters')
 
-        for rule in self.__get_scheduled_routing_rules(rules):
+        now = datetime.utcnow()
+
+        for rule in self._get_scheduled_routing_rules(rules, now):
             content_filter = rule.get('filter', {})
 
             if filters_service.does_match(content_filter, ingest_item):
@@ -325,20 +329,52 @@ class RoutingRuleSchemeService(BaseService):
             if len(rules_with_same_name) > 1:
                 raise SuperdeskApiError.badRequestError("Rule Names must be unique within a scheme")
 
-    def __get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
+    def _get_scheduled_routing_rules(self, rules, current_dt_utc):
         """
         Iterates rules list and returns the list of rules that are scheduled.
+
+        :param list rules: routing rules to check
+        :param datetime current_dt_utc: the value to take as the current
+            time in UTC
+
+        :return: the rules scheduled to be appplied at `current_dt_utc`
+        :rtype: list
         """
+        # make it a timezone-aware object
+        current_dt_utc = current_dt_utc.replace(tzinfo=pytz.utc)
+        delta_minute = timedelta(minutes=1)
+
         scheduled_rules = []
         for rule in rules:
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = set_time(current_datetime, schedule.get('hour_of_day_from', '0000'))
-                to_time = set_time(current_datetime, schedule.get('hour_of_day_to', '2359'), second=59)
-                if not (Weekdays.is_scheduled_day(current_datetime, schedule.get('day_of_week', []))
-                        and (from_time < current_datetime < to_time)):
-                    is_scheduled = False
+                # adjust current time to the schedule's timezone
+                tz_name = schedule.get('time_zone')
+                schedule_tz = pytz.timezone(tz_name) if tz_name else pytz.utc
+                now_tz_schedule = current_dt_utc.astimezone(tz=schedule_tz)
+
+                # Create start and end time-of-day limits. If start time is not
+                # defined, the beginning of the day is assumed. If end time
+                # is not defined, the end of the day is assumed (excluding the
+                # midnight, since at that point a new day has already begun).
+                hour_of_day_from = schedule.get('hour_of_day_from')
+                if not hour_of_day_from:
+                    hour_of_day_from = '0000'  # might be both '' or None
+                from_time = set_time(now_tz_schedule, hour_of_day_from)
+
+                hour_of_day_to = schedule.get('hour_of_day_to')
+                if hour_of_day_to:
+                    to_time = set_time(now_tz_schedule, hour_of_day_to)
+                else:
+                    to_time = set_time(now_tz_schedule, '2359') + delta_minute
+
+                # check if the current day of week and time of day both match
+                day_of_week_matches = Weekdays.is_scheduled_day(
+                    now_tz_schedule, schedule.get('day_of_week', []))
+                time_of_day_matches = (from_time <= now_tz_schedule < to_time)
+
+                is_scheduled = (day_of_week_matches and time_of_day_matches)
 
             if is_scheduled:
                 scheduled_rules.append(rule)
