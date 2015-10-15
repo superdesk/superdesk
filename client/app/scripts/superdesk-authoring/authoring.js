@@ -542,14 +542,15 @@
             //check for desk membership for edit rights.
             if (current_item.task && current_item.task.desk) {
                 // in production
-                var desk = _.find(self.userDesks, {'_id': current_item.task.desk});
-                if (!desk) {
-                    action = angular.extend({}, DEFAULT_ACTIONS);
-                }
 
                 action.duplicate = user_privileges.duplicate &&
                     !_.contains(['spiked', 'killed'], current_item.state) &&
                     (angular.isUndefined(current_item.package_type) || current_item.package_type !== 'takes');
+
+                var desk = _.find(self.userDesks, {'_id': current_item.task.desk});
+                if (!desk) {
+                    action = angular.extend({}, DEFAULT_ACTIONS);
+                }
             } else {
                 // personal
                 action.copy = true;
