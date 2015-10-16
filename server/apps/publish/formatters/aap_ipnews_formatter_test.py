@@ -245,8 +245,9 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         self.assertEqual(doc['subject_reference'], '00000000')
         self.assertEqual(doc['headline'], 'This is a test headline')
 
+
 class DefaultSubjectTest(SuperdeskTestCase):
-    
+
     def setUp(self):
         super().setUp()
         vocabularies = [{
@@ -285,18 +286,18 @@ class DefaultSubjectTest(SuperdeskTestCase):
 
         self.app.data.insert('vocabularies', vocabularies)
         init_app(self.app)
-    
+
     def test_subject(self):
         article = {
-            'anpa_category': [{'qcode': 'a'},{'qcode': 's'}],
-            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+            'anpa_category': [{'qcode': 'a'}, {'qcode': 's'}],
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}]
         }
 
         self.assertEqual(set_subject({'qcode': 'a'}, article), '04001005')
         self.assertEqual(set_subject({'qcode': 's'}, article), '15011002')
         article = {
-            'anpa_category': [{'qcode': 'a'},{'qcode': 's'}],
-            'subject': None,
+            'anpa_category': [{'qcode': 'a'}, {'qcode': 's'}],
+            'subject': None
         }
 
         self.assertEqual(set_subject({'qcode': 'a'}, article), None)
@@ -304,7 +305,7 @@ class DefaultSubjectTest(SuperdeskTestCase):
 
         article = {
             'anpa_category': None,
-            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}],
+            'subject': [{'qcode': '04001005'}, {'qcode': '15011002'}]
         }
 
         self.assertEqual(set_subject(None, article), '04001005')
