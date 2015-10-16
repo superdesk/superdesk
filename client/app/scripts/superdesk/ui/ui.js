@@ -873,10 +873,7 @@ define([
                 scope.minutesRange = range(0, 59, STEP);
 
                 tzdata.$promise.then(function () {
-                    scope.timeZones = _.union(
-                        _.keys(tzdata.zones),
-                        _.keys(tzdata.links)
-                    );
+                    scope.timeZones = tzdata.getTzNames();
                 });
 
                 if (scope.model) {

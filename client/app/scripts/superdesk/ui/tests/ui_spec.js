@@ -227,11 +227,14 @@ describe('superdesk ui', function() {
                 };
                 tzdataMock.zones = fetchedTzData.zones;
                 tzdataMock.links = fetchedTzData.links;
+                tzdataMock.getTzNames = function () {
+                    return ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar'];
+                };
 
                 getTzdataDeferred.resolve(fetchedTzData);
                 isoScope.$digest();
 
-                expectedList = ['Europe/Rome', 'Australia/Sydney', 'Foo/Bar'];
+                expectedList = ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar'];
                 expect(isoScope.timeZones).toEqual(expectedList);
             });
 

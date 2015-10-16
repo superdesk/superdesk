@@ -45,13 +45,17 @@ describe('WorldClockConfigController', function () {
                 'Foo/Bar': []
             }
         };
+
         fakeTzdata.zones = serverTzdata.zones;
         fakeTzdata.links = serverTzdata.links;
+        fakeTzdata.getTzNames = function () {
+            return ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar'];
+        };
 
         getTzdataDeferred.resolve(serverTzdata);
         scope.$digest();
 
-        expectedList = ['Europe/Rome', 'Australia/Sydney', 'Foo/Bar'];
+        expectedList = ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar'];
         expect(scope.availableZones).toEqual(expectedList);
     });
 

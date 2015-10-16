@@ -186,15 +186,18 @@ describe('ingest', function() {
             };
             fakeTzData.zones = serverTzData.zones;
             fakeTzData.links = serverTzData.links;
+            fakeTzData.getTzNames = function () {
+                return ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar'];
+            };
 
             isoScope.timeZones = [];
 
             getTzDataDeferred.resolve(serverTzData);
             isoScope.$digest();
 
-            expect(isoScope.timeZones).toEqual([
-                'Europe/Rome', 'Australia/Sydney', 'Foo/Bar'
-            ]);
+            expect(isoScope.timeZones).toEqual(
+                ['Australia/Sydney', 'Europe/Rome', 'Foo/Bar']
+            );
         });
 
         describe('scope\'s searchTimeZones() method', function () {
