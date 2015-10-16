@@ -58,13 +58,15 @@ define([
                 link: function(scope, element, attrs) {
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {
-                            var sizes = scope.gridster.serialize(widget.el);
-                            angular.extend(widget, {
-                                row: sizes[0].row,
-                                col: sizes[0].col,
-                                sizex: sizes[0].size_x,
-                                sizey: sizes[0].size_y
-                            });
+                            if (widget.active) {
+                                var sizes = scope.gridster.serialize(widget.el);
+                                angular.extend(widget, {
+                                    row: sizes[0].row,
+                                    col: sizes[0].col,
+                                    sizex: sizes[0].size_x,
+                                    sizey: sizes[0].size_y
+                                });
+                            }
                         });
                     };
 
