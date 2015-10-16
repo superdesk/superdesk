@@ -17,8 +17,17 @@ function SpellcheckService($q, api, dictionaries) {
      * @param {string} _lang
      */
     this.setLanguage = function(_lang) {
-        if (lang !== _lang) {
-            lang = _lang;
+        function getBaseLanguage(language) {
+            if (language && language.indexOf('-') > 0) {
+                return language.split('-')[0];
+            }
+            return language;
+        }
+
+        var language = getBaseLanguage(_lang);
+
+        if (lang !== language) {
+            lang = language;
             dict = null;
         }
     };

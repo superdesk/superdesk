@@ -74,6 +74,15 @@ describe('spellcheck', function() {
         expect(then).not.toHaveBeenCalled();
     }));
 
+    it('can locate the base dict when language is set to en-US', inject(function(spellcheck, $rootScope) {
+        spellcheck.setLanguage('en-US');
+        var p = createParagraph('test');
+        var then = jasmine.createSpy('then');
+        spellcheck.errors(p).then(then);
+        $rootScope.$digest();
+        expect(then).toHaveBeenCalled();
+    }));
+
     function assignErrors(_errors) {
         errors.splice(0, errors.length);
         errors.push.apply(errors, _errors);
