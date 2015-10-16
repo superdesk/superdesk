@@ -1686,6 +1686,7 @@
                 };
 
                 function runSend(open) {
+                    scope.item.sendTo = true;
                     var deskId = scope.selectedDesk._id;
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
 
@@ -1755,6 +1756,7 @@
                     var stageId = scope.selectedStage._id || scope.selectedDesk.incoming_stage;
 
                     scope.item.more_coming = true;
+                    scope.item.sendTo = true;
                     return sendAuthoring(deskId, stageId, scope.selectedMacro, true)
                         .then(function() {
                             var itemDeskId = null;
