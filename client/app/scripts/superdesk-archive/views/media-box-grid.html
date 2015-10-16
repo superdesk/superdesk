@@ -23,10 +23,7 @@
     </div>
 
     <div class="media-info">
-
-        <span ng-if="item.highlights" sd-highlights-title data-item="item"></span>
-
-        <h5 ng-class="{'shifted' : item.highlights}">
+        <h5>
             <span ng-show="item.slugline">{{ item.slugline }}</span>
             <span ng-show="!item.slugline">{{ item.type | translate }}</span>
         </h5>
@@ -43,19 +40,14 @@
         <div ng-if="item.marked_for_not_publication" class="state-label not-for-publication" translate>Not for publication</div>       
 
         <div ng-if="item.archived" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
+        
+        <div class="highlights-box" ng-if="item.highlights" sd-highlights-title data-item="item"></div>
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
     <span class="urgency-label"><i class="urgency-icon-{{item.priority}}"></i></span>
     <span class="priority-label"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></span>
     <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}">{{item.state}}</div>
-</div>
-
-<div class="action">
-    <ul ng-if="extras.activity" class="item-functions"
-        sd-activity-list
-        data-item="item"
-        data-type="{{getType(item)}}"
-        data-action="{{extras.activity.action}}">
-    </ul>
+    
+    <div class="item-right toolbox" sd-item-actions-menu data-item="item" data-active="focused"></div>
 </div>
