@@ -294,7 +294,7 @@ describe('monitoring view', function() {
     });
 
     it('show personal', function() {
-        monitoring.openPersonal();
+        monitoring.showPersonal();
         expect(monitoring.getPersonalItemText(0)).toBe('package1');
         expect(monitoring.getPersonalItemText(1)).toBe('item1');
         expect(monitoring.getPersonalItemText(2)).toBe('item2');
@@ -304,8 +304,8 @@ describe('monitoring view', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(4);
         monitoring.actionOnItem('Spike', 1, 2);
         expect(monitoring.getGroupItems(1).count()).toBe(3);
-        monitoring.openSpiked();
-        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item7');
+        monitoring.showSpiked();
+        expect(monitoring.getSpikedTextItem(0)).toBe('item7');
         monitoring.unspikeItem(0);
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
@@ -321,8 +321,8 @@ describe('monitoring view', function() {
         expect(monitoring.getGroupItems(0).count()).toBe(3);
         monitoring.actionOnItem('Spike', 0, 0);
         expect(monitoring.getGroupItems(0).count()).toBe(2);
-        monitoring.openSpiked();
-        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('package1');
+        monitoring.showSpiked();
+        expect(monitoring.getSpikedTextItem(0)).toBe('package1');
         monitoring.unspikeItem(0);
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
@@ -332,8 +332,8 @@ describe('monitoring view', function() {
         monitoring.selectItem(1, 2);
         monitoring.spikeMultipleItems();
         expect(monitoring.getGroupItems(1).count()).toBe(3);
-        monitoring.openSpiked();
-        expect(monitoring.getItemText(monitoring.getSpikedItem(0))).toBe('item7');
+        monitoring.showSpiked();
+        expect(monitoring.getSpikedTextItem(0)).toBe('item7');
         monitoring.selectSpikedItem(0);
         monitoring.unspikeMultipleItems();
         expect(monitoring.getSpikedItems().count()).toBe(0);

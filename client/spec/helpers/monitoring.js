@@ -13,15 +13,26 @@ function Monitoring() {
         openUrl('/#/workspace/monitoring');
     };
 
-    this.openSpiked = function() {
+    this.showMonitoring = function() {
+        element(by.className('big-icon-view')).click();
+    };
+
+    this.showSpiked = function() {
         element(by.className('big-icon-spiked')).click();
     };
 
     /**
      * Open personal monitoring view
      */
-    this.openPersonal = function() {
+    this.showPersonal = function() {
         element(by.className('big-icon-personal')).click();
+    };
+
+    /**
+     * Open global search view
+     */
+    this.showSearch = function() {
+        element(by.className('big-icon-global-search')).click();
     };
 
     /**
@@ -80,8 +91,8 @@ function Monitoring() {
         return this.getSpikedItems().get(item);
     };
 
-    this.getItemText = function(item) {
-        return item.element(by.id('title')).getText();
+    this.getSpikedTextItem = function(index) {
+        return this.getSpikedItem(index).element(by.id('title')).getText();
     };
 
     this.getTextItem = function(group, item) {

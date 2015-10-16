@@ -1,224 +1,182 @@
 
 'use strict';
 
-var workspace = require('./helpers/workspace'),
-    monitoring = require('./helpers/monitoring'),
-    content = require('./helpers/content'),
-    authoring = require('./helpers/authoring');
+var monitoring = require('./helpers/monitoring'),
+    search = require('./helpers/search'),
+    authoring = require('./helpers/authoring'),
+    ctrlKey = require('./helpers/utils').ctrlKey;
 
 describe('authoring', function() {
-    it('can open item stage', function() {
-        workspace.open();
-        workspace.editItem('item4', 'SPORTS');
-        element(by.css('button.stage')).click();
-        expect(browser.getCurrentUrl()).toMatch(/workspace\/content/);
+
+    beforeEach(function() {
+        monitoring.openMonitoring();
     });
 
-    it('Can Undo content', function() {
-        var TIMEOUT = 500;
-
-        var ctrl = function(key) {
-            var Key = protractor.Key;
-            return browser.actions().sendKeys(Key.chord(Key.CONTROL, key)).perform();
-        };
-
-        workspace.open();
-        workspace.editItem('item4', 'SPORTS');
-
+    it('authoring operations', function() {
+        //undo and redo operations by using CTRL+Z and CTRL+y
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        expect(authoring.getBodyText()).toBe('item5 text');
         authoring.writeText('Two');
-        expect(authoring.getBodyText()).toBe('Two');
-
-        browser.sleep(TIMEOUT);
-
+        expect(authoring.getBodyText()).toBe('Twoitem5 text');
         authoring.writeText('Words');
-        expect(authoring.getBodyText()).toBe('TwoWords');
-
-        browser.sleep(TIMEOUT);
-
-        ctrl('z');
-        expect(authoring.getBodyText()).toBe('Two');
-
-        browser.sleep(TIMEOUT);
-
-        ctrl('y');
-        expect(authoring.getBodyText()).toBe('TwoWords');
-    });
-
-    it('view item history create-fetch operation', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item6', 'Politic');
-
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(1);
-        expect(authoring.getHistoryItem(0).getText()).toMatch(/Fetched as \d+ to Politic Desk\/two by.*/);
-    });
-
-    it('view item history create-update operations', function() {
-        workspace.open();
-        authoring.createTextItem();
-        authoring.writeTextToHeadline('new item');
-        authoring.writeText('some text');
+        expect(authoring.getBodyText()).toBe('TwoWordsitem5 text');
+        ctrlKey('z');
+        expect(authoring.getBodyText()).toBe('Twoitem5 text');
+        ctrlKey('y');
+        expect(authoring.getBodyText()).toBe('TwoWordsitem5 text');
         authoring.save();
-
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ Created by.*/);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Updated by.*/);
         authoring.close();
 
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item5', 'Politic');
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(1);
-        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ \(Politic Desk\/one\) Created by.*/);
-    });
-
-    xit('view item history spike-unspike operations', function() {
-        //it will be fixed on next PR when authoring tests will be refactored
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        //workspace.actionOnItem('Spike', 'item6', 'Politic');
-        //workspace.actionOnItem('Unspike Item', 'item6', 'Politic', 'Spiked');
-        workspace.editItem('item6', 'Politic');
-
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(3);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/two by .*/);
-        expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/two by .*/);
-    });
-
-    it('view item history move operation', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item5', 'Politic');
-        authoring.writeText(' ');
-        authoring.save();
-        expect(authoring.sendToButton.isDisplayed()).toBe(true);
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);
-        authoring.sendTo('Politic Desk', 'two');
-        authoring.confirmSendTo();
-        workspace.selectStage('two');
-        workspace.editItem('item5', 'Politic');
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(3);
-        expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
-    });
-
-    it('view item history duplicate operation', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.duplicateItem('item5', 'Politic Desk');
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.switchToDesk('POLITIC DESK');
-        workspace.selectStage('New');
-        workspace.editItem('item5', 'Politic Desk');
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
-    });
-
-    it('view item history publish operation', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item5', 'Politic');
-        authoring.writeText('some text');
-        authoring.save();
-        authoring.publish();
-        workspace.selectStage('Published');
-        workspace.filterItems('composite');
-        content.actionOnItem('Open', 0);
-        authoring.showHistory();
-        expect(authoring.getHistoryItems().count()).toBe(2);
-        var publishItem = authoring.getHistoryItem(1);
-        expect(publishItem.getText()).toMatch(/Published by.*/);
-        var queuedSwitch = authoring.getQueuedItemsSwitch(publishItem);
-        expect(queuedSwitch.isDisplayed()).toBe(true);
-        queuedSwitch.click();
-        expect(authoring.getQueuedItems().count()).toBe(1);
-    });
-
-    it('allows to create a new empty package', function () {
-        monitoring.openMonitoring();
+        //allows to create a new empty package
         monitoring.createItemAction('create_package');
         expect(element(by.className('packaging-screen')).isDisplayed()).toBe(true);
-    });
+        authoring.close();
 
-    it('can change normal theme', function () {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item6', 'Politic');
-        element(by.className('close-preview')).click();
-        authoring.changeNormalTheme('dark-theme');
-
-        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme')).toBe(true);
-    });
-
-    it('can change proofread theme', function () {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item6', 'Politic');
-        authoring.changeProofreadTheme('dark-theme-mono');
-
-        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme-mono')).toBe(true);
-    });
-
-    it('can show correct and kill buttons based on the selected action', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item5', 'Politic');
-        authoring.writeText('some text');
-        authoring.save();
-        authoring.publish();
-
-        workspace.selectStage('Published');
-        workspace.filterItems('text');
-
-        content.actionOnItem('Correct item', 0);
-        authoring.sendToButton.click();
-        expect(authoring.correct_button.isDisplayed()).toBe(true);
-        element(by.id('closeAuthoringBtn')).click();
-
-        content.actionOnItem('Kill item', 0);
-        authoring.sendToButton.click();
-        expect(authoring.kill_button.isDisplayed()).toBe(true);
-        element(by.id('closeAuthoringBtn')).click();
-    });
-
-    it('can show correct and kill buttons for latest version only', function() {
-        workspace.open();
-        workspace.switchToDesk('SPORTS DESK');
-        workspace.editItem('item5', 'Politic');
-        authoring.writeText('some text');
-        authoring.save();
-        authoring.publish();
-
-        workspace.selectStage('Published');
-        workspace.filterItems('text');
-
-        content.actionOnItem('Correct item', 0);
-        authoring.correct();
-
-        content.actionOnItem('Open', 0);
-        expect(authoring.edit_correct_button.isDisplayed()).toBe(true);
-        expect(authoring.edit_kill_button.isDisplayed()).toBe(true);
-        element(by.id('closeAuthoringBtn')).click();
-
-        content.actionOnItem('Open', 1);
-        expect(authoring.edit_correct_button.isDisplayed()).toBe(false);
-        expect(authoring.edit_kill_button.isDisplayed()).toBe(false);
-        element(by.id('closeAuthoringBtn')).click();
-    });
-
-    it('can edit packages in which the item was linked', function() {
-        monitoring.openMonitoring();
-        monitoring.openAction(1, 0);
+        //can edit packages in which the item was linked
+        expect(monitoring.getTextItem(1, 1)).toBe('item9');
+        monitoring.actionOnItem('Edit', 1, 1);
         authoring.showPackages();
         expect(authoring.getPackages().count()).toBe(1);
         expect(authoring.getPackage(0).getText()).toMatch('PACKAGE2');
         authoring.getPackage(0).click();
         authoring.showInfo();
         expect(authoring.getGUID().getText()).toMatch('package2');
+        authoring.close();
+
+        //can change normal theme
+        expect(monitoring.getTextItem(2, 2)).toBe('item6');
+        monitoring.actionOnItem('Edit', 2, 2);
+        authoring.changeNormalTheme('dark-theme');
+        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme')).toBe(true);
+        authoring.close();
+
+        //can change proofread theme
+        expect(monitoring.getTextItem(2, 2)).toBe('item6');
+        monitoring.actionOnItem('Edit', 2, 2);
+        authoring.changeProofreadTheme('dark-theme-mono');
+        expect(monitoring.hasClass(element(by.className('main-article')), 'dark-theme-mono')).toBe(true);
+        authoring.close();
+
+        //publish & kill item
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
+        monitoring.showSearch();
+        search.setListView();
+        search.showCustomSearch();
+        search.toggleByType('text');
+        expect(search.getTextItem(0)).toBe('item5');
+        search.actionOnItem('Kill item', 0);
+        authoring.sendToButton.click();
+        expect(authoring.kill_button.isDisplayed()).toBe(true);
+
+        //publish & correct item
+        monitoring.openMonitoring();
+        expect(monitoring.getTextItem(2, 2)).toBe('item6');
+        monitoring.actionOnItem('Edit', 2, 2);
+        authoring.publish();
+        monitoring.showSearch();
+        search.setListView();
+        search.showCustomSearch();
+        search.toggleByType('text');
+        expect(search.getTextItem(0)).toBe('item6');
+        search.actionOnItem('Correct item', 0);
+        authoring.sendToButton.click();
+        expect(authoring.correct_button.isDisplayed()).toBe(true);
+        authoring.close();
+        expect(search.getTextItem(0)).toBe('item6');
+        search.actionOnItem('Open', 0);
+        expect(authoring.edit_correct_button.isDisplayed()).toBe(true);
+        expect(authoring.edit_kill_button.isDisplayed()).toBe(true);
+        authoring.close();
+        search.toggleByType('text');
+        search.toggleByType('composite');
+        expect(search.getTextItem(0)).toBe('item6');
+        search.actionOnItem('Open', 0);
+        expect(authoring.edit_correct_button.isDisplayed()).toBe(false);
+        expect(authoring.edit_kill_button.isDisplayed()).toBe(false);
+    });
+
+    it('authoring history', function() {
+        //view item history create-fetch operation
+        expect(monitoring.getTextItem(2, 2)).toBe('item6');
+        monitoring.actionOnItem('Edit', 2, 2);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(1);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Fetched as \d+ to Politic Desk\/two by.*/);
+        authoring.close();
+
+        //view item history move operation
+        expect(monitoring.getTextItem(1, 3)).toBe('item8');
+        monitoring.actionOnItem('Edit', 1, 3);
+        authoring.writeText('Two');
+        authoring.save();
+        expect(authoring.sendToButton.isDisplayed()).toBe(true);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        authoring.sendTo('Politic Desk', 'two');
+        authoring.confirmSendTo();
+        expect(monitoring.getTextItem(2, 0)).toBe('item8');
+        monitoring.actionOnItem('Edit', 2, 0);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Moved to Politic Desk\/two by .*/);
+        authoring.close();
+
+        //view item history create-update operations
+        authoring.createTextItem();
+        authoring.writeTextToHeadline('new item');
+        authoring.writeText('some text');
+        authoring.save();
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(0).getText()).toMatch(/Story \d+ Created by.*/);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Updated by.*/);
+        authoring.save();
+        authoring.close();
+
+        //view item history publish operation
+        expect(monitoring.getTextItem(2, 3)).toBe('item6');
+        monitoring.actionOnItem('Edit', 2, 3);
+        authoring.publish();
+        monitoring.showSearch();
+        search.setListView();
+        search.showCustomSearch();
+        search.toggleByType('text');
+        expect(search.getTextItem(0)).toBe('item6');
+        search.actionOnItem('Open', 0);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Published by.*/);
+        authoring.close();
+        monitoring.showMonitoring();
+
+        //view item history spike-unspike operations
+        expect(monitoring.getTextItem(1, 2)).toBe('item7');
+        monitoring.actionOnItem('Spike', 1, 2);
+        monitoring.showSpiked();
+        expect(monitoring.getSpikedTextItem(0)).toBe('item7');
+        monitoring.unspikeItem(0);
+        monitoring.showMonitoring();
+        expect(monitoring.getTextItem(0, 0)).toBe('item7');
+        monitoring.actionOnItem('Edit', 0, 0);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(3);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Spiked from Politic Desk\/one by .*/);
+        expect(authoring.getHistoryItem(2).getText()).toMatch(/Unspiked to Politic Desk\/one by .*/);
+        authoring.close();
+
+        //view item history duplicate operation
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Duplicate', 1, 0);
+        monitoring.showSpiked();
+        monitoring.showMonitoring();
+        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 0, 0);
+        authoring.showHistory();
+        expect(authoring.getHistoryItems().count()).toBe(2);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
+        authoring.close();
     });
 });

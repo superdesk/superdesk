@@ -24,6 +24,7 @@ function GlobalSearch() {
             .then(function(isVisible) {
                 if (isVisible) {
                     list.click();
+                    browser.sleep(1000);
                 }
             });
     };
@@ -38,6 +39,7 @@ function GlobalSearch() {
         return grid.then(function(isVisible) {
             if (isVisible) {
                 grid.click();
+                browser.sleep(1000);
             }
         });
     };
@@ -60,6 +62,16 @@ function GlobalSearch() {
      */
     this.getItem = function(index) {
         return this.getItems().get(index);
+    };
+
+    /**
+     * Get the search element text at 'index' row
+     *
+     * @param {number} index
+     * @return {string}
+     */
+    this.getTextItem = function(index) {
+        return this.getItem(index).element(by.id('title')).getText();
     };
 
     /**
@@ -102,5 +114,25 @@ function GlobalSearch() {
         expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
         expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe'))
             .toContain(highlight);
+    };
+
+    /**
+     * Show custom search right panel
+     */
+    this.showCustomSearch = function() {
+        browser.sleep(500);
+        element(by.className('filter-trigger'))
+        .element(by.className('icon-filter-large')).click();
+        browser.sleep(500);
+    };
+
+    /**
+     * Toggle search by item type combobox
+     *
+     * @param {string} type
+     */
+    this.toggleByType = function(type) {
+        browser.actions().mouseMove(element(by.className('filetype-icon-' + type))).perform();
+        element(by.id('filetype-icon-' + type)).click();
     };
 }
