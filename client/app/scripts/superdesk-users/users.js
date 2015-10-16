@@ -578,8 +578,15 @@
                     $q.all(promises).then(function() {
                         notify.success(gettext('Privileges updated.'));
                         rolesForm.$setPristine();
-                    }, function() {
-                        notify.success(gettext('Error. Privileges not updated.'));
+                    }, function(response) {
+                        if (angular.isDefined(response.data._issues) &&
+                            angular.isDefined(response.data._issues['validator exception'])) {
+                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                        } else if (angular.isDefined(response.data._message)) {
+                            notify.error(gettext('Error: ' + response.data._message));
+                        } else {
+                            notify.error(gettext('Error. Privileges not updated.'));
+                        }
                     });
                 };
             }
@@ -1306,9 +1313,15 @@
                         api.save('users', scope.user, _.pick(scope.user, 'privileges'))
                         .then(function(result) {
                             notify.success(gettext('Privileges updated.'));
-                        }, function(error) {
-                            notify.error(gettext('Privileges not updated.'));
-                            console.log(error);
+                        }, function(response) {
+                            if (angular.isDefined(response.data._issues) &&
+                                angular.isDefined(response.data._issues['validator exception'])) {
+                                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                            } else if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
+                            } else {
+                                notify.error(gettext('Error. Privileges not updated.'));
+                            }
                         });
                         userPrivileges.$setPristine();
                     };
