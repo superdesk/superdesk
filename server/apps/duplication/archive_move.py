@@ -117,7 +117,6 @@ class MoveService(BaseService):
         if old_desk_id and old_desk_id != new_desk_id:
             old_desk = get_resource_service('desks').find_one(req=None, _id=old_desk_id)
             new_desk = get_resource_service('desks').find_one(req=None, _id=new_desk_id)
-            print(old_desk, new_desk, old_desk_id, new_desk_id)
             if old_desk.get('desk_type', '') != new_desk.get('desk_type', ''):
                 if new_desk.get('desk_type') == DeskTypes.authoring.value:
                     updated['task'][LAST_AUTHORING_DESK] = new_desk_id

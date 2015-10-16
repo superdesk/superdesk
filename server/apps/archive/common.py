@@ -529,9 +529,9 @@ def convert_task_attributes_to_objectId(doc):
         task['stage'] = ObjectId(task.get('stage'))
     if ObjectId.is_valid(task.get('user')) and not isinstance(task.get('user'), ObjectId):
         task['user'] = ObjectId(task.get('user'))
-    if ObjectId.is_valid(task.get('last_production_desk')) and \
-            not isinstance(task.get('last_production_desk'), ObjectId):
-        task['last_production_desk'] = ObjectId(task.get('last_production_desk'))
-    if ObjectId.is_valid(task.get('last_authoring_desk', None)) and \
-            not isinstance(task.get('last_authoring_desk'), ObjectId):
-        task['last_authoring_desk'] = ObjectId(task.get('last_authoring_desk'))
+    if ObjectId.is_valid(task.get(LAST_PRODUCTION_DESK)) and \
+            not isinstance(task.get(LAST_PRODUCTION_DESK), ObjectId):
+        task[LAST_PRODUCTION_DESK] = ObjectId(task.get(LAST_PRODUCTION_DESK))
+    if ObjectId.is_valid(task.get(LAST_AUTHORING_DESK, None)) and \
+            not isinstance(task.get(LAST_AUTHORING_DESK), ObjectId):
+        task[LAST_AUTHORING_DESK] = ObjectId(task.get(LAST_AUTHORING_DESK))

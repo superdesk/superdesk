@@ -340,10 +340,10 @@ Feature: News Items Archive
       And we delete "/desks/#desks._id#"
       Then we get error 412
       """
-      {"_message": "Cannot delete desk as it has article(s)."}
+      {"_message": "Cannot delete desk as it has article(s) or referenced by versions of the article(s)."}
       """
 
-    @auth @test
+    @auth
     Scenario: Cannot delete desk when it is still referenced in archive version
       Given empty "desks"
       And empty "archive"
@@ -368,7 +368,7 @@ Feature: News Items Archive
       When we delete "/desks/#SPORTS_DESK_ID#"
       Then we get error 412
       """
-      {"_message": "Cannot delete desk as it referenced by article(s) versions."}
+      {"_message": "Cannot delete desk as it has article(s) or referenced by versions of the article(s)."}
       """
 
     @auth

@@ -145,26 +145,6 @@ class DesksService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as routing scheme(s) are associated with the desk')
 
-        archive_query = {
-            'query': {
-                'filtered': {
-                    'filter': {
-                        'or': [
-                            {'term': {'task.desk': str(desk[config.ID_FIELD])}},
-                            {'term': {'task.last_authoring_desk': str(desk[config.ID_FIELD])}},
-                            {'term': {'task.last_production_desk': str(desk[config.ID_FIELD])}}
-                        ]
-                    }
-                }
-            }
-        }
-
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(archive_query)}
-        items = superdesk.get_resource_service('archive').get(req=request, lookup=None)
-        if items and items.count():
-            raise SuperdeskApiError.preconditionFailedError(message='Cannot delete desk as it has article(s).')
-
         archive_versions_query = {
             '$or': [
                 {'task.desk': str(desk[config.ID_FIELD])},
@@ -176,7 +156,7 @@ class DesksService(BaseService):
         items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
         if items and items.count():
             raise SuperdeskApiError.preconditionFailedError(
-                message='Cannot delete desk as it referenced by article(s) versions.')
+                message='Cannot delete desk as it has article(s) or referenced by versions of the article(s).')
 
     def delete(self, lookup):
         """
