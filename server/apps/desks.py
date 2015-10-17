@@ -158,6 +158,19 @@ class DesksService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as it has article(s) or referenced by versions of the article(s).')
 
+    def on_fetched(self, doc):
+        self._enhance_item(doc[config.ITEMS])
+
+    def on_fetched_item(self, doc):
+        self._enhance_item([doc])
+
+    def _enhance_item(self, docs):
+        """
+        enhance the desk with default desk type as authoring.
+        """
+        for doc in docs:
+            doc.setdefault('desk_type', DeskTypes.authoring.value)
+
     def delete(self, lookup):
         """
         Overriding to delete stages before deleting a desk

@@ -63,7 +63,8 @@
             {"user": "54ed94da10245479ccc38410"}
         ],
         "name": "National",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e68fcd1024542de76d6643",
@@ -123,7 +124,8 @@
             {"user": "54ed955910245479d505d296"}
         ],
         "name": "World news",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e691ca1024542de640fef1",
@@ -183,7 +185,8 @@
             {"user": "54ed955910245479d505d2a3"}
         ],
         "name": "Finance",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e692311024542ddeb76af8",
@@ -214,7 +217,8 @@
             {"user": "54ed952410245479ccc38447"}
         ],
         "name": "New Zealand",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e6928d1024542de640fef5",
@@ -291,7 +295,8 @@
             {"user": "54ed952410245479ccc3846c"}
         ],
         "name": "Sport",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e6930f1024542ddeb76afb",
@@ -316,7 +321,8 @@
             {"user": "54ed955910245479d505d295"}
         ],
         "name": "Features",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54e698a31024542de76d664a",
@@ -335,7 +341,8 @@
             {"user": "54ed952410245479ccc38477"}
         ],
         "name": "Special",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     },
     {
         "_id": "54fe3aee10245412eac572ba",
@@ -351,7 +358,8 @@
             {"user": "54ed955910245479d505d2a2"}
         ],
         "name": "Perth",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe430410245412e8b8f523",
@@ -367,7 +375,8 @@
             {"user": "54ed955910245479d505d2a1"}
         ],
         "name": "Melbourne",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe438b10245412e5608d41",
@@ -383,7 +392,8 @@
             {"user": "54ed955910245479d505d292"}
         ],
         "name": "Darwin",
-        "spike_expiry": 43200
+        "spike_expiry": 43200,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe43c210245412e8b8f526",
@@ -398,7 +408,8 @@
             {"user": "54ed955910245479d505d299"}
         ],
         "name": "Adelaide",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe44ac10245489df75a266",
@@ -414,7 +425,8 @@
             {"user": "54ed955910245479d505d29f"}
         ],
         "name": "Canberra",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe44df10245489ed5c3a8f",
@@ -430,7 +442,8 @@
             {"user": "54ed955910245479d505d29e"}
         ],
         "name": "Hobart",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe451210245489e2d3b561",
@@ -445,7 +458,8 @@
             {"user": "54ed955910245479d505d29c"}
         ],
         "name": "Brisbane",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe457210245489e2d3b564",
@@ -459,7 +473,8 @@
             {"user": "54ed946e10245479ccc38398"}
         ],
         "name": "Sydney",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe45a910245489df75a26e",
@@ -475,7 +490,8 @@
             {"user": "54ed955910245479d505d28e"}
         ],
         "name": "Jakarta",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe45f210245489ed5c3a95",
@@ -491,7 +507,8 @@
             {"user": "54ed955910245479d505d296"}
         ],
         "name": "London",
-        "spike_expiry": 4320
+        "spike_expiry": 4320,
+        "desk_type": "authoring"
     },
     {
         "_id": "54fe70e310245489e9c69bb5",
@@ -505,6 +522,7 @@
             {"user": "54ed94da10245479ccc383e2"}
         ],
         "name": "Broadcast",
-        "spike_expiry": 1440
+        "spike_expiry": 1440,
+        "desk_type": "production"
     }
 ]

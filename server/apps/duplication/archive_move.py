@@ -118,12 +118,10 @@ class MoveService(BaseService):
             old_desk = get_resource_service('desks').find_one(req=None, _id=old_desk_id)
             new_desk = get_resource_service('desks').find_one(req=None, _id=new_desk_id)
             if old_desk.get('desk_type', '') != new_desk.get('desk_type', ''):
-                if new_desk.get('desk_type') == DeskTypes.authoring.value:
-                    updated['task'][LAST_AUTHORING_DESK] = new_desk_id
-                    updated['task'][LAST_PRODUCTION_DESK] = old_desk_id
-                else:
+                if new_desk.get('desk_type') == DeskTypes.production.value:
                     updated['task'][LAST_AUTHORING_DESK] = old_desk_id
-                    updated['task'][LAST_PRODUCTION_DESK] = new_desk_id
+                else:
+                    updated['task'][LAST_PRODUCTION_DESK] = old_desk_id
 
 
 superdesk.workflow_action(
