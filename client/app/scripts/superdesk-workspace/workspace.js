@@ -303,8 +303,8 @@
         };
     }
 
-    WorkspaceSidenavDirective.$inject = [];
-    function WorkspaceSidenavDirective() {
+    WorkspaceSidenavDirective.$inject = ['superdeskFlags'];
+    function WorkspaceSidenavDirective(superdeskFlags) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
             link: function(scope) {
@@ -317,13 +317,11 @@
                  * @param {object} e Gets $event from the element
                  */
                 scope.hideMonitoring = function (state, e) {
-                    var flags = scope.$parent.flags;
-
-                    if (flags.authoring && state) {
+                    if (superdeskFlags.flags.authoring && state) {
                         e.preventDefault();
-                        flags.hideMonitoring = !flags.hideMonitoring;
+                        superdeskFlags.flags.hideMonitoring = !superdeskFlags.flags.hideMonitoring;
                     } else {
-                        flags.hideMonitoring = false;
+                        superdeskFlags.flags.hideMonitoring = false;
                     }
                 };
             }

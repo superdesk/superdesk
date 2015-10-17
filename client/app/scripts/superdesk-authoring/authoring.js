@@ -833,6 +833,7 @@
 
     AuthoringDirective.$inject = [
         'superdesk',
+        'superdeskFlags',
         'authoringWorkspace',
         'notify',
         'gettext',
@@ -852,9 +853,8 @@
         'modal',
         'archiveService'
     ];
-    function AuthoringDirective(superdesk, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
-                                privileges, content, $location, referrer, macros, $timeout, $q, $window, modal,
-                                archiveService) {
+    function AuthoringDirective(superdesk, superdeskFlags, authoringWorkspace, notify, gettext, desks, authoring, api, session, lock,
+            privileges, content, $location, referrer, macros, $timeout, $q, $window, modal, archiveService) {
         return {
             link: function($scope, elem, attrs) {
                 var _closing;
@@ -1150,6 +1150,7 @@
                 $scope.close = function() {
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
+                        superdeskFlags.flags.hideMonitoring = false;
                         authoringWorkspace.close($scope.item);
                     });
                 };
