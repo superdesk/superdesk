@@ -123,7 +123,7 @@ describe('sdSearchFacets directive', function () {
         spyOn(search, 'getSubjectCodes').and.returnValue([]);
 
         desks = _desks_;
-        spyOn(desks, 'initialize');
+        spyOn(desks, 'initialize').and.returnValue($q.when([]));
 
         facetsInit = $q.defer();
         spyOn(tags, 'initSelectedFacets').and.returnValue(facetsInit.promise);

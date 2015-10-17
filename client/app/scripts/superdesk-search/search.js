@@ -55,7 +55,7 @@
 
             if (to_desk) {
                 desk = to_desk.split('-');
-                if (desk.length === 2 ) {
+                if (desk.length === 2) {
                     filters.push({'term': {'task.desk': desk[0]}});
                     if (!from_desk) {
                         var field = desk[1] === 'authoring' ? 'task.last_production_desk' : 'task.last_authoring_desk';
@@ -334,10 +334,10 @@
         }
 
         function initFromToDesk(params) {
-            if(params.from_desk) {
+            if (params.from_desk) {
                 tags.selectedParameters.push('From Desk:' + desks.deskLookup[params.from_desk.split('-')[0]].name);
             }
-            if(params.to_desk) {
+            if (params.to_desk) {
                 tags.selectedParameters.push('To Desk:' + desks.deskLookup[params.to_desk.split('-')[0]].name);
             }
         }
@@ -1236,11 +1236,10 @@
                         }
 
                         desks.initialize()
-                            .then(function(){
+                            .then(function() {
                                 scope.desks = desks.desks;
-                                scope.selectedDesk.from = $location.search().from_desk || null
-                                scope.selectedDesk.to = $location.search().to_desk || null;
-                                console.log('from_desk', $location.search().from_desk);
+                                initFromToDesk($location.search().from_desk, 'from');
+                                initFromToDesk($location.search().to_desk, 'to');
                             });
                     }
 
@@ -1251,6 +1250,23 @@
                             .then(function(result) {
                                 scope.providers = result._items;
                             });
+                    }
+
+                    /*
+                     * initialize the desk drop down selection.
+                     * @param {string} query string parameter from_desk or to_desk
+                     * @param {field} scope field to be updated.
+                     */
+                    function initFromToDesk(param, field) {
+                        if (param) {
+                            var deskParams = param.split('-');
+                            if (deskParams.length === 2) {
+                                var desk = _.find(scope.desks._items, function(item) {
+                                    return item._id === deskParams[0];
+                                });
+                                scope.selectedDesk[field] = desk ? desk : null;
+                            }
+                        }
                     }
 
                     scope.$on('$locationChangeSuccess', function() {
@@ -1361,19 +1377,39 @@
                             };
                         });
 
-
                     /*
                      * filter content by desk.
                      */
                     scope.deskSearch = function () {
-                        if (scope.selectedDesk.from) {
-                            $location.search('from_desk', scope.selectedDesk.from);
+                        $location.search('from_desk', getDeskParam('from'));
+                        $location.search('to_desk', getDeskParam('to'));
+                    };
+
+                    /*
+                     * Get the Desk Type
+                     * @param {string} field from or to
+                     * @returns {string} desk querystring parameter
+                     */
+                    function getDeskParam(field) {
+                        var deskId = '';
+                        if (scope.selectedDesk[field]) {
+                            if (typeof(scope.selectedDesk[field]) === 'string') {
+                                deskId = scope.selectedDesk[field];
+                            } else {
+                                if (_.isObject(scope.selectedDesk[field])) {
+                                    deskId = scope.selectedDesk[field]._id;
+                                }
+                            }
+
+                            var desk_type = _.result(_.find(scope.desks._items, function (item) {
+                                return item._id === deskId;
+                            }), 'desk_type');
+
+                            return deskId + '-' + desk_type;
                         }
 
-                        if (scope.selectedDesk.to) {
-                            $location.search('to_desk', scope.selectedDesk.to);
-                        }
-                    };
+                        return null;
+                    }
 
                     /*
                      * Filter content by subject search

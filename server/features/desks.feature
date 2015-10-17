@@ -30,7 +30,7 @@ Feature: Desks
             """
         When we get the default incoming stage
         And we delete latest
-        Then we get error 403
+        Then we get error 412
         """
         {"_status": "ERR", "_message": "Cannot delete a default stage."}
         """

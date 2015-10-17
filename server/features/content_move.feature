@@ -24,7 +24,7 @@ Feature: Move or Send Content to another desk
           "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
         """
         Then there is no "last_production_desk" in task
-        Then there is no "last_authoring_desk" in task
+        And there is no "last_authoring_desk" in task
 
     @auth
     Scenario: Send Content from one desk to another desk and validate metadata set by API
@@ -59,13 +59,13 @@ Feature: Move or Send Content to another desk
           "task": {
             "desk": "#desks._id#",
             "stage": "#desks.incoming_stage#",
-            "last_production_desk": "#FINANCE_DESK_ID#",
             "last_authoring_desk": "#SPORTS_DESK_ID#"
             }
         }
         """
+        And there is no "last_production_desk" in task
 
-    @auth @test
+    @auth
     Scenario: Send Content from one desk to another desk with same desk_type does not change the last_production_desk and last_authoring_desk
         Given we have "desks" with "SPORTS_DESK_ID" and success
         """
@@ -98,11 +98,11 @@ Feature: Move or Send Content to another desk
           "task": {
             "desk": "#desks._id#",
             "stage": "#desks.incoming_stage#",
-            "last_production_desk": "#FINANCE_DESK_ID#",
             "last_authoring_desk": "#SPORTS_DESK_ID#"
             }
         }
         """
+        And there is no "last_production_desk" in task
         When we post to "/desks" with "NATIONAL_DESK_ID" and success
         """
         [{"name": "National", "desk_type": "production" }]
@@ -119,11 +119,11 @@ Feature: Move or Send Content to another desk
           "task": {
             "desk": "#desks._id#",
             "stage": "#desks.incoming_stage#",
-            "last_production_desk": "#FINANCE_DESK_ID#",
             "last_authoring_desk": "#SPORTS_DESK_ID#"
             }
         }
         """
+        And there is no "last_production_desk" in task
         When we post to "/desks" with "ENTERTAINMENT_DESK_ID" and success
         """
         [{"name": "Entertainment", "desk_type": "authoring" }]
@@ -141,16 +141,17 @@ Feature: Move or Send Content to another desk
             "desk": "#desks._id#",
             "stage": "#desks.incoming_stage#",
             "last_production_desk": "#NATIONAL_DESK_ID#",
-            "last_authoring_desk": "#ENTERTAINMENT_DESK_ID#"
+            "last_authoring_desk": "#SPORTS_DESK_ID#"
             }
         }
         """
+
 
     @auth
     Scenario: Send Content from one stage to another stage with same desk
         Given "desks"
         """
-        [{"name": "Sports"}]
+        [{"name": "Sports", "desk_type": "production"}]
         """
         When we post to "archive"
         """
@@ -179,6 +180,9 @@ Feature: Move or Send Content to another desk
         { "headline": "test1", "guid": "123", "state": "submitted", "_current_version": 2,
           "task": {"desk": "#desks._id#", "stage": "#stages._id#", "user": "#CONTEXT_USER_ID#"}}
         """
+        And there is no "last_authoring_desk" in task
+        And there is no "last_production_desk" in task
+
 
     @auth
     @clean

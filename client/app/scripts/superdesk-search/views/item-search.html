@@ -94,7 +94,7 @@
             </label>
             <select
                 id="last-from-desk" name="last-from-desk"
-                ng-options="d._id + '-' + d.desk_type as d.name for d in desks._items track by d._id"
+                ng-options="d._id as d.name for d in desks._items track by d._id"
                 ng-model="selectedDesk.from" ng-change="deskSearch()">
                 <option value=""></option>
             </select>
@@ -106,7 +106,7 @@
             </label>
             <select
                 id="last-to-desk" name="last-to-desk"
-                ng-options="d._id + '-' + d.desk_type as d.name for d in desks._items track by d._id"
+                ng-options="d._id as d.name for d in desks._items track by d._id"
                 ng-model="selectedDesk.to" ng-change="deskSearch()">
                 <option value=""></option>
             </select>

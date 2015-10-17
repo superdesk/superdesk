@@ -554,7 +554,7 @@ Feature: Stages
         """
 
     @auth
-    @notification @test
+    @notification
     Scenario: Cannot delete stage if there are only spiked documents
         Given empty "archive"
         Given empty "stages"
