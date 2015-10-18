@@ -36,9 +36,9 @@
         /*
          * Sets the from-to desk filters.
          */
-        function setFromToDeskFilters(filters) {
-            var from_desk = $location.search().from_desk,
-                to_desk = $location.search().to_desk,
+        function setFromToDeskFilters(filters, params) {
+            var from_desk = params.from_desk,
+                to_desk = params.to_desk,
                 desk;
 
             if (from_desk) {
@@ -185,7 +185,7 @@
             this.getCriteria = function getCriteria(withSource) {
                 var search = params;
                 var sort = getSort();
-                setFromToDeskFilters(filters);
+                setFromToDeskFilters(filters, params);
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
