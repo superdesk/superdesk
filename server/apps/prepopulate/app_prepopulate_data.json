@@ -115,7 +115,7 @@
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk", "desk_type": "authoring"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk", "desk_type": "production"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
