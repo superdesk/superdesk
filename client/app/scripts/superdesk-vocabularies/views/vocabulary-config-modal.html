@@ -16,9 +16,9 @@
 
                     <div ng-repeat="item in vocabulary.items track by $index">
                         <div ng-repeat="(key, value) in model" ng-if="key !== 'is_active'" class="field vocabularyField">
-                            <input type="text" ng-model="item[key]" ng-disabled="!item.is_active" required>
+                            <input type="text" ng-model="item[key]" ng-disabled="!item.is_active">
                         </div>
-                        <span class="pull-right vocabularyStatus" sd-switch ng-model="item.is_active"></span>
+                        <span class="pull-right vocabularyStatus" sd-switch ng-model="item.is_active" tooltip="{{ :: 'Enable / Disable' | translate }}" tooltip-placement="left"></span>
                     </div>
 
                     <li class="divider"></li>
