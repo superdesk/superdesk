@@ -366,9 +366,9 @@ Feature: Stages
         [{"type": "text"}]
         """
         When we delete "/stages/#stages._id#"
-        Then we get error 403
+        Then we get error 412
         """
-        {"_status": "ERR", "_message": "Only empty stages can be deleted."}
+        {"_status": "ERR", "_message": "Cannot delete stage as it has article(s) or referenced by versions of the article(s)."}
         """
 
     @auth
@@ -527,9 +527,9 @@ Feature: Stages
         ]
         """
         When we delete "/stages/#stages._id#"
-        Then we get error 403
+        Then we get error 412
         """
-        {"_status": "ERR", "_message": "Stage is refered to by Ingest Routing Schemes : routing rule scheme 1"}
+        {"_status": "ERR", "_message": "Stage is referred by Ingest Routing Schemes : routing rule scheme 1"}
         """
 
     @auth
@@ -548,14 +548,14 @@ Feature: Stages
         }
         """
         When we delete "/stages/#desks.incoming_stage#"
-        Then we get error 403
+        Then we get error 412
         """
         {"_status": "ERR", "_message": "Cannot delete a default stage."}
         """
 
     @auth
     @notification
-    Scenario: Can delete stage if there are only spiked documents
+    Scenario: Cannot delete stage if there are only spiked documents
         Given empty "archive"
         Given empty "stages"
         Given "desks"
@@ -570,18 +570,20 @@ Feature: Stages
         "desk": "#desks._id#"
         }
         """
-
+        Then we get OK response
         When we patch "/stages/#stages._id#"
         """
         {"desk":"#desks._id#"}
         """
+        Then we get OK response
         When we post to "archive"
         """
-        [{"headline": "This is spiked", "type": "text", "state": "spiked"}]
+        [{"headline": "This is spiked", "type": "text", "state": "spiked",
+            "task": {"desk": "#desks._id#", "stage": "#stages._id#"}}]
         """
+        Then we get OK response
         When we delete "/stages/#stages._id#"
-        Then we get response code 204
-        Then we get notifications
+        Then we get error 412
         """
-        [{"event": "stage", "extra": {"deleted": 1}}]
+        {"_status": "ERR", "_message": "Cannot delete stage as it has article(s) or referenced by versions of the article(s)."}
         """

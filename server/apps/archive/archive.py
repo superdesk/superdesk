@@ -14,7 +14,8 @@ from superdesk.metadata.utils import extra_response_fields, item_url, aggregatio
 from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
-    ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE
+    ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
+    LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from superdesk import get_resource_service
@@ -164,6 +165,8 @@ class ArchiveService(BaseService):
             if not doc.get('ingest_provider'):
                 doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
+            convert_task_attributes_to_objectId(doc)
+
     def on_created(self, docs):
         packages = [doc for doc in docs if doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE]
         if packages:
@@ -183,6 +186,7 @@ class ArchiveService(BaseService):
         updates[ITEM_OPERATION] = ITEM_UPDATE
         is_update_allowed(original)
         user = get_user()
+        convert_task_attributes_to_objectId(updates)
 
         if 'publish_schedule' in updates and original['state'] == 'scheduled':
             # this is an deschedule action
@@ -387,6 +391,7 @@ class ArchiveService(BaseService):
         resolve_document_version(new_doc, SOURCE, 'PATCH', new_doc)
         if original_doc.get('task', {}).get('desk') is not None and new_doc.get('state') != 'submitted':
             new_doc[ITEM_STATE] = CONTENT_STATE.SUBMITTED
+        convert_task_attributes_to_objectId(new_doc)
         item_model.create([new_doc])
         self._duplicate_versions(original_doc['guid'], new_doc)
 
@@ -402,6 +407,9 @@ class ArchiveService(BaseService):
         copied_item.pop(LINKED_IN_PACKAGES, None)
         copied_item.pop(EMBARGO, None)
         copied_item.pop('publish_schedule', None)
+        task = copied_item.get('task', {})
+        task.pop(LAST_PRODUCTION_DESK, None)
+        task.pop(LAST_AUTHORING_DESK, None)
 
     def _duplicate_versions(self, old_id, new_doc):
         """

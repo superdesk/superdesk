@@ -21,6 +21,36 @@ describe('search service', function() {
         expect(criteria.query.filtered.query.query_string.query).toBe('test');
     }));
 
+    it('can create query for from_desk', inject(function($rootScope, search) {
+        // only from desk is specified
+        var criteria = search.query({from_desk: 'test-authoring'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.last_authoring_desk': 'test'}});
+        criteria = search.query({from_desk: 'test-production'}).getCriteria();
+        filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.last_production_desk': 'test'}});
+    }));
+
+    it('can create query for to_desk', inject(function($rootScope, search) {
+        // only to desk is specified
+        var criteria = search.query({to_desk: '456-authoring'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.desk': '456'}});
+        expect(filters).toContain({exists: {field: 'task.last_production_desk'}});
+        criteria = search.query({to_desk: '456-production'}).getCriteria();
+        filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.desk': '456'}});
+        expect(filters).toContain({exists: {field: 'task.last_authoring_desk'}});
+    }));
+
+    it('can create query for from_desk and to_desk', inject(function($rootScope, search) {
+        // both from desk and to desk are specified
+        var criteria = search.query({from_desk: '123-authoring', to_desk: '456-production'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.last_authoring_desk': '123'}});
+        expect(filters).toContain({term: {'task.desk': '456'}});
+    }));
+
     it('can sort items', inject(function(search, $location, $rootScope) {
         search.setSort('urgency');
         $rootScope.$digest();
@@ -123,7 +153,7 @@ describe('sdSearchFacets directive', function () {
         spyOn(search, 'getSubjectCodes').and.returnValue([]);
 
         desks = _desks_;
-        spyOn(desks, 'initialize');
+        spyOn(desks, 'initialize').and.returnValue($q.when([]));
 
         facetsInit = $q.defer();
         spyOn(tags, 'initSelectedFacets').and.returnValue(facetsInit.promise);

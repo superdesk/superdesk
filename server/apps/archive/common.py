@@ -7,7 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
+from bson import ObjectId
 
 import flask
 from eve.utils import config
@@ -41,6 +41,9 @@ ITEM_RESTORE = 'restore'
 ITEM_DUPLICATE = 'duplicate'
 ITEM_DESCHEDULE = 'deschedule'
 item_operations = [ITEM_CREATE, ITEM_UPDATE, ITEM_RESTORE, ITEM_DUPLICATE, ITEM_DESCHEDULE]
+# part the task dict
+LAST_AUTHORING_DESK = 'last_authoring_desk'
+LAST_PRODUCTION_DESK = 'last_production_desk'
 
 
 def update_version(updates, original):
@@ -511,3 +514,28 @@ def is_takes_package(doc):
     """
 
     return doc[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE and doc.get(PACKAGE_TYPE, '') == TAKES_PACKAGE
+
+
+def convert_task_attributes_to_objectId(doc):
+    """
+    set the task attributes desk, stage, user as object id
+    :param doc:
+
+    """
+    task = doc.get('task', {})
+
+    if not task:
+        return
+
+    if ObjectId.is_valid(task.get('desk')) and not isinstance(task.get('desk'), ObjectId):
+        task['desk'] = ObjectId(task.get('desk'))
+    if ObjectId.is_valid(task.get('stage')) and not isinstance(task.get('stage'), ObjectId):
+        task['stage'] = ObjectId(task.get('stage'))
+    if ObjectId.is_valid(task.get('user')) and not isinstance(task.get('user'), ObjectId):
+        task['user'] = ObjectId(task.get('user'))
+    if ObjectId.is_valid(task.get(LAST_PRODUCTION_DESK)) and \
+            not isinstance(task.get(LAST_PRODUCTION_DESK), ObjectId):
+        task[LAST_PRODUCTION_DESK] = ObjectId(task.get(LAST_PRODUCTION_DESK))
+    if ObjectId.is_valid(task.get(LAST_AUTHORING_DESK, None)) and \
+            not isinstance(task.get(LAST_AUTHORING_DESK), ObjectId):
+        task[LAST_AUTHORING_DESK] = ObjectId(task.get(LAST_AUTHORING_DESK))

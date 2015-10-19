@@ -34,6 +34,38 @@
         }
 
         /*
+         * Sets the from-to desk filters.
+         */
+        function setFromToDeskFilters(filters, params) {
+            var from_desk = params.from_desk,
+                to_desk = params.to_desk,
+                desk;
+
+            if (from_desk) {
+                desk = from_desk.split('-');
+                if (desk.length === 2) {
+                    if (desk[1] === 'authoring') {
+                        filters.push({'term': {'task.last_authoring_desk': desk[0]}});
+                    } else {
+                        filters.push({'term': {'task.last_production_desk': desk[0]}});
+                    }
+
+                }
+            }
+
+            if (to_desk) {
+                desk = to_desk.split('-');
+                if (desk.length === 2) {
+                    filters.push({'term': {'task.desk': desk[0]}});
+                    if (!from_desk) {
+                        var field = desk[1] === 'authoring' ? 'task.last_production_desk' : 'task.last_authoring_desk';
+                        filters.push({'exists': {'field': field}});
+                    }
+                }
+            }
+        }
+
+        /*
          * Function for finding object by string array for subject codes
          */
         this.getSubjectCodes = function (currentTags, subjectcodes) {
@@ -153,6 +185,7 @@
             this.getCriteria = function getCriteria(withSource) {
                 var search = params;
                 var sort = getSort();
+                setFromToDeskFilters(filters, params);
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
@@ -282,6 +315,7 @@
 
                 var colonIndex = parameters.indexOf(':');
                 var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
+
                 tags.selectedParameters.push(parameter);
                 parameters = parameters.replace(parameter, '');
             }
@@ -292,10 +326,19 @@
         function initSelectedKeywords (keywords) {
             tags.selectedKeywords = [];
             while (keywords.indexOf('(') >= 0) {
-                var paranthesisIndex = keywords.indexOf('(');
-                var keyword = keywords.substring(paranthesisIndex, keywords.indexOf(')', paranthesisIndex) + 1);
+                var parenthesisIndex = keywords.indexOf('(');
+                var keyword = keywords.substring(parenthesisIndex, keywords.indexOf(')', parenthesisIndex) + 1);
                 tags.selectedKeywords.push(keyword);
                 keywords = keywords.replace(keyword, '');
+            }
+        }
+
+        function initFromToDesk(params) {
+            if (params.from_desk) {
+                tags.selectedParameters.push('From Desk:' + desks.deskLookup[params.from_desk.split('-')[0]].name);
+            }
+            if (params.to_desk) {
+                tags.selectedParameters.push('To Desk:' + desks.deskLookup[params.to_desk.split('-')[0]].name);
             }
         }
 
@@ -340,6 +383,8 @@
                     var keywords = initSelectedParameters(parameters);
                     initSelectedKeywords(keywords);
                 }
+
+                initFromToDesk(tags.currentSearch);
 
                 _.forEach(tags.currentSearch, function(type, key) {
                     if (key !== 'q') {
@@ -631,6 +676,14 @@
 
                                 metadata.removeSubjectTerm(elementName);
                             }
+                        }
+
+                        if (param.indexOf('From Desk') >= 0) {
+                            $location.search('from_desk', null);
+                        }
+
+                        if (param.indexOf('To Desk') >= 0) {
+                            $location.search('to_desk', null);
                         }
                     };
                 }
@@ -1141,8 +1194,8 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata',
-            function($location, $timeout, asset, api, tags, search, metadata) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks',
+            function($location, $timeout, asset, api, tags, search, metadata, desks) {
             return {
                 scope: {
                     repo: '=',
@@ -1157,6 +1210,10 @@
                         var params = $location.search();
                         scope.query = params.q;
                         scope.flags = false;
+                        scope.desks = [];
+                        scope.selectedDesk = {
+                            from: null, to: null
+                        };
 
                         fetchProviders();
 
@@ -1177,6 +1234,13 @@
                                 scope.repo.search = 'local';
                             }
                         }
+
+                        desks.initialize()
+                            .then(function() {
+                                scope.desks = desks.desks;
+                                initFromToDesk($location.search().from_desk, 'from');
+                                initFromToDesk($location.search().to_desk, 'to');
+                            });
                     }
 
                     init();
@@ -1188,8 +1252,24 @@
                             });
                     }
 
+                    /*
+                     * initialize the desk drop down selection.
+                     * @param {string} query string parameter from_desk or to_desk
+                     * @param {field} scope field to be updated.
+                     */
+                    function initFromToDesk(param, field) {
+                        if (param) {
+                            var deskParams = param.split('-');
+                            if (deskParams.length === 2) {
+                                scope.selectedDesk[field] = deskParams[0];
+                            }
+                        }
+                    }
+
                     scope.$on('$locationChangeSuccess', function() {
-                        if (scope.query !== $location.search().q) {
+                        if (scope.query !== $location.search().q ||
+                            scope.selectedDesk.from !== $location.search().from_desk ||
+                            scope.selectedDesk.to !== $location.search().to_desk) {
                             init();
                         }
                     });
@@ -1293,6 +1373,33 @@
                                 subject: search.getSubjectCodes(currentTags, scope.subjectcodes)
                             };
                         });
+
+                    /*
+                     * filter content by desk.
+                     */
+                    scope.deskSearch = function () {
+                        $location.search('from_desk', getDeskParam('from'));
+                        $location.search('to_desk', getDeskParam('to'));
+                    };
+
+                    /*
+                     * Get the Desk Type
+                     * @param {string} field from or to
+                     * @returns {string} desk querystring parameter
+                     */
+                    function getDeskParam(field) {
+                        var deskId = '';
+                        if (scope.selectedDesk[field]) {
+                            deskId = scope.selectedDesk[field];
+                            var desk_type = _.result(_.find(scope.desks._items, function (item) {
+                                return item._id === deskId;
+                            }), 'desk_type');
+
+                            return deskId + '-' + desk_type;
+                        }
+
+                        return null;
+                    }
 
                     /*
                      * Filter content by subject search

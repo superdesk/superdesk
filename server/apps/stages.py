@@ -10,6 +10,7 @@
 
 import logging
 import superdesk
+from superdesk import config
 from flask import current_app as app
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
@@ -101,7 +102,7 @@ class StagesService(BaseService):
             if 'desk' in doc:
                 push_notification(self.notification_key,
                                   created=1,
-                                  stage_id=str(doc.get('_id')),
+                                  stage_id=str(doc.get(config.ID_FIELD)),
                                   desk_id=str(doc.get('desk')),
                                   is_visible=doc.get('is_visible', True))
             if doc.get('default_incoming', False):
@@ -111,9 +112,9 @@ class StagesService(BaseService):
         """
         Checks if deleting the stage would not violate data integrity, raises an exception if it does.
 
-            1/ Can't delete the default incomming stage
-            2/ The stage must have no unspiked documents
-            3/ The stage can not be refered to by a ingest routing rule
+            1/ Can't delete the default incoming stage
+            2/ The stage must have no documents (spiked or unspiked)
+            3/ The stage can not be referred to by a ingest routing rule
 
         :param doc:
         :return:
@@ -121,24 +122,25 @@ class StagesService(BaseService):
         if doc['default_incoming'] is True:
             desk_id = doc.get('desk', None)
             if desk_id and superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id):
-                raise SuperdeskApiError.forbiddenError(message='Cannot delete a default stage.')
+                raise SuperdeskApiError.preconditionFailedError(message='Cannot delete a default stage.')
 
-        # check if the stage has any documents in it
-        items = self._get_unspiked_stage_documents(str(doc['_id']))
-        if items.count() > 0:  # cannot delete
-            raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
+        archive_versions_query = {'task.stage': str(doc[config.ID_FIELD])}
+        items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
+        if items and items.count():
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Cannot delete stage as it has article(s) or referenced by versions of the article(s).')
 
-        # check if the stage is refered to in a ingest routing rule
-        rules = self._stage_in_rule(doc['_id'])
+        # check if the stage is referred to in a ingest routing rule
+        rules = self._stage_in_rule(doc[config.ID_FIELD])
         if rules.count() > 0:
             rule_names = ', '.join(rule.get('name') for rule in rules)
-            raise SuperdeskApiError.forbiddenError(
-                message='Stage is refered to by Ingest Routing Schemes : {}'.format(rule_names))
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Stage is referred by Ingest Routing Schemes : {}'.format(rule_names))
 
     def on_deleted(self, doc):
         push_notification(self.notification_key,
                           deleted=1,
-                          stage_id=str(doc.get('_id')),
+                          stage_id=str(doc.get(config.ID_FIELD)),
                           desk_id=str(doc.get('desk')))
 
     def on_update(self, updates, original):
@@ -146,11 +148,11 @@ class StagesService(BaseService):
             updates['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
         super().on_update(updates, original)
         if updates.get('content_expiry', None):
-            docs = self.get_stage_documents(str(original['_id']))
+            docs = self.get_stage_documents(str(original[config.ID_FIELD]))
             for doc in docs:
                 expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
                 item_model = get_model(ItemModel)
-                item_model.update({'_id': doc['_id']}, {'expiry': expiry})
+                item_model.update({'_id': doc[config.ID_FIELD]}, {'expiry': expiry})
 
         if updates.get('default_incoming', False):
             if not original.get('default_incoming'):
@@ -164,13 +166,13 @@ class StagesService(BaseService):
         if 'is_visible' in updates and updates['is_visible'] != original.get('is_visible', True):
             push_notification('stage_visibility_updated',
                               updated=1,
-                              stage_id=str(original['_id']),
+                              stage_id=str(original[config.ID_FIELD]),
                               desk_id=str(original['desk']),
                               is_visible=updates.get('is_visible', original.get('is_visible', True)))
         else:
             push_notification(self.notification_key,
                               updated=1,
-                              stage_id=str(original.get('_id')),
+                              stage_id=str(original.get(config.ID_FIELD)),
                               desk_id=str(original.get('desk')))
 
     def _get_unspiked_stage_documents(self, stage_id):

@@ -15,7 +15,7 @@ from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 
 from apps.archive.common import get_expiry, item_operations, ITEM_OPERATION, update_version
-from apps.archive.common import insert_into_versions, is_assigned_to_a_desk
+from apps.archive.common import insert_into_versions, is_assigned_to_a_desk, convert_task_attributes_to_objectId
 
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
@@ -218,6 +218,7 @@ class TasksService(BaseService):
             resolve_document_version(doc, ARCHIVE, 'POST')
             self.update_times(doc)
             self.update_stage(doc)
+            convert_task_attributes_to_objectId(doc)
 
     def on_created(self, docs):
         push_notification(self.datasource, created=1)
@@ -240,6 +241,7 @@ class TasksService(BaseService):
             updates[ITEM_OPERATION] = ITEM_SEND
             send_to(doc=original, update=updates, desk_id=None, stage_id=new_stage_id, user_id=new_user_id)
             resolve_document_version(updates, ARCHIVE, 'PATCH', original)
+        convert_task_attributes_to_objectId(updates)
         update_version(updates, original)
 
     def on_updated(self, updates, original):

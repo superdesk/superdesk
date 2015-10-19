@@ -18,7 +18,7 @@ Feature: Duplication of Content within Desk
           "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}]
       """
 
-    @auth
+    @auth @test
     Scenario: Duplicate a content with history
       When we patch given
       """
@@ -44,6 +44,8 @@ Feature: Duplication of Content within Desk
       """
       {"state": "submitted", "_current_version": 4, "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"}}
       """
+      Then there is no "last_production_desk" in task
+      Then there is no "last_authoring_desk" in task
       When we get "/archive/#duplicate._id#?version=all"
       Then we get list with 4 items
 

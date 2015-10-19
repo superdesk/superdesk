@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+from bson import ObjectId
 from test_factory import SuperdeskTestCase
 from eve.utils import date_to_str
 from superdesk.utc import get_expiry_date, utcnow
@@ -17,7 +18,8 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError
 from datetime import timedelta, datetime
 from pytz import timezone
-from apps.archive.common import validate_schedule, remove_media_files, format_dateline_to_locmmmddsrc
+from apps.archive.common import validate_schedule, remove_media_files, \
+    format_dateline_to_locmmmddsrc, convert_task_attributes_to_objectId
 from settings import ORGANIZATION_NAME_ABBREVIATION
 
 
@@ -266,3 +268,21 @@ class ArchiveTestCase(SuperdeskTestCase):
         formatted_dateline = format_dateline_to_locmmmddsrc(located, current_ts)
         self.assertEqual(formatted_dateline, 'SYDNEY, NSW, AU %s %s -' % (formatted_date,
                                                                           ORGANIZATION_NAME_ABBREVIATION))
+
+    def test_if_task_attributes_converted_to_objectid(self):
+        doc = {
+            'task': {
+                'user': '562435231d41c835d7b5fb55',
+                'desk': ObjectId("562435241d41c835d7b5fb5d"),
+                'stage': 'test',
+                'last_authoring_desk': 3245,
+                'last_production_desk': None
+            }
+        }
+
+        convert_task_attributes_to_objectId(doc)
+        self.assertIsInstance(doc['task']['user'], ObjectId)
+        self.assertEqual(doc['task']['desk'], ObjectId("562435241d41c835d7b5fb5d"))
+        self.assertEqual(doc['task']['stage'], 'test')
+        self.assertEqual(doc['task']['last_authoring_desk'], 3245)
+        self.assertIsNone(doc['task']['last_production_desk'])

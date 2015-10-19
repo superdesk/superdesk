@@ -28,7 +28,7 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule, ITEM_OPERATION
+from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.publish.formatters import get_formatter
@@ -135,6 +135,7 @@ class BasePublishService(BaseService):
 
         self._set_updates(original, updates, updates.get(config.LAST_UPDATED, utcnow()))
         updates[ITEM_OPERATION] = ITEM_PUBLISH
+        convert_task_attributes_to_objectId(updates)
 
     def on_updated(self, updates, original):
         self.update_published_collection(published_item_id=original[config.ID_FIELD])

@@ -26,16 +26,37 @@
                                 <label translate>Source for User Created Articles</label>
                                 <input type="text" class="fullwidth-input" ng-model="desk.edit.source" ng-keyup="handleEdit($event);" required>
                             </div>
-                            <div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry" data-header="Spike Expiry"></div>
-                            <div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="published_item_expiry" data-header="Published Item Expiry"></div>
+                            <ul class="expiry">
+                                <li>
+                                    <div sd-content-expiry
+                                         data-item="desk.edit"
+                                         data-preview="false"
+                                         data-expiryfield="spike_expiry"
+                                         data-header="Spike Expiry"></div>
+                                </li>
+                                <li>
+                                    <div sd-content-expiry
+                                         data-item="desk.edit"
+                                         data-preview="false"
+                                         data-expiryfield="published_item_expiry"
+                                         data-header="Published Item Expiry"></div>
+                                </li>
+                            </ul>
+                            <div class="field desk-type">
+                                <label translate>Desk Type</label>
+                                <select id="deskType" ng-model="desk.edit.desk_type"
+                                        ng-options="deskType.value as deskType.name for deskType in deskTypes"
+                                        required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
                         </fieldset>
-                        <p ng-if="message">{{ message }}</p>
                         <span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
                         <p ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</p>
                         <span ng-show="_error" translate>There was a problem, desk not created/updated.</span>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
+                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
                     </div>
                 </form>
             </div>
@@ -146,7 +167,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Next</button>
+                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Next</button>
                 </div>
             </div>
         </div>
@@ -170,7 +191,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Next</button>
+                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Next</button>
                 </div>
             </div>
         </div>

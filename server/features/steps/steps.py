@@ -1751,6 +1751,12 @@ def there_is_no_key_in_response(context, key):
     assert key not in data, 'key "%s" is in %s' % (key, data)
 
 
+@then('there is no "{key}" in task')
+def there_is_no_key_in_preferences(context, key):
+    data = get_json_data(context.response)['task']
+    assert key not in data, 'key "%s" is in task' % key
+
+
 @then('there is no "{key}" in "{namespace}" preferences')
 def there_is_no_key_in_preferences(context, key, namespace):
     data = get_json_data(context.response)['user_preferences']

@@ -8,14 +8,21 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 from superdesk.errors import SuperdeskApiError
-
 from superdesk.resource import Resource
+from superdesk import config
+from superdesk.utils import SuperdeskBaseEnum
 from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
 from apps.tasks import default_status
 from superdesk.notification import push_notification
 from superdesk.activity import add_activity, ACTIVITY_UPDATE
+
+
+class DeskTypes(SuperdeskBaseEnum):
+    authoring = 'authoring'
+    production = 'production'
+
 
 desks_schema = {
     'name': {
@@ -65,6 +72,11 @@ desks_schema = {
                 }
             }
         }
+    },
+    'desk_type': {
+        'type': 'string',
+        'default': DeskTypes.authoring.value,
+        'allowed': DeskTypes.values()
     }
 }
 
@@ -92,19 +104,34 @@ class DesksService(BaseService):
 
     def create(self, docs, **kwargs):
         for doc in docs:
+            doc.setdefault('desk_type', DeskTypes.authoring.value)
             if not doc.get('incoming_stage', None):
                 stage = {'name': 'New', 'default_incoming': True, 'desk_order': 1, 'task_status': default_status}
                 superdesk.get_resource_service('stages').post([stage])
-                doc['incoming_stage'] = stage.get('_id')
+                doc['incoming_stage'] = stage.get(config.ID_FIELD)
                 super().create([doc], **kwargs)
-                superdesk.get_resource_service('stages').patch(doc['incoming_stage'], {'desk': doc['_id']})
+                superdesk.get_resource_service('stages').patch(doc['incoming_stage'], {'desk': doc[config.ID_FIELD]})
             else:
                 super().create([doc], **kwargs)
-        return [doc['_id'] for doc in docs]
+        return [doc[config.ID_FIELD] for doc in docs]
 
     def on_created(self, docs):
         for doc in docs:
-            push_notification(self.notification_key, created=1, desk_id=str(doc.get('_id')))
+            push_notification(self.notification_key, created=1, desk_id=str(doc.get(config.ID_FIELD)))
+
+    def on_update(self, updates, original):
+        if updates.get('desk_type', '') != original.get('desk_type', ''):
+            archive_versions_query = {
+                '$or': [
+                    {'task.last_authoring_desk': str(original[config.ID_FIELD])},
+                    {'task.last_production_desk': str(original[config.ID_FIELD])}
+                ]
+            }
+
+            items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
+            if items and items.count():
+                raise SuperdeskApiError.badRequestError(
+                    message='Cannot update Desk Type as there are article(s) referenced by the Desk.')
 
     def on_delete(self, desk):
         """
@@ -114,29 +141,41 @@ class DesksService(BaseService):
             3. The desk is associated with routing rule(s)
         """
 
-        as_default_desk = superdesk.get_resource_service('users').get(req=None, lookup={'desk': desk['_id']})
+        as_default_desk = superdesk.get_resource_service('users').get(req=None, lookup={'desk': desk[config.ID_FIELD]})
         if as_default_desk and as_default_desk.count():
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as it is assigned as default desk to user(s).')
 
-        routing_rules_query = {'$or': [{'rules.actions.fetch.desk': desk['_id']},
-                                       {'rules.actions.publish.desk': desk['_id']}]
-                               }
+        routing_rules_query = {
+            '$or': [
+                {'rules.actions.fetch.desk': desk[config.ID_FIELD]},
+                {'rules.actions.publish.desk': desk[config.ID_FIELD]}
+            ]
+        }
         routing_rules = superdesk.get_resource_service('routing_schemes').get(req=None, lookup=routing_rules_query)
         if routing_rules and routing_rules.count():
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as routing scheme(s) are associated with the desk')
 
-        items = superdesk.get_resource_service('archive').get(req=None, lookup={'task.desk': str(desk['_id'])})
+        archive_versions_query = {
+            '$or': [
+                {'task.desk': str(desk[config.ID_FIELD])},
+                {'task.last_authoring_desk': str(desk[config.ID_FIELD])},
+                {'task.last_production_desk': str(desk[config.ID_FIELD])}
+            ]
+        }
+
+        items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
         if items and items.count():
-            raise SuperdeskApiError.preconditionFailedError(message='Cannot delete desk as it has article(s).')
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Cannot delete desk as it has article(s) or referenced by versions of the article(s).')
 
     def delete(self, lookup):
         """
         Overriding to delete stages before deleting a desk
         """
 
-        superdesk.get_resource_service('stages').delete(lookup={'desk': lookup.get('_id')})
+        superdesk.get_resource_service('stages').delete(lookup={'desk': lookup.get(config.ID_FIELD)})
         super().delete(lookup)
 
     def on_deleted(self, doc):
@@ -144,7 +183,7 @@ class DesksService(BaseService):
         push_notification(self.notification_key,
                           deleted=1,
                           user_ids=desk_user_ids,
-                          desk_id=str(doc.get('_id')))
+                          desk_id=str(doc.get(config.ID_FIELD)))
 
     def on_updated(self, updates, original):
         self.__send_notification(updates, original)
@@ -157,7 +196,7 @@ class DesksService(BaseService):
         return added, removed
 
     def __send_notification(self, updates, desk):
-        desk_id = desk['_id']
+        desk_id = desk[config.ID_FIELD]
 
         if 'members' in updates:
             added, removed = self.__compare_members(desk.get('members', {}), updates['members'])
@@ -176,7 +215,7 @@ class DesksService(BaseService):
                              user=user.get('username'),
                              desk=desk.get('name'))
         else:
-            push_notification(self.notification_key, updated=1, desk_id=str(desk.get('_id')))
+            push_notification(self.notification_key, updated=1, desk_id=str(desk.get(config.ID_FIELD)))
 
 
 class UserDesksResource(Resource):

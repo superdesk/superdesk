@@ -143,4 +143,76 @@ function Desks() {
     this.save = function() {
         element(by.id('save')).click();
     };
+
+    /**
+     * Get the desk name element
+     * @returns {ElementFinder} desk name element
+     **/
+    this.deskNameElement = function() {
+        return element(by.model('desk.edit.name'));
+    };
+
+    /**
+     * Get the desk description element
+     * @returns {ElementFinder} desk description element
+     **/
+    this.deskDescriptionElement = function() {
+        return element(by.model('desk.edit.description'));
+    };
+
+    /**
+     * Get the desk source element
+     * @returns {ElementFinder} desk source element
+     **/
+    this.deskSourceElement = function() {
+        return element(by.model('desk.edit.source'));
+    };
+
+    /**
+     * Get the desk type element
+     * @returns {ElementFinder} desk type element
+     **/
+    this.getDeskType = function() {
+        return element(by.model('desk.edit.desk_type'));
+    };
+
+    /**
+     * Set desk type
+     * @param {string} deskType name
+     **/
+    this.setDeskType = function(deskType) {
+        element(by.model('desk.edit.desk_type')).$('[value="string:' + deskType + '"]').click();
+    };
+
+    /**
+     * next button on general tab
+     * @returns {ElementFinder} next button
+     **/
+    this.getNextButtonOnGeneralTab = function() {
+        return element(by.id('next-general'));
+    };
+
+    /**
+     * next button on stages tab
+     * @returns {ElementFinder} next button
+     **/
+    this.getNextButtonOnStagesTab = function() {
+        return element(by.id('next-stages'));
+    };
+
+    /**
+     * next button on people tab
+     * @returns {ElementFinder} next button
+     **/
+    this.getNextButtonOnPeopleTab = function() {
+        return element(by.id('next-people'));
+    };
+
+    /**
+     * new desk button
+     * @returns {ElementFinder} button
+     **/
+    this.getNewDeskButton = function() {
+        return element(by.id('add-new-desk'));
+    };
 }

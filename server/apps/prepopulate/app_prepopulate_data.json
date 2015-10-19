@@ -108,14 +108,14 @@
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin1-"}, {"user": "-id user admin2-"}, {"user": "-id user admin3-"}], "name": "Sports Desk", "desk_type": "authoring"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Sports Desks-"
     },
 
     {
-        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk"},
+        "data": {"members": [{"user": "-id user admin-"}, {"user": "-id user admin4-"}, {"user": "-id user admin1-"}], "name": "Politic Desk", "desk_type": "production"},
         "resource": "desks",
         "username": "admin",
         "id_name": "-id desk Politic Desks-"
@@ -310,6 +310,18 @@
         },
 		"resource": "vocabularies",
 		"id_name": "-id vocabularies subscriber_types-"
+    },
+
+    {
+        "data": {
+            "_id": "desk_types",
+            "items": [
+                {"is_active": true, "name": "authoring", "value": "authoring"},
+                {"is_active": true, "name": "production", "value": "production"}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies desk_types-"
     },
 
     {

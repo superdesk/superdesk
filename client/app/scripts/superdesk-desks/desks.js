@@ -836,12 +836,14 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', function(gettext, desks, WizardHandler) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata',
+            function(gettext, desks, WizardHandler, metadata) {
             return {
 
                 link: function(scope, elem, attrs) {
 
                     scope.limits = limits;
+                    scope.deskTypes = [];
 
                     scope.$watch('step.current', function(step) {
                         if (step === 'general') {
@@ -897,6 +899,15 @@
                             scope._errorLimits = scope.desk.edit.name.length > scope.limits.desk ? true : null;
                         }
                     };
+
+                    if (metadata.values.desk_types) {
+                        scope.deskTypes = metadata.values.desk_types;
+                    } else {
+                        metadata.fetchMetadataValues()
+                            .then(function() {
+                                scope.deskTypes = metadata.values.desk_types;
+                            });
+                    }
 
                 }
             };
