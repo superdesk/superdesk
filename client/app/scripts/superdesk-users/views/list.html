@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div class="preview-pane">
+        <div class="preview-pane" ng-if="selected.user">
             <header>
                 <a id="open-user-profile" href="" ng-click="intent('detail', 'user', selected.user)" ng-show="selected.user._id" class="btn btn-light pull-left" translate>View full profile</a>
                 <button ng-click="selected.user = null" class="close-preview"><i class="icon-close-small"></i></button>
