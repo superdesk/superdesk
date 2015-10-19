@@ -195,7 +195,7 @@
                         e.stopPropagation();
                     },
                     mouseenter: function () {
-                        $(this).find('.dropdown-toggle').click();
+                        $(this).find('.highlights-list').not('.open').children('.dropdown-toggle').click();
                     }
                 });
 
