@@ -2,6 +2,20 @@
     'use strict';
 
     /**
+    * Common error handler code for privilege errors
+    */
+    function privilegesErrorHandler(response) {
+        if (angular.isDefined(response.data._issues) &&
+            angular.isDefined(response.data._issues['validator exception'])) {
+            return 'Error: ' + response.data._issues['validator exception'];
+        } else if (angular.isDefined(response.data._message)) {
+            return 'Error: ' + response.data._message;
+        } else {
+            return 'Error. Privileges not updated.';
+        }
+    }
+
+    /**
      * Bussiness logic layer, should be used instead of resource
      */
     UsersService.$inject = ['api', '$q', 'notify'];
@@ -578,8 +592,8 @@
                     $q.all(promises).then(function() {
                         notify.success(gettext('Privileges updated.'));
                         rolesForm.$setPristine();
-                    }, function() {
-                        notify.success(gettext('Error. Privileges not updated.'));
+                    }, function(response) {
+                        notify.error(gettext(privilegesErrorHandler(response)));
                     });
                 };
             }
@@ -1306,9 +1320,8 @@
                         api.save('users', scope.user, _.pick(scope.user, 'privileges'))
                         .then(function(result) {
                             notify.success(gettext('Privileges updated.'));
-                        }, function(error) {
-                            notify.error(gettext('Privileges not updated.'));
-                            console.log(error);
+                        }, function(response) {
+                            notify.error(gettext(privilegesErrorHandler(response)));
                         });
                         userPrivileges.$setPristine();
                     };
