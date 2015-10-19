@@ -1,14 +1,15 @@
 'use strict';
 
 var monitoring = require('./helpers/monitoring'),
+    authoring = require('./helpers/authoring'),
     publishQueue = require('./helpers/publish_queue');
 
 describe('publish queue', function() {
     beforeEach(function() {
         monitoring.openMonitoring();
-        monitoring.openAction(1, 0);
-        monitoring.openSendMenu();
-        monitoring.publish();
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
         publishQueue.openPublishQueue();
     });
     it('publish using HTTP Push delivery type', function() {

@@ -8,6 +8,7 @@ module.exports.printLogs = printLogs;
 module.exports.waitForSuperdesk = waitForSuperdesk;
 module.exports.nav = nav;
 module.exports.getListOption = getListOption;
+module.exports.ctrlKey = ctrlKey;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -166,4 +167,14 @@ function route(location) {
 function getListOption(dropdown, n) {
     var cssSelector = 'option:nth-child(' + n + ')';
     return dropdown.$(cssSelector);
+}
+
+/**
+ * Performs CTRL + key action
+ *
+ * @param {char} key
+ */
+function ctrlKey(key) {
+    var Key = protractor.Key;
+    browser.actions().sendKeys(Key.chord(Key.CONTROL, key)).perform();
 }

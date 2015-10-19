@@ -60,15 +60,18 @@ describe('Package', function() {
     });
 
     it('create package from published item', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('some text');
         authoring.save();
         authoring.publish();
-        search.openGlobalSearch();
-        search.setListView().then(function() {
-            search.actionOnItem('Create package', 0);
-            expect(authoring.getGroupItems('MAIN').count()).toBe(1);
-        });
+        monitoring.showSearch();
+        search.setListView();
+        search.showCustomSearch();
+        search.toggleByType('text');
+        expect(search.getTextItem(0)).toBe('item5');
+        search.actionOnItem('Create package', 0);
+        expect(authoring.getGroupItems('MAIN').count()).toBe(1);
     });
 
     it('create package by combining an item with open item', function() {
