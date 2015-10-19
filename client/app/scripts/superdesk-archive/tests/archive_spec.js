@@ -44,6 +44,14 @@ describe('content', function() {
             expect(archiveService.isLegal(item)).toBe(true);
         }));
 
+        it('returns the related items', inject(function(archiveService, api, $q, search) {
+            spyOn(api, 'query').and.returnValue($q.when());
+            archiveService.getRelatedItems('test');
+            expect(api.query).toHaveBeenCalled();
+            var criteria = api.query.calls.mostRecent().args[1];
+            expect(criteria.source.query.filtered.query.query_string.query).toBe('slugline:(test)');
+        }));
+
         it('can verify if the item is published or not', inject(function(archiveService) {
             item.state = 'submitted';
             expect(archiveService.isPublished(item)).toBe(false);

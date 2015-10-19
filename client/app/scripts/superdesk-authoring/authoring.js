@@ -2279,11 +2279,12 @@
                     scope.loaded = true;
 
                     if (!archiveService.isLegal(scope.item)) {
-                        // Related items
-                        familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
-                            .then(function (items) {
+                        // Related Items
+                        if (scope.item.slugline) {
+                            archiveService.getRelatedItems(scope.item.slugline).then(function(items) {
                                 scope.relatedItems = items;
                             });
+                        }
 
                         var relatedItemWidget = _.filter(authoringWidgets, function (widget) {
                             return widget._id === 'related-item';

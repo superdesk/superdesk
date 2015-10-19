@@ -76,16 +76,7 @@
 					</div>
 				</div>
 			</li>
-
-			<li>
-				<label translate>Associated</label>
-				<a ng-show="associatedItem != null" ng-href="#/authoring/{{item.related_to}}" title="{{ associatedItem.slugline || associatedItem.headline }}">
-		            <div ng-show="associatedItem.slugline || associatedItem.headline">
-		                {{ associatedItem.slugline || associatedItem.headline | uppercase}}
-		            </div>
-		            <div ng-hide="associatedItem.slugline || associatedItem.headline" translate>Blank headline received</div>
-		        </a>
-			</li>
+			
 			<li ng-if="item.ingest_provider_sequence">
 				<label translate>Provider sequence</label>
 				<div class="data">{{item.ingest_provider_sequence}}</div>
