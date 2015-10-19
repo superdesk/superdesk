@@ -16,8 +16,8 @@ function AuthoringWidgetsProvider() {
     };
 }
 
-WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService'];
-function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService) {
+WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets', 'archiveService', 'keyboardManager'];
+function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveService, keyboardManager) {
     $scope.active = null;
 
     $scope.$watch('item', function(item) {
@@ -36,6 +36,16 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
 
         $scope.widgets = authoringWidgets.filter(function(widget) {
             return !!widget.display[display];
+        });
+
+        /*
+         * Navigate throw right tab widgets with keyboard combination
+         * Combination: Ctrl + {{widget number}}
+         */
+        angular.forEach($scope.widgets, function (widget) {
+            keyboardManager.bind('ctrl+' + widget.order, function () {
+                $scope.activate(widget);
+            }, {global: true});
         });
     });
 
