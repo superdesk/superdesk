@@ -21,7 +21,7 @@ describe('search service', function() {
         expect(criteria.query.filtered.query.query_string.query).toBe('test');
     }));
 
-    it('can create query for from_desk and to_desk', inject(function($rootScope, search) {
+    it('can create query for from_desk', inject(function($rootScope, search) {
         // only from desk is specified
         var criteria = search.query({from_desk: 'test-authoring'}).getCriteria();
         var filters = criteria.query.filtered.filter.and;
@@ -29,49 +29,26 @@ describe('search service', function() {
         criteria = search.query({from_desk: 'test-production'}).getCriteria();
         filters = criteria.query.filtered.filter.and;
         expect(filters).toContain({term: {'task.last_production_desk': 'test'}});
+    }));
 
+    it('can create query for to_desk', inject(function($rootScope, search) {
         // only to desk is specified
-        criteria = search.query({to_desk: '456-authoring'}).getCriteria();
-        filters = criteria.query.filtered.filter.and;
+        var criteria = search.query({to_desk: '456-authoring'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
         expect(filters).toContain({term: {'task.desk': '456'}});
         expect(filters).toContain({exists: {field: 'task.last_production_desk'}});
         criteria = search.query({to_desk: '456-production'}).getCriteria();
         filters = criteria.query.filtered.filter.and;
         expect(filters).toContain({term: {'task.desk': '456'}});
         expect(filters).toContain({exists: {field: 'task.last_authoring_desk'}});
-
-        // both from desk and to desk are specified
-        criteria = search.query({from_desk: '123-authoring', to_desk: '456-production'}).getCriteria();
-        filters = criteria.query.filtered.filter.and;
-        expect(filters).toContain({term: {'task.last_authoring_desk': '123'}});
-        expect(filters).toContain({term: {'task.desk': '456'}});
     }));
 
-    it('create tags for from desk', inject(function ($location, $rootScope, $q, tags, _desks_) {
-        var desks = _desks_;
-        spyOn(desks, 'initialize').and.returnValue($q.when([]));
-
-        desks.deskLookup = {
-            from: {
-                name: 'National'
-            },
-            to: {
-                name: 'Sport'
-            }
-        };
-
-        $location.search('from_desk', 'from-authoring');
-        $location.search('to_desk', 'to-authoring');
-
-        var tagsList = null;
-        tags.initSelectedFacets().then(function(value) {
-            tagsList = value;
-        });
-
-        $rootScope.$digest();
-        expect(tagsList.selectedParameters.length).toEqual(2);
-        expect(tagsList.selectedParameters[0]).toEqual('From Desk:National');
-        expect(tagsList.selectedParameters[1]).toEqual('To Desk:Sport');
+    it('can create query for from_desk and to_desk', inject(function($rootScope, search) {
+        // both from desk and to desk are specified
+        var criteria = search.query({from_desk: '123-authoring', to_desk: '456-production'}).getCriteria();
+        var filters = criteria.query.filtered.filter.and;
+        expect(filters).toContain({term: {'task.last_authoring_desk': '123'}});
+        expect(filters).toContain({term: {'task.desk': '456'}});
     }));
 
     it('can sort items', inject(function(search, $location, $rootScope) {

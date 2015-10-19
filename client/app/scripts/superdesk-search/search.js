@@ -1261,10 +1261,7 @@
                         if (param) {
                             var deskParams = param.split('-');
                             if (deskParams.length === 2) {
-                                var desk = _.find(scope.desks._items, function(item) {
-                                    return item._id === deskParams[0];
-                                });
-                                scope.selectedDesk[field] = desk ? desk : null;
+                                scope.selectedDesk[field] = deskParams[0];
                             }
                         }
                     }
@@ -1393,14 +1390,7 @@
                     function getDeskParam(field) {
                         var deskId = '';
                         if (scope.selectedDesk[field]) {
-                            if (typeof(scope.selectedDesk[field]) === 'string') {
-                                deskId = scope.selectedDesk[field];
-                            } else {
-                                if (_.isObject(scope.selectedDesk[field])) {
-                                    deskId = scope.selectedDesk[field]._id;
-                                }
-                            }
-
+                            deskId = scope.selectedDesk[field];
                             var desk_type = _.result(_.find(scope.desks._items, function (item) {
                                 return item._id === deskId;
                             }), 'desk_type');

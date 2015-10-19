@@ -97,4 +97,32 @@ describe('Tag Service', function() {
         expect(members.selectedParameters.length).toBe(1);
 
     }));
+
+    it('create tags for from desk and to desk', inject(function ($location, $rootScope, $q, tags, _desks_) {
+        var desks = _desks_;
+        desks.deskLookup = {
+            from: {
+                name: 'National'
+            },
+            to: {
+                name: 'Sport'
+            }
+        };
+
+        $location.search('from_desk', 'from-authoring');
+        $location.search('to_desk', 'to-authoring');
+
+        spyOn(desks, 'initialize').and.returnValue($q.when([]));
+
+        var tagsList = null;
+        tags.initSelectedFacets()
+            .then(function(value) {
+                tagsList = value;
+            });
+
+        $rootScope.$digest();
+        expect(tagsList.selectedParameters.length).toEqual(2);
+        expect(tagsList.selectedParameters[0]).toEqual('From Desk:National');
+        expect(tagsList.selectedParameters[1]).toEqual('To Desk:Sport');
+    }));
 });
