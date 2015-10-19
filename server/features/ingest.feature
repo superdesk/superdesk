@@ -123,26 +123,26 @@ Feature: Fetch From Ingest
         Then we get existing resource
 		"""
 		{
-		"_items": [
-		  {
-		    "type": "text",
-		    "subject" : [
-              {
-                  "name" : "Formula One",
-                  "qcode" : "15039001"
-              },
-              {
-                  "name" : "sport",
-                  "qcode" : "15000000"
-              },
-              {
-                  "name" : "motor racing",
-                  "qcode" : "15039000"
-              }
-              ]
-		  }
-		  ]
-		}
+                    "_items": [
+                        {
+                            "type": "text",
+                            "subject": [
+                                {
+                                    "name": "Formula One",
+                                    "qcode": "15039001"
+                                },
+                                {
+                                    "name": "sport",
+                                    "qcode": "15000000"
+                                },
+                                {
+                                    "name": "motor racing",
+                                    "qcode": "15039000"
+                                }
+                            ]
+                        }
+                    ]
+                }
   		"""
 
     @auth
