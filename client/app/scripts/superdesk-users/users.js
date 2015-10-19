@@ -2,6 +2,20 @@
     'use strict';
 
     /**
+    * Common error handler code for privilege errors
+    */
+    function privilegesErrorHandler(response) {
+        if (angular.isDefined(response.data._issues) &&
+            angular.isDefined(response.data._issues['validator exception'])) {
+            return 'Error: ' + response.data._issues['validator exception'];
+        } else if (angular.isDefined(response.data._message)) {
+            return 'Error: ' + response.data._message;
+        } else {
+            return 'Error. Privileges not updated.';
+        }
+    }
+
+    /**
      * Bussiness logic layer, should be used instead of resource
      */
     UsersService.$inject = ['api', '$q', 'notify'];
@@ -579,14 +593,7 @@
                         notify.success(gettext('Privileges updated.'));
                         rolesForm.$setPristine();
                     }, function(response) {
-                        if (angular.isDefined(response.data._issues) &&
-                            angular.isDefined(response.data._issues['validator exception'])) {
-                            notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                        } else if (angular.isDefined(response.data._message)) {
-                            notify.error(gettext('Error: ' + response.data._message));
-                        } else {
-                            notify.error(gettext('Error. Privileges not updated.'));
-                        }
+                        notify.error(gettext(privilegesErrorHandler(response)));
                     });
                 };
             }
@@ -1314,14 +1321,7 @@
                         .then(function(result) {
                             notify.success(gettext('Privileges updated.'));
                         }, function(response) {
-                            if (angular.isDefined(response.data._issues) &&
-                                angular.isDefined(response.data._issues['validator exception'])) {
-                                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
-                            } else if (angular.isDefined(response.data._message)) {
-                                notify.error(gettext('Error: ' + response.data._message));
-                            } else {
-                                notify.error(gettext('Error. Privileges not updated.'));
-                            }
+                            notify.error(gettext(privilegesErrorHandler(response)));
                         });
                         userPrivileges.$setPristine();
                     };
