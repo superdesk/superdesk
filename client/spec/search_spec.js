@@ -3,7 +3,9 @@
 
 var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
-    content = require('./helpers/pages').content;
+    content = require('./helpers/pages').content,
+    globalSearch = require('./helpers/search'),
+    authoring = require('./helpers/authoring');
 
 describe('Search', function() {
 
@@ -70,5 +72,41 @@ describe('Search', function() {
         var priority3 = element.all(by.repeater('(key,value) in aggregations.priority')).first();
         priority3.click();
         expect(element.all(by.repeater('items._items')).count()).toBe(1);
+    });
+
+    it('can search by from desk field', function() {
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
+        expect(element.all(by.repeater('items._items')).count()).toBe(2);
+        authoring.createTextItem();
+        authoring.writeTextToHeadline('From-Sports-To-Politics');
+        authoring.writeText('This is Body');
+        authoring.writeTextToAbstract('This is Abstract');
+        authoring.save();
+        expect(element.all(by.repeater('items._items')).count()).toBe(3);
+        authoring.sendTo('Politic Desk');
+        authoring.confirmSendTo();
+        workspace.switchToDesk('POLITIC DESK').then(content.setListView);
+        expect(element.all(by.repeater('items._items')).count()).toBe(8);
+        globalSearch.openGlobalSearch();
+        globalSearch.setListView();
+        expect(element.all(by.repeater('items._items')).count()).toBe(11);
+        globalSearch.openFilterPanel();
+        globalSearch.openParameters();
+
+        globalSearch.selectDesk('from-desk', 'Sports Desk');
+        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
+
+        globalSearch.selectDesk('to-desk', 'Politic Desk');
+        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
+
+        globalSearch.selectDesk('from-desk', '');
+        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(globalSearch.getHeadlineElement(0).getText()).toBe('From-Sports-To-Politics');
+
+        globalSearch.selectDesk('to-desk', '');
+        expect(element.all(by.repeater('items._items')).count()).toBe(11);
+
     });
 });

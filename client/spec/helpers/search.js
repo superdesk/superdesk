@@ -132,7 +132,40 @@ function GlobalSearch() {
      * @param {string} type
      */
     this.toggleByType = function(type) {
-        browser.actions().mouseMove(element(by.className('filetype-icon-' + type))).perform();
-        element(by.id('filetype-icon-' + type)).click();
+            browser.actions().mouseMove(element(by.className('filetype-icon-' + type))).perform();
+            element(by.id('filetype-icon-' + type)).click();
+    };
+
+    /**
+     * Open the filter panel
+     */
+    this.openFilterPanel = function() {
+        element(by.css('.filter-trigger')).click();
+    };
+
+    /**
+     * Open the search Parameters from
+     */
+    this.openParameters = function() {
+        element(by.id('search-parameters')).click();
+    };
+
+    /**
+     * Open the search Parameters from
+     * @param {string} selectId - Id of the <select> element
+     * @param {string} deskName - Name of the desk.
+     */
+    this.selectDesk = function(selectId, deskName) {
+        element(by.id(selectId)).element(by.css('option[label="' + deskName + '"]')).click();
+    };
+
+    /**
+     * Get the Element Heading by index
+     * @param {number} index
+     * @return {promise} headline element
+     */
+    this.getHeadlineElement = function(index) {
+        element(by.id('search-parameters')).click();
+        return this.getItem(index).element(by.className('item-heading'));
     };
 }
