@@ -1,4 +1,4 @@
-from .common import BasePublishService, BasePublishResource, ITEM_PUBLISH, WIRE
+from .common import BasePublishService, BasePublishResource, ITEM_PUBLISH
 from eve.utils import config
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, ITEM_STATE, CONTENT_STATE, EMBARGO
 from superdesk.metadata.packages import PACKAGE_TYPE, TAKES_PACKAGE
@@ -86,7 +86,8 @@ class ArchivePublishService(BasePublishService):
         # Step 4
         if not first_take:
             subscribers = self.filter_subscribers(doc, subscribers,
-                                                  WIRE if doc.get('targeted_for') else target_media_type)
+                                                  SUBSCRIBER_TYPES.WIRE if doc.get('targeted_for')
+                                                  else target_media_type)
 
         if takes_subscribers:
             # Step 4a

@@ -1,7 +1,8 @@
-from .common import BasePublishService, BasePublishResource, ITEM_KILL, WIRE
+from .common import BasePublishService, BasePublishResource, ITEM_KILL
 from eve.utils import config
 from superdesk.metadata.item import CONTENT_STATE, GUID_FIELD
 from superdesk import get_resource_service
+from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk.utc import utcnow
 import logging
 from copy import copy
@@ -67,7 +68,9 @@ class KillPublishService(BasePublishService):
                 if ref[GUID_FIELD] != original[config.ID_FIELD]:
                     original_data = super().find_one(req=None, _id=ref[GUID_FIELD])
                     updates_data = copy(updates)
-                    queued = self.publish(doc=original_data, updates=updates_data, target_media_type=WIRE)
+                    queued = self.publish(doc=original_data,
+                                          updates=updates_data,
+                                          target_media_type=SUBSCRIBER_TYPES.WIRE)
                     # we need to update the archive item and not worry about queued as we could have
                     # a takes only going to digital client.
                     self._set_updates(original_data, updates_data, last_updated)
