@@ -1,12 +1,13 @@
 define([
     'angular',
     'require',
+    'moment',
     './controllers/list',
     './controllers/upload',
     './archive-widget/archive',
     './related-item-widget/relatedItem',
     './directives'
-], function(angular, require) {
+], function(angular, require, moment) {
     'use strict';
 
     MultiService.$inject = ['$rootScope'];
@@ -130,8 +131,8 @@ define([
         };
     }
 
-    ArchiveService.$inject = ['desks', 'session', 'api', '$q'];
-    function ArchiveService(desks, session, api, $q) {
+    ArchiveService.$inject = ['desks', 'session', 'api', '$q', 'search'];
+    function ArchiveService(desks, session, api, $q, search) {
         /**
          * Adds 'task' property to the article represented by item.
          *
@@ -185,6 +186,29 @@ define([
          */
         this.isLegal = function(item) {
             return (angular.isDefined(item._type) && !_.isNull(item._type) && item._type === 'legal_archive');
+        };
+
+        /**
+         *  Returns the list of items having the same slugline in the last day
+         *  @param {String} slugline
+         *  @return {Object} the list of archive items
+         */
+        this.getRelatedItems = function(slugline) {
+            var before24HrDateTime = moment().subtract(1, 'days').format();
+            var params = {};
+            params.q = 'slugline:(' + slugline + ')';
+            params.ignoreKilled = true;
+            params.ignoreDigital = true;
+            params.afterversioncreated = before24HrDateTime;
+
+            var query = search.query(params);
+            query.size(200);
+            var criteria = query.getCriteria(true);
+            criteria.repo = 'archive,published';
+
+            return api.query('search', criteria).then(function(result) {
+                return result;
+            });
         };
 
         /**
