@@ -101,7 +101,7 @@ class LocatorMapper(FieldMapper):
 
         # If no mapping is found then use the first place value
         if not mapped_value:
-            for place in article.get('place', []):
+            for place in (article.get('place') or []):
                 return place.get('qcode')
 
         return mapped_value
@@ -114,7 +114,7 @@ class LocatorMapper(FieldMapper):
         :param dict locators: subject code locator mapping dictionary
         :return: if found then the locator as string else None
         """
-        subjects = article.get('subject', [])
+        subjects = article.get('subject') or []
         for subject in subjects:
             qcode = subject.get('qcode', '')
             feature = locators.get(qcode)
