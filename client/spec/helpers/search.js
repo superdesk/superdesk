@@ -132,8 +132,8 @@ function GlobalSearch() {
      * @param {string} type
      */
     this.toggleByType = function(type) {
-            browser.actions().mouseMove(element(by.className('filetype-icon-' + type))).perform();
-            element(by.id('filetype-icon-' + type)).click();
+        browser.actions().mouseMove(element(by.className('filetype-icon-' + type))).perform();
+        element(by.id('filetype-icon-' + type)).click();
     };
 
     /**
