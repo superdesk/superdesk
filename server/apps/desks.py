@@ -119,6 +119,20 @@ class DesksService(BaseService):
         for doc in docs:
             push_notification(self.notification_key, created=1, desk_id=str(doc.get(config.ID_FIELD)))
 
+    def on_update(self, updates, original):
+        if updates.get('desk_type', '') != original.get('desk_type', ''):
+            archive_versions_query = {
+                '$or': [
+                    {'task.last_authoring_desk': str(original[config.ID_FIELD])},
+                    {'task.last_production_desk': str(original[config.ID_FIELD])}
+                ]
+            }
+
+            items = superdesk.get_resource_service('archive_versions').get(req=None, lookup=archive_versions_query)
+            if items and items.count():
+                raise SuperdeskApiError.badRequestError(
+                    message='Cannot update Desk Type as there are article(s) referenced by the Desk.')
+
     def on_delete(self, desk):
         """
         Overriding to prevent deletion of a desk if the desk meets one of the below conditions:
