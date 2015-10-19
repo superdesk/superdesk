@@ -523,6 +523,10 @@ def convert_task_attributes_to_objectId(doc):
 
     """
     task = doc.get('task', {})
+
+    if not task:
+        return
+
     if ObjectId.is_valid(task.get('desk')) and not isinstance(task.get('desk'), ObjectId):
         task['desk'] = ObjectId(task.get('desk'))
     if ObjectId.is_valid(task.get('stage')) and not isinstance(task.get('stage'), ObjectId):
