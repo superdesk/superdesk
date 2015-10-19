@@ -303,8 +303,8 @@
         };
     }
 
-    WorkspaceSidenavDirective.$inject = ['superdeskFlags'];
-    function WorkspaceSidenavDirective(superdeskFlags) {
+    WorkspaceSidenavDirective.$inject = ['superdeskFlags', '$location', 'keyboardManager'];
+    function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
             link: function(scope) {
@@ -324,6 +324,36 @@
                         superdeskFlags.flags.hideMonitoring = false;
                     }
                 };
+
+                /*
+                 * By using keyboard shortcuts, change the current showed view
+                 *
+                 */
+                var opt = {global: true};
+                keyboardManager.bind('alt+h', function (e) {
+                    e.preventDefault();
+                    $location.url('/workspace');
+                }, opt);
+                keyboardManager.bind('alt+m', function (e) {
+                    e.preventDefault();
+                    $location.url('/workspace/monitoring');
+                }, opt);
+                keyboardManager.bind('alt+t', function (e) {
+                    e.preventDefault();
+                    $location.url('/workspace/tasks');
+                }, opt);
+                keyboardManager.bind('alt+x', function (e) {
+                    e.preventDefault();
+                    $location.url('/workspace/spike-monitoring');
+                }, opt);
+                keyboardManager.bind('alt+p', function (e) {
+                    e.preventDefault();
+                    $location.url('/workspace/personal');
+                }, opt);
+                keyboardManager.bind('alt+s', function (e) {
+                    e.preventDefault();
+                    $location.url('search');
+                }, opt);
             }
         };
     }
