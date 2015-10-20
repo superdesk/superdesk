@@ -134,6 +134,7 @@ class RoutingRuleSchemeResource(Resource):
                     },
                     'schedule': {
                         'type': 'dict',
+                        'nullable': True,
                         'schema': {
                             'day_of_week': {
                                 'type': 'list'
@@ -146,7 +147,8 @@ class RoutingRuleSchemeResource(Resource):
                             },
                             'time_zone': {
                                 'type': 'string',
-                                'nullable': True
+                                'nullable': False,
+                                'default': 'UTC'
                             }
                         }
                     }
@@ -175,10 +177,10 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
         for routing_scheme in docs:
-            self.__validate_routing_scheme(routing_scheme)
-            self.__check_if_rule_name_is_unique(routing_scheme)
+            self._adjust_for_empty_schedules(routing_scheme)
+            self._validate_routing_scheme(routing_scheme)
+            self._check_if_rule_name_is_unique(routing_scheme)
 
     def on_update(self, updates, original):
         """
@@ -188,9 +190,9 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
-        self.__validate_routing_scheme(updates)
-        self.__check_if_rule_name_is_unique(updates)
+        self._adjust_for_empty_schedules(updates)
+        self._validate_routing_scheme(updates)
+        self._check_if_rule_name_is_unique(updates)
 
     def on_delete(self, doc):
         """
@@ -240,7 +242,30 @@ class RoutingRuleSchemeService(BaseService):
                             (rule.get('name'), routing_scheme.get('name'),
                              provider.get('name'), ingest_item[config.ID_FIELD]))
 
-    def __validate_routing_scheme(self, routing_scheme):
+    def _adjust_for_empty_schedules(self, routing_scheme):
+        """For all routing scheme's rules, set their non-empty schedules to
+        None if they are effectively not defined.
+
+        A schedule is recognized as "not defined" if it only contains time zone
+        information without anything else. This can happen if an empty schedule
+        is submitted by the client, because `Eve` then converts it to the
+        following:
+
+            {'time_zone': 'UTC'}
+
+        This is because the time_zone field has a default value set in the
+        schema, and Eve wants to apply it even when the containing object (i.e.
+        the schedule) is None and there is nothing that would contain the time
+        zone information.
+
+        :param dict routing_scheme: the routing scheme to check
+        """
+        for rule in routing_scheme.get('rules', []):
+            schedule = rule.get('schedule')
+            if schedule and (set(schedule.keys()) == {'time_zone'}):
+                rule['schedule'] = None
+
+    def _validate_routing_scheme(self, routing_scheme):
         """
         Validates routing scheme for the below:
             1. A routing scheme must have at least one rule.
@@ -317,7 +342,7 @@ class RoutingRuleSchemeService(BaseService):
                 msg = 'Unknown time zone {}'.format(time_zone)
                 raise SuperdeskApiError.badRequestError(message=msg)
 
-    def __check_if_rule_name_is_unique(self, routing_scheme):
+    def _check_if_rule_name_is_unique(self, routing_scheme):
         """
         Checks if name of a routing rule is unique or not.
         """

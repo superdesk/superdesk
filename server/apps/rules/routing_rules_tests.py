@@ -1,6 +1,8 @@
 
 import unittest
 from unittest import mock
+
+from copy import deepcopy
 from datetime import datetime, timedelta
 from .routing_rules import Weekdays
 
@@ -39,6 +41,116 @@ class RoutingRuleSchemeServiceTest(unittest.TestCase):
                 "(RoutingRuleSchemeService).")
         else:
             self.instance = RoutingRuleSchemeService()
+
+
+@mock.patch(
+    'apps.rules.routing_rules'
+    '.RoutingRuleSchemeService._validate_routing_scheme')
+@mock.patch(
+    'apps.rules.routing_rules'
+    '.RoutingRuleSchemeService._check_if_rule_name_is_unique')
+class OnCreateMethodTestCase(RoutingRuleSchemeServiceTest):
+    """Tests for the on_create() method."""
+
+    def test_does_not_modify_semantically_non_empty_schedules(self, *mocks):
+        routing_schemes = [{
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': {
+                    'day_of_week': ['MON'],
+                    'hour_of_day_from': '0800',
+                    'hour_of_day_to': '1800',
+                    'time_zone': 'UTC'
+                }
+            }]
+        }]
+        original_scheme = deepcopy(routing_schemes[0])
+        self.instance.on_create(routing_schemes)
+        self.assertEqual(routing_schemes[0], original_scheme)
+
+    def test_does_not_modify_empty_schedules(self, *mocks):
+        routing_schemes = [{
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': None
+            }]
+        }]
+        original_scheme = deepcopy(routing_schemes[0])
+        self.instance.on_create(routing_schemes)
+        self.assertEqual(routing_schemes[0], original_scheme)
+
+    def test_sets_semantically_empty_schedules_to_none(self, *mocks):
+        routing_schemes = [{
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': {'time_zone': 'UTC'}  # effectively empty schedule
+            }]
+        }]
+
+        expected_scheme = deepcopy(routing_schemes[0])
+        expected_scheme['rules'][0]['schedule'] = None
+
+        self.instance.on_create(routing_schemes)
+
+        self.assertEqual(routing_schemes[0], expected_scheme)
+
+
+@mock.patch(
+    'apps.rules.routing_rules'
+    '.RoutingRuleSchemeService._validate_routing_scheme')
+@mock.patch(
+    'apps.rules.routing_rules'
+    '.RoutingRuleSchemeService._check_if_rule_name_is_unique')
+class OnUpdateMethodTestCase(RoutingRuleSchemeServiceTest):
+    """Tests for the on_update() method."""
+
+    def test_does_not_modify_semantically_non_empty_schedules(self, *mocks):
+        routing_scheme = {
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': {
+                    'day_of_week': ['MON'],
+                    'hour_of_day_from': '0800',
+                    'hour_of_day_to': '1800',
+                    'time_zone': 'UTC'
+                }
+            }]
+        }
+        original_scheme = deepcopy(routing_scheme)
+        self.instance.on_update(routing_scheme, {})
+        self.assertEqual(routing_scheme, original_scheme)
+
+    def test_does_not_modify_empty_schedules(self, *mocks):
+        routing_scheme = {
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': None
+            }]
+        }
+        original_scheme = deepcopy(routing_scheme)
+        self.instance.on_update(routing_scheme, {})
+        self.assertEqual(routing_scheme, original_scheme)
+
+    def test_sets_semantically_empty_schedules_to_none(self, *mocks):
+        routing_scheme = {
+            'name': 'scheme_1',
+            'rules': [{
+                'name': 'rule_1',
+                'schedule': {'time_zone': 'UTC'}  # effectively empty schedule
+            }]
+        }
+
+        expected_scheme = deepcopy(routing_scheme)
+        expected_scheme['rules'][0]['schedule'] = None
+
+        self.instance.on_update(routing_scheme, {})
+
+        self.assertEqual(routing_scheme, expected_scheme)
 
 
 class ValidateScheduleMethodTestCase(RoutingRuleSchemeServiceTest):

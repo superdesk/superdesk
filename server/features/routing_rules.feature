@@ -481,56 +481,6 @@ Feature: Routing Scheme and Routing Rules
       """
       Then we get response code 201
 
-    @auth @vocabulary
-    Scenario: Create an invalid Routing Scheme with an empty schedule
-      Given empty "desks"
-      Given we have "/filter_conditions" with "FCOND_ID" and success
-      """
-      [{
-          "name": "Sports Content",
-          "field": "subject",
-          "operator": "in",
-          "value": "04000000"
-      }]
-      """
-      And we have "/content_filters" with "FILTER_ID" and success
-      """
-      [{
-          "name": "Sports Content",
-          "content_filter": [
-              {
-                  "expression": {
-                      "fc": ["#FCOND_ID#"]
-                  }
-              }
-          ]
-      }]
-      """
-
-      When we post to "/desks"
-      """
-      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
-      """
-      And we post to "/routing_schemes"
-      """
-      [
-        {
-          "name": "routing rule scheme 1",
-          "rules": [
-            {
-              "name": "Sports Rule",
-              "filter": "#FILTER_ID#",
-              "actions": {
-                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
-              },
-              "schedule": {}
-            }
-          ]
-        }
-      ]
-      """
-      Then we get response code 400
-
     @auth
     Scenario: A user with no privilege to "routing schemes" can't create a Routing Scheme
       Given we login as user "foo" with password "bar" and user type "user"
