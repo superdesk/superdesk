@@ -68,4 +68,39 @@ describe('Ingest Settings: routing scheme', function() {
         expect(stageList.$('option:checked').getAttribute('value')).toEqual('');
         expect(macroList.$('option:checked').getAttribute('value')).toEqual('');
     });
+
+    it('contains the Schedule tab for editing routing schedules', function () {
+        var ruleSettings,
+            tzOption;
+
+        // Open the routing scheme edit modal under the Routing tab and set
+        // routing scheme name.
+        // Then add a new routing rule and set its name, and open the Schedule
+        // settings pane
+        ingestSettings.tabs.routingTab.click();
+        ingestSettings.newSchemeBtn.click();
+        ingestSettings.schemeNameInput.sendKeys('My Routing Scheme');
+
+        ruleSettings = ingestSettings.routingRuleSettings;
+        ingestSettings.newRoutingRuleBtn.click();
+        ruleSettings.ruleNameInput.sendKeys('Routing Rule 1');
+
+        ruleSettings.tabSchedule.click();
+
+        // one the Schedule tab now, set a few scheduling options...
+        // de-select Saturday and Sunday
+        ruleSettings.daysButtons.sat.click();
+        ruleSettings.daysButtons.sun.click();
+
+        // pick the time zone
+        ruleSettings.timezoneInput.sendKeys('Asia/Singapore');
+        tzOption = ruleSettings.timezoneList.get(0);
+        browser.driver.wait(protractor.until.elementIsVisible(tzOption), 3000);
+        tzOption.click();
+
+        // save the routing scheme and check that it was successfull
+        ingestSettings.saveBtn.click();
+
+        utils.assertToastMsg('success', 'Routing scheme saved');
+    });
 });

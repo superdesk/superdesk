@@ -11,8 +11,11 @@
 import logging
 import superdesk
 
+import pytz
+from pytz import all_timezones_set
+
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -131,6 +134,7 @@ class RoutingRuleSchemeResource(Resource):
                     },
                     'schedule': {
                         'type': 'dict',
+                        'nullable': True,
                         'schema': {
                             'day_of_week': {
                                 'type': 'list'
@@ -140,6 +144,11 @@ class RoutingRuleSchemeResource(Resource):
                             },
                             'hour_of_day_to': {
                                 'type': 'string'
+                            },
+                            'time_zone': {
+                                'type': 'string',
+                                'nullable': False,
+                                'default': 'UTC'
                             }
                         }
                     }
@@ -168,10 +177,10 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
         for routing_scheme in docs:
-            self.__validate_routing_scheme(routing_scheme)
-            self.__check_if_rule_name_is_unique(routing_scheme)
+            self._adjust_for_empty_schedules(routing_scheme)
+            self._validate_routing_scheme(routing_scheme)
+            self._check_if_rule_name_is_unique(routing_scheme)
 
     def on_update(self, updates, original):
         """
@@ -181,9 +190,9 @@ class RoutingRuleSchemeService(BaseService):
 
         Will throw BadRequestError if any of the pre-conditions fail.
         """
-
-        self.__validate_routing_scheme(updates)
-        self.__check_if_rule_name_is_unique(updates)
+        self._adjust_for_empty_schedules(updates)
+        self._validate_routing_scheme(updates)
+        self._check_if_rule_name_is_unique(updates)
 
     def on_delete(self, doc):
         """
@@ -210,7 +219,9 @@ class RoutingRuleSchemeService(BaseService):
 
         filters_service = superdesk.get_resource_service('content_filters')
 
-        for rule in self.__get_scheduled_routing_rules(rules):
+        now = datetime.utcnow()
+
+        for rule in self._get_scheduled_routing_rules(rules, now):
             content_filter = rule.get('filter', {})
 
             if filters_service.does_match(content_filter, ingest_item):
@@ -231,7 +242,30 @@ class RoutingRuleSchemeService(BaseService):
                             (rule.get('name'), routing_scheme.get('name'),
                              provider.get('name'), ingest_item[config.ID_FIELD]))
 
-    def __validate_routing_scheme(self, routing_scheme):
+    def _adjust_for_empty_schedules(self, routing_scheme):
+        """For all routing scheme's rules, set their non-empty schedules to
+        None if they are effectively not defined.
+
+        A schedule is recognized as "not defined" if it only contains time zone
+        information without anything else. This can happen if an empty schedule
+        is submitted by the client, because `Eve` then converts it to the
+        following:
+
+            {'time_zone': 'UTC'}
+
+        This is because the time_zone field has a default value set in the
+        schema, and Eve wants to apply it even when the containing object (i.e.
+        the schedule) is None and there is nothing that would contain the time
+        zone information.
+
+        :param dict routing_scheme: the routing scheme to check
+        """
+        for rule in routing_scheme.get('rules', []):
+            schedule = rule.get('schedule')
+            if schedule and (set(schedule.keys()) == {'time_zone'}):
+                rule['schedule'] = None
+
+    def _validate_routing_scheme(self, routing_scheme):
         """
         Validates routing scheme for the below:
             1. A routing scheme must have at least one rule.
@@ -262,9 +296,16 @@ class RoutingRuleSchemeService(BaseService):
                     'publish') is None and actions.get('exit') is None):
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have actions")
             else:
-                self.__validate_schedule(schedule)
+                self._validate_schedule(schedule)
 
-    def __validate_schedule(self, schedule):
+    def _validate_schedule(self, schedule):
+        """Check if the given routing schedule configuration is valid and raise
+        an error if this is not the case.
+
+        :param dict schedule: the routing schedule configuration to validate
+
+        :raises SuperdeskApiError: if validation of `schedule` fails
+        """
         if schedule is not None \
                 and (len(schedule) == 0
                      or (schedule.get('day_of_week') is None
@@ -281,15 +322,27 @@ class RoutingRuleSchemeService(BaseService):
                 except:
                     raise SuperdeskApiError.badRequestError(message="Invalid value for from time.")
 
-                try:
-                    to_time = datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
-                except:
-                    raise SuperdeskApiError.badRequestError(message="Invalid value for to time.")
+                to_time = schedule.get('hour_of_day_to', '')
+                if to_time:
+                    try:
+                        to_time = datetime.strptime(to_time, '%H%M')
+                    except:
+                        raise SuperdeskApiError.badRequestError(
+                            message="Invalid value for hour_of_day_to "
+                                    "(expected %H%M).")
 
-                if from_time > to_time:
-                    raise SuperdeskApiError.badRequestError(message="From time should be less than To Time.")
+                    if from_time > to_time:
+                        raise SuperdeskApiError.badRequestError(
+                            message="From time should be less than To Time."
+                        )
 
-    def __check_if_rule_name_is_unique(self, routing_scheme):
+            time_zone = schedule.get('time_zone')
+
+            if time_zone and (time_zone not in all_timezones_set):
+                msg = 'Unknown time zone {}'.format(time_zone)
+                raise SuperdeskApiError.badRequestError(message=msg)
+
+    def _check_if_rule_name_is_unique(self, routing_scheme):
         """
         Checks if name of a routing rule is unique or not.
         """
@@ -301,20 +354,52 @@ class RoutingRuleSchemeService(BaseService):
             if len(rules_with_same_name) > 1:
                 raise SuperdeskApiError.badRequestError("Rule Names must be unique within a scheme")
 
-    def __get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
+    def _get_scheduled_routing_rules(self, rules, current_dt_utc):
         """
         Iterates rules list and returns the list of rules that are scheduled.
+
+        :param list rules: routing rules to check
+        :param datetime current_dt_utc: the value to take as the current
+            time in UTC
+
+        :return: the rules scheduled to be appplied at `current_dt_utc`
+        :rtype: list
         """
+        # make it a timezone-aware object
+        current_dt_utc = current_dt_utc.replace(tzinfo=pytz.utc)
+        delta_minute = timedelta(minutes=1)
+
         scheduled_rules = []
         for rule in rules:
             is_scheduled = True
             schedule = rule.get('schedule', {})
             if schedule:
-                from_time = set_time(current_datetime, schedule.get('hour_of_day_from', '0000'))
-                to_time = set_time(current_datetime, schedule.get('hour_of_day_to', '2359'), second=59)
-                if not (Weekdays.is_scheduled_day(current_datetime, schedule.get('day_of_week', []))
-                        and (from_time < current_datetime < to_time)):
-                    is_scheduled = False
+                # adjust current time to the schedule's timezone
+                tz_name = schedule.get('time_zone')
+                schedule_tz = pytz.timezone(tz_name) if tz_name else pytz.utc
+                now_tz_schedule = current_dt_utc.astimezone(tz=schedule_tz)
+
+                # Create start and end time-of-day limits. If start time is not
+                # defined, the beginning of the day is assumed. If end time
+                # is not defined, the end of the day is assumed (excluding the
+                # midnight, since at that point a new day has already begun).
+                hour_of_day_from = schedule.get('hour_of_day_from')
+                if not hour_of_day_from:
+                    hour_of_day_from = '0000'  # might be both '' or None
+                from_time = set_time(now_tz_schedule, hour_of_day_from)
+
+                hour_of_day_to = schedule.get('hour_of_day_to')
+                if hour_of_day_to:
+                    to_time = set_time(now_tz_schedule, hour_of_day_to)
+                else:
+                    to_time = set_time(now_tz_schedule, '2359') + delta_minute
+
+                # check if the current day of week and time of day both match
+                day_of_week_matches = Weekdays.is_scheduled_day(
+                    now_tz_schedule, schedule.get('day_of_week', []))
+                time_of_day_matches = (from_time <= now_tz_schedule < to_time)
+
+                is_scheduled = (day_of_week_matches and time_of_day_matches)
 
             if is_scheduled:
                 scheduled_rules.append(rule)

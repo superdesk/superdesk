@@ -187,6 +187,28 @@
 		width: 60%;
 		float: left;
 		margin-right: 10px;
+		.item-list {
+			list-style-type: none;
+			padding: 0.5em 0em;
+			li {
+				padding: 0.1em 0.75em;
+				color: #333;
+				font-size: 14px;
+				.text-normal();
+				cursor: pointer;
+				&:hover {
+					background-color: #5e5e5e;
+					color: white;
+				}
+				&.no-match {
+					cursor: default;
+					&:hover {
+						background-color: inherit;
+						color: inherit;
+					}
+				}
+			}
+		}
 	}
 	.general-tab {
 		.summary {

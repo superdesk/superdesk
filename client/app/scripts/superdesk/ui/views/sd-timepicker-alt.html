@@ -1,6 +1,18 @@
 <div>
-    <span class="input-small">{{ hours|leadingZero }}:{{ minutes|leadingZero }}</span>
+    <span
+        class="input-small"
+        ng-show="hasValue"
+        >{{ hours|leadingZero }}:{{ minutes|leadingZero }}</span>
+    <span
+        class="input-small"
+        ng-show="!hasValue">--- : ---</span>
+
     <button class="btn btn-default" ng-click="toggle()"><i class="icon-time"></i></button>
+    <button
+        class="btn btn-default"
+        ng-show="hasValue"
+        title="{{:: 'Clear Value' | translate}}"
+        ng-click="clearValue()"><i class="icon-remove"></i></button>
 </div>
 
 <div class="timepicker-popup" ng-show="open" ng-keydown="keydown({e: $event})" tabindex="0">

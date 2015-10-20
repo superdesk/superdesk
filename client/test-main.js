@@ -91,6 +91,7 @@ tests.push('superdesk-workspace/workspace');
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-ui');
+tests.push('angular-resource');
 tests.push('angular-route');
 tests.push('angular-file-upload');
 tests.push('moment');

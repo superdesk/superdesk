@@ -93,6 +93,13 @@ function IngestDashboard() {
  *
  */
 function IngestSettings() {
+    var daysButonsBox = $('.day-filter-box');
+
+    this.saveBtn = element(by.buttonText('Save'));
+
+    // the main input box for setting the routing scheme's name
+    this.schemeNameInput = $('[placeholder="Scheme name"]');
+
     // the main navigation tabs on the ingest settings page
     this.tabs = {
         routingTab: element(by.buttonText('Routing'))
@@ -105,6 +112,9 @@ function IngestSettings() {
     // the settings pane for routing rule (in a modal)
     this.routingRuleSettings = {
         tabAction: element(by.buttonText('Action')),
+        tabSchedule: element(by.buttonText('Schedule')),
+
+        ruleNameInput: $('[placeholder="Rule name"]'),
 
         // NOTE: several elements appear twice - under the FETCH settings
         // and under the PUBLISH settings, hence the need to locate them all
@@ -117,6 +127,19 @@ function IngestSettings() {
         showPublishBtn: $$('.icon-plus-small').get(1),
         publishDeskList: element.all(by.name('desk')).get(1),
         publishStageList: element.all(by.name('stage')).get(1),
-        publishMacroList: element.all(by.name('macro')).get(1)
+        publishMacroList: element.all(by.name('macro')).get(1),
+
+        daysButtons: {
+            mon: daysButonsBox.element(by.buttonText('Monday')),
+            tue: daysButonsBox.element(by.buttonText('Tuesday')),
+            wed: daysButonsBox.element(by.buttonText('Wednesday')),
+            thu: daysButonsBox.element(by.buttonText('Thursday')),
+            fri: daysButonsBox.element(by.buttonText('Friday')),
+            sat: daysButonsBox.element(by.buttonText('Saturday')),
+            sun: daysButonsBox.element(by.buttonText('Sunday'))
+        },
+
+        timezoneInput: $('[term="tzSearchTerm"]').element(by.model('term')),
+        timezoneList: $('.item-list').all(by.tagName('li'))
     };
 }
