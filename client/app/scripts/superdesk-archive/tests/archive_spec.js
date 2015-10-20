@@ -137,6 +137,26 @@ describe('content', function() {
             expect(multi.getItems().length).toBe(0);
         }));
     });
+    describe('media-related directive', function() {
+        it('can view item', inject(function(familyService, $rootScope, $compile, superdesk, $q) {
+            var scope = $rootScope.$new();
+            scope.item = {_id: 1, family_id: 1};
+
+            var elem = $compile('<div sd-media-related data-item=\'item\'></div>')(scope);
+            scope.$digest();
+
+            var iscope = elem.isolateScope();
+            expect(iscope.item).toBe(scope.item);
+
+            scope.relatedItems = {_items: [{_id: 2, family_id: 1}]};
+
+            spyOn(superdesk, 'intent').and.returnValue($q.when());
+            iscope.open(scope.relatedItems._items[0]);
+            scope.$apply();
+
+            expect(superdesk.intent).toHaveBeenCalledWith('view', 'item', scope.relatedItems._items[0]);
+        }));
+    });
 
     describe('item preview container', function() {
         it('can handle preview:item intent', inject(function($rootScope, $compile, superdesk) {

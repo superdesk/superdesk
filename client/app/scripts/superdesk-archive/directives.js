@@ -245,7 +245,9 @@
                         });
                     });
                     scope.open = function(item) {
-                        superdesk.intent('read_only', 'content_article', item);
+                        superdesk.intent('view', 'item', item).then(null, function() {
+                            superdesk.intent('edit', 'item', item);
+                        });
                     };
                 }
             };
