@@ -84,7 +84,7 @@ class ArchiveRewriteService(Service):
         """
         rewrite = dict()
         fields = ['family_id', 'abstract', 'anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'priority',
-                  'byline', 'dateline', 'headline', 'event_id']
+                  'byline', 'dateline', 'headline', 'event_id', 'place']
 
         for field in fields:
             if original.get(field):
