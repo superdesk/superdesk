@@ -97,14 +97,17 @@
 <div class="field" ng-if="isMediaType">
 
   <div ng-if="item.type == 'picture'" class="full-preview" sd-ratio-calc>
-      <div sd-item-crops data-item="item"></div>
       <div>
           <span translate>Original</span>
           <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
       </div>
+      <div sd-item-crops data-item="item"></div>
+      <button id="btnCrop" class="btn btn-medium pull-right" ng-click="applyCrop()" ng-if="metadata.crop_sizes">
+        <span ng-if="!item.hasCropes">APPLY CROPS</span>
+        <span ng-if="item.hasCropes">EDIT CROPS</span>
+      </button>
   </div>
 
-  <button id="btnCrop" class="pull-right" ng-click="applyCrop()" ng-if="metadata.crop_sizes" translate>APPLY CROPS</button>
   <div ng-if="item.type == 'audio'">
     <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
   </div>

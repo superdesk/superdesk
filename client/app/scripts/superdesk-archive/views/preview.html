@@ -29,11 +29,11 @@
 
             <!-- item rendition -->
             <div ng-if="selected.preview.type == 'picture'" class="picture-preview">
-                <div sd-item-crops data-item="selected.preview"></div>
                 <div>
                     <span translate>Original</span>
                     <div sd-item-rendition data-item="selected.preview" data-rendition="viewImage"></div>
                 </div>
+                <div sd-item-crops data-item="selected.preview"></div>
             </div>
 
             <div ng-if="selected.preview.type == 'audio'">
