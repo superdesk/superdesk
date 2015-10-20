@@ -300,6 +300,19 @@ describe('monitoring view', function() {
         expect(monitoring.getPersonalItemText(2)).toBe('item2');
     });
 
+    it('can view items in related item tab', function() {
+        expect(monitoring.getGroupItems(0).count()).toBe(0);
+        expect(monitoring.getGroupItems(1).count()).toBe(4);
+        monitoring.actionOnItem('Duplicate', 1, 0);
+        monitoring.filterAction('text');
+        expect(monitoring.getGroupItems(0).count()).toBe(1);
+        expect(monitoring.getTextItem(0, 0)).toBe('item5');
+        monitoring.previewAction(0, 0);
+        monitoring.tabAction('related');
+        monitoring.openRelatedItem(0);
+        expect(authoring.getHeadlineText()).toBe('item5');
+    });
+
     it('updates item group on single item spike-unspike', function() {
         expect(monitoring.getGroupItems(1).count()).toBe(4);
         monitoring.actionOnItem('Spike', 1, 2);

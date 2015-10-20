@@ -142,6 +142,15 @@ function Monitoring() {
         ).perform();
     };
 
+    this.tabAction = function(tab) {
+        element.all(by.css('[ng-click="tab = \'' + tab + '\'"]')).click();
+    };
+
+    this.openRelatedItem = function(index) {
+        var relatedItem = element.all(by.repeater('relatedItem in relatedItems._items')).get(index);
+        relatedItem.all(by.className('related-item')).get(index).click();
+    };
+
     /**
      * Perform the 'action' operation on the
      * 'item' element from 'group'
