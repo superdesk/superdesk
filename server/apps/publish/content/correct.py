@@ -1,4 +1,4 @@
-from .common import BasePublishService, BasePublishResource, ITEM_CORRECT, WIRE
+from .common import BasePublishService, BasePublishResource, ITEM_CORRECT
 from eve.utils import config
 from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, EMBARGO
 from superdesk.metadata.packages import PACKAGE_TYPE
@@ -111,6 +111,6 @@ class CorrectPublishService(BasePublishService):
                 # Step 5
                 subscribers_yet_to_receive = \
                     self.filter_subscribers(doc, subscribers_yet_to_receive,
-                                            WIRE if doc.get('targeted_for') else target_media_type)
+                                            SUBSCRIBER_TYPES.WIRE if doc.get('targeted_for') else target_media_type)
 
         return subscribers, subscribers_yet_to_receive

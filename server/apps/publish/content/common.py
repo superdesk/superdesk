@@ -42,8 +42,6 @@ from apps.publish.published_item import LAST_PUBLISHED_VERSION
 
 logger = logging.getLogger(__name__)
 
-DIGITAL = 'digital'
-WIRE = 'wire'
 ITEM_PUBLISH = 'publish'
 ITEM_CORRECT = 'correct'
 ITEM_KILL = 'kill'
@@ -79,8 +77,9 @@ class BasePublishService(BaseService):
     publish_type = 'publish'
     published_state = 'published'
 
-    non_digital = partial(filter, lambda s: s.get('subscriber_type', '') != SUBSCRIBER_TYPES.DIGITAL)
-    digital = partial(filter, lambda s: s.get('subscriber_type', '') == SUBSCRIBER_TYPES.DIGITAL)
+    non_digital = partial(filter, lambda s: s.get('subscriber_type', '') == SUBSCRIBER_TYPES.WIRE)
+    digital = partial(filter, lambda s: (s.get('subscriber_type', '') in {SUBSCRIBER_TYPES.DIGITAL,
+                                                                          SUBSCRIBER_TYPES.ALL}))
     takes_package_service = TakesPackageService()
     package_service = PackageService()
 
@@ -174,7 +173,7 @@ class BasePublishService(BaseService):
                         updated = copy(original)
                         updated.update(updates)
 
-                        if original[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED] and \
+                        if original[ITEM_TYPE] in {CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED} and \
                                 self.sending_to_digital_subscribers(updated):
                             # create a takes package
                             package_id = self.takes_package_service.package_story_as_a_take(updated, {}, None)
@@ -183,8 +182,8 @@ class BasePublishService(BaseService):
                             queued_digital = self._publish_takes_package(package, updates, original, last_updated)
 
                 # queue only text items
-                queued_wire = \
-                    self.publish(doc=original, updates=updates, target_media_type=WIRE if package else None)
+                media_type = SUBSCRIBER_TYPES.WIRE if package else None
+                queued_wire = self.publish(doc=original, updates=updates, target_media_type=media_type)
 
                 queued = queued_digital or queued_wire
                 if not queued:
@@ -231,12 +230,12 @@ class BasePublishService(BaseService):
         '''
         if package[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
             package.update(package_updates)
-            queued_digital = self.publish(doc=package, updates=None, target_media_type=DIGITAL)
+            queued_digital = self.publish(doc=package, updates=None, target_media_type=SUBSCRIBER_TYPES.DIGITAL)
         else:
             package.update(package_updates)
             queued_digital = get_resource_service('archive_publish').publish(doc=package,
                                                                              updates=None,
-                                                                             target_media_type=DIGITAL)
+                                                                             target_media_type=SUBSCRIBER_TYPES.DIGITAL)
 
         self.update_published_collection(published_item_id=package[config.ID_FIELD])
         return queued_digital
@@ -547,7 +546,7 @@ class BasePublishService(BaseService):
         subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, target_media_type)
 
         # Step 3
-        if target_media_type == WIRE:
+        if target_media_type == SUBSCRIBER_TYPES.WIRE:
             self._update_headline_sequence(updated)
 
         # Step 4
@@ -587,7 +586,7 @@ class BasePublishService(BaseService):
         if doc.get(EMBARGO) and doc.get(EMBARGO) > utcnow():
             return False
 
-        subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, DIGITAL)
+        subscribers, subscribers_yet_to_receive = self.get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
         subscribers = list(self.digital(subscribers))
         subscribers_yet_to_receive = list(self.digital(subscribers_yet_to_receive))
         return len(subscribers) > 0 or len(subscribers_yet_to_receive) > 0
@@ -637,10 +636,10 @@ class BasePublishService(BaseService):
         global_filters = list(service.get(req=req, lookup=None))
 
         for subscriber in subscribers:
-            if target_media_type:
+            if target_media_type and subscriber.get('subscriber_type', '') != SUBSCRIBER_TYPES.ALL:
                 can_send_takes_packages = subscriber['subscriber_type'] == SUBSCRIBER_TYPES.DIGITAL
-                if target_media_type == WIRE and can_send_takes_packages or target_media_type == DIGITAL \
-                        and not can_send_takes_packages:
+                if target_media_type == SUBSCRIBER_TYPES.WIRE and can_send_takes_packages or \
+                   target_media_type == SUBSCRIBER_TYPES.DIGITAL and not can_send_takes_packages:
                     continue
 
             if doc.get('targeted_for'):

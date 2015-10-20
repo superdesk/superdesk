@@ -17,7 +17,6 @@ from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
 
 from apps.packages.package_service import PackageService
-from apps.publish.content.common import DIGITAL, WIRE
 from apps.publish.content.publish import ArchivePublishService
 from superdesk.publish.subscribers import SUBSCRIBER_TYPES
 from apps.validators import ValidatorsPopulateCommand
@@ -71,6 +70,14 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                              "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
                              "geo_restrictions": "New South Wales", "email": "test@test.com",
                              "destinations": [{"name": "dest1", "format": "nitf",
+                                               "delivery_type": "ftp",
+                                               "config": {"address": "127.0.0.1", "username": "test"}
+                                               }]
+                             },
+                            {"_id": "5", "name": "sub5", "is_active": True, "subscriber_type": SUBSCRIBER_TYPES.ALL,
+                             "media_type": "media", "sequence_num_settings": {"max": 10, "min": 1},
+                             "email": "test@test.com",
+                             "destinations": [{"name": "dest1", "format": "ninjs",
                                                "delivery_type": "ftp",
                                                "config": {"address": "127.0.0.1", "username": "test"}
                                                }]
@@ -468,7 +475,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         get_resource_service(ARCHIVE_PUBLISH).patch(id=doc['_id'], updates={ITEM_STATE: CONTENT_STATE.SCHEDULED,
                                                                             'task': {}})
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(5, queue_items.count())
+        self.assertEqual(7, queue_items.count())
 
         for item in queue_items:
             self.assertEqual(schedule_date, item["publish_schedule"])
@@ -478,11 +485,11 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         archive_publish = get_resource_service(ARCHIVE_PUBLISH)
         doc = copy(self.articles[1])
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
         archive_publish.queue_transmission(doc, subscribers)
 
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(1, queue_items.count())
+        self.assertEqual(2, queue_items.count())
         self.assertEqual('3', queue_items[0]["subscriber_id"])
 
     def test_queue_transmission_for_wire_channels(self):
@@ -490,12 +497,12 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         archive_publish = get_resource_service(ARCHIVE_PUBLISH)
         doc = copy(self.articles[1])
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
         archive_publish.queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
 
-        self.assertEqual(4, queue_items.count())
-        expected_subscribers = ['1', '2']
+        self.assertEqual(5, queue_items.count())
+        expected_subscribers = ['1', '2', '5']
         self.assertIn(queue_items[0]["subscriber_id"], expected_subscribers)
         self.assertIn(queue_items[1]["subscriber_id"], expected_subscribers)
         self.assertIn(queue_items[2]["subscriber_id"], expected_subscribers)
@@ -507,19 +514,19 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         doc[ITEM_TYPE] = CONTENT_TYPE.PICTURE
 
         archive_publish = get_resource_service(ARCHIVE_PUBLISH)
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, DIGITAL)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.DIGITAL)
         no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(0, queue_items.count())
+        self.assertEqual(1, queue_items.count())
         self.assertEqual(1, len(no_formatters))
-        self.assertFalse(queued)
+        self.assertTrue(queued)
 
-        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, WIRE)
+        subscribers, subscribers_yet_to_receive = archive_publish.get_subscribers(doc, SUBSCRIBER_TYPES.WIRE)
         no_formatters, queued = archive_publish.queue_transmission(doc, subscribers)
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(0, queue_items.count())
+        self.assertEqual(2, queue_items.count())
         self.assertEqual(0, len(no_formatters))
-        self.assertFalse(queued)
+        self.assertTrue(queued)
 
     def test_delete_from_queue_by_article_id(self):
         self._is_publish_queue_empty()
@@ -601,7 +608,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                                                     updates={ITEM_STATE: CONTENT_STATE.PUBLISHED})
 
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(5, queue_items.count())
+        self.assertEqual(7, queue_items.count())
         published_items = self.app.data.find(PUBLISHED, None, None)
         self.assertEqual(2, published_items.count())
         published_digital_doc = next((item for item in published_items
@@ -614,7 +621,7 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         get_resource_service(ARCHIVE_CORRECT).patch(id=doc[config.ID_FIELD],
                                                     updates={ITEM_STATE: CONTENT_STATE.CORRECTED})
         queue_items = self.app.data.find(PUBLISH_QUEUE, None, None)
-        self.assertEqual(10, queue_items.count())
+        self.assertEqual(14, queue_items.count())
         published_items = self.app.data.find(PUBLISHED, None, None)
         self.assertEqual(4, published_items.count())
         last_published_digital = get_publish_items(published_digital_doc['item_id'], True)
