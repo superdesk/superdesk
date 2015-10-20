@@ -9,13 +9,13 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from flask import request
+from apps.content import push_content_notification
 from apps.tasks import send_to
 
 from superdesk import get_resource_service
 import superdesk
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
-from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.metadata.utils import item_url
@@ -65,14 +65,7 @@ class DuplicateService(BaseService):
             guid_of_duplicated_items.append(new_guid)
 
         if kwargs.get('notify', True):
-            task = archived_doc.get('task', {})
-            push_notification(
-                'content:update',
-                duplicated=1,
-                item=str(new_guid),
-                desk=str(task.get('desk', '')),
-                stage=str(task.get('stage', ''))
-            )
+            push_content_notification([archived_doc])
 
         return guid_of_duplicated_items
 

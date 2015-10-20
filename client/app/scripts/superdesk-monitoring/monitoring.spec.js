@@ -1,4 +1,3 @@
-
 describe('monitoring', function() {
     'use strict';
 
@@ -162,12 +161,12 @@ describe('monitoring', function() {
             scope.$digest();
 
             spyOn(api, 'query').and.returnValue($q.when({_items: [], _meta: {total: 0}}));
-            scope.$broadcast('content:update', {stage: {'bar': 1}});
+            scope.$broadcast('content:update', {stages: {'bar': 1}});
             scope.$digest();
             $timeout.flush(500);
             expect(api.query).not.toHaveBeenCalled();
 
-            scope.$broadcast('content:update', {stage: {'foo': 1}});
+            scope.$broadcast('content:update', {stages: {'foo': 1}});
             scope.$digest();
             $timeout.flush(500);
             expect(api.query).toHaveBeenCalled();
