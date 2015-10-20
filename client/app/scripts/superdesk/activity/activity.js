@@ -228,8 +228,10 @@ define([
                             data: data
                         };
 
+                        var self = this;
+
                         return this.resolve(intent).then(function(activity) {
-                            return activityService.start(activity, intent);
+                            return self.start(activity, intent);
                         }, function() {
                             $rootScope.$broadcast([
                                 'intent',
@@ -249,6 +251,18 @@ define([
                      */
                     link: function getSuperdeskLink(activity, data) {
                         return activityService.getLink(this.activity(activity), data);
+                    },
+
+                    /**
+                     * Start activity
+                     *
+                     * @param {Object} activity
+                     * @param {Object} locals
+                     * @alias {activityService.start}
+                     * @return {Promise}
+                     */
+                    start: function(activity, locals) {
+                        return activityService.start(activity, locals);
                     },
 
                     /**

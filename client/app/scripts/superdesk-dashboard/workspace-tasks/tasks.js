@@ -392,8 +392,15 @@ angular.module('superdesk.workspace.tasks', [])
         label: gettext('Pick task'),
         icon: 'pick',
         controller: ['data', 'superdesk',
+            /**
+             * Open given item using sidebar authoring
+             *
+             * @param {Object} data
+             * @param {Object} superdesk service
+             * @return {Promise}
+             */
             function pickTask(data, superdesk) {
-                return superdesk.intent('author', 'article', data.item);
+                return superdesk.intent('edit', 'item', data.item);
             }
         ],
         filters: [{action: superdesk.ACTION_EDIT, type: 'task'}]
