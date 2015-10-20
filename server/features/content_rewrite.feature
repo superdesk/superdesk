@@ -28,7 +28,9 @@ Feature: Rewrite content
       [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
         "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
         "subject":[{"qcode": "17004000", "name": "Statistics"}],
-        "body_html": "Test Document body"}]
+        "body_html": "Test Document body",
+        "place": [{"qcode" : "ACT", "world_region" : "Oceania", "country" : "Australia",
+        "name" : "ACT", "state" : "Australian Capital Territory"}]}]
       """
       When we post to "/stages"
       """
@@ -79,7 +81,8 @@ Feature: Rewrite content
       Then we get existing resource
       """
       {"_items" : [{"_id": "#REWRITE_ID#", "anpa_take_key": "update", "rewrite_of": "#archive.123.take_package#",
-        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]}
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+        "place": [{"qcode" : "ACT"}]}]}
       """
 
     @auth
