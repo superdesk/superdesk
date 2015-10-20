@@ -630,7 +630,7 @@ describe('authoring actions', function() {
             privileges.setUserPrivileges(userPrivileges);
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
-            allowedActions(itemActions, ['view', 'duplicate']);
+            allowedActions(itemActions, ['view']);
         }));
 
     it('can only view the item if the item is killed',
