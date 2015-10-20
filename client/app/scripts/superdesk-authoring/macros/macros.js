@@ -82,6 +82,7 @@ angular.module('superdesk.authoring.macros', [])
                 label: gettext('Macros'),
                 template: 'scripts/superdesk-authoring/macros/views/macros-widget.html',
                 order: 6,
+                needEditable: true,
                 side: 'right',
                 display: {authoring: true, packages: true, legalArchive: false}
             });
