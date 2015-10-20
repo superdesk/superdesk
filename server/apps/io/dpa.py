@@ -55,3 +55,23 @@ class DPAIngestService(FileIngestService):
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
                 raise ParserError.parseFileError('DPA', filename, ex, provider)
+
+    def parse_file(self, filename, provider):
+        """
+        Given a filename of a file to be ingested prepend the path found in the providers config and call
+        the underlying parse_file method
+        :param filename:
+        :param provider:
+        :return: The item parsed from the file
+        """
+        try:
+            path = provider.get('config', {}).get('path', None)
+
+            if not path:
+                return []
+
+            item = self.parser.parse_file(os.path.join(path, filename), provider)
+
+            return [item]
+        except Exception as ex:
+            raise ParserError.parseFileError('DPA', filename, ex, provider)

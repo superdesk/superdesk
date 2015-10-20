@@ -50,6 +50,7 @@ class CeleryTaskRaceTest(SuperdeskTestCase):
 
 
 class UpdateIngestTest(SuperdeskTestCase):
+
     def setUp(self):
         super().setUp()
         setup_providers(self)
@@ -350,3 +351,93 @@ class UpdateIngestTest(SuperdeskTestCase):
         # 12 files in grid fs
         current_files = self.app.media.fs('upload').find()
         self.assertEqual(12, current_files.count())
+
+    def test_anpa_category_to_subject_derived_ingest(self):
+        vocab = [{'_id': 'categories', 'items': [{'is_active': True, 'name': 'Domestic Sport', 'qcode': 's',
+                                                  "subject": "15000000"}]}]
+        self.app.data.insert('vocabularies', vocab)
+
+        provider_name = 'DPA'
+        guid = 'IPTC7901_odd_charset.txt'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self.provider_services[provider.get('type')]
+        provider_service.provider = provider
+
+        items = provider_service.parse_file(guid, provider)
+        service = get_resource_service('ingest')
+        service.post(items)
+
+        # ingest the items and check the subject code has been derived
+        self.ingest_items(items, provider)
+        self.assertEqual(items[0]['subject'][0]['qcode'], '15000000')
+
+    def test_anpa_category_to_subject_derived_ingest_ignores_inactive_categories(self):
+        vocab = [{'_id': 'categories', 'items': [{'is_active': False, 'name': 'Domestic Sport', 'qcode': 's',
+                                                  "subject": "15000000"}]}]
+        self.app.data.insert('vocabularies', vocab)
+
+        provider_name = 'DPA'
+        guid = 'IPTC7901_odd_charset.txt'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self.provider_services[provider.get('type')]
+        provider_service.provider = provider
+
+        items = provider_service.parse_file(guid, provider)
+        service = get_resource_service('ingest')
+        service.post(items)
+
+        # ingest the items and check the subject code has been derived
+        self.ingest_items(items, provider)
+        self.assertNotIn('subject', items[0])
+
+    def test_subject_to_anpa_category_derived_ingest(self):
+        vocab = [{'_id': 'iptc_category_map',
+                  'items': [{'name': 'Finance', 'category': 'f', 'subject': '04000000', 'is_active': True}]},
+                 {'_id': 'categories',
+                  'items': [{'is_active': True, 'name': 'Australian Weather', 'qcode': 'b', 'subject': '17000000'}]}]
+
+        self.app.data.insert('vocabularies', vocab)
+
+        provider_name = 'AAP'
+        guid = 'nitf-fishing.xml'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self.provider_services[provider.get('type')]
+        provider_service.provider = provider
+
+        items = provider_service.parse_file(guid, provider)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+
+        service = get_resource_service('ingest')
+        service.post(items)
+
+        # ingest the items and check the subject code has been derived
+        self.ingest_items(items, provider)
+        self.assertEqual(items[0]['anpa_category'][0]['qcode'], 'f')
+
+    def test_subject_to_anpa_category_derived_ingest_ignores_inactive_map_entries(self):
+        vocab = [{'_id': 'iptc_category_map',
+                  'items': [{'name': 'Finance', 'category': 'f', 'subject': '04000000', 'is_active': False}]},
+                 {'_id': 'categories',
+                  'items': [{'is_active': True, 'name': 'Australian Weather', 'qcode': 'b', 'subject': '17000000'}]}]
+
+        self.app.data.insert('vocabularies', vocab)
+
+        provider_name = 'AAP'
+        guid = 'nitf-fishing.xml'
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+        provider_service = self.provider_services[provider.get('type')]
+        provider_service.provider = provider
+
+        items = provider_service.parse_file(guid, provider)
+        for item in items:
+            item['ingest_provider'] = provider['_id']
+            item['expiry'] = utcnow() + timedelta(hours=11)
+
+        service = get_resource_service('ingest')
+        service.post(items)
+
+        # ingest the items and check the subject code has been derived
+        self.ingest_items(items, provider)
+        self.assertNotIn('anpa_category', items[0])

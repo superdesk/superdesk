@@ -269,5 +269,29 @@
             {"is_active": true, "name": "authoring", "value": "authoring"},
             {"is_active": true, "name": "production", "value": "production"}
         ]
+    },
+    {
+        "_id": "iptc_category_map",
+        "display_name": "Ingest map between IPTC codes and ANPA Categories",
+        "type": "manageable",
+        "items": [
+            {"name" : "Sport", "category" : "s", "subject" : "15000000", "is_active" : true},
+            {"name" : "Finance", "category" : "f", "subject" : "04000000", "is_active" : true},
+            {"name" : "Entertainment", "category" : "e", "subject" : "01000000", "is_active" : true},
+            {"name" : "News", "category" : "i", "subject" : "02000000", "is_active" : true},
+            {"name" : "News 2", "category" : "i", "subject" : "03000000", "is_active" : true},
+            {"name" : "News 3", "category" : "i", "subject" : "05000000", "is_active" : true},
+            {"name" : "News 4", "category" : "i", "subject" : "06000000", "is_active" : true},
+            {"name" : "Features", "category" : "c", "subject" : "07000000", "is_active" : true},
+            {"name" : "Features 2", "category" : "c", "subject" : "08000000", "is_active" : true},
+            {"name" : "News 5", "category" : "i", "subject" : "09000000", "is_active" : true},
+            {"name" : "Features 3", "category" : "c", "subject" : "10000000", "is_active" : true},
+            {"name" : "News 5", "category" : "i", "subject" : "11000000", "is_active" : true},
+            {"name" : "News 6", "category" : "i", "subject" : "12000000", "is_active" : true},
+            {"name" : "News 7", "category" : "i", "subject" : "13000000", "is_active" : true},
+            {"name" : "News 8", "category" : "i", "subject" : "14000000", "is_active" : true},
+            {"name" : "News 9", "category" : "i", "subject" : "16000000", "is_active" : true},
+            {"name" : "Weather", "category" : "b", "subject" : "17000000", "is_active" : true}
+        ]
     }
 ]
