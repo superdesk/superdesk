@@ -1,7 +1,7 @@
 
-'use strict';
-
 describe('tasks', function() {
+
+    'use strict';
 
     beforeEach(module('superdesk.desks'));
     beforeEach(module('superdesk.filters'));
@@ -62,5 +62,16 @@ describe('tasks', function() {
                 expect(tasksArgs[0]).toBe('tasks');
             }));
         });
+    });
+
+    describe('pick task controller', function() {
+        beforeEach(module('superdesk.workspace.tasks'));
+
+        it('can pick task', inject(function(superdesk) {
+            spyOn(superdesk, 'intent');
+            var data = {item: {_id: 'foo'}};
+            superdesk.start(superdesk.activity('pick.task'), {data: data});
+            expect(superdesk.intent).toHaveBeenCalledWith('edit', 'item', data.item);
+        }));
     });
 });
