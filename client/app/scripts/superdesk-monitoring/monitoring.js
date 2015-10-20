@@ -134,7 +134,7 @@
             switch (card.type) {
             case 'stage':
                 // refresh stage if it matches updated stage
-                return !!data.stage[card._id];
+                return !!data.stages[card._id];
 
             case 'personal':
                 return data.user === session.identity._id;
