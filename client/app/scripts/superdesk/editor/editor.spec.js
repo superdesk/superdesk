@@ -42,13 +42,14 @@ describe('text editor', function() {
         expect(html).toBe('test <b>foo</b> error it');
     }));
 
-    it('can findreplace', inject(function(editor, spellcheck, $q, $rootScope) {
+    it('can findreplace', inject(function(editor, spellcheck, $q, $rootScope, $timeout) {
         spyOn(spellcheck, 'errors').and.returnValue($q.when([{word: 'test', index: 0}]));
         var scope = createScope('test foo and foo', $rootScope);
         editor.registerScope(scope);
 
         editor.setSettings({findreplace: {needle: 'foo'}});
         editor.render();
+        $timeout.flush();
 
         $rootScope.$digest();
         var foo = '<span class="sdfindreplace sdhilite">foo</span>';
@@ -69,6 +70,7 @@ describe('text editor', function() {
 
         editor.setSettings({findreplace: {needle: 'test'}});
         editor.render();
+        $timeout.flush();
         editor.replaceAll('bar');
         expect(scope.node.innerHTML).toBe('bar bar and foo');
 

@@ -332,7 +332,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
         hiliteToken(node, token, className);
         $timeout(function() {
             hilite(node, tokens, className, true);
-        }, 0);
+        }, 0, false);
     }
 
     /**
