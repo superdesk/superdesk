@@ -9,6 +9,7 @@ module.exports.waitForSuperdesk = waitForSuperdesk;
 module.exports.nav = nav;
 module.exports.getListOption = getListOption;
 module.exports.ctrlKey = ctrlKey;
+module.exports.altKey = altKey;
 module.exports.assertToastMsg = assertToastMsg;
 
 // construct url from uri and base url
@@ -178,6 +179,16 @@ function getListOption(dropdown, n) {
 function ctrlKey(key) {
     var Key = protractor.Key;
     browser.actions().sendKeys(Key.chord(Key.CONTROL, key)).perform();
+}
+
+/**
+ * Performs ALT + key action
+ *
+ * @param {char} key
+ */
+function altKey(key) {
+    var Key = protractor.Key;
+    browser.actions().sendKeys(Key.chord(Key.ALT, key)).perform();
 }
 
 /**

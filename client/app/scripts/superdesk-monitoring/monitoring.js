@@ -154,6 +154,8 @@
         this.closePreview = closePreview;
         this.previewItem = null;
 
+        this.selectedGroup = null;
+
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
 
@@ -207,8 +209,26 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = ['cards', 'api', 'desks', 'authoringWorkspace', '$timeout', 'superdesk', 'activityService'];
-    function MonitoringGroupDirective(cards, api, desks, authoringWorkspace, $timeout, superdesk, activityService) {
+    MonitoringGroupDirective.$inject = [
+        'cards',
+        'api',
+        'desks',
+        'authoringWorkspace',
+        '$timeout',
+        'superdesk',
+        'activityService',
+        'keyboardManager'
+    ];
+    function MonitoringGroupDirective(
+            cards,
+            api,
+            desks,
+            authoringWorkspace,
+            $timeout,
+            superdesk,
+            activityService,
+            keyboardManager) {
+
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
             BUFFER = 8,
@@ -259,6 +279,16 @@
                     }
                 });
 
+                /*
+                 * Change between simple and group by keyboard
+                 * Keyboard shortcut: Ctrl + g
+                 */
+                keyboardManager.bind('ctrl+g', function () {
+                    if (scope.selected) {
+                        monitoring.viewSingleGroup(monitoring.singleGroup ? null : monitoring.selectedGroup);
+                    }
+                });
+
                 var queryTimeout;
 
                 /**
@@ -304,6 +334,7 @@
 
                 function select(item) {
                     scope.selected = item;
+                    monitoring.selectedGroup = scope.group;
                     monitoring.preview(item);
                 }
 
