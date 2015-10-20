@@ -256,6 +256,10 @@
                 this.filter({not: {term: {state: 'killed'}}});
             }
 
+            if (params.onlyLastPublished) {
+                this.filter({not: {term: {last_published_version: 'false'}}});
+            }
+
             if (params.ignoreDigital) {
                 this.filter({not: {term: {package_type: 'takes'}}});
             }

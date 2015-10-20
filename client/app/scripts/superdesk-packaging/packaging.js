@@ -196,6 +196,7 @@
             params.ignoreKilled = true;
             params.ignoreDigital = true;
             params.ignoreScheduled = true;
+            params.onlyLastPublished = true;
 
             var query = search.query(params);
 
