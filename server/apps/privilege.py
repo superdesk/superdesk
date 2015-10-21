@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from operator import itemgetter
 
 import superdesk
 from superdesk.utils import ListCursor
@@ -17,8 +18,14 @@ from superdesk.privilege import get_privilege_list
 class PrivilegeService(superdesk.Service):
 
     def get(self, req, lookup):
-        """Return all registered privileges."""
-        return ListCursor(get_privilege_list())
+        """
+        Returns all registered privileges.
+        """
+
+        _privileges = get_privilege_list()
+        _privileges = sorted(_privileges, key=itemgetter('label'))
+
+        return ListCursor(_privileges)
 
 
 class PrivilegeResource(superdesk.Resource):

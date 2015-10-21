@@ -69,7 +69,11 @@
         this.getGlobalContentFilters = function() {
             return api.query('content_filters', {'is_global': true})
                 .then(angular.bind(this, function(params) {
-                    return params._items;
+                    var filters = _.sortBy(params._items, function(filter) {
+                        return filter.name.toLowerCase();
+                    });
+
+                    return filters;
                 }));
         };
 
@@ -229,8 +233,11 @@
         };
 
         var fetchFilterConditions = function() {
-            contentFilters.getAllFilterConditions().then(function(f) {
-                $scope.filterConditions = f;
+            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
+                _filterConditions = _.sortBy(_filterConditions, function(_filterCondition) {
+                    return _filterCondition.name.toLowerCase();
+                });
+                $scope.filterConditions = _filterConditions;
             });
         };
 
@@ -415,9 +422,13 @@
         };
 
         var fetchFilterConditions = function() {
-            contentFilters.getAllFilterConditions().then(function(_filters) {
-                $scope.filterConditions = _filters;
-                _.each(_filters, function(filter) {
+            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
+                _filterConditions = _.sortBy(_filterConditions, function(_filterCondition) {
+                    return _filterCondition.name.toLowerCase();
+                });
+
+                $scope.filterConditions = _filterConditions;
+                _.each(_filterConditions, function(filter) {
                     $scope.filterConditionLookup[filter._id] = filter;
                 });
             });
@@ -425,7 +436,10 @@
 
         var fetchContentFilters = function() {
             contentFilters.getAllContentFilters().then(function(_filters) {
-                $scope.contentFilters = _filters;
+                $scope.contentFilters = _.sortBy(_filters, function(filter) {
+                    return filter.name.toLowerCase();
+                });
+
                 _.each($scope.contentFilters, function(filter) {
                     $scope.contentFiltersLookup[filter._id] = filter;
                 });

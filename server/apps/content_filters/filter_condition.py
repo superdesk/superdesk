@@ -24,11 +24,14 @@ class FilterConditionResource(Resource):
     schema = {
         'name': {
             'type': 'string',
+            'required': True,
             'nullable': False,
+            'empty': False,
             'iunique': True
         },
         'field': {
             'type': 'string',
+            'empty': False,
             'nullable': False,
             'allowed': ['anpa_category',
                         'urgency',
@@ -50,10 +53,12 @@ class FilterConditionResource(Resource):
                         'notlike',
                         'startswith',
                         'endswith'],
+            'empty': False,
             'nullable': False,
         },
         'value': {
             'type': 'string',
+            'empty': False,
             'nullable': False,
         }
     }
@@ -63,7 +68,6 @@ class FilterConditionResource(Resource):
         'field': 'name'
     }
 
-    datasource = {'default_sort': [('_created', -1)]}
     privileges = {'POST': 'content_filters',
                   'PATCH': 'content_filters',
                   'DELETE': 'content_filters'}

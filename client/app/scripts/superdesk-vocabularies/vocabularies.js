@@ -24,6 +24,10 @@
             if (typeof service.vocabularies === 'undefined') {
                 return api.query('vocabularies', {where: {type: 'manageable'}}).then(
                     function(result) {
+                        result._items = _.sortBy(result._items, function(vocabulary) {
+                            return vocabulary.display_name.toLowerCase();
+                        });
+
                         service.vocabularies = result;
                         return service.vocabularies;
                     }

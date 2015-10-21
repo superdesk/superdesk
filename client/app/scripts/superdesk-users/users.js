@@ -483,6 +483,9 @@
 
                 api('roles').query()
                 .then(function(result) {
+                    result._items = _.sortBy(result._items, function(role) {
+                        return role.name.toLowerCase();
+                    });
                     scope.roles = result._items;
                 });
 
@@ -568,8 +571,11 @@
             templateUrl: 'scripts/superdesk-users/views/settings-privileges.html',
             link: function(scope) {
 
-                api('roles').query()
-                .then(function(result) {
+                api('roles').query().then(function(result) {
+                    result._items = _.sortBy(result._items, function(role) {
+                        return role.name.toLowerCase();
+                    });
+
                     scope.roles = result._items;
                 });
 

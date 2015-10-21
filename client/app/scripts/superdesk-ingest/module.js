@@ -393,6 +393,9 @@ define([
                 function fetchProviders() {
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
+                            result._items = _.sortBy(result._items, function(provider) {
+                                return provider.name.toLowerCase();
+                            });
                             $scope.providers = result;
                         });
                 }
@@ -424,10 +427,18 @@ define([
                 });
 
                 api('rule_sets').query().then(function(result) {
+                    result._items = _.sortBy(result._items, function(ruleSet) {
+                        return ruleSet.name.toLowerCase();
+                    });
+
                     $scope.rulesets = result._items;
                 });
 
                 api('routing_schemes').query().then(function(result) {
+                    result._items = _.sortBy(result._items, function(routingScheme) {
+                        return routingScheme.name.toLowerCase();
+                    });
+
                     $scope.routingScheme = result._items;
                 });
 
@@ -627,6 +638,9 @@ define([
                 scope.editRuleset = null;
 
                 api('rule_sets').query().then(function(result) {
+                    result._items = _.sortBy(result._items, function(ruleSet) {
+                        return ruleSet.name.toLowerCase();
+                    });
                     scope.rulesets = result._items;
                 });
 
@@ -643,6 +657,10 @@ define([
                         if (_new) {
                             scope.rulesets.push(_orig);
                         }
+
+                        scope.rulesets = _.sortBy(scope.rulesets, function(ruleSet) {
+                            return ruleSet.name.toLowerCase();
+                        });
                         notify.success(gettext('Rule set saved.'));
                         scope.cancel();
                     }, function(response) {
@@ -714,9 +732,11 @@ define([
                 scope.ruleIndex = null;
                 scope.schemes = [];
 
-                api('routing_schemes')
-                .query()
-                .then(function(result) {
+                api('routing_schemes').query().then(function(result) {
+                    result._items = _.sortBy(result._items, function(routingScheme) {
+                        return routingScheme.name.toLowerCase();
+                    });
+
                     scope.schemes = result._items;
                 });
 
@@ -762,6 +782,9 @@ define([
                         if (_new) {
                             scope.schemes.push(_orig);
                         }
+                        scope.schemes = _.sortBy(scope.schemes, function(routingScheme) {
+                            return routingScheme.name.toLowerCase();
+                        });
                         notify.success(gettext('Routing scheme saved.'));
                         scope.cancel();
                     }, function(response) {

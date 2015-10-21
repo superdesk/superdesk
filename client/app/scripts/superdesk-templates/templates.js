@@ -149,13 +149,16 @@
                 function fetchTemplates() {
                     templates.fetchTemplates(1, 50).then(
                         function(result) {
+                            result._items = _.sortBy(result._items, function(template) {
+                                return template.template_name.toLowerCase();
+                            });
+
                             $scope.content_templates = result;
                         }
                     );
                 }
 
-                desks.initialize()
-                .then(function() {
+                desks.initialize().then(function() {
                     $scope.desks = desks.desks;
                 });
 
@@ -180,12 +183,14 @@
                  * @return {Object} d Returns time object
                  */
                 $scope.getTime = function getTime(time) {
-                    var d = new Date();
+                    if (time) {
+                        var d = new Date();
 
-                    d.setUTCHours(time.substr(0, 2));
-                    d.setUTCMinutes(time.substr(2, 2));
+                        d.setUTCHours(time.substr(0, 2));
+                        d.setUTCMinutes(time.substr(2, 2));
 
-                    return d;
+                        return d;
+                    }
                 };
 
                 $scope.types = templates.types;

@@ -401,7 +401,9 @@
                 function runConfirmed() {
                     desks.remove(desk).then(
                         function(response) {
-                            _.remove($scope.desks._items, desk);
+                            _.remove($scope.desks._items, function(deskToBeRemoved) {
+                                return deskToBeRemoved.name.toLowerCase() === desk.name.toLowerCase();
+                            });
                             notify.success(gettext('Desk deleted.'), 3000);
                         },
                         function(response) {
@@ -524,6 +526,10 @@
 
                         return _fetchAll('desks')
                         .then(function(items) {
+                            items = _.sortBy(items, function(desk) {
+                                return desk.name.toLowerCase();
+                            });
+
                             self.desks = {_items: items};
                             _.each(items, function(item) {
                                 self.deskLookup[item._id] = item;
@@ -592,7 +598,15 @@
                         return $q.when();
                     },
                     fetchUserDesks: function(user) {
-                        return api.get(user._links.self.href + '/desks');
+                        return api.get(user._links.self.href + '/desks').then(function(response) {
+                            if (response && response._items) {
+                                response._items = _.sortBy(response._items, function(desk) {
+                                    return desk.name.toLowerCase();
+                                });
+                            }
+
+                            return $q.when(response);
+                        });
                     },
 
                     /**
@@ -871,6 +885,9 @@
                                 _.extend(origDesk, scope.desk.edit);
                             }
 
+                            scope.desks._items = _.sortBy(scope.desks._items, function(desk) {
+                                return desk.name.toLowerCase();
+                            });
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
                             WizardHandler.wizard('desks').next();
                         }, errorMessage);

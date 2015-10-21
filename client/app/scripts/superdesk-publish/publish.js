@@ -387,6 +387,9 @@
                 function fetchSubscribers() {
                     adminPublishSettingsService.fetchSubscribers().then(
                         function(result) {
+                            result._items = _.sortBy(result._items, function(subscriber) {
+                                return subscriber.name.toLowerCase();
+                            });
                             $scope.subscribers = result;
                         }
                     );
