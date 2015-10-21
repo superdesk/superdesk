@@ -233,8 +233,8 @@ def add_default_values(doc, user_name, user_type, **kwargs):
 def get_user_query(username):
     """
     Get the user query.
-    :param {str} username:
-    :return {dict}: query
+    :param str username:
+    :return dict: query
     """
     pattern = '^{}$'.format(re.escape(username.strip()))
     return {'username': re.compile(pattern, re.IGNORECASE)}
