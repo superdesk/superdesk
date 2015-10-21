@@ -41,7 +41,9 @@ from apps.packages import PackageService, TakesPackageService
 from .archive_media import ArchiveMediaService
 from superdesk.utc import utcnow
 import datetime
-from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION
+from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES, VERSION, \
+    DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES, \
+    DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES
 from superdesk.metadata.packages import RESIDREF, SEQUENCE
 
 
@@ -164,6 +166,9 @@ class ArchiveService(BaseService):
 
             if not doc.get('ingest_provider'):
                 doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
+
+            doc.setdefault('priority', DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES)
+            doc.setdefault('urgency', DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES)
 
             convert_task_attributes_to_objectId(doc)
 
