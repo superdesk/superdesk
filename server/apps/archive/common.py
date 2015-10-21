@@ -73,6 +73,7 @@ def on_create_item(docs, repo_type=ARCHIVE):
 
         set_default_state(doc, CONTENT_STATE.DRAFT)
         doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
+
         set_dateline(doc, repo_type)
         set_byline(doc, repo_type)
         set_sign_off(doc, repo_type=repo_type)
@@ -145,7 +146,7 @@ def set_byline(doc, repo_type=ARCHIVE):
     profile then doc['byline'] = user_profile['byline']. Otherwise it's not set.
     """
 
-    if repo_type == ARCHIVE:
+    if BYLINE not in doc and repo_type == ARCHIVE:
         user = get_user()
         if user and user.get(BYLINE):
             doc[BYLINE] = user[BYLINE]
