@@ -10,7 +10,7 @@ Feature: Fetch Items from Ingest
       """
       And ingest from "reuters"
       """
-      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
+      [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "byline": "Chuck Norris", "dateline": {"source": "Reuters"}}]
       """
       When we post to "/ingest/tag_reuters.com_2014_newsml_LOVEA6M0L7U2E/fetch"
       """
@@ -25,7 +25,9 @@ Feature: Fetch Items from Ingest
       		"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", 
       		"ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E",
       		"operation": "fetch",
-      		"sign_off": "abc"
+      		"sign_off": "abc",
+      		"byline": "Chuck Norris",
+      		"dateline": {"source": "Reuters"}
       	}
       ]}
       """
