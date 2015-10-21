@@ -288,6 +288,12 @@ MAX_VALUE_OF_PUBLISH_SEQUENCE = int(env('MAX_VALUE_OF_PUBLISH_SEQUENCE', 9999))
 # Defines default value for Source to be set for manually created articles
 DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES = env('DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES', 'AAP')
 
+# Defines default value for Priority to be set for manually created articles
+DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES = env('DEFAULT_PRIORITY_VALUE_FOR_MANUAL_ARTICLES', 3)
+
+# Defines default value for Urgency to be set for manually created articles
+DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES = env('DEFAULT_URGENCY_VALUE_FOR_MANUAL_ARTICLES', 3)
+
 # Determines if the ODBC publishing mechanism will be used, If enabled then pyodbc must be installed along with it's
 # dependencies
 ODBC_PUBLISH = env('ODBC_PUBLISH', None)

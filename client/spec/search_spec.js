@@ -72,7 +72,7 @@ describe('Search', function() {
         expect(element.all(by.repeater('(key,value) in aggregations.priority')).count()).toBe(1);
         var priority3 = element.all(by.repeater('(key,value) in aggregations.priority')).first();
         priority3.click();
-        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(element.all(by.repeater('items._items')).count()).toBe(2);
     });
 
     it('can search by from desk field', function() {

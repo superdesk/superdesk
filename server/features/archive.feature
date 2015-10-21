@@ -400,14 +400,14 @@ Feature: News Items Archive
         """
 
     @auth
-    Scenario: Assign a default Source to user created content Items
+    Scenario: Assign a default values to user created content Items
         When we post to "/archive"
         """
         [{"type": "text", "body_html": "<p>content</p>"}]
         """
         Then we get new resource
         """
-        {"type": "text", "source":"AAP"}
+        {"type": "text", "source":"AAP", "priority":3, "urgency":3}
         """
 
     @auth
