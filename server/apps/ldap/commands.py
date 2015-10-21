@@ -12,7 +12,7 @@ import logging
 from flask import current_app as app
 from superdesk.errors import SuperdeskApiError
 import superdesk
-from .ldap import ADAuth, add_default_values
+from .ldap import ADAuth, add_default_values, get_user_query
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
             raise SuperdeskApiError.notFoundError('Username not found')
 
         # Check if User Profile already exists in Mongo
-        user = superdesk.get_resource_service('users').find_one(username=username, req=None)
+        user = superdesk.get_resource_service('users').find_one(req=None, **get_user_query(username))
 
         if user:
             superdesk.get_resource_service('users').patch(user.get('_id'), user_data)

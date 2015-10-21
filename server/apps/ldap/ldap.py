@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+import re
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
 from apps.auth.service import AuthService
 from superdesk.users.services import UsersService
@@ -16,9 +17,9 @@ from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from flask import current_app as app
-import flask
 import superdesk
 from apps.auth.errors import UserDisabledError, CredentialsAuthError
+from apps.auth import get_user
 from superdesk.users.errors import UserInactiveError
 
 
@@ -168,7 +169,9 @@ class ADAuthService(AuthService):
                 message='No user has been found in AD',
                 payload={'profile_to_import': 1})
 
-        user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
+        query = get_user_query(profile_to_import)
+
+        user = superdesk.get_resource_service('users').find_one(req=None, **query)
 
         if not user:
             add_default_values(user_data, profile_to_import,
@@ -182,7 +185,7 @@ class ADAuthService(AuthService):
                 raise UserInactiveError()
 
             superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
-            user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
+            user = superdesk.get_resource_service('users').find_one(req=None, **query)
 
         return user
 
@@ -192,9 +195,11 @@ class ImportUserProfileService(UsersService):
     Service Class for endpoint /import_profile
     """
     def on_create(self, docs):
+
+        logged_in_user = get_user().get('username')
         for index, doc in enumerate(docs):
             # ensuring the that logged in user is importing the profile.
-            if flask.g.user.get('username') != doc.get('username'):
+            if logged_in_user != doc.get('username'):
                 raise SuperdeskApiError.forbiddenError(message="Invalid Credentials.", payload={'credentials': 1})
 
             try:
@@ -218,8 +223,18 @@ def add_default_values(doc, user_name, user_type, **kwargs):
     Adds user_name, user_type, is_active: True, needs_activation: False and the values passed to **kwargs to doc.
     """
 
-    doc['username'] = user_name
+    doc['username'] = user_name.strip()
     doc['user_type'] = 'user' if user_type is None else user_type
     doc['is_active'] = True
     doc['needs_activation'] = False
     doc.update(**kwargs)
+
+
+def get_user_query(username):
+    """
+    Get the user query.
+    :param {str} username:
+    :return {dict}: query
+    """
+    pattern = '^{}$'.format(re.escape(username.strip()))
+    return {'username': re.compile(pattern, re.IGNORECASE)}
