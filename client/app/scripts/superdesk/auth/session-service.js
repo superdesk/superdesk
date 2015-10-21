@@ -63,9 +63,9 @@ define(['lodash'], function(_) {
             setToken(session.token);
             setSessionId(session._id);
             setSessionHref(session._links && session._links.self.href);
-
             this.identity = null;
             resolveIdentity(this.updateIdentity(identity));
+            $rootScope.$broadcast('login');
         };
 
         function resolveIdentity(identity) {
@@ -83,6 +83,7 @@ define(['lodash'], function(_) {
             this.sessionId = null;
             setToken(null);
             setSessionId(null);
+            $rootScope.$broadcast('logout');
         };
 
         /**
