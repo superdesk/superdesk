@@ -19,6 +19,9 @@ describe('Ingest Settings: routing scheme', function() {
         // routing rule and open its Action settings pane
         ingestSettings.tabs.routingTab.click();
         ingestSettings.newSchemeBtn.click();
+
+        ingestSettings.writeTextToSchemeName('Test Scheme');
+
         ingestSettings.newRoutingRuleBtn.click();
         ruleSettings = ingestSettings.routingRuleSettings;
         ruleSettings.tabAction.click();
@@ -102,5 +105,20 @@ describe('Ingest Settings: routing scheme', function() {
         ingestSettings.saveBtn.click();
 
         utils.assertToastMsg('success', 'Routing scheme saved');
+    });
+
+    it('cannot add blank rule', function() {
+        ingestSettings.tabs.routingTab.click();
+        ingestSettings.newSchemeBtn.click();
+        ingestSettings.writeTextToSchemeName('Test Scheme');
+        ingestSettings.newRoutingRuleBtn.click();
+
+        expect(ingestSettings.getTextfromRuleName()).toBe('');
+        expect(ingestSettings.newRoutingRuleBtn.getAttribute('disabled')).toBeTruthy();
+
+        ingestSettings.writeTextToRuleName('Test Rule');
+        expect(ingestSettings.getTextfromRuleName()).toBe('Test Rule');
+        expect(ingestSettings.newRoutingRuleBtn.getAttribute('disabled')).toBeFalsy();
+
     });
 });
