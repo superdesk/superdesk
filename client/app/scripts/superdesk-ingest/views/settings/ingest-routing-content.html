@@ -57,7 +57,7 @@
                                         </div>
                                     </li>
                                 </ul>
-                                <button class="btn btn-info btn-full" ng-click="addRule()">
+                                <button class="btn btn-info btn-full" ng-click="addRule()" ng-disabled="!schemeForm.$valid">
                                     <i class="icon-plus-sign icon-white"></i> <span translate>Add New Rule</span>
                                 </button>
                             </div>

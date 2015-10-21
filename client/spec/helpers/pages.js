@@ -109,6 +109,19 @@ function IngestSettings() {
 
     this.newRoutingRuleBtn = element(by.partialButtonText('New Rule'));
 
+    var newSchemeInput = element(by.model('editScheme.name'));
+    this.writeTextToSchemeName = function (text) {
+        newSchemeInput.sendKeys(text);
+    };
+
+    var newRuleInput = element(by.model('rule.name'));
+    this.writeTextToRuleName = function (text) {
+        newRuleInput.sendKeys(text);
+    };
+    this.getTextfromRuleName = function() {
+        return newRuleInput.getAttribute('value');
+    };
+
     // the settings pane for routing rule (in a modal)
     this.routingRuleSettings = {
         tabAction: element(by.buttonText('Action')),
