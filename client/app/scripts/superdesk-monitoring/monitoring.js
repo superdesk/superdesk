@@ -155,6 +155,7 @@
         this.previewItem = null;
 
         this.selectedGroup = null;
+        this.bindedItems = [];
 
         this.singleGroup = null;
         this.viewSingleGroup = viewSingleGroup;
@@ -217,6 +218,7 @@
         '$timeout',
         'superdesk',
         'activityService',
+        'workflowService',
         'keyboardManager'
     ];
     function MonitoringGroupDirective(
@@ -227,6 +229,7 @@
             $timeout,
             superdesk,
             activityService,
+            workflowService,
             keyboardManager) {
 
         var ITEM_HEIGHT = 57,
@@ -287,7 +290,41 @@
                     if (scope.selected) {
                         monitoring.viewSingleGroup(monitoring.singleGroup ? null : monitoring.selectedGroup);
                     }
-                });
+                }, {inputDisabled: false});
+
+                /*
+                 * Bind item actions on keyboard shortcuts
+                 * Keyboard shortcuts are defined with actions
+                 *
+                 * @param {Object} item
+                 */
+                function bindActionKeyShortcuts(item) {
+                    // First unbind all binded shortcuts
+                    if (monitoring.bindedItems) {
+                        unbindActionKeyShortcuts();
+                    }
+
+                    var intent = {action: 'list'};
+                    superdesk.findActivities(intent, item).forEach(function (activity) {
+                        if (activity.keyboardShortcut && workflowService.isActionAllowed(item, activity.action)) {
+                            monitoring.bindedItems.push(activity.keyboardShortcut);
+
+                            keyboardManager.bind(activity.keyboardShortcut, function () {
+                                activityService.start(activity, {data: {item: scope.selected}});
+                            }, {inputDisabled: false});
+                        }
+                    });
+                }
+
+                /*
+                 * Unbind all item actions
+                 */
+                function unbindActionKeyShortcuts() {
+                    monitoring.bindedItems.forEach(function (item) {
+                        keyboardManager.unbind(item);
+                    });
+                    monitoring.bindedItems = [];
+                }
 
                 var queryTimeout;
 
@@ -336,6 +373,8 @@
                     scope.selected = item;
                     monitoring.selectedGroup = scope.group;
                     monitoring.preview(item);
+
+                    bindActionKeyShortcuts(item);
                 }
 
                 function preview(item) {
