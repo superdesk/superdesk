@@ -187,6 +187,16 @@ Feature: Desks
         """
         {"headline": "test1", "sign_off": "abc"}
         """
+		When we patch "/desks/#desks._id#"
+        """
+         {"name": "Sports Desk modified", "desk_type": "production"}
+        """
+        Then we get OK response
+		When we patch "/desks/#desks._id#"
+        """
+         {"name": "Sports Desk modified", "desk_type": "authoring"}
+        """
+        Then we get OK response
         When we post to "/desks" with "FINANCE_DESK_ID" and success
         """
         [{"name": "Finance", "desk_type": "production" }]
