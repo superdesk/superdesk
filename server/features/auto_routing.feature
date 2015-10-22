@@ -1,6 +1,6 @@
 Feature: Auto Routing
 
-    @auth @provider @test @vocabulary
+    @auth @provider @vocabulary
     Scenario: Content is fetched based on subject metadata
         Given empty "desks"
         Given "filter_conditions"
@@ -196,7 +196,7 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider @test @vocabulary
+    @auth @provider @vocabulary
     Scenario: Content is fetched and published to different stages 1
         Given the "validators"
         """

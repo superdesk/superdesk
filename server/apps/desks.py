@@ -120,7 +120,7 @@ class DesksService(BaseService):
             push_notification(self.notification_key, created=1, desk_id=str(doc.get(config.ID_FIELD)))
 
     def on_update(self, updates, original):
-        if updates.get('desk_type') and updates.get('desk_type', '') != original.get('desk_type', ''):
+        if updates.get('desk_type') and updates.get('desk_type') != original.get('desk_type', ''):
             archive_versions_query = {
                 '$or': [
                     {'task.last_authoring_desk': str(original[config.ID_FIELD])},
