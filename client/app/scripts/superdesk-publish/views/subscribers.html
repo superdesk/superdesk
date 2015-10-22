@@ -10,7 +10,7 @@
         <ul class="pills-list provider-list">
             <li ng-repeat="subscriber in subscribers._items track by subscriber._id" class="clearfix">
                 <div class="header">
-                    <h6 id="subscriberName">{{:: subscriber.name }}</h6>
+                    <h6 id="subscriberName">{{ subscriber.name }}</h6>
                     <span class="label offProvider" ng-if="!subscriber.is_active" translate>Not Active</span>
                     <div class="actions">
                         <button ng-click="edit(subscriber)" title="{{:: 'Edit Subscriber' | translate }}"><i class="icon-pencil"></i></button>
@@ -127,7 +127,7 @@
                         <div class="content privileges-settings">
                             <div class="horizontal">
                                 <div class="roles-list">
-                                    <div ng-repeat="gf in globalFilters track by gf._id | orderBy:name" class="field">
+                                    <div ng-repeat="gf in globalFilters track by gf._id" class="field">
                                         <label>
                                             {{:: gf.name}}
                                             <span sd-switch ng-model="subscriber.global_filters[gf._id]"></span>

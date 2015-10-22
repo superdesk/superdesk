@@ -401,7 +401,9 @@
                 function runConfirmed() {
                     desks.remove(desk).then(
                         function(response) {
-                            _.remove($scope.desks._items, desk);
+                            _.remove($scope.desks._items, function(deskToBeRemoved) {
+                                return deskToBeRemoved.name.toLowerCase() === desk.name.toLowerCase();
+                            });
                             notify.success(gettext('Desk deleted.'), 3000);
                         },
                         function(response) {
@@ -470,8 +472,8 @@
                 }
             });
         }])
-        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
-            function($q, api, preferencesService, userList, notify, session) {
+        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session', '$filter',
+            function($q, api, preferencesService, userList, notify, session, $filter) {
 
                 var userDesks, userDesksPromise;
 
@@ -524,6 +526,8 @@
 
                         return _fetchAll('desks')
                         .then(function(items) {
+                            items = $filter('sortByName')(items);
+
                             self.desks = {_items: items};
                             _.each(items, function(item) {
                                 self.deskLookup[item._id] = item;
@@ -592,7 +596,13 @@
                         return $q.when();
                     },
                     fetchUserDesks: function(user) {
-                        return api.get(user._links.self.href + '/desks');
+                        return api.get(user._links.self.href + '/desks').then(function(response) {
+                            if (response && response._items) {
+                                response._items = $filter('sortByName')(response._items);
+                            }
+
+                            return $q.when(response);
+                        });
                     },
 
                     /**
@@ -836,8 +846,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata',
-            function(gettext, desks, WizardHandler, metadata) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter',
+            function(gettext, desks, WizardHandler, metadata, $filter) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -871,6 +881,7 @@
                                 _.extend(origDesk, scope.desk.edit);
                             }
 
+                            scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
                             WizardHandler.wizard('desks').next();
                         }, errorMessage);

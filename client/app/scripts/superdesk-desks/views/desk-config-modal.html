@@ -180,10 +180,10 @@
                         <p ng-if="message">{{ message }}</p>
                         <div class="member-list clearfix">
                             <ul>
-                                <li ng-repeat="user in deskMembers" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
+                                <li ng-repeat="user in deskMembers track by user._id | orderBy: 'display_name'" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
                                     <i class="icon-close-small" ng-click="remove(user)"></i>
                                     <figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
-                                    <div class="name">{{user.display_name}}</div>
+                                    <div class="name">{{:: user.display_name}}</div>
                                 </li>
                             </ul>
                         </div>

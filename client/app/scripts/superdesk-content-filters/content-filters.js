@@ -20,8 +20,8 @@
      *   providing higher-level methods for fetching and modifying all content
      *   related to content filters on the server.
      */
-    ContentFiltersService.$inject = ['api'];
-    function ContentFiltersService(api) {
+    ContentFiltersService.$inject = ['api', '$filter'];
+    function ContentFiltersService(api, $filter) {
 
         this.productionTestFilter = function(filter) {
             return filter;
@@ -67,10 +67,9 @@
         };
 
         this.getGlobalContentFilters = function() {
-            return api.query('content_filters', {'is_global': true})
-                .then(angular.bind(this, function(params) {
-                    return params._items;
-                }));
+            return api.query('content_filters', {'is_global': true}).then(function(response) {
+                return $filter('sortByName')(response._items);
+            });
         };
 
         var _getAll = function(endPoint, page, items) {
@@ -124,8 +123,8 @@
      *   Controller for the Filter Conditions tab, found on the Content Filters
      *   settings page.
      */
-    FilterConditionsController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function FilterConditionsController($scope, contentFilters, notify, modal) {
+    FilterConditionsController.$inject = ['$scope', 'contentFilters', 'notify', 'modal', '$filter'];
+    function FilterConditionsController($scope, contentFilters, notify, modal, $filter) {
         $scope.filterConditions = null;
         $scope.filterCondition = null;
         $scope.origFilterCondition = null;
@@ -229,8 +228,8 @@
         };
 
         var fetchFilterConditions = function() {
-            contentFilters.getAllFilterConditions().then(function(f) {
-                $scope.filterConditions = f;
+            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
+                $scope.filterConditions = $filter('sortByName')(_filterConditions);
             });
         };
 
@@ -246,8 +245,8 @@
      *   Controller for the Filters tab, found on the Content Filters settings
      *   page.
      */
-    ManageContentFiltersController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function ManageContentFiltersController($scope, contentFilters, notify, modal) {
+    ManageContentFiltersController.$inject = ['$scope', 'contentFilters', 'notify', 'modal', '$filter'];
+    function ManageContentFiltersController($scope, contentFilters, notify, modal, $filter) {
         $scope.filterConditions = null;
         $scope.contentFilters = null;
         $scope.contentFilter = null;
@@ -415,9 +414,9 @@
         };
 
         var fetchFilterConditions = function() {
-            contentFilters.getAllFilterConditions().then(function(_filters) {
-                $scope.filterConditions = _filters;
-                _.each(_filters, function(filter) {
+            contentFilters.getAllFilterConditions().then(function(_filterConditions) {
+                $scope.filterConditions = $filter('sortByName')(_filterConditions);
+                _.each(_filterConditions, function(filter) {
                     $scope.filterConditionLookup[filter._id] = filter;
                 });
             });
@@ -425,7 +424,8 @@
 
         var fetchContentFilters = function() {
             contentFilters.getAllContentFilters().then(function(_filters) {
-                $scope.contentFilters = _filters;
+                $scope.contentFilters = $filter('sortByName')(_filters);
+
                 _.each($scope.contentFilters, function(filter) {
                     $scope.contentFiltersLookup[filter._id] = filter;
                 });

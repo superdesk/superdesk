@@ -11,8 +11,8 @@
 (function() {
     'use strict';
 
-    VocabularyService.$inject = ['api', '$q'];
-    function VocabularyService(api, $q) {
+    VocabularyService.$inject = ['api', '$q', '$filter'];
+    function VocabularyService(api, $q, $filter) {
         var service = this;
 
         /**
@@ -24,6 +24,7 @@
             if (typeof service.vocabularies === 'undefined') {
                 return api.query('vocabularies', {where: {type: 'manageable'}}).then(
                     function(result) {
+                        result._items = $filter('sortByName')(result._items, 'display_name');
                         service.vocabularies = result;
                         return service.vocabularies;
                     }

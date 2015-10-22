@@ -24,6 +24,8 @@ class RuleSetsResource(Resource):
             'type': 'string',
             'iunique': True,
             'required': True,
+            'nullable': False,
+            'empty': False,
             'minlength': 1
         },
         'rules': {
@@ -31,9 +33,6 @@ class RuleSetsResource(Resource):
         }
     }
 
-    datasource = {
-        'default_sort': [('name', 1)]
-    }
     privileges = {'POST': 'rule_sets', 'DELETE': 'rule_sets', 'PATCH': 'rule_sets'}
 
 

@@ -22,6 +22,13 @@ logger = logging.getLogger(__name__)
 
 class ContentFilterResource(Resource):
     schema = {
+        'name': {
+            'type': 'string',
+            'required': True,
+            'nullable': False,
+            'empty': False,
+            'iunique': True
+        },
         'content_filter': {
             'type': 'list',
             'schema': {
@@ -43,11 +50,6 @@ class ContentFilterResource(Resource):
                 }
             }
         },
-        'name': {
-            'type': 'string',
-            'nullable': False,
-            'iunique': True
-        },
         'is_global': {
             'type': 'boolean',
             'default': False
@@ -59,7 +61,6 @@ class ContentFilterResource(Resource):
         'field': 'name'
     }
 
-    datasource = {'default_sort': [('_created', -1)]}
     privileges = {'POST': 'content_filters',
                   'PATCH': 'content_filters',
                   'DELETE': 'content_filters'}

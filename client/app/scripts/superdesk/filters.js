@@ -194,5 +194,18 @@ define([
 
                 return currentTSInLocated.toISOString();
             };
+        })
+        .filter('sortByName', function() {
+            return function (_collection, propertyName) {
+                if (!propertyName) {
+                    propertyName = 'name';
+                }
+
+                _collection = _.sortBy(_collection, function (_entry) {
+                    return _entry[propertyName].toLowerCase();
+                });
+
+                return _collection;
+            };
         });
 });

@@ -88,7 +88,8 @@ class RoutingRuleSchemeResource(Resource):
             'type': 'string',
             'iunique': True,
             'required': True,
-            'minlength': 1
+            'nullable': False,
+            'empty': False
         },
         'rules': {
             'type': 'list',
@@ -155,10 +156,6 @@ class RoutingRuleSchemeResource(Resource):
                 }
             }
         }
-    }
-
-    datasource = {
-        'default_sort': [('name', 1)]
     }
 
     privileges = {'POST': 'routing_rules', 'DELETE': 'routing_rules', 'PATCH': 'routing_rules'}

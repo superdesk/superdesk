@@ -19,8 +19,8 @@ describe('Reload Service', function() {
 
             spyOn(session, 'getIdentity').and.returnValue($q.when({_links: {self: {href: USER_URL}}}));
             spyOn(api, 'get').and.returnValue($q.when({_items: [
-                {_id: '5567ff31102454c7bac47644'},
-                {_id: '55394997102454b5ea111bd5'}
+                {_id: '5567ff31102454c7bac47644', name: 'Desk One'},
+                {_id: '55394997102454b5ea111bd5', name: 'Desk Two'}
             ]}));
             spyOn(preferencesService, 'get').and.returnValue($q.when([]));
             spyOn(preferencesService, 'update');

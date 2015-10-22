@@ -361,8 +361,8 @@ define([
         };
     }
 
-    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', 'modal'];
-    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, modal) {
+    IngestSourcesContent.$inject = ['providerTypes', 'gettext', 'notify', 'api', '$location', 'modal', '$filter'];
+    function IngestSourcesContent(providerTypes, gettext, notify, api, $location, modal, $filter) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-sources-content.html',
             link: function($scope) {
@@ -393,6 +393,7 @@ define([
                 function fetchProviders() {
                     return api.ingestProviders.query({max_results: 200})
                         .then(function(result) {
+                            result._items = $filter('sortByName')(result._items);
                             $scope.providers = result;
                         });
                 }
@@ -424,11 +425,11 @@ define([
                 });
 
                 api('rule_sets').query().then(function(result) {
-                    $scope.rulesets = result._items;
+                    $scope.rulesets = $filter('sortByName')(result._items);
                 });
 
                 api('routing_schemes').query().then(function(result) {
-                    $scope.routingScheme = result._items;
+                    $scope.routingScheme = $filter('sortByName')(result._items);
                 });
 
                 $scope.fetchSourceErrors = function() {
@@ -617,8 +618,8 @@ define([
         };
     }
 
-    IngestRulesContent.$inject = ['api', 'gettext', 'notify', 'modal'];
-    function IngestRulesContent(api, gettext, notify, modal) {
+    IngestRulesContent.$inject = ['api', 'gettext', 'notify', 'modal', '$filter'];
+    function IngestRulesContent(api, gettext, notify, modal, $filter) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-rules-content.html',
             link: function(scope) {
@@ -627,7 +628,7 @@ define([
                 scope.editRuleset = null;
 
                 api('rule_sets').query().then(function(result) {
-                    scope.rulesets = result._items;
+                    scope.rulesets = $filter('sortByName')(result._items);
                 });
 
                 scope.edit = function(ruleset) {
@@ -643,6 +644,8 @@ define([
                         if (_new) {
                             scope.rulesets.push(_orig);
                         }
+
+                        scope.rulesets = $filter('sortByName')(scope.rulesets);
                         notify.success(gettext('Rule set saved.'));
                         scope.cancel();
                     }, function(response) {
@@ -699,10 +702,8 @@ define([
      *   Creates the main page for adding or editing routing rules (in the
      *   modal for editing ingest routing schemes).
      */
-    IngestRoutingContent.$inject = [
-        'api', 'gettext', 'notify', 'modal', 'contentFilters'
-    ];
-    function IngestRoutingContent(api, gettext, notify, modal, contentFilters) {
+    IngestRoutingContent.$inject = ['api', 'gettext', 'notify', 'modal', 'contentFilters', '$filter'];
+    function IngestRoutingContent(api, gettext, notify, modal, contentFilters, $filter) {
         return {
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-content.html',
             link: function(scope) {
@@ -714,10 +715,8 @@ define([
                 scope.ruleIndex = null;
                 scope.schemes = [];
 
-                api('routing_schemes')
-                .query()
-                .then(function(result) {
-                    scope.schemes = result._items;
+                api('routing_schemes').query().then(function(result) {
+                    scope.schemes = $filter('sortByName')(result._items);
                 });
 
                 scope.contentFilters = [];
@@ -762,6 +761,7 @@ define([
                         if (_new) {
                             scope.schemes.push(_orig);
                         }
+                        scope.schemes = $filter('sortByName')(scope.schemes);
                         notify.success(gettext('Routing scheme saved.'));
                         scope.cancel();
                     }, function(response) {

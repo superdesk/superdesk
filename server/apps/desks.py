@@ -27,8 +27,10 @@ class DeskTypes(SuperdeskBaseEnum):
 desks_schema = {
     'name': {
         'type': 'string',
-        'iunique': True,
         'required': True,
+        'nullable': False,
+        'empty': False,
+        'iunique': True
     },
     'description': {
         'type': 'string'
@@ -95,7 +97,6 @@ superdesk.privilege(name='desks', label='Desk Management', description='User can
 
 class DesksResource(Resource):
     schema = desks_schema
-    datasource = {'default_sort': [('created', -1)]}
     privileges = {'POST': 'desks', 'PATCH': 'desks', 'DELETE': 'desks'}
 
 

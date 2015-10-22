@@ -354,11 +354,11 @@
 
     SubscribersDirective.$inject = [
         'gettext', 'notify', 'api', 'adminPublishSettingsService', 'modal',
-        'metadata', 'contentFilters', '$q'
+        'metadata', 'contentFilters', '$q', '$filter'
     ];
     function SubscribersDirective(
         gettext, notify, api, adminPublishSettingsService,
-        modal, metadata, contentFilters, $q) {
+        modal, metadata, contentFilters, $q, $filter) {
 
         return {
             templateUrl: 'scripts/superdesk-publish/views/subscribers.html',
@@ -387,6 +387,7 @@
                 function fetchSubscribers() {
                     adminPublishSettingsService.fetchSubscribers().then(
                         function(result) {
+                            result._items = $filter('sortByName')(result._items);
                             $scope.subscribers = result;
                         }
                     );
