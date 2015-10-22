@@ -43,4 +43,63 @@ describe('templates', function() {
             expect(ctrl.state.solo._id).toBe('test');
         }));
     });
+
+    describe('Aggregate Widget', function() {
+        var fakeEndpoints = {};
+        var queryDeferred;
+        beforeEach(module('superdesk.aggregate', 'templates'));
+
+        beforeEach(module(function($provide) {
+
+            function fakeApi() {
+                function apiMock(endpointName) {
+                    return fakeEndpoints[endpointName];
+                }
+                return apiMock;
+            }
+
+            $provide.service('api', fakeApi);
+
+            var fakeCards = {
+                criteria: function(card, queryString) {
+                    return {card: card, query: queryString};
+                },
+                shouldUpdate: function() {
+                    return true;
+                }
+            };
+
+            $provide.value('cards', fakeCards);
+        }));
+
+        beforeEach(inject(function($templateCache, $q) {
+            $templateCache.put('scripts/superdesk-desks/views/stage-item-list.html', '<div></div>');
+            queryDeferred = $q.defer();
+            fakeEndpoints.archive = {
+                query: jasmine.createSpy('archive_query').and.returnValue(queryDeferred.promise)
+            };
+        }));
+
+        it('it responds to changes query', inject(function($rootScope, $controller, $compile, api, cards) {
+            var scope = $rootScope.$new();
+            scope.agg = {
+                total: 1,
+                cards: [
+                    {_id: 1, max_items: 10, query: null, fileType: null,
+                        header: 'Test Group', subheader: 'Sub header', type: 'stage'}
+                ]
+            };
+
+            var elemStr = ['<div ng-repeat="group in agg.cards">',
+                           '     <div sd-stage-items data-stage="group" data-filter="group.query"></div>',
+                           '</div>'].join('');
+
+            $compile(elemStr)(scope);
+            scope.$digest();
+            expect(fakeEndpoints.archive.query).toHaveBeenCalledWith({card: scope.agg.cards[0], query: null});
+            scope.agg.cards[0].query = 'Test';
+            scope.$digest();
+            expect(fakeEndpoints.archive.query).toHaveBeenCalledWith({card: scope.agg.cards[0], query: 'Test'});
+        }));
+    });
 });

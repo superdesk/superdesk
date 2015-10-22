@@ -65,4 +65,15 @@ describe('dashboard', function() {
 
         expect(dashboard.getWidgetLabel(0)).toBe('test');
     });
+
+    it('search in monitoring widget', function() {
+        dashboard.showDashboardSettings();
+        dashboard.addWidget(3);  // the monitoring widget
+        dashboard.doneAction();
+        expect(dashboard.getWidgets().count()).toBe(1);
+        expect(dashboard.getGroupItems(0, 1).count()).toBe(4);
+        dashboard.doSearch(0, 'item7');
+        expect(dashboard.getGroupItems(0, 1).count()).toBe(1);
+        expect(dashboard.getTextItem(0, 1, 0)).toBe('item7');
+    });
 });
