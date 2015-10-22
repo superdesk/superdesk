@@ -472,8 +472,8 @@
                 }
             });
         }])
-        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
-            function($q, api, preferencesService, userList, notify, session) {
+        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session', '$filter',
+            function($q, api, preferencesService, userList, notify, session, $filter) {
 
                 var userDesks, userDesksPromise;
 
@@ -526,9 +526,7 @@
 
                         return _fetchAll('desks')
                         .then(function(items) {
-                            items = _.sortBy(items, function(desk) {
-                                return desk.name.toLowerCase();
-                            });
+                            items = $filter('sortByName')(items);
 
                             self.desks = {_items: items};
                             _.each(items, function(item) {
@@ -600,9 +598,7 @@
                     fetchUserDesks: function(user) {
                         return api.get(user._links.self.href + '/desks').then(function(response) {
                             if (response && response._items) {
-                                response._items = _.sortBy(response._items, function(desk) {
-                                    return desk.name.toLowerCase();
-                                });
+                                response._items = $filter('sortByName')(response._items);
                             }
 
                             return $q.when(response);
@@ -850,8 +846,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata',
-            function(gettext, desks, WizardHandler, metadata) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter',
+            function(gettext, desks, WizardHandler, metadata, $filter) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -885,9 +881,7 @@
                                 _.extend(origDesk, scope.desk.edit);
                             }
 
-                            scope.desks._items = _.sortBy(scope.desks._items, function(desk) {
-                                return desk.name.toLowerCase();
-                            });
+                            scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
                             WizardHandler.wizard('desks').next();
                         }, errorMessage);

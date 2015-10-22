@@ -472,8 +472,8 @@
             });
     }
 
-    UserRolesDirective.$inject = ['api', 'gettext', 'notify', 'modal'];
-    function UserRolesDirective(api, gettext, notify, modal) {
+    UserRolesDirective.$inject = ['api', 'gettext', 'notify', 'modal', '$filter'];
+    function UserRolesDirective(api, gettext, notify, modal, $filter) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-users/views/settings-roles.html',
@@ -483,10 +483,7 @@
 
                 api('roles').query()
                 .then(function(result) {
-                    result._items = _.sortBy(result._items, function(role) {
-                        return role.name.toLowerCase();
-                    });
-                    scope.roles = result._items;
+                    scope.roles = $filter('sortByName')(result._items);
                 });
 
                 scope.edit = function(role) {
@@ -564,19 +561,15 @@
         };
     }
 
-    RolesPrivilegesDirective.$inject = ['api', 'gettext', 'notify', '$q'];
-    function RolesPrivilegesDirective(api, gettext, notify, $q) {
+    RolesPrivilegesDirective.$inject = ['api', 'gettext', 'notify', '$q', '$filter'];
+    function RolesPrivilegesDirective(api, gettext, notify, $q, $filter) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-users/views/settings-privileges.html',
             link: function(scope) {
 
                 api('roles').query().then(function(result) {
-                    result._items = _.sortBy(result._items, function(role) {
-                        return role.name.toLowerCase();
-                    });
-
-                    scope.roles = result._items;
+                    scope.roles = $filter('sortByName')(result._items);
                 });
 
                 api('privileges').query().

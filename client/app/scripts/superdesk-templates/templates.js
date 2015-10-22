@@ -135,8 +135,8 @@
         };
     }
 
-    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'desks', 'weekdays'];
-    function TemplatesDirective(gettext, notify, api, templates, modal, desks, weekdays) {
+    TemplatesDirective.$inject = ['gettext', 'notify', 'api', 'templates', 'modal', 'desks', 'weekdays', '$filter'];
+    function TemplatesDirective(gettext, notify, api, templates, modal, desks, weekdays, $filter) {
         return {
             templateUrl: 'scripts/superdesk-templates/views/templates.html',
             link: function ($scope) {
@@ -149,10 +149,7 @@
                 function fetchTemplates() {
                     templates.fetchTemplates(1, 50).then(
                         function(result) {
-                            result._items = _.sortBy(result._items, function(template) {
-                                return template.template_name.toLowerCase();
-                            });
-
+                            result._items = $filter('sortByName')(result._items, 'template_name');
                             $scope.content_templates = result;
                         }
                     );

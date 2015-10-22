@@ -20,8 +20,8 @@
      *   providing higher-level methods for fetching and modifying all content
      *   related to content filters on the server.
      */
-    ContentFiltersService.$inject = ['api'];
-    function ContentFiltersService(api) {
+    ContentFiltersService.$inject = ['api', '$filter'];
+    function ContentFiltersService(api, $filter) {
 
         this.productionTestFilter = function(filter) {
             return filter;
@@ -67,14 +67,9 @@
         };
 
         this.getGlobalContentFilters = function() {
-            return api.query('content_filters', {'is_global': true})
-                .then(angular.bind(this, function(params) {
-                    var filters = _.sortBy(params._items, function(filter) {
-                        return filter.name.toLowerCase();
-                    });
-
-                    return filters;
-                }));
+            return api.query('content_filters', {'is_global': true}).then(function(response) {
+                return $filter('sortByName')(response._items);
+            });
         };
 
         var _getAll = function(endPoint, page, items) {
@@ -128,8 +123,8 @@
      *   Controller for the Filter Conditions tab, found on the Content Filters
      *   settings page.
      */
-    FilterConditionsController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function FilterConditionsController($scope, contentFilters, notify, modal) {
+    FilterConditionsController.$inject = ['$scope', 'contentFilters', 'notify', 'modal', '$filter'];
+    function FilterConditionsController($scope, contentFilters, notify, modal, $filter) {
         $scope.filterConditions = null;
         $scope.filterCondition = null;
         $scope.origFilterCondition = null;
@@ -234,10 +229,7 @@
 
         var fetchFilterConditions = function() {
             contentFilters.getAllFilterConditions().then(function(_filterConditions) {
-                _filterConditions = _.sortBy(_filterConditions, function(_filterCondition) {
-                    return _filterCondition.name.toLowerCase();
-                });
-                $scope.filterConditions = _filterConditions;
+                $scope.filterConditions = $filter('sortByName')(_filterConditions);
             });
         };
 
@@ -253,8 +245,8 @@
      *   Controller for the Filters tab, found on the Content Filters settings
      *   page.
      */
-    ManageContentFiltersController.$inject = ['$scope', 'contentFilters', 'notify', 'modal'];
-    function ManageContentFiltersController($scope, contentFilters, notify, modal) {
+    ManageContentFiltersController.$inject = ['$scope', 'contentFilters', 'notify', 'modal', '$filter'];
+    function ManageContentFiltersController($scope, contentFilters, notify, modal, $filter) {
         $scope.filterConditions = null;
         $scope.contentFilters = null;
         $scope.contentFilter = null;
@@ -423,11 +415,7 @@
 
         var fetchFilterConditions = function() {
             contentFilters.getAllFilterConditions().then(function(_filterConditions) {
-                _filterConditions = _.sortBy(_filterConditions, function(_filterCondition) {
-                    return _filterCondition.name.toLowerCase();
-                });
-
-                $scope.filterConditions = _filterConditions;
+                $scope.filterConditions = $filter('sortByName')(_filterConditions);
                 _.each(_filterConditions, function(filter) {
                     $scope.filterConditionLookup[filter._id] = filter;
                 });
@@ -436,9 +424,7 @@
 
         var fetchContentFilters = function() {
             contentFilters.getAllContentFilters().then(function(_filters) {
-                $scope.contentFilters = _.sortBy(_filters, function(filter) {
-                    return filter.name.toLowerCase();
-                });
+                $scope.contentFilters = $filter('sortByName')(_filters);
 
                 _.each($scope.contentFilters, function(filter) {
                     $scope.contentFiltersLookup[filter._id] = filter;
