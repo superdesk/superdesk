@@ -5,6 +5,11 @@ var openUrl = require('./utils').open;
 module.exports = new GlobalSearch();
 
 function GlobalSearch() {
+    this.ingestRepo = element(by.id('ingest-collection'));
+    this.archiveRepo = element(by.id('archive-collection'));
+    this.publishedRepo = element(by.id('published-collection'));
+    this.archivedRepo = element(by.id('archived-collection'));
+    this.goButton = element(by.buttonText('Go'));
 
     /**
      * Open dashboard for current selected desk/custom workspace.

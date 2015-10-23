@@ -120,4 +120,20 @@ describe('Search', function() {
         globalSearch.actionOnItem('Duplicate', 0);
         expect(globalSearch.getRelatedItems().count()).toBe(2);
     });
+
+    it('can disable when no repo is selected and enable if at lease one repo is selected', function () {
+        globalSearch.openGlobalSearch();
+        globalSearch.openFilterPanel();
+        globalSearch.openParameters();
+
+        globalSearch.ingestRepo.click();
+        globalSearch.archiveRepo.click();
+        globalSearch.publishedRepo.click();
+        globalSearch.archivedRepo.click();
+
+        expect(globalSearch.goButton.isEnabled()).toBe(false);
+
+        globalSearch.ingestRepo.click();
+        expect(globalSearch.goButton.isEnabled()).toBe(true);
+    });
 });
