@@ -350,7 +350,7 @@
                     e.preventDefault();
                     $location.url('/workspace/personal');
                 }, opt);
-                keyboardManager.bind('alt+s', function (e) {
+                keyboardManager.bind('alt+f', function (e) {
                     e.preventDefault();
                     $location.url('search');
                 }, opt);

@@ -43,7 +43,7 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
          * Combination: Ctrl + {{widget number}}
          */
         angular.forEach(_.sortBy($scope.widgets, 'order'), function (widget, index) {
-            keyboardManager.bind('ctrl+' + (index+1), function () {
+            keyboardManager.bind('ctrl+' + (index + 1), function () {
                 $scope.activate(widget);
             }, {inputDisabled: false});
         });
