@@ -109,7 +109,7 @@ def set_dateline(doc, repo_type):
                 doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
 
 
-def format_dateline_to_locmmmddsrc(located, current_timestamp):
+def format_dateline_to_locmmmddsrc(located, current_timestamp, source=ORGANIZATION_NAME_ABBREVIATION):
     """
     Formats dateline to "Location, Month Date Source -"
 
@@ -137,7 +137,7 @@ def format_dateline_to_locmmmddsrc(located, current_timestamp):
         formatted_date = current_timestamp.strftime('%b %d')
 
     return "{location} {mmmdd} {source} -".format(location=dateline_location.upper(), mmmdd=formatted_date,
-                                                  source=ORGANIZATION_NAME_ABBREVIATION)
+                                                  source=source)
 
 
 def set_byline(doc, repo_type=ARCHIVE):

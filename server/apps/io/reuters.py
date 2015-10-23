@@ -24,7 +24,8 @@ from superdesk.io.newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 from superdesk.errors import IngestApiError
 from flask import current_app as app
-
+from macros.reuters_derive_dateline import reuters_derive_dateline
+from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
 class ReutersIngestService(IngestService):
     """Reuters ingest service."""
@@ -95,6 +96,8 @@ class ReutersIngestService(IngestService):
         payload = {'id': guid}
         tree = self.get_tree('item', payload)
         items = self.parser.parse_message(tree, self.provider)
+        for item in (i for i in items if i[ITEM_TYPE] == CONTENT_TYPE.TEXT):
+            reuters_derive_dateline(item)
         return items
 
     def get_ids(self, channel, last_updated, updated):

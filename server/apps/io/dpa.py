@@ -17,6 +17,7 @@ from superdesk.utc import utc
 from superdesk.utils import get_sorted_files, FileSortAttributes
 from superdesk.errors import ParserError, ProviderError
 from superdesk.io.iptc7901 import Iptc7901FileParser
+from macros.dpa_derive_dateline import dpa_derive_dateline
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ class DPAIngestService(FileIngestService):
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('last_updated')):
                         item = self.parser.parse_file(filepath, provider)
+                        dpa_derive_dateline(item)
 
                         self.move_file(self.path, filename, provider=provider, success=True)
                         yield [item]
