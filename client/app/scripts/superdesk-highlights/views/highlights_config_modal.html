@@ -14,6 +14,14 @@
 					<input type="text" class="fullwidth-input" ng-model="configEdit.name" required>
 				</div>
 				<div class="field">
+                    <label translate>Template</label>
+                    <select ng-model="configEdit.template" name="template" id="template">
+	                     <option id="default" value="" ng-selected="!configEdit.template" translate>default template</option>
+	                     <option id="{{template.template_name}}" ng-repeat="template in templates" value="{{template._id}}" ng-selected="configEdit.template === template._id"
+	                     >{{ template.template_name }}</option>
+                     </select>
+                </div>
+				<div class="field">
 					<label translate>Assigned desks</label>
 					<div class="multi-select">
 						<ul>

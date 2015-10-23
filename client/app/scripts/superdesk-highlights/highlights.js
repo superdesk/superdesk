@@ -291,10 +291,14 @@
         };
     }
 
-    HighlightsSettingsController.$inject = ['$scope', 'desks'];
-    function HighlightsSettingsController($scope, desks) {
+    HighlightsSettingsController.$inject = ['$scope', 'api', 'desks'];
+    function HighlightsSettingsController($scope, api, desks) {
         desks.initialize().then(function() {
             $scope.desks = desks.deskLookup;
+        });
+
+        api.query('content_templates', {'template_type': 'highlights'}).then(function(result) {
+            $scope.templates = result._items || [];
         });
 
         $scope.hours = _.range(1, 25);

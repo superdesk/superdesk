@@ -400,8 +400,16 @@
     	"id_name": "-id subscriber Public API-"
     },
 	
+	{
+        "data": {"template_name": "custom_highlight", "template_type": "highlights", 
+                 "body_html": "<b>custom highlight template</b>\n{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+                }, 
+        "resource": "content_templates",
+        "id_name": "-id content template-"
+    },
+
     {
-    	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"]}, 
+    	"data": {"name": "Highlight one", "desks": ["-id desk Sports Desks-"], "groups": ["main"], "template": "-id content template-"}, 
     	"resource": "highlights",
     	"id_name": "-id highlight one-"
     },

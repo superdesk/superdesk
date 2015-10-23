@@ -16,10 +16,12 @@ describe('HIGHLIGHTS', function() {
             //add highlights configuration with one desk
             highlights.add();
             highlights.setName('highlight new');
+            highlights.setTemplate('custom_highlight');
             highlights.toggleDesk('Sports Desk');
             highlights.save();
             expect(highlights.getRow('highlight new').count()).toBe(1);
             highlights.edit('highlight new');
+            expect(highlights.getTemplate()).toMatch('custom_highlight');
             highlights.expectDeskSelection('Sports Desk', true);
             highlights.cancel();
 
@@ -53,6 +55,14 @@ describe('HIGHLIGHTS', function() {
             highlights.edit('highlight first group');
             expect(highlights.groups.count()).toBe(1);
             expect(highlights.getGroup('first').count()).toBe(1);
+            highlights.cancel();
+
+            //set default template for highlight configuration
+            highlights.edit('highlight one');
+            highlights.setTemplate('default');
+            highlights.save();
+            highlights.edit('highlight one');
+            expect(highlights.getTemplate()).toMatch('');
             highlights.cancel();
 
             //change the name of highlight configuration

@@ -19,6 +19,7 @@ class HighlightsResource(Resource):
             'iunique': True,
             'required': True
         },
+        'template': Resource.rel('content_templates', nullable=True),
         'desks': {
             'type': 'list',
             'schema': Resource.rel('desks', True)
