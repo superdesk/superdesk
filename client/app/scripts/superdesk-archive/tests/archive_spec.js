@@ -156,6 +156,23 @@ describe('content', function() {
 
             expect(superdesk.intent).toHaveBeenCalledWith('view', 'item', scope.relatedItems._items[0]);
         }));
+        it('can fetch related items when item duplicated',
+            inject(function(familyService, $rootScope, $compile, superdesk, $q) {
+            var scope = $rootScope.$new();
+            scope.item = {_id: 1, family_id: 1};
+
+            var elem = $compile('<div sd-media-related data-item=\'item\'></div>')(scope);
+            scope.$digest();
+
+            var iscope = elem.isolateScope();
+            expect(iscope.item).toBe(scope.item);
+
+            spyOn(familyService, 'fetchItems').and.returnValue($q.when());
+            scope.$broadcast('item:duplicate');
+            scope.$apply();
+
+            expect(familyService.fetchItems).toHaveBeenCalledWith(scope.item.family_id, scope.item);
+        }));
     });
 
     describe('item preview container', function() {

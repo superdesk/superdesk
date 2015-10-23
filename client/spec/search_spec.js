@@ -107,4 +107,17 @@ describe('Search', function() {
         globalSearch.selectDesk('to-desk', '');
         expect(globalSearch.getItems().count()).toBe(11);
     });
+
+    it('can dynamically update items in related tab when item duplicated', function() {
+        globalSearch.openGlobalSearch();
+        globalSearch.setListView();
+        expect(globalSearch.getItems().count()).toBe(10);
+
+        globalSearch.actionOnItem('Duplicate', 0);
+        monitoring.tabAction('related');
+        expect(globalSearch.getRelatedItems().count()).toBe(1);
+
+        globalSearch.actionOnItem('Duplicate', 0);
+        expect(globalSearch.getRelatedItems().count()).toBe(2);
+    });
 });

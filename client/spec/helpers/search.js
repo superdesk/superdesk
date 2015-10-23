@@ -89,6 +89,15 @@ function GlobalSearch() {
     };
 
     /**
+     * Get the list of relatedItems from related tab
+     *
+     * @return {promise} list of elements
+     */
+    this.getRelatedItems = function() {
+        return element.all(by.repeater('relatedItem in relatedItems._items'));
+    };
+
+    /**
      * Perform the 'action' operation of the
      * 'index' element of the global search list
      *

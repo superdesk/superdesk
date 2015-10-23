@@ -757,6 +757,8 @@
                     scope.$on('item:published:no_post_publish_actions', itemDelete);
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
+                    scope.$on('item:duplicate', queryItems);
+
                     scrollElem.on('scroll', handleScroll);
 
                     scope.$watch('view', function(newValue, oldValue) {
