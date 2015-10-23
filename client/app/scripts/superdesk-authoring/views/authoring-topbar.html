@@ -47,7 +47,10 @@
 			 ng-if="highlight"
 			 translate>Export</button>
 
-        <button class="navbtn navbtn-hover strict" title="{{ :: 'Minimize' | translate }}" ng-click="minimize()">
+        <button class="navbtn navbtn-hover strict"
+                ng-if="!item._locked"
+                title="{{ :: 'Minimize' | translate }}"
+                ng-click="minimize()">
             <i class="big-icon-minimize"></i>
         </button>
 
