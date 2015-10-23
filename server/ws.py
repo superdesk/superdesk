@@ -13,8 +13,6 @@
 from settings import WS_HOST, WS_PORT, LOG_SERVER_ADDRESS, LOG_SERVER_PORT
 from superdesk.ws import create_server
 
-beat_delay = 30
-
 
 if __name__ == '__main__':
     config = {
