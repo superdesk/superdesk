@@ -329,7 +329,7 @@
                  * By using keyboard shortcuts, change the current showed view
                  *
                  */
-                var opt = {global: true};
+                var opt = {global: true, inputDisabled: false};
                 keyboardManager.bind('alt+h', function (e) {
                     e.preventDefault();
                     $location.url('/workspace');

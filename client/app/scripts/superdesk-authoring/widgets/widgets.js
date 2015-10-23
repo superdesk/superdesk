@@ -45,7 +45,7 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
         angular.forEach($scope.widgets, function (widget) {
             keyboardManager.bind('ctrl+' + widget.order, function () {
                 $scope.activate(widget);
-            }, {global: true});
+            }, {inputDisabled: false});
         });
     });
 

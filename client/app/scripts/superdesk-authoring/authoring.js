@@ -2140,6 +2140,7 @@
                     label: gettext('Edit'),
                     priority: 10,
                     icon: 'pencil',
+                    keyboardShortcut: 'ctrl+e',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.edit(data.item ? data.item : data);
                     }],
@@ -2183,6 +2184,7 @@
                     label: gettext('Open'),
                     priority: 2000,
                     icon: 'fullscreen',
+                    keyboardShortcut: 'ctrl+o',
                     controller: ['data', 'authoringWorkspace', function(data, authoringWorkspace) {
                         authoringWorkspace.view(data.item || data);
                     }],
