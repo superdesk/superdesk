@@ -793,13 +793,12 @@
                         criteria = search.query($location.search()).getCriteria(true);
                         criteria.source.size = 0;
                         scope.total = null;
+                        scope.preview(null);
                         return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
                             scope.$applyAsync(render);
                         });
                     }
-
-                    queryItems();
 
                     /*
                      * Function to get the search endpoint name based on the criteria
@@ -921,6 +920,8 @@
                         scope.selected.preview = item;
                         $location.search('_id', item ? item._id : null);
                     };
+
+                    queryItems();
 
                     scope.openLightbox = function openLightbox() {
                         scope.selected.view = scope.selected.preview;

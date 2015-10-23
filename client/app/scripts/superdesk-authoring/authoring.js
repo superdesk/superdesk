@@ -962,9 +962,9 @@
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
                         if (res.cropData) {
-                            $scope.item.hasCropes = true;
+                            $scope.item.hasCrops = true;
                         }
-                        
+
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -1983,13 +1983,11 @@
                 });
 
                 metadata.initialize().then(function() {
-                    scope.item.hasCropes = false;
+                    scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    _.each(scope.metadata.crop_sizes, function(crop) {
-                        if (scope.item.renditions[crop.name]){
-                            scope.item.hasCropes = true;
-                        }
-                    })
+                    scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
+                        return scope.item.renditions[crop.name];
+                    });
                 });
 
                 /**

@@ -386,6 +386,47 @@ describe('cropImage', function() {
         expect($scope.data.cropData['4-3']).toEqual(toMatch);
     }));
 
+    it('can change button label for apply/edit crop',
+    inject(function($rootScope, $compile, $q, metadata) {
+        var metaInit = $q.defer();
+
+        metadata.values = {
+            crop_sizes: [
+                {name: '4-3'}, {name: '16-9'}
+            ]
+        };
+
+        spyOn(metadata, 'initialize').and.returnValue(metaInit.promise);
+
+        var elem = $compile('<div sd-article-edit></div>')($rootScope.$new());
+        var scope = elem.scope();
+
+        scope.item = {
+            renditions: {
+            }
+        };
+
+        metaInit.resolve();
+        scope.$digest();
+
+        expect(scope.item.hasCrops).toBe(false);
+
+        elem = $compile('<div sd-article-edit></div>')($rootScope.$new());
+        scope = elem.scope();
+
+        scope.item = {
+            renditions: {
+                '4-3': {
+                }
+            }
+        };
+
+        metaInit.resolve();
+        scope.$digest();
+
+        expect(scope.item.hasCrops).toBe(true);
+    }));
+
 });
 
 describe('autosave', function() {
