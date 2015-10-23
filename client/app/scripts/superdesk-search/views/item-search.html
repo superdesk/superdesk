@@ -141,6 +141,6 @@
     </fieldset>    
 </form>
 <div class="actions">
-    <button class="btn btn-info pull-right" ng-click="search()" translate>Go</button>
+    <button class="btn btn-info pull-right" ng-click="search()" ng-disabled="!isSearchEnabled()" translate>Go</button>
     <button class="btn pull-right" ng-click="focusOnSearch();" translate>Cancel</button>
 </div>

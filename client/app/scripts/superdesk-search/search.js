@@ -1338,6 +1338,16 @@
 
                     }
 
+                    /**
+                     * Function which dictates whether the Go button should be enabled or disabled.
+                     *
+                     * @return {boolean} true if Go button in parameters section should be enabled. false otherwise.
+                     */
+                    scope.isSearchEnabled = function() {
+                        return scope.repo.search && (scope.repo.search !== 'local' ||
+                            (scope.repo.ingest || scope.repo.archive || scope.repo.published || scope.repo.archived));
+                    };
+
                     scope.focusOnSearch = function() {
                         if (scope.advancedOpen) {
                             scope.toggle();
