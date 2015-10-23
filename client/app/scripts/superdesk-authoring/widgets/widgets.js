@@ -42,8 +42,8 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets, archiveServi
          * Navigate throw right tab widgets with keyboard combination
          * Combination: Ctrl + {{widget number}}
          */
-        angular.forEach($scope.widgets, function (widget) {
-            keyboardManager.bind('ctrl+' + widget.order, function () {
+        angular.forEach(_.sortBy($scope.widgets, 'order'), function (widget, index) {
+            keyboardManager.bind('ctrl+' + (index+1), function () {
                 $scope.activate(widget);
             }, {inputDisabled: false});
         });
