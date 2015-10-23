@@ -282,6 +282,8 @@
                     }
                 });
 
+                scope.$on('$destroy', unbindActionKeyShortcuts);
+
                 /*
                  * Change between simple and group by keyboard
                  * Keyboard shortcut: Ctrl + g
@@ -311,7 +313,7 @@
 
                             keyboardManager.bind(activity.keyboardShortcut, function () {
                                 activityService.start(activity, {data: {item: scope.selected}});
-                            }, {inputDisabled: false});
+                            }, {inputDisabled: true});
                         }
                     });
                 }

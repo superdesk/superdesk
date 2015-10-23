@@ -144,7 +144,8 @@
                         elt = e.srcElement;
                     }
                     if (elt.nodeType === 3) { elt = elt.parentNode; }
-                    if (elt.tagName === 'INPUT' || elt.tagName === 'TEXTAREA') { return; }
+                    if (elt.tagName === 'INPUT' || elt.tagName === 'TEXTAREA' ||
+                            elt.className.indexOf('editor-type-html') !== -1) { return; }
                 }
 
                 // Find out which key is pressed

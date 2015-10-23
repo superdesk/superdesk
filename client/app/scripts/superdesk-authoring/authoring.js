@@ -2203,7 +2203,6 @@
                     cssClass: 'upload-avatar modal-static modal-responsive',
                     controller: ChangeImageController,
                     templateUrl: 'scripts/superdesk-authoring/views/change-image.html',
-                    keyboardShortcut: 'ctrl+e',
                     filters: [{action: 'edit', type: 'crop'}]
                 });
         }])
