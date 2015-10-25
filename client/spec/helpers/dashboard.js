@@ -155,4 +155,24 @@ function Dashboard() {
     this.getTextItem = function(widget, group, item) {
         return this.getItem(widget, group, item).element(by.id('title')).getText();
     };
+
+    /**
+     * Get an search text box widget
+     *
+     * @param {number} widget index
+     * @return {promise} item element
+     */
+    this.getSearchTextBox = function(widget) {
+        return this.getWidget(widget).element(by.css('.search-box input'));
+    };
+
+    /**
+     * Get an search text box widget
+     *
+     * @param {number} widget index
+     * @param {string} searchText search string
+     */
+    this.doSearch = function(widget, searchText) {
+        this.getSearchTextBox(widget).sendKeys(searchText);
+    };
 }
