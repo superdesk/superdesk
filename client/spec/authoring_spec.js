@@ -179,4 +179,25 @@ describe('authoring', function() {
         expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
         authoring.close();
     });
+
+    it('keyboard shortcuts', function() {
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.writeText('z');
+        element(by.cssContainingText('span', 'Headline')).click();
+        ctrlKey('s');
+        browser.wait(function() {
+            return element(by.buttonText('SAVE')).getAttribute('disabled');
+        }, 500);
+        authoring.close();
+        monitoring.actionOnItem('Edit', 1, 0);
+        browser.sleep(300);
+
+        expect(authoring.getBodyText()).toBe('zitem5 text');
+
+        element(by.cssContainingText('span', 'Headline')).click();
+        ctrlKey('q');
+        browser.sleep(300);
+
+        expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
+    });
 });
