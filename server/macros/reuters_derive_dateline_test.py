@@ -10,11 +10,13 @@
 
 from unittest import TestCase
 from .reuters_derive_dateline import reuters_derive_dateline
+import datetime
 
 
 class DPADeriveDatelineTests(TestCase):
     def simple_case_test(self):
         item = dict()
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
         item['body_html'] = '<p>DETROIT (Reuters) - General Motors Co <GM.N> Chief Financial Officer Chuck Stevens \
             said on Wednesday the macroeconomic challenges in Brazil will remain in the near term but the company \
             has \"huge upside leverage once the macro situation changes\" in South America\'s largest \
@@ -28,6 +30,7 @@ class DPADeriveDatelineTests(TestCase):
 
     def with_a_date_test(self):
         item = dict()
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
         item['body_html'] = '<p>PARIS, Oct 22 (Reuters) - Eurotunnel said on\nThursday that third-quarter revenue \
         rose 3 percent to 334.4\nmillion euros ($379.48 million), as economic recovery helped\noffset the \
         impact of the disruption to traffic resulting from\nthe migrant crisis.</p>\n<p>The operator of the \
@@ -50,6 +53,7 @@ class DPADeriveDatelineTests(TestCase):
 
     def with_a_byline_test(self):
         item = dict()
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
         item['byline'] = 'By Karl Plume'
         item['body_html'] = '<p>By Karl Plume</p>\n<p>CHICAGO, Oct 21 (Reuters) - Chicago Cubs supporters have \
         uttered the phrase \"wait till next year\" perhaps more than any other fans in baseball, with their team\'s \
@@ -65,6 +69,7 @@ class DPADeriveDatelineTests(TestCase):
 
     def with_a_dateline_already_leave_it_alone_test(self):
         item = dict()
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
         item['dateline'] = {'located': {'city': 'Chicargo'}}
         item['body_html'] = '<p>DONT CARE (Reuters) - Chicago Cubs supporters have \
         uttered the phrase \"wait till next year\" perhaps more than any other fans in baseball, with their team\'s \
@@ -80,6 +85,7 @@ class DPADeriveDatelineTests(TestCase):
 
     def with_just_a_date_test(self):
         item = dict()
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
         item['body_html'] = '<p>Oct 22 (Reuters) - Eurotunnel said on\nThursday that third-quarter revenue \
         rose 3 percent to 334.4\nmillion euros ($379.48 million), as economic recovery helped\noffset the \
         impact of the disruption to traffic resulting from\nthe migrant crisis.</p>\n<p>The operator of the \
@@ -87,3 +93,18 @@ class DPADeriveDatelineTests(TestCase):
         economy in Britain and to a lesser extent in the\neuro-zone.</p>'
         reuters_derive_dateline(item)
         self.assertNotIn('dateline', item)
+
+    def from_bagalore_test(self):
+        item = {'dateline': {'located': {'city': 'Bangalore'}}}
+        item['firstcreated'] = datetime.datetime(2015, 10, 26, 11, 45, 19, 0)
+        item['body_html'] = '<p>Wagga Wagga (Reuters) - Chicago Cubs supporters have \
+        uttered the phrase \"wait till next year\" perhaps more than any other fans in baseball, with their team\'s \
+        championship drought stretching to 107 years after being swept from this year\'s playoffs by the New York \
+        Mets.</p>\n<p>However, the 2015 Cubs have given Chicago\'s north-side faithful reason to believe that \
+        their wait for a title, the longest in U.S. professional sports, might soon come to an end.</p>\n<p>The \
+        Mets ensured the Cubs\' unprecedented streak will continue another year with an 8-3 victory on Wednesday \
+        that saw them capture the National League pennant and claim a place in the World Series against \
+        Kansas City or Toronto.</p>\n<p>While the Cubs\' clubhouse was disappointed after the defeat, there were \
+        real signs of hope.</p>'
+        reuters_derive_dateline(item)
+        self.assertEqual(item['dateline']['located']['city'], 'Wagga Wagga')

@@ -38,7 +38,7 @@ def noise11_derive_metadata(item, **kwargs):
             qcode = '01000000'
             item['subject'] = [{'qcode': qcode, 'name': subject_codes[qcode]}]
 
-        cities = find_cities()
+        cities = find_cities(country_code='AU', state_code='NSW')
         located = [c for c in cities if c['city'].lower() == 'sydney']
 
         if located and 'dateline' not in item:

@@ -38,4 +38,4 @@ class DPADeriveDatelineTests(TestCase):
         item = dict()
         item['body_html'] = 'No dateline here'
         dpa_derive_dateline(item)
-        self.assertNotIn('located', item)
+        self.assertNotIn('dateline', item)

@@ -11,6 +11,9 @@
 from superdesk.locators.locators import find_cities
 from bs4 import BeautifulSoup
 import logging
+from apps.archive.common import format_dateline_to_locmmmddsrc
+from superdesk.utc import get_date
+from superdesk.metadata.item import BYLINE
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +31,7 @@ def reuters_derive_dateline(item, **kwargs):
             soup = BeautifulSoup(html)
             pars = soup.findAll('p')
             if len(pars) >= 2:
-                if 'byline' in item and item.get('byline') in pars[0].get_text():
+                if BYLINE in item and item.get(BYLINE) in pars[0].get_text():
                     first = pars[1].get_text()
                 else:
                     first = pars[0].get_text()
@@ -44,7 +47,7 @@ def reuters_derive_dateline(item, **kwargs):
                     if 'dateline' not in item:
                         item['dateline'] = {}
                     # there is already a dateline that is not Bangalore don't do anything just return
-                    elif 'located' in item['dateline'] and 'BANGALOR' != item['dateline']['located'].get(
+                    elif 'located' in item['dateline'] and 'BANGALORE' != item['dateline']['located'].get(
                             'city').upper():
                         return
 
@@ -53,10 +56,15 @@ def reuters_derive_dateline(item, **kwargs):
                                                                                        'tz': 'UTC',
                                                                                        'dateline': 'city'}
                     item['dateline']['source'] = item.get('original_source', 'Reuters')
-                    item['dateline']['text'] = city
+                    item['dateline']['text'] = format_dateline_to_locmmmddsrc(item['dateline']['located'],
+                                                                              get_date(item['firstcreated']),
+                                                                              source=item.get('original_source',
+                                                                                              'Reuters'))
+
         return item
     except:
         logging.exception('Reuters dateline macro exception')
+
 
 name = 'Derive dateline from article text for Reuters'
 label = 'Reuters dateline derivation'

@@ -27,6 +27,7 @@ from flask import current_app as app
 from macros.reuters_derive_dateline import reuters_derive_dateline
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 
+
 class ReutersIngestService(IngestService):
     """Reuters ingest service."""
 
