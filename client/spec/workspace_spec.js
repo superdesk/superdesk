@@ -27,7 +27,7 @@ describe('workspace', function () {
         expect(browser.getLocationAbsUrl()).toMatch('/workspace/personal');
 
         // Can switch to search view by pressing alt + s
-        altKey('s');
+        altKey('f');
         expect(browser.getLocationAbsUrl()).toMatch('/search');
 
         // Can get back to dashboard by pressing alt + h
