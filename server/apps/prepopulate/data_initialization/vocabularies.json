@@ -96,9 +96,9 @@
             {"is_active": true, "name": "1", "value": 1},
             {"is_active": true, "name": "2", "value": 2},
             {"is_active": true, "name": "3", "value": 3},
-            {"is_active": false, "name": "4", "value": 4},
+            {"is_active": true, "name": "4", "value": 4},
             {"is_active": true, "name": "5", "value": 5},
-            {"is_active": false, "name": "6", "value": 6},
+            {"is_active": true, "name": "6", "value": 6},
             {"is_active": false, "name": "7", "value": 7},
             {"is_active": false, "name": "8", "value": 8},
             {"is_active": false, "name": "9", "value": 9}
