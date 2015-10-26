@@ -69,6 +69,11 @@ function GlobalSearch() {
         return this.getItems().get(index);
     };
 
+    this.itemClick = function(index) {
+        var itemElem = this.getItem(index);
+        itemElem.click();
+    };
+
     /**
      * Get the search element text at 'index' row
      *

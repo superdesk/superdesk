@@ -114,10 +114,13 @@ describe('Search', function() {
         expect(globalSearch.getItems().count()).toBe(10);
 
         globalSearch.actionOnItem('Duplicate', 0);
+        globalSearch.itemClick(0);
         monitoring.tabAction('related');
         expect(globalSearch.getRelatedItems().count()).toBe(1);
 
         globalSearch.actionOnItem('Duplicate', 0);
+        globalSearch.itemClick(0);
+        monitoring.tabAction('related');
         expect(globalSearch.getRelatedItems().count()).toBe(2);
     });
 
