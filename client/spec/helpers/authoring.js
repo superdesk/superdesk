@@ -29,6 +29,8 @@ function Authoring() {
     this.setCategoryBtn = element(by.id('category-setting'))
         .element(by.tagName('button'));
 
+    this.sendItemContainer = element(by.id('send-item-container'));
+
     /**
      * Find all file type icons in the item's info icons box matching the
      * given file type.
