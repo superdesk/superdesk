@@ -246,6 +246,12 @@ media uploader
 */
 .upload-media {
 
+	.modal-body {
+		display: flex;
+		flex-direction:column;
+		overflow: hidden !important;
+		padding: 0;
+	}
 	.drag-area { //start screen on modal show
 		position: absolute;
 		top:5px;
@@ -253,6 +259,7 @@ media uploader
 		bottom: 5px;
 		right: 5px;
 		border: 3px dashed @background-main;
+		overflow-y: auto;
 		.user-select(none);
 		&.dragover {
 			border-color: #e7e7e7;
@@ -287,14 +294,18 @@ media uploader
 				height: auto;
 				line-height: 140%;
 			}
-
 		}
 
 		&.compact {
 			z-index: 5;
-			top: auto;
 			height: 90px;
 			border-color: #e7e7e7;
+			position: relative;
+			top: auto; bottom: auto; left: auto; right: auto;
+			order: 2;
+			flex: 0 0 auto;
+			margin: 5px;
+			.box-sizing(border-box);
 			&.dragover {
 				border-color: #c7c7c7;
 			}
@@ -303,13 +314,13 @@ media uploader
 				font-size: 16px;
 				right: 50%;
 				left: auto;
-				top: 35px;
+				top: 32px;
 				margin:0;
 				padding-top: 0;
 				height: auto;
 			}
 			.upload-manual {
-				top: 32px;
+				top: 26px;
 				margin: 0;
 				width: auto;
 				.or-label {
@@ -325,7 +336,6 @@ media uploader
 						margin-left : -3px;
 						top: -15px;
 					}
-
 				}
 			}
 		}
@@ -333,13 +343,13 @@ media uploader
 
 	.upload-error {
 		height: 40px;
-		position: absolute;
-		left: 0; right: 0; top: 0;
+		position: relative;
 		.box-sizing(border-box);
 		background: #f7e8e8;
 		border-bottom: 1px solid #eed7d7;
 		text-align: center;
 		line-height: 40px;
+		margin-bottom: 10px;
 		span {
 			.text-light();
 			font-size: 14px;
@@ -355,12 +365,11 @@ media uploader
 	}
 
 	.upload-edit {	//detail upload screen and basic edit
-
-		position: absolute;
-		left: 0; right: 0; bottom: 0; top: 0px;
 		z-index: 1;
-		padding: 20px 20px 91px 20px;
-		overflow: auto;
+		padding: 20px;
+		flex: 1 1 auto;
+    	overflow-y: auto;
+    	position: relative;
 		&.error {
 			top: 40px;
 		}
@@ -489,7 +498,6 @@ media uploader
 		}
 
 		&.compact {
-			bottom: 105px;
 		}
 	}
 
@@ -499,7 +507,7 @@ media uploader
 		z-index: 10;
 		border-bottom: 1px solid #ddd;
 		&.open {
-			bottom: 105px;
+			position: relative;
 		}
 		.optional-drag {
 			width: 120px;
@@ -514,7 +522,5 @@ media uploader
 				margin-top: -2px;
 			}
 		}
-
 	}
-
 }

@@ -5,7 +5,7 @@
 
 <div class="modal-body" ng-init="dragshow = false">
 
-    <div class="drag-area" ng-show="!items.length || dragshow" ng-file-drop="addFiles($files)" ng-class="{compact: dragshow}">
+    <div class="drag-area" ng-show="!items.length || dragshow" ng-file-drop="addFiles($files)" ng-class="{compact: dragshow && items.length}">
         <div class="title" translate>Drag Your Files Here</div>
         <div class="upload-manual">
             <div class="or-label" translate>or</div>
@@ -17,6 +17,9 @@
 		<span translate>There are failed uploads.</span><span class="action" ng-click="tryAgain()" translate>Try again</span>
 	</div>
     <div class="upload-edit" ng-show="items.length" ng-class="{compact: dragshow, error: failed}">
+        <div class="upload-error" ng-if="errorMessage">
+            <span class="action" translate>Error: {{ :: errorMessage}}</span>
+        </div>        
         <ul class="upload-thumbs">
             <li ng-repeat="item in items">
                 <div class="thumb" sd-image-preview="item.url" data-file="item.file">
@@ -43,9 +46,6 @@
                 </div>
             </li>
         </ul>
-        <div class="upload-error" ng-if="errorMessage">
-            <span class="action" translate>Error: {{ :: errorMessage}}</span>
-        </div>
     </div>
 
     <div class="optional-drag-holder" ng-class="{open: dragshow}" ng-show="items.length" >
