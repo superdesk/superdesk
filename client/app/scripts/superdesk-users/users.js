@@ -1297,6 +1297,16 @@
                 }
             };
         }])
+
+        /**
+         * @memberof superdesk.users
+         * @ngdoc directive
+         * @name sdUserPrivileges
+         * @description
+         *   This directive creates the Privileges tab on the user profile
+         *   panel, used for setting user permissions for various actions in
+         *   the system.
+         */
         .directive('sdUserPrivileges', ['api', 'gettext', 'notify', function(api, gettext, notify) {
             return {
                 scope: {
@@ -1315,14 +1325,44 @@
                         console.log(error);
                     });
 
-                    scope.save = function(userPrivileges) {
-                        api.save('users', scope.user, _.pick(scope.user, 'privileges'))
-                        .then(function(result) {
+                    // the last user privileges that were saved on the server
+                    scope.origPrivileges = angular.copy(scope.user.privileges);
+
+                    /**
+                    * Saves selected user privileges on the server and marks
+                    * the corresponding HTML form as $pristine.
+                    *
+                    * @method save
+                    */
+                    scope.save = function () {
+                        api.save(
+                            'users',
+                            scope.user,
+                            _.pick(scope.user, 'privileges')
+                        )
+                        .then(function () {
+                            scope.origPrivileges = angular.copy(
+                                scope.user.privileges);
+                            scope.userPrivileges.$setPristine();
                             notify.success(gettext('Privileges updated.'));
-                        }, function(response) {
-                            notify.error(gettext(privilegesErrorHandler(response)));
+                        }, function (response) {
+                            notify.error(
+                                gettext(privilegesErrorHandler(response)));
                         });
-                        userPrivileges.$setPristine();
+                    };
+
+                    /**
+                    * Reverts all changes to user privileges settings since the
+                    * time they were last saved, and marks the corresponding
+                    * HTML form as $pristine.
+                    *
+                    * @method cancel
+                    */
+                    scope.cancel = function () {
+                        scope.user.privileges = angular.copy(
+                            scope.origPrivileges);
+
+                        scope.userPrivileges.$setPristine();
                     };
                 }
             };
