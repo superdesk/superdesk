@@ -13,7 +13,7 @@ describe('workqueue', function() {
 
     beforeEach(module('mock.route'));
     beforeEach(module('superdesk.authoring.workqueue'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function(session, $q) {
         spyOn(session, 'getIdentity').and.returnValue($q.when({_id: USER_ID}));

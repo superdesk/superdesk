@@ -14,7 +14,7 @@ describe('sdUserPrivileges directive', function() {
         $compile,
         $rootScope;
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.users'));
 
     beforeEach(module(function ($provide) {

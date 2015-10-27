@@ -146,7 +146,7 @@ describe('monitoring', function() {
 
     describe('monitoring group directive', function() {
 
-        beforeEach(module('templates'));
+        beforeEach(module('superdesk.templates-cache'));
 
         beforeEach(inject(function($templateCache) {
             // change template not to require aggregate config but rather render single group

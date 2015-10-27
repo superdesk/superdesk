@@ -14,7 +14,7 @@ describe('sdDeskeditMacros directive', function() {
         $compile,
         $rootScope;
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.desks'));
 
     beforeEach(inject(function (_$compile_, _$rootScope_, $q, _macros_) {

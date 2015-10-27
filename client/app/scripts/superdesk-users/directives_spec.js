@@ -104,7 +104,7 @@ define([
         var noop = angular.noop;
 
         beforeEach(module('superdesk.users'));
-        beforeEach(module('templates'));
+        beforeEach(module('superdesk.templates-cache'));
 
         beforeEach(module(function($provide) {
             $provide.service('gettext', noop);

@@ -5,7 +5,7 @@ describe('highlights', function() {
     beforeEach(module('superdesk.highlights'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     describe('sdPackageHighlightsDropdown directive', function() {
         var scope, desk;

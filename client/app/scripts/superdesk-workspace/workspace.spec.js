@@ -4,7 +4,7 @@ describe('workspace', function() {
 
     var DESK = 1;
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.dashboard'));
 
     beforeEach(inject(function(session) {
