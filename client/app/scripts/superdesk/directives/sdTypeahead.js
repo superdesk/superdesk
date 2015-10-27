@@ -93,7 +93,7 @@ define(['angular'], function(angular) {
                     $input.bind('blur', function() {
                         scope.$apply(function() {
                             scope.focused = false;
-                            if (typeof scope.blur === 'function') {
+                            if (typeof scope.blur === 'function' && !scope.hide) {
                                 scope.blur({item: scope.active});
                             }
                         });
