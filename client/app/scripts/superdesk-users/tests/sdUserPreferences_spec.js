@@ -1,13 +1,11 @@
 'use strict';
 
 describe('sdUserPreferences directive', function() {
-    var metadata,
-        metadataInit,  // metadata initialization deferred object
-        preferencesService,
-        fetchedPreferences,
-        prefFetch,
+    var fetchedPreferences,
         scope,
         $element;  // the root DOM element the directive operates on
+
+    var user = {'_id': 1};
 
     beforeEach(module('superdesk.users'));
     beforeEach(module('superdesk.authoring.metadata'));
@@ -15,9 +13,9 @@ describe('sdUserPreferences directive', function() {
     beforeEach(module('templates'));
 
     beforeEach(inject(function (
-        $rootScope, $compile, $q, _metadata_, _preferencesService_, session
+        $rootScope, $compile, $q, metadata, preferencesService, session, userList
     ) {
-        var html = '<div sd-user-preferences></div>';
+        var html = '<div sd-user-preferences data-user="user"></div>';
 
         // patch session service
         session.identity = {
@@ -40,35 +38,27 @@ describe('sdUserPreferences directive', function() {
                 'place': ''
             }
         };
-        preferencesService = _preferencesService_;
-        prefFetch = $q.defer();
-        spyOn(preferencesService, 'get')
-            .and.returnValue(prefFetch.promise);
 
-        // patch metadata service's initialization
-        metadata = _metadata_;
-        metadataInit = $q.defer();
-
-        spyOn(metadata, 'initialize')
-            .and.returnValue(metadataInit.promise);
-
-        // compile the directive and run it
-        scope = $rootScope.$new();
-        $element = $compile(html)(scope);
-        scope.$digest();
-    }));
-
-    it('initializes the list of categories in scope', function () {
         metadata.values = {
             categories: [
                 {name: 'Domestic Sport', qcode: 't'},
                 {name: 'Politics', qcode: 'p'}
             ],
-            default_categories: [{qcode: 'x'}]
+            default_categories: [{qcode: 'x'}, {qcode: 'y'}]
         };
 
-        prefFetch.resolve(fetchedPreferences);
-        metadataInit.resolve();
+        spyOn(preferencesService, 'get').and.returnValue($q.when(fetchedPreferences));
+        spyOn(userList, 'getUser').and.returnValue($q.when(user));
+        spyOn(metadata, 'initialize').and.returnValue($q.when(metadata));
+
+        // compile the directive and run it
+        scope = $rootScope.$new(true);
+        scope.user = user;
+        $element = $compile(html)(scope);
+        scope.$digest();
+    }));
+
+    it('initializes the list of categories in scope', function () {
         scope.$digest();
 
         expect(angular.equals(
@@ -82,25 +72,16 @@ describe('sdUserPreferences directive', function() {
 
     it('initializes the list of default preferred categories in scope',
         function () {
-            metadata.values = {
-                categories: [{name: 'Politics', qcode: 'p'}],
-                default_categories: [{qcode: 'x'}, {qcode: 'y'}]
-            };
-
-            prefFetch.resolve(fetchedPreferences);
-            metadataInit.resolve();
             scope.$digest();
-
             expect(scope.defaultCategories).toEqual({'x': true, 'y': true});
         }
     );
 
     describe('scope\'s save() method', function () {
         var modal,
-            modalConfirm,  // deferred modal confirmation
-            updatePrefs;
+            modalConfirm;  // deferred modal confirmation
 
-        beforeEach(inject(function ($q, _modal_) {
+        beforeEach(inject(function ($q, _modal_, preferencesService) {
             var $newDiv;
 
             modal = _modal_;
@@ -112,17 +93,14 @@ describe('sdUserPreferences directive', function() {
             $newDiv = $('<div class="input-term"><input type="text"/></div>');
             $element.find('[sd-typeahead]').append($newDiv);
 
-            updatePrefs = $q.defer();
-            spyOn(preferencesService, 'update')
-                .and.returnValue(updatePrefs.promise);
+            spyOn(preferencesService, 'update').and.returnValue($q.when(fetchedPreferences));
 
         }));
 
-        it('sends the preferred categories settings to server', function () {
+        it('sends the preferred categories settings to server', inject(function (preferencesService) {
             var arg,
                 callArgs;
 
-            prefFetch.resolve(fetchedPreferences);
             scope.$digest();
 
             scope.categories = [
@@ -142,15 +120,13 @@ describe('sdUserPreferences directive', function() {
 
             arg = callArgs['categories:preferred'] || {};
             expect(arg.selected).toEqual({'v': false, 'q': true});
-        });
+        }));
 
         it('it saves default preferred categories if none selected and ' +
-            'the user agrees',
-            function () {
+            'the user agrees', inject(function (preferencesService) {
                 var arg,
                     callArgs;
 
-                prefFetch.resolve(fetchedPreferences);
                 scope.$digest();
 
                 scope.defaultCategories = {'b': true, 'd': true};
@@ -180,14 +156,11 @@ describe('sdUserPreferences directive', function() {
                     {'a': false, 'b': true, 'c': false, 'd': true}
                 );
             }
-        );
+        ));
 
         it('does not save with default preferred categories if the user ' +
-            'does not confirm that',
-            function () {
-                prefFetch.resolve(fetchedPreferences);
+            'does not confirm that', inject(function (preferencesService) {
                 scope.$digest();
-
                 scope.defaultCategories = {'b': true, 'd': true};
 
                 // no categories have been selected by the user
@@ -204,7 +177,7 @@ describe('sdUserPreferences directive', function() {
                 expect(modal.confirm).toHaveBeenCalled();
                 expect(preferencesService.update).not.toHaveBeenCalled();
             }
-        );
+        ));
 
     });
 
