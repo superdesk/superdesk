@@ -10,37 +10,30 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Search', function() {
 
-    beforeEach(function(done) {
-        openUrl('/#/workspace/content').then(done);
+    beforeEach(function() {
+        openUrl('/#/search').then(globalSearch.setListView());
     });
 
     it('can search by search field', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
-        var searchTextbox = element(by.id('search-input'));
-        searchTextbox.click();
-        searchTextbox.clear();
-        searchTextbox.sendKeys('item3');
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.searchInput.click();
+        globalSearch.searchInput.clear();
+        globalSearch.searchInput.sendKeys('item3');
         var focused = browser.driver.switchTo().activeElement().getAttribute('id');
-        expect(searchTextbox.getAttribute('id')).toEqual(focused);
-
+        expect(globalSearch.searchInput.getAttribute('id')).toEqual(focused);
         element(by.id('search-button')).click();
-        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(globalSearch.getItems().count()).toBe(1);
     });
 
     it('can search by search within field', function() {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
-        var filterPanelButton = element(by.css('.filter-trigger'));
-        filterPanelButton.click();
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
 
         var searchTextbox = element(by.id('search_within'));
         searchTextbox.clear();
         searchTextbox.sendKeys('item3');
         element(by.id('search_within_button')).click();
-        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        expect(globalSearch.getItems().count()).toBe(1);
         expect(element.all(by.repeater('parameter in tags.selectedKeywords')).count()).toBe(1);
     });
 
@@ -64,18 +57,16 @@ describe('Search', function() {
     });
 
     it('can search by priority field', function () {
-        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
-        var filterPanelButton = element(by.css('.filter-trigger'));
-        filterPanelButton.click();
-        expect(element.all(by.repeater('(key,value) in aggregations.priority')).count()).toBe(1);
-        var priority3 = element.all(by.repeater('(key,value) in aggregations.priority')).first();
-        priority3.click();
-        expect(element.all(by.repeater('items._items')).count()).toBe(2);
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getPriorityElements().count()).toBe(3);
+        var priority = globalSearch.getPriorityElementByIndex(0);
+        priority.click();
+        expect(globalSearch.getItems().count()).toBe(1);
     });
 
     it('can search by from desk field', function() {
+        monitoring.openMonitoring();
         monitoring.switchToDesk('SPORTS DESK').then(authoring.createTextItem());
         authoring.writeTextToHeadline('From-Sports-To-Politics');
         authoring.writeText('This is Body');
@@ -109,8 +100,6 @@ describe('Search', function() {
     });
 
     it('can dynamically update items in related tab when item duplicated', function() {
-        globalSearch.openGlobalSearch();
-        globalSearch.setListView();
         expect(globalSearch.getItems().count()).toBe(10);
 
         globalSearch.actionOnItem('Duplicate', 0);
@@ -122,7 +111,6 @@ describe('Search', function() {
     });
 
     it('can disable when no repo is selected and enable if at lease one repo is selected', function () {
-        globalSearch.openGlobalSearch();
         globalSearch.openFilterPanel();
         globalSearch.openParameters();
 

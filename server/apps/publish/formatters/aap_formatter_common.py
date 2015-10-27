@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import superdesk
+from superdesk.metadata.item import Priority
 
 
 def map_priority(priority):
@@ -18,15 +19,12 @@ def map_priority(priority):
     :return: one character legacy priority
     """
     mapping = {
-        1: 'f',
-        2: 'u',
-        3: 'b',
-        4: 'r',
-        5: 'z',
-        6: 'd'
+        Priority.Flash.value: 'f',
+        Priority.Urgent.value: 'u',
+        Priority.Three_Paragraph.value: 'b'
     }
 
-    return mapping.get(priority, mapping[5])
+    return mapping.get(priority, 'r')
 
 
 def set_subject(category, article):

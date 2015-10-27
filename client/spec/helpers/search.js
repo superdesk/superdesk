@@ -10,6 +10,7 @@ function GlobalSearch() {
     this.publishedRepo = element(by.id('published-collection'));
     this.archivedRepo = element(by.id('archived-collection'));
     this.goButton = element(by.buttonText('Go'));
+    this.searchInput = element(by.id('search-input'));
 
     /**
      * Open dashboard for current selected desk/custom workspace.
@@ -181,5 +182,22 @@ function GlobalSearch() {
     this.getHeadlineElement = function(index) {
         element(by.id('search-parameters')).click();
         return this.getItem(index).element(by.className('item-heading'));
+    };
+
+    /**
+     * Get the Priority Elements
+     * @return {promise} Priority elements
+     */
+    this.getPriorityElements = function() {
+        return element.all(by.repeater('(key,value) in aggregations.priority'));
+    };
+
+    /**
+     * Get the Priority Element by Index
+     * @param {number} index
+     * @return {promise} Priority element
+     */
+    this.getPriorityElementByIndex = function(index) {
+        return this.getPriorityElements().get(index);
     };
 }

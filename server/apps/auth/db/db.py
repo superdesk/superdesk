@@ -10,7 +10,6 @@
 
 import bcrypt
 from flask import g
-
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
 from apps.auth.errors import UserDisabledError, CredentialsAuthError
