@@ -1313,7 +1313,8 @@
         };
     }
 
-    function AuthoringTopbarDirective() {
+    AuthoringTopbarDirective.$inject = ['keyboardManager'];
+    function AuthoringTopbarDirective(keyboardManager) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html',
             link: function(scope) {
@@ -1325,6 +1326,37 @@
                         scope.saveDisabled = false;
                     });
                 };
+                keyboardManager.bind('ctrl+q', function (e) {
+                    e.preventDefault();
+                    scope.close();
+                });
+                keyboardManager.bind('ctrl+s', function (e) {
+                    e.preventDefault();
+                    if (scope._editable &&
+                        scope.itemActions.save &&
+                        scope.action === 'edit' &&
+                        !scope.saveDisabled &&
+                        scope.save_enabled()
+                    ) {
+                        scope.saveTopbar();
+                    }
+                });
+                keyboardManager.bind('ctrl+u', function (e) {
+                    e.preventDefault();
+                    if (scope.item._locked &&
+                        !scope.item.sendTo &&
+                        scope.can_unlock() &&
+                        scope.itemActions.save &&
+                        !scope.unlockClicked
+                    ) {
+                        scope.unlock();
+                    }
+                });
+                scope.$on('$destroy', function() {
+                    keyboardManager.unbind('ctrl+q');
+                    keyboardManager.unbind('ctrl+s');
+                    keyboardManager.unbind('ctrl+u');
+                });
             }
         };
     }
