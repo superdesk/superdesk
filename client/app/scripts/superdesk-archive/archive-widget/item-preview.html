@@ -18,11 +18,11 @@
 			</p>
             
             <div ng-if="item.type == 'picture'" class="picture-preview">
-                <div sd-item-crops data-item="item"></div>
                 <div>
                     <span translate>Original</span>
                     <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
                 </div>
+                <div sd-item-crops data-item="item"></div>
             </div>
 
             <div ng-if="item.type == 'audio'">

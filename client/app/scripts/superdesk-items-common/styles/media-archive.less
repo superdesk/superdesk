@@ -648,9 +648,6 @@
 				margin-left: 75px;
 				display: flex;
 				box-sizing: border-box;
-				overflow: hidden;
-				white-space: nowrap;
-			    text-overflow: ellipsis;
 				dl {
 					margin: 0;
 				}
@@ -695,8 +692,6 @@
 				text-transform: uppercase;
 				font-size: 12px;
 				margin-right: 10px;
-				//overflow: hidden;
-				//text-overflow: ellipsis;
 				white-space: nowrap;
 			}
 			.highlights-box {
@@ -1007,9 +1002,33 @@
 	}
 }
 
-figure.media {
-	img {
-		max-width: 100%;
+.cropItems{
+	li{
+		display: inline-block;
+		max-width: 47%;
+
+		&:nth-child(2n){
+			float: right;
+
+			figure.media {
+	 			img{
+					float: right;
+				}
+			}
+		}
+
+		figure.media {
+            @media only screen and (min-width : 1630px) {
+     			img{
+					max-height: 170px;
+				}
+            }
+            @media only screen and (max-width : 1630px) {
+     			img{
+					max-height: 140px;
+				}
+            }
+		}
 	}
 }
 

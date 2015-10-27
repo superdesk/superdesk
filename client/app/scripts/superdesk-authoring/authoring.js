@@ -961,6 +961,10 @@
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
+                        if (res.cropData) {
+                            $scope.item.hasCrops = true;
+                        }
+
                         notify.success(gettext('Item updated.'));
                         return $scope.origItem;
                     }, function(response) {
@@ -1979,7 +1983,11 @@
                 });
 
                 metadata.initialize().then(function() {
+                    scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
+                    scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
+                        return scope.item.renditions[crop.name];
+                    });
                 });
 
                 /**
