@@ -443,10 +443,7 @@ def item_schema(extra=None):
             'type': 'dict',
             'nullable': True,
             'schema': {
-                'type': 'dict',
-                'schema': {
-                    'status': {'type': 'string'}
-                }
+                'status': {'type': 'string'}
             }
         }
     }
