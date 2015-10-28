@@ -1151,6 +1151,16 @@
                     };
 
                     /**
+                     * Sets the form as dirty when value is changed. This function should be used when one wants to set
+                     * form dirty for input controls created without using <input>.
+                     *
+                     * @method articleDefaultsChanged
+                     */
+                    scope.articleDefaultsChanged = function(item) {
+                        scope.userPrefs.$setDirty();
+                    };
+
+                    /**
                     * Builds a user preferences object in scope from the given
                     * data.
                     *
@@ -1175,7 +1185,7 @@
                         // values object is undefined or any of the needed
                         // data buckets are missing in it
                         buckets = [
-                            'cities', 'categories', 'default_categories'
+                            'cities', 'categories', 'default_categories', 'locators'
                         ];
                         initNeeded = buckets.some(function (bucketName) {
                             var values = metadata.values || {};
@@ -1223,6 +1233,8 @@
                             newObj.selected = !!selectedCats[cat.qcode];
                             scope.categories.push(newObj);
                         });
+
+                        scope.locators = helperData.locators;
                     }
 
                     /**

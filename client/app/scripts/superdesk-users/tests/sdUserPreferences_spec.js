@@ -28,11 +28,16 @@ describe('sdUserPreferences directive', function() {
         fetchedPreferences = {
             'dateline:located': {
                 label: 'Located',
-                category: 'dateline',
+                category: 'article_defaults',
                 located: null
             },
             'categories:preferred': {
                 selected: {}
+            },
+            'article:default:place': {
+                'label': 'Place',
+                'category': 'article_defaults',
+                'place': ''
             }
         };
         preferencesService = _preferencesService_;

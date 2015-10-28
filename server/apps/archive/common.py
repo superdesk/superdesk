@@ -74,39 +74,10 @@ def on_create_item(docs, repo_type=ARCHIVE):
         set_default_state(doc, CONTENT_STATE.DRAFT)
         doc.setdefault(config.ID_FIELD, doc[GUID_FIELD])
 
-        set_dateline(doc, repo_type)
-        set_byline(doc, repo_type)
-        set_sign_off(doc, repo_type=repo_type)
+        copy_metadata_from_user_preferences(doc, repo_type)
 
         if not doc.get(ITEM_OPERATION):
             doc[ITEM_OPERATION] = ITEM_CREATE
-
-
-def set_dateline(doc, repo_type):
-    """
-    If repo_type is ARCHIVE and dateline isn't available then this method sets dateline property for the article
-    represented by doc. Dateline has 3 parts: Located, Date (Format: Month Day) and Source.
-    Dateline can either be simple: Sydney, July 30 AAP - or can be complex: Surat,Gujarat,IN, July 30 AAP -.
-    Date in the dateline should be timezone sensitive to the Located.
-
-    Located is set on the article based on user preferences if available. If located is not available in
-    user preferences then dateline in full will not be set.
-
-    :param doc: article
-    :param repo_type: collection name where the doc will be persisted
-    """
-
-    if repo_type == ARCHIVE and 'dateline' not in doc:
-        current_date_time = dateline_ts = utcnow()
-        doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
-                           'text': None}
-
-        user = get_user()
-        if user and user.get('user_preferences', {}).get('dateline:located'):
-            located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
-            if located:
-                doc['dateline']['located'] = located
-                doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
 
 
 def format_dateline_to_locmmmddsrc(located, current_timestamp, source=ORGANIZATION_NAME_ABBREVIATION):
@@ -140,18 +111,6 @@ def format_dateline_to_locmmmddsrc(located, current_timestamp, source=ORGANIZATI
                                                   source=source)
 
 
-def set_byline(doc, repo_type=ARCHIVE):
-    """
-    Sets byline property on the doc if it's from ARCHIVE repo. If user creating the article has byline set in the
-    profile then doc['byline'] = user_profile['byline']. Otherwise it's not set.
-    """
-
-    if BYLINE not in doc and repo_type == ARCHIVE:
-        user = get_user()
-        if user and user.get(BYLINE):
-            doc[BYLINE] = user[BYLINE]
-
-
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
 
@@ -177,7 +136,7 @@ def set_original_creator(doc):
     doc['original_creator'] = user
 
 
-def set_sign_off(updates, original=None, repo_type=ARCHIVE):
+def set_sign_off(updates, original=None, repo_type=ARCHIVE, user=None):
     """
     Set sign_off on updates object. Rules:
         1. updates['sign_off'] = original['sign_off'] + sign_off of the user performing operation.
@@ -187,7 +146,7 @@ def set_sign_off(updates, original=None, repo_type=ARCHIVE):
     if repo_type != ARCHIVE:
         return
 
-    user = get_user()
+    user = user if user else get_user()
     if not user:
         return
 
@@ -540,3 +499,40 @@ def convert_task_attributes_to_objectId(doc):
     if ObjectId.is_valid(task.get(LAST_AUTHORING_DESK, None)) and \
             not isinstance(task.get(LAST_AUTHORING_DESK), ObjectId):
         task[LAST_AUTHORING_DESK] = ObjectId(task.get(LAST_AUTHORING_DESK))
+
+
+def copy_metadata_from_user_preferences(doc, repo_type=ARCHIVE):
+    """
+    Copies following properties: byline, signoff, dateline.located, place from user preferences to doc if the repo_type
+    is Archive.
+
+    About Dateline: Dateline has 3 parts: Located, Date (Format: Month Day) and Source. Dateline can either be simple:
+    Sydney, July 30 AAP - or can be complex: Surat,Gujarat,IN, July 30 AAP -. Date in the dateline is timezone
+    sensitive to the Located.  Located is set on the article based on user preferences if available. If located is not
+    available in user preferences then dateline in full will not be set.
+    """
+
+    if repo_type == ARCHIVE:
+        user = get_user()
+
+        if 'dateline' not in doc:
+            current_date_time = dateline_ts = utcnow()
+            doc['dateline'] = {'date': current_date_time, 'source': ORGANIZATION_NAME_ABBREVIATION, 'located': None,
+                               'text': None}
+
+            if user and user.get('user_preferences', {}).get('dateline:located'):
+                located = user.get('user_preferences', {}).get('dateline:located', {}).get('located')
+                if located:
+                    doc['dateline']['located'] = located
+                    doc['dateline']['text'] = format_dateline_to_locmmmddsrc(located, dateline_ts)
+
+        if BYLINE not in doc and user and user.get(BYLINE):
+                doc[BYLINE] = user[BYLINE]
+
+        if 'place' not in doc and user:
+            place_in_preference = user.get('user_preferences', {}).get('article:default:place')
+
+            if place_in_preference:
+                doc['place'] = place_in_preference.get('place')
+
+        set_sign_off(doc, repo_type=repo_type, user=user)
