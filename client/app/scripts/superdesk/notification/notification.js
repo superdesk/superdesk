@@ -10,8 +10,8 @@
 (function() {
     'use strict';
 
-    WebSocketProxy.$inject = ['$rootScope', 'config', '$interval'];
-    function WebSocketProxy($rootScope, config, $interval) {
+    WebSocketProxy.$inject = ['$rootScope', 'config', '$interval', 'session', 'SESSION_EVENTS'];
+    function WebSocketProxy($rootScope, config, $interval, session, SESSION_EVENTS) {
 
         var ws = null;
         var connectTimer = -1;
@@ -35,8 +35,17 @@
         }
 
         var connect = function() {
-            ws = new WebSocket(config.server.ws);
-            bindEvents();
+            if (!ws) {
+                ws = new WebSocket(config.server.ws);
+                bindEvents();
+            }
+        };
+
+        var disconnect = function() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
         };
 
         var bindEvents = function() {
@@ -61,7 +70,7 @@
                 $rootScope.$broadcast('disconnected');
                 $interval.cancel(connectTimer);
                 connectTimer = $interval(function() {
-                    if (ws) {
+                    if (ws && session.sessionId) {
                         connect();  // Retry to connect for every TIMEOUT interval.
                     }
                 }, TIMEOUT, 0, false);  // passed invokeApply = false to prevent triggering digest cycle
@@ -69,6 +78,10 @@
         };
 
         connect();
+
+        $rootScope.$on(SESSION_EVENTS.LOGOUT, disconnect);
+
+        $rootScope.$on(SESSION_EVENTS.LOGIN, connect);
     }
 
     /**

@@ -32,11 +32,14 @@ define([
             expect(session.identity.name).toBe('user');
         }));
 
-        it('can be set expired', inject(function (session) {
+        it('can be set expired', inject(function (session, $rootScope) {
+            spyOn($rootScope, '$broadcast');
             session.start(SESSION, {name: 'foo'});
+            expect($rootScope.$broadcast).toHaveBeenCalledWith('login');
             session.expire();
             expect(session.token).toBe(null);
             expect(session.identity.name).toBe('foo');
+            expect($rootScope.$broadcast).toHaveBeenCalledWith('logout');
         }));
 
         it('can resolve identity on start', inject(function (session, $rootScope) {

@@ -223,12 +223,12 @@ function EditorService(spellcheck, $rootScope, $timeout) {
      * @param {Scope} scope
      * @param {Scope} force force rendering manually - eg. via keyboard
      */
-    this.renderScope = function(scope, force) {
+    this.renderScope = function(scope, force, preventStore) {
         self.cleanScope(scope);
         if (self.settings.findreplace) {
             renderFindreplace(scope.node);
         } else if (self.settings.spellcheck || force) {
-            renderSpellcheck(scope.node);
+            renderSpellcheck(scope.node, preventStore);
         }
     };
 
@@ -303,9 +303,9 @@ function EditorService(spellcheck, $rootScope, $timeout) {
      *
      * @param {Node} node
      */
-    function renderSpellcheck(node) {
+    function renderSpellcheck(node, preventStore) {
         spellcheck.errors(node).then(function(tokens) {
-            hilite(node, tokens, ERROR_CLASS);
+            hilite(node, tokens, ERROR_CLASS, preventStore);
         });
     }
 
@@ -724,11 +724,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     });
 
                     scope.cursor = {};
-                    render();
+                    render(null, null, true);
                 };
 
-                function render($event, event) {
-                    editor.renderScope(scope, $event);
+                function render($event, event, preventStore) {
+                    editor.renderScope(scope, $event, preventStore);
                     scope.node.classList.remove(TYPING_CLASS);
                     if (event) {
                         event.preventDefault();

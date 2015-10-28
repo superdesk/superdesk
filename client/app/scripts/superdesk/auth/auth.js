@@ -62,6 +62,10 @@ define([
     }
 
     angular.module('superdesk.session', [])
+        .constant('SESSION_EVENTS', {
+            LOGIN: 'login',
+            LOGOUT: 'logout'
+        })
         .service('session', require('./session-service'));
 
     return angular.module('superdesk.auth', [

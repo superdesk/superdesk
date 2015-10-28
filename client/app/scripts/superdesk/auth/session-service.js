@@ -4,8 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', '$rootScope', 'storage'];
-    function SessionService($q, $rootScope, storage) {
+    SessionService.$inject = ['$q', '$rootScope', 'storage', 'SESSION_EVENTS'];
+    function SessionService($q, $rootScope, storage, SESSION_EVENTS) {
 
         var TOKEN_KEY = 'sess:token';
         var TOKEN_HREF = 'sess:href';
@@ -63,9 +63,9 @@ define(['lodash'], function(_) {
             setToken(session.token);
             setSessionId(session._id);
             setSessionHref(session._links && session._links.self.href);
-
             this.identity = null;
             resolveIdentity(this.updateIdentity(identity));
+            $rootScope.$broadcast(SESSION_EVENTS.LOGIN);
         };
 
         function resolveIdentity(identity) {
@@ -83,6 +83,7 @@ define(['lodash'], function(_) {
             this.sessionId = null;
             setToken(null);
             setSessionId(null);
+            $rootScope.$broadcast(SESSION_EVENTS.LOGOUT);
         };
 
         /**
