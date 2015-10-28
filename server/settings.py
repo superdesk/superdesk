@@ -166,7 +166,6 @@ INSTALLED_APPS.extend([
     'apps.comments',
 
     'superdesk.io',
-    'superdesk.io.subjectcodes',
     'apps.io',
     'superdesk.io.ftp',
     'superdesk.io.rss',
@@ -204,6 +203,9 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
+
+    'superdesk.io.subjectcodes',
+    'pa.topics',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']
