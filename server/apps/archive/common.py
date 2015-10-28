@@ -438,6 +438,16 @@ def item_schema(extra=None):
         EMBARGO: {
             'type': 'datetime',
             'nullable': True
+        },
+        'broadcast': {
+            'type': 'dict',
+            'nullable': True,
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'status': {'type': 'string'}
+                }
+            }
         }
     }
     schema.update(metadata_schema)
