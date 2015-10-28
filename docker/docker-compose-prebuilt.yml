@@ -1,0 +1,72 @@
+logstash:
+  extends:
+    file: common.yml
+    service: logstash
+  links:
+  - elastic
+
+mongodb:
+  extends:
+    file: common.yml
+    service: mongodb
+
+redis:
+  extends:
+    file: common.yml
+    service: redis
+
+kibana:
+  extends:
+    file: common.yml
+    service: kibana
+  links:
+  - elastic
+  ports:
+  - "5601:5601"
+  image: sourcefabric/kibana:master
+
+elastic:
+  extends:
+    file: common.yml
+    service: elastic
+
+postfix:
+  extends:
+    file: common.yml
+    service: postfix
+
+backend:
+  extends:
+    file: common.yml
+    service: backend
+  links:
+   - mongodb
+   - redis
+   - elastic
+   - logstash
+   - postfix
+  image: sourcefabric/superdesk-server:master
+
+pubapi:
+  extends:
+    file: common.yml
+    service: pubapi
+  links:
+   - mongodb
+   - redis
+   - elastic
+   - logstash
+   - postfix
+  image: sourcefabric/superdesk-content-api:master
+
+frontend:
+  extends:
+    file: common.yml
+    service: frontend
+  links:
+   - backend
+   - pubapi
+  ports:
+   - "443:443"
+   - "80:80"
+  image: sourcefabric/superdesk-content-api:master
