@@ -10,8 +10,8 @@
 (function() {
     'use strict';
 
-    WebSocketProxy.$inject = ['$rootScope', 'config', '$interval', 'session'];
-    function WebSocketProxy($rootScope, config, $interval, session) {
+    WebSocketProxy.$inject = ['$rootScope', 'config', '$interval', 'session', 'SESSION_EVENTS'];
+    function WebSocketProxy($rootScope, config, $interval, session, SESSION_EVENTS) {
 
         var ws = null;
         var connectTimer = -1;
@@ -79,13 +79,9 @@
 
         connect();
 
-        $rootScope.$on('logout', function(event) {
-            disconnect();
-        });
+        $rootScope.$on(SESSION_EVENTS.LOGOUT, disconnect);
 
-        $rootScope.$on('login', function(event) {
-            connect();
-        });
+        $rootScope.$on(SESSION_EVENTS.LOGIN, connect);
     }
 
     /**
