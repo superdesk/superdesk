@@ -32,7 +32,7 @@ Feature: Desks
         And we delete latest
         Then we get error 412
         """
-        {"_status": "ERR", "_message": "Cannot delete a default stage."}
+        {"_status": "ERR", "_message": "Cannot delete a Incoming Stage."}
         """
 
 	@auth
@@ -151,7 +151,7 @@ Feature: Desks
         """
         When we patch "/desks/#desks._id#"
         """
-        { "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+        { "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10},
                                   {"_id": "id_saved_search", "type": "search", "max_items": 20},
                                   {"_id": "id_personal", "type": "personal", "max_items": 15}
                                  ]
@@ -161,8 +161,8 @@ Feature: Desks
         When we get "/desks"
         Then we get list with 1 items
             """
-            {"_items": [{"name": "Sports Desk", 
-                          "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+            {"_items": [{"name": "Sports Desk",
+                          "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10},
                                                   {"_id": "id_saved_search", "type": "search", "max_items": 20},
                                                   {"_id": "id_personal", "type": "personal", "max_items": 15}
                                                  ]
