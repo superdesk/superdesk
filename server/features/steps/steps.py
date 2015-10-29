@@ -97,7 +97,7 @@ def json_match(context_data, response_data):
         return True
     elif not isinstance(context_data, dict):
         if context_data != response_data:
-            print(context_data, ' != ', response_data)
+            print('---' + str(context_data) + '---\n', ' != \n', '---' + str(response_data) + '---\n')
         return context_data == response_data
 
 

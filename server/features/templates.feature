@@ -28,6 +28,19 @@ Feature: Templates
         """
 
     @auth
+    Scenario: User can create highlight template
+        When we post to "content_templates"
+        """
+        {"template_name": "default highlight", "template_type": "highlights", 
+         "body_html": "{% for item in items %} <h2>{{ item.headline }}</h2> {{ item.body_html }} <p></p> {% endfor %}"
+        }
+        """
+        Then we get new resource
+        """
+        {"template_name": "default highlight", "template_type": "highlights"}
+        """
+
+    @auth
     Scenario: User can schedule a content creation
         Given "desks"
         """

@@ -2,29 +2,24 @@
 import superdesk
 from bs4 import BeautifulSoup
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
+from flask import render_template
+from jinja2 import Template
 
 
-def join_html(pieces):
-    """Join given list with line breaks.
+def getTemplate(highlightId):
+    """Return the string template associated with highlightId or none """
+    if not highlightId:
+        return None
+    highlightService = superdesk.get_resource_service('highlights')
+    highlight = highlightService.find_one(req=None, _id=highlightId)
+    if not highlight or not highlight.get('template'):
+        return None
 
-    :param pieces: list of str
-    """
-    return '\n'.join(pieces)
-
-
-def item_to_str(item):
-    """Get text representation of a given item.
-
-    :param item: news item
-    """
-
-    pieces = []
-    pieces.append('<h2>%s</h2>' % item.get('headline', ''))
-    html = item.get('body_html')
-    if html:
-        soup = BeautifulSoup(html)
-        pieces.append(str(soup.p))
-    return join_html(pieces)
+    templateService = superdesk.get_resource_service('content_templates')
+    template = templateService.find_one(req=None, _id=highlight.get('template'))
+    if not template or 'body_html' not in template:
+        return None
+    return template.get('body_html')
 
 
 class GenerateHighlightsService(superdesk.Service):
@@ -39,6 +34,7 @@ class GenerateHighlightsService(superdesk.Service):
             package = service.find_one(req=None, _id=doc['package'])
             if not package:
                 superdesk.abort(404)
+            stringTemplate = getTemplate(package.get('highlight'))
 
             doc.clear()
             doc[ITEM_TYPE] = CONTENT_TYPE.TEXT
@@ -48,15 +44,23 @@ class GenerateHighlightsService(superdesk.Service):
             doc['task'] = package.get('task')
             doc['family_id'] = package.get('guid')
 
-            body = []
+            items = []
             for group in package.get('groups', []):
                 for ref in group.get('refs', []):
                     if 'residRef' in ref:
                         item = service.find_one(req=None, _id=ref.get('residRef'))
-                        body.append(item_to_str(item))
-                        body.append('<p></p>')
-            doc['body_html'] = join_html(body)
+                        if item:
+                            html = item.get('body_html')
+                            if html:
+                                soup = BeautifulSoup(html)
+                                item['first_paragraph_body_html'] = str(soup.p)
+                            items.append(item)
 
+            if stringTemplate:
+                template = Template(stringTemplate)
+                doc['body_html'] = template.render(package=package, items=items)
+            else:
+                doc['body_html'] = render_template('default_highlight_template.txt', package=package, items=items)
         if preview:
             return ['' for doc in docs]
         else:

@@ -49,7 +49,8 @@
 
         this.types = [
             {_id: 'kill', label: gettext('Kill')},
-            {_id: 'create', label: gettext('Create')}
+            {_id: 'create', label: gettext('Create')},
+            {_id: 'highlights', label: gettext('Highlights')}
         ];
 
         this.fetchTemplates = function fetchTemplates(page, pageSize, type, desk, keyword) {

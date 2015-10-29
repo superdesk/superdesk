@@ -66,7 +66,7 @@ class ContentTemplatesResource(Resource):
         'template_type': {
             'type': 'string',
             'required': True,
-            'allowed': ['create', 'kill'],
+            'allowed': ['create', 'kill', 'highlights'],
             'default': 'create',
         },
         'template_desk': Resource.rel('desks', embeddable=False, nullable=True),

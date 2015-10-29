@@ -22,5 +22,4 @@ if build == 'unknown':
 	build = '353893'
 
 print(BUILDS_URL.format(build))
-
-cd 
+ 

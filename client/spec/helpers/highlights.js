@@ -113,6 +113,26 @@ function Highlights() {
         });
     };
 
+    /**
+     * Get the current set template for highlight
+     *
+     * @return {string} template
+     */
+    this.getTemplate = function() {
+        return element(by.id('template')).$('option:checked').getText();
+    };
+
+    /**
+     * Set the current template for highlight
+     *
+     * @param {string} template
+     */
+    this.setTemplate = function(template) {
+        element(by.id('template')).click();
+        browser.sleep(300);
+        element(by.id('template')).element(by.id(template)).click();
+    };
+
     this.save = function() {
         element(by.css('[ng-click="save()"]')).click();
     };
