@@ -137,11 +137,12 @@ define([
          * Adds 'task' property to the article represented by item.
          *
          * @param {Object} item
+         * @param {Object} desk when passed the item will be assigned to this desk instead of user's activeDesk.
          */
-        this.addTaskToArticle = function (item) {
-            if ((!item.task || !item.task.desk) && desks.activeDeskId && desks.userDesks) {
-                var currentDesk = _.find(desks.userDesks._items, {_id: desks.activeDeskId});
-                item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': session.identity._id};
+        this.addTaskToArticle = function (item, desk) {
+            if ((!item.task || !item.task.desk) && (desk || desks.activeDeskId && desks.userDesks)) {
+                var currentDesk = desk || _.find(desks.userDesks._items, {_id: desks.activeDeskId});
+                item.task = {'desk': currentDesk._id, 'stage': currentDesk.working_stage, 'user': session.identity._id};
             }
         };
 

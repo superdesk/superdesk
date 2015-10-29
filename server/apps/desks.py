@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+
 from superdesk.errors import SuperdeskApiError
 from superdesk.resource import Resource
 from superdesk import config
@@ -14,7 +15,6 @@ from superdesk.utils import SuperdeskBaseEnum
 from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
-from apps.tasks import default_status
 from superdesk.notification import push_notification
 from superdesk.activity import add_activity, ACTIVITY_UPDATE
 
@@ -45,6 +45,7 @@ desks_schema = {
         }
     },
     'incoming_stage': Resource.rel('stages', True),
+    'working_stage': Resource.rel('stages', True),
     'spike_expiry': {
         'type': 'integer'
     },
@@ -104,16 +105,33 @@ class DesksService(BaseService):
     notification_key = 'desk'
 
     def create(self, docs, **kwargs):
-        for doc in docs:
-            doc.setdefault('desk_type', DeskTypes.authoring.value)
-            if not doc.get('incoming_stage', None):
-                stage = {'name': 'New', 'default_incoming': True, 'desk_order': 1, 'task_status': default_status}
-                superdesk.get_resource_service('stages').post([stage])
-                doc['incoming_stage'] = stage.get(config.ID_FIELD)
-                super().create([doc], **kwargs)
-                superdesk.get_resource_service('stages').patch(doc['incoming_stage'], {'desk': doc[config.ID_FIELD]})
-            else:
-                super().create([doc], **kwargs)
+        """
+        Overriding to check if the desk being created has Working and Incoming Stages. If not then Working and Incoming
+        Stages would be created and associates them with the desk and desk with the Working and Incoming Stages.
+        Also sets desk_type.
+
+        :return: list of desk id's
+        """
+
+        for desk in docs:
+            stages_to_be_linked_with_desk = []
+            stage_service = superdesk.get_resource_service('stages')
+
+            if 'working_stage' not in desk:
+                stages_to_be_linked_with_desk.append('working_stage')
+                stage_id = stage_service.create_working_stage()
+                desk['working_stage'] = stage_id[0]
+
+            if 'incoming_stage' not in desk:
+                stages_to_be_linked_with_desk.append('incoming_stage')
+                stage_id = stage_service.create_incoming_stage()
+                desk['incoming_stage'] = stage_id[0]
+
+            desk.setdefault('desk_type', DeskTypes.authoring.value)
+            super().create([desk], **kwargs)
+            for stage_type in stages_to_be_linked_with_desk:
+                stage_service.patch(desk[stage_type], {'desk': desk[config.ID_FIELD]})
+
         return [doc[config.ID_FIELD] for doc in docs]
 
     def on_created(self, docs):
@@ -133,6 +151,9 @@ class DesksService(BaseService):
             if items and items.count():
                 raise SuperdeskApiError.badRequestError(
                     message='Cannot update Desk Type as there are article(s) referenced by the Desk.')
+
+    def on_updated(self, updates, original):
+        self.__send_notification(updates, original)
 
     def on_delete(self, desk):
         """
@@ -185,9 +206,6 @@ class DesksService(BaseService):
                           deleted=1,
                           user_ids=desk_user_ids,
                           desk_id=str(doc.get(config.ID_FIELD)))
-
-    def on_updated(self, updates, original):
-        self.__send_notification(updates, original)
 
     def __compare_members(self, original, updates):
         original_members = set([member['user'] for member in original])

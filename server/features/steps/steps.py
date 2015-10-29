@@ -1397,7 +1397,7 @@ def we_get_default_incoming_stage(context):
     assert_200(context.response)
     data = json.loads(context.response.get_data())
     assert data['default_incoming'] is True
-    assert data['name'] == 'New'
+    assert data['name'] == 'Incoming Stage'
 
 
 @then('we get stage filled in to default_incoming')
