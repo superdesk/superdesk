@@ -289,8 +289,8 @@
         };
     }
 
-    TagService.$inject = ['$location', 'desks'];
-    function TagService($location, desks) {
+    TagService.$inject = ['$location', 'desks', 'userList'];
+    function TagService($location, desks, userList) {
         var tags = {};
         tags.selectedFacets = {};
         tags.selectedParameters = [];
@@ -421,6 +421,20 @@
                         }
                     }
                 });
+                /*
+                * if one of the parameters is the original creator then replace the user id with the
+                * display name.
+                */
+                for (var i in tags.selectedParameters) {
+                    if (tags.selectedParameters[i].indexOf('original_creator') >= 0) {
+                        var user_id = tags.selectedParameters[i].split(':')[1];
+                        user_id = user_id.substring(1, user_id.length-1);
+                        userList.getUser(user_id).then(function(user) {
+                            tags.selectedParameters[i] = 'creator:(' + user.display_name + ')';
+                            return tags;
+                        });
+                    }
+                };
 
                 return tags;
             });
@@ -680,6 +694,21 @@
 
                                 metadata.removeSubjectTerm(elementName);
                             }
+                            /*
+                            * remove the original creator parameter
+                            */
+                            if (param.indexOf('creator:') >= 0) {
+                                var parray = params.q.split(' ');
+                                for(var p in parray)
+                                {
+                                    if (parray[p].indexOf('original_creator') >= 0)
+                                    {
+                                        params.q = params.q.replace(parray[p], '').trim();
+                                        $location.search('q', params.q || null);
+                                    }
+                                }
+                            }
+
                         }
 
                         if (param.indexOf('From Desk') >= 0) {
@@ -1201,8 +1230,8 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks',
-            function($location, $timeout, asset, api, tags, search, metadata, desks) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks', 'userList',
+            function($location, $timeout, asset, api, tags, search, metadata, desks, userList) {
             return {
                 scope: {
                     repo: '=',
@@ -1221,8 +1250,10 @@
                         scope.selectedDesk = {
                             from: null, to: null
                         };
+                        scope.meta = {};
 
                         fetchProviders();
+                        fetchUsers();
 
                         if (params.repo) {
                             var param_list = params.repo.split(',');
@@ -1251,6 +1282,20 @@
                     }
 
                     init();
+
+                    /*
+                    * initlialize the creator drop down selection.
+                    */
+                    function fetchUsers() {
+                        userList.getAll()
+                        .then(function(result) {
+                            scope.userList = {};
+                            scope.meta.original_creator = null;
+                            _.each(result, function(user) {
+                                scope.userList[user._id] = user;
+                            });
+                        });
+                    }
 
                     function fetchProviders() {
                         return api.ingestProviders.query({max_results: 200})
