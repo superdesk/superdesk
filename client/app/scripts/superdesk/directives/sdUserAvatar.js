@@ -5,7 +5,7 @@ define(['angular'], function (angular) {
     return angular.module('superdesk.avatar', [])
         .directive('sdUserAvatar', function() {
             return {
-                scope: {src: '='},
+                scope: {src: '=', initials: '='},
                 link: function (scope, element, attrs) {
 
                     var figure = element.parents('figure');
@@ -14,15 +14,17 @@ define(['angular'], function (angular) {
                         element.hide();
                     });
 
-                    scope.$watch('src', function (src) {
-                        if (src) {
-                            element.attr('src', src).show();
-                            figure.addClass('no-bg');
-                        } else {
-                            element.hide();
-                            figure.removeClass('no-bg');
-                        }
-                    });
+                    if (scope.src) {
+                        element.attr('src', scope.src).show();
+                        figure.addClass('no-bg');
+                    } else if (scope.initials) {
+                        var initials = scope.initials.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
+                        element.hide().parent().html(initials);
+                        figure.addClass('initials');
+                    } else {
+                        element.hide();
+                        figure.removeClass('no-bg');
+                    }
                 }
             };
 
