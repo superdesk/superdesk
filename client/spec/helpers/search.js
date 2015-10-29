@@ -180,6 +180,15 @@ function GlobalSearch() {
     };
 
     /**
+     * Select the user passed user display name from the passed <select> element
+     * @param {string} selectId - Id of the <select> element
+     * @param {string} userName - Name of the desk.
+     */
+    this.selectCreator = function(selectId, userName) {
+        element(by.id(selectId)).element(by.css('option[label="' + userName + '"]')).click();
+    };
+
+    /**
      * Get the Element Heading by index
      * @param {number} index
      * @return {promise} headline element
