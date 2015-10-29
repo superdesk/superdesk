@@ -117,7 +117,7 @@ class PreferencesResource(Resource):
     superdesk.register_default_user_preference('dateline:located', {
         'type': 'dict',
         'label': 'Located',
-        'category': 'dateline'
+        'category': 'article_defaults'
     })
 
     superdesk.register_default_user_preference('categories:preferred', {
@@ -125,6 +125,13 @@ class PreferencesResource(Resource):
         'category': 'categories',
         'label': 'Preferred Categories',
         'selected': {},
+    })
+
+    superdesk.register_default_user_preference('article:default:place', {
+        'type': 'list',
+        'label': 'Place',
+        'category': 'article_defaults',
+        'place': []
     })
 
     superdesk.register_default_session_preference('scratchpad:items', [])

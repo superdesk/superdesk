@@ -9,7 +9,7 @@
         <div class="title">User settings</div>
         <ul>
             <li class="fieldset" ng-repeat="(id, p) in preferences track by id"
-                ng-if="p.category !== 'dateline' && p.category !== 'categories'">
+                ng-if="p.category !== 'article_defaults' && p.category !== 'categories'">
                 <div class="legend">{{ p.category }}</div>
                 <div sd-info-item>
                     <label translate>{{ :: p.label }}</label>
@@ -23,7 +23,9 @@
             </li>
 
             <li class="fieldset terms-box">
-                <div class="legend">{{ :: preferences['dateline:located'].category }}</div>
+                <div class="legend" translate>Article Defaults</div>
+
+                <div class="legend" translate>Dateline</div>
                 <div sd-info-item>
                     <label translate>{{ :: preferences['dateline:located'].label }}</label>
                     <span sd-meta-locators data-list="cities" data-item="preferences['dateline:located']" data-field="located"
@@ -32,6 +34,12 @@
                 <div class="dateline_preview">
                     <label translate>Preview</label>
                     <span>{{ datelinePreview | previewDateline:datelineSource}} </span>
+                </div>
+
+                <div sd-info-item>
+                    <label translate>{{ :: preferences['article:default:place'].label }}</label>
+                    <span sd-meta-dropdown data-item="preferences['article:default:place']"
+                          data-field="place" data-list="locators" data-change="articleDefaultsChanged(item)"></span>
                 </div>
             </li>
 

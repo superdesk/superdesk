@@ -12,11 +12,11 @@ import logging
 
 from flask import abort, current_app as app
 from eve.utils import config
-from apps.archive.common import set_byline, set_sign_off
+from apps.archive.common import copy_metadata_from_user_preferences
 from settings import DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE, BYLINE
+from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from superdesk.upload import url_for_media
 from .common import update_dates_for, generate_guid, GUID_TAG, set_original_creator, \
     generate_unique_id_and_name, set_item_expiry
@@ -83,10 +83,7 @@ class ArchiveMediaService():
         if not doc.get('ingest_provider'):
             doc['source'] = DEFAULT_SOURCE_VALUE_FOR_MANUAL_ARTICLES
 
-        if BYLINE not in doc:
-            set_byline(doc)
-
-        set_sign_off(doc)
+        copy_metadata_from_user_preferences(doc)
 
     def get_file_from_document(self, doc):
         file = doc.get('media_fetched')
