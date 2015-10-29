@@ -80,8 +80,7 @@ describe('Search', function() {
         globalSearch.openFilterPanel();
         expect(globalSearch.getItems().count()).toBe(10);
         globalSearch.openParameters();
-        /*element(by.id('search-creator')).element(by.css('option[label="first name last name"]')).click();*/
-        globalSearch.selectDesk('search-creator', 'first name last name');
+        globalSearch.selectCreator('search-creator', 'first name last name');
         globalSearch.goButton.click();
         expect(globalSearch.getItems().count()).toBe(9);
     });

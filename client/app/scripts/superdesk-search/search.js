@@ -425,16 +425,19 @@
                 * if one of the parameters is the original creator then replace the user id with the
                 * display name.
                 */
-                for (var i in tags.selectedParameters) {
+                var i = -1;
+                for (i in tags.selectedParameters) {
                     if (tags.selectedParameters[i].indexOf('original_creator') >= 0) {
-                        var user_id = tags.selectedParameters[i].split(':')[1];
-                        user_id = user_id.substring(1, user_id.length-1);
-                        userList.getUser(user_id).then(function(user) {
-                            tags.selectedParameters[i] = 'creator:(' + user.display_name + ')';
-                            return tags;
-                        });
+                        break;
                     }
-                };
+                }
+                if (i >= 0) {
+                    var user_id = tags.selectedParameters[i].split(':')[1];
+                    user_id = user_id.substring(1, user_id.length - 1);
+                    userList.getUser(user_id).then(function(user) {
+                        tags.selectedParameters[i] = 'creator:(' + user.display_name + ')';
+                    return tags;});
+                }
 
                 return tags;
             });
@@ -699,7 +702,7 @@
                             */
                             if (param.indexOf('creator:') >= 0) {
                                 var parray = params.q.split(' ');
-                                for(var p in parray)
+                                for (var p in parray)
                                 {
                                     if (parray[p].indexOf('original_creator') >= 0)
                                     {
