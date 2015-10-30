@@ -61,12 +61,16 @@ Feature: Archive Broadcast
           "urgency": 1,
           "priority": 3,
           "place": [{"qcode": "VIC", "name": "VIC"}],
-          "family_id": "123",
+          "family_id": "xyz",
           "dateline": {
             "source": "AAP",
             "text": "Los Angeles, Aug 11 AAP -"
           },
-          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}]
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "master_id": "123"
+          }
       }
       """
     When we get "archive/#broadcast._id#?version=all"
@@ -162,12 +166,16 @@ Feature: Archive Broadcast
           "urgency": 1,
           "priority": 3,
           "place": [{"qcode": "VIC", "name": "VIC"}],
-          "family_id": "123",
+          "family_id": "xyz",
           "dateline": {
             "source": "AAP",
             "text": "Los Angeles, Aug 11 AAP -"
           },
-          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}]
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "master_id": "123"
+          }
       }
       """
     When we get "archive/#broadcast._id#?version=all"
@@ -433,7 +441,7 @@ Feature: Archive Broadcast
     {"_message": "Invalid content state."}
     """
 
-  @auth @vocabulary @test
+  @auth @vocabulary
   Scenario: Create Archive Broadcast Content if content state is published
     Given "desks"
       """

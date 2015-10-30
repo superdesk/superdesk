@@ -107,7 +107,7 @@ class ArchiveResource(Resource):
         'elastic_filter': {'terms': {'state': ['fetched', 'routed', 'draft', 'in_progress', 'spiked', 'submitted']}},
         'elastic_filter_callback': private_content_filter
     }
-    etag_ignore_fields = ['highlights']
+    etag_ignore_fields = ['highlights', 'broadcast']
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'PUT']
     versioning = True
