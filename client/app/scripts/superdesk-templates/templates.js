@@ -35,6 +35,7 @@
             'anpa_take_key',
             'keywords',
             'priority',
+            'profile',
             'urgency',
             'pubstatus',
             'description',

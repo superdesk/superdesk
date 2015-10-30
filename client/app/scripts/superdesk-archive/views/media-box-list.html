@@ -27,6 +27,7 @@
             <time sd-datetime data-date="item.versioncreated"></time>
         </div>
         <div class="line">
+            <div class="label label--{{item.profile}}" ng-if="item.profile">{{ item.profile }}</div>
             <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
             <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
             <div class="state-label state-{{item.state}}" ng-class="{state_embargo: item.embargo}" ng-hide="viewType">{{item.state}}</div>
