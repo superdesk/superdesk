@@ -265,6 +265,7 @@
                 scope.view = 'compact';
                 scope.page = 1;
                 scope.fetching = false;
+                scope.previewingBroadcast = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
                 scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
@@ -280,6 +281,12 @@
                 scope.$on('task:stage', queryItems);
                 scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
+                scope.$on('item:duplicate', queryItems);
+                scope.$on('broadcast:created', function(event, args) {
+                    scope.previewingBroadcast = true;
+                    queryItems();
+                    preview(args.item);
+                });
                 scope.$on('item:unspike', queryItems);
                 scope.$on('$routeUpdate', queryItems);
 
@@ -290,6 +297,12 @@
                 });
 
                 scope.$on('$destroy', unbindActionKeyShortcuts);
+
+                scope.$watch('selected', function(newVal, oldVal) {
+                    if(!newVal && scope.previewingBroadcast) {
+                        scope.previewingBroadcast = false; 
+                    }
+                });
 
                 /*
                  * Change between simple and group by keyboard
@@ -395,6 +408,11 @@
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;
+
+                    if (!scope.previewingBroadcast) {
+                        monitoring.preview(null);
+                    }
+
                     return apiquery().then(function(items) {
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
