@@ -399,6 +399,29 @@ define([
                         return authoring.itemActions(item).duplicate;
                     }]
                 })
+                .activity('createBroadcast', {
+                    label: gettext('Create Broadcast'),
+                    icon: 'copy',
+                    monitor: true,
+                    controller: ['api', 'notify', '$rootScope', 'data', 'desks', 'authoringWorkspace', 
+                    function(api, notify, $rootScope, data, desks, authoringWorkspace) {
+                        api.save('archive_broadcast', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                            .then(function(broadcastItem) {
+                                authoringWorkspace.edit(broadcastItem); 
+                                $rootScope.$broadcast('broadcast:created', {'item': data.item});
+                        });
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    keyboardShortcut: 'ctrl+b',
+                    privileges: {archive: 1},
+                    condition: function(item) {
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
+                    },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return angular.isUndefined(item.broadcast_id) && 
+                        (!item.genre || item.genre[0].name !== 'Broadcast Script');
+                    }]
+                })
                 .activity('copy', {
                     label: gettext('Copy'),
                     icon: 'copy',
