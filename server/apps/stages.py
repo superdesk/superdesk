@@ -78,6 +78,8 @@ class StagesResource(Resource):
         }
     }
 
+    datasource = {'default_sort': [('desk_order', 1)]}
+
     privileges = {'POST': 'desks', 'DELETE': 'desks', 'PATCH': 'desks'}
 
 

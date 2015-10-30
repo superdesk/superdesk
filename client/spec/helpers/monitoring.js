@@ -491,4 +491,20 @@ function Monitoring() {
         }, 300);
     };
 
+    this.turnOffWorkingStage = function(deskIndex, canCloseSettingsModal) {
+        this.showMonitoringSettings();
+        this.toggleStage(deskIndex, 0);
+
+        if (typeof canCloseSettingsModal !== 'boolean') {
+            canCloseSettingsModal = true;
+        }
+
+        if (canCloseSettingsModal) {
+            this.nextStages();
+            this.nextSearches();
+            this.nextReorder();
+            this.saveSettings();
+        }
+    };
+
 }

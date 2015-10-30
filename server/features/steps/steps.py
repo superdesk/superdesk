@@ -1390,7 +1390,7 @@ def we_change_user_status(context, status, url):
 @when('we get the default incoming stage')
 def we_get_default_incoming_stage(context):
     data = json.loads(context.response.get_data())
-    incoming_stage = data['_items'][0]['incoming_stage']
+    incoming_stage = data['_items'][0]['incoming_stage'] if '_items' in data else data['incoming_stage']
     assert incoming_stage
     url = 'stages/{0}'.format(incoming_stage)
     when_we_get_url(context, url)
