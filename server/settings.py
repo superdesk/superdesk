@@ -167,6 +167,7 @@ INSTALLED_APPS.extend([
 
     'superdesk.io',
     'superdesk.io.subjectcodes',
+    'superdesk.io.iptc',
     'apps.io',
     'superdesk.io.ftp',
     'superdesk.io.rss',
