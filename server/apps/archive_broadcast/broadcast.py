@@ -146,13 +146,14 @@ class ArchiveBroadcastService(BaseService):
 
         for broadcast_item in broadcast_items:
             item = next((item for item in items
-                         if item.get(config.ID_FIELD) == broadcast_item.get('broadcast', {}).get('master_id')))
-            item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
+                         if item.get(config.ID_FIELD) == broadcast_item.get('broadcast', {}).get('master_id')), None)
+            if item:
+                item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
 
-    def get_broadcast_story_from_master_story(self, item):
-        """
-        Retrive the broadcast story from the master story
-        :param dict item: master story item
-        :return:
-        """
-        pass
+            item = next((item for item in items
+                         if not item.get('broadcast_id') and
+                         self.takesService.get_take_package_id(item) ==
+                         broadcast_item.get('broadcast', {}).get('takes_package_id')), None)
+
+            if item:
+                item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
