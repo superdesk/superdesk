@@ -425,17 +425,14 @@
                 * if one of the parameters is the original creator then replace the user id with the
                 * display name.
                 */
-                var i = -1;
-                for (i in tags.selectedParameters) {
-                    if (tags.selectedParameters[i].indexOf('original_creator') >= 0) {
-                        break;
-                    }
-                }
-                if (i >= 0) {
-                    var user_id = tags.selectedParameters[i].split(':')[1];
+                var creatorParam = _.find(tags.selectedParameters, function(param) {
+                    return param.indexOf('original_creator') >= 0;
+                });
+                if (creatorParam) {
+                    var user_id = creatorParam.split(':')[1];
                     user_id = user_id.substring(1, user_id.length - 1);
                     userList.getUser(user_id).then(function(user) {
-                        tags.selectedParameters[i] = 'creator:(' + user.display_name + ')';
+                        tags.selectedParameters[tags.selectedParameters.indexOf(creatorParam)] = 'creator:(' + user.display_name + ')';
                     return tags;});
                 }
 
@@ -701,17 +698,15 @@
                             * remove the original creator parameter
                             */
                             if (param.indexOf('creator:') >= 0) {
-                                var parray = params.q.split(' ');
-                                for (var p in parray)
-                                {
-                                    if (parray[p].indexOf('original_creator') >= 0)
+                                var pArray = params.q.split(' ');
+                                _.forEach (pArray, function(p) {
+                                    if (p.indexOf('original_creator') >= 0)
                                     {
-                                        params.q = params.q.replace(parray[p], '').trim();
-                                        $location.search('q', params.q || null);
+                                        params.q = params.q.replace(p, '').trim();
                                     }
-                                }
+                                });
+                                $location.search('q', params.q || null);
                             }
-
                         }
 
                         if (param.indexOf('From Desk') >= 0) {
