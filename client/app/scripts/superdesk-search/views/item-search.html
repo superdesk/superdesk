@@ -82,7 +82,7 @@
             <label for="search-creator">
                 {{:: 'Creator' | translate}}
             </label>
-            <select id="search-creator" ng-model="meta.original_creator" ng-options="user._id  as user.display_name for user in userList track by user._id">
+            <select id="search-creator" ng-model="meta.original_creator" ng-options="user._id  as user.display_name for user in userList">
             <option value="" label=""></option>
             </select>
         </div>
