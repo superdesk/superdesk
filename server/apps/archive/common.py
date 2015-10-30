@@ -443,7 +443,9 @@ def item_schema(extra=None):
             'type': 'dict',
             'nullable': True,
             'schema': {
-                'status': {'type': 'string'}
+                'status': {'type': 'string'},
+                'master_id': {'type': 'string', 'mapping': not_analyzed},
+                'takes_package_id': {'type': 'string', 'mapping': not_analyzed}
             }
         }
     }

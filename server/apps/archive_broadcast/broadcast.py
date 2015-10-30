@@ -15,6 +15,7 @@ from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 from flask import request
 from apps.archive.common import CUSTOM_HATEOAS, insert_into_versions, get_user
+from apps.packages import TakesPackageService
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
 from superdesk.metadata.utils import item_url
@@ -46,9 +47,11 @@ class ArchiveBroadcastResource(Resource):
 
 
 class ArchiveBroadcastService(BaseService):
+    takesService = TakesPackageService()
 
     def create(self, docs):
         service = get_resource_service(SOURCE)
+
         item_id = request.view_args['item_id']
         item = service.find_one(req=None, _id=item_id)
         doc = docs[0]
@@ -74,9 +77,14 @@ class ArchiveBroadcastService(BaseService):
         if not broadcast_genre:
             raise SuperdeskApiError.badRequestError(message="Cannot find the {} genre.".format(BROADCAST_GENRE))
 
-        doc['broadcast'] = {'status': ''}
+        doc['broadcast'] = {
+            'status': '',
+            'master_id': item_id,
+            'takes_package_id': self.takesService.get_take_package_id(item)
+        }
+
         doc['genre'] = broadcast_genre
-        doc['family_id'] = item_id
+        doc['family_id'] = item.get('family_id')
 
         for key in FIELDS_TO_COPY:
             doc[key] = item.get(key)
@@ -115,7 +123,6 @@ class ArchiveBroadcastService(BaseService):
         """
         Sets the broadcast_id attribute if master story has broadcast script
         :param list items: list of items
-        :return:
         """
         ids = [item.get(config.ID_FIELD) for item in items
                if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
@@ -125,7 +132,7 @@ class ArchiveBroadcastService(BaseService):
                 'filtered': {
                     'filter': {
                         'and': [
-                            {'terms': {'family_id': ids}},
+                            {'terms': {'broadcast.master_id': ids}},
                             {'term': {'genre.name': BROADCAST_GENRE}}
                         ]
                     }
@@ -138,5 +145,14 @@ class ArchiveBroadcastService(BaseService):
         broadcast_items = get_resource_service(SOURCE).get(req=request, lookup=None)
 
         for broadcast_item in broadcast_items:
-            item = next((item for item in items if item.get(config.ID_FIELD) == broadcast_item.get('family_id')))
+            item = next((item for item in items
+                         if item.get(config.ID_FIELD) == broadcast_item.get('broadcast', {}).get('master_id')))
             item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
+
+    def get_broadcast_story_from_master_story(self, item):
+        """
+        Retrive the broadcast story from the master story
+        :param dict item: master story item
+        :return:
+        """
+        pass
