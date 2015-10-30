@@ -1,6 +1,6 @@
 from .common import BasePublishService, BasePublishResource, ITEM_KILL
 from eve.utils import config
-from superdesk.metadata.item import CONTENT_STATE, GUID_FIELD
+from superdesk.metadata.item import CONTENT_STATE, GUID_FIELD, PUB_STATUS
 from superdesk import get_resource_service
 from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk.utc import utcnow
@@ -30,6 +30,7 @@ class KillPublishService(BasePublishService):
         if is_item_in_package(original):
             raise SuperdeskApiError.badRequestError(message='This item is in a package' +
                                                             ' it needs to be removed before the item can be killed')
+        updates['pubstatus'] = PUB_STATUS.CANCELED
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_KILL
         self.takes_package_service.process_killed_takes_package(original)
