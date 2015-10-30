@@ -15,21 +15,21 @@ describe('Master Desk', function() {
 
     it('show content view', function() {
         masterDesks.switchToTab('content');
-        expect(itemHeadline(1, 1, 0)).toBe('item3');
-        expect(itemHeadline(1, 3, 0)).toBe('item4');
-        expect(itemHeadline(0, 1, 0)).toBe('item5');
-        expect(itemHeadline(0, 2, 2)).toBe('item6');
+        expect(itemHeadline(1, 2, 0)).toBe('item3');
+        expect(itemHeadline(1, 4, 0)).toBe('item4');
+        expect(itemHeadline(0, 2, 0)).toBe('item5');
+        expect(itemHeadline(0, 3, 2)).toBe('item6');
     });
 
     it('show content view - preview item', function() {
         masterDesks.switchToTab('content');
-        masterDesks.previewItem(0, 1, 0);
+        masterDesks.previewItem(0, 2, 0);
         expect(masterDesks.previewTitle.getText()).toBe('item5');
     });
 
     it('show content view - edit item', function() {
         masterDesks.switchToTab('content');
-        masterDesks.editItem(0, 1, 0);
+        masterDesks.editItem(0, 2, 0);
         authoring.writeText('some text');
         authoring.save();
         authoring.sendToButton.click();
