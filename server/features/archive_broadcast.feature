@@ -503,3 +503,122 @@ Feature: Archive Broadcast
     [{"desk": "#desks._id#"}]
     """
     Then we get OK response
+
+
+  @auth @vocabulary
+  Scenario: Create Archive Broadcast Content for takes package
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1"
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/link"
+      """
+      [{"desk": "#desks._id#"}]
+      """
+    Then we get next take as "TAKE"
+      """
+      {
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key=2",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "state": "in_progress",
+          "original_creator": "#CONTEXT_USER_ID#",
+          "urgency": 1,
+          "priority": 3
+      }
+      """
+    When we post to "archive/#TAKE#/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get OK response
+    And we get updated response
+      """
+      {
+          "type": "text",
+          "slugline": "comics",
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "_current_version": 1,
+          "urgency": 1,
+          "priority": 3,
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "takes_package_id": "#TAKE_PACKAGE#",
+            "master_id": "#TAKE#"
+          }
+      }
+      """
+    When we get "archive"
+    Then we get list with 4 items
+    """
+    {
+      "_items": [
+        {
+          "_id": "123",
+          "type": "text",
+          "slugline": "comics",
+          "broadcast_id": "#broadcast._id#"
+        },
+        {
+          "_id": "#TAKE#",
+          "type": "text",
+          "slugline": "comics",
+          "broadcast_id": "#broadcast._id#"
+        },
+        {
+          "_id": "#broadcast._id#",
+          "type": "text",
+          "slugline": "comics",
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}]
+        },
+        {
+          "_id": "#TAKE_PACKAGE#",
+          "type": "composite"
+        }
+      ]
+    }
+    """
