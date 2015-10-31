@@ -101,6 +101,8 @@ class ArchiveBroadcastService(BaseService):
         The state of the item cannot be Killed, Scheduled or Spiked
         :param dict item: item from which the broadcast item will be created
         """
+        # TODO: for takes package only one broadcast content is allowed
+
         if not item:
             raise SuperdeskApiError.notFoundError(
                 message="Cannot find the requested item id.")
@@ -179,3 +181,15 @@ class ArchiveBroadcastService(BaseService):
 
         broadcast_items = list(self._get_broadcast_items([item]))
         return broadcast_items[0] if broadcast_items else None
+
+    def on_takepackage_created(self, take_package_id, item):
+        print('take', take_package_id, 'master')
+        broadcast_items = list(self._get_broadcast_items([item]))
+        if not broadcast_items:
+            return
+
+        broadcast_item = broadcast_items[0]
+        if not broadcast_item.get('broadcast', {}).get('takes_package_id'):
+            updates = broadcast_item.get('broadcast')
+            updates['takes_package_id'] = take_package_id
+            self.system_update(broadcast_item[config.ID_FIELD], updates, broadcast_item)
