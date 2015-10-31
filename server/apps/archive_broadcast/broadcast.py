@@ -119,10 +119,11 @@ class ArchiveBroadcastService(BaseService):
         """
         return item.get('genre') and any(genre.get('value') == BROADCAST_GENRE for genre in item.get('genre', []))
 
-    def enhance_items(self, items):
+    def _get_broadcast_items(self, items):
         """
-        Sets the broadcast_id attribute if master story has broadcast script
+
         :param list items: list of items
+        :return list: list of broadcast items
         """
         ids = [item.get(config.ID_FIELD) for item in items
                if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
@@ -142,7 +143,15 @@ class ArchiveBroadcastService(BaseService):
 
         request = ParsedRequest()
         request.args = {'source': json.dumps(query)}
-        broadcast_items = get_resource_service(SOURCE).get(req=request, lookup=None)
+        broadcast_items = get_resource_service(SOURCE).get(req=request, lookup=None) or []
+        return broadcast_items
+
+    def enhance_items(self, items):
+        """
+        Sets the broadcast_id attribute if master story has broadcast script
+        :param list items: list of items
+        """
+        broadcast_items = self._get_broadcast_items(items)
 
         for broadcast_item in broadcast_items:
             item = next((item for item in items
@@ -157,3 +166,16 @@ class ArchiveBroadcastService(BaseService):
 
             if item:
                 item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
+
+    def get_broadcast_story_from_master_story(self, item):
+        """
+        Get the broadcast story from the master story.
+        :param dict item: master story item
+        :return dict: return broadcast story if found else None
+        """
+
+        if self.is_broadcast(item):
+            return None
+
+        broadcast_items = list(self._get_broadcast_items([item]))
+        return broadcast_items[0] if broadcast_items else None
