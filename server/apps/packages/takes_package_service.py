@@ -12,6 +12,7 @@ import logging
 import json
 from eve.utils import config, ParsedRequest
 from eve.versioning import resolve_document_version
+from flask import current_app as app
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -127,9 +128,9 @@ class TakesPackageService():
 
         ids = get_resource_service(ARCHIVE).post([takes_package])
         insert_into_versions(id_=ids[0])
-        original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target['_id'])
+        original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
-
+        self._takes_package_created(ids[0], target)
         return ids[0]
 
     def link_as_next_take(self, target, link):
@@ -282,3 +283,7 @@ class TakesPackageService():
         request = ParsedRequest()
         request.sort = SEQUENCE
         return list(get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query))
+
+    def _takes_package_created(self, takes_package_id, take_id):
+        if hasattr(app, 'on_takepackage_created'):
+            app.on_takepackage_created(takes_package_id, take_id)

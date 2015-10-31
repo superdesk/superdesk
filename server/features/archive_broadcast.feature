@@ -710,7 +710,7 @@ Feature: Archive Broadcast
     }
     """
 
-  @auth @vocabulary @test
+  @auth @vocabulary
   Scenario: Spike the broadcast content
     Given "desks"
       """
