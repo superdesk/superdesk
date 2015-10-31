@@ -622,3 +622,177 @@ Feature: Archive Broadcast
       ]
     }
     """
+
+  @auth @vocabulary
+  Scenario: Spike the master story should spike the broadcast content
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get OK response
+    And we get updated response
+      """
+      {
+          "type": "text",
+          "slugline": "comics",
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "_current_version": 1,
+          "urgency": 1,
+          "priority": 3,
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "family_id": "xyz",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          },
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "master_id": "123"
+          }
+      }
+      """
+    When we spike "123"
+    Then we get OK response
+    And we get "/archive/#broadcast._id#" and match
+    """
+    {
+      "state": "spiked",
+      "_id": "#broadcast._id#",
+      "_current_version": 2,
+      "broadcast": {
+        "status": ""
+      }
+    }
+    """
+
+  @auth @vocabulary @test
+  Scenario: Spike the broadcast content
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get OK response
+    And we get updated response
+      """
+      {
+          "type": "text",
+          "slugline": "comics",
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "_current_version": 1,
+          "urgency": 1,
+          "priority": 3,
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "family_id": "xyz",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          },
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "master_id": "123"
+          }
+      }
+      """
+    When we spike "#broadcast._id#"
+    Then we get OK response
+    And we get "/archive/#broadcast._id#" and match
+    """
+    {
+      "state": "spiked",
+      "_id": "#broadcast._id#",
+      "_current_version": 2,
+      "broadcast": {
+        "status": ""
+      }
+    }
+    """
