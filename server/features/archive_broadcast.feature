@@ -796,3 +796,96 @@ Feature: Archive Broadcast
       }
     }
     """
+
+  @auth @vocabulary @test
+  Scenario: Cannot create broadcast content if already exists for any take in the takes package
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we post to "archive/123/link"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get next take as "TAKE"
+      """
+      {
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key=2",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "state": "in_progress",
+          "original_creator": "#CONTEXT_USER_ID#",
+          "urgency": 1,
+          "priority": 3
+      }
+      """
+    And we get "/archive/#broadcast._id#" and match
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123",
+        "takes_package_id": "#TAKE_PACKAGE#"
+      }
+    }
+    """
+    When we post to "archive/#TAKE#/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get error 400
+    """
+    {"_message": "Takes already have broadcast content associated with it."}
+    """

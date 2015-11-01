@@ -20,6 +20,7 @@ from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
 from superdesk.metadata.utils import item_url
 from superdesk.metadata.item import CONTENT_TYPE, CONTENT_STATE, ITEM_TYPE, ITEM_STATE
+from superdesk.metadata.packages import RESIDREF
 from superdesk import get_resource_service, config
 from superdesk.errors import SuperdeskApiError
 from apps.archive.archive import SOURCE
@@ -113,6 +114,18 @@ class ArchiveBroadcastService(BaseService):
         if item.get(ITEM_STATE) in [CONTENT_STATE.KILLED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.SPIKED]:
             raise SuperdeskApiError.badRequestError(message="Invalid content state.")
 
+        takes_package = self.takesService.get_take_package(item)
+
+        if not takes_package:
+            return
+
+        refs = self.takesService.get_package_refs(takes_package)
+        broadcast_items = self._get_broadcast_items(
+            [{config.ID_FIELD: ref.get(RESIDREF), ITEM_TYPE: CONTENT_TYPE.TEXT} for ref in refs])
+
+        if broadcast_items.count() != 0:
+            raise SuperdeskApiError.badRequestError(message='Takes already have broadcast content associated with it.')
+
     def is_broadcast(self, item):
         """
         Item to check if broadcast or not.
@@ -127,7 +140,7 @@ class ArchiveBroadcastService(BaseService):
         :param list items: list of items
         :return list: list of broadcast items
         """
-        ids = [item.get(config.ID_FIELD) for item in items
+        ids = [str(item.get(config.ID_FIELD)) for item in items
                if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
 
         query = {
@@ -182,14 +195,22 @@ class ArchiveBroadcastService(BaseService):
         broadcast_items = list(self._get_broadcast_items([item]))
         return broadcast_items[0] if broadcast_items else None
 
-    def on_takepackage_created(self, take_package_id, item):
-        print('take', take_package_id, 'master')
+    def on_takes_package_created(self, take_package_id, item):
+        """
+        This event will be called on takes package creation
+        :param str take_package_id:
+        :param dict item:
+        """
         broadcast_items = list(self._get_broadcast_items([item]))
         if not broadcast_items:
             return
 
         broadcast_item = broadcast_items[0]
-        if not broadcast_item.get('broadcast', {}).get('takes_package_id'):
-            updates = broadcast_item.get('broadcast')
-            updates['takes_package_id'] = take_package_id
-            self.system_update(broadcast_item[config.ID_FIELD], updates, broadcast_item)
+        if broadcast_item.get('broadcast', {}).get('takes_package_id'):
+            return
+
+        updates = {
+            'broadcast': broadcast_item.get('broadcast')
+        }
+        updates['broadcast']['takes_package_id'] = take_package_id
+        get_resource_service(SOURCE).system_update(broadcast_item[config.ID_FIELD], updates, broadcast_item)
