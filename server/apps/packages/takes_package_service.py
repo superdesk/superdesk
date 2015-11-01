@@ -130,7 +130,8 @@ class TakesPackageService():
         insert_into_versions(id_=ids[0])
         original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
-        self._takes_package_created(ids[0], target)
+        if hasattr(app, 'on_takes_package_created'):
+            app.on_takes_package_created(ids[0], target)
         return ids[0]
 
     def link_as_next_take(self, target, link):
@@ -220,7 +221,7 @@ class TakesPackageService():
         """
         package = self.get_take_package(item)
         if package:
-            refs = self._get_package_refs(package)
+            refs = self.get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
                             and ref.get(RESIDREF, '') != item.get(config.ID_FIELD, '')), None)
@@ -229,7 +230,7 @@ class TakesPackageService():
 
         return None
 
-    def _get_package_refs(self, package):
+    def get_package_refs(self, package):
         """
         Get refs from the takes package
         :param dict package: takes package
@@ -250,7 +251,7 @@ class TakesPackageService():
         :param int sequence: take sequence of the published take
         :return: True if takes are published in correct order else false.
         """
-        refs = self._get_package_refs(package)
+        refs = self.get_package_refs(package)
         if refs:
             takes = [ref.get(RESIDREF) for ref in refs if ref.get(SEQUENCE) < sequence]
             # elastic filter for the archive resource filters out the published items
@@ -269,7 +270,7 @@ class TakesPackageService():
         :param takes_package: takes package
         :return: List of publishes takes.
         """
-        refs = self._get_package_refs(takes_package)
+        refs = self.get_package_refs(takes_package)
         if not refs:
             return []
 
@@ -283,7 +284,3 @@ class TakesPackageService():
         request = ParsedRequest()
         request.sort = SEQUENCE
         return list(get_resource_service(ARCHIVE).get_from_mongo(req=request, lookup=query))
-
-    def _takes_package_created(self, takes_package_id, take_id):
-        if hasattr(app, 'on_takepackage_created'):
-            app.on_takepackage_created(takes_package_id, take_id)
