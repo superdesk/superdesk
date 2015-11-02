@@ -846,8 +846,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter',
-            function(gettext, desks, WizardHandler, metadata, $filter) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate',
+            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -893,7 +893,8 @@
 
                         if (response.data && response.data._issues) {
                             if (response.data._issues.name && response.data._issues.name.unique) {
-                                scope._errorMessage = gettext('Desk with name ' + scope.desk.edit.name + ' already exists.');
+                                scope._errorMessage = $interpolate(gettext(
+                                    'Desk with name {{ name }} already exists.'))({name: scope.desk.edit.name});
                             } else if (response.data._issues['validator exception']) {
                                 scope._errorMessage = gettext(response.data._issues['validator exception']);
                             }
