@@ -20,8 +20,8 @@ def init_app(app):
     endpoint_name = ARCHIVE_BROADCAST_NAME
     service = ArchiveBroadcastService(endpoint_name, backend=superdesk.get_backend())
     ArchiveBroadcastResource(endpoint_name, app=app, service=service)
-    app.on_takes_package_created -= service.on_takes_package_created
-    app.on_takes_package_created += service.on_takes_package_created
+    app.on_broadcast_master_updated -= service.on_broadcast_master_updated
+    app.on_broadcast_master_updated += service.on_broadcast_master_updated
 
     superdesk.privilege(name=ARCHIVE_BROADCAST_NAME, label='Broadcast',
                         description='Allows user to create broadcast content.')

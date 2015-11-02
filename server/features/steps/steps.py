@@ -1758,6 +1758,16 @@ def there_is_no_key_in_preferences(context, key):
     assert key not in data, 'key "%s" is in task' % key
 
 
+@then('broadcast "{key}" has value "{value}"')
+def broadcast_key_has_value(context, key, value):
+    data = get_json_data(context.response).get('broadcast', {})
+    value = apply_placeholders(context, value)
+    if value.lower() == 'none':
+        assert data[key] is None, 'key "%s" is not none and has value "%s"' % (key, data[key])
+    else:
+        assert data[key] == value, 'key "%s" does not have valid value "%s"' % (key, data[key])
+
+
 @then('there is no "{key}" in "{namespace}" preferences')
 def there_is_no_key_in_preferences(context, key, namespace):
     data = get_json_data(context.response)['user_preferences']

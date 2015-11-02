@@ -358,14 +358,7 @@ Feature: Archive Broadcast
     Then we get OK response
     When we spike "123"
     Then we get OK response
-    When we post to "archive/123/broadcast"
-    """
-    [{}]
-    """
-    Then we get error 400
-    """
-    {"_message": "Invalid content state."}
-    """
+
 
   @auth @vocabulary
   Scenario: Cannot create Archive Broadcast Content if content state is killed
@@ -698,7 +691,8 @@ Feature: Archive Broadcast
       """
     When we spike "123"
     Then we get OK response
-    And we get "/archive/#broadcast._id#" and match
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
     """
     {
       "state": "spiked",
@@ -709,6 +703,9 @@ Feature: Archive Broadcast
       }
     }
     """
+    And broadcast "rewrite_id" has value "none"
+    And broadcast "master_id" has value "none"
+    And broadcast "takes_package_id" has value "none"
 
   @auth @vocabulary
   Scenario: Spike the broadcast content
@@ -785,7 +782,8 @@ Feature: Archive Broadcast
       """
     When we spike "#broadcast._id#"
     Then we get OK response
-    And we get "/archive/#broadcast._id#" and match
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
     """
     {
       "state": "spiked",
@@ -796,8 +794,11 @@ Feature: Archive Broadcast
       }
     }
     """
+    And broadcast "rewrite_id" has value "none"
+    And broadcast "master_id" has value "none"
+    And broadcast "takes_package_id" has value "none"
 
-  @auth @vocabulary @test
+  @auth @vocabulary
   Scenario: Cannot create broadcast content if already exists for any take in the takes package
     Given "desks"
       """
@@ -875,7 +876,7 @@ Feature: Archive Broadcast
       "_id": "#broadcast._id#",
       "_current_version": 1,
       "broadcast": {
-        "status": "",
+        "status": "New take created or story reopened.",
         "master_id": "123",
         "takes_package_id": "#TAKE_PACKAGE#"
       }
@@ -889,3 +890,239 @@ Feature: Archive Broadcast
     """
     {"_message": "Takes already have broadcast content associated with it."}
     """
+
+  @auth @vocabulary
+  Scenario: Change the broadcast content status based on the actions performed in the published master story
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "schema": {},
+            "type": "text",
+            "act": "correct",
+            "_id": "correct_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "Master Story Published",
+        "master_id": "123"
+      }
+    }
+    """
+    And broadcast "rewrite_id" has value "none"
+    When we publish "#archive._id#" with "correct" type and "corrected" state
+    Then we get OK response
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "Master Story Corrected",
+        "master_id": "123"
+      }
+    }
+    """
+    And broadcast "rewrite_id" has value "none"
+    When we rewrite "123"
+      """
+      {"desk_id": "#desks._id#"}
+      """
+    Then we get OK response
+    And we get "/archive/#broadcast._id#" and match
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "Master story re-written.",
+        "master_id": "123",
+        "rewrite_id": "#REWRITE_ID#"
+      }
+    }
+    """
+
+  @auth @vocabulary
+  Scenario: Spike the re-write and it should remove the reference from broadcast
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.incoming_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we rewrite "123"
+      """
+      {"desk_id": "#desks._id#"}
+      """
+    Then we get OK response
+    And we get "/archive/#broadcast._id#" and match
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "Master story re-written.",
+        "master_id": "123",
+        "rewrite_id": "#REWRITE_ID#"
+      }
+    }
+    """
+    When we spike "#REWRITE_ID#"
+    Then we get OK response
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    And broadcast "rewrite_id" has value "none"
