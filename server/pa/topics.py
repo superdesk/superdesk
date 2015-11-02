@@ -19,7 +19,7 @@ def get_topics(filepath=None):
         for topic_name in f:
             topic_name = topic_name.strip()
             topic_code = 'patopic:%s' % topic_name.upper()
-            if len(topic_name):
+            if topic_name:
                 topics[topic_code] = topic_name
     return topics
 
