@@ -1,5 +1,11 @@
 
 import json
+
+import apps.archive  # NOQA
+# XXX: This import is needed in order to avoid ImportError when importing
+# package_service, caused by circular dependencies.
+# When that issue is resolved, the workaround should be removed.
+
 import apps.packages.package_service as package
 
 from superdesk import get_resource_service
@@ -72,17 +78,27 @@ class MarkedForHighlightsService(BaseService):
             highlights = item.get('highlights', [])
             if not highlights:
                 highlights = []
+
             if doc['highlights'] not in highlights:
                 highlights.append(doc['highlights'])
+                highlight_on = True  # highlight toggled on
             else:
                 highlights = [h for h in highlights if h != doc['highlights']]
+                highlight_on = False  # highlight toggled off
+
             updates = {
                 'highlights': highlights,
                 '_updated': item['_updated'],
                 '_etag': item['_etag']
             }
             service.update(item['_id'], updates, item)
-        push_notification('item:mark', marked=1)
+
+            push_notification(
+                'item:mark',
+                marked=int(highlight_on),
+                item_id=item['_id'],
+                highlight_id=str(doc['highlights']))
+
         return ids
 
 package.package_create_signal.connect(on_create_package)
