@@ -13,6 +13,9 @@
 
         <div id="locked" class="clearfix" sd-item-lock data-item="selected.preview"></div>
 
+        <div class="rewrite" ng-if="selected.preview.rewrite_id">{{ :: 'This story has been rewritten by: ' | translate }}<a ng-click="previewRewriteStory()" 
+            class="open-item"><i class="icon-external"></i></a></div>
+
         <p class="title preview-headline" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
         <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>

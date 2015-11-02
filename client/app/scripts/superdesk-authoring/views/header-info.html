@@ -37,6 +37,11 @@
                  data-change="autosave(item)">
             </div>
         </div>
+        <div ng-if="item.broadcast.master_id">
+            <label translate ng-class="{'broadcast-status': item.broadcast.status !== ''}" tooltip="{{item.broadcast.status}}">MASTER<b ng-if="item.broadcast.status"> !</b></label>
+            <div class="data"><a ng-click="previewMasterStory()" title="{{ :: 'Preview master story' | translate }}"
+            class="open-item"><i class="icon-external"></i></a></div>
+        </div>
     </div>
 
     <div class="authoring-header__detailed">
