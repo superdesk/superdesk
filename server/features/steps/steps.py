@@ -101,9 +101,10 @@ def json_match(context_data, response_data):
         return context_data == response_data
 
 
-def get_fixture_path(fixture):
-    abspath = os.path.abspath(os.path.dirname(__file__))
-    return os.path.join(abspath, 'fixtures', fixture)
+def get_fixture_path(context, fixture):
+    path = context.app.settings.get('BEHAVE_TESTS_FIXTURES_PATH',
+                                    os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures'))
+    return os.path.join(path, fixture)
 
 
 def get_macro_path(macro):
@@ -302,7 +303,7 @@ def step_impl_when_auth(context):
 
 @given('we create a new macro "{macro_name}"')
 def step_create_new_macro(context, macro_name):
-    src = get_fixture_path(macro_name)
+    src = get_fixture_path(context, macro_name)
     dst = get_macro_path(macro_name)
     shutil.copyfile(src, dst)
 
@@ -636,7 +637,7 @@ def when_upload_patch_dictionary(context):
 
 
 def upload_file(context, dest, filename, file_field, extra_data=None, method='post', user_headers=[]):
-    with open(get_fixture_path(filename), 'rb') as f:
+    with open(get_fixture_path(context, filename), 'rb') as f:
         data = {file_field: f}
         if extra_data:
             data.update(extra_data)
