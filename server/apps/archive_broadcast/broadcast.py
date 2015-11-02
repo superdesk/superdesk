@@ -168,6 +168,11 @@ class ArchiveBroadcastService(BaseService):
         ids = [str(item.get(config.ID_FIELD)) for item in items
                if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
 
+        takes_packages = [self.takesService.get_take_package_id(item) for item in items
+                          if self.takesService.get_take_package_id(item)]
+
+        ids.append(takes_packages)
+
         if not ids:
             return
 
@@ -180,7 +185,7 @@ class ArchiveBroadcastService(BaseService):
                 item['broadcast_id'] = broadcast_item.get(config.ID_FIELD)
 
             item = next((item for item in items
-                         if not item.get('broadcast_id') and
+                         if (not item.get('broadcast_id') and self.takesService.get_take_package_id(item)) and
                          self.takesService.get_take_package_id(item) ==
                          broadcast_item.get('broadcast', {}).get('takes_package_id')), None)
 
