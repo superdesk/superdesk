@@ -14,7 +14,8 @@ import json
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 from flask import request
-from apps.archive.common import CUSTOM_HATEOAS, insert_into_versions, get_user
+from apps.archive.common import CUSTOM_HATEOAS, insert_into_versions, get_user, \
+    ITEM_CREATE, ITEM_UPDATE
 from apps.packages import TakesPackageService
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
@@ -24,6 +25,7 @@ from superdesk.metadata.packages import RESIDREF
 from superdesk import get_resource_service, config
 from superdesk.errors import SuperdeskApiError
 from apps.archive.archive import SOURCE
+from apps.publish.content.common import ITEM_CORRECT, ITEM_PUBLISH
 
 
 logger = logging.getLogger(__name__)
@@ -48,11 +50,11 @@ class ArchiveBroadcastResource(Resource):
 
 
 class ArchiveBroadcastService(BaseService):
+
     takesService = TakesPackageService()
 
     def create(self, docs):
         service = get_resource_service(SOURCE)
-
         item_id = request.view_args['item_id']
         item = service.find_one(req=None, _id=item_id)
         doc = docs[0]
@@ -81,7 +83,8 @@ class ArchiveBroadcastService(BaseService):
         doc['broadcast'] = {
             'status': '',
             'master_id': item_id,
-            'takes_package_id': self.takesService.get_take_package_id(item)
+            'takes_package_id': self.takesService.get_take_package_id(item),
+            'rewrite_id': item.get('rewritten_by')
         }
 
         doc['genre'] = broadcast_genre
@@ -102,8 +105,6 @@ class ArchiveBroadcastService(BaseService):
         The state of the item cannot be Killed, Scheduled or Spiked
         :param dict item: item from which the broadcast item will be created
         """
-        # TODO: for takes package only one broadcast content is allowed
-
         if not item:
             raise SuperdeskApiError.notFoundError(
                 message="Cannot find the requested item id.")
@@ -120,8 +121,7 @@ class ArchiveBroadcastService(BaseService):
             return
 
         refs = self.takesService.get_package_refs(takes_package)
-        broadcast_items = self._get_broadcast_items(
-            [{config.ID_FIELD: ref.get(RESIDREF), ITEM_TYPE: CONTENT_TYPE.TEXT} for ref in refs])
+        broadcast_items = self._get_broadcast_items([ref.get(RESIDREF) for ref in refs])
 
         if broadcast_items.count() != 0:
             raise SuperdeskApiError.badRequestError(message='Takes already have broadcast content associated with it.')
@@ -134,39 +134,44 @@ class ArchiveBroadcastService(BaseService):
         """
         return item.get('genre') and any(genre.get('value') == BROADCAST_GENRE for genre in item.get('genre', []))
 
-    def _get_broadcast_items(self, items):
+    def _get_broadcast_items(self, ids):
         """
 
         :param list items: list of items
         :return list: list of broadcast items
         """
-        ids = [str(item.get(config.ID_FIELD)) for item in items
-               if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
-
         query = {
             'query': {
                 'filtered': {
                     'filter': {
-                        'and': [
-                            {'terms': {'broadcast.master_id': ids}},
-                            {'term': {'genre.name': BROADCAST_GENRE}}
-                        ]
+                        'bool': {
+                            'must': {'term': {'genre.name': BROADCAST_GENRE}},
+                            'should': [
+                                {'terms': {'broadcast.master_id': ids}},
+                                {'terms': {'broadcast.takes_package_id': ids}}
+                            ]
+                        }
                     }
                 }
             }
         }
 
-        request = ParsedRequest()
-        request.args = {'source': json.dumps(query)}
-        broadcast_items = get_resource_service(SOURCE).get(req=request, lookup=None) or []
-        return broadcast_items
+        req = ParsedRequest()
+        req.args = {'source': json.dumps(query)}
+        return get_resource_service(SOURCE).get(req=req, lookup=None)
 
     def enhance_items(self, items):
         """
         Sets the broadcast_id attribute if master story has broadcast script
         :param list items: list of items
         """
-        broadcast_items = self._get_broadcast_items(items)
+        ids = [str(item.get(config.ID_FIELD)) for item in items
+               if item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]]
+
+        if not ids:
+            return
+
+        broadcast_items = self._get_broadcast_items(ids)
 
         for broadcast_item in broadcast_items:
             item = next((item for item in items
@@ -192,25 +197,100 @@ class ArchiveBroadcastService(BaseService):
         if self.is_broadcast(item):
             return None
 
-        broadcast_items = list(self._get_broadcast_items([item]))
+        ids = [str(item.get(config.ID_FIELD))]
+        if self.takesService.get_take_package_id(item):
+            ids.append(str(self.takesService.get_take_package_id(item)))
+
+        broadcast_items = list(self._get_broadcast_items(ids))
         return broadcast_items[0] if broadcast_items else None
 
-    def on_takes_package_created(self, take_package_id, item):
+    def on_broadcast_master_updated(self, item_event, item,
+                                    takes_package_id=None, rewrite_id=None):
+        # TODO(mayur): modify docstring later on
         """
-        This event will be called on takes package creation
-        :param str take_package_id:
-        :param dict item:
+        This event is called when the master story is correct, published, re-written, new take/re-opened
+        :param str item_event: Item operations
+        :param dict item: item on which operation performed.
+        :param str takes_package_id: takes_package_id.
+        :param str rewrite_id: re-written story id.
         """
-        broadcast_items = list(self._get_broadcast_items([item]))
+        status = ''
+
+        if not item or self.is_broadcast(item):
+            return
+
+        broadcast_item = self.get_broadcast_story_from_master_story(item)
+
+        if not broadcast_item:
+            return
+
+        if broadcast_item.get('lock_user'):
+            return
+
+        if item_event == ITEM_CREATE and takes_package_id:
+            status = 'New take created or story reopened.'
+        elif item_event == ITEM_CREATE and rewrite_id:
+            status = 'Master story re-written.'
+        elif item_event == ITEM_UPDATE:
+            status = 'Master Story Updated'
+        elif item_event == ITEM_PUBLISH:
+            status = 'Master Story Published'
+        elif item_event == ITEM_CORRECT:
+            status = 'Master Story Corrected'
+
+        updates = {
+            'broadcast': broadcast_item.get('broadcast'),
+        }
+
+        if status:
+            updates['broadcast']['status'] = status
+
+        if not updates['broadcast']['takes_package_id'] and takes_package_id:
+            updates['broadcast']['takes_package_id'] = takes_package_id
+
+        if not updates['broadcast']['rewrite_id'] and rewrite_id:
+            updates['broadcast']['rewrite_id'] = rewrite_id
+
+        get_resource_service(SOURCE).system_update(broadcast_item[config.ID_FIELD], updates, broadcast_item)
+
+    def remove_rewrite_refs(self, item):
+        """
+        Remove the rewrite references
+        :param item:
+        :return:
+        """
+
+        if self.is_broadcast(item):
+            return
+
+        query = {
+            'query': {
+                'filtered': {
+                    'filter': {
+                        'and': [
+                            {'term': {'genre.name': BROADCAST_GENRE}},
+                            {'term': {'broadcast.rewrite_id': item.get(config.ID_FIELD)}}
+                        ]
+                    }
+                }
+            }
+        }
+
+        req = ParsedRequest()
+        req.args = {'source': json.dumps(query)}
+        broadcast_items = list(get_resource_service(SOURCE).get(req=req, lookup=None))
+
         if not broadcast_items:
             return
 
         broadcast_item = broadcast_items[0]
-        if broadcast_item.get('broadcast', {}).get('takes_package_id'):
-            return
-
         updates = {
-            'broadcast': broadcast_item.get('broadcast')
+            'broadcast': broadcast_item.get('broadcast', {})
         }
-        updates['broadcast']['takes_package_id'] = take_package_id
-        get_resource_service(SOURCE).system_update(broadcast_item[config.ID_FIELD], updates, broadcast_item)
+
+        updates['broadcast']['rewrite_id'] = None
+
+        if 're-written' in updates['broadcast']['status']:
+            updates['broadcast']['status'] = ''
+
+        get_resource_service(SOURCE).system_update(broadcast_item.get(config.ID_FIELD), updates, broadcast_item)

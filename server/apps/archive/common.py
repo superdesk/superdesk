@@ -445,7 +445,8 @@ def item_schema(extra=None):
             'schema': {
                 'status': {'type': 'string'},
                 'master_id': {'type': 'string', 'mapping': not_analyzed},
-                'takes_package_id': {'type': 'string', 'mapping': not_analyzed}
+                'takes_package_id': {'type': 'string', 'mapping': not_analyzed},
+                'rewrite_id': {'type': 'string', 'mapping': not_analyzed}
             }
         }
     }

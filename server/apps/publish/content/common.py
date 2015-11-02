@@ -16,6 +16,7 @@ from copy import deepcopy
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
+from flask import current_app as app
 
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES, EMBARGO
@@ -141,6 +142,11 @@ class BasePublishService(BaseService):
         original = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
         updates.update(original)
         user = get_user()
+
+        if hasattr(app, 'on_broadcast_master_updated') and updates[ITEM_OPERATION] != ITEM_KILL and \
+                original.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
+            app.on_broadcast_master_updated(updates[ITEM_OPERATION], original)
+
         push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
 
     def update(self, id, updates, original):
@@ -639,7 +645,7 @@ class BasePublishService(BaseService):
             if target_media_type and subscriber.get('subscriber_type', '') != SUBSCRIBER_TYPES.ALL:
                 can_send_takes_packages = subscriber['subscriber_type'] == SUBSCRIBER_TYPES.DIGITAL
                 if target_media_type == SUBSCRIBER_TYPES.WIRE and can_send_takes_packages or \
-                   target_media_type == SUBSCRIBER_TYPES.DIGITAL and not can_send_takes_packages:
+                        target_media_type == SUBSCRIBER_TYPES.DIGITAL and not can_send_takes_packages:
                     continue
 
             if doc.get('targeted_for'):
@@ -831,6 +837,7 @@ class BasePublishService(BaseService):
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
+
 
 superdesk.workflow_state('published')
 superdesk.workflow_action(

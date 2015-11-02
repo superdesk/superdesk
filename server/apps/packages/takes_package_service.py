@@ -19,7 +19,7 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
     LAST_TAKE, REFS, MAIN_GROUP, SEQUENCE, RESIDREF
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE, EMBARGO
-from apps.archive.common import insert_into_versions
+from apps.archive.common import insert_into_versions, ITEM_CREATE
 from .package_service import get_item_ref, create_root_group
 
 logger = logging.getLogger(__name__)
@@ -130,8 +130,9 @@ class TakesPackageService():
         insert_into_versions(id_=ids[0])
         original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
-        if hasattr(app, 'on_takes_package_created'):
-            app.on_takes_package_created(ids[0], target)
+        if hasattr(app, 'on_broadcast_master_updated'):
+            app.on_broadcast_master_updated(ITEM_CREATE, target,
+                                            takes_package_id=ids[0])
         return ids[0]
 
     def link_as_next_take(self, target, link):
@@ -164,6 +165,9 @@ class TakesPackageService():
             del takes_package[config.ID_FIELD]
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
+            if hasattr(app, 'on_broadcast_master_updated'):
+                app.on_broadcast_master_updated(ITEM_CREATE, target,
+                                                takes_package_id=takes_package_id)
 
         if link.get(SEQUENCE):
             archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})

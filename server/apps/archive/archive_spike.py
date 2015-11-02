@@ -120,6 +120,8 @@ class ArchiveSpikeService(BaseService):
                 insert_into_versions(id_=broadcast_item.get(config.ID_FIELD))
             except:
                 raise SuperdeskApiError.badRequestError(message="Failed to spike the related broadcast item.")
+        else:
+            get_resource_service('archive_broadcast').remove_rewrite_refs(item)
 
     def update(self, id, updates, original):
         original_state = original[ITEM_STATE]
@@ -144,7 +146,10 @@ class ArchiveSpikeService(BaseService):
 
         if original.get('broadcast'):
             updates['broadcast'] = {
-                'status': ''
+                'status': '',
+                'master_id': None,
+                'takes_package_id': None,
+                'rewrite_id': None
             }
 
         item = self.backend.update(self.datasource, id, updates, original)
