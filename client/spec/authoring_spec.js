@@ -201,4 +201,13 @@ describe('authoring', function() {
 
         expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
     });
+
+    it('can display monitoring after publishing an item using full view of authoring', function () {
+        monitoring.actionOnItem('Edit', 2, 2);
+        monitoring.showHideList();
+
+        authoring.publish();
+        expect(monitoring.getGroups().count()).toBe(4);
+    });
+
 });
