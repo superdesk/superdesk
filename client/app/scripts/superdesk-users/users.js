@@ -208,8 +208,8 @@
         return userservice;
     }
 
-    UserListController.$inject = ['$scope', '$location', 'api'];
-    function UserListController($scope, $location, api) {
+    UserListController.$inject = ['$scope', '$location', 'api', 'lodash'];
+    function UserListController($scope, $location, api, _) {
         var DEFAULT_SIZE = 25;
 
         $scope.selected = {user: null};
@@ -472,8 +472,8 @@
             });
     }
 
-    UserRolesDirective.$inject = ['api', 'gettext', 'notify', 'modal', '$filter'];
-    function UserRolesDirective(api, gettext, notify, modal, $filter) {
+    UserRolesDirective.$inject = ['api', 'gettext', 'notify', 'modal', '$filter', 'lodash'];
+    function UserRolesDirective(api, gettext, notify, modal, $filter, _) {
         return {
             scope: true,
             templateUrl: 'scripts/superdesk-users/views/settings-roles.html',
@@ -886,9 +886,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session',
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'usersService', 'userList', 'session', 'lodash',
             '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
-        function(api, gettext, notify, usersService, userList, session, $location, $route, superdesk, features,
+        function(api, gettext, notify, usersService, userList, session, _, $location, $route, superdesk, features,
                  asset, privileges, desks, keyboardManager) {
 
             return {
@@ -1044,10 +1044,10 @@
          */
         .directive('sdUserPreferences', [
             'api', 'session', 'preferencesService', 'notify', 'asset',
-            'metadata', 'modal', '$timeout', '$q',
+            'metadata', 'modal', '$timeout', '$q', 'lodash',
         function (
             api, session, preferencesService, notify, asset, metadata, modal,
-            $timeout, $q
+            $timeout, $q, _
         ) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
