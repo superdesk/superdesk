@@ -60,7 +60,7 @@
 
     <div class="slide-pane__footer">
         <ul class="btn-list">
-            <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send">
+            <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send && itemActions.new_take">
                 <button class="btn btn-info"
                         ng-click="sendAndContinue()"
                         ng-disabled="item.embargo || disableSendButton()"
