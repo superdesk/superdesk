@@ -326,6 +326,38 @@
 
     {
         "data": {
+            "_id": "crop_sizes",
+            "items": [
+                {"is_active": true, "name": "4-3", "width": 800, "height": 600},
+                {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies crop_sizes-"
+    },
+
+    {
+        "data": {
+            "_id": "genre",
+            "items": [
+                {"is_active": true, "name": "Article (news)", "value": "Article"},
+                {"is_active": true, "name": "Sidebar", "value": "Sidebar"},
+                {"is_active": true, "name": "Factbox", "value": "Factbox"},
+                {"is_active": true, "name": "Feature", "value": "Feature"},
+                {"is_active": true, "name": "Newsfeature", "value": "Newsfeature"},
+                {"is_active": true, "name": "Backgrounder", "value": "Backgrounder"},
+                {"is_active": true, "name": "Opinion", "value": "Opinion"},
+                {"is_active": true, "name": "View (incl parly sketch)", "value": "View"},
+                {"is_active": true, "name": "Modular", "value": "Modular"},
+                {"is_active": true, "name": "Broadcast Script", "value": "Broadcast Script"}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies genre-"
+    },
+
+    {
+        "data": {
             "_id": "categories",
             "display_name": "Categories",
             "type": "manageable",
