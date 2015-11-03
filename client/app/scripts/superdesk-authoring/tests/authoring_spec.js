@@ -402,6 +402,7 @@ describe('cropImage', function() {
         var scope = elem.scope();
 
         scope.item = {
+            type: 'picture',
             renditions: {
             }
         };
@@ -415,6 +416,7 @@ describe('cropImage', function() {
         scope = elem.scope();
 
         scope.item = {
+            type: 'picture',
             renditions: {
                 '4-3': {
                 }
