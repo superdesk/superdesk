@@ -45,7 +45,7 @@ Feature: Ingest Provider
         When we get "/activity/"
         Then we get existing resource
         """
-        {"_items": [{"data": {"name": "reuters 4"}, "message": "created Ingest Channel {{name}}"}]}
+        {"_items": [{"data": {"name": "reuters 4"}, "message": "Created Ingest Channel {{name}}"}]}
         """
         Then we get notifications
         """
@@ -57,7 +57,7 @@ Feature: Ingest Provider
         Then we get emails
         """
         [
-          {"body": "created Ingest Channel reuters 4"}
+          {"body": "Created Ingest Channel reuters 4"}
         ]
 
         """
@@ -273,3 +273,15 @@ Feature: Ingest Provider
         Then we get list with 1 items
         When we delete "/ingest_providers/#ingest_providers._id#"
         Then we get deleted response
+        When we get "/activity/"
+        Then we get existing resource
+        """
+        {"_items": [{"data": {"name": "reuters 4"}, "message": "Deleted Ingest Channel {{name}}"}]}
+        """
+        And we get notifications
+        """
+        [
+          {"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}},
+          {"event": "ingest_provider:delete", "extra": {"provider_id": "#ingest_providers._id#"}}
+        ]
+        """
