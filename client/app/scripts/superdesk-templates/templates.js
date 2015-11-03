@@ -195,6 +195,7 @@
 
                 $scope.save = function() {
                     delete $scope.template._datelinedate;
+                    delete $scope.template.hasCrops;
                     api.content_templates.save($scope.origTemplate, $scope.template)
                         .then(
                             function() {
