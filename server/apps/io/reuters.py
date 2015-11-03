@@ -13,7 +13,7 @@
 import traceback
 import datetime
 from urllib.parse import urlparse, urlunparse
-
+from superdesk.logging import logger
 import requests
 
 from superdesk.io.ingest_service import IngestService
@@ -102,9 +102,12 @@ class ReutersIngestService(IngestService):
         ids = []
         payload = {'channel': channel, 'fieldsRef': 'id'}
         payload['dateRange'] = "%s-%s" % (self.format_date(last_updated), self.format_date(updated))
+        logger.info('Reuters requesting Date Range |{}| for channel {}'.format(payload['dateRange'], channel))
         tree = self.get_tree('items', payload)
         for result in tree.findall('result'):
-            ids.append(result.find('guid').text)
+            id = result.find('guid').text
+            if id not in ids:
+                ids.append(id)
         return ids
 
     def get_channels(self):
