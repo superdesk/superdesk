@@ -113,6 +113,24 @@
         </div>
 
     </fieldset>
+        <fieldset ng-show="repo.search === 'paimg'">      
+        <div class="field">
+            <label for="search-headline">
+                {{:: 'Headline' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-headline" ng-model="meta.headline">
+            </div>
+        </div>       
+        <div class="field">
+            <label for="search-slugline">
+                {{:: 'Slugline(keywords)' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-slugline" ng-model="meta.slugline">
+            </div>
+        </div>      
+    </fieldset> 
     <fieldset ng-show="repo.search === 'aapmm'">      
         <div class="field">
             <label for="search-slugline">

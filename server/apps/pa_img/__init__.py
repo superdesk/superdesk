@@ -9,12 +9,12 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk import intrinsic_privilege
-from .aap_mm_datalayer import AAPMMDatalayer
+from .pa_img_datalayer import PaImgDatalayer
 from apps.io.search_ingest import SearchIngestService, SearchIngestResource
 
 
 def init_app(app):
-    app.data.aapmm = AAPMMDatalayer(app)
-    service = SearchIngestService(datasource=None, backend=app.data.aapmm, source='aapmm')
-    SearchIngestResource(endpoint_name='aapmm', app=app, service=service)
-    intrinsic_privilege(resource_name='aapmm', method=['GET', 'POST'])
+    app.data.paimg = PaImgDatalayer(app)
+    service = SearchIngestService(datasource=None, backend=app.data.paimg, source='paimg')
+    SearchIngestResource(endpoint_name='paimg', app=app, service=service)
+    intrinsic_privilege(resource_name='paimg', method=['GET', 'POST'])
