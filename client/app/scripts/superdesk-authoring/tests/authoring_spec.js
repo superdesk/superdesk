@@ -1253,7 +1253,7 @@ describe('authoring workspace', function() {
         expect(authoringWorkspace.getAction()).toBe('edit');
         expect(superdeskFlags.flags.authoring).toBeTruthy();
 
-        authoringWorkspace.close();
+        authoringWorkspace.close(true);
         expect(authoringWorkspace.item).toBe(null);
         expect(authoringWorkspace.getItem()).toBe(null);
         expect(superdeskFlags.flags.authoring).toBeFalsy();
@@ -1341,7 +1341,7 @@ describe('authoring container directive', function() {
         expect(iscope.authoring.action).toBe('edit');
         expect(iscope.authoring.state.opened).toBe(true);
 
-        authoringWorkspace.close();
+        authoringWorkspace.close(true);
         $rootScope.$digest();
         expect(iscope.authoring.item).toBe(null);
         expect(iscope.authoring.state.opened).toBe(false);
