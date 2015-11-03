@@ -501,12 +501,12 @@
                     action.correct = user_privileges.correct && lockedByMe && !is_read_only_state;
                 }
 
-                action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
+                action.re_write = _.contains(['published', 'corrected'], current_item.state) &&
                     _.contains(['text', 'preformatted'], current_item.type) &&
                     !current_item.embargo &&
                     angular.isUndefined(current_item.rewritten_by) &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) &&
-                    (angular.isUndefined(current_item.broadcast.master_id));
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                    (!current_item.broadcast || !current_item.broadcast.master_id);
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
