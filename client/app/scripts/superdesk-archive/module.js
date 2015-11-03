@@ -418,8 +418,7 @@ define([
                         return (item.lock_user === null || angular.isUndefined(item.lock_user));
                     },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
-                        return angular.isUndefined(item.broadcast_id) &&
-                        (!item.genre || item.genre[0].name !== 'Broadcast Script');
+                        return authoring.itemActions(item).create_broadcast;
                     }]
                 })
                 .activity('copy', {

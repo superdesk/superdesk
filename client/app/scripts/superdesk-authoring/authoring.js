@@ -481,7 +481,8 @@
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -501,8 +502,11 @@
                 }
 
                 action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
-                    _.contains(['text', 'preformatted'], current_item.type) && !current_item.embargo &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming));
+                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    !current_item.embargo &&
+                    angular.isUndefined(current_item.rewritten_by) &&
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming)) &&
+                    (angular.isUndefined(current_item.broadcast.master_id));
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
@@ -536,6 +540,11 @@
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
                 !current_item.embargo && current_item.package_type !== 'takes' &&
                 current_item.state !== 'killed' && !current_item.publish_schedule;
+
+            action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
+                (_.contains(['published', 'corrected'], current_item.state)) &&
+                current_item.type === 'text' &&
+                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
 
             action.multi_edit = !is_read_only_state;
 

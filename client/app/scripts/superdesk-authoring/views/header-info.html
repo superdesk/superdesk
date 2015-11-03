@@ -33,7 +33,7 @@
                  data-item="item"
                  data-field="genre"
                  data-list="metadata.genre"
-                 ng-disabled="!_editable"
+                 ng-disabled="!_editable || item.broadcast.master_id"
                  data-change="autosave(item)">
             </div>
         </div>
