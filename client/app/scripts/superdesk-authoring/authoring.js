@@ -1308,6 +1308,14 @@
                     }
                 });
 
+                $scope.$on('item:mark', function(e, data) {
+                    if ($scope.item._id === data.item_id){
+                        $scope.item.highlights = $scope.item.highlights.indexOf(data.highlight_id) >= 0 ?
+                            _.without($scope.item.highlights, data.highlight_id) :
+                            [data.highlight_id].concat($scope.item.highlights);
+                    }
+                });
+
                 macros.setupShortcuts($scope);
             }
         };
@@ -2015,9 +2023,9 @@
                 });
 
                 metadata.initialize().then(function() {
-                    scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    if (scope.metadata.crop_sizes) {
+                    if (scope.item.type === 'picture'){
+                        scope.item.hasCrops = false;
                         scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
                             return scope.item.renditions[crop.name];
                         });
