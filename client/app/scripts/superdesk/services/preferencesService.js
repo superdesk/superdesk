@@ -52,7 +52,7 @@ define(['angular'], function(angular) {
                  * Fetch preferences from server and store local copy.
                  * On next call it will remove local copy and fetch again.
                  */
-                function getPreferences() {
+                function getPreferences(cached) {
                     var api = $injector.get('api');
                     preferences = null;
                     preferencesPromise = session.getIdentity()
@@ -71,7 +71,7 @@ define(['angular'], function(angular) {
                      * @return {Promise}
                      */
                     function fetchPreferences() {
-                        return api.find('preferences', session.sessionId, null, true);
+                        return api.find('preferences', session.sessionId, null, cached);
                     }
 
                     /**
@@ -102,13 +102,14 @@ define(['angular'], function(angular) {
 
                 /**
                  * Get preference value, in case preferences are not loaded yet it will fetch it.
-                 *
+                 * Parameter force is used to  bypass the cache
                  * @param {string} key
+                 * @param {boolean} force
                  * @returns {Promise}
                  */
-                this.get = function(key) {
-                    if (!preferencesPromise) {
-                        getPreferences();
+                this.get = function(key, force) {
+                    if (!preferencesPromise || force) {
+                        getPreferences(!force);
                     }
 
                     return preferencesPromise.then(returnValue);

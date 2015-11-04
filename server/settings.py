@@ -198,6 +198,7 @@ INSTALLED_APPS.extend([
     'apps.duplication',
     'apps.aap.import_text_archive',
     'apps.aap_mm',
+    'apps.pa_img',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -208,6 +209,8 @@ INSTALLED_APPS.extend([
 
     'superdesk.io.subjectcodes',
     'pa.topics',
+
+    'apps.archive_broadcast'
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

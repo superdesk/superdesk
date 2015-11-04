@@ -13,6 +13,7 @@ function getChromeOptions() {
 }
 
 exports.config = {
+    allScriptsTimeout: 20000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
@@ -25,8 +26,7 @@ exports.config = {
     framework: 'jasmine2',
     jasmineNodeOpts: {
         showColors: true,
-        defaultTimeoutInterval: 120000,
-        allScriptsTimeout: 21000
+        defaultTimeoutInterval: 200000
     },
 
     capabilities: {

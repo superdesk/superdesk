@@ -16,6 +16,7 @@ from copy import deepcopy
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
+from flask import current_app as app
 
 from superdesk.metadata.item import PUB_STATUS, CONTENT_TYPE, ITEM_TYPE, GUID_FIELD, ITEM_STATE, CONTENT_STATE, \
     PUBLISH_STATES, EMBARGO
@@ -28,7 +29,8 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId
+from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId, is_genre, \
+    BROADCAST_GENRE
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.publish.formatters import get_formatter
@@ -46,6 +48,10 @@ ITEM_PUBLISH = 'publish'
 ITEM_CORRECT = 'correct'
 ITEM_KILL = 'kill'
 item_operations.extend([ITEM_PUBLISH, ITEM_CORRECT, ITEM_KILL])
+
+
+def is_published(item):
+    return item[ITEM_STATE] in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]
 
 
 class BasePublishResource(ArchiveResource):
@@ -141,6 +147,14 @@ class BasePublishService(BaseService):
         original = get_resource_service(ARCHIVE).find_one(req=None, _id=original[config.ID_FIELD])
         updates.update(original)
         user = get_user()
+
+        if hasattr(app, 'on_broadcast_master_updated') and updates[ITEM_OPERATION] != ITEM_KILL and \
+                original.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
+            app.on_broadcast_master_updated(updates[ITEM_OPERATION], original)
+
+        if hasattr(app, 'on_broadcast_content_updated'):
+            app.on_broadcast_content_updated(updates, original)
+
         push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
 
     def update(self, id, updates, original):
@@ -153,13 +167,16 @@ class BasePublishService(BaseService):
 
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
+            else:
+                self._resolve_associations(updates)
 
             queued_digital = False
             package = None
 
             if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE:
                 # if target_for is set the we don't to digital client.
-                if not updates.get('targeted_for', original.get('targeted_for')):
+                if not (updates.get('targeted_for', original.get('targeted_for')) or
+                        is_genre(original, BROADCAST_GENRE)):
                     # check if item is in a digital package
                     package = self.takes_package_service.get_take_package(original)
 
@@ -182,7 +199,12 @@ class BasePublishService(BaseService):
                             queued_digital = self._publish_takes_package(package, updates, original, last_updated)
 
                 # queue only text items
-                media_type = SUBSCRIBER_TYPES.WIRE if package else None
+                media_type = None
+                updated = deepcopy(original)
+                updated.update(updates)
+                if package:
+                    media_type = SUBSCRIBER_TYPES.WIRE
+
                 queued_wire = self.publish(doc=original, updates=updates, target_media_type=media_type)
 
                 queued = queued_digital or queued_wire
@@ -639,7 +661,7 @@ class BasePublishService(BaseService):
             if target_media_type and subscriber.get('subscriber_type', '') != SUBSCRIBER_TYPES.ALL:
                 can_send_takes_packages = subscriber['subscriber_type'] == SUBSCRIBER_TYPES.DIGITAL
                 if target_media_type == SUBSCRIBER_TYPES.WIRE and can_send_takes_packages or \
-                   target_media_type == SUBSCRIBER_TYPES.DIGITAL and not can_send_takes_packages:
+                        target_media_type == SUBSCRIBER_TYPES.DIGITAL and not can_send_takes_packages:
                     continue
 
             if doc.get('targeted_for'):
@@ -786,7 +808,7 @@ class BasePublishService(BaseService):
         if doc.get(SEQUENCE):
             doc['headline'] = '{}={}'.format(doc['headline'], doc.get(SEQUENCE))
 
-    def _validate_package_contents(self, package, takes_package, validation_errors=[]):
+    def _validate_package_contents(self, package, takes_package, validation_errors):
         """
         If the item passed is a package this function will ensure that the unpublished content validates and none of
         the content is locked by other than the publishing session, also do not allow any killed or spiked content
@@ -822,7 +844,7 @@ class BasePublishService(BaseService):
                         validation_errors.append('Package cannot have Items with Embargo')
 
                     # don't validate items that already have published
-                    if doc[ITEM_STATE] not in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED]:
+                    if not is_published(doc):
                         validate_item = {'act': self.publish_type, 'type': doc[ITEM_TYPE], 'validate': doc}
                         errors = get_resource_service('validate').post([validate_item], headline=True)
                         if errors[0]:
@@ -831,6 +853,22 @@ class BasePublishService(BaseService):
                     # check the locks on the items
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
+
+    def _resolve_associations(self, item):
+        errors = []
+        search = get_resource_service('search')
+        for rel, ref in item.get('associations', {}).items():
+            lookup = {config.ID_FIELD: ref['uri']}
+            doc = search.find_one(req=None, **lookup)
+            if doc and is_published(doc):
+                ref.update(doc)
+            elif doc:
+                errors.append('related item is not published rel=%s item=%s' % (rel, ref['uri']))
+            else:
+                errors.append('related item not found rel=%s item=%s' % (rel, ref['uri']))
+        if errors:
+            raise ValidationError(errors)
+
 
 superdesk.workflow_state('published')
 superdesk.workflow_action(

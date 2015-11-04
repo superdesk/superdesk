@@ -187,7 +187,7 @@
 
             var orTerms = null;
             if (!_.isEmpty($scope.searchQuery)) {
-                orTerms = {'$or': [{'headline': $scope.searchQuery}, {'unique_name': $scope.searchQuery}]};
+                orTerms = {'$or': [{'headline':{'$regex': $scope.searchQuery, '$options':'-i'}}, {'unique_name': $scope.searchQuery}]};
             }
 
             var filterTerms = [];
@@ -212,7 +212,6 @@
                     '$and': andTerms
                 });
             }
-
             return api.publish_queue.query(criteria);
         }
 

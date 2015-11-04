@@ -103,6 +103,7 @@
 
 	.desk-container {
 		flex: 0 0 20%;
+		min-width: 250px;
 		.border-box();
 		position: relative;
 	}
@@ -244,6 +245,8 @@
 			.opacity(50);
 			i {
 				height: 32px;
+				width: 32px;
+				text-align: center;
 			}
 		}
 		.urgency {
@@ -251,6 +254,10 @@
 			float: left;
 			line-height: 30px;
 			margin-right: 10px;
+		}
+		time {
+			color:#999;
+			font-size: 11px;
 		}
 		.text {
 			height: 32px;
@@ -260,7 +267,8 @@
 			font-size: 12px;
 			padding-right: 10px;
 			.keywords {
-				  color: #216278;
+				  color: @sd-keyword;
+				  font-weight: 500;
 				  text-transform: uppercase;
 				  margin-right: 5px;
 			}
@@ -547,23 +555,27 @@
 			top: 70px; bottom: 80px;
 			overflow: auto;
 		}
-		.member-list {
-			ul {
-				> li {
-					position: relative;
-					float: left;
-					margin: 5px;
-					border: 1px solid rgba(0,0,0,0);
-					.border-radius(3px);
-					padding: 15px 10px;
-					width: 115px;
-					.avatar {
-						display: block;
-						width: 84px;
-						height: 84px;
-						float: none;
-						margin: 0 auto 10px;
-					}
+        .member-list {
+            ul {
+                > li {
+                    position: relative;
+                    float: left;
+                    margin: 5px;
+                    border: 1px solid rgba(0,0,0,0);
+                    .border-radius(3px);
+                    padding: 15px 10px;
+                    width: 115px;
+                    .avatar {
+                        display: block;
+                        width: 84px;
+                        height: 84px;
+                        float: none;
+                        margin: 0 auto 10px;
+                        &.initials {
+                            font-size: 34px;
+                            line-height: 84px;
+                        }
+                    }
 					.name {
 						text-align: center;
 						width: 115px;
@@ -594,5 +606,8 @@
 				}
 			}
 		}
+	}
+	textarea {
+		height: 44px;
 	}
 }

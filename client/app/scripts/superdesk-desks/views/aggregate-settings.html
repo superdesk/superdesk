@@ -8,11 +8,11 @@
     <div sd-wizard-step data-title="{{ :: 'Desks' | translate }}" data-code="desks">
         <div class="content">
             <div ng-if="widget">
-	            <span class="pull-right" sd-character-count data-item="widget.configuration.label" data-limit="30"></span>
-	            <div class="field">
-	                <label translate>View name</label>
-	                <input type="text" class="fullwidth-input" ng-model="widget.configuration.label" ng-keyup="handleEdit($event);" required>
-	            </div>
+                <span class="pull-right" sd-character-count data-item="widget.configuration.label" data-limit="30"></span>
+                <div class="field">
+                    <label translate>View name</label>
+                    <input type="text" class="fullwidth-input" ng-model="widget.configuration.label" ng-keyup="handleEdit($event);" required>
+                </div>
             </div>
             <div class="legend" translate>Select desks for view</div>
             <div class="desk" ng-repeat="desk in desks | orderBy: 'name'">
@@ -24,6 +24,9 @@
                     <li ng-repeat="stage in deskStages[desk._id]">
                         <span sd-check ng-model="editGroups[stage._id].selected" ng-click="setStageInfo(stage._id)"></span> {{stage.name}}
                     </li>
+                    <li>
+                        <span sd-check ng-model="editGroups[desk._id + ':output'].selected" ng-click="setDeskOutputInfo(desk._id + ':output')"></span> Output/Published
+                    </li>
                 </ul>
             </div>
             <div class="desk">
@@ -32,11 +35,6 @@
                 </div>
             </div>
             <div ng-show="" class="legend" translate>Select saved searches to view</div>
-
-        </div>
-        
-        <div class="modal-footer">
-            <button id="nextStages" class="btn btn-primary" ng-click="next()" translate>Next</button>
         </div>
     </div>
 
@@ -55,10 +53,7 @@
             <div ng-show="" class="legend" translate>Select saved searches for view</div>
 
         </div>
-        <div class="modal-footer">
-            <button id="previousSearches" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button id="nextSearches" class="btn btn-primary" ng-click="next()" translate>Next</button>
-        </div>
+
     </div>
 
     <div sd-wizard-step data-title="{{ :: 'Reorder Sections' | translate }}" data-code="reorder">
@@ -69,6 +64,9 @@
                     <div class="group-title" ng-if="item.type === 'stage'">
                         {{deskLookup[stageLookup[item._id].desk].name}} : <span>{{stageLookup[item._id].name}}</span>
                     </div>
+                    <div class="group-title" ng-if="item.type === 'deskOutput'">
+                        {{item.name}} : <span translate>Desk Output</span>
+                    </div>
                     <div class="group-title" ng-if="item.type === 'search'">
                         {{searchLookup[item._id].name}}
                     </div>
@@ -76,10 +74,6 @@
                 </li>
             </ul>
         </div>
-        <div class="modal-footer">
-            <button id="previousReorder" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button id="nextReorder" class="btn btn-primary" ng-click="next()" translate>Next</button>
-        </div>  
     </div>
 
     <div sd-wizard-step data-title="{{ :: 'Items Count' | translate }}" data-code="maxitems">
@@ -90,6 +84,9 @@
                     <div class="desk-title pull-left" ng-if="max.type === 'stage'">
                         {{deskLookup[stageLookup[max._id].desk].name}} : <span>{{stageLookup[max._id].name}}</span>
                     </div>
+                    <div class="desk-title pull-left" ng-if="max.type === 'deskOutput'">
+                        {{max.name}} : <span translate>Desk Output</span>
+                    </div>
                     <div class="desk-title pull-left" ng-if="max.type === 'search'">
                         {{searchLookup[max._id].name}}
                     </div>
@@ -98,10 +95,12 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button id="previousMax" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button class="btn btn-primary" ng-click="save()" translate>Done</button>
-        </div>  
     </div>
 
+</div>
+
+<div class="modal-footer">
+    <button id="previousBtn" class="btn pull-left" ng-if="step.current !== 'desks'" ng-click="previous()" translate>Previous</button>
+    <button id="nextBtn" class="btn" ng-if="step.current !== 'maxitems'" ng-click="next()" translate>Next</button>
+    <button class="btn btn-primary" ng-click="save()" translate>Done</button>
 </div>

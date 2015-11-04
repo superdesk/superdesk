@@ -188,10 +188,11 @@
          * Fetch single user from default cache, or make new api call
          *
          * @param {String} id of user
+         * @param {boolean} forced to bypass the cache
          * @returns {Promise}
          */
-        userservice.getUser = function(id) {
-            return api('users').getById(id, undefined, true);
+        userservice.getUser = function(id, forced) {
+            return api('users').getById(id, undefined, !forced);
         };
 
         /**
@@ -909,7 +910,7 @@
                     scope.dirty = false;
                     scope.errorMessage = null;
 
-                    scope.$watch('origUser', resetUser);
+                    resetUser(scope.origUser);
 
                     scope.$watchCollection('user', function(user) {
                         _.each(user, function(value, key) {
@@ -944,6 +945,7 @@
                             scope.user.picture_url = avatar; // prevent replacing Avatar which would get into diff
                         });
                     };
+
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
@@ -1011,19 +1013,23 @@
                     };
 
                     function resetUser(user) {
-                        scope.error = null;
-                        scope.user = _.create(user);
-                        scope.confirm = {password: null};
-                        scope.show = {password: false};
-                        scope._active = usersService.isActive(user);
-                        scope._pending = usersService.isPending(user);
-                        scope.profile = scope.user._id === session.identity._id;
-                        scope.userDesks = [];
-                        if (angular.isDefined(user) && angular.isDefined(user._links)) {
-                            desks.fetchUserDesks(user).then(function(response) {
-                                scope.userDesks = response._items;
-                            });
-                        }
+                        scope.dirty = false;
+                        return userList.getUser(user._id, true).then(function(u) {
+                            scope.error = null;
+                            scope.origUser = u;
+                            scope.user = _.create(u);
+                            scope.confirm = {password: null};
+                            scope.show = {password: false};
+                            scope._active = usersService.isActive(u);
+                            scope._pending = usersService.isPending(u);
+                            scope.profile = scope.user._id === session.identity._id;
+                            scope.userDesks = [];
+                            if (angular.isDefined(u) && angular.isDefined(u._links)) {
+                                desks.fetchUserDesks(u).then(function(response) {
+                                    scope.userDesks = response._items;
+                                });
+                            }
+                        });
                     }
 
                     scope.$on('user:updated', function(event, user) {
@@ -1044,17 +1050,17 @@
          */
         .directive('sdUserPreferences', [
             'api', 'session', 'preferencesService', 'notify', 'asset',
-            'metadata', 'modal', '$timeout', '$q',
+            'metadata', 'modal', '$timeout', '$q', 'userList',
         function (
             api, session, preferencesService, notify, asset, metadata, modal,
-            $timeout, $q
+            $timeout, $q, userList
         ) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, element, attrs) {
                     var orig;  // original preferences, before any changes
 
-                    preferencesService.get().then(function(result) {
+                    preferencesService.get(null, true).then(function(result) {
                         orig = result;
                         buildPreferences(orig);
 
@@ -1069,6 +1075,10 @@
                         scope.datelinePreview = scope.preferences['dateline:located'].located;
                     };
 
+                    userList.getUser(scope.user._id, true).then(function(u) {
+                        scope.user = u;
+                    });
+
                     /**
                     * Saves the preferences changes on the server. It also
                     * invokes additional checks beforehand, namely the
@@ -1080,7 +1090,11 @@
                         preSaveCategoriesCheck()
                         .then(function () {
                             var update = createPatchObject();
-                            return preferencesService.update(update);
+                            return preferencesService.update(update).then(function() {
+                                userList.getUser(scope.user._id, true).then(function(u) {
+                                    scope.user = u;
+                                });
+                            });
                         }, function () {
                             return $q.reject('canceledByModal');
                         })
@@ -1187,6 +1201,7 @@
                         buckets = [
                             'cities', 'categories', 'default_categories', 'locators'
                         ];
+
                         initNeeded = buckets.some(function (bucketName) {
                             var values = metadata.values || {};
                             return angular.isUndefined(values[bucketName]);
@@ -1310,22 +1325,26 @@
             };
         }])
 
-        /**
+		/**
          * @memberof superdesk.users
          * @ngdoc directive
          * @name sdUserPrivileges
          * @description
          *   This directive creates the Privileges tab on the user profile
-         *   panel, used for setting user permissions for various actions in
-         *   the system.
+         *   panel, allowing users to set various system preferences for
+         *   themselves.
          */
-        .directive('sdUserPrivileges', ['api', 'gettext', 'notify', function(api, gettext, notify) {
+        .directive('sdUserPrivileges', ['api', 'gettext', 'notify', 'userList', function(api, gettext, notify, userList) {
             return {
                 scope: {
                     user: '='
                 },
                 templateUrl: 'scripts/superdesk-users/views/user-privileges.html',
                 link: function(scope) {
+                    userList.getUser(scope.user._id, true).then(function(u) {
+                        scope.user = u;
+                    });
+
                     api('privileges').query().
                     then(function(result) {
                         scope.privileges = result._items;

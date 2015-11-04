@@ -1,7 +1,7 @@
 <div class="monitoring" ng-controller="AggregateCtrl as aggregate">
     <div class="subnav">
         <span class="flat-searchbar monitoring-backlink" ng-if="monitoring.singleGroup">
-            <button class="backlink" ng-click="monitoring.viewSingleGroup(null)"></button>
+            <button tooltip="{{ :: 'Back to original view' | translate }}" tooltip-placement="right" class="backlink" ng-click="monitoring.viewSingleGroup(null)"></button>
             <div class="separator-handler"></div>
         </span>
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: aggregate.monitoringSearch}">
@@ -60,7 +60,8 @@
             <div class="content-list" ng-if="!aggregate.loading">   
                 <div ng-if="!monitoring.singleGroup && type === 'monitoring'">
                     <div ng-repeat="group in aggregate.groups track by group._id"
-                        sd-monitoring-group data-group="group" data-view-type="'monitoring'"></div>
+                         sd-monitoring-group data-group="group"  data-num-items="group.max_items"
+                         data-view-type="group.type === 'deskOutput' ? 'deskOutput' : 'monitoring'"></div>
                 </div>
                 <div ng-if="type === 'spike'">
                     <div ng-repeat="group in aggregate.spikeGroups track by group._id | orderBy: name"

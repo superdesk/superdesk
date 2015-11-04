@@ -293,7 +293,7 @@ Feature: Move or Send Content to another desk
         """
         Then we get error 400
         """
-        {"_message": "Error:'Headline cannot be empty!' in outgoing rule:Validate Headline for stage:New"}
+        {"_message": "Error:'Headline cannot be empty!' in outgoing rule:Validate Headline for stage:Incoming Stage"}
         """
 
     @auth

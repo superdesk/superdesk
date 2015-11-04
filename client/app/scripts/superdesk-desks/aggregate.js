@@ -44,7 +44,7 @@
                 }));
         }))
         .then(angular.bind(this, function() {
-            return api.query('all_saved_searches', {})
+            return api.query('all_saved_searches', {'max_results': 200})
                .then(angular.bind(this, function(searchesList) {
                    this.searches = searchesList._items;
                    _.each(this.searches, function(item) {
@@ -128,6 +128,11 @@
                         self.groups.push({_id: item._id, type: 'stage', header: item.name});
                     }
                 });
+
+                var currentDesk = desks.getCurrentDesk();
+                if (currentDesk) {
+                    self.groups.push({_id: currentDesk._id + ':output', type: 'deskOutput', header: currentDesk.name});
+                }
             } else {
                 _.each(groups, function(item) {
                     if (item.type === 'stage' && !self.stageLookup[item._id]) {
@@ -266,14 +271,13 @@
                     var desk = self.deskLookup[stage.desk];
                     card.header = desk.name;
                     card.subheader = stage.name;
-                }
-
-                if (card.type === 'search') {
+                } else if (card.type === 'deskOutput') {
+                    var desk_id = card._id.substring(0, card._id.indexOf(':'));
+                    card.header = self.deskLookup[desk_id].name;
+                } else if (card.type === 'search') {
                     card.search = self.searchLookup[card._id];
                     card.header = card.search.name;
-                }
-
-                if (card.type === 'personal') {
+                } else if (card.type === 'personal') {
                     card.header = gettext('Personal');
                 }
             }
@@ -300,6 +304,14 @@
                     var stage = self.stageLookup[item._id];
                     self.editGroups[stage.desk] = {
                         _id: stage._id,
+                        selected: true,
+                        type: 'desk',
+                        order: 0
+                    };
+                } else if (item.type === 'deskOutput') {
+                    var desk_id = item._id.substring(0, item._id.indexOf(':'));
+                    self.editGroups[desk_id] = {
+                        _id: item._id,
                         selected: true,
                         type: 'desk',
                         order: 0
@@ -417,6 +429,11 @@
                     item._id = _id;
                     item.type = 'desk';
                     item.order = 0;
+
+                    var deskOutput = scope.editGroups[_id + ':output'];
+                    if (deskOutput) {
+                        deskOutput.selected = item.selected;
+                    }
                 };
 
                 scope.setStageInfo = function(_id) {
@@ -427,6 +444,16 @@
                         item.max_items = defaultMaxItems;
                         item.order = _.size(scope.editGroups);
                     }
+                };
+
+                scope.setDeskOutputInfo = function(_id) {
+                    var item = scope.editGroups[_id];
+                    item._id = _id;
+                    item.type = 'deskOutput';
+                    item.max_items = defaultMaxItems;
+                    item.order = _.size(scope.editGroups);
+
+                    scope.editGroups[_id] = item;
                 };
 
                 scope.setSearchInfo = function(_id) {
@@ -484,6 +511,7 @@
                             var stage = scope.stageLookup[item._id];
                             return scope.editGroups[stage.desk].selected;
                         }
+
                         if (item.type === 'personal') {
                             return scope.editGroups.personal.selected;
                         }
@@ -492,6 +520,14 @@
                     values = _.sortBy(values, function(item) {
                         return item.order;
                     });
+
+                    _.each(values, function(item) {
+                        if (item.type === 'deskOutput') {
+                            var desk_id = item._id.substring(0, item._id.indexOf(':'));
+                            item.name = desks.deskLookup[desk_id].name;
+                        }
+                    });
+
                     return values;
                 };
 

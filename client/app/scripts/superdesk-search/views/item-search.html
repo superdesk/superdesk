@@ -72,14 +72,20 @@
                 <input type="text" id="search-storytext" ng-model="meta.body_html">
             </div>
         </div>
-
+        <div class="field">
+            <label for="search-byline">
+                {{:: 'Byline' | translate}}
+            </label>
+            <input type="text" id="search-byline" ng-model="meta.byline">
+        </div>
         <div class="field" ng-if="repo.archive">
             <label for="search-creator">
                 {{:: 'Creator' | translate}}
             </label>
-            <input type="text" id="search-creator" ng-model="meta.original_creator">
+            <select id="search-creator" ng-model="meta.original_creator" ng-options="user._id  as user.display_name for user in userList">
+            <option value="" label=""></option>
+            </select>
         </div>
-
         <div class="field">
             <label for="search-subject">
                 {{:: 'Subject' | translate}}
@@ -113,6 +119,24 @@
         </div>
 
     </fieldset>
+        <fieldset ng-show="repo.search === 'paimg'">      
+        <div class="field">
+            <label for="search-headline">
+                {{:: 'Headline' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-headline" ng-model="meta.headline">
+            </div>
+        </div>       
+        <div class="field">
+            <label for="search-slugline">
+                {{:: 'Slugline(keywords)' | translate}}
+            </label>
+            <div class="control">
+                <input type="text" id="search-slugline" ng-model="meta.slugline">
+            </div>
+        </div>      
+    </fieldset> 
     <fieldset ng-show="repo.search === 'aapmm'">      
         <div class="field">
             <label for="search-slugline">
