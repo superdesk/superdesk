@@ -1,5 +1,5 @@
 <div ng-repeat="block in vm.blocks"
-     sd-text-editor-block
+     sd-text-editor-block='block'
      ng-change="vm.onBlockChange()"
      ng-model="block.body">
 </div>

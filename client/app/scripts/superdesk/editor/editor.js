@@ -554,7 +554,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['$timeout', function ($timeout) {
+    .directive('sdTextEditor', ['$timeout', 'lodash', function ($timeout, _) {
         return {
             scope: {type: '=', config: '=', language: '='},
             require: ['sdTextEditor', 'ngModel'],
@@ -562,6 +562,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
             controllerAs: 'vm',
             controller: function() {
                 var vm = this;
+                function Block(body) {
+                    this.body = body || '';
+                }
                 angular.extend(vm, {
                     blocks: [],
                     initEditor: function(model) {
@@ -577,11 +580,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                                     blocks.push(block);
                                     block = undefined;
                                 }
-                                blocks.push({body: element.innerHTML});
+                                if (element.innerHTML !== '' && element.innerHTML !== '<br>') {
+                                    blocks.push(new Block(element.innerHTML));
+                                }
                             // if it's not a paragraph, we update the current block
                             } else {
                                 if (block === undefined) {
-                                    block = {body: ''};
+                                    block = new Block();
                                 }
                                 // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
                                 // TODO: check if it works for comment
@@ -605,6 +610,16 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                             new_body += '<p>' + block.body + '</p>';
                         });
                         vm.model.$setViewValue(new_body);
+                    },
+                    getBlockPosition: function(block) {
+                        return _.indexOf(vm.blocks, block);
+                    },
+                    insertNewBlockAfter: function(block) {
+                        var new_block = new Block();
+                        vm.blocks.splice(vm.getBlockPosition(block) + 1, 0, new_block);
+                    },
+                    removeBlock: function(block) {
+                        vm.blocks.splice(vm.getBlockPosition(block), 1);
                     }
                 });
             },
@@ -682,17 +697,15 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
         }
 
         return {
-            scope: {type: '=', config: '=', language: '='},
+            scope: {type: '=', config: '=', language: '=', sdTextEditorBlock: '='},
             require: ['ngModel', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/block.html',
             link: function(scope, elem, attrs, controllers) {
                 var ngModel = controllers[0];
-                // var sdTextEditor = controllers[1];
+                var sdTextEditor = controllers[1];
                 scope.model = ngModel;
                 editor.registerScope(scope);
-
                 var TYPING_CLASS = 'typing';
-
                 var editorElem;
                 var updateTimeout;
                 var renderTimeout;
@@ -713,6 +726,10 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.model = ngModel;
 
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
+                    // focus on the node if empty, probably a new one
+                    if (scope.node.innerHTML === '') {
+                        scope.medium.selectElement(scope.node);
+                    }
 
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);
@@ -776,8 +793,15 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                     // create a new block when 'enter' key is pressed
                     editorElem.on('keyup', function(e) {
+                        // press enter, create a new block
                         if (e.keyCode === 13) {
-                            console.log('key', editorElem);
+                            sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock);
+                        }
+                        // backspace, remove the block if empty
+                        if (e.keyCode === 8) {
+                            if ($(scope.node).text()=== '') {
+                                sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                            }
                         }
                     });
 
