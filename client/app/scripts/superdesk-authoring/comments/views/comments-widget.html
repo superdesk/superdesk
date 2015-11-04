@@ -2,7 +2,7 @@
     <ul class="notification-list white">
         <li ng-repeat="comment in comments" ng-class="{active: comment._id === active}">
             <figure class="avatar">
-                <img sd-user-avatar data-src="comment.user.picture_url">
+                <img sd-user-avatar data-src="comment.user.picture_url" data-initials="comment.user.display_name">
             </figure>
             <div class="content">
                 <div class="text" sd-comment-text data-comment="comment" data-name="{{comment.user.display_name || comment.user.username}}" data-text="{{comment.text}}"></div>

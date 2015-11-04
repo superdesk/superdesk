@@ -13,7 +13,7 @@
 import traceback
 import datetime
 from urllib.parse import urlparse, urlunparse
-
+from superdesk.logging import logger
 import requests
 
 from superdesk.io.ingest_service import IngestService
@@ -99,12 +99,13 @@ class ReutersIngestService(IngestService):
 
     def get_ids(self, channel, last_updated, updated):
         """Get ids of documents which should be updated."""
-        ids = []
+        ids = set()
         payload = {'channel': channel, 'fieldsRef': 'id'}
         payload['dateRange'] = "%s-%s" % (self.format_date(last_updated), self.format_date(updated))
+        logger.info('Reuters requesting Date Range |{}| for channel {}'.format(payload['dateRange'], channel))
         tree = self.get_tree('items', payload)
         for result in tree.findall('result'):
-            ids.append(result.find('guid').text)
+            ids.add(result.find('guid').text)
         return ids
 
     def get_channels(self):

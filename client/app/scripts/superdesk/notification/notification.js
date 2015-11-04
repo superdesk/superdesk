@@ -87,8 +87,8 @@
     /**
      * Service for notifying user when websocket connection disconnected or connected.
      */
-    NotifyConnectionService.$inject = ['$rootScope', 'notify', 'gettext', '$timeout'];
-    function NotifyConnectionService($rootScope, notify, gettext, $timeout) {
+    NotifyConnectionService.$inject = ['$rootScope', 'notify', 'gettext', '$timeout', 'session'];
+    function NotifyConnectionService($rootScope, notify, gettext, $timeout, session) {
         var successTimeout, alertTimeout;
         var _this = this;
         _this.message = null;
@@ -106,6 +106,13 @@
             successTimeout = $timeout(function() {
                 notify.success(gettext(_this.message));
             }, 100);
+        });
+
+        $rootScope.$on('vocabularies:updated', function(event, data) {
+            if (!data.user || data.user !== session.identity._id) {
+                notify.error(gettext(data.vocabulary +
+                    ' vocabulary has been updated. Please re-login to see updated vocabulary values'));
+            }
         });
     }
 

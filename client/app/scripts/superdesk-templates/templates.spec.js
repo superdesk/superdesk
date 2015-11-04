@@ -15,6 +15,7 @@ describe('templates', function() {
             expect(ctrl.type).toBe('create');
             ctrl.name = 'test';
             ctrl.desk = 'news';
+            ctrl.hasCrops = true;
             ctrl.save();
             expect(api.save).toHaveBeenCalledWith('content_templates', {
                 template_name: 'test',

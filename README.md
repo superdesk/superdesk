@@ -34,7 +34,7 @@ $ ./scripts/docker-local-demo.sh
 
 Open in a browser `http://localhost:80` after the server will be ready.
 
-If you can't log in then you probably need to run `./scripts/docker-local-create-user.sh`.
+If you can't log in then you probably need to run `./scripts/docker-local-create-user.sh`. The default username is `admin` and the password is `admin`.
 
 If you're going to assign some hostname to the instance, you should also set it in the config file  [common.yml](./docker/common.yml) instead of `127.0.0.1`.
 

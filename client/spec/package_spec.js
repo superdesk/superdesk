@@ -1,12 +1,14 @@
-var route = require('./helpers/utils').route,
-    search = require('./helpers/search'),
+var search = require('./helpers/search'),
     authoring = require('./helpers/pages').authoring,
     monitoring = require('./helpers/monitoring');
 
-describe('Package', function() {
+describe('package', function() {
     'use strict';
 
-    beforeEach(route('/workspace/monitoring'));
+    beforeEach(function() {
+        monitoring.openMonitoring();
+        monitoring.turnOffWorkingStage();
+    });
 
     it('increment package version', function() {
         monitoring.actionOnItem('Edit', 2, 0);

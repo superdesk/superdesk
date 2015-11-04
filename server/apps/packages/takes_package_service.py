@@ -18,7 +18,7 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
     LAST_TAKE, REFS, MAIN_GROUP, SEQUENCE, RESIDREF
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE, EMBARGO
-from apps.archive.common import insert_into_versions
+from apps.archive.common import insert_into_versions, ITEM_CREATE, RE_OPENS
 from .package_service import get_item_ref, create_root_group
 
 logger = logging.getLogger(__name__)
@@ -26,9 +26,8 @@ logger = logging.getLogger(__name__)
 
 class TakesPackageService():
     # metadata field of take
-    fields_for_creating_take = ['headline', 'anpa_category', 'pubstatus',
-                                'slugline', 'urgency', 'subject', 'dateline',
-                                'place', 'priority', 'abstract', 'ednote', 'source']
+    fields_for_creating_take = ['headline', 'anpa_category', 'pubstatus', 'slugline', 'urgency', 'subject', 'dateline',
+                                'place', 'priority', 'abstract', 'ednote', 'source', 'body_footer']
 
     def get_take_package_id(self, item):
         """
@@ -92,7 +91,7 @@ class TakesPackageService():
         to['event_id'] = target.get('event_id')
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(ITEM_STATE) in PUBLISH_STATES:
-            to['anpa_take_key'] = '{} (reopens)'.format(take_key)
+            to['anpa_take_key'] = '{} ({})'.format(take_key, RE_OPENS)
         to[config.VERSION] = 1
         to[ITEM_STATE] = CONTENT_STATE.PROGRESS if to.get('task', {}).get('desk', None) else CONTENT_STATE.DRAFT
 
@@ -127,9 +126,10 @@ class TakesPackageService():
 
         ids = get_resource_service(ARCHIVE).post([takes_package])
         insert_into_versions(id_=ids[0])
-        original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target['_id'])
+        original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
-
+        get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
+                                                                              takes_package_id=ids[0])
         return ids[0]
 
     def link_as_next_take(self, target, link):
@@ -162,6 +162,8 @@ class TakesPackageService():
             del takes_package[config.ID_FIELD]
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
+            get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
+                                                                                  takes_package_id=takes_package_id)
 
         if link.get(SEQUENCE):
             archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})
@@ -219,7 +221,7 @@ class TakesPackageService():
         """
         package = self.get_take_package(item)
         if package:
-            refs = self._get_package_refs(package)
+            refs = self.get_package_refs(package)
             if refs:
                 ref = next((ref for ref in refs if ref.get(SEQUENCE) == 1
                             and ref.get(RESIDREF, '') != item.get(config.ID_FIELD, '')), None)
@@ -228,7 +230,7 @@ class TakesPackageService():
 
         return None
 
-    def _get_package_refs(self, package):
+    def get_package_refs(self, package):
         """
         Get refs from the takes package
         :param dict package: takes package
@@ -249,7 +251,7 @@ class TakesPackageService():
         :param int sequence: take sequence of the published take
         :return: True if takes are published in correct order else false.
         """
-        refs = self._get_package_refs(package)
+        refs = self.get_package_refs(package)
         if refs:
             takes = [ref.get(RESIDREF) for ref in refs if ref.get(SEQUENCE) < sequence]
             # elastic filter for the archive resource filters out the published items
@@ -268,7 +270,7 @@ class TakesPackageService():
         :param takes_package: takes package
         :return: List of publishes takes.
         """
-        refs = self._get_package_refs(takes_package)
+        refs = self.get_package_refs(takes_package)
         if not refs:
             return []
 

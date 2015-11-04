@@ -52,7 +52,7 @@ class GenerateHighlightsService(superdesk.Service):
                         if item:
                             html = item.get('body_html')
                             if html:
-                                soup = BeautifulSoup(html)
+                                soup = BeautifulSoup(html, "html.parser")
                                 item['first_paragraph_body_html'] = str(soup.p)
                             items.append(item)
 

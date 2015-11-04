@@ -73,6 +73,27 @@ ELASTICSEARCH_INDEX = env('ELASTICSEARCH_INDEX', 'superdesk')
 if env('ELASTIC_PORT'):
     ELASTICSEARCH_URL = env('ELASTIC_PORT').replace('tcp:', 'http:')
 
+ELASTICSEARCH_SETTINGS = {
+    'settings': {
+        'analysis': {
+            'filter': {
+                'remove_hyphen': {
+                    'pattern': '[-]',
+                    'type': 'pattern_replace',
+                    'replacement': ' '
+                }
+            },
+            'analyzer': {
+                'phrase_prefix_analyzer': {
+                    'type': 'custom',
+                    'filter': ['remove_hyphen', 'lowercase'],
+                    'tokenizer': 'keyword'
+                }
+            }
+        }
+    }
+}
+
 REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
 if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
@@ -188,6 +209,7 @@ INSTALLED_APPS.extend([
     'apps.prepopulate',
     'apps.legal_archive',
     'apps.search',
+    'apps.saved_searches',
     'apps.privilege',
     'apps.rules',
     'apps.highlights',
@@ -198,6 +220,7 @@ INSTALLED_APPS.extend([
     'apps.duplication',
     'apps.aap.import_text_archive',
     'apps.aap_mm',
+    'apps.pa_img',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -205,9 +228,10 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
+    'apps.archive_broadcast',
 
     'superdesk.io.subjectcodes',
-    'pa.topics',
+    'pa.topics'
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

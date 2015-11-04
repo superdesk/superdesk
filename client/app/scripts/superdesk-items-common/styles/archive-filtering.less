@@ -69,6 +69,13 @@
 		padding: 20px; 
 		overflow: auto;
 		padding-bottom: @bottom-view-padding;
+		.edit-search {
+			font-weight: 500;
+		    font-size: 15px;
+		    margin: -20px -20px 15px -15px;
+		    padding: 5px;
+		    border-bottom: 1px solid @gray;
+		}
 	}
 
 	.toggle-box {
@@ -191,9 +198,13 @@
 	.content-type-filters {
 		li {
 			position: relative;
+			line-height: 16px;
+			margin-bottom: 4px;
+			padding: 2px 3px 2px 5px;
 
 			i[class*="filetype-icon-"] {
-				margin-left: -8px;
+				margin:0 8px 0 0;
+				float: left;
 			}
 			.sd-checkbox {
 				position: absolute;
@@ -246,6 +257,48 @@
 		}
 	}
 
+	.search-filters {
+		position: relative;
+		margin: 1px 0px 20px;
+		height: @nav-height;
+		input {
+			height: @nav-height;
+			border-width: 0 0 1px 0 !important;
+			padding-left: 15px;
+		}
+		button {
+			position: absolute;
+			top: 0; right: 0;
+			height: @nav-height;
+			width: @nav-height - 15px;
+			border: 0;
+			background: none;
+			i {
+				width: 18px;
+  				background-repeat: no-repeat;
+  				margin-top: 5px;
+			}
+		}
+	}
+
+	.save-search-panel {
+	    background-color: #fff;
+	    margin: -20px 0px 0px -10px;
+	    padding: 10px;
+	    float: left;
+	    width: 100%;
+		.title {
+			text-transform: uppercase;
+			font-size: 13px;
+    		font-weight: 500;
+    		color: #666;
+		}
+		input {
+			border-width: 1px 1px 1px 1px !important;
+			margin-bottom: 10px;
+		}
+	}
+
 	.date-filter {
 
 		.predefined-dates {
@@ -278,15 +331,31 @@
 			top: @nav-height;
 			position: absolute;
 			left: 0; right: 0;
-			bottom: @bottom-view-padding;
 			overflow: auto;
 			ul {
 				> li {
 					display: block;
 					padding: 10px 15px 10px 20px;
 					border-bottom: 1px solid #ddd;
-					.delete {
+					float: left;
+					width: 88%;
+					.search-item {
+						float: left;
+						width: 60%;
+						i {
+							color: @gray;
+						}
+						.search-description {
+							font-size: 11px;
+							color: @grayLight;
+						}
+					}
+					.search-button {
 						float: right;
+						width: 25%;
+					}
+					.delete {
+						float: left;
 						border: 0;
 						background: 0;
 						display: none;
@@ -301,7 +370,16 @@
 					&.active {
 						background: @sd-hover;
 					}
+					&:last-child {
+						margin-bottom: 20px;
+					}
 				}
+
+			}
+			.title {
+				margin: 10px;
+				font-weight: 500;
+				font-size: 14px;
 			}
 		}
 		.edit-saved-searches {

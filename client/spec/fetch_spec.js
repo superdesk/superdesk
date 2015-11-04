@@ -4,7 +4,7 @@
 var workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content;
 
-describe('Fetch', function() {
+describe('fetch', function() {
     beforeEach(function() {
         workspace.open();
         workspace.switchToDesk('SPORTS DESK');

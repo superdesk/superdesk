@@ -1,33 +1,36 @@
+<div class="search-filters">
+	<input id="search_saved_searches" ng-model="searchText" type="text" placeholder="{{:: 'Search saved searches' | translate}}">
+	<button id="search_saved_searches_button" ng-click="filter()">
+		<i class="svg-icon-right"></i>
+	</button>
+</div>   
 
-<div class="header">
-    <button class="btn btn-info" ng-click="edit()" translate>Save search</button>
-</div>
 <div class="list">
+	<div class="title" translate>Private Saved Searches</div>
 	<ul>
-	    <li ng-repeat="view in views | orderBy:'name' " ng-click="select(view)" ng-class="{active: view == selected}">
-	    	{{ view.name }}
-	    	<button class="delete" ng-click="remove(view); $event.stopPropagation();"><i class="icon-trash"></i></button>
+	    <li ng-repeat="search in userSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
+	    	<div class="search-item">
+	    		<div class="search-name">{{:: search.name }} <i ng-if="search.is_global" translate>[Global]</i></div>
+	    		<div class="search-description">{{:: search.description }}</div>
+	    	</div>
+	    	<div class="search-button">
+		    	<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}"><i class="icon-pencil"></i></button>
+		    	<button class="delete" ng-click="remove(search); $event.stopPropagation();" title="{{:: 'Delete search' | translate }}"><i class="icon-trash"></i></button>
+	    	</div>
+	    </li>
+	</ul>
+	<div class="title" translate>Global Saved Searches</div>
+	<ul>
+	    <li ng-repeat="search in globalSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
+	    	<div class="search-item">
+	    		<div class="search-name">{{:: search.name }} <i>by {{:: userLookup[search.user].display_name }}</i></div>
+	    		<div class="search-description">{{:: search.description }}</div>
+	    	</div>
+	    	<div class="search-button">
+	    		<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}" ng-if="privileges.global_saved_searches"><i class="icon-pencil"></i></button>
+	    		<button class="delete" ng-click="remove(search); $event.stopPropagation();" title="{{:: 'Delete search' | translate }}" ng-if="privileges.global_saved_searches"><i class="icon-trash"></i></button>
+	    	</div>
 	    </li>
 	</ul>
 </div>
 
-<div class="mini-modal edit-saved-searches" ng-if="editSearch">
-	<div class="title" translate>Save search</div>
-	<div class="close" ng-click="cancel()">
-		<i class="icon-close-small"></i>
-	</div>
-	<div class="content">
-		<form name="viewsForm">
-			<fieldset>
-				<div class="field">
-					<label>Name</label>
-                    <input type="text" class="fullwidth-input" ng-model="editSearch.name" required>
-				</div>
-			</fieldset>
-		</form>
-	</div>
-	<div class="footer">
-		<button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-		<button class="btn btn-primary" ng-click="save(editSearch)" ng-disabled="!viewsForm.$valid" translate>Ok</button>
-	</div>
-</div>

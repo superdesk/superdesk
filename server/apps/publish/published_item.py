@@ -356,7 +356,9 @@ class PublishedItemService(BaseService):
 
         item_refs = (ref for group in package.get(GROUPS, []) for ref in group.get(REFS, []) if RESIDREF in ref)
         for ref in item_refs:
-            query = {'$and': [{'item_id': ref[RESIDREF]}, {config.VERSION: ref[config.VERSION]}]}
+            query = {'$and': [{'item_id': ref[RESIDREF]}]}
+            if ref.get(config.VERSION):
+                query['$and'].append({config.VERSION: ref[config.VERSION]})
             items = self.get_from_mongo(req=None, lookup=query)
             for item in items:
                 # If allow_post_publish_actions is False then the item has been copied to Legal Archive already

@@ -28,7 +28,7 @@ def reuters_derive_dateline(item, **kwargs):
     try:
         html = item.get('body_html')
         if html:
-            soup = BeautifulSoup(html)
+            soup = BeautifulSoup(html, "html.parser")
             pars = soup.findAll('p')
             if len(pars) >= 2:
                 if BYLINE in item and item.get(BYLINE) in pars[0].get_text():

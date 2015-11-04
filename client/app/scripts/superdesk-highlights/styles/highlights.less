@@ -104,7 +104,7 @@
             .opacity(50);
             background-color: transparent;
             i { margin-right: 0; }
-            &:hover {
+            &:hover, &:focus {
                 background-color: transparent;
                 .opacity(100);
             }
@@ -127,6 +127,17 @@
             color: @white;
             margin: 0;
             padding: 0;
+        }
+    }
+}
+
+.highlights-dropdown {
+    .dropdown-menu {
+        .menu-label {
+            text-align: left;
+            line-height: 16px;
+            padding: 0 16px;
+            margin-bottom: 5px;
         }
     }
 }

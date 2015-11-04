@@ -241,4 +241,22 @@ describe('itemListService', function() {
             terms: {type: ['text']}
         });
     }));
+
+    it('query using the related items', inject(function($rootScope, itemListService, api) {
+        var queryParams = null;
+
+        itemListService.fetch({
+            keyword: 'k',
+            related: true
+        })
+        .then(function(params) {
+            queryParams = params;
+        });
+        $rootScope.$digest();
+        expect(queryParams.source.query.filtered.query).toEqual({
+            match_phrase_prefix: {
+                'slugline.phrase': 'k'
+            }
+        });
+    }));
 });

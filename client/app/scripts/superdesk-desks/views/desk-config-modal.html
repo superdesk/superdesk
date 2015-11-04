@@ -51,12 +51,12 @@
                                 </select>
                             </div>
                         </fieldset>
-                        <span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
-                        <p ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</p>
-                        <span ng-show="_error" translate>There was a problem, desk not created/updated.</span>
+                        <span class="alert-danger" ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</span>
+                        <span class="alert-danger" ng-show="_error">{{ _errorMessage }}</span>
                     </div>
                     <div class="modal-footer">
-                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
+                        <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Save & Continue</button>
+                        <button id="done-general" class="btn btn-primary" ng-click="save(desk.edit, true)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Done</button>
                     </div>
                 </form>
             </div>
@@ -84,14 +84,14 @@
                                         </span>
 
                                         <span ng-if="isActive(stage)">
-                                            <input type="text" id="edit-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" />
+                                            <input type="text" id="edit-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" required />
                                         </span>
 
                                         <div class="actions" ng-if="!editStage">
                                             <button ng-click="edit(stage)" sd-focus-element data-target="#edit-stage">
                                                 <i class="icon-pencil" ></i>
                                             </button>
-                                            <button ng-if="!stage.default_incoming" ng-click="remove(stage)">
+                                            <button ng-if="!stage.working_stage && !stage.default_incoming" ng-click="remove(stage)">
                                                 <i class="icon-trash"></i>
                                             </button>
                                         </div>
@@ -100,13 +100,13 @@
                                 <span ng-if="editStage && !editStage._id" sd-character-count data-item="editStage.name" data-limit="limits.stage"></span>
                                 <div class="stage editable" ng-show="editStage && !editStage._id">
                                     <span>
-                                        <input type="text" id="insert-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" />
+                                        <input type="text" id="insert-stage" ng-model="editStage.name" required ng-keyup="handleEdit($event);" />
                                     </span>
                                 </div>
                             </div>
                             <div ng-if="editStage">
                                 <button class="btn" ng-click="cancel()" translate>Cancel</button>
-                                <button class="btn btn-primary" ng-click="save()" ng-disabled="!editStage.task_status || _errorLimits" translate>Save</button>
+                                <button class="btn btn-primary" ng-click="save()" ng-disabled="!enableSave()" translate>Save</button>
                             </div>
                             <p ng-if="message">{{ message }}</p>
                             <p ng-show="_errorUniqueness" translate>Stage with name "{{ editStage.name }}"" already exists.</p>
@@ -117,12 +117,15 @@
                     <div class="col">
                         <div class="row" ng-if="selected && !editStage">
                             <div class="header"  translate>Stage Details</div>
+                            <label class="label globalread" ng-if="selected.working_stage === null || selected.working_stage">
+                                {{:: 'Working Stage' }}
+                            </label>
+                            <label class="label globalread" ng-if="selected.default_incoming === null || selected.default_incoming">
+                                {{:: 'Incoming Stage' }}
+                            </label>
                             <label translate>Global Read: <label class="label globalread">
                                 {{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
                             </label></label>
-                            <label class="label globalread" ng-if="selected.default_incoming == null || selected.default_incoming">
-                                {{:: 'Default incomming stage' }}
-                            </label>
                             <label translate>Stage description: {{ selected.description}}</label>
                             <label translate>Content expiry:</label>
                             <div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
@@ -137,7 +140,11 @@
                                 <span sd-switch ng-model="editStage.is_visible"></span>
                             </div>
                             <div class="field">
-                                <label>{{:: 'Default incoming stage' | translate }}</label>
+                                <label>{{:: 'Working Stage' | translate }}</label>
+                                <span sd-switch ng-model="editStage.working_stage"></span>
+                            </div>
+                            <div class="field">
+                                <label>{{:: 'Incoming Stage' | translate }}</label>
                                 <span sd-switch ng-model="editStage.default_incoming"></span>
                             </div>
                             <div class="field">
@@ -166,8 +173,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Next</button>
+                    <button id="next-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next()" translate>Continue</button>
+                    <button id="done-stages" class="btn btn-primary" ng-disabled="message != null" ng-click="next(true)" translate>Done</button>
                 </div>
             </div>
         </div>
@@ -182,7 +189,7 @@
                             <ul>
                                 <li ng-repeat="user in deskMembers track by user._id | orderBy: 'display_name'" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
                                     <i class="icon-close-small" ng-click="remove(user)"></i>
-                                    <figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
+                                    <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name"></figure>
                                     <div class="name">{{:: user.display_name}}</div>
                                 </li>
                             </ul>
@@ -190,8 +197,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
-                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Next</button>
+                    <button id="next-people" class="btn btn-primary" ng-click="save()" ng-disabled="message != null" translate>Save & Continue</button>
+                    <button id="done-people" class="btn btn-primary" ng-click="save(true)" ng-disabled="message != null" translate>Done</button>
                 </div>
             </div>
         </div>
@@ -205,7 +212,6 @@
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn pull-left" ng-click="previous()" translate>Previous</button>
                     <button id="save" class="btn btn-primary" ng-click="save()" translate>Done</button>
                 </div>
             </div>
