@@ -1465,9 +1465,9 @@ def step_we_get_email(context):
         assert check_if_email_sent(context, email['body'])
 
 
-@then('we get no email')
-def step_we_get_no_email(context):
-    assert len(context.outbox) == 0
+@then('we get {count} emails')
+def step_we_get_no_email(context, count):
+    assert len(context.outbox) == int(count)
 
 
 def check_if_email_sent(context, body):
