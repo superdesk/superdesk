@@ -21,7 +21,6 @@ from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
 from superdesk.metadata.utils import item_url
 from superdesk.metadata.item import CONTENT_TYPE, CONTENT_STATE, ITEM_TYPE, ITEM_STATE
-from superdesk.metadata.packages import RESIDREF
 from superdesk import get_resource_service, config
 from superdesk.errors import SuperdeskApiError
 from apps.archive.archive import SOURCE
