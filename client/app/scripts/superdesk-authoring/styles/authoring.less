@@ -56,53 +56,66 @@
 	}
 }
 
+.lock-avatar {
+    margin-right: 10px;
+    margin-left: -6px;
+    .avatar-with-info {
+        margin-top: 2px;
+        cursor: pointer; 
+       .logged-info {
+            background-color: #cf0000;
+            border: 1px solid #cf0000;
+            box-shadow: 0px 0 0 2px @subnav-authoring;
+        }
+    }
+    .dropdown-menu {
+        padding: 10px;
+        top: -19px;
+        text-align: center;
+        .avatar {
+            display: inline-block;
+            margin: 10px 0;
+            float: none;
+        }
+        button {
+            text-align: center;
+            margin-top: 15px;
+        }
+    }
+    .menu-label {
+        padding-left: 0;
+    }
+}
+
 .subnav {
-	.button-stack > .btn {
-		padding: 8px 20px;
-		height: 28px;
-	}
-	.authoring-topbar {
-		height: 30px;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
-                max-width: 55%;
-		.lock-info {
-			background: rgba(229,28,35,0.3);
-			width: 30px;
-			height: 30px;
-			line-height: 26px;
-			text-align: center;
-			.border-radius(50%);
-			margin-right: 10px;
-		}
-		.lock-text {
-			color: #e51c23;
-			font-size: 14px;
-			line-height: 30px;
-			.text-light();
-			b {
-                            .text-semibold();
-			}
-		}
-		.stage {
-                    font-size: 10px;
-                    .text-light();
-                    letter-spacing: 0.035em;
-                    line-height: 29px;
-                    color: @gray;
-                    border: 0;
-                    background-color: transparent;
-                    text-transform: uppercase;
-                    b {
-                        color: @grayDark;
-                        .text-semibold();
-                    }
-		}
-                &.has-highlights {
-                    overflow: visible;
-                }
-	}
+    .button-stack > .btn {
+        padding: 8px 20px;
+        height: 28px;
+    }
+    .authoring-topbar {
+        height: 30px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 55%;
+        .stage {
+            font-size: 10px;
+            .text-light();
+            letter-spacing: 0.035em;
+            line-height: 29px;
+            color: @gray;
+            border: 0;
+            background-color: transparent;
+            text-transform: uppercase;
+            b {
+                color: @grayDark;
+                .text-semibold();
+            }
+        }
+        &.has-highlights {
+            overflow: visible;
+        }
+    }
 }
 
 .auto-save {
