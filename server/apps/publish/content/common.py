@@ -29,7 +29,8 @@ from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk import get_resource_service
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId
+from apps.archive.common import validate_schedule, ITEM_OPERATION, convert_task_attributes_to_objectId, is_genre, \
+    BROADCAST_GENRE
 from superdesk.utc import utcnow
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.publish.formatters import get_formatter
@@ -165,7 +166,8 @@ class BasePublishService(BaseService):
 
             if original[ITEM_TYPE] != CONTENT_TYPE.COMPOSITE:
                 # if target_for is set the we don't to digital client.
-                if not updates.get('targeted_for', original.get('targeted_for')):
+                if not (updates.get('targeted_for', original.get('targeted_for')) or
+                        is_genre(original, BROADCAST_GENRE)):
                     # check if item is in a digital package
                     package = self.takes_package_service.get_take_package(original)
 
@@ -188,7 +190,12 @@ class BasePublishService(BaseService):
                             queued_digital = self._publish_takes_package(package, updates, original, last_updated)
 
                 # queue only text items
-                media_type = SUBSCRIBER_TYPES.WIRE if package else None
+                media_type = None
+                updated = deepcopy(original)
+                updated.update(updates)
+                if package or is_genre(updated, BROADCAST_GENRE):
+                    media_type = SUBSCRIBER_TYPES.WIRE
+
                 queued_wire = self.publish(doc=original, updates=updates, target_media_type=media_type)
 
                 queued = queued_digital or queued_wire

@@ -111,8 +111,8 @@ class ArchiveSpikeService(BaseService):
         :param item:
         :return:
         """
-        broadcast_item = get_resource_service('archive_broadcast').get_broadcast_story_from_master_story(item)
-        if broadcast_item:
+        broadcast_items = get_resource_service('archive_broadcast').get_broadcast_items_from_master_story(item)
+        for broadcast_item in broadcast_items:
             try:
                 updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
                 resolve_document_version(updates, ARCHIVE, 'PATCH', broadcast_item)
