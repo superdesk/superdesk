@@ -372,6 +372,18 @@
                         }
                     });
 
+                    scope.$on('item:highlight', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item_id) {
+                            if (!scope.item.highlights) {
+                                scope.item.highlights = [data.highlight_id];
+                            } else if (scope.item.highlights.indexOf(data.highlight_id) === -1){
+                                scope.item.highlights = [data.highlight_id].concat(scope.item.highlights);
+                            } else if (!scope.item.multiSelect){
+                                scope.item.highlights = _.without(scope.item.highlights, data.highlight_id);
+                            }
+                        }
+                    });
+
                     scope.clickAction =  function clickAction(item) {
                         if (typeof scope.preview === 'function') {
                             $location.search('fetch', null);

@@ -1309,11 +1309,15 @@
                     }
                 });
 
-                $scope.$on('item:mark', function(e, data) {
+                $scope.$on('item:highlight', function(e, data) {
                     if ($scope.item._id === data.item_id){
-                        $scope.item.highlights = $scope.item.highlights.indexOf(data.highlight_id) >= 0 ?
-                            _.without($scope.item.highlights, data.highlight_id) :
-                            [data.highlight_id].concat($scope.item.highlights);
+                        if (!$scope.item.highlights) {
+                            $scope.item.highlights = [data.highlight_id];
+                        } else if ($scope.item.highlights.indexOf(data.highlight_id) === -1){
+                            $scope.item.highlights = [data.highlight_id].concat($scope.item.highlights);
+                        } else if (!$scope.item.multiSelect){
+                            $scope.item.highlights = _.without($scope.item.highlights, data.highlight_id);
+                        }
                     }
                 });
 
