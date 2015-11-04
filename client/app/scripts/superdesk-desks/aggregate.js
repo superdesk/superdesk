@@ -44,7 +44,7 @@
                 }));
         }))
         .then(angular.bind(this, function() {
-            return api.query('all_saved_searches', {})
+            return api.query('all_saved_searches', {'max_results': 200})
                .then(angular.bind(this, function(searchesList) {
                    this.searches = searchesList._items;
                    _.each(this.searches, function(item) {
