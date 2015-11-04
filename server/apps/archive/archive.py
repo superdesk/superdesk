@@ -282,9 +282,6 @@ class ArchiveService(BaseService):
                          type=updated[ITEM_TYPE])
 
         push_content_notification([updated, original])
-        if hasattr(app, 'on_broadcast_master_updated'):
-            app.on_broadcast_master_updated(ITEM_UPDATE, original)
-
 
     def on_replace(self, document, original):
         document[ITEM_OPERATION] = ITEM_UPDATE
