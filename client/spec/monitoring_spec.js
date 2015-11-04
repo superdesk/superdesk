@@ -396,7 +396,12 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
 
-        monitoring.fetchAs(0, 0);
+        monitoring.openFetchAsOptions(0, 0);
+
+        expect(element(by.id('publishScheduleTimestamp')).isPresent()).toBe(false);
+        expect(element(by.id('embargoScheduleTimestamp')).isPresent()).toBe(false);
+
+        monitoring.clickOnFetchButton();
 
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);

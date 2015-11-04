@@ -391,9 +391,17 @@ function Monitoring() {
 
     this.uploadModal = element(by.className('upload-media'));
 
-    this.fetchAs = function(group, item) {
+    this.openFetchAsOptions = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
+    };
+
+    this.clickOnFetchButton = function() {
         return element(by.css('[ng-click="send()"]')).click();
+    };
+
+    this.fetchAs = function(group, item) {
+        this.openFetchAsOptions(group, item);
+        return this.clickOnFetchButton();
     };
 
     this.fetchAndOpen = function(group, item) {
