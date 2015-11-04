@@ -9,7 +9,8 @@
             {field: 'urgency', label: gettext('News Value')},
             {field: 'anpa_category.name', label: gettext('Category')},
             {field: 'slugline', label: gettext('Slugline')},
-            {field: 'priority', label: gettext('Priority')}
+            {field: 'priority', label: gettext('Priority')},
+            {field: 'genre.name', label: gettext('Genre')}
         ];
 
         function getSort() {
@@ -170,6 +171,10 @@
                     query.post_filter({terms: {'anpa_category.name': JSON.parse(params.category)}});
                 }
 
+                if (params.genre) {
+                    query.post_filter({terms: {'genre.name': JSON.parse(params.genre)}});
+                }
+
                 if (params.desk) {
                     query.post_filter({terms: {'task.desk': JSON.parse(params.desk)}});
                 }
@@ -308,7 +313,8 @@
             'week': 1,
             'month': 1,
             'desk': 1,
-            'stage':1
+            'stage':1,
+            'genre': 1
         };
 
         function initSelectedParameters (parameters) {
@@ -499,7 +505,8 @@
                             'credit': {},
                             'category': {},
                             'urgency': {},
-                            'priority': {}
+                            'priority': {},
+                            'genre': {}
                         };
                     };
 
@@ -522,6 +529,12 @@
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                 if (cat.key !== '') {
                                     scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
+
+                            _.forEach(scope.items._aggregations.genre.buckets, function(g) {
+                                if (g.key !== '') {
+                                    scope.aggregations.genre[g.key] = g.doc_count;
                                 }
                             });
 

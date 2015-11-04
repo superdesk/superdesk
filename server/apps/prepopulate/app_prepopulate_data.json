@@ -542,6 +542,7 @@
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
+            "genre": [{"is_active":true, "name":"Sidebar", "value":"Sidebar"}],
             "version": "1",
             "versioncreated": "2015-01-05T10:10:10+0000",
             "_current_version" : 0,
