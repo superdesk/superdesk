@@ -131,8 +131,8 @@ function GlobalSearch() {
      */
     this.checkMarkedForHighlight = function(highlight, item) {
         var crtItem = this.getItem(item);
-        expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip-html-unsafe'))
+        expect(crtItem.element(by.className('icon-star')).isDisplayed()).toBeTruthy();
+        expect(crtItem.element(by.className('icon-star')).getAttribute('tooltip-html-unsafe'))
             .toContain(highlight);
     };
 
@@ -164,6 +164,13 @@ function GlobalSearch() {
     };
 
     /**
+     * Open the saved search tab
+     */
+    this.openSavedSearchTab = function() {
+        element(by.id('saved_searches_tab')).click();
+    };
+
+    /**
      * Open the search Parameters from
      */
     this.openParameters = function() {
@@ -177,6 +184,15 @@ function GlobalSearch() {
      */
     this.selectDesk = function(selectId, deskName) {
         element(by.id(selectId)).element(by.css('option[label="' + deskName + '"]')).click();
+    };
+
+    /**
+     * Select the user passed user display name from the passed <select> element
+     * @param {string} selectId - Id of the <select> element
+     * @param {string} userName - Name of the desk.
+     */
+    this.selectCreator = function(selectId, userName) {
+        element(by.id(selectId)).element(by.css('option[label="' + userName + '"]')).click();
     };
 
     /**
@@ -198,11 +214,28 @@ function GlobalSearch() {
     };
 
     /**
+     * Get the Genre Elements
+     * @return {promise} Genre elements
+     */
+    this.getGenreElements = function() {
+        return element.all(by.repeater('(key,value) in aggregations.genre'));
+    };
+
+    /**
      * Get the Priority Element by Index
      * @param {number} index
      * @return {promise} Priority element
      */
     this.getPriorityElementByIndex = function(index) {
         return this.getPriorityElements().get(index);
+    };
+
+    /**
+     * Get the Genre Element by Index
+     * @param {number} index
+     * @return {promise} Genre element
+     */
+    this.getGenreElementByIndex = function(index) {
+        return this.getGenreElements().get(index);
     };
 }

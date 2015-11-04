@@ -12,7 +12,8 @@ function getChromeOptions() {
     return chromeOptions;
 }
 
-exports.config = {
+var config = {
+    allScriptsTimeout: 20000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
@@ -45,5 +46,20 @@ exports.config = {
                 consolidateAll: true
             })
         );
+        function CustomReporter() {
+            this.specDone = function(result) {
+                if (result.failedExpectations.length > 0) {
+                    var name = result.fullName.split(' ');
+                    var stack = result.failedExpectations[0].stack;
+                    if (stack.indexOf(name) === 0) {
+                        console.log('at Object.<anonymous> (spec/' + name[0] + '_spec.js:0:0)');
+                    }
+                }
+            };
+        }
+        jasmine.getEnv().addReporter(new CustomReporter());
     }
 };
+
+exports.config = config;
+module.exports = config;

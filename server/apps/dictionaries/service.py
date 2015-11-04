@@ -103,6 +103,32 @@ class DictionaryService(BaseService):
             if 'content' in doc:
                 doc['content'] = decode_dict(doc['content'])
 
+    def get_base_language(self, lang):
+        if lang and lang.find('-') > 0:
+            return lang.split('-')[0]
+
+    def get_dictionaries(self, lang):
+        """
+        Returns all the active dictionaries. If both the language (en-AU)
+        and the base language (en) available, it will return the dict with language
+        :param lang:
+        :return:
+        """
+        languages = [{'language_id': lang}]
+        base_language = self.get_base_language(lang)
+        if base_language:
+            languages.append({'language_id': base_language})
+
+        lookup = {'$and': [{'$or': languages},
+                           {'$or': [{'is_active': {'$exists': 0}}, {'is_active': 'true'}]}]}
+        dicts = list(self.get(req=None, lookup=lookup))
+        langs = [d['language_id'] for d in dicts]
+
+        if base_language and base_language in langs and lang in langs:
+            dicts = [d for d in dicts if d['language_id'] != base_language]
+
+        return dicts
+
     def get_model_for_lang(self, lang):
         """Get model for given language.
 
@@ -111,8 +137,8 @@ class DictionaryService(BaseService):
         :param lang: language code
         """
         model = {}
-        lookup = {'$and': [{'language_id': lang}, {'is_active': {'$in': ['true', None]}}]}
-        dicts = self.get(req=None, lookup=lookup)
+        dicts = self.get_dictionaries(lang)
+
         for _dict in dicts:
             if 'content' in _dict:
                 content = decode_dict(_dict['content'])

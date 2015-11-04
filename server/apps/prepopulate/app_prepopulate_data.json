@@ -129,7 +129,7 @@
 		    "task_status" : "todo",
 		    "content_expiry" : 43200,
 		    "name" : "one",
-		    "desk_order" : 2
+		    "desk_order" : 3
 		},
         "resource": "stages",
         "username": "admin",
@@ -144,7 +144,7 @@
 		    "task_status" : "in_progress",
 		    "content_expiry" : 43200,
 		    "name" : "two",
-		    "desk_order" : 3
+		    "desk_order" : 4
 		},
         "resource": "stages",
         "username": "admin",
@@ -159,7 +159,7 @@
 		    "task_status" : "done",
 		    "content_expiry" : 43200,
 		    "name" : "three",
-		    "desk_order" : 4
+		    "desk_order" : 5
 		},
         "resource": "stages",
         "username": "admin",
@@ -174,7 +174,7 @@
 		    "task_status" : "todo",
 		    "content_expiry" : 43200,
 		    "name" : "one",
-		    "desk_order" : 2
+		    "desk_order" : 3
 		},
         "resource": "stages",
         "username": "admin",
@@ -189,7 +189,7 @@
 		    "task_status" : "in_progress",
 		    "content_expiry" : 43200,
 		    "name" : "two",
-		    "desk_order" : 3
+		    "desk_order" : 4
 		},
         "resource": "stages",
         "username": "admin",
@@ -204,7 +204,7 @@
 		    "task_status" : "done",
 		    "content_expiry" : 43200,
 		    "name" : "three",
-		    "desk_order" : 4
+		    "desk_order" : 5
 		},
         "resource": "stages",
         "username": "admin",
@@ -326,6 +326,38 @@
 
     {
         "data": {
+            "_id": "crop_sizes",
+            "items": [
+                {"is_active": true, "name": "4-3", "width": 800, "height": 600},
+                {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies crop_sizes-"
+    },
+
+    {
+        "data": {
+            "_id": "genre",
+            "items": [
+                {"is_active": true, "name": "Article (news)", "value": "Article"},
+                {"is_active": true, "name": "Sidebar", "value": "Sidebar"},
+                {"is_active": true, "name": "Factbox", "value": "Factbox"},
+                {"is_active": true, "name": "Feature", "value": "Feature"},
+                {"is_active": true, "name": "Newsfeature", "value": "Newsfeature"},
+                {"is_active": true, "name": "Backgrounder", "value": "Backgrounder"},
+                {"is_active": true, "name": "Opinion", "value": "Opinion"},
+                {"is_active": true, "name": "View (incl parly sketch)", "value": "View"},
+                {"is_active": true, "name": "Modular", "value": "Modular"},
+                {"is_active": true, "name": "Broadcast Script", "value": "Broadcast Script"}
+            ]
+        },
+		"resource": "vocabularies",
+		"id_name": "-id vocabularies genre-"
+    },
+
+    {
+        "data": {
             "_id": "categories",
             "display_name": "Categories",
             "type": "manageable",
@@ -379,6 +411,21 @@
         },
         "resource": "vocabularies",
         "id_name": "-id vocabularies default_categories-"
+    },
+
+    {
+        "data": {
+            "_id": "footers",
+            "display_name": "Public Service Announcements",
+            "type": "manageable",
+            "items": [
+                {"is_active": true, "name": "Suicide", "value": "Readers seeking support and information about suicide prevention can contact Lifeline on 13 11 14.<br>Suicide Call Back Service 1300 659 467<br>MensLine Australia 1300 78 99 78<br>Multicultural Mental Health Australia www.mmha.org.au<br>Local Aboriginal Medical Service available from www.vibe.com.au"},
+                {"is_active": true, "name": "Children", "value": "Kids Helpline 1800 55 1800 (for young people aged 5 to 25)"},
+                {"is_active": true, "name": "Domestic Violence", "value": "National domestic violence helpline: 1800 737 732  or 1800RESPECT. In an emergency call triple-zero."}
+            ]
+        },
+        "resource": "vocabularies",
+        "id_name": "-id vocabularies footers-"
     },
 
     {
@@ -506,14 +553,16 @@
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline",
+            "slugline": "item5 slugline one/two ",
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",
+            "genre": [{"is_active":true, "name":"Sidebar", "value":"Sidebar"}],
             "version": "1",
             "versioncreated": "2015-01-05T10:10:10+0000",
             "_current_version" : 0,
             "original_creator": "-id user admin-",
+            "byline": "Billy The Fish",
             "state": "in_progress",
             "pubstatus": "usable",
             "urgency": 1,
@@ -665,7 +714,7 @@
         "data": {
             "guid": "package2",
             "unique_id": 2,
-            "unique_name": "package1",
+            "unique_name": "package2",
 		    "firstcreated": "NOW()",
             "original_creator": "-id user admin-",
             "versioncreated": "NOW()",
@@ -732,7 +781,7 @@
             "_current_version" : 1,
             "original_creator": "-id user admin-",
             "unique_id": 2,
-            "unique_name": "package1",
+            "unique_name": "package3",
             "groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}],
              "task" : {
                 "desk" : "-id desk Politic Desks-",
@@ -936,5 +985,64 @@
             "name": "saved search admin1",
             "user": "-id user admin1-"
         }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "global saved search item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo": "ingest",
+                    "q": "headline:(ingest1)"
+                }
+            },
+            "name": "global saved search ingest1",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search ingest1 and item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search other user",
+            "user": "-id user admin1-",
+            "is_global": true
+        }
     }
+
 ]

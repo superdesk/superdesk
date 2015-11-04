@@ -13,6 +13,21 @@ Feature: Saved Searches
         Then we get response code 201
 
     @auth
+    Scenario: Create a Global Saved Search
+        Given empty "saved_searches"
+        When we post to "/users/#CONTEXT_USER_ID#/saved_searches"
+        """
+        {
+        "name": "cricket",
+        "filter": {"query": {"q": "cricket", "repo": "archive"}},
+        "is_global": true
+        }
+        """
+        Then we get response code 201
+        When we get "/users/#CONTEXT_USER_ID#/saved_searches"
+        Then we get list with 1 items
+
+    @auth
     Scenario: Create a Saved Search with facets
         Given empty "saved_searches"
         When we post to "/users/#CONTEXT_USER_ID#/saved_searches"
@@ -50,6 +65,36 @@ Feature: Saved Searches
         When we get "/users/#CONTEXT_USER_ID#/saved_searches"
         Then we get list with 1 items
 
+        When we get "/all_saved_searches"
+        Then we get list with 2 items
+
+    @auth
+    Scenario: A user should see another user's global searches
+        Given empty "saved_searches"
+        When we post to "/users"
+        """
+        {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
+        """
+        And we post to "/users/#users._id#/saved_searches"
+        """
+        {
+        "name": "basket ball",
+        "filter": {"query": {"q": "basket ball", "repo": "ingest"}},
+        "description": "abc",
+        "is_global": true
+        }
+        """
+        When we post to "/users/#CONTEXT_USER_ID#/saved_searches"
+        """
+        {
+        "name": "cricket",
+        "filter": {"query": {"q": "cricket", "repo": "archive"}}
+        }
+        """
+        When we get "/users/#users._id#/saved_searches"
+        Then we get list with 1 items
+        When we get "/users/#CONTEXT_USER_ID#/saved_searches"
+        Then we get list with 2 items
         When we get "/all_saved_searches"
         Then we get list with 2 items
 
@@ -156,3 +201,49 @@ Feature: Saved Searches
 		    }]
 		}
 		"""
+
+    @auth
+    Scenario: A user cannot update another user's search
+        Given empty "saved_searches"
+        When we post to "/users"
+        """
+        {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
+        """
+        And we post to "/users/#users._id#/saved_searches"
+        """
+        {
+        "name": "basket ball",
+        "filter": {"query": {"q": "basket ball", "repo": "ingest"}},
+        "description": "abc"
+        }
+        """
+        When we patch "/users/test_user"
+        """
+        {"user_type": "user", "privileges": {"global_saved_searches" : 0}}
+        """
+        When we patch "/users/#users._id#/saved_searches/#saved_searches._id#"
+        """
+        {"description": "abc123"}
+        """
+        Then we get response code 403
+
+    @auth
+    Scenario: A user with global search privilege can update another user's search
+        Given empty "saved_searches"
+        When we post to "/users"
+        """
+        {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true, "sign_off": "abc"}
+        """
+        And we post to "/users/#users._id#/saved_searches"
+        """
+        {
+        "name": "basket ball",
+        "filter": {"query": {"q": "basket ball", "repo": "ingest"}},
+        "description": "abc"
+        }
+        """
+        When we patch "/users/#users._id#/saved_searches/#saved_searches._id#"
+        """
+        {"description": "abc123"}
+        """
+        Then we get response code 200

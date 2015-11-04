@@ -772,7 +772,7 @@ Feature: Packages
         Given empty "archive"
         When we post to "archive" with success
         """
-        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606", "slugline": "WORMS"}]
         """
         When we post to "archive" with success
         """
@@ -798,5 +798,76 @@ Feature: Packages
         When we spike "tag:example.com,0000:newsml_BRE9A606"
         Then we get error 400
         """
-        {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be spiked"}, "_status": "ERR"}
+        {"_issues": {"validator exception": "400: The item \"WORMS\" is in a package it needs to be removed before the item can be spiked"}, "_status": "ERR"}
+        """
+
+    @auth
+    Scenario: Creating a package with Public Service Announcements fails
+        Given empty "archive"
+        When we post to "archive" with success
+        """
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
+        """
+        And we post to "archive"
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite",
+            "body_footer": "Suicide Call Back Service 1300 659 467"
+        }
+        """
+        Then we get error 400
+        """
+        {"_message": "Package doesn't support Public Service Announcements"}
+        """
+
+    @auth
+    Scenario: Updating a package with Public Service Announcements fails
+        Given empty "archive"
+        When we post to "archive" with success
+        """
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
+        """
+        And we post to "archive" with success
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite"
+        }
+        """
+        And we patch "/archive/#archive._id#"
+        """
+        {"body_footer": "Suicide Call Back Service 1300 659 467"}
+        """
+        Then we get error 400
+        """
+        {"_issues": {"validator exception": "400: Package doesn't support Public Service Announcements"}}
         """

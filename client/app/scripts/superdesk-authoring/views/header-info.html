@@ -37,9 +37,14 @@
                  data-item="item"
                  data-field="genre"
                  data-list="metadata.genre"
-                 ng-disabled="!_editable"
+                 ng-disabled="!_editable || item.broadcast.master_id"
                  data-change="autosave(item)">
             </div>
+        </div>
+        <div ng-if="item.broadcast.master_id">
+            <label translate ng-class="{'broadcast-status': item.broadcast.status !== ''}" tooltip="{{item.broadcast.status}}">MASTER<b ng-if="item.broadcast.status"> !</b></label>
+            <div class="data"><a id="preview-master" ng-click="previewMasterStory()" title="{{ :: 'Preview master story' | translate }}"
+            class="open-item"><i class="icon-external"></i></a></div>
         </div>
     </div>
 
@@ -87,7 +92,7 @@
                          data-item="item"
                          data-field="priority"
                          data-list="metadata.priority"
-                         data-icon="urgency-icon"
+                         data-icon="priority-label priority-label-"
                          data-label="Priority"
                          ng-disabled="!_editable"
                          data-change="autosave(item)">
@@ -100,7 +105,7 @@
                          data-item="item"
                          data-field="urgency"
                          data-list="metadata.urgency"
-                         data-icon="output-item-label label"
+                         data-icon="urgency-label urgency-label-"
                          data-label="Urgency"
                          ng-disabled="!_editable"
                          data-change="autosave(item)">

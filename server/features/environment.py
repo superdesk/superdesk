@@ -10,12 +10,16 @@
 
 import os
 from superdesk import tests
-from apps.io.tests import setup_providers, teardown_providers
-from settings import LDAP_SERVER
-from features.steps.steps import get_macro_path
-from flask import json
-from app import get_app
 from superdesk.vocabularies.command import VocabulariesPopulateCommand
+
+from flask import json
+
+from app import get_app
+from apps.io.tests import setup_providers, teardown_providers
+from features.steps.steps import get_macro_path
+from settings import LDAP_SERVER, AMAZON_CONTAINER_NAME, \
+    AMAZON_ACCESS_KEY_ID, AMAZON_SECRET_ACCESS_KEY, AMAZON_REGION, \
+    AMAZON_SERVE_DIRECT_LINKS, AMAZON_S3_USE_HTTPS
 from test_factory import setup_auth_user
 
 
@@ -23,7 +27,16 @@ readonly_fields = ['display_name', 'password', 'phone', 'first_name', 'last_name
 
 
 def before_all(context):
-    tests.setup(context=context, app_factory=get_app)
+    config = {}
+    if AMAZON_CONTAINER_NAME:
+        config['AMAZON_CONTAINER_NAME'] = AMAZON_CONTAINER_NAME
+        config['AMAZON_ACCESS_KEY_ID'] = AMAZON_ACCESS_KEY_ID
+        config['AMAZON_SECRET_ACCESS_KEY'] = AMAZON_SECRET_ACCESS_KEY
+        config['AMAZON_REGION'] = AMAZON_REGION
+        config['AMAZON_SERVE_DIRECT_LINKS'] = AMAZON_SERVE_DIRECT_LINKS
+        config['AMAZON_S3_USE_HTTPS'] = AMAZON_S3_USE_HTTPS
+
+    tests.setup(context=context, config=config, app_factory=get_app)
     os.environ['BEHAVE_TESTING'] = '1'
 
 
@@ -32,6 +45,9 @@ def before_feature(context, feature):
         feature.mark_skipped()
 
     if 'ldapauth' in feature.tags and not LDAP_SERVER:
+        feature.mark_skipped()
+
+    if 'amazons3' in feature.tags and not context.app.config.get('AMAZON_CONTAINER_NAME', None):
         feature.mark_skipped()
 
 
@@ -50,6 +66,9 @@ def before_scenario(context, scenario):
         scenario.mark_skipped()
 
     if 'ldapauth' in scenario.tags and not LDAP_SERVER:
+        scenario.mark_skipped()
+
+    if 'amazons3' in scenario.tags and not context.app.config.get('AMAZON_CONTAINER_NAME', None):
         scenario.mark_skipped()
 
     if scenario.status != 'skipped' and 'auth' in scenario.tags:

@@ -1,4 +1,7 @@
 <li>
+    <div class="menu-label" translate>Create new item</div>
+</li>
+<li>
     <button id="create_text_article" ng-click="create()">
         <i class="icon-plus-small icon-round icon-white"></i>
         {{ :: 'Plain text' | translate }}
@@ -10,8 +13,6 @@
         {{ :: 'Preformatted' | translate }}
     </button>
 </li>
-
-<li class="divider"></li>
 
 <li>
     <button id="create_package"  ng-click="createPackage()">
@@ -27,7 +28,9 @@
 </li>
 
 <li class="divider"></li>
-
+<li>
+    <div class="menu-label" translate>From template</div>
+</li>
 <div ng-show="contentTemplates._items.length">
     <li translate>From template:</li>
     <li ng-repeat="template in contentTemplates._items">
@@ -49,7 +52,7 @@
 
 <li ng-if="openUpload">
     <button ng-click="openUpload()" id="start-upload-btn">
-        <i class="icon-upload-blue"></i> {{ :: 'UPLOAD' | translate }}
+        <i class="icon-upload blue"></i> {{ :: 'UPLOAD ITEM' | translate }}
     </button>
 </li>
 

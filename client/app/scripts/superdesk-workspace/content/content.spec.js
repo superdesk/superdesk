@@ -39,17 +39,26 @@ describe('superdesk.workspace.content', function() {
             expect(done).toHaveBeenCalledWith(ITEM);
         }));
 
-        it('can create items from template', inject(function(api, content, $rootScope) {
+        it('can create items from template', inject(function(api, content, desks, session, $rootScope) {
+            session.identity = {_id: 'user:1'};
+
+            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'},
+                                        {_id: '2', name: 'news', working_stage: '4', incoming_stage: '5'}]};
+
+            desks.setCurrentDeskId('2');
+
             content.createItemFromTemplate({
                 slugline: 'test_slugline',
                 body_html: 'test_body_html',
                 irrelevantData: 'yes'
             }).then(done);
+
             $rootScope.$digest();
             expect(done).toHaveBeenCalledWith(ITEM);
             expect(api.save).toHaveBeenCalledWith('archive', {
                 slugline: 'test_slugline',
-                body_html: 'test_body_html'
+                body_html: 'test_body_html',
+                task: {desk: '2', stage: '4', user: 'user:1'}
             });
         }));
     });

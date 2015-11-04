@@ -5,7 +5,12 @@
     <a ng-href="" ng-if="show_transmission_details" ng-click="showOrHideTransmissionDetails()">
         <i class="icon-minus-small true"></i> {{ :: 'Hide sent/queued items' | translate }}
     </a>
-    <ul ng-if="show_transmission_details">
+    <ul ng-if="show_transmission_details && queuedItems.length === 0">
+        <li class="alert-danger" translate>
+            <div>Not been transmitted to any subscriber</div>
+        </li>
+    </ul>
+    <ul ng-if="show_transmission_details && queuedItems.length > 0">
         <li ng-repeat="queuedItem in queuedItems track by queuedItem._id" ng-click="showFormattedItem(queuedItem)">
             <div ng-if="queuedItem.state !== 'error'">
                 {{ :: 'Sent/Queued as' | translate }} <b>{{ queuedItem.unique_name }}</b>

@@ -229,7 +229,7 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": true}
@@ -243,7 +243,7 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "closed"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
         When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": false}
@@ -257,7 +257,7 @@ Feature: Ingest Provider
         """
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "opened"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
-        Then we get no email
+        Then we get 0 emails
 
     @auth
     @notification
@@ -285,3 +285,16 @@ Feature: Ingest Provider
           {"event": "ingest_provider:delete", "extra": {"provider_id": "#ingest_providers._id#"}}
         ]
         """
+
+    @auth @notification
+    Scenario: Disabled/Inactive Administrators don't receive emails when an Ingest Provider is created
+        Given empty "ingest_providers"
+        When we post to "/users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "sign_off": "fb", "user_type": "administrator", "is_active": false, "is_enabled": false}
+        """
+        And we post to "ingest_providers"
+	    """
+        [{"type": "reuters", "name": "reuters 4", "source": "reuters", "is_closed": false, "content_expiry": 0, "config": {"username": "foo", "password": "bar"}}]
+	    """
+        Then we get 1 emails

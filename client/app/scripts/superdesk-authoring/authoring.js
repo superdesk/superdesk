@@ -30,7 +30,8 @@
         more_coming: false,
         targeted_for: [],
         embargo: null,
-        renditions: null
+        renditions: null,
+        body_footer: null
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -477,11 +478,17 @@
             var lockedByMe = !lock.isLocked(current_item);
             action.view = !lockedByMe;
 
+            var isBroadcast = (current_item.genre && current_item.genre.length > 0 &&
+                               (current_item.type === 'text' || current_item.type === 'preformatted') &&
+                               current_item.genre.some(function(genre) {
+                                   return genre.name === 'Broadcast Script';
+                               }));
+
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast;
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -500,9 +507,12 @@
                     action.correct = user_privileges.correct && lockedByMe && !is_read_only_state;
                 }
 
-                action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
-                    _.contains(['text', 'preformatted'], current_item.type) && !current_item.embargo &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming));
+                action.re_write = _.contains(['published', 'corrected'], current_item.state) &&
+                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    !current_item.embargo &&
+                    angular.isUndefined(current_item.rewritten_by) &&
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                    (!current_item.broadcast || !current_item.broadcast.master_id);
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
@@ -536,6 +546,10 @@
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
                 !current_item.embargo && current_item.package_type !== 'takes' &&
                 current_item.state !== 'killed' && !current_item.publish_schedule;
+
+            action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
+                (_.contains(['published', 'corrected'], current_item.state)) &&
+                (current_item.type === 'text' || current_item.type === 'preformatted') && !isBroadcast;
 
             action.multi_edit = !is_read_only_state;
 
@@ -1101,7 +1115,7 @@
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
-                                authoringWorkspace.close();
+                                authoringWorkspace.close(true);
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
@@ -1155,8 +1169,7 @@
                 $scope.close = function() {
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
-                        superdeskFlags.flags.hideMonitoring = false;
-                        authoringWorkspace.close($scope.item);
+                        authoringWorkspace.close(true);
                     });
                 };
 
@@ -1164,7 +1177,7 @@
                  * Minimize an item
                  */
                 $scope.minimize = function () {
-                    authoringWorkspace.close();
+                    authoringWorkspace.close(true);
                 };
 
                 $scope.closeOpenNew = function(createFunction, paramValue) {
@@ -1308,6 +1321,18 @@
                     }
                 });
 
+                $scope.$on('item:highlight', function(e, data) {
+                    if ($scope.item._id === data.item_id){
+                        if (!$scope.item.highlights) {
+                            $scope.item.highlights = [data.highlight_id];
+                        } else if ($scope.item.highlights.indexOf(data.highlight_id) === -1){
+                            $scope.item.highlights = [data.highlight_id].concat($scope.item.highlights);
+                        } else if (!$scope.item.multiSelect){
+                            $scope.item.highlights = _.without($scope.item.highlights, data.highlight_id);
+                        }
+                    }
+                });
+
                 macros.setupShortcuts($scope);
             }
         };
@@ -1326,23 +1351,8 @@
                         scope.saveDisabled = false;
                     });
                 };
-                keyboardManager.bind('ctrl+q', function (e) {
-                    e.preventDefault();
-                    scope.close();
-                });
-                keyboardManager.bind('ctrl+s', function (e) {
-                    e.preventDefault();
-                    if (scope._editable &&
-                        scope.itemActions.save &&
-                        scope.action === 'edit' &&
-                        !scope.saveDisabled &&
-                        scope.save_enabled()
-                    ) {
-                        scope.saveTopbar();
-                    }
-                });
-                keyboardManager.bind('ctrl+u', function (e) {
-                    e.preventDefault();
+                scope.$on('key:ctrl:shift:u', function($event, event) {
+                    event.preventDefault();
                     if (scope.item._locked &&
                         !scope.item.sendTo &&
                         scope.can_unlock() &&
@@ -1352,11 +1362,22 @@
                         scope.unlock();
                     }
                 });
-                scope.$on('$destroy', function() {
-                    keyboardManager.unbind('ctrl+q');
-                    keyboardManager.unbind('ctrl+s');
-                    keyboardManager.unbind('ctrl+u');
+                scope.$on('key:ctrl:shift:e', function($event, event) {
+                    event.preventDefault();
+                    scope.close();
                 });
+                scope.$on('key:ctrl:shift:s', function($event, event) {
+                    event.preventDefault();
+                    if (scope._editable &&
+                        scope.itemActions.save &&
+                        scope.action === 'edit' &&
+                        !scope.saveDisabled &&
+                        scope.save_enabled()
+                    ) {
+                        scope.saveTopbar();
+                    }
+                });
+
             }
         };
     }
@@ -1561,9 +1582,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService) {
         return {
             scope: {
                 item: '=',
@@ -1695,8 +1716,8 @@
                  * Returns true if Publish Schedule needs to be displayed, false otherwise.
                  */
                 scope.showPublishSchedule = function() {
-                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
-                        !scope.item.embargo_date && !scope.item.embargo_time &&
+                    return scope.item && archiveService.getType(scope.item) !== 'ingest' &&
+                        scope.item.type !== 'composite' && !scope.item.embargo_date && !scope.item.embargo_time &&
                         !authoring.isTakeItem(scope.item) &&
                         ['published', 'killed', 'corrected'].indexOf(scope.item.state) === -1;
                 };
@@ -1705,7 +1726,7 @@
                  * Returns true if Embargo needs to be displayed, false otherwise.
                  */
                 scope.showEmbargo = function() {
-                    var prePublishCondition = scope.mode !== 'ingest' && scope.item &&
+                    var prePublishCondition = scope.item && archiveService.getType(scope.item) !== 'ingest' &&
                         scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
                         !scope.item.publish_schedule_time && !authoring.isTakeItem(scope.item);
 
@@ -1804,7 +1825,7 @@
                             return authoring.linkItem(scope.item, null, itemDeskId);
                         })
                         .then(function (item) {
-                            authoringWorkspace.close();
+                            authoringWorkspace.close(false);
                             notify.success(gettext('New take created.'));
                             authoringWorkspace.edit(item);
                         }, function(err) {
@@ -1845,7 +1866,7 @@
                             if (sendAndContinue) {
                                 return deferred.resolve();
                             } else {
-                                authoringWorkspace.close();
+                                authoringWorkspace.close(true);
                             }
                         }, function(err) {
                             if (angular.isDefined(err.data._message)) {
@@ -1975,9 +1996,8 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout',
-    'superdesk', 'notify', 'gettext'];
-    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout, superdesk, notify, gettext) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', '$filter', 'superdesk'];
+    function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
@@ -2015,11 +2035,14 @@
                 });
 
                 metadata.initialize().then(function() {
-                    scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
-                        return scope.item.renditions[crop.name];
-                    });
+
+                    if (scope.item.type === 'picture') {
+                        scope.item.hasCrops = false;
+                        scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
+                            return scope.item.renditions && scope.item.renditions[crop.name];
+                        });
+                    }
                 });
 
                 /**
@@ -2115,6 +2138,20 @@
                         var diff = data.cropData;
                         scope.item.renditions = _.merge(orig, diff);
                     });
+                };
+
+                /**
+                 * Adds the selected Public Service Announcement to the item allowing user for further edit.
+                 */
+                scope.addPSAToFooter = function() {
+                    if (!scope.item.body_footer) {
+                        scope.item.body_footer = '';
+                    }
+
+                    if (scope.item.body_footer_value) {
+                        scope.item.body_footer = scope.item.body_footer + scope.item.body_footer_value.value + '<br>';
+                        autosave.save(scope.item);
+                    }
                 };
             }
         };
@@ -2308,8 +2345,8 @@
         };
     }
 
-    headerInfoDirective.$inject = ['familyService', 'authoringWidgets', 'authoring', 'archiveService'];
-    function headerInfoDirective(familyService, authoringWidgets, authoring, archiveService) {
+    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService'];
+    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             require: '^sdAuthoringWidgets',
@@ -2335,6 +2372,14 @@
 
                         scope.activateWidget = function () {
                             WidgetsManagerCtrl.activate(relatedItemWidget[0]);
+                        };
+
+                        scope.previewMasterStory = function () {
+                            var item_id = item.broadcast.takes_package_id ?
+                                item.broadcast.takes_package_id : item.broadcast.master_id;
+                            return api.find('archive', item_id).then(function(item) {
+                                $rootScope.$broadcast('broadcast:preview', {'item': item});
+                            });
                         };
                     }
 
@@ -2376,11 +2421,17 @@
         };
 
         /**
-         * Stop editing
+         * Stop editing.
+         *
+         * @param {boolean} showMonitoring when true shows the monitoring if monitoring is hidden.
          */
-        this.close = function() {
+        this.close = function(showMonitoring) {
             self.item = null;
             self.action = null;
+            if (showMonitoring && superdeskFlags.flags.hideMonitoring) {
+                superdeskFlags.flags.hideMonitoring = false;
+            }
+
             saveState();
         };
 

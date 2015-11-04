@@ -11,6 +11,12 @@ libfreetype6 libfontconfig nodejs npm nginx git \
 
 RUN npm -g install grunt-cli bower
 
+# Set the locale
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
 # setup the environment
 WORKDIR	/opt/superdesk-client/
 COPY ./nginx.conf /etc/nginx/nginx.conf
