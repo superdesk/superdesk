@@ -563,7 +563,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
             controller: function() {
                 var vm = this;
                 function Block(body) {
-                    this.body = body || '';
+                    var empty = ['<br>', '<br/>', '<br></br>'];
+                    this.body = (empty.indexOf(empty) === -1) ? body : '';
+                    this.focus = false;
                 }
                 angular.extend(vm, {
                     blocks: [],
@@ -614,12 +616,18 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     getBlockPosition: function(block) {
                         return _.indexOf(vm.blocks, block);
                     },
-                    insertNewBlockAfter: function(block) {
-                        var new_block = new Block();
+                    insertNewBlockAfter: function(block, body) {
+                        var new_block = new Block(body);
                         vm.blocks.splice(vm.getBlockPosition(block) + 1, 0, new_block);
+                        vm.setFocusOnBlock(new_block);
                     },
                     removeBlock: function(block) {
                         vm.blocks.splice(vm.getBlockPosition(block), 1);
+                    },
+                    setFocusOnBlock: function(block) {
+                        vm.blocks.forEach(function(b) {
+                            b.focus = b === block;
+                        });
                     }
                 });
             },
@@ -726,10 +734,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.model = ngModel;
 
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
-                    // focus on the node if empty, probably a new one
-                    if (scope.node.innerHTML === '') {
-                        scope.medium.selectElement(scope.node);
-                    }
+                    // focus on the node if needed
+                    scope.$watch('sdTextEditorBlock.focus', function(should_focus) {
+                        if (should_focus) {
+                            scope.node.focus();
+                        }
+                    });
 
                     scope.$on('spellcheck:run', render);
                     scope.$on('key:ctrl:shift:s', render);
@@ -791,11 +801,16 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         }
                     });
 
-                    // create a new block when 'enter' key is pressed
+                    // Actions to support multi blocks edition
                     editorElem.on('keyup', function(e) {
                         // press enter, create a new block
                         if (e.keyCode === 13) {
-                            sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock);
+                            // last paragraph contains what is after the cursor
+                            var last_paragraph = $(scope.node).find('p:last');
+                            // add a new block just after this one
+                            sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, last_paragraph.html());
+                            // remove it from current block
+                            last_paragraph.remove();
                         }
                         // backspace, remove the block if empty
                         if (e.keyCode === 8) {
