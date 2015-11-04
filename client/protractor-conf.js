@@ -13,6 +13,7 @@ function getChromeOptions() {
 }
 
 exports.config = {
+    allScriptsTimeout: 20000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
