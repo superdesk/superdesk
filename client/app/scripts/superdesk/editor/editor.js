@@ -554,7 +554,70 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
     .service('editor', EditorService)
 
-    .directive('sdTextEditor', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
+    .directive('sdTextEditor', ['$timeout', function ($timeout) {
+        return {
+            scope: {type: '=', config: '=', language: '='},
+            require: ['sdTextEditor', 'ngModel'],
+            templateUrl: 'scripts/superdesk/editor/views/editor.html',
+            controllerAs: 'vm',
+            controller: function() {
+                var vm = this;
+                angular.extend(vm, {
+                    blocks: [],
+                    initEditor: function(model) {
+                        // save the model to update it later
+                        vm.model = model;
+                        // parse the given model and create blocks per paragraph
+                        var blocks = [], block;
+                        $('<div>' + model.$modelValue || '' + '</div>').contents().toArray().forEach(function(element) {
+                            // if we get a <p>, we push the current block and create a new one
+                            // for the paragraph content
+                            if (element.nodeName === 'P') {
+                                if (block !== undefined) {
+                                    blocks.push(block);
+                                    block = undefined;
+                                }
+                                blocks.push({body: element.innerHTML});
+                            // if it's not a paragraph, we update the current block
+                            } else {
+                                if (block === undefined) {
+                                    block = {body: ''};
+                                }
+                                // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
+                                // TODO: check if it works for comment
+                                block.body += element.outerHTML || element.nodeValue;
+                            }
+                        });
+                        // at the end of the loop, we push the last current block
+                        if (block !== undefined) {
+                            blocks.push(block);
+                        }
+                        // update the actual blocks value at the end to prevent more digest cycle as needed
+                        vm.blocks = blocks;
+                    },
+                    onBlockChange: function() {
+                        vm.commitChanges();
+                    },
+                    commitChanges: function(b) {
+                        var new_body = '';
+                        // wrap all the blocks around <p></p>
+                        vm.blocks.forEach(function(block) {
+                            new_body += '<p>' + block.body + '</p>';
+                        });
+                        vm.model.$setViewValue(new_body);
+                    }
+                });
+            },
+            link: function(scope, element, attr, controllers) {
+                var controller = controllers[0];
+                var ngModel = controllers[1];
+                $timeout(function() {
+                    controller.initEditor(ngModel);
+                });
+            }
+        };
+    }])
+    .directive('sdTextEditorBlock', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
@@ -620,10 +683,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
         return {
             scope: {type: '=', config: '=', language: '='},
-            require: 'ngModel',
-            templateUrl: 'scripts/superdesk/editor/views/editor.html',
-            link: function(scope, elem, attrs, ngModel) {
-
+            require: ['ngModel', '^sdTextEditor'],
+            templateUrl: 'scripts/superdesk/editor/views/block.html',
+            link: function(scope, elem, attrs, controllers) {
+                var ngModel = controllers[0];
+                // var sdTextEditor = controllers[1];
                 scope.model = ngModel;
                 editor.registerScope(scope);
 
@@ -707,6 +771,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                             });
 
                             return false;
+                        }
+                    });
+
+                    // create a new block when 'enter' key is pressed
+                    editorElem.on('keyup', function(e) {
+                        if (e.keyCode === 13) {
+                            console.log('key', editorElem);
                         }
                     });
 

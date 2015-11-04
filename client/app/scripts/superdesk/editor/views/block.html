@@ -1,0 +1,21 @@
+<div class="dropdown" dropdown>
+    <pre class="text-editor editor-type-text"
+        ng-show="type=='preformatted'"
+        spellcheck="false"
+        ></pre>
+
+    <div class="text-editor editor-type-html"
+        ng-show="type=='text' || !type"
+        spellcheck="false"
+        ></div>
+
+    <code class="text-editor-info" ng-if="cursor.line && type == 'preformatted'"><small translate>Line: {{ cursor.line }}, Column: {{ cursor.column }}</small></code>
+
+    <button class="dropdown-toggle hide" dropdown-toggle></button>
+    <ul class="dropdown-menu">
+        <li ng-repeat="word in suggestions"><button ng-click="replace(word)">{{ :: word }}</button></li>
+        <li ng-show="suggestions.length === 0"><button translate>SORRY, NO SUGGESTIONS.</button></li>
+        <li class="divider"></li>
+        <li><button ng-click="addWordToDictionary()" translate>Add to dictionary</button></li>
+    </ul>
+</div>
