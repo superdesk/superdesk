@@ -1034,3 +1034,254 @@ Feature: Content Publishing
       """
       {"_current_version": 4, "state": "killed", "pubstatus": "canceled", "sign_off": "abc/foo", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+
+    @auth @vocabulary
+    Scenario: Publish broadcast content to wire subscribers only using master story
+      Given the "validators"
+      """
+        [
+          {
+              "schema": {},
+              "type": "text",
+              "act": "publish",
+              "_id": "publish_text"
+          },
+          {
+              "schema": {},
+              "type": "text",
+              "act": "correct",
+              "_id": "correct_text"
+          }
+        ]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with "DigitalSubscriber" and success
+      """
+      {
+        "name":"Digital","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we post to "/subscribers" with "WireSubscriber" and success
+      """
+      {
+        "name":"Wire","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we post to "/archive/123/broadcast"
+      """
+      [{"desk": "#desks._id#"}]
+      """
+      Then we get OK response
+      When we patch "/archive/#broadcast._id#"
+      """
+      {
+        "headline": "broadcast content",
+        "body_html": "broadcast content"
+      }
+      """
+      When we publish "#broadcast._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/archive/#broadcast._id#"
+      Then we get existing resource
+      """
+      { "_current_version": 3,
+        "state": "published",
+        "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+        "_id": "#broadcast._id#",
+        "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+        "broadcast": {
+            "master_id": "123"
+          }
+       }
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+        "_items" : [
+            {
+              "_current_version": 3,
+              "state": "published",
+              "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+              "_id": "#broadcast._id#",
+              "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+              "broadcast": {
+                  "master_id": "123"
+              }
+            }
+        ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 1 items
+      """
+      {
+        "_items": [
+          {
+            "item_version": 3,
+            "publishing_action": "published",
+            "headline": "broadcast content",
+            "item_id": "#broadcast._id#"
+          }
+        ]
+      }
+      """
+      When we publish "#broadcast._id#" with "correct" type and "corrected" state
+      """
+      {"headline": "broadcast content corrected"}
+      """
+      Then we get OK response
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+        "_items" : [
+            {
+              "_current_version": 3,
+              "state": "published",
+              "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+              "_id": "#broadcast._id#",
+              "headline": "broadcast content",
+              "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+              "broadcast": {
+                  "master_id": "123"
+              }
+            },
+            {
+              "_current_version": 4,
+              "state": "corrected",
+              "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+              "_id": "#broadcast._id#",
+              "headline": "broadcast content corrected",
+              "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+              "broadcast": {
+                  "master_id": "123"
+              }
+            }
+        ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 2 items
+      """
+      {
+        "_items": [
+          {
+            "item_version": 3,
+            "publishing_action": "published",
+            "headline": "broadcast content",
+            "item_id": "#broadcast._id#",
+            "subscriber_id": "#WireSubscriber#"
+          },
+          {
+            "item_version": 4,
+            "publishing_action": "corrected",
+            "headline": "broadcast content corrected",
+            "item_id": "#broadcast._id#",
+            "subscriber_id": "#WireSubscriber#"
+          }
+        ]
+      }
+      """
+
+    @auth @vocabulary
+    Scenario: Publish broadcast content to wire subscribers not using master story
+      Given the "validators"
+      """
+        [
+          {
+              "schema": {},
+              "type": "text",
+              "act": "publish",
+              "_id": "publish_text"
+          },
+          {
+              "schema": {},
+              "type": "text",
+              "act": "correct",
+              "_id": "correct_text"
+          }
+        ]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+        "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with "DigitalSubscriber" and success
+      """
+      {
+        "name":"Digital","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we post to "/subscribers" with "WireSubscriber" and success
+      """
+      {
+        "name":"Wire","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      Then we get OK response
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/archive/#archive._id#"
+      Then we get existing resource
+      """
+      { "_current_version": 2,
+        "state": "published",
+        "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+        "_id": "#archive._id#",
+        "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}]
+       }
+      """
+      And we get no "broadcast"
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+        "_items" : [
+            {
+              "_current_version": 2,
+              "state": "published",
+              "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"},
+              "_id": "123",
+              "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}]
+            }
+        ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 1 items
+      """
+      {
+        "_items": [
+          {
+            "item_version": 2,
+            "publishing_action": "published",
+            "headline": "test",
+            "item_id": "123",
+            "subscriber_id": "#WireSubscriber#"
+          }
+        ]
+      }
+      """

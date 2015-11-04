@@ -75,34 +75,39 @@ Feature: Archive Broadcast
       """
     When we get "archive/#broadcast._id#?version=all"
     Then we get list with 1 items
-    And we get "archive/123" and match
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get OK response
+    And we get updated response
       """
       {
-          "guid": "123",
           "type": "text",
-          "headline": "headline",
           "slugline": "comics",
-          "anpa_take_key": "take key",
+          "state": "draft",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
           "anpa_category": [
                 {"name": "Australian General News", "qcode": "a"}
           ],
-          "broadcast_id": "#broadcast._id#",
-          "state": "draft",
-          "subject":[{"qcode": "17004000", "name": "Statistics"}],
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
               "stage": "#desks.incoming_stage#"
           },
-          "genre": [{"name": "Article", "value": "Article"}],
+          "_current_version": 1,
           "urgency": 1,
           "priority": 3,
-          "family_id": "xyz",
           "place": [{"qcode": "VIC", "name": "VIC"}],
-          "body_html": "Take-1",
+          "family_id": "xyz",
           "dateline": {
             "source": "AAP",
             "text": "Los Angeles, Aug 11 AAP -"
+          },
+          "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+          "broadcast": {
+            "status": "",
+            "master_id": "123"
           }
       }
       """
@@ -180,37 +185,7 @@ Feature: Archive Broadcast
       """
     When we get "archive/#broadcast._id#?version=all"
     Then we get list with 1 items
-    And we get "archive/123" and match
-      """
-      {
-          "guid": "123",
-          "type": "preformatted",
-          "headline": "headline",
-          "slugline": "comics",
-          "anpa_take_key": "take key",
-          "anpa_category": [
-                {"name": "Australian General News", "qcode": "a"}
-          ],
-          "broadcast_id": "#broadcast._id#",
-          "state": "draft",
-          "subject":[{"qcode": "17004000", "name": "Statistics"}],
-          "task": {
-              "user": "#CONTEXT_USER_ID#",
-              "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
-          },
-          "genre": [{"name": "Article", "value": "Article"}],
-          "urgency": 1,
-          "priority": 3,
-          "family_id": "xyz",
-          "place": [{"qcode": "VIC", "name": "VIC"}],
-          "body_html": "Take-1",
-          "dateline": {
-            "source": "AAP",
-            "text": "Los Angeles, Aug 11 AAP -"
-          }
-      }
-      """
+
 
   @auth
   Scenario: Cannot create Archive Broadcast Content if Broadcast Script genre is not in vocabulary.
@@ -272,6 +247,89 @@ Feature: Archive Broadcast
     """
     {"_message": "Cannot find the requested item id."}
     """
+
+  @auth @vocabulary
+  Scenario: Cannot change genre for Archive Broadcast Content if master story is present
+    Given "desks"
+    """
+    [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+    """
+    When we post to "archive"
+    """
+    [{
+        "guid": "123",
+        "type": "text",
+        "headline": "headline",
+        "slugline": "comics",
+        "anpa_take_key": "take key",
+        "anpa_category": [
+              {"name": "Australian General News", "qcode": "a"}
+        ],
+        "state": "draft",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "task": {
+            "user": "#CONTEXT_USER_ID#",
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#"
+        },
+        "genre": [{"name": "Article", "value": "Article"}],
+        "urgency": 1,
+        "priority": 3,
+        "family_id": "xyz",
+        "place": [{"qcode": "VIC", "name": "VIC"}],
+        "body_html": "Take-1",
+        "dateline": {
+          "source": "AAP",
+          "text": "Los Angeles, Aug 11 AAP -"
+        }
+    }]
+    """
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get OK response
+    And we get updated response
+    """
+    {
+        "type": "text",
+        "slugline": "comics",
+        "state": "draft",
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "anpa_category": [
+              {"name": "Australian General News", "qcode": "a"}
+        ],
+        "task": {
+            "user": "#CONTEXT_USER_ID#",
+            "desk": "#desks._id#",
+            "stage": "#desks.incoming_stage#"
+        },
+        "_current_version": 1,
+        "urgency": 1,
+        "priority": 3,
+        "place": [{"qcode": "VIC", "name": "VIC"}],
+        "family_id": "xyz",
+        "dateline": {
+          "source": "AAP",
+          "text": "Los Angeles, Aug 11 AAP -"
+        },
+        "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+        "broadcast": {
+          "status": "",
+          "master_id": "123"
+        }
+    }
+    """
+    When we patch "archive/#broadcast._id#"
+    """
+    {"genre": [{"name": "Article", "value": "Article"}]}
+    """
+    Then we get error 400
+    """
+    {"_issues": {"validator exception": "400: Cannot change the genre for broadcast content."}}
+    """
+
 
   @auth @vocabulary
   Scenario: Cannot create Archive Broadcast Content if content type is not text or preformatted
@@ -593,14 +651,12 @@ Feature: Archive Broadcast
         {
           "_id": "123",
           "type": "text",
-          "slugline": "comics",
-          "broadcast_id": "#broadcast._id#"
+          "slugline": "comics"
         },
         {
           "_id": "#TAKE#",
           "type": "text",
-          "slugline": "comics",
-          "broadcast_id": "#broadcast._id#"
+          "slugline": "comics"
         },
         {
           "_id": "#broadcast._id#",
@@ -886,10 +942,8 @@ Feature: Archive Broadcast
     """
     [{"desk": "#desks._id#"}]
     """
-    Then we get error 400
-    """
-    {"_message": "Takes already have broadcast content associated with it."}
-    """
+    Then we get OK response
+
 
   @auth @vocabulary
   Scenario: Change the broadcast content status based on the actions performed in the published master story

@@ -15,7 +15,7 @@ from .common import remove_unwanted, update_state, set_item_expiry, remove_media
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
-    LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId
+    LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from superdesk import get_resource_service
@@ -142,8 +142,6 @@ class ArchiveService(BaseService):
             handle_existing_data(item)
             self.takesService.enhance_with_package_info(item)
 
-        get_resource_service('archive_broadcast').enhance_items(items)
-
     def on_create(self, docs):
         on_create_item(docs)
 
@@ -255,6 +253,11 @@ class ArchiveService(BaseService):
             self.packageService.on_update(updates, original)
 
         update_version(updates, original)
+
+        # if broadcast then update to genre is not allowed.
+        if original.get('broadcast') and updates.get('genre') and \
+                any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
+            raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
 
         # Do the validation after Circular Reference check passes in Package Service
         updated = original.copy()

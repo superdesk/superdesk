@@ -14,35 +14,4 @@ from .broadcast import ARCHIVE_BROADCAST_NAME
 
 
 class ArchiveBroadcastTestCase(SuperdeskTestCase):
-
-    def setUp(self):
-        super().setUp()
-        self.service = get_resource_service(ARCHIVE_BROADCAST_NAME)
-
-    def test_broadcast_content(self):
-        content = {
-            'genre': [{'name': 'Broadcast Script', 'value': 'Broadcast Script'}]
-        }
-
-        self.assertTrue(self.service.is_broadcast(content))
-
-    def test_broadcast_content_if_genre_is_none(self):
-        content = {
-            'genre': None
-        }
-
-        self.assertFalse(self.service.is_broadcast(content))
-
-    def test_broadcast_content_if_genre_is_empty_list(self):
-        content = {
-            'genre': []
-        }
-
-        self.assertFalse(self.service.is_broadcast(content))
-
-    def test_broadcast_content_if_genre_is_other_than_broadcast(self):
-        content = {
-            'genre': [{'name': 'Article', 'value': 'Article'}]
-        }
-
-        self.assertFalse(self.service.is_broadcast(content))
+    pass

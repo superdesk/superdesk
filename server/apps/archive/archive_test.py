@@ -19,7 +19,8 @@ from superdesk.errors import SuperdeskApiError
 from datetime import timedelta, datetime
 from pytz import timezone
 from apps.archive.common import validate_schedule, remove_media_files, \
-    format_dateline_to_locmmmddsrc, convert_task_attributes_to_objectId
+    format_dateline_to_locmmmddsrc, convert_task_attributes_to_objectId, \
+    is_genre, BROADCAST_GENRE
 from settings import ORGANIZATION_NAME_ABBREVIATION
 
 
@@ -286,3 +287,39 @@ class ArchiveTestCase(SuperdeskTestCase):
         self.assertEqual(doc['task']['stage'], 'test')
         self.assertEqual(doc['task']['last_authoring_desk'], 3245)
         self.assertIsNone(doc['task']['last_production_desk'])
+
+
+class ArchiveCommonTestCase(SuperdeskTestCase):
+
+    def setUp(self):
+        super().setUp()
+
+    def test_broadcast_content(self):
+        content = {
+            'genre': [{'name': 'Broadcast Script', 'value': 'Broadcast Script'}]
+        }
+
+        self.assertTrue(is_genre(content, BROADCAST_GENRE))
+
+    def test_broadcast_content_if_genre_is_none(self):
+        content = {
+            'genre': None
+        }
+
+        self.assertFalse(is_genre(content, BROADCAST_GENRE))
+
+    def test_broadcast_content_if_genre_is_empty_list(self):
+        content = {
+            'genre': []
+        }
+
+        self.assertFalse(is_genre(content, BROADCAST_GENRE))
+
+    def test_broadcast_content_if_genre_is_other_than_broadcast(self):
+        content = {
+            'genre': [{'name': 'Article', 'value': 'Article'}]
+        }
+
+        self.assertFalse(is_genre(content, BROADCAST_GENRE))
+        self.assertTrue(is_genre(content, 'Article'))
+
