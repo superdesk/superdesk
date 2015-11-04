@@ -312,7 +312,7 @@ class RetrievingDataTests(ContentFilterTests):
 
     def test_does_match_returns_false_for_nonexisting_filter(self):
         for article in self.articles:
-            self.assertFalse(self.f.does_match(None, article))
+            self.assertTrue(self.f.does_match(None, article))
 
     def test_does_match_using_like_filter_single_fc(self):
         doc = {'content_filter': [{"expression": {"fc": [1]}}], 'name': 'pf-1'}
