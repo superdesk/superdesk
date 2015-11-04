@@ -138,8 +138,8 @@ class ArchiveBroadcastService(BaseService):
         }
 
         req = ParsedRequest()
-        req.args = {'source': json.dumps(query)}
-        return get_resource_service(SOURCE).get(req=req, lookup=None)
+        req.args = {'source': json.dumps(query), 'repo': 'archive,published'}
+        return get_resource_service('search').get(req=req, lookup=None)
 
     def get_broadcast_items_from_master_story(self, item):
         """
@@ -174,8 +174,6 @@ class ArchiveBroadcastService(BaseService):
             status = 'New take created or story reopened.'
         elif item_event == ITEM_CREATE and rewrite_id:
             status = 'Master story re-written.'
-        elif item_event == ITEM_UPDATE:
-            status = 'Master Story Updated'
         elif item_event == ITEM_PUBLISH:
             status = 'Master Story Published'
         elif item_event == ITEM_CORRECT:
@@ -186,6 +184,7 @@ class ArchiveBroadcastService(BaseService):
         if not broadcast_items:
             return
 
+        ids = []
         for broadcast_item in broadcast_items:
             try:
                 if broadcast_item.get('lock_user'):
@@ -204,8 +203,16 @@ class ArchiveBroadcastService(BaseService):
                 if not updates['broadcast']['rewrite_id'] and rewrite_id:
                     updates['broadcast']['rewrite_id'] = rewrite_id
 
-                get_resource_service(SOURCE).system_update(broadcast_item.get(config.ID_FIELD),
-                                                           updates, broadcast_item)
+                if not broadcast_item.get(config.ID_FIELD) in ids:
+                    if broadcast_item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED,
+                                                          CONTENT_STATE.KILLED]:
+                        get_resource_service('published').update_published_items(broadcast_item.get(config.ID_FIELD),
+                                                                                 'broadcast', updates.get('broadcast'))
+
+                    get_resource_service(SOURCE).system_update(broadcast_item.get(config.ID_FIELD),
+                                                               updates, broadcast_item)
+
+                    ids.append(broadcast_item.get(config.ID_FIELD))
             except:
                 logger.exception('Failed to update status for the broadcast item {}'.
                                  format(broadcast_item.get(config.ID_FIELD)))
