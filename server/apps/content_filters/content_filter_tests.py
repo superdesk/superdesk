@@ -310,7 +310,7 @@ class RetrievingDataTests(ContentFilterTests):
             self.assertEqual(1, docs.count())
             self.assertTrue('3' in doc_ids)
 
-    def test_does_match_returns_false_for_nonexisting_filter(self):
+    def test_does_match_returns_true_for_nonexisting_filter(self):
         for article in self.articles:
             self.assertTrue(self.f.does_match(None, article))
 
