@@ -210,6 +210,13 @@ describe('publish queue', function() {
         expect($scope.publish_queue[0].headline).toEqual(publishQueue._items[0].headline);
     }));
 
+    it('can perform case-insensitive search on headline', inject(function($rootScope) {
+        $scope.search('dugan stars');
+        $scope.$digest();
+        var reQuery = new RegExp($scope.searchQuery, 'i');
+        expect($scope.publish_queue[0].headline).toMatch(reQuery);
+    }));
+
     it('can search by unique name', inject(function($rootScope) {
         $scope.search(publishQueue._items[0].unique_name);
         $scope.$digest();
