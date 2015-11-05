@@ -1485,7 +1485,7 @@
         .directive('sdSavedSearchSelect', ['api', 'session', function SavedSearchSelectDirective(api, session) {
             return {
                 link: function(scope) {
-                    api.query('saved_searches', {}, session.identity).then(function(res) {
+                    api.query('saved_searches', {'max_results': 200}, session.identity).then(function(res) {
                         scope.searches = res._items;
                     });
                 }
@@ -1503,7 +1503,7 @@
                     scope.selected = null;
                     scope.editSearch = null;
 
-                    resource.query().then(function(views) {
+                    resource.query({'max_results': 200}).then(function(views) {
                         scope.views = views._items;
                     });
 

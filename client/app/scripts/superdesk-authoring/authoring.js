@@ -2017,9 +2017,11 @@
                 metadata.initialize().then(function() {
                     scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
-                        return scope.item.renditions[crop.name];
-                    });
+                    if (scope.metadata.crop_sizes) {
+                        scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
+                            return scope.item.renditions[crop.name];
+                        });
+                    }
                 });
 
                 /**

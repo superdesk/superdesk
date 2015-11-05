@@ -239,32 +239,32 @@ function Monitoring() {
     };
 
     this.nextStages = function() {
-        element(by.id('nextStages')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.nextSearches = function() {
-        element(by.id('nextSearches')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousSearches = function() {
-        element(by.id('previousSearches')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.nextReorder = function() {
-        element(by.id('nextReorder')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousReorder = function() {
-        element(by.id('previousReorder')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.previousMax = function() {
-        element(by.id('previousMax')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
