@@ -15,6 +15,7 @@ import json
 
 from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
+from eve.validation import ValidationError
 
 from apps.packages.package_service import PackageService
 from apps.publish.content.publish import ArchivePublishService
@@ -718,3 +719,19 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         removed_items, added_items = ArchivePublishService()._get_changed_items(items, updates)
         self.assertEqual(len(removed_items), 1)
         self.assertEqual(len(added_items), 1)
+
+    def test_resolve_associations(self):
+        item = {
+            'associations': {
+                'sidebar': {'uri': '1'}
+            }
+        }
+        ArchivePublishService()._resolve_associations(item)
+        self.assertEqual('text', item['associations']['sidebar']['type'])
+
+        with self.assertRaisesRegex(ValidationError, 'item is not published rel=image item=2'):
+            ArchivePublishService()._resolve_associations({
+                'associations': {
+                    'image': {'uri': '2'}
+                }
+            })

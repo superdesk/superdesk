@@ -31,7 +31,8 @@
         targeted_for: [],
         embargo: null,
         renditions: null,
-        body_footer: null
+        body_footer: null,
+        associations: null
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -2192,6 +2193,7 @@
         .directive('sdAuthoringContainer', AuthoringContainerDirective)
         .directive('sdAuthoringEmbedded', AuthoringEmbeddedDirective)
         .directive('sdHeaderInfo', headerInfoDirective)
+        .directive('sdItemAssociation', ItemAssociationDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -2513,5 +2515,67 @@
         }
 
         init();
+    }
+
+    ItemAssociationDirective.$inject = ['api'];
+    function ItemAssociationDirective(api) {
+        return {
+            scope: {
+                rel: '=',
+                item: '=',
+                editable: '=',
+                onchange: '&'
+            },
+            template: '<div class="item-association" ng-class="{preview: preview}">' +
+                '<img ng-if="preview" ng-src="{{ preview.renditions.viewImage.href }}"></div>',
+            link: function(scope, elem) {
+
+                var PICTURE_TYPE = 'application/superdesk.item.picture';
+
+                /**
+                 * Get superdesk item from event
+                 *
+                 * @param {Event} event
+                 * @param {string} dataType
+                 * @return {Object}
+                 */
+                function getItem(event, dataType) {
+                    return angular.fromJson(event.originalEvent.dataTransfer.getData(dataType));
+                }
+
+                // it should prevent default as long as this is valid image
+                elem.on('dragover', function(event) {
+                    if (scope.editable && PICTURE_TYPE === event.originalEvent.dataTransfer.types[0]) {
+                        event.preventDefault();
+                    }
+                });
+
+                // update item associations on drop
+                elem.on('drop', function(event) {
+                    event.preventDefault();
+                    var item = getItem(event, PICTURE_TYPE);
+                    var data = {};
+                    data[scope.rel] = {uri: item._id};
+                    scope.$apply(function() {
+                        scope.onchange({item: scope.item, data: data});
+                        scope.preview = item;
+                        scope.item.associations = angular.extend({},
+                            scope.item.associations || {},
+                            data
+                        );
+                    });
+                });
+
+                // init associated item for preview
+                scope.$watch('item', function(item) {
+                    if (item && item.associations && item.associations[scope.rel]) {
+                        var rel = item.associations[scope.rel];
+                        api.find('search', rel.uri).then(function(related) {
+                            scope.preview = related;
+                        });
+                    }
+                });
+            }
+        };
     }
 })();

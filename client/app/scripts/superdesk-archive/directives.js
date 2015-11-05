@@ -415,6 +415,21 @@
                 }
             };
         }])
+        .directive('sdDraggableItem', function() {
+            return {
+                link: function(scope, elem) {
+                    if (scope.item) {
+                        elem.attr('draggable', true);
+                        // set item data on event
+                        elem.on('dragstart', function(event) {
+                            var dt = event.originalEvent.dataTransfer;
+                            dt.setData('application/superdesk.item.' + scope.item.type, angular.toJson(scope.item));
+                            dt.effectAllowed = 'link';
+                        });
+                    }
+                }
+            };
+        })
         .directive('sdItemCrops', ['metadata', function(metadata) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-crops.html',
