@@ -126,7 +126,7 @@
                 criteria.repo = card.search.filter.query.repo;
             }
             criteria.source.from = 0;
-            criteria.source.size = 25;
+            criteria.source.size = card.max_items || 25;
             return criteria;
         }
 
@@ -404,8 +404,8 @@
                         itemsCount = scope.numItems || ITEMS_COUNT,
                         to = Math.min(scope.total, start + itemsCount + BUFFER);
 
-                    if (parseInt(list.style.height, 10) !== scope.total * ITEM_HEIGHT) {
-                        list.style.height = (scope.total * ITEM_HEIGHT) + 'px';
+                    if (parseInt(list.style.height, 10) !== Math.min(itemsCount, scope.total) * ITEM_HEIGHT) {
+                        list.style.height = (Math.min(itemsCount, scope.total) * ITEM_HEIGHT) + 'px';
                     }
 
                     criteria.source.from = from;
@@ -433,7 +433,7 @@
                     if (scope.group.type === 'search') {
                         if (criteria.repo && criteria.repo.indexOf(',') === -1) {
                             provider = criteria.repo;
-                            if (!criteria.source.size) {
+                            if (!angular.isDefined(criteria.source.size)) {
                                 criteria.source.size = 25;
                             }
                         }
