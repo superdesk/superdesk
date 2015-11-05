@@ -23,18 +23,25 @@ describe('content', function() {
         beforeEach(inject(function (desks, session) {
             session.identity = {_id: 'user:1'};
 
-            desks.userDesks = {_items: [{_id: '1', name: 'sport', incoming_stage: '2'},
-                                        {_id: '2', name: 'news', incoming_stage: '1'}]};
+            desks.userDesks = {_items: [{_id: '1', name: 'sport', working_stage: '2', incoming_stage: '3'},
+                                        {_id: '2', name: 'news', working_stage: '4', incoming_stage: '5'}]};
             desks.setCurrentDeskId('2');
 
             item = {'_id': '123'};
         }));
 
-        it('can add an item to a desk', inject(function(archiveService) {
+        it('can add an item to user\'s active desk', inject(function(archiveService) {
             archiveService.addTaskToArticle(item);
 
             expect(item.task.desk).toBe('2');
-            expect(item.task.stage).toBe('1');
+            expect(item.task.stage).toBe('4');
+        }));
+
+        it('can add an item to a desk', inject(function(archiveService, desks) {
+            archiveService.addTaskToArticle(item, desks.userDesks._items[0]);
+
+            expect(item.task.desk).toBe('1');
+            expect(item.task.stage).toBe('2');
         }));
 
         it('verifies if item is from Legal Archive or not', inject(function(archiveService) {

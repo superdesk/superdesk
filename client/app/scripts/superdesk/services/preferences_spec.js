@@ -45,6 +45,8 @@ describe('Preferences Service', function() {
             }
         };
 
+    var testUncachedPreferences = {'user_preferences': {'feature:preview': {'enabled': false}}};
+
     var update = {
         'feature:preview': {
             'default': false,
@@ -56,7 +58,13 @@ describe('Preferences Service', function() {
     };
 
     beforeEach(inject(function(api, $q) {
-        spyOn(api, 'find').and.returnValue($q.when(testPreferences));
+        spyOn(api, 'find').and.callFake(function(resource, id, params, cache) {
+            if (cache) {
+                return $q.when(testPreferences);
+            } else {
+                return $q.when(testUncachedPreferences);
+            }
+        });
         spyOn(api, 'save').and.returnValue($q.when({'user_preferences': update}));
     }));
 
@@ -93,6 +101,16 @@ describe('Preferences Service', function() {
 
         $rootScope.$digest();
         expect(preferences.view).toBe('mgrid');
+    }));
+
+    it('can get user preferences by key bypass the cache', inject(function(api, $rootScope) {
+        var preferences;
+        preferencesService.get('feature:preview', true).then(function(_preferences) {
+            preferences = _preferences;
+        });
+
+        $rootScope.$digest();
+        expect(preferences.enabled).toBe(false);
     }));
 
     it('update user preferences by key', inject(function(api, $q, $rootScope) {

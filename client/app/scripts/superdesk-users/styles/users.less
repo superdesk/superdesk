@@ -412,14 +412,20 @@
 		width: 82px;
 		height: 82px;
 		float: left;
-		margin-right: 20px;
+		margin-right: 14px;
 		position: relative;
-		.avatar {
-				width: 100%;
-				height: 100%;
-				.border-radius(3px);
-				background-image: url('../../images/avatar_200.png');
-		}
+        .avatar {
+            width: 100%;
+            height: 100%;
+            .border-radius(50%);
+            position: relative;
+            background-image: url('../../images/avatar_200.png');
+            &.initials {
+                font-size: 32px;
+                line-height: 82px;
+                font-weight: 300;
+            }
+        }
 		.change-photo {
 			display: none;
 			background-color: rgba(55,152,180,0.6);
@@ -432,6 +438,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
+			height:30px;
 		}
 		&:hover {
 			.change-photo {
@@ -636,18 +643,27 @@ Profile page styles
 		}
 	}
 
-	.profile-pic {
-		width: 160px;
-		height: 160px;
-		figure {
-			width: 160px;
-			height: 160px;
-			img {
-				width: 160px;
-				max-width: 160px;
-			}
-		}
-	}
+    .profile-pic {
+        width: 160px;
+        height: 160px;
+        .avatar {
+            width: 160px;
+            height: 160px;
+            overflow: hidden;
+            img {
+                width: 160px;
+                max-width: 160px;
+            }
+            &.initials {
+                font-size: 62px;
+                line-height: 160px;
+                font-weight: 300;
+            }
+        }
+        .change-photo {
+        	line-height: 28px;
+        }
+    }
 
 	.header-info {
 		height: 160px;

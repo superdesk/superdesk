@@ -86,7 +86,7 @@ function WorkqueueCtrl($scope, $route, workqueue, authoringWorkspace, multiEdit,
     $scope.closeItem = function(item) {
         lock.unlock(item);
         if (authoringWorkspace.item && item._id === authoringWorkspace.item._id){
-            authoringWorkspace.close();
+            authoringWorkspace.close(true);
         }
 
         multiEdit.items = _.without(multiEdit.items, _.find(multiEdit.items, {article: item._id}));

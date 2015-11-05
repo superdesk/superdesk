@@ -57,23 +57,27 @@
 			top: 70px; bottom: 80px;
 			overflow: auto;
 		}
-		.member-list {
-			ul {
-				> li {
-					position: relative;
-					float: left;
-					margin: 5px;
-					border: 1px solid rgba(0,0,0,0);
-					.border-radius(3px);
-					padding: 15px 10px;
-					width: 115px;
-					.avatar {
-						display: block;
-						width: 84px;
-						height: 84px;
-						float: none;
-						margin: 0 auto 10px;
-					}
+        .member-list {
+            ul {
+                > li {
+                    position: relative;
+                    float: left;
+                    margin: 5px;
+                    border: 1px solid rgba(0,0,0,0);
+                    .border-radius(3px);
+                    padding: 15px 10px;
+                    width: 115px;
+                    .avatar {
+                        display: block;
+                        width: 84px;
+                        height: 84px;
+                        float: none;
+                        margin: 0 auto 10px;
+                        &.initials {
+                            font-size: 34px;
+                            line-height: 84px;
+                        }
+                    }
 					.name {
 						text-align: center;
 					}
