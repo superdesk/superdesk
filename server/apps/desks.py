@@ -66,7 +66,7 @@ desks_schema = {
                 },
                 'type': {
                     'type': 'string',
-                    'allowed': ['search', 'stage', 'personal'],
+                    'allowed': ['search', 'stage', 'deskOutput', 'personal'],
                     'required': True
                 },
                 'max_items': {

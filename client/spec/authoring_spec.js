@@ -40,7 +40,7 @@ describe('authoring', function() {
         authoring.showPackages();
         expect(authoring.getPackages().count()).toBe(1);
         expect(authoring.getPackage(0).getText()).toMatch('PACKAGE2');
-        authoring.getPackage(0).click();
+        authoring.getPackage(0).element(by.tagName('a')).click();
         authoring.showInfo();
         expect(authoring.getGUID().getText()).toMatch('package2');
         authoring.close();
@@ -207,7 +207,7 @@ describe('authoring', function() {
         monitoring.showHideList();
 
         authoring.publish();
-        expect(monitoring.getGroups().count()).toBe(4);
+        expect(monitoring.getGroups().count()).toBe(5);
     });
 
 });
