@@ -67,7 +67,7 @@ describe('Send To', function() {
         monitoring.showHideList();
 
         authoring.sendTo('Politic Desk');
-        expect(monitoring.getGroups().count()).toBe(5);
+        expect(monitoring.getGroups().count()).toBe(6);
     });
 
 });

@@ -29,7 +29,7 @@ describe('dashboard', function() {
         dashboard.addWidget(3);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(2);
-        expect(dashboard.getGroups(0).count()).toBe(5);
+        expect(dashboard.getGroups(0).count()).toBe(6);
 
         expect(dashboard.getTextItem(0, 2, 0)).toBe('item5');
         expect(dashboard.getTextItem(0, 3, 2)).toBe('item6');

@@ -217,7 +217,7 @@ define([
          * and Killed.
          *
          * @param {Object} item
-         * @return true if the state of the item is in one of the published states, false otherwise.
+         * @return boolean if the state of the item is in one of the published states, false otherwise.
          */
         this.isPublished = function(item) {
             return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
