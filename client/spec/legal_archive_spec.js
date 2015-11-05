@@ -5,7 +5,7 @@ var workspace = require('./helpers/workspace'),
     authoring = require('./helpers/authoring'),
     legalArchive = require('./helpers/legal_archive');
 
-describe('Legal Archive', function() {
+describe('legal_archive', function() {
     it('can display Legal Archive option in hamburger menu', function () {
         workspace.open();
 

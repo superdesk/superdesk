@@ -2,7 +2,7 @@
 	<div class="assignee" ng-class="{'open': open}" ng-init="hoveractive = false">
 		<div class="toggle" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
 			<div class="avatar" ng-class="{desk : desk && !user }">
-				<img sd-user-avatar data-src="user.picture_url">
+				<img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name">
 			</div>
 			<div class="add">
 				<i class="icon-plus-large icon-white"></i>

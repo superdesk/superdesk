@@ -11,7 +11,7 @@ done
 
 # run tests
 ./node_modules/protractor/bin/webdriver-manager update
-./node_modules/protractor/bin/protractor protractor-conf.js --baseUrl 'http://localhost:9000'
+./node_modules/protractor-flake/bin/protractor-flake --node-bin node --max-attempts=3 -- protractor-conf.js --baseUrl 'http://localhost:9000' $@
 TEST_STATUS=$?
 
 # stop server

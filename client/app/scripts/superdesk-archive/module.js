@@ -137,16 +137,17 @@ define([
          * Adds 'task' property to the article represented by item.
          *
          * @param {Object} item
+         * @param {Object} desk when passed the item will be assigned to this desk instead of user's activeDesk.
          */
-        this.addTaskToArticle = function (item) {
-            if ((!item.task || !item.task.desk) && desks.activeDeskId && desks.userDesks) {
-                var currentDesk = _.find(desks.userDesks._items, {_id: desks.activeDeskId});
-                item.task = {'desk': desks.activeDeskId, 'stage': currentDesk.incoming_stage, 'user': session.identity._id};
+        this.addTaskToArticle = function (item, desk) {
+            if ((!item.task || !item.task.desk) && (desk || desks.activeDeskId && desks.userDesks)) {
+                var currentDesk = desk || _.find(desks.userDesks._items, {_id: desks.activeDeskId});
+                item.task = {'desk': currentDesk._id, 'stage': currentDesk.working_stage, 'user': session.identity._id};
             }
         };
 
         /**
-         * Returns the type of the item.
+         * Returns the _type aka repository of the item.
          *
          * @param {Object} item
          * @return String
@@ -216,7 +217,7 @@ define([
          * and Killed.
          *
          * @param {Object} item
-         * @return true if the state of the item is in one of the published states, false otherwise.
+         * @return boolean if the state of the item is in one of the published states, false otherwise.
          */
         this.isPublished = function(item) {
             return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
@@ -396,6 +397,28 @@ define([
                     },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).duplicate;
+                    }]
+                })
+                .activity('createBroadcast', {
+                    label: gettext('Create Broadcast'),
+                    icon: 'copy',
+                    monitor: true,
+                    controller: ['api', 'notify', '$rootScope', 'data', 'desks', 'authoringWorkspace',
+                    function(api, notify, $rootScope, data, desks, authoringWorkspace) {
+                        api.save('archive_broadcast', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                            .then(function(broadcastItem) {
+                                authoringWorkspace.edit(broadcastItem);
+                                $rootScope.$broadcast('broadcast:created', {'item': data.item});
+                            });
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    keyboardShortcut: 'ctrl+b',
+                    privileges: {archive: 1},
+                    condition: function(item) {
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
+                    },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).create_broadcast;
                     }]
                 })
                 .activity('copy', {

@@ -108,12 +108,8 @@
             link: function(scope) {
 
                 scope.markItem = function(highlight) {
+                    scope.item.multiSelect = false;
                     highlightsService.markItem(highlight._id, scope.item._id);
-                    if (!scope.item.highlights) {
-                        scope.item.highlights = [highlight._id];
-                    } else {
-                        scope.item.highlights = [highlight._id].concat(scope.item.highlights);
-                    }
                 };
 
                 scope.isMarked = function(highlight) {
@@ -135,13 +131,7 @@
 
                 scope.markItem = function(highlight) {
                     angular.forEach(multi.getItems(), function(item) {
-                        if (!item.highlights) {
-                            item.highlights = [highlight._id];
-                        } else if (item.highlights.indexOf(highlight._id) === -1) {
-                            item.highlights = [highlight._id].concat(item.highlights);
-                        } else {
-                            return;
-                        }
+                        item.multiSelect = true;
                         highlightsService.markItem(highlight._id, item._id);
                     });
                     multi.reset();

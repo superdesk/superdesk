@@ -82,3 +82,17 @@ Feature: Vocabularies
      }]}
     """
     And there is no "locators" in response
+
+  @auth @notification @vocabulary
+  Scenario: User receives notification when a vocabulary is updated
+    When we get "/vocabularies/categories"
+    Then we get response code 200
+    When we patch "/vocabularies/categories"
+    """
+    {"items": [{"name": "National", "value": "A", "is_active": true}, {"name": "Domestic Sports", "value": "T", "is_active": true}]}
+    """
+    Then we get updated response
+    And we get notifications
+    """
+    [{"event": "vocabularies:updated", "extra": {"vocabulary": "Categories", "user": "#CONTEXT_USER_ID#"}}]
+    """

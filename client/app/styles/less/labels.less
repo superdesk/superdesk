@@ -4,13 +4,15 @@
 // Base
 .label {
   padding: 2px 8px;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 11px;
+  font-weight: 500;
   line-height: 13px;
   color: @white;
   vertical-align: middle;
   white-space: nowrap;
   background-color: @gray;
+  box-sizing: border-box;
+  letter-spacing: 0.05em;
   .border-radius(2px);
   &.small {
     font-size: 10px;
@@ -20,6 +22,15 @@
     .border-radius(50px);
   }
 }
+.label--snap {
+  margin-right: 10px;
+  background-color: @label-snap;
+  height: 17px;
+  padding: 2px 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  line-height: 14px;
+}
 
 // Hover state
 .label:hover {
@@ -27,15 +38,15 @@
 }
 
 // Colors
-.label-info { 
+.label--info { 
   background-color: darken(@sd-blue, 10%); 
 }
 
 // Label lite
-.label-lite {
-    font-size: 10px;
-    color: #8D8A8A;
-    text-transform: uppercase;
+.label--lite {
+  font-size: 10px;
+  color: #8D8A8A;
+  text-transform: uppercase;
 }
 
 // Tags
@@ -86,4 +97,98 @@
         }
     }
   }
+}
+
+
+/*----------------------------------------
+  #Urgency label
+----------------------------------------*/
+
+@urgency-label-color-0 : #cccccc;
+@urgency-label-color-1 : #01405b;
+@urgency-label-color-2 : #005e84;
+@urgency-label-color-3 : #3684a4;
+@urgency-label-color-4 : #64a4bf;
+@urgency-label-color-5 : #a1c6d8;
+
+.urgency-label {
+  width: 16px;
+  height: 16px;
+  .border-radius(50%);
+  display: inline-block;
+  text-align: center;
+  color:#fff;
+  font-size: 10px;
+  background: @urgency-label-color-0;
+  .box-sizing(border-box);
+  line-height: 17px;
+  vertical-align: top;
+  font-style: normal;
+}
+.urgency-label--0 {
+  background: @urgency-label-color-0;
+}
+.urgency-label--1 {
+  background: @urgency-label-color-1;
+}
+.urgency-label--2 {
+  background: @urgency-label-color-2;
+}
+.urgency-label--3 {
+  background: @urgency-label-color-3;
+}
+.urgency-label--4 {
+  background: @urgency-label-color-4;
+}
+.urgency-label--5 {
+  background: @urgency-label-color-5;
+}
+
+
+/*----------------------------------------
+  #Priority label
+----------------------------------------*/
+
+@priority-label-color-0 : #cccccc;
+@priority-label-color-1 : #b82f00;
+@priority-label-color-2 : #de6237;
+@priority-label-color-3 : #e49c56;
+@priority-label-color-4 : #edc175;
+@priority-label-color-5 : #b6c28b;
+@priority-label-color-6 : #c0c9a1;
+
+.priority-label {
+  width: 16px;
+  height: 16px;
+  .border-radius(2px);
+  display: inline-block;
+  text-align: center;
+  color:#fff;
+  font-size: 10px;
+  background: @priority-label-color-0;
+  .box-sizing(border-box);
+  line-height: 17px;
+  vertical-align: top;
+  font-style: normal;
+}
+.priority-label--0 {
+  background: @priority-label-color-0;
+}
+.priority-label--1 {
+  background: @priority-label-color-1;
+}
+.priority-label--2 {
+  background: @priority-label-color-2;
+}
+.priority-label--3 {
+  background: @priority-label-color-3;
+}
+.priority-label--4 {
+  background: @priority-label-color-4;
+}
+.priority-label--5 {
+  background: @priority-label-color-5;
+}
+.priority-label--6 {
+  background: @priority-label-color-6;
 }

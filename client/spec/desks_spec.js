@@ -10,7 +10,7 @@
 'use strict';
 var desks = require('./helpers/desks');
 
-describe('desk maintenance', function() {
+describe('desks', function() {
 
     beforeEach(function() {
         desks.openDesksSettings();
@@ -21,7 +21,7 @@ describe('desk maintenance', function() {
         desks.deskDescriptionElement().sendKeys('New Description');
         desks.deskSourceElement().sendKeys('Test');
         desks.setDeskType('production');
-        desks.getNextButtonOnGeneralTab().click();
+        desks.actionSaveAndContinueOnGeneralTab();
         desks.showTab('macros');
         desks.save();
         desks.edit('Politic Desk');
@@ -36,9 +36,23 @@ describe('desk maintenance', function() {
         desks.deskDescriptionElement().sendKeys('Test Description');
         desks.deskSourceElement().sendKeys('Test Source');
         desks.setDeskType('authoring');
-        desks.getNextButtonOnGeneralTab().click();
+        desks.actionSaveAndContinueOnGeneralTab();
         desks.showTab('macros');
         desks.save();
+        desks.edit('Test Desk');
+        expect(desks.deskNameElement().getAttribute('value')).toEqual('Test Desk');
+        expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('Test Description');
+        expect(desks.deskSourceElement().getAttribute('value')).toEqual('Test Source');
+        expect(desks.getDeskType().getAttribute('value')).toEqual('string:authoring');
+    });
+
+    it('add desk with Done action', function() {
+        desks.getNewDeskButton().click();
+        desks.deskNameElement().sendKeys('Test Desk');
+        desks.deskDescriptionElement().sendKeys('Test Description');
+        desks.deskSourceElement().sendKeys('Test Source');
+        desks.setDeskType('authoring');
+        desks.actionDoneOnGeneralTab();
         desks.edit('Test Desk');
         expect(desks.deskNameElement().getAttribute('value')).toEqual('Test Desk');
         expect(desks.deskDescriptionElement().getAttribute('value')).toEqual('Test Description');

@@ -5120,3 +5120,4 @@ Feature: Package Publishing
       """
         {"_issues": {"validator exception": "['item-1 headline: ABSTRACT is a required field', 'item-2 headline: ABSTRACT is a required field', 'compositeitem: HEADLINE is a required field']"}, "_status": "ERR"}
       """
+

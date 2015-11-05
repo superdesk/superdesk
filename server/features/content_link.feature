@@ -793,6 +793,7 @@ Feature: Link content in takes
                 "type": "composite"
             },
             "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}],
+            "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#"},
             "priority": 1,
             "urgency": 1,
             "ednote": "ednote",

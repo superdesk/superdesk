@@ -74,9 +74,16 @@
                 }
             };
         })
-        .directive('sdMediaPreview', [function() {
+        .directive('sdMediaPreview', ['api', '$rootScope', function(api, $rootScope) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/preview.html'
+                templateUrl: 'scripts/superdesk-archive/views/preview.html',
+                link: function(scope) {
+                    scope.previewRewriteStory = function () {
+                        return api.find('archive', scope.item.rewrite_id).then(function(item) {
+                            $rootScope.$broadcast('broadcast:preview', {'item': item});
+                        });
+                    };
+                }
             };
         }])
         .directive('sdMediaPreviewWidget', [function() {
@@ -369,6 +376,18 @@
                                 scope._progress = Math.min(100, Math.round(100.0 * data.progress.current / data.progress.total));
                             }
                             scope.$digest();
+                        }
+                    });
+
+                    scope.$on('item:highlight', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item_id) {
+                            if (!scope.item.highlights) {
+                                scope.item.highlights = [data.highlight_id];
+                            } else if (scope.item.highlights.indexOf(data.highlight_id) === -1){
+                                scope.item.highlights = [data.highlight_id].concat(scope.item.highlights);
+                            } else if (!scope.item.multiSelect){
+                                scope.item.highlights = _.without(scope.item.highlights, data.highlight_id);
+                            }
                         }
                     });
 

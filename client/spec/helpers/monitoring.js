@@ -239,32 +239,32 @@ function Monitoring() {
     };
 
     this.nextStages = function() {
-        element(by.id('nextStages')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.nextSearches = function() {
-        element(by.id('nextSearches')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousSearches = function() {
-        element(by.id('previousSearches')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.nextReorder = function() {
-        element(by.id('nextReorder')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousReorder = function() {
-        element(by.id('previousReorder')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.previousMax = function() {
-        element(by.id('previousMax')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
@@ -296,12 +296,20 @@ function Monitoring() {
      *  @param {index} index
      *  @return {promise}
      */
-    this.getSearch = function(index) {
-        return this.config.all(by.repeater('search in currentSavedSearches')).get(index);
+    this.getGlobalSearch = function(index) {
+        return this.config.all(by.repeater('search in globalSavedSearches')).get(index);
     };
 
-    this.getSearchText = function(search) {
-        return this.getSearch(search).element(by.css('.desk-title')).getText();
+    this.getPrivateSearch = function(index) {
+        return this.config.all(by.repeater('search in privateSavedSearches')).get(index);
+    };
+
+    this.getGlobalSearchText = function(search) {
+        return this.getGlobalSearch(search).element(by.css('.desk-title')).getText();
+    };
+
+    this.getPrivateSearchText = function(search) {
+        return this.getPrivateSearch(search).element(by.css('.desk-title')).getText();
     };
 
     this.toggleDesk = function(desk) {
@@ -312,16 +320,32 @@ function Monitoring() {
         this.getStage(desk, stage).element(by.css('[ng-click="setStageInfo(stage._id)"]')).click();
     };
 
+    this.toggleDeskOutput = function(desk) {
+        this.getDesk(desk).element(by.model('editGroups[desk._id + \':output\'].selected')).click();
+    };
+
     this.togglePersonal = function() {
         element(by.css('[ng-click="setPersonalInfo()"]')).click();
     };
 
-    this.toggleSearch = function(search) {
-        this.getSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
+    this.switchGlobalSearchOn = function() {
+        element(by.model('showGlobalSavedSearches')).click();
+    };
+
+    this.toggleGlobalSearch = function(search) {
+        this.getGlobalSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
+    };
+
+    this.togglePrivateSearch = function(search) {
+        this.getPrivateSearch(search).element(by.css('[ng-click="setSearchInfo(search._id)"]')).click();
     };
 
     this.toggleAllSearches = function() {
         element(by.css('[ng-click="initSavedSearches(showAllSavedSearches)"]')).click();
+    };
+
+    this.toggleGlobalSearches = function() {
+        element(by.model('showGlobalSavedSearches')).click();
     };
 
     this.getOrderItem = function(item) {
@@ -391,9 +415,17 @@ function Monitoring() {
 
     this.uploadModal = element(by.className('upload-media'));
 
-    this.fetchAs = function(group, item) {
+    this.openFetchAsOptions = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
+    };
+
+    this.clickOnFetchButton = function() {
         return element(by.css('[ng-click="send()"]')).click();
+    };
+
+    this.fetchAs = function(group, item) {
+        this.openFetchAsOptions(group, item);
+        return this.clickOnFetchButton();
     };
 
     this.fetchAndOpen = function(group, item) {
@@ -416,8 +448,8 @@ function Monitoring() {
      */
     this.checkMarkedForHighlight = function(highlight, group, item) {
         var crtItem = this.getItem(group, item);
-        expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        browser.actions().mouseMove(crtItem.element(by.className('icon-star-color'))).perform();
+        expect(crtItem.element(by.className('icon-star')).isDisplayed()).toBeTruthy();
+        browser.actions().mouseMove(crtItem.element(by.className('icon-star'))).perform();
         element.all(by.css('.dropdown-menu.open li')).then(function (items) {
             expect(items[1].getText()).toContain(highlight);
         });
@@ -481,6 +513,22 @@ function Monitoring() {
         return browser.wait(function() {
             return element(by.className('list-view')).isPresent();
         }, 300);
+    };
+
+    this.turnOffWorkingStage = function(deskIndex, canCloseSettingsModal) {
+        this.showMonitoringSettings();
+        this.toggleStage(deskIndex, 0);
+
+        if (typeof canCloseSettingsModal !== 'boolean') {
+            canCloseSettingsModal = true;
+        }
+
+        if (canCloseSettingsModal) {
+            this.nextStages();
+            this.nextSearches();
+            this.nextReorder();
+            this.saveSettings();
+        }
     };
 
 }

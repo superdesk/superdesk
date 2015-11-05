@@ -15,7 +15,7 @@ from flask import request
 from superdesk import get_resource_service, Service
 from superdesk.metadata.item import ITEM_STATE, EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
-from apps.archive.common import CUSTOM_HATEOAS
+from apps.archive.common import CUSTOM_HATEOAS, ITEM_CREATE
 from superdesk.metadata.utils import item_url
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
@@ -46,9 +46,12 @@ class ArchiveRewriteService(Service):
         self._validate_rewrite(original)
         digital = TakesPackageService().get_take_package(original)
         rewrite = self._create_rewrite_article(original, digital)
-        archive_service.post([rewrite])
+        ids = archive_service.post([rewrite])
         build_custom_hateoas(CUSTOM_HATEOAS, rewrite)
         self._add_rewritten_flag(original, digital, rewrite)
+        get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE,
+                                                                              item=original,
+                                                                              rewrite_id=ids[0])
         return [rewrite]
 
     def _validate_rewrite(self, original):
