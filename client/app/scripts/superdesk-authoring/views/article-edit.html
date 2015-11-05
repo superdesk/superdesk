@@ -12,6 +12,15 @@
   <div class="headline" ng-if="!_editable">{{item.headline}}</div>
 </div>
 
+<div ng-if="item.type === 'text' && item.profile != 'snap'" class="field">
+  <label translate>Featured Image</label>
+  <div sd-item-association
+      data-item="item"
+      data-rel="'feature_image'"
+      data-editable="_editable"
+      data-onchange="autosave(item)"></div>
+</div>
+
 <div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
   <label translate>Abstract</label>
     <span sd-character-count data-item="item.abstract" data-html="true" data-limit="limits.abstract"></span>
