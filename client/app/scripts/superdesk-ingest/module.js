@@ -59,6 +59,10 @@ define([
         search: {
             label: 'Search provider',
             templateUrl: 'scripts/superdesk-ingest/views/settings/searchConfig.html'
+        },
+        whatsapp: {
+            label: 'WhatsApp',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/whatsappConfig.html'
         }
     });
 

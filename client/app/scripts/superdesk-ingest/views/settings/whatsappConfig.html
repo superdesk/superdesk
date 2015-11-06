@@ -1,0 +1,8 @@
+<div class="field">
+	<label for="whatsapp_phone" translate>phone</label>
+	<input type="text" id="whatsapp_phone" placeholder="{{ 'phone'|translate }}" ng-model="provider.config.phone" required ng-change="$parent.setConfig(provider)">
+</div>
+<div class="field">
+	<label for="whatsapp_password" translate>Password</label>
+	<input type="text" id="whatsapp_password" placeholder="{{ 'password'|translate }}" ng-model="provider.config.password" required ng-change="$parent.setConfig(provider)">
+</div>
