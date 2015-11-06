@@ -599,6 +599,10 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         if (block !== undefined) {
                             blocks.push(block);
                         }
+                        // if no block, create an empty one to start
+                        if (blocks.length === 0) {
+                            blocks.push(new Block());
+                        }
                         // update the actual blocks value at the end to prevent more digest cycle as needed
                         vm.blocks = blocks;
                     },
@@ -622,7 +626,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         vm.setFocusOnBlock(new_block);
                     },
                     removeBlock: function(block) {
-                        vm.blocks.splice(vm.getBlockPosition(block), 1);
+                        // remove block only if it's not the first one
+                        var block_position = vm.getBlockPosition(block);
+                        if (block_position > 0) {
+                            vm.blocks.splice(block_position, 1);
+                            vm.setFocusOnBlock(vm.blocks[block_position - 1]);
+                        }
                     },
                     setFocusOnBlock: function(block) {
                         vm.blocks.forEach(function(b) {
@@ -738,6 +747,16 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.$watch('sdTextEditorBlock.focus', function(should_focus) {
                         if (should_focus) {
                             scope.node.focus();
+                            // set the cursor at the end of the block
+                            // FIXME: Doesn't work when tag are present
+                            if (scope.node.textContent.length > 0) {
+                                var range = document.createRange();
+                                var sel = window.getSelection();
+                                range.setStart(scope.node.firstChild, scope.node.textContent.length);
+                                range.collapse(true);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
                         }
                     });
 
@@ -808,14 +827,18 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                             // last paragraph contains what is after the cursor
                             var last_paragraph = $(scope.node).find('p:last');
                             // add a new block just after this one
-                            sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, last_paragraph.html());
-                            // remove it from current block
-                            last_paragraph.remove();
+                            $timeout(function () {
+                                sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, last_paragraph.html());
+                                // remove it from current block
+                                last_paragraph.remove();
+                            });
                         }
                         // backspace, remove the block if empty
                         if (e.keyCode === 8) {
                             if ($(scope.node).text()=== '') {
-                                sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                                $timeout(function () {
+                                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                                });
                             }
                         }
                     });
