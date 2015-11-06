@@ -13,7 +13,7 @@ from eve_elastic.elastic import set_filters
 
 import superdesk
 from superdesk.metadata.item import CONTENT_STATE, ITEM_STATE
-from superdesk.metadata.utils import aggregations
+from superdesk.metadata.utils import aggregations, item_url
 from apps.archive.archive import SOURCE as ARCHIVE
 
 
@@ -23,6 +23,10 @@ class SearchService(superdesk.Service):
 
     It can search against different collections like Ingest, Production, Archived etc.. at the same time.
     """
+
+    @property
+    def elastic(self):
+        return app.data.elastic
 
     def __init__(self, datasource, backend):
         super().__init__(datasource=datasource, backend=backend)
@@ -85,7 +89,6 @@ class SearchService(superdesk.Service):
         Runs elastic search on multiple doc types.
         """
 
-        elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
         filters = self._get_filters(types)
@@ -102,8 +105,8 @@ class SearchService(superdesk.Service):
 
         set_filters(query, filters)
 
-        hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
-        docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
+        hits = self.elastic.es.search(body=query, index=self.elastic.index, doc_type=types)
+        docs = self._get_docs(hits)
 
         for resource in types:
             response = {app.config['ITEMS']: [doc for doc in docs if doc['_type'] == resource]}
@@ -112,10 +115,27 @@ class SearchService(superdesk.Service):
 
         return docs
 
+    def _get_docs(self, hits):
+        """Parse hits from elastic and return only docs.
+
+        This will remove some extra metadata from elastic.
+
+        :param hits: elastic hits dictionary
+        """
+        return self.elastic._parse_hits(hits, 'ingest')  # any resource with item schema will do
+
+    def find_one(self, req, **lookup):
+        """Find item by id in all collections."""
+        hits = self.elastic.es.mget({'ids': [lookup[app.config['ID_FIELD']]]}, self.elastic.index)
+        hits['hits'] = {'hits': hits.pop('docs', [])}
+        docs = self._get_docs(hits)
+        return docs.first()
+
 
 class SearchResource(superdesk.Resource):
     resource_methods = ['GET']
-    item_methods = []
+    item_methods = ['GET']
+    item_url = item_url
 
 
 def init_app(app):

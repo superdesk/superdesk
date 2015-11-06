@@ -168,8 +168,6 @@ INSTALLED_APPS.extend([
     'apps.comments',
 
     'superdesk.io',
-    'superdesk.io.subjectcodes',
-    'superdesk.io.iptc',
     'apps.io',
     'superdesk.io.ftp',
     'superdesk.io.rss',
@@ -200,6 +198,7 @@ INSTALLED_APPS.extend([
     'apps.duplication',
     'apps.aap.import_text_archive',
     'apps.aap_mm',
+    'apps.pa_img',
     'apps.spellcheck',
     'apps.templates',
     'apps.archived',
@@ -207,6 +206,9 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
+
+    'superdesk.io.subjectcodes',
+    'pa.topics',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

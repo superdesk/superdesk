@@ -14,26 +14,39 @@ import logging
 from eve.utils import config
 from flask import json
 
-import superdesk
-from superdesk.errors import SuperdeskApiError, ProviderError
+from apps.archive.archive import SOURCE as ARCHIVE
 from apps.archive.common import generate_unique_id_and_name
-from superdesk.metadata.utils import generate_guid
-from superdesk.metadata.item import GUID_TAG, FAMILY_ID, INGEST_ID, ITEM_STATE, CONTENT_STATE
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
-from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk import get_resource_service
+import superdesk
+from superdesk.errors import SuperdeskApiError, ProviderError
+from superdesk.metadata.item import GUID_TAG, FAMILY_ID, INGEST_ID, ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.utils import generate_guid
+from superdesk.resource import Resource
+
 
 logger = logging.getLogger(__name__)
 
 
-class AapMMService(superdesk.Service):
+class SearchIngestResource(superdesk.Resource):
+    resource_methods = ['GET', 'POST']
+    schema = {
+        'guid': {'type': 'string', 'required': True},
+        'desk': Resource.rel('desks', False, nullable=True)
+    }
+
+
+class SearchIngestService(superdesk.Service):
+    def __init__(self, datasource=None, backend=None, source=None):
+        super().__init__(datasource, backend)
+        self.source = source
 
     def create(self, docs, **kwargs):
         new_guids = []
-        provider = get_resource_service('ingest_providers').find_one(source='aapmm', req=None)
+        provider = get_resource_service('ingest_providers').find_one(source=self.source, req=None)
         if provider and 'config' in provider and 'username' in provider['config']:
-                self.backend.set_credentials(provider['config']['username'], provider['config']['password'])
+                self.backend.set_credentials(provider['config']['username'], provider['config'].get('password', ''))
         for doc in docs:
             if not doc.get('desk'):
                 # if no desk is selected then it is bad request
@@ -66,12 +79,12 @@ class AapMMService(superdesk.Service):
         return new_guids
 
     def get(self, req, lookup):
-        provider = get_resource_service('ingest_providers').find_one(source='aapmm', req=None)
+        provider = get_resource_service('ingest_providers').find_one(source=self.source, req=None)
         if provider:
             if 'config' in provider and 'username' in provider['config']:
-                self.backend.set_credentials(provider['config']['username'], provider['config']['password'])
+                self.backend.set_credentials(provider['config']['username'], provider['config'].get('password', ''))
             query = self._get_query(req)
-            results = self.backend.find('aapmm', query, None)
+            results = self.backend.find(self.source, query, None)
             for doc in results.docs:
                 doc['ingest_provider'] = str(provider[superdesk.config.ID_FIELD])
             return results
