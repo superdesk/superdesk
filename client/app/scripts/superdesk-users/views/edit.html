@@ -27,7 +27,7 @@
 		    </header>
 		    <div class="content">
 		    	<div sd-user-edit data-user="user" ng-if="selectedTab === 'overview'"></div>
-		    	<div sd-user-preferences ng-if="selectedTab === 'preferences'"></div>
+		    	<div sd-user-preferences data-user="user" ng-if="selectedTab === 'preferences'"></div>
 		    	<div sd-user-privileges data-user="user" ng-if="selectedTab === 'privileges' && privileges.users"></div>
 		    </div>
 		</div>
