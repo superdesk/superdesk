@@ -10,6 +10,7 @@ describe('authoring', function() {
 
     beforeEach(function() {
         monitoring.openMonitoring();
+        monitoring.turnOffWorkingStage(0);
     });
 
     it('authoring operations', function() {
@@ -176,7 +177,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 0, 0);
         authoring.showHistory();
         expect(authoring.getHistoryItems().count()).toBe(2);
-        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/New\) by .*/);
+        expect(authoring.getHistoryItem(1).getText()).toMatch(/Copied to \d+ \(Politic Desk\/Incoming Stage\) by .*/);
         authoring.close();
     });
 

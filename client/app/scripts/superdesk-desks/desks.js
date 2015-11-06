@@ -1059,6 +1059,10 @@
                         }
                     };
 
+                    scope.enableSave = function() {
+                        return scope.editStage.name && scope.editStage.name.length > 0 && !scope._errorLimits;
+                    };
+
                     function clearErrorMessages() {
                         if (scope._errorUniqueness || scope._error || scope._errorLimits) {
                             scope._errorUniqueness = null;
