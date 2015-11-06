@@ -147,6 +147,8 @@ describe('HIGHLIGHTS', function() {
         beforeEach(route('/workspace/monitoring'));
 
         it('create highlight package', function() {
+            monitoring.turnOffWorkingStage(0);
+
             //mark for highlight in monitoring
             monitoring.actionOnItemSubmenu('Mark for highlight', 'Highlight two', 1, 0);
             monitoring.actionOnItemSubmenu('Mark for highlight', 'Highlight three', 1, 2);

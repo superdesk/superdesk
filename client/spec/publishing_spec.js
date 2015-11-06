@@ -7,6 +7,7 @@ var monitoring = require('./helpers/monitoring'),
 describe('publish queue', function() {
     beforeEach(function() {
         monitoring.openMonitoring();
+        monitoring.turnOffWorkingStage();
         expect(monitoring.getTextItem(1, 0)).toBe('item5');
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.publish();
