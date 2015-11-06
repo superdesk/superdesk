@@ -763,69 +763,23 @@
     ChangeImageController.$inject = ['$scope', 'gettext', 'notify', 'modal', '$q'];
     function ChangeImageController($scope, gettext, notify, modal, $q) {
         $scope.data = $scope.locals.data;
-        $scope.preview = {};
-        $scope.origPreview = {};
         $scope.data.cropData = {};
         $scope.data.isDirty = false;
-
-        $scope.$watch('preview', function(newValue, oldValue) {
-            if (newValue === oldValue) {
-                $scope.origPreview = $scope.preview;
-                return;
-            }
-
-            // During the initialisation of jcrop the preview object keeps changing and
-            // new keys are being added to it. We want to ignore those changes and only
-            // respond to those  that are actually caused by the changed crop coordinates.
-            if (Object.keys(newValue).length === Object.keys(oldValue).length) {
-                $scope.data.isDirty = true;
-                return;
-            }
-        }, true);
-
-        /*
-        * Gets the crop coordinates, which was set in preview object during the onChange
-        * event of jcrop
-        */
-        function getCropCoordinates(cropName) {
-            var coordinates = {};
-            var cropPoints  = $scope.preview[cropName];
-            coordinates.CropLeft = Math.round(Math.min(cropPoints.cords.x, cropPoints.cords.x2));
-            coordinates.CropRight = Math.round(Math.max(cropPoints.cords.x, cropPoints.cords.x2));
-            coordinates.CropTop = Math.round(Math.min(cropPoints.cords.y, cropPoints.cords.y2));
-            coordinates.CropBottom = Math.round(Math.max(cropPoints.cords.y, cropPoints.cords.y2));
-
-            return coordinates;
-        }
-
-        /*
-        * Serves for holding the crop coordinates
-        */
-        function recordCrops(cropName) {
-            var obj = {};
-            obj[cropName] = getCropCoordinates(cropName);
-            _.extend($scope.data.cropData, obj);
-        }
 
         /*
         * Records the coordinates for each crop sizes available and
         * notify the user and then resolve the activity.
         */
         $scope.done = function() {
-            _.forEach($scope.data.cropsizes, function(cropsize) {
-                recordCrops(cropsize.name);
-            });
             notify.success(gettext('Crop changes have been recorded'));
-            $scope.resolve($scope.data);
+            $scope.resolve($scope.data.cropData);
         };
 
         $scope.close = function() {
             if ($scope.data.isDirty) {
                 modal.confirm(gettext('You have unsaved changes, do you want to continue?'))
                 .then(function() { // Ok = continue w/o saving
-                    $scope.data.isDirty = false;
-                    $scope.preview = $scope.origPreview;
-                    $scope.resolve($scope.data);
+                    return $scope.reject();
                 });
             } else {
                 $scope.reject();
@@ -1997,8 +1951,9 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', '$filter', 'superdesk'];
-    function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'renditions', 'session', '$filter', '$timeout',
+    'superdesk', 'notify', 'gettext'];
+    function ArticleEditDirective(autosave, authoring, metadata, renditions, session, $filter, $timeout, superdesk, notify, gettext) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
@@ -2106,30 +2061,15 @@
                     }
                 };
 
-                /**
-                 * Function to evaluate aspect ratio attribute in advance to provide in
-                 * proper decimal format required by jCrop.
-                 */
-                scope.evalAspectRatio = function(ar) {
-                    var parts = ar.split('-').map(_.partial(parseInt, _, 10));
-                    var result = parts[0] / parts[1];
-
-                    if (isNaN(result) || !isFinite(result)) {
-                        scope.errorMessage = 'Error: Given Aspect ratio was not valid, using default: ' + DEFAULT_ASPECT_RATIO;
-                        return DEFAULT_ASPECT_RATIO;
-                    } else {
-                        scope.errorMessage = null;
-                        return result;
-                    }
-                };
-
                 scope.applyCrop = function() {
                     var ar = {};
                     scope.item.cropsizes = scope.metadata.crop_sizes;
                     _.forEach(scope.item.cropsizes, function(cropsizes) {
-                        ar = {aspectRatio: scope.evalAspectRatio(cropsizes.name)};
+                        ar = {aspectRatio: renditions.evalAspectRatio(cropsizes.name)};
                         _.extend(_.filter(scope.item.cropsizes, {name: cropsizes.name})[0], ar);
                     });
+
+                    scope.metadata.crop_sizes;
 
                     superdesk.intent('edit', 'crop',  scope.item).then(function(data) {
                         if (!mainEditScope.dirty) {
@@ -2167,6 +2107,7 @@
         .service('lock', LockService)
         .service('authThemes', AuthoringThemesService)
         .service('authoringWorkspace', AuthoringWorkspaceService)
+        .service('renditions', RenditionsService)
 
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
@@ -2503,8 +2444,8 @@
         init();
     }
 
-    ItemAssociationDirective.$inject = ['api'];
-    function ItemAssociationDirective(api) {
+    ItemAssociationDirective.$inject = ['superdesk', 'renditions'];
+    function ItemAssociationDirective(superdesk, renditions) {
         return {
             scope: {
                 rel: '=',
@@ -2512,8 +2453,7 @@
                 editable: '=',
                 onchange: '&'
             },
-            template: '<div class="item-association" ng-class="{preview: preview}">' +
-                '<img ng-if="preview" ng-src="{{ preview.renditions.viewImage.href }}"></div>',
+            templateUrl: 'scripts/superdesk-authoring/views/item-association.html',
             link: function(scope, elem) {
 
                 var PICTURE_TYPE = 'application/superdesk.item.picture';
@@ -2540,28 +2480,78 @@
                 elem.on('drop', function(event) {
                     event.preventDefault();
                     var item = getItem(event, PICTURE_TYPE);
-                    var data = {};
-                    data[scope.rel] = {uri: item._id};
                     scope.$apply(function() {
+                        var data = updateItemAssociation(item);
                         scope.onchange({item: scope.item, data: data});
-                        scope.preview = item;
-                        scope.item.associations = angular.extend({},
-                            scope.item.associations || {},
-                            data
-                        );
                     });
                 });
 
+                function updateItemAssociation(updated) {
+                    var data = {};
+                    data[scope.rel] = updated;
+
+                    scope.item.associations = angular.extend(
+                        {},
+                        scope.item.associations,
+                        data
+                    );
+
+                    return data;
+                }
+
                 // init associated item for preview
-                scope.$watch('item', function(item) {
-                    if (item && item.associations && item.associations[scope.rel]) {
-                        var rel = item.associations[scope.rel];
-                        api.find('search', rel.uri).then(function(related) {
-                            scope.preview = related;
-                        });
-                    }
+                scope.$watch('item.associations[rel]', function(related) {
+                    scope.related = related;
+                });
+
+                renditions.get().then(function() {
+                    scope.edit = function() {
+                        superdesk.intent('edit', 'crop', {item: scope.related, renditions: renditions.renditions})
+                            .then(function(data) {
+                                var renditions = angular.extend({}, scope.related.renditions || {});
+                                angular.forEach(data, function(crop, renditionName) {
+                                    renditions[renditionName] = angular.extend({},
+                                        renditions[renditionName] || {},
+                                        {crop: crop}
+                                    );
+                                });
+
+                                var updated = angular.extend({}, scope.related, {renditions: renditions});
+                                var data = updateItemAssociation(updated);
+                                scope.onchange({item: scope.item, data: data});
+                            });
+                    };
                 });
             }
         };
     }
+
+    RenditionsService.$inject = ['metadata'];
+    function RenditionsService(metadata) {
+        var self = this;
+        this.get = function() {
+            return metadata.initialize().then(function() {
+                self.renditions = metadata.values.crop_sizes;
+                return self.renditions;
+            });
+        };
+
+        /**
+         * Function to evaluate aspect ratio attribute in advance to provide in
+         * proper decimal format required by jCrop.
+         */
+        this.evalAspectRatio = function(rendition) {
+            var parts = rendition.split('-').map(_.partial(parseInt, _, 10));
+            var result = parts[0] / parts[1];
+
+            if (isNaN(result) || !isFinite(result)) {
+                scope.errorMessage = 'Error: Given Aspect ratio was not valid, using default: ' + DEFAULT_ASPECT_RATIO;
+                return DEFAULT_ASPECT_RATIO;
+            } else {
+                scope.errorMessage = null;
+                return result;
+            }
+        };
+    }
+
 })();

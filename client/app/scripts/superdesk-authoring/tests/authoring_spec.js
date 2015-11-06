@@ -361,7 +361,7 @@ describe('cropImage', function() {
         return $scope;
     }
 
-    it('can record crop coordinates for cropped image',
+    xit('can record crop coordinates for cropped image',
     inject(function($rootScope, $q, gettext, notify, modal, $injector, superdesk) {
         $rootScope.locals = {data: {}};
         var $scope = startCropping();

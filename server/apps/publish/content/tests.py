@@ -8,14 +8,14 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from copy import copy
-from datetime import timedelta
 import os
 import json
 
+from copy import copy
+from datetime import timedelta
 from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
-from eve.validation import ValidationError
+from unittest.mock import MagicMock, patch
 
 from apps.packages.package_service import PackageService
 from apps.publish.content.publish import ArchivePublishService
@@ -321,6 +321,9 @@ class ArchivePublishTestCase(SuperdeskTestCase):
             json.dump(self.json_data, file)
         init_app(self.app)
         ValidatorsPopulateCommand().run(self.filename)
+
+        self.app.media.url_for_media = MagicMock(return_value='url_for_media')
+        self.app.media.put = MagicMock(return_value='media_id')
 
     def tearDown(self):
         super().tearDown()
@@ -721,18 +724,48 @@ class ArchivePublishTestCase(SuperdeskTestCase):
         self.assertEqual(len(removed_items), 1)
         self.assertEqual(len(added_items), 1)
 
-    def test_resolve_associations(self):
+    def test_publish_associations(self):
         item = {
             'associations': {
-                'sidebar': {'uri': '1'}
+                'sidebar': {
+                    'headline': 'foo',
+                    'pubstatus': 'canceled',
+                },
+                'image': {
+                    'pubstatus': 'usable',
+                    'headline': 'bar',
+                    'fetch_endpoint': 'paimg',
+                    'renditions': {
+                        'original': {
+                            'href': 'https://c2.staticflickr.com/4/3665/9203816834_3329fac058_t.jpg',
+                            'width': 100,
+                            'height': 67,
+                            'mimetype': 'image/jpeg'
+                        },
+                        'thumbnail': {
+                            'crop': {
+                                'CropLeft': 10,
+                                'CropRight': 50,
+                                'CropTop': 10,
+                                'CropBottom': 40,
+                            }
+                        }
+                    }
+                }
             }
         }
-        ArchivePublishService()._resolve_associations(item)
-        self.assertEqual('text', item['associations']['sidebar']['type'])
 
-        with self.assertRaisesRegex(ValidationError, 'item is not published rel=image item=2'):
-            ArchivePublishService()._resolve_associations({
-                'associations': {
-                    'image': {'uri': '2'}
-                }
-            })
+        thumbnail_crop = {'width': 40, 'height': 30}
+        with patch.object(CropService, 'get_crop_by_name', return_value=thumbnail_crop):
+            ArchivePublishService()._publish_associations(item, 'baz')
+
+        self.assertNotIn('sidebar', item['associations'])
+        self.assertIn('image', item['associations'])
+
+        image = item['associations']['image']
+        renditions = image['renditions']
+        self.assertNotIn('crop', renditions['thumbnail'])
+        self.assertEqual(40, renditions['thumbnail']['width'])
+        self.assertEqual(30, renditions['thumbnail']['height'])
+        self.assertEqual('image/jpeg', renditions['thumbnail']['mimetype'])
+        self.assertEqual('url_for_media', renditions['thumbnail']['href'])

@@ -9,13 +9,18 @@
           <div class="original">
             <div class="crop-area image">
                 <ul> 
-                    <li ng-repeat="cropsize in data.cropsizes track by cropsize.name">
-                    <label class="field-label" translate>ASPECT RATIO: {{cropsize.name.replace('-', '/')}}</label>
-                    <label class="cords-label">{{preview[cropsize.name].cords}}</label>
-                    <div sd-image-crop data-show-Min-Size-Error="true"
-                        data-src="data.renditions.original.href" data-cords="preview[cropsize.name].cords" data-box-width="800" 
-                        data-box-height="600" data-aspect-ratio="cropsize.aspectRatio" 
-                        data-minimum-size="[cropsize.width, cropsize.height]" data-crop-select="data.renditions[cropsize.name]">
+                    <li ng-repeat="rendition in data.renditions track by rendition.name">
+                    <label class="field-label">{{ rendition.name }}</label>
+                    <div sd-image-crop
+                        data-show-Min-Size-Error="true"
+                        data-box-width="600" 
+                        data-box-height="400"
+                        data-src="data.item.renditions.viewImage.href"
+                        data-original="data.item.renditions.original"
+                        data-rendition="rendition"
+                        data-crop-init="data.item.renditions[rendition.name].crop"
+                        data-crop-data="data.cropData[rendition.name]"
+                        data-on-change="data.isDirty = true">
                     </div>
                     <br />
                     </li>
@@ -25,6 +30,11 @@
         </div>
     </section>
 </div>
+
 <div class="modal-footer">
-    <button type="button" class="btn btn-medium btn-info" ng-click="done()" ng-disabled="!preview || !preview.progress || !data.isDirty" translate>Save</button>
+    <button type="button"
+        class="btn btn-medium btn-info"
+        ng-click="done()"
+        ng-disabled="!data.isDirty"
+        translate>Save</button>
 </div>

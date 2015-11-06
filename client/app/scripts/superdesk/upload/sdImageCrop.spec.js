@@ -23,19 +23,8 @@ describe('Image Crop', function() {
             scope.src = url;
             scope.minimumSize = [800, 600];
             $elm = $compile('<div sd-image-crop data-src="src" data-show-Min-Size-Error="true"' +
-                ' data-aspect-ratio="4/3" data-minimum-size="minimumSize" data-box-width="boxWidth"' +
+                ' data-minimum-size="minimumSize" data-box-width="boxWidth"' +
                 ' data-box-height="boxHeight"></div>')(scope);
-        }));
-
-        it('should be ok with given aspect-ratio', inject(function($compile) {
-            $compile('<div sd-image-crop data-aspect-ratio="4/3"></div>')(scope);
-        }));
-
-        it('should fail when aspect-ratio missing', inject(function($compile) {
-            var fn = function() {
-                $compile('<div sd-image-crop></div>')(scope);
-            };
-            expect(fn).toThrow(new Error('sdImageCrop: attribute "aspect-ratio" is mandatory'));
         }));
 
         it('invokes watch', inject(function() {
@@ -98,25 +87,24 @@ describe('Image Crop', function() {
             }));
 
             it('executes with validation failed', inject(function($compile) {
-                var fn = function() {
-                    fakeImg.width = 800;
-                    fakeImg.height = 500;
-                    scope.$digest();
+                fakeImg.width = 800;
+                fakeImg.height = 500;
+                scope.$digest();
 
-                    isoScope = $elm.isolateScope();
-                    isoScope.src = newUrl;
-                    isoScope.$digest();
+                isoScope = $elm.isolateScope();
+                isoScope.src = newUrl;
+                isoScope.$digest();
 
-                    expect(typeof fakeImg.onload).toEqual('function');
+                expect(typeof fakeImg.onload).toEqual('function');
 
-                    scope.$parent.preview = {};
+                scope.$parent.preview = {};
 
-                    var handler = fakeImg.onload;
-                    handler.apply(fakeImg);
-                    expect(mySpy.calls.count()).toEqual(1);
-                };
-                expect(fn).toThrow(new Error('sdImageCrop: Sorry, but image must be at least ' +
-                    scope.minimumSize[0] + 'x' + scope.minimumSize[1]));
+                var handler = fakeImg.onload;
+                handler.apply(fakeImg);
+                expect(mySpy.calls.count()).toEqual(0);
+                expect($elm.text())
+                    .toBe('Sorry, but image must be at least ' + scope.minimumSize[0] + 'x' + scope.minimumSize[1] +
+                          ', (it is 800x500).');
             }));
         });
     });

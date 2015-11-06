@@ -20,7 +20,7 @@ from superdesk.upload import url_for_media
 import urllib3
 
 from superdesk.errors import SuperdeskApiError
-from superdesk.media.media_operations import process_file_from_stream, decode_metadata
+from superdesk.media.media_operations import process_file_from_stream, decode_metadata, download_file_from_url
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.metadata.item import ITEM_TYPE, CONTENT_TYPE
 from superdesk.utc import utc, utcnow
@@ -54,6 +54,16 @@ class PaImgDatalayer(DataLayer):
         self._token = None
         self._headers = {'Content-Type': 'application/json'}
         self._http = urllib3.PoolManager()
+
+    def fetch_file(self, url):
+        """Get file stream for given image url.
+
+        It will fetch the file using predefined auth token.
+
+        :param url: pa image api url
+        """
+        stream, name, mime = download_file_from_url('%s?token=%s' % (url, self._token))
+        return stream
 
     def find(self, resource, req, lookup):
         """
@@ -149,13 +159,10 @@ class PaImgDatalayer(DataLayer):
             if 'renditions' in doc:
                 renditions = doc.get('renditions')
                 new_doc['renditions'] = {
-                    'viewImage': {'href': renditions['sample']['href']},
-                    'thumbnail': {'href': renditions['thumbnail']['href']},
-                    'original': {'href': renditions['full']['href']},
-                    'baseImage': {'href': renditions['masonry']['href']},
+                    'original': renditions.get('full'),
+                    'thumbnail': renditions.get('thumbnail_lrg'),
+                    'viewImage': renditions.get('sample'),
                 }
-                if not new_doc['renditions']['original']['href']:
-                    new_doc['renditions']['original']['href'] = new_doc['renditions']['viewImage']['href']
 
         if 'byline' in doc:
             new_doc['byline'] = doc['byline']
