@@ -35,7 +35,7 @@ describe('sdUserPrivileges directive', function() {
         $provide.service('api', fakeApi);
     }));
 
-    beforeEach(inject(function (_$rootScope_, _$compile_, $q, api) {
+    beforeEach(inject(function (_$rootScope_, _$compile_, $q, api, userList) {
         $rootScope = _$rootScope_;
         $compile = _$compile_;
 
@@ -51,6 +51,8 @@ describe('sdUserPrivileges directive', function() {
             getById: jasmine.createSpy('get_roles_by_user_id')
                         .and.returnValue(getByIdDeferred.promise)
         };
+
+        spyOn(userList, 'getUser').and.returnValue($q.when({_id: 1}));
     }));
 
     /**
@@ -73,7 +75,7 @@ describe('sdUserPrivileges directive', function() {
         scope = $rootScope.$new();
         angular.extend(scope, scopeValues);
 
-        html = '<div sd-user-privileges user="user"></div>';
+        html = '<div sd-user-privileges data-user="user"></div>';
 
         $element = $compile(html)(scope);
         scope.$digest();

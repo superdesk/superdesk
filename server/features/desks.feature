@@ -12,27 +12,29 @@ Feature: Desks
         Given empty "users"
         Given empty "desks"
         When we post to "users"
-            """
-            {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
-            """
-        When we post to "/desks"
-            """
-            {"name": "Sports Desk", "members": [{"user": "#users._id#"}]}
-            """
-        And we get "/desks"
-        Then we get list with 1 items
-            """
-            {"_items": [{"name": "Sports Desk", "members": [{"user": "#users._id#"}], "desk_type": "authoring"}]}
-            """
+        """
+        {"username": "foo", "email": "foo@bar.com", "is_active": true, "sign_off": "abc"}
+        """
+        And we post to "/desks"
+        """
+        {"name": "Sports Desk", "members": [{"user": "#users._id#"}]}
+        """
+        And we get "/desks/#desks._id#"
+        Then we get existing resource
+        """
+        {"name": "Sports Desk", "desk_type": "authoring", "members": [{"user": "#users._id#"}]}
+        """
+        And we get "incoming_stage"
+        And we get "working_stage"
         Then we get notifications
-            """
-            [{"event": "desk", "extra": {"created": 1, "desk_id": "#desks._id#"}}]
-            """
+        """
+        [{"event": "desk", "extra": {"created": 1, "desk_id": "#desks._id#"}}]
+        """
         When we get the default incoming stage
         And we delete latest
         Then we get error 412
         """
-        {"_status": "ERR", "_message": "Cannot delete a default stage."}
+        {"_status": "ERR", "_message": "Cannot delete a Incoming Stage."}
         """
 
 	@auth
@@ -151,7 +153,7 @@ Feature: Desks
         """
         When we patch "/desks/#desks._id#"
         """
-        { "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+        { "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10},
                                   {"_id": "id_saved_search", "type": "search", "max_items": 20},
                                   {"_id": "id_personal", "type": "personal", "max_items": 15}
                                  ]
@@ -161,8 +163,8 @@ Feature: Desks
         When we get "/desks"
         Then we get list with 1 items
             """
-            {"_items": [{"name": "Sports Desk", 
-                          "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10}, 
+            {"_items": [{"name": "Sports Desk",
+                          "monitoring_settings": [{"_id": "id_stage", "type": "stage", "max_items": 10},
                                                   {"_id": "id_saved_search", "type": "search", "max_items": 20},
                                                   {"_id": "id_personal", "type": "personal", "max_items": 15}
                                                  ]

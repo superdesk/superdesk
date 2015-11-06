@@ -1561,9 +1561,9 @@
         };
     }
     SendItem.$inject = ['$q', 'api', 'desks', 'notify', 'authoringWorkspace', 'superdeskFlags',
-        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm'];
+        '$location', 'macros', '$rootScope', 'authoring', 'send', 'spellcheck', 'confirm', 'archiveService'];
     function SendItem($q, api, desks, notify, authoringWorkspace, superdeskFlags,
-        $location, macros, $rootScope, authoring, send, spellcheck, confirm) {
+        $location, macros, $rootScope, authoring, send, spellcheck, confirm, archiveService) {
         return {
             scope: {
                 item: '=',
@@ -1695,8 +1695,8 @@
                  * Returns true if Publish Schedule needs to be displayed, false otherwise.
                  */
                 scope.showPublishSchedule = function() {
-                    return scope.mode !== 'ingest' && scope.item && scope.item.type !== 'composite' &&
-                        !scope.item.embargo_date && !scope.item.embargo_time &&
+                    return scope.item && archiveService.getType(scope.item) !== 'ingest' &&
+                        scope.item.type !== 'composite' && !scope.item.embargo_date && !scope.item.embargo_time &&
                         !authoring.isTakeItem(scope.item) &&
                         ['published', 'killed', 'corrected'].indexOf(scope.item.state) === -1;
                 };
@@ -1705,7 +1705,7 @@
                  * Returns true if Embargo needs to be displayed, false otherwise.
                  */
                 scope.showEmbargo = function() {
-                    var prePublishCondition = scope.mode !== 'ingest' && scope.item &&
+                    var prePublishCondition = scope.item && archiveService.getType(scope.item) !== 'ingest' &&
                         scope.item.type !== 'composite' && !scope.item.publish_schedule_date &&
                         !scope.item.publish_schedule_time && !authoring.isTakeItem(scope.item);
 
@@ -2017,9 +2017,11 @@
                 metadata.initialize().then(function() {
                     scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
-                        return scope.item.renditions[crop.name];
-                    });
+                    if (scope.metadata.crop_sizes) {
+                        scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
+                            return scope.item.renditions[crop.name];
+                        });
+                    }
                 });
 
                 /**

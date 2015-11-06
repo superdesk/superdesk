@@ -239,32 +239,32 @@ function Monitoring() {
     };
 
     this.nextStages = function() {
-        element(by.id('nextStages')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.nextSearches = function() {
-        element(by.id('nextSearches')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousSearches = function() {
-        element(by.id('previousSearches')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.nextReorder = function() {
-        element(by.id('nextReorder')).click();
+        element(by.id('nextBtn')).click();
         browser.sleep(500);
     };
 
     this.previousReorder = function() {
-        element(by.id('previousReorder')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
     this.previousMax = function() {
-        element(by.id('previousMax')).click();
+        element(by.id('previousBtn')).click();
         browser.sleep(500);
     };
 
@@ -391,9 +391,17 @@ function Monitoring() {
 
     this.uploadModal = element(by.className('upload-media'));
 
-    this.fetchAs = function(group, item) {
+    this.openFetchAsOptions = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
+    };
+
+    this.clickOnFetchButton = function() {
         return element(by.css('[ng-click="send()"]')).click();
+    };
+
+    this.fetchAs = function(group, item) {
+        this.openFetchAsOptions(group, item);
+        return this.clickOnFetchButton();
     };
 
     this.fetchAndOpen = function(group, item) {
@@ -481,6 +489,22 @@ function Monitoring() {
         return browser.wait(function() {
             return element(by.className('list-view')).isPresent();
         }, 300);
+    };
+
+    this.turnOffWorkingStage = function(deskIndex, canCloseSettingsModal) {
+        this.showMonitoringSettings();
+        this.toggleStage(deskIndex, 0);
+
+        if (typeof canCloseSettingsModal !== 'boolean') {
+            canCloseSettingsModal = true;
+        }
+
+        if (canCloseSettingsModal) {
+            this.nextStages();
+            this.nextSearches();
+            this.nextReorder();
+            this.saveSettings();
+        }
     };
 
 }

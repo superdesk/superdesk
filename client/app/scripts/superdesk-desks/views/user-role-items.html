@@ -3,7 +3,7 @@
 		<figure class="avatar avatar-with-info small" title="{{item.display_name}}" ng-class="{'user-logged': isLoggedIn(item)}">
 			<div class="logged-info"></div>
 			<div class="user-image">
-				<img sd-user-avatar data-src="item.picture_url">
+				<img sd-user-avatar data-src="item.picture_url" data-initials="item.display_name">
 			</div>
 		</figure>
 		<div class="text pull-left">
