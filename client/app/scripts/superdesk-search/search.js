@@ -1048,6 +1048,41 @@
             };
         }])
 
+        .directive('sdSaveSearch', ['$location', 'asset', 'api', 'session', 'notify', 'gettext', 
+            function($location, asset, api, session, notify, gettext) {
+            return {
+                scope: {},
+                templateUrl: asset.templateUrl('superdesk-search/views/save-search.html'),
+                link: function(scope, elem) {
+                    var resource = api('saved_searches', session.identity);
+                    scope.editSearch = null;
+
+                    scope.edit = function() {
+                        scope.editSearch = {};
+                    };
+
+                    scope.cancel = function() {
+                        scope.editSearch = null;
+                    };
+
+                    scope.save = function(editSearch) {
+
+                        editSearch.filter = {query: $location.search()};
+
+                        resource.save({}, editSearch)
+                        .then(function(result) {
+                            notify.success(gettext('Saved search created'));
+                            scope.cancel();
+                            scope.views.push(result);
+                        }, function() {
+                            notify.error(gettext('Error. Saved search not created.'));
+                        });
+                    };
+                }
+            };
+        }])
+
+
         .directive('sdItemContainer', ['$filter', 'desks', 'api', function($filter, desks, api) {
             return {
                 scope: {
@@ -1567,8 +1602,8 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext', 'asset',
-        function(api, session, $location, notify, gettext, asset) {
+        .directive('sdSavedSearches', ['api', 'session', 'notify', 'gettext', 'asset',
+        function(api, session, notify, gettext, asset) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
@@ -1576,7 +1611,6 @@
 
                     var resource = api('saved_searches', session.identity);
                     scope.selected = null;
-                    scope.editSearch = null;
 
                     resource.query({'max_results': 200}).then(function(views) {
                         scope.views = views._items;
@@ -1585,28 +1619,6 @@
                     scope.select = function(view) {
                         scope.selected = view;
                         $location.search(view.filter.query);
-                    };
-
-                    scope.edit = function() {
-                        scope.editSearch = {};
-                    };
-
-                    scope.cancel = function() {
-                        scope.editSearch = null;
-                    };
-
-                    scope.save = function(editSearch) {
-
-                        editSearch.filter = {query: $location.search()};
-
-                        resource.save({}, editSearch)
-                        .then(function(result) {
-                            notify.success(gettext('Saved search created'));
-                            scope.cancel();
-                            scope.views.push(result);
-                        }, function() {
-                            notify.error(gettext('Error. Saved search not created.'));
-                        });
                     };
 
                     scope.remove = function(view) {

@@ -1,7 +1,11 @@
 
-<div class="header">
-    <button class="btn btn-info" ng-click="edit()" translate>Save search</button>
-</div>
+<div class="search-within-filter">
+	<input id="search_saved_searches" type="text" placeholder="{{'Search saved searches' | translate}}">
+	<button id="search_saved_searches_button" ng-click="searchSavedSearches()">
+		<i class="svg-icon-right"></i>
+	</button>
+</div>   
+
 <div class="list">
 	<ul>
 	    <li ng-repeat="view in views | orderBy:'name' " ng-click="select(view)" ng-class="{active: view == selected}">
@@ -11,23 +15,3 @@
 	</ul>
 </div>
 
-<div class="mini-modal edit-saved-searches" ng-if="editSearch">
-	<div class="title" translate>Save search</div>
-	<div class="close" ng-click="cancel()">
-		<i class="icon-close-small"></i>
-	</div>
-	<div class="content">
-		<form name="viewsForm">
-			<fieldset>
-				<div class="field">
-					<label>Name</label>
-                    <input type="text" class="fullwidth-input" ng-model="editSearch.name" required>
-				</div>
-			</fieldset>
-		</form>
-	</div>
-	<div class="footer">
-		<button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-		<button class="btn btn-primary" ng-click="save(editSearch)" ng-disabled="!viewsForm.$valid" translate>Ok</button>
-	</div>
-</div>
