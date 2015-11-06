@@ -149,13 +149,10 @@ class PaImgDatalayer(DataLayer):
             if 'renditions' in doc:
                 renditions = doc.get('renditions')
                 new_doc['renditions'] = {
-                    'viewImage': {'href': renditions['sample']['href']},
-                    'thumbnail': {'href': renditions['thumbnail']['href']},
-                    'original': {'href': renditions['full']['href']},
-                    'baseImage': {'href': renditions['masonry']['href']},
+                    'original': renditions.get('full'),
+                    'thumbnail': renditions.get('thumbnail_lrg'),
+                    'viewImage': renditions.get('sample'),
                 }
-                if not new_doc['renditions']['original']['href']:
-                    new_doc['renditions']['original']['href'] = new_doc['renditions']['viewImage']['href']
 
         if 'byline' in doc:
             new_doc['byline'] = doc['byline']
