@@ -1,6 +1,6 @@
 <div class="item-locked" ng-if="lock.user && !lock.lockbyme">
     <div class="locked-content">
-        <span class="lock-sign"><i class="icon-lock-red"></i></span>
+        <span class="lock-sign"><i class="icon-lock red"></i></span>
        	<span class="text"><em translate>Locked by</em> {{ lock.user | username }}</span>
         <button class="btn btn-light pull-left" ng-click="unlock()" ng-if="can_unlock()" translate>Unlock</button>
     </div>
@@ -8,7 +8,7 @@
 </div>
 <div class="item-locked" ng-if="lock.lockbyme">
     <div class="locked-content">    
-        <span class="lock-sign"><i class="icon-lock-red"></i></span>
+        <span class="lock-sign"><i class="icon-lock red"></i></span>
        	<span class="text"><em translate>Locked by you in another browser</em></span> 
        	<button class="btn btn-light pull-left" ng-click="unlock()" translate>Unlock</button>
     </div>    

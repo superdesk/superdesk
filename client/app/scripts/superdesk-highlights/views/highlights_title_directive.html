@@ -4,7 +4,7 @@
      on-toggle="toggleClass(open)">
 
     <button class="dropdown-toggle" dropdown-toggle>
-        <i ng-class="{'icon-star-color': highlights.length === 1, 'icon-multi-star-color': highlights.length > 1}"></i>
+        <i ng-class="{'icon-star red': highlights.length === 1, 'icon-multi-star red': highlights.length > 1}"></i>
     </button>
 
     <ul class="dropdown-menu highlights-list-menu" ng-class="{open: open}" ng-click="$event.stopPropagation()">
