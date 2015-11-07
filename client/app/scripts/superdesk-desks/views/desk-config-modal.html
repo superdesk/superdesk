@@ -51,9 +51,8 @@
                                 </select>
                             </div>
                         </fieldset>
-                        <span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
-                        <p ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</p>
-                        <span ng-show="_error" translate>There was a problem, desk not created/updated.</span>
+                        <span class="alert-danger" ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</span>
+                        <span class="alert-danger" ng-show="_error" translate>{{ _errorMessage }}</span>
                     </div>
                     <div class="modal-footer">
                         <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
