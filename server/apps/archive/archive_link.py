@@ -14,7 +14,7 @@ from superdesk import get_resource_service, Service
 from superdesk.metadata.item import EMBARGO
 from superdesk.resource import Resource, build_custom_hateoas
 from apps.packages import TakesPackageService
-from apps.archive.common import CUSTOM_HATEOAS
+from apps.archive.common import CUSTOM_HATEOAS, BROADCAST_GENRE, is_genre
 from apps.auth import get_user
 from superdesk.metadata.utils import item_url
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -51,6 +51,9 @@ class ArchiveLinkService(Service):
         target = service.find_one(req=None, _id=target_id)
         self._validate_link(target, target_id)
         link = {}
+
+        if is_genre(target, BROADCAST_GENRE):
+            raise SuperdeskApiError.badRequestError("Cannot add new take to the story with genre as broadcast.")
 
         if desk_id:
             link = {'task': {'desk': desk_id}}
