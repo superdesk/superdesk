@@ -109,6 +109,7 @@ body, html {
             border-radius: 0px;
             background-color: transparent;
             z-index: 10;
+            line-height: 0;
             i {
                 margin-top: -3px;
                 margin-right: 0;
@@ -212,15 +213,12 @@ body, html {
 				&.dark-theme {
 					border: 0;
 					.dark-theme();
-					i {
-						background-image: url(@iconWhiteSpritePath);
-					}
 				}
 				&.dark-blue-theme {
 					border: 0;
 					.dark-blue-theme();
 					i {
-						background-image: url(@iconWhiteSpritePath);
+						color: white;
 					}
 				}
 				&.dark-theme-mono {
@@ -228,7 +226,7 @@ body, html {
 					.dark-theme();
 					font-family: @monoFontFamily;
 					i {
-						background-image: url(@iconWhiteSpritePath);
+						color: white;
 					}
 				}
 				&.natural-theme {

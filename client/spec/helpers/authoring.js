@@ -248,8 +248,8 @@ function Authoring() {
     };
 
     this.checkMarkedForHighlight = function(highlight, item) {
-        expect(element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        browser.actions().mouseMove(element(by.className('icon-star-color'))).perform();
+        expect(element(by.className('icon-star')).isDisplayed()).toBeTruthy();
+        browser.actions().mouseMove(element(by.className('icon-star'))).perform();
         element.all(by.css('.dropdown-menu.open li')).then(function (items) {
             expect(items[1].getText()).toContain(highlight);
         });
