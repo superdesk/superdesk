@@ -54,7 +54,7 @@
 
         this.open = function () {
             if (authoringWorkspace.getState()) {
-                authoringWorkspace.close();
+                authoringWorkspace.close(true);
             }
             superdesk.intent('author', 'multiedit');
         };
