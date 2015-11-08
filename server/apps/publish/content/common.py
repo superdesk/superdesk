@@ -148,6 +148,9 @@ class BasePublishService(BaseService):
                 original.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             app.on_broadcast_master_updated(updates[ITEM_OPERATION], original)
 
+        if hasattr(app, 'on_broadcast_content_updated'):
+            app.on_broadcast_content_updated(updates, original)
+
         push_notification('item:updated', item=str(original[config.ID_FIELD]), user=str(user.get(config.ID_FIELD)))
 
     def update(self, id, updates, original):

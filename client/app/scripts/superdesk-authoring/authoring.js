@@ -2360,7 +2360,9 @@
                         };
 
                         scope.previewMasterStory = function () {
-                            return api.find('archive', item.broadcast.master_id).then(function(item) {
+                            var item_id = item.broadcast.takes_package_id ?
+                                item.broadcast.takes_package_id : item.broadcast.master_id;
+                            return api.find('archive', item_id).then(function(item) {
                                 $rootScope.$broadcast('broadcast:preview', {'item': item});
                             });
                         };

@@ -105,24 +105,6 @@ class ArchiveSpikeService(BaseService):
         """
         PackageService().remove_spiked_refs_from_package(item)
 
-    def _spike_broadcast_item(self, item):
-        """
-
-        :param item:
-        :return:
-        """
-        broadcast_items = get_resource_service('archive_broadcast').get_broadcast_items_from_master_story(item)
-        for broadcast_item in broadcast_items:
-            try:
-                updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
-                resolve_document_version(updates, ARCHIVE, 'PATCH', broadcast_item)
-                self.patch(broadcast_item.get(config.ID_FIELD), updates)
-                insert_into_versions(id_=broadcast_item.get(config.ID_FIELD))
-            except:
-                raise SuperdeskApiError.badRequestError(message="Failed to spike the related broadcast item.")
-        else:
-            get_resource_service('archive_broadcast').remove_rewrite_refs(item)
-
     def update(self, id, updates, original):
         original_state = original[ITEM_STATE]
         if not is_workflow_state_transition_valid('spike', original_state):
@@ -145,19 +127,16 @@ class ArchiveSpikeService(BaseService):
             updates['rewrite_of'] = None
 
         if original.get('broadcast'):
-            updates['broadcast'] = {
-                'status': '',
-                'master_id': None,
-                'takes_package_id': None,
-                'rewrite_id': None
-            }
+            updates['broadcast'] = None
 
         item = self.backend.update(self.datasource, id, updates, original)
         push_notification('item:spike', item=str(item.get(config.ID_FIELD)), user=str(user))
         self._removed_refs_from_package(id)
-        self._spike_broadcast_item(original)
         return item
 
+    def on_updated(self, updates, original):
+        if hasattr(app, 'on_broadcast_master_spiked'):
+            app.on_broadcast_master_spiked(original)
 
 class ArchiveUnspikeService(BaseService):
 
