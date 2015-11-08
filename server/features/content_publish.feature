@@ -1079,7 +1079,9 @@ Feature: Content Publishing
         "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
       }
       """
-      And we post to "/archive/123/broadcast"
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/123/broadcast"
       """
       [{"desk": "#desks._id#"}]
       """
@@ -1125,7 +1127,7 @@ Feature: Content Publishing
       }
       """
       When we get "/publish_queue"
-      Then we get list with 1 items
+      Then we get list with 3 items
       """
       {
         "_items": [
@@ -1174,7 +1176,7 @@ Feature: Content Publishing
       }
       """
       When we get "/publish_queue"
-      Then we get list with 2 items
+      Then we get list with 4 items
       """
       {
         "_items": [
