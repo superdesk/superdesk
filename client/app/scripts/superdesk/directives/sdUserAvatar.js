@@ -14,16 +14,21 @@ define(['angular'], function (angular) {
                         element.hide();
                     });
 
-                    if (scope.src) {
-                        element.attr('src', scope.src).show();
-                        figure.addClass('no-bg');
-                    } else if (scope.initials) {
-                        var initials = scope.initials.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
-                        element.hide().parent().html(initials);
-                        figure.addClass('initials');
-                    } else {
-                        element.hide();
-                        figure.removeClass('no-bg');
+                    scope.$watch('src', initAvatar);
+                    scope.$watch('initials', initAvatar);
+
+                    function initAvatar() {
+                        if (scope.src) {
+                            element.attr('src', scope.src).show();
+                            figure.addClass('no-bg');
+                        } else if (scope.initials) {
+                            var initials = scope.initials.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
+                            element.hide().parent().html(initials);
+                            figure.addClass('initials');
+                        } else {
+                            element.hide();
+                            figure.removeClass('no-bg');
+                        }
                     }
                 }
             };
