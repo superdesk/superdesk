@@ -147,7 +147,7 @@ define([
         };
 
         /**
-         * Returns the type of the item.
+         * Returns the _type aka repository of the item.
          *
          * @param {Object} item
          * @return String

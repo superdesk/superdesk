@@ -55,9 +55,19 @@ describe('Send To', function() {
         monitoring.openAction(2, 0);
         monitoring.showHideList();
         expect(monitoring.hasClass(element(by.id('main-container')), 'hideMonitoring')).toBe(true);
-        browser.sleep(3000);
 
         authoring.sendToButton.click();
         expect(authoring.sendItemContainer.isDisplayed()).toBe(true);
     });
+
+    it('can display monitoring after submitting an item to a desk using full view of authoring', function() {
+        monitoring.openMonitoring();
+        workspace.selectDesk('Sports Desk');
+        monitoring.openAction(2, 0);
+        monitoring.showHideList();
+
+        authoring.sendTo('Politic Desk');
+        expect(monitoring.getGroups().count()).toBe(5);
+    });
+
 });

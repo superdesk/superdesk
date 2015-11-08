@@ -1102,7 +1102,7 @@
                                 notify.success(gettext('Item published.'));
                                 $scope.item = response;
                                 $scope.dirty = false;
-                                authoringWorkspace.close();
+                                authoringWorkspace.close(true);
                             }
                         } else {
                             notify.error(gettext('Unknown Error: Item not published.'));
@@ -1156,8 +1156,7 @@
                 $scope.close = function() {
                     _closing = true;
                     authoring.close($scope.item, $scope.origItem, $scope.save_enabled()).then(function () {
-                        superdeskFlags.flags.hideMonitoring = false;
-                        authoringWorkspace.close($scope.item);
+                        authoringWorkspace.close(true);
                     });
                 };
 
@@ -1165,7 +1164,7 @@
                  * Minimize an item
                  */
                 $scope.minimize = function () {
-                    authoringWorkspace.close();
+                    authoringWorkspace.close(true);
                 };
 
                 $scope.closeOpenNew = function(createFunction, paramValue) {
@@ -1805,7 +1804,7 @@
                             return authoring.linkItem(scope.item, null, itemDeskId);
                         })
                         .then(function (item) {
-                            authoringWorkspace.close();
+                            authoringWorkspace.close(false);
                             notify.success(gettext('New take created.'));
                             authoringWorkspace.edit(item);
                         }, function(err) {
@@ -1846,7 +1845,7 @@
                             if (sendAndContinue) {
                                 return deferred.resolve();
                             } else {
-                                authoringWorkspace.close();
+                                authoringWorkspace.close(true);
                             }
                         }, function(err) {
                             if (angular.isDefined(err.data._message)) {
@@ -1976,9 +1975,8 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', 'session', '$filter', '$timeout',
-    'superdesk', 'notify', 'gettext'];
-    function ArticleEditDirective(autosave, authoring, metadata, session, $filter, $timeout, superdesk, notify, gettext) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', '$filter', 'superdesk'];
+    function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
@@ -2380,11 +2378,17 @@
         };
 
         /**
-         * Stop editing
+         * Stop editing.
+         *
+         * @param {boolean} showMonitoring when true shows the monitoring if monitoring is hidden.
          */
-        this.close = function() {
+        this.close = function(showMonitoring) {
             self.item = null;
             self.action = null;
+            if (showMonitoring && superdeskFlags.flags.hideMonitoring) {
+                superdeskFlags.flags.hideMonitoring = false;
+            }
+
             saveState();
         };
 
