@@ -322,4 +322,3 @@ class ArchiveCommonTestCase(SuperdeskTestCase):
 
         self.assertFalse(is_genre(content, BROADCAST_GENRE))
         self.assertTrue(is_genre(content, 'Article'))
-
