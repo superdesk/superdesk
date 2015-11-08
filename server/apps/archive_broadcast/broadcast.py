@@ -184,7 +184,7 @@ class ArchiveBroadcastService(BaseService):
         if not broadcast_items:
             return
 
-        ids = []
+        processed_ids = set()
         for broadcast_item in broadcast_items:
             try:
                 if broadcast_item.get('lock_user'):
@@ -203,23 +203,28 @@ class ArchiveBroadcastService(BaseService):
                 if not updates['broadcast']['rewrite_id'] and rewrite_id:
                     updates['broadcast']['rewrite_id'] = rewrite_id
 
-                if not broadcast_item.get(config.ID_FIELD) in ids:
-                    if broadcast_item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED,
-                                                          CONTENT_STATE.KILLED]:
-                        get_resource_service('published').update_published_items(broadcast_item.get(config.ID_FIELD),
-                                                                                 'broadcast', updates.get('broadcast'))
-
-                    get_resource_service(SOURCE).system_update(broadcast_item.get(config.ID_FIELD),
-                                                               updates, broadcast_item)
-
-                    ids.append(broadcast_item.get(config.ID_FIELD))
+                if not broadcast_item.get(config.ID_FIELD) in processed_ids:
+                    self._update_broadcast_status(broadcast_item, updates)
+                    # list of ids that are processed.
+                    processed_ids.add(broadcast_item.get(config.ID_FIELD))
             except:
                 logger.exception('Failed to update status for the broadcast item {}'.
                                  format(broadcast_item.get(config.ID_FIELD)))
 
+    def _update_broadcast_status(self, item, updates):
+        # update the published collection as well as archive.
+        if item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED,
+                                              CONTENT_STATE.KILLED]:
+            get_resource_service('published').update_published_items(item.get(config.ID_FIELD),
+                                                                     'broadcast', updates.get('broadcast'))
+
+        archive_item = get_resource_service(SOURCE).find_one(req=None, _id=item.get(config.ID_FIELD))
+        get_resource_service(SOURCE).system_update(archive_item.get(config.ID_FIELD), updates, archive_item)
+
     def remove_rewrite_refs(self, item):
         """
-        Remove the rewrite references from the broadcast item
+        Remove the rewrite references from the broadcast item if the re-write is spiked.
+        Called by the "on_updated_archive_spike" event
         :param dict item: Re-written article of the original story
         """
         if is_genre(item, BROADCAST_GENRE):
@@ -261,3 +266,36 @@ class ArchiveBroadcastService(BaseService):
             except:
                 logger.exception('Failed to remove rewrite id for the broadcast item {}'.
                                  format(broadcast_item.get(config.ID_FIELD)))
+
+    def reset_broadcast_status(self, updates, original):
+        """
+        Reset the broadcast status if the broadcast item is updated.
+        Called by the "on_updated_archive" event
+        :param dict updates: updates to the original document
+        :param dict original: original document
+        """
+        if original.get('broadcast') and original.get('broadcast').get('status', ''):
+            broadcast_updates = {
+                'broadcast': original.get('broadcast'),
+            }
+
+            broadcast_updates['broadcast']['status'] = ''
+            self._update_broadcast_status(original, broadcast_updates)
+            updates.update(broadcast_updates)
+
+    def spike_broadcast_item(self, original):
+        """
+        Spike the broadcast item called by the "on_updated_archive_spike" event
+        :param: dict original: original document
+        """
+        broadcast_items = self.get_broadcast_items_from_master_story(original)
+        for broadcast_item in broadcast_items:
+            try:
+                updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
+                resolve_document_version(updates, SOURCE, 'PATCH', broadcast_item)
+                get_resource_service('archive_spike').patch(broadcast_item.get(config.ID_FIELD), updates)
+                insert_into_versions(id_=broadcast_item.get(config.ID_FIELD))
+            except:
+                raise SuperdeskApiError.badRequestError(message="Failed to spike the related broadcast item.")
+        else:
+            self.remove_rewrite_refs(original)

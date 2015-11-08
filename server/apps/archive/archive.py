@@ -283,6 +283,9 @@ class ArchiveService(BaseService):
 
         push_content_notification([updated, original])
 
+        if hasattr(app, 'on_broadcast_content_updated'):
+            app.on_broadcast_content_updated(updates, original)
+
     def on_replace(self, document, original):
         document[ITEM_OPERATION] = ITEM_UPDATE
         remove_unwanted(document)

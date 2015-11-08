@@ -672,7 +672,7 @@ Feature: Archive Broadcast
     }
     """
 
-  @auth @vocabulary
+  @auth @vocabulary @test
   Scenario: Spike the master story should spike the broadcast content
     Given "desks"
       """
