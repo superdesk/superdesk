@@ -33,7 +33,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -75,7 +75,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "_current_version": 1,
           "urgency": 1,
@@ -113,7 +113,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "_current_version": 1,
           "urgency": 1,
@@ -165,7 +165,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -260,7 +260,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -341,7 +341,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -383,7 +383,7 @@ Feature: Archive Broadcast
         "task": {
             "user": "#CONTEXT_USER_ID#",
             "desk": "#desks._id#",
-            "stage": "#desks.incoming_stage#"
+            "stage": "#desks.working_stage#"
         },
         "_current_version": 1,
         "urgency": 1,
@@ -433,7 +433,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -479,7 +479,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -544,7 +544,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -612,7 +612,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -673,7 +673,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -733,7 +733,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "_current_version": 1,
           "urgency": 1,
@@ -780,7 +780,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -822,7 +822,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "_current_version": 1,
           "urgency": 1,
@@ -892,7 +892,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -1000,7 +1000,7 @@ Feature: Archive Broadcast
           "task": {
               "user": "#CONTEXT_USER_ID#",
               "desk": "#desks._id#",
-              "stage": "#desks.incoming_stage#"
+              "stage": "#desks.working_stage#"
           },
           "genre": [{"name": "Article", "value": "Article"}],
           "urgency": 1,
@@ -1074,3 +1074,101 @@ Feature: Archive Broadcast
     }
     """
     And broadcast "rewrite_id" has value "none"
+
+  @auth @vocabulary @test
+  Scenario: Broadcast content cannot be re-opened and new take can be added
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we patch "archive/#broadcast._id#"
+    """
+    {"body_html": "TEST", "headline": "TEST"}
+    """
+    Then we get OK response
+    When we post to "archive/#broadcast._id#/link"
+    """
+    [{}]
+    """
+    Then we get error 400
+    """
+    {"_message": "Cannot add new take to the story with genre as broadcast."}
+    """
+    When we publish "#broadcast._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/#broadcast._id#/link"
+    """
+    [{}]
+    """
+    Then we get error 400
+    """
+    {"_message": "Cannot add new take to the story with genre as broadcast."}
+    """
+
