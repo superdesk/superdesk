@@ -15,7 +15,7 @@ from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 from flask import request
 from apps.archive.common import CUSTOM_HATEOAS, insert_into_versions, get_user, \
-    ITEM_CREATE, ITEM_UPDATE, BROADCAST_GENRE, is_genre
+    ITEM_CREATE, BROADCAST_GENRE, is_genre
 from apps.packages import TakesPackageService
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
@@ -213,8 +213,7 @@ class ArchiveBroadcastService(BaseService):
 
     def _update_broadcast_status(self, item, updates):
         # update the published collection as well as archive.
-        if item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED,
-                                              CONTENT_STATE.KILLED]:
+        if item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED]:
             get_resource_service('published').update_published_items(item.get(config.ID_FIELD),
                                                                      'broadcast', updates.get('broadcast'))
 

@@ -10,14 +10,13 @@
 
 
 import logging
-from eve.versioning import resolve_document_version
 
 from flask import current_app as app
 
 import superdesk
 from superdesk import get_resource_service, config
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
-from superdesk.metadata.item import ITEM_STATE, CONTENT_STATE
+from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import get_expiry_date
@@ -28,7 +27,7 @@ from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
 from apps.archive.common import item_operations, ITEM_OPERATION, \
-    is_item_in_package, set_sign_off, insert_into_versions
+    is_item_in_package, set_sign_off
 
 logger = logging.getLogger(__name__)
 
@@ -137,6 +136,7 @@ class ArchiveSpikeService(BaseService):
     def on_updated(self, updates, original):
         if hasattr(app, 'on_broadcast_master_spiked'):
             app.on_broadcast_master_spiked(original)
+
 
 class ArchiveUnspikeService(BaseService):
 
