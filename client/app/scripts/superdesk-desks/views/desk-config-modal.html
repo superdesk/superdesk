@@ -188,7 +188,7 @@
                             <ul>
                                 <li ng-repeat="user in deskMembers track by user._id | orderBy: 'display_name'" ng-class="{'inactive' : !user.is_enabled || !user.is_active}">
                                     <i class="icon-close-small" ng-click="remove(user)"></i>
-                                    <figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
+                                    <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name"></figure>
                                     <div class="name">{{:: user.display_name}}</div>
                                 </li>
                             </ul>
