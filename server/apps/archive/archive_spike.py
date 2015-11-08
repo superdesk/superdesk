@@ -134,8 +134,8 @@ class ArchiveSpikeService(BaseService):
         return item
 
     def on_updated(self, updates, original):
-        if hasattr(app, 'on_broadcast_master_spiked') and original.get('rewrite_of'):
-            app.on_broadcast_master_spiked(original)
+        if hasattr(app, 'on_broadcast_spike_item'):
+            app.on_broadcast_spike_item(original)
 
 
 class ArchiveUnspikeService(BaseService):

@@ -102,8 +102,8 @@ class ArchiveBroadcastService(BaseService):
     def _valid_broadcast_item(self, item):
         """
         Broadcast item can only be created for Text or Pre-formatted item.
-        The state of the item cannot be Killed, Scheduled or Spiked
-        :param dict item: item from which the broadcast item will be created
+        Item state needs to be Published or Corrected
+        :param dict item: Item from which the broadcast item will be created
         """
         if not item:
             raise SuperdeskApiError.notFoundError(
@@ -117,8 +117,8 @@ class ArchiveBroadcastService(BaseService):
 
     def _get_broadcast_items(self, ids):
         """
-
-        :param list items: list of items
+        Get the broadcast items for the master_id and takes_package_id
+        :param list ids: list of item ids
         :return list: list of broadcast items
         """
         query = {
@@ -159,7 +159,7 @@ class ArchiveBroadcastService(BaseService):
     def on_broadcast_master_updated(self, item_event, item,
                                     takes_package_id=None, rewrite_id=None):
         """
-        This event is called when the master story is correct, published, re-written, new take/re-opened
+        This event is called when the master story is corrected, published, re-written, new take/re-opened
         :param str item_event: Item operations
         :param dict item: item on which operation performed.
         :param str takes_package_id: takes_package_id.
@@ -212,6 +212,11 @@ class ArchiveBroadcastService(BaseService):
                                  format(broadcast_item.get(config.ID_FIELD)))
 
     def _update_broadcast_status(self, item, updates):
+        """
+        Update the status of the broadcast item
+        :param dict item: broadcast item to be updated
+        :param dict updates: broadcast updates
+        """
         # update the published collection as well as archive.
         if item.get(ITEM_STATE) in [CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED, CONTENT_STATE.KILLED]:
             get_resource_service('published').update_published_items(item.get(config.ID_FIELD),
@@ -223,7 +228,6 @@ class ArchiveBroadcastService(BaseService):
     def remove_rewrite_refs(self, item):
         """
         Remove the rewrite references from the broadcast item if the re-write is spiked.
-        Called by the "on_updated_archive_spike" event
         :param dict item: Re-written article of the original story
         """
         if is_genre(item, BROADCAST_GENRE):
@@ -260,8 +264,7 @@ class ArchiveBroadcastService(BaseService):
                 if 're-written' in updates['broadcast']['status']:
                     updates['broadcast']['status'] = ''
 
-                get_resource_service(SOURCE).system_update(broadcast_item.get(config.ID_FIELD),
-                                                           updates, broadcast_item)
+                self._update_broadcast_status(broadcast_item, updates)
             except:
                 logger.exception('Failed to remove rewrite id for the broadcast item {}'.
                                  format(broadcast_item.get(config.ID_FIELD)))
@@ -269,7 +272,6 @@ class ArchiveBroadcastService(BaseService):
     def reset_broadcast_status(self, updates, original):
         """
         Reset the broadcast status if the broadcast item is updated.
-        Called by the "on_updated_archive" event
         :param dict updates: updates to the original document
         :param dict original: original document
         """
@@ -282,9 +284,10 @@ class ArchiveBroadcastService(BaseService):
             self._update_broadcast_status(original, broadcast_updates)
             updates.update(broadcast_updates)
 
-    def spike_broadcast_item(self, original):
+    def spike_item(self, original):
         """
-        Spike the broadcast item called by the "" event
+        If Original item is re-write then it will remove the reference from the broadcast item.
         :param: dict original: original document
         """
-        self.remove_rewrite_refs(original)
+        if original.get('rewrite_of'):
+            self.remove_rewrite_refs(original)

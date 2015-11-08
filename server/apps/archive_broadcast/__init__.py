@@ -27,8 +27,8 @@ def init_app(app):
     app.on_broadcast_master_updated += service.on_broadcast_master_updated
     app.on_broadcast_content_updated -= service.reset_broadcast_status
     app.on_broadcast_content_updated += service.reset_broadcast_status
-    app.on_broadcast_master_spiked -= service.spike_broadcast_item
-    app.on_broadcast_master_spiked += service.spike_broadcast_item
+    app.on_broadcast_spike_item -= service.spike_item
+    app.on_broadcast_spike_item += service.spike_item
 
     superdesk.privilege(name=ARCHIVE_BROADCAST_NAME, label='Broadcast',
                         description='Allows user to create broadcast content.')
