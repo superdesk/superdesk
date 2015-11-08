@@ -307,7 +307,7 @@
     function WorkspaceSidenavDirective(superdeskFlags, $location, keyboardManager) {
         return {
             templateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav-items.html',
-            link: function(scope) {
+            link: function(scope, elem) {
 
                 /*
                  * Function for showing and hiding monitoring list
@@ -337,6 +337,17 @@
                 keyboardManager.bind('alt+m', function (e) {
                     e.preventDefault();
                     $location.url('/workspace/monitoring');
+                }, opt);
+                keyboardManager.bind('alt+d', function (e) {
+                    e.preventDefault();
+                    elem.find('.highlights-dropdown .dropdown-toggle').click();
+                    elem.find('.dropdown-menu button')[0].focus();
+                    keyboardManager.push('up', function() {
+                        elem.find('.dropdown-menu button:focus').parent('li').prev().children('button').focus();
+                    });
+                    keyboardManager.push('down', function() {
+                        elem.find('.dropdown-menu button:focus').parent('li').next().children('button').focus();
+                    });
                 }, opt);
                 keyboardManager.bind('alt+t', function (e) {
                     e.preventDefault();
