@@ -112,7 +112,7 @@ class ArchiveBroadcastService(BaseService):
         if not item.get(ITEM_TYPE) in [CONTENT_TYPE.TEXT, CONTENT_TYPE.PREFORMATTED]:
             raise SuperdeskApiError.badRequestError(message="Invalid content type.")
 
-        if item.get(ITEM_STATE) in [CONTENT_STATE.KILLED, CONTENT_STATE.SCHEDULED, CONTENT_STATE.SPIKED]:
+        if item.get(ITEM_STATE) not in [CONTENT_STATE.CORRECTED, CONTENT_STATE.PUBLISHED]:
             raise SuperdeskApiError.badRequestError(message="Invalid content state.")
 
     def _get_broadcast_items(self, ids):
@@ -284,17 +284,7 @@ class ArchiveBroadcastService(BaseService):
 
     def spike_broadcast_item(self, original):
         """
-        Spike the broadcast item called by the "on_updated_archive_spike" event
+        Spike the broadcast item called by the "" event
         :param: dict original: original document
         """
-        broadcast_items = self.get_broadcast_items_from_master_story(original)
-        for broadcast_item in broadcast_items:
-            try:
-                updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
-                resolve_document_version(updates, SOURCE, 'PATCH', broadcast_item)
-                get_resource_service('archive_spike').patch(broadcast_item.get(config.ID_FIELD), updates)
-                insert_into_versions(id_=broadcast_item.get(config.ID_FIELD))
-            except:
-                raise SuperdeskApiError.badRequestError(message="Failed to spike the related broadcast item.")
-        else:
-            self.remove_rewrite_refs(original)
+        self.remove_rewrite_refs(original)
