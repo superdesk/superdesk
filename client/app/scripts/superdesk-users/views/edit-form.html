@@ -6,7 +6,7 @@
 
     <div class="profile-pic">
         <figure class="avatar">
-            <img sd-user-avatar data-src="user.picture_url" alt="{{ user.FullName }}">
+            <img sd-user-avatar data-src="user.picture_url" data-initials="user.display_name" alt="{{ user.FullName }}">
         </figure>
         <span class="disabled-label" ng-if="user._id && !user.is_enabled" translate>disabled</span>
         <span class="disabled-label" ng-if="user._id && user.is_enabled && !_active" translate>inactive</span>
