@@ -1,4 +1,3 @@
-
 'use strict';
 
 var authoring = require('./helpers/authoring'),
@@ -23,6 +22,27 @@ describe('monitoring view', function() {
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(monitoring.getTextItem(0, 2)).toBe('item6');
+    });
+
+    it('can configure desk output as default when user switches desks and show it on monitoring view', function() {
+        expect(monitoring.getGroups().count()).toBe(6);
+
+        workspace.selectDesk('Sports Desk');
+        expect(monitoring.getGroups().count()).toBe(6);
+    });
+
+    it('can display the item in Desk Output when it\'s been submitted to a production desk', function () {
+        workspace.selectDesk('Sports Desk');
+        monitoring.actionOnItem('Edit', 2, 0);
+        authoring.sendTo('Politic Desk', 'two');
+        expect(monitoring.getTextItem(5, 0)).toBe('item3');
+    });
+
+    it('can display the item in Desk Output when it\'s published in a production desk', function() {
+        expect(monitoring.getTextItem(3, 2)).toBe('item6');
+        monitoring.actionOnItem('Edit', 3, 2);
+        authoring.publish();
+        expect(monitoring.getTextItem(5, 0)).toBe('item6');
     });
 
     it('configure personal and show it on monitoring view', function() {
@@ -54,6 +74,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 1);
         monitoring.toggleStage(0, 2);
         monitoring.toggleStage(0, 4);
+        monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -69,6 +90,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 1);
         monitoring.toggleStage(0, 2);
         monitoring.toggleStage(0, 4);
+        monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.nextSearches();
@@ -89,6 +111,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 1);
         monitoring.toggleStage(0, 2);
         monitoring.toggleStage(0, 4);
+        monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
         monitoring.toggleSearch(1);
         monitoring.toggleSearch(2);
@@ -111,6 +134,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 1);
         monitoring.toggleStage(0, 2);
         monitoring.toggleStage(0, 4);
+        monitoring.toggleDeskOutput(0);
         monitoring.togglePersonal();
         monitoring.nextStages();
         monitoring.toggleSearch(1);
@@ -197,7 +221,7 @@ describe('monitoring view', function() {
     });
 
     it('configure a stage and then delete the stage', function() {
-        expect(monitoring.getGroups().count()).toBe(5);
+        expect(monitoring.getGroups().count()).toBe(6);
 
         desks.openDesksSettings();
         desks.edit('Politic Desk');
@@ -207,7 +231,7 @@ describe('monitoring view', function() {
         desks.save();
 
         monitoring.openMonitoring();
-        expect(monitoring.getGroups().count()).toBe(4);
+        expect(monitoring.getGroups().count()).toBe(5);
     });
 
     it('can search content', function() {
@@ -361,7 +385,6 @@ describe('monitoring view', function() {
         monitoring.unspikeMultipleItems();
         expect(monitoring.getSpikedItems().count()).toBe(0);
     });
-
     it('can show/hide monitoring list', function() {
         monitoring.openAction(2, 0);
         monitoring.showHideList();
