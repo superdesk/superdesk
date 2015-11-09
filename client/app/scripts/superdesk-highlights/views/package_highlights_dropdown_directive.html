@@ -1,6 +1,9 @@
 <div id="highlightPackage" title="{{ :: 'Highlights' | translate }}"> 
-    <button class="dropdown-toggle" ng-click="hideMonitoring(currentRoute.href === '/workspace/highlights', $event)"><i class="big-icon-marked-star"></i></button>
+    <button class="dropdown-toggle" ng-click="hideMonitoring(currentRoute.href === '/workspace/highlights', $event)" dropdown-toggle>
+        <i class="big-icon-marked-star"></i>
+    </button>
     <ul class="dropdown-menu pull-left">
+        <li><div class="menu-label">Choose highlight list</div></li>
         <li ng-if="hasHighlights" ng-repeat="h in highlights track by h._id">
             <button option="{{ h.name }}" ng-click="listHighlight(h);">{{ h.name }}</button>
         </li>
