@@ -1307,6 +1307,18 @@
                     }
                 });
 
+                $scope.$on('item:highlight', function(e, data) {
+                    if ($scope.item._id === data.item_id){
+                        if (!$scope.item.highlights) {
+                            $scope.item.highlights = [data.highlight_id];
+                        } else if ($scope.item.highlights.indexOf(data.highlight_id) === -1){
+                            $scope.item.highlights = [data.highlight_id].concat($scope.item.highlights);
+                        } else if (!$scope.item.multiSelect){
+                            $scope.item.highlights = _.without($scope.item.highlights, data.highlight_id);
+                        }
+                    }
+                });
+
                 macros.setupShortcuts($scope);
             }
         };
@@ -2013,9 +2025,9 @@
                 });
 
                 metadata.initialize().then(function() {
-                    scope.item.hasCrops = false;
                     scope.metadata = metadata.values;
-                    if (scope.metadata.crop_sizes) {
+                    if (scope.item.type === 'picture'){
+                        scope.item.hasCrops = false;
                         scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
                             return scope.item.renditions[crop.name];
                         });
