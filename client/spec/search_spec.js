@@ -65,6 +65,26 @@ describe('Search', function() {
         expect(globalSearch.getItems().count()).toBe(1);
     });
 
+    it('can search by byline field', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        var bylineTextbox = element(by.id('search-byline'));
+        bylineTextbox.clear();
+        bylineTextbox.sendKeys('Billy The Fish');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+    });
+
+    it('can search by original creator', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        globalSearch.selectCreator('search-creator', 'first name last name');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(9);
+    });
+
     it('can search by from desk field', function() {
         monitoring.openMonitoring();
         monitoring.switchToDesk('SPORTS DESK').then(authoring.createTextItem());
