@@ -17,12 +17,12 @@ do
 		echo "waiting for mongo..."
 	fi
 	if [ $REDIS -eq 0 ] ; then
-		curl -# -m $TIMEOUT REDIS_HOSTNAME:6379 2>&1 | grep "wrong number of arguments for 'get' command"  2>&1 > /dev/null &&
+		curl -# -m $TIMEOUT $REDIS_HOSTNAME:6379 2>&1 | grep "wrong number of arguments for 'get' command"  2>&1 > /dev/null &&
 		REDIS=1 ||
 		echo "waiting for redis..."
 	fi
 	if [ $ELASTIC -eq 0 ] ; then
-		curl -s -m $TIMEOUT -o /dev/null ELASTIC_HOSTNAME:9200  2>&1 > /dev/null &&
+		curl -s -m $TIMEOUT -o /dev/null $ELASTIC_HOSTNAME:9200  2>&1 > /dev/null &&
 		ELASTIC=1 ||
 		echo "waiting for elastic..."
 	fi
