@@ -69,4 +69,4 @@ frontend:
   ports:
    - "443:443"
    - "80:80"
-  image: sourcefabric/superdesk-content-api:master
+  image: sourcefabric/superdesk-client:master
