@@ -1075,7 +1075,7 @@ Feature: Archive Broadcast
     """
     And broadcast "rewrite_id" has value "none"
 
-  @auth @vocabulary @test
+  @auth @vocabulary
   Scenario: Broadcast content cannot be re-opened and new take can be added
     Given "desks"
       """
