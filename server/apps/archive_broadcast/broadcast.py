@@ -15,7 +15,7 @@ from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 from flask import request
 from apps.archive.common import CUSTOM_HATEOAS, insert_into_versions, get_user, \
-    ITEM_CREATE, BROADCAST_GENRE, is_genre
+    ITEM_CREATE, BROADCAST_GENRE, is_genre, RE_OPENS
 from apps.packages import TakesPackageService
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
@@ -171,9 +171,13 @@ class ArchiveBroadcastService(BaseService):
             return
 
         if item_event == ITEM_CREATE and takes_package_id:
-            status = 'New take created or story reopened.'
+            if RE_OPENS.lower() in str(item.get('anpa_take_key', '')).lower():
+                status = 'Story Re-opened'
+            else:
+                status = 'New Take Created'
+
         elif item_event == ITEM_CREATE and rewrite_id:
-            status = 'Master story re-written.'
+            status = 'Master Story Re-written'
         elif item_event == ITEM_PUBLISH:
             status = 'Master Story Published'
         elif item_event == ITEM_CORRECT:
@@ -261,7 +265,7 @@ class ArchiveBroadcastService(BaseService):
 
                 updates['broadcast']['rewrite_id'] = None
 
-                if 're-written' in updates['broadcast']['status']:
+                if 'Re-written' in updates['broadcast']['status']:
                     updates['broadcast']['status'] = ''
 
                 self._update_broadcast_status(broadcast_item, updates)

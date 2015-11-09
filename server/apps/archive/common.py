@@ -45,6 +45,7 @@ item_operations = [ITEM_CREATE, ITEM_UPDATE, ITEM_RESTORE, ITEM_DUPLICATE, ITEM_
 LAST_AUTHORING_DESK = 'last_authoring_desk'
 LAST_PRODUCTION_DESK = 'last_production_desk'
 BROADCAST_GENRE = 'Broadcast Script'
+RE_OPENS = 'reopens'
 
 
 def update_version(updates, original):
