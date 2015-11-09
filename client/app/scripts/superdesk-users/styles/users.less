@@ -640,18 +640,22 @@ Profile page styles
 		}
 	}
 
-	.profile-pic {
-		width: 160px;
-		height: 160px;
-		figure {
-			width: 160px;
-			height: 160px;
-			img {
-				width: 160px;
-				max-width: 160px;
-			}
-		}
-	}
+    .profile-pic {
+        width: 160px;
+        height: 160px;
+        .avatar {
+            width: 160px;
+            height: 160px;
+            img {
+                width: 160px;
+                max-width: 160px;
+            }
+            &.initials {
+                font-size: 62px;
+                line-height: 160px;
+            }
+        }
+    }
 
 	.header-info {
 		height: 160px;
