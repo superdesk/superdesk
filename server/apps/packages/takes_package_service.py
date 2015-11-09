@@ -19,7 +19,7 @@ from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.packages import LINKED_IN_PACKAGES, PACKAGE_TYPE, TAKES_PACKAGE, PACKAGE, \
     LAST_TAKE, REFS, MAIN_GROUP, SEQUENCE, RESIDREF
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE, PUBLISH_STATES, ITEM_STATE, CONTENT_STATE, EMBARGO
-from apps.archive.common import insert_into_versions, ITEM_CREATE
+from apps.archive.common import insert_into_versions, ITEM_CREATE, RE_OPENS
 from .package_service import get_item_ref, create_root_group
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,7 @@ class TakesPackageService():
         to['event_id'] = target.get('event_id')
         to['anpa_take_key'] = '{}={}'.format(take_key, sequence)
         if target.get(ITEM_STATE) in PUBLISH_STATES:
-            to['anpa_take_key'] = '{} (reopens)'.format(take_key)
+            to['anpa_take_key'] = '{} ({})'.format(take_key, RE_OPENS)
         to[config.VERSION] = 1
         to[ITEM_STATE] = CONTENT_STATE.PROGRESS if to.get('task', {}).get('desk', None) else CONTENT_STATE.DRAFT
 

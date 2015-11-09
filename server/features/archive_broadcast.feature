@@ -644,7 +644,7 @@ Feature: Archive Broadcast
 
 
   @auth @vocabulary
-  Scenario: Create Archive Broadcast Content for takes package
+  Scenario: Create Archive Broadcast Content from takes package
     Given "desks"
       """
       [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
@@ -853,7 +853,7 @@ Feature: Archive Broadcast
     }
     """
 
-  @auth @vocabulary
+  @auth @vocabulary @test
   Scenario: Change the broadcast content status based on the actions performed in the published master story
     Given "desks"
       """
@@ -960,12 +960,169 @@ Feature: Archive Broadcast
       "_id": "#broadcast._id#",
       "_current_version": 1,
       "broadcast": {
-        "status": "Master story re-written.",
+        "status": "Master Story Re-written",
         "master_id": "123",
         "rewrite_id": "#REWRITE_ID#"
       }
     }
     """
+
+
+  @auth @vocabulary
+  Scenario: Change the broadcast content status based on the actions performed in the published takes
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "schema": {},
+            "type": "text",
+            "act": "correct",
+            "_id": "correct_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "archive/123/link"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get next take as "TAKE"
+    """
+    {
+      "headline": "headline",
+      "slugline": "comics",
+      "anpa_take_key": "take key=2",
+      "state": "in_progress",
+      "priority": 3,
+      "urgency": 1,
+      "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+    }
+    """
+    When we patch "archive/#TAKE#"
+    """
+    {"body_html": "TEST", "abstract": "TEST"}
+    """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Wire Channel","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we post to "/subscribers" with success
+      """
+      {
+        "name":"Digital Channel","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "123" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123",
+        "takes_package_id": "#TAKE_PACKAGE#"
+      }
+    }
+    """
+    When we post to "archive/#TAKE#/link"
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get next take as "TAKE2"
+    """
+    {
+      "headline": "headline",
+      "slugline": "comics",
+      "anpa_take_key": "take key=3",
+      "state": "in_progress",
+      "priority": 3,
+      "urgency": 1,
+      "linked_in_packages": [{"package_type" : "takes","package" : "#TAKE_PACKAGE#"}]
+    }
+    """
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "New Take Created",
+        "master_id": "123",
+        "takes_package_id": "#TAKE_PACKAGE#"
+      }
+    }
+    """
+    When we publish "#TAKE#" with "publish" type and "published" state
+    Then we get OK response
+    When we get "/archive/#broadcast._id#"
+    Then we get existing resource
+    """
+    {
+      "state": "draft",
+      "_id": "#broadcast._id#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "Master Story Published",
+        "master_id": "123",
+        "takes_package_id": "#TAKE_PACKAGE#"
+      }
+    }
+    """
+
 
   @auth @vocabulary
   Scenario: Spike the re-write and it should remove the reference from broadcast
@@ -1052,7 +1209,7 @@ Feature: Archive Broadcast
       "_id": "#broadcast._id#",
       "_current_version": 1,
       "broadcast": {
-        "status": "Master story re-written.",
+        "status": "Master Story Re-written",
         "master_id": "123",
         "rewrite_id": "#REWRITE_ID#"
       }
