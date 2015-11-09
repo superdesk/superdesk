@@ -1,7 +1,7 @@
 <div class="monitoring" ng-controller="AggregateCtrl as aggregate">
     <div class="subnav">
         <span class="flat-searchbar monitoring-backlink" ng-if="monitoring.singleGroup">
-            <button class="backlink" ng-click="monitoring.viewSingleGroup(null)"></button>
+            <button tooltip="{{ :: 'Back to original view' | translate }}" tooltip-placement="right" class="backlink" ng-click="monitoring.viewSingleGroup(null)"></button>
             <div class="separator-handler"></div>
         </span>
         <div class="flat-searchbar monitoring-flat-searchbar" ng-class="{extended: aggregate.monitoringSearch}">
