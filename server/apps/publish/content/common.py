@@ -196,7 +196,7 @@ class BasePublishService(BaseService):
                 media_type = None
                 updated = deepcopy(original)
                 updated.update(updates)
-                if package or is_genre(updated, BROADCAST_GENRE):
+                if package:
                     media_type = SUBSCRIBER_TYPES.WIRE
 
                 queued_wire = self.publish(doc=original, updates=updates, target_media_type=media_type)
