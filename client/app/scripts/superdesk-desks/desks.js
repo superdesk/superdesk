@@ -778,7 +778,6 @@
                 require: '^sdDeskConfig',
                 templateUrl: 'scripts/superdesk-desks/views/desk-config-modal.html',
                 link: function(scope, elem, attrs, ctrl) {
-
                 }
             };
         })
@@ -868,7 +867,7 @@
                         scope.desk.edit = _.create(desk);
                     };
 
-                    scope.save = function(desk) {
+                    scope.save = function(desk, done) {
                         scope.message = gettext('Saving...');
 
                         var _new = desk._id ? false : true;
@@ -883,7 +882,11 @@
 
                             scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
-                            WizardHandler.wizard('desks').next();
+                            if (!done) {
+                                WizardHandler.wizard('desks').next();
+                            } else {
+                                WizardHandler.wizard('desks').finish();
+                            }
                         }, errorMessage);
                     };
 
@@ -975,8 +978,12 @@
                         WizardHandler.wizard('desks').previous();
                     };
 
-                    scope.next = function() {
-                        WizardHandler.wizard('desks').next();
+                    scope.next = function(done) {
+                        if (!done) {
+                            WizardHandler.wizard('desks').next();
+                        } else {
+                            WizardHandler.wizard('desks').finish();
+                        }
                     };
 
                     scope.edit = function(stage) {
@@ -1233,7 +1240,7 @@
                         WizardHandler.wizard('desks').previous();
                     };
 
-                    scope.save = function() {
+                    scope.save = function(done) {
                         var members = _.map(scope.deskMembers, function(obj) {
                             return {user: obj._id};
                         });
@@ -1243,7 +1250,11 @@
                             desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
                             var origDesk = desks.deskLookup[scope.desk.edit._id];
                             _.extend(origDesk, scope.desk.edit);
-                            WizardHandler.wizard('desks').next();
+                            if (!done) {
+                                WizardHandler.wizard('desks').next();
+                            } else {
+                                WizardHandler.wizard('desks').finish();
+                            }
                         }, function(response) {
                             scope.message = gettext('There was a problem, members not saved.');
                         });
