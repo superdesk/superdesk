@@ -58,7 +58,7 @@
         </div>
         <div class="preview-layout monitoring-preview-layout">
             <div class="content-list" ng-if="!aggregate.loading">   
-                <div ng-if="!monitoring.singleGroup && type === 'monitoring'">
+                <div ng-if="(!monitoring.singleGroup || monitoring.isDeskChanged()) && type === 'monitoring'">
                     <div ng-repeat="group in aggregate.groups track by group._id"
                          sd-monitoring-group data-group="group"  data-num-items="group.max_items"
                          data-view-type="group.type === 'deskOutput' ? 'deskOutput' : 'monitoring'"></div>
@@ -67,13 +67,13 @@
                     <div ng-repeat="group in aggregate.spikeGroups track by group._id | orderBy: name"
                         sd-monitoring-group data-group="group" data-view-type="'spiked'"></div>
                 </div>
-                <div ng-if="monitoring.singleGroup">
+                <div ng-if="monitoring.singleGroup && !monitoring.isDeskChanged()">
                     <div sd-monitoring-group class="single-group" data-group="monitoring.singleGroup" data-num-items="10" data-view-type="'single_monitoring'"></div>
                 </div>
                 <div ng-if="type === 'personal'">
                     <div sd-monitoring-group data-group="{'type': 'personal', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"></div>
                 </div>
-                <div ng-if="type === 'highlights'">
+                <div ng-if="type === 'highlights' && monitoring.highlightsDeskChanged()">
                     <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"
                     data-view-type="'highlights'"></div>
                 </div>

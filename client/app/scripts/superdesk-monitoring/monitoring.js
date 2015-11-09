@@ -170,10 +170,11 @@
         }
     }
 
-    MonitoringController.$inject = ['$location'];
-    function MonitoringController($location) {
+    MonitoringController.$inject = ['$location', 'desks'];
+    function MonitoringController($location, desks) {
         this.state = {};
 
+        console.log(desks);
         this.preview = preview;
         this.closePreview = closePreview;
         this.previewItem = null;
@@ -188,6 +189,18 @@
 
         this.edit = edit;
         this.editItem = null;
+
+        this.isDeskChanged = function (){
+            return desks.changeDesk;
+        };
+
+        this.highlightsDeskChanged = function (){
+            if(desks.changeDesk) {
+                $location.url('/workspace/monitoring');
+            }
+
+            return true;
+        };
 
         var vm = this;
 
@@ -292,6 +305,12 @@
                 scope.$on('broadcast:preview', function(event, args) {
                     scope.previewingBroadcast = true;
                     preview(args.item);
+                });
+
+                scope.$on('item:highlight', function(event, data) {
+                    if (scope.group.type === 'highlights') {
+                        queryItems();
+                    }
                 });
 
                 scope.$on('content:update', function(event, data) {
@@ -415,6 +434,11 @@
 
                     if (!scope.previewingBroadcast) {
                         monitoring.preview(null);
+                    }
+
+                    if (desks.changeDesk) {
+                        desks.changeDesk = false;
+                        monitoring.singleGroup = null;
                     }
 
                     return apiquery().then(function(items) {
