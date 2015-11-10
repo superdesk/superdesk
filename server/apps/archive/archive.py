@@ -142,6 +142,8 @@ class ArchiveService(BaseService):
             handle_existing_data(item)
             self.takesService.enhance_with_package_info(item)
 
+        get_resource_service('archive_broadcast').enhance_items(items)
+
     def on_create(self, docs):
         on_create_item(docs)
 
