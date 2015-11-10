@@ -146,7 +146,7 @@ class NewsMLG2Formatter(Formatter):
         content_set = SubElement(news_item, 'contentSet')
         if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
             SubElement(content_set, 'inlineData',
-                       attrib={'contenttype': 'text/plain'}).text = article.get('body_html')
+                       attrib={'contenttype': 'text/plain'}).text = self.append_public_service_announcements(article)
         elif article[ITEM_TYPE] in [CONTENT_TYPE.TEXT, CONTENT_TYPE.COMPOSITE]:
             inline = SubElement(content_set, 'inlineXML',
                                 attrib={'contenttype': 'application/nitf+xml'})

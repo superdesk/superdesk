@@ -29,16 +29,15 @@ class AAPSMSFormatter(Formatter):
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': map_priority(article.get('priority'))}
 
+            body = self.append_public_service_announcements(article)
             if article.get(EMBARGO):
                 embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
-                article['body_html'] = embargo + article['body_html']
+                body = embargo + body
 
-            if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
-                odbc_item['StoryText'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
-            elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
-                soup = BeautifulSoup(article.get('body_html', ''))
-                odbc_item['StoryText'] = soup.text.replace('\'', '\'\'')
+            if article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
+                body = BeautifulSoup(body).text
 
+            odbc_item['StoryText'] = body.replace('\'', '\'\'')  # @article_text
             odbc_item['ident'] = '0'
 
             return [(pub_seq_num, odbc_item)]

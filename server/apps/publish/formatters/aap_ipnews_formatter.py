@@ -59,10 +59,10 @@ class AAPIpNewsFormatter(Formatter):
 
                 odbc_item['take_key'] = article.get('anpa_take_key', None)  # @take_key
                 odbc_item['usn'] = article.get('unique_id', None)  # @usn
-                if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:
-                    odbc_item['article_text'] = article.get('body_html', '').replace('\'', '\'\'')  # @article_text
+                if article[ITEM_TYPE] == CONTENT_TYPE.PREFORMATTED:  # @article_text
+                    odbc_item['article_text'] = self.append_public_service_announcements(article).replace('\'', '\'\'')
                 elif article[ITEM_TYPE] == CONTENT_TYPE.TEXT:
-                    soup = BeautifulSoup(article.get('body_html', ''))
+                    soup = BeautifulSoup(self.append_public_service_announcements(article))
                     text = StringIO()
                     for p in soup.findAll('p'):
                         text.write('\x19\r\n')

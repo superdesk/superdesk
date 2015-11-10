@@ -36,12 +36,12 @@ class ANPAFormatterTest(SuperdeskTestCase):
         'anpa_take_key': 'take_key',
         'urgency': 5,
         'unique_id': '1',
-        'type': 'preformatted',
         'body_html': 'The story body',
         'type': 'text',
         'word_count': '1',
         'priority': 1,
-        'task': {'desk': 1}
+        'task': {'desk': 1},
+        'psa_footer': 'call helpline 999 if you are planning to quit smoking'
     }
 
     desks = [{'_id': 1, 'name': 'National'},
@@ -58,7 +58,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         subscriber = self.app.data.find('subscribers', None, None)[0]
 
         f = AAPAnpaFormatter()
-        seq, item = f.format(self.article, subscriber)[0]
+        seq, item = f.format(self.article.copy(), subscriber)[0]
 
         self.assertGreater(int(seq), 0)
 
@@ -80,7 +80,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line.strip(), 'slugline take_key')
 
         line = lines.readline()
-        self.assertEqual(line.strip(), 'The story body')
+        self.assertEqual(line.strip(), 'The story bodycall helpline 999 if you are planning to quit smoking')
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'AAP')
@@ -90,7 +90,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         subscriber['name'] = 'not notes'
 
         f = AAPAnpaFormatter()
-        seq, item = f.format(self.article, subscriber)[0]
+        seq, item = f.format(self.article.copy(), subscriber)[0]
 
         self.assertGreater(int(seq), 0)
 
@@ -109,7 +109,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line.strip(), 'slugline take_key')
 
         line = lines.readline()
-        self.assertEqual(line.strip(), 'The story body')
+        self.assertEqual(line.strip(), 'The story bodycall helpline 999 if you are planning to quit smoking')
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'AAP')
@@ -117,7 +117,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
     def testANPAWithBylineFormatter(self):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         subscriber['name'] = 'not notes'
-        byline_article = dict(self.article)
+        byline_article = dict(self.article.copy())
         byline_article['byline'] = 'Joe Blogs'
 
         f = AAPAnpaFormatter()
@@ -143,14 +143,14 @@ class ANPAFormatterTest(SuperdeskTestCase):
         self.assertEqual(line.strip(), 'Joe Blogs')
 
         line = lines.readline()
-        self.assertEqual(line.strip(), 'The story body')
+        self.assertEqual(line.strip(), 'The story bodycall helpline 999 if you are planning to quit smoking')
 
         line = lines.readline()
         self.assertEqual(line.strip(), 'AAP')
 
     def testMultipleCategoryFormatter(self):
         subscriber = self.app.data.find('subscribers', None, None)[0]
-        multi_article = dict(self.article)
+        multi_article = dict(self.article.copy())
         multi_article.pop('anpa_category')
         multi_article['anpa_category'] = [{'qcode': 'a'}, {'qcode': 'b'}]
         f = AAPAnpaFormatter()

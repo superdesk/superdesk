@@ -27,6 +27,7 @@ class AapSMSFormatterTest(SuperdeskTestCase):
         'headline': 'This is a test headline',
         'type': 'preformatted',
         'body_html': 'The story body',
+        'psa_footer': 'call helpline 999 if you are planning to quit smoking'
     }
 
     def setUp(self):
@@ -42,4 +43,6 @@ class AapSMSFormatterTest(SuperdeskTestCase):
 
         self.assertGreater(int(seq), 0)
         self.assertDictEqual(item, {'Category': 'a', 'Priority': 'f', 'Sequence': item['Sequence'], 'ident': '0',
-                                    'Headline': 'This is a test headline', 'StoryText': 'The story body'})
+                                    'Headline': 'This is a test headline',
+                                    'StoryText':
+                                        'The story body<br>call helpline 999 if you are planning to quit smoking'})
