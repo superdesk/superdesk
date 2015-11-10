@@ -35,6 +35,7 @@
             'anpa_take_key',
             'keywords',
             'priority',
+            'profile',
             'urgency',
             'pubstatus',
             'description',
@@ -195,6 +196,7 @@
 
                 $scope.save = function() {
                     delete $scope.template._datelinedate;
+                    delete $scope.template.hasCrops;
                     api.content_templates.save($scope.origTemplate, $scope.template)
                         .then(
                             function() {

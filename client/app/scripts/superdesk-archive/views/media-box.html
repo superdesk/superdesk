@@ -1,5 +1,6 @@
 <div id="{{ :: item._id }}"
     class="media-box media-{{ :: item.type}}"
+    sd-draggable-item
     ng-class="{selected: item._id === selected._id, archived: item.archived || item.created, locked: lock.isLocked}"
     ng-mouseenter="focused=true"
     ng-mouseleave="focused=false"

@@ -8,11 +8,11 @@
     <div sd-wizard-step data-title="{{ :: 'Desks' | translate }}" data-code="desks">
         <div class="content">
             <div ng-if="widget">
-	            <span class="pull-right" sd-character-count data-item="widget.configuration.label" data-limit="30"></span>
-	            <div class="field">
-	                <label translate>View name</label>
-	                <input type="text" class="fullwidth-input" ng-model="widget.configuration.label" ng-keyup="handleEdit($event);" required>
-	            </div>
+                <span class="pull-right" sd-character-count data-item="widget.configuration.label" data-limit="30"></span>
+                <div class="field">
+                    <label translate>View name</label>
+                    <input type="text" class="fullwidth-input" ng-model="widget.configuration.label" ng-keyup="handleEdit($event);" required>
+                </div>
             </div>
             <div class="legend" translate>Select desks for view</div>
             <div class="desk" ng-repeat="desk in desks | orderBy: 'name'">
@@ -32,11 +32,6 @@
                 </div>
             </div>
             <div ng-show="" class="legend" translate>Select saved searches to view</div>
-
-        </div>
-        
-        <div class="modal-footer">
-            <button id="nextStages" class="btn btn-primary" ng-click="next()" translate>Next</button>
         </div>
     </div>
 
@@ -55,10 +50,7 @@
             <div ng-show="" class="legend" translate>Select saved searches for view</div>
 
         </div>
-        <div class="modal-footer">
-            <button id="previousSearches" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button id="nextSearches" class="btn btn-primary" ng-click="next()" translate>Next</button>
-        </div>
+
     </div>
 
     <div sd-wizard-step data-title="{{ :: 'Reorder Sections' | translate }}" data-code="reorder">
@@ -76,10 +68,6 @@
                 </li>
             </ul>
         </div>
-        <div class="modal-footer">
-            <button id="previousReorder" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button id="nextReorder" class="btn btn-primary" ng-click="next()" translate>Next</button>
-        </div>  
     </div>
 
     <div sd-wizard-step data-title="{{ :: 'Items Count' | translate }}" data-code="maxitems">
@@ -98,10 +86,12 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button id="previousMax" class="btn pull-left" ng-click="previous()" translate>Previous</button>
-            <button class="btn btn-primary" ng-click="save()" translate>Done</button>
-        </div>  
     </div>
 
+</div>
+
+<div class="modal-footer">
+    <button id="previousBtn" class="btn pull-left" ng-if="step.current !== 'desks'" ng-click="previous()" translate>Previous</button>
+    <button id="nextBtn" class="btn" ng-if="step.current !== 'maxitems'" ng-click="next()" translate>Next</button>
+    <button class="btn btn-primary" ng-click="save()" translate>Done</button>
 </div>
