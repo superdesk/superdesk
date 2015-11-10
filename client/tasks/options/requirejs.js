@@ -25,6 +25,16 @@ module.exports = function(grunt) {
                 include: include
             }
         },
+        compileBower: {
+            options: {
+                name: 'superdesk/superdesk',
+                baseUrl: '<%= appDir %>/scripts/',
+                mainConfigFile: '<%= appDir %>/scripts/config.js',
+                out: '<%= bowerDir %>/scripts/superdesk.js',
+                optimize: 'none',
+                include: ['superdesk/superdesk']
+            }
+        },
         compileDocs: {
             options: {
                 name: 'superdesk/superdesk-docs',

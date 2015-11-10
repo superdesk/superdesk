@@ -4,7 +4,7 @@ module.exports = {
     app: {
         cwd: 'app',
         src: 'scripts/superdesk*/**/*.html',
-        dest: '<%= distDir %>/scripts/superdesk-templates.js',
+        dest: '<%= distDir %>/scripts/templates-cache.js',
         options: {
             htmlmin: {
                 collapseWhitespace: true,
@@ -12,8 +12,8 @@ module.exports = {
             },
             bootstrap: function(module, script) {
                 return '"use strict";' +
-                    'var templates = angular.module("templates");' +
-                    'templates.run([\'$templateCache\', function($templateCache) {' +
+                    'angular.module("superdesk.templates-cache")' +
+                    '.run([\'$templateCache\', function($templateCache) {' +
                     script + ' }]);';
             }
         }

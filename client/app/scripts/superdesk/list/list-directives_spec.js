@@ -2,7 +2,7 @@
 
 describe('list directives', function() {
     beforeEach(module('superdesk.list'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     it('renders list', inject(function($compile, $rootScope) {
         var scope = $rootScope.$new(true);

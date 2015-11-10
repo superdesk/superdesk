@@ -6,7 +6,7 @@ describe('dictionaries', function() {
         LANG = 'en';
 
     beforeEach(module('superdesk.dictionaries'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function(session, $q) {
         spyOn(session, 'getIdentity').and.returnValue($q.when({_id: USER_ID}));

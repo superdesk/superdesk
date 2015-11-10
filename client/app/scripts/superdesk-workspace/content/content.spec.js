@@ -3,7 +3,7 @@
 
 describe('superdesk.workspace.content', function() {
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.workspace.content'));
 
