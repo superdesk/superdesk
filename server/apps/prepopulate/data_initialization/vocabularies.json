@@ -178,9 +178,6 @@
                             {"name": "AAP Bulletin Builder", "value": "AAP BULLETIN BUILDER"}]},
             {"is_active": true, "name": "Wire/Paper", "value": "wire",
                 "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
-                            {"name": "AAP SMS", "value": "AAP SMS"}]},
-            {"is_active": true, "name": "Broadcast", "value": "broadcast",
-                "formats": [{"name": "AAP ANPA", "value": "AAP ANPA"}, {"name": "NITF", "value": "nitf"}, {"name": "AAP IPNEWS", "value": "AAP IPNEWS"},
                             {"name": "AAP SMS", "value": "AAP SMS"}]}
         ]
     },

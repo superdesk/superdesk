@@ -74,9 +74,16 @@
                 }
             };
         })
-        .directive('sdMediaPreview', [function() {
+        .directive('sdMediaPreview', ['api', '$rootScope', function(api, $rootScope) {
             return {
-                templateUrl: 'scripts/superdesk-archive/views/preview.html'
+                templateUrl: 'scripts/superdesk-archive/views/preview.html',
+                link: function(scope) {
+                    scope.previewRewriteStory = function () {
+                        return api.find('archive', scope.item.rewrite_id).then(function(item) {
+                            $rootScope.$broadcast('broadcast:preview', {'item': item});
+                        });
+                    };
+                }
             };
         }])
         .directive('sdMediaPreviewWidget', [function() {

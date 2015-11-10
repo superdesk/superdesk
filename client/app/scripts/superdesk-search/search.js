@@ -9,7 +9,8 @@
             {field: 'urgency', label: gettext('News Value')},
             {field: 'anpa_category.name', label: gettext('Category')},
             {field: 'slugline', label: gettext('Slugline')},
-            {field: 'priority', label: gettext('Priority')}
+            {field: 'priority', label: gettext('Priority')},
+            {field: 'genre.name', label: gettext('Genre')}
         ];
 
         function getSort() {
@@ -170,6 +171,10 @@
                     query.post_filter({terms: {'anpa_category.name': JSON.parse(params.category)}});
                 }
 
+                if (params.genre) {
+                    query.post_filter({terms: {'genre.name': JSON.parse(params.genre)}});
+                }
+
                 if (params.desk) {
                     query.post_filter({terms: {'task.desk': JSON.parse(params.desk)}});
                 }
@@ -308,7 +313,8 @@
             'week': 1,
             'month': 1,
             'desk': 1,
-            'stage':1
+            'stage':1,
+            'genre': 1
         };
 
         function initSelectedParameters (parameters) {
@@ -499,7 +505,8 @@
                             'credit': {},
                             'category': {},
                             'urgency': {},
-                            'priority': {}
+                            'priority': {},
+                            'genre': {}
                         };
                     };
 
@@ -522,6 +529,12 @@
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                 if (cat.key !== '') {
                                     scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
+
+                            _.forEach(scope.items._aggregations.genre.buckets, function(g) {
+                                if (g.key !== '') {
+                                    scope.aggregations.genre[g.key] = g.doc_count;
                                 }
                             });
 
@@ -765,6 +778,8 @@
 
                     var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
+                    scope.previewingBroadcast = false;
+
                     var updateTimeout,
                         criteria = search.query($location.search()).getCriteria(true),
                         list = elem[0].getElementsByClassName('list-view')[0],
@@ -785,6 +800,15 @@
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
+                    scope.$on('broadcast:preview', function(event, args) {
+                        scope.previewingBroadcast = true;
+                        scope.preview(args.item);
+                    });
+                    scope.$on('broadcast:created', function(event, args) {
+                        scope.previewingBroadcast = true;
+                        queryItems();
+                        scope.preview(args.item);
+                    });
 
                     scrollElem.on('scroll', handleScroll);
 
@@ -794,6 +818,13 @@
                             render();
                         }
                     });
+
+                    scope.$watch('selected', function(newVal, oldVal) {
+                        if (!newVal && scope.previewingBroadcast) {
+                            scope.previewingBroadcast = false;
+                        }
+                    });
+
                     scope.$watch(function getSearchParams() {
                         return _.omit($location.search(), '_id');
                     }, function(newValue, oldValue) {
@@ -820,7 +851,9 @@
                         criteria = search.query($location.search()).getCriteria(true);
                         criteria.source.size = 0;
                         scope.total = null;
-                        scope.preview(null);
+                        if (!scope.previewingBroadcast) {
+                            scope.preview(null);
+                        }
                         return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
                             scope.$applyAsync(render);

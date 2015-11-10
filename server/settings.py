@@ -209,6 +209,8 @@ INSTALLED_APPS.extend([
 
     'superdesk.io.subjectcodes',
     'pa.topics',
+
+    'apps.archive_broadcast'
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']

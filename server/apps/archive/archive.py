@@ -15,7 +15,7 @@ from .common import remove_unwanted, update_state, set_item_expiry, remove_media
     is_update_allowed, on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
-    LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId
+    LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
 from .archive_crop import ArchiveCropService
 from flask import current_app as app
 from superdesk import get_resource_service
@@ -107,7 +107,7 @@ class ArchiveResource(Resource):
         'elastic_filter': {'terms': {'state': ['fetched', 'routed', 'draft', 'in_progress', 'spiked', 'submitted']}},
         'elastic_filter_callback': private_content_filter
     }
-    etag_ignore_fields = ['highlights']
+    etag_ignore_fields = ['highlights', 'broadcast']
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'PUT']
     versioning = True
@@ -254,6 +254,11 @@ class ArchiveService(BaseService):
 
         update_version(updates, original)
 
+        # if broadcast then update to genre is not allowed.
+        if original.get('broadcast') and updates.get('genre') and \
+                any(genre.get('value', '').lower() != BROADCAST_GENRE.lower() for genre in updates.get('genre')):
+            raise SuperdeskApiError.badRequestError('Cannot change the genre for broadcast content.')
+
         # Do the validation after Circular Reference check passes in Package Service
         updated = original.copy()
         updated.update(updates)
@@ -277,6 +282,9 @@ class ArchiveService(BaseService):
                          type=updated[ITEM_TYPE])
 
         push_content_notification([updated, original])
+
+        if hasattr(app, 'on_broadcast_content_updated'):
+            app.on_broadcast_content_updated(updates, original)
 
     def on_replace(self, document, original):
         document[ITEM_OPERATION] = ITEM_UPDATE
