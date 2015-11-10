@@ -679,7 +679,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         // update the actual blocks value at the end to prevent more digest cycle as needed
                         vm.blocks = blocks;
                     },
-                    commitChanges: function(b) {
+                    commitChanges: function() {
                         var new_body = '';
                         if (vm.blocks.length > 1) {
                             vm.blocks.forEach(function(block) {
@@ -707,6 +707,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         var new_block = new Block(attrs);
                         vm.blocks.splice(vm.getBlockPosition(block) + 1, 0, new_block);
                         vm.setFocusOnBlock(new_block);
+                        vm.commitChanges();
                     },
                     removeBlock: function(block) {
                         // remove block only if it's not the first one
@@ -718,6 +719,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             // if it's the first block, just remove the content
                             block.body = '';
                         }
+                        vm.commitChanges();
                     },
                     setFocusOnBlock: function(block) {
                         vm.blocks.forEach(function(b) {
