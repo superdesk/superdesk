@@ -174,7 +174,6 @@
     function MonitoringController($location, desks) {
         this.state = {};
 
-        console.log(desks);
         this.preview = preview;
         this.closePreview = closePreview;
         this.previewItem = null;
@@ -190,16 +189,14 @@
         this.edit = edit;
         this.editItem = null;
 
-        this.isDeskChanged = function (){
+        this.isDeskChanged = function () {
             return desks.changeDesk;
         };
 
-        this.highlightsDeskChanged = function (){
-            if(desks.changeDesk) {
+        this.highlightsDeskChanged = function () {
+            if (desks.changeDesk) {
                 $location.url('/workspace/monitoring');
             }
-
-            return true;
         };
 
         var vm = this;
@@ -248,9 +245,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager) {
+            workflowService, keyboardManager, desks) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,

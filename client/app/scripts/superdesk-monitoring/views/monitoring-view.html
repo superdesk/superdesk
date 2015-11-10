@@ -73,7 +73,7 @@
                 <div ng-if="type === 'personal'">
                     <div sd-monitoring-group data-group="{'type': 'personal', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"></div>
                 </div>
-                <div ng-if="type === 'highlights' && monitoring.highlightsDeskChanged()">
+                <div ng-if="type === 'highlights' && !monitoring.highlightsDeskChanged()">
                     <div sd-monitoring-group data-group="{'type': 'highlights', 'query': query, 'fileType': aggregate.getSelectedFileTypes()}"
                     data-view-type="'highlights'"></div>
                 </div>
