@@ -14,7 +14,7 @@ from copy import deepcopy
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
 from superdesk.media.media_operations import crop_image, process_file_from_stream
-from superdesk.upload import UploadService, url_for_media
+from superdesk.upload import url_for_media
 from superdesk.metadata.item import CONTENT_TYPE, ITEM_TYPE
 
 
@@ -90,7 +90,7 @@ class ArchiveCropService():
 
         return next((c for c in self.crop_sizes if c.get('name', '').lower() == crop_name.lower()), None)
 
-    def create_crop(self, original, crop_name, doc):
+    def create_crop(self, original, crop_name, crop_data):
         """
         Create a new crop based on the crop co-ordinates
         :param original: Article to add the crop
@@ -100,13 +100,11 @@ class ArchiveCropService():
         :return dict: modified renditions
         """
         renditions = original.get('renditions', {})
-        crop_data = UploadService().get_cropping_data(doc)
         original_crop = renditions.get(crop_name, {})
         fields = ('CropLeft', 'CropTop', 'CropRight', 'CropBottom')
         crop_created = False
 
-        if any(crop_data[i] != original_crop.get(name) for i, name in enumerate(fields)):
-
+        if any(crop_data.get(name) != original_crop.get(name) for name in fields):
             original_image = renditions.get('original', {})
             original_file = superdesk.app.media.get(original_image.get('media'), 'upload')
             if not original_file:
@@ -118,7 +116,7 @@ class ArchiveCropService():
                 if not cropped:
                     raise SuperdeskApiError.badRequestError('Saving crop failed.')
 
-                renditions[crop_name] = self._save_cropped_image(out, original_file, doc)
+                renditions[crop_name] = self._save_cropped_image(out, original_file, crop_data)
                 crop_created = True
             except SuperdeskApiError:
                 raise

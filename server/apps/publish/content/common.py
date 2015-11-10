@@ -13,6 +13,7 @@ from functools import partial
 import logging
 from copy import deepcopy
 
+from flask import current_app as app
 from eve.versioning import resolve_document_version
 from eve.utils import config, ParsedRequest
 from eve.validation import ValidationError
@@ -39,6 +40,7 @@ from apps.archive.common import get_user, insert_into_versions, item_operations
 from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from superdesk.media.media_operations import crop_image
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +160,7 @@ class BasePublishService(BaseService):
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
             else:
-                self._resolve_associations(updates)
+                self._publish_associations(updates)
 
             queued_digital = False
             package = None
@@ -838,20 +840,34 @@ class BasePublishService(BaseService):
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
 
-    def _resolve_associations(self, item):
-        errors = []
-        search = get_resource_service('search')
-        for rel, ref in item.get('associations', {}).items():
-            lookup = {config.ID_FIELD: ref['uri']}
-            doc = search.find_one(req=None, **lookup)
-            if doc and is_published(doc):
-                ref.update(doc)
-            elif doc:
-                errors.append('related item is not published rel=%s item=%s' % (rel, ref['uri']))
-            else:
-                errors.append('related item not found rel=%s item=%s' % (rel, ref['uri']))
-        if errors:
-            raise ValidationError(errors)
+    def _publish_associations(self, parent):
+        associations = parent.get('associations', {})
+        for rel, item in associations.copy().items():
+            if item.get('pubstatus', 'usable') != 'usable':
+                associations.pop(rel)
+                continue
+            self._publish_renditions(item)
+
+    def _publish_renditions(self, item):
+        renditions = item.get('renditions', {})
+        original = self._get_file(renditions.get('original'), item)
+        for rendition_name, rendition in renditions.items():
+            crop = rendition.pop('crop', {})
+            if crop and original:
+                rendition.update(self._generate_rendition(original, crop, rendition_name))
+
+    def _get_file(self, rendition, item):
+        if item.get('fetch_endpoint'):
+            return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
+
+    def _generate_rendition(self, original, crop, rendition_name):
+        rendition = {}
+        ok, output = crop_image(original, rendition_name, crop)
+        if ok:
+            rendition['href'] = app.media.url_for_media(app.media.put(output, rendition_name))
+            rendition['width'] = output.width
+            rendition['height'] = output.height
+        return rendition
 
 
 superdesk.workflow_state('published')
