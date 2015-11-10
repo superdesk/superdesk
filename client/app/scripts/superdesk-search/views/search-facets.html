@@ -74,6 +74,15 @@
             </ul>
         </div>
 
+        <div sd-toggle-box data-title="{{ 'Genres' | translate }}" ng-hide="isEmpty('genre')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.genre" ng-click="toggleFilter('genre', key)">
+                    <span class="sd-checkbox" ng-checked="hasFilter('genre',key)"></span>
+                    <span>{{:: key | translate}} <i>{{:: value }}</i></span>
+                </li>
+            </ul>
+        </div>
+
         <div sd-toggle-box data-title="{{ 'Urgency' | FacetLabels }}" ng-hide="isEmpty('urgency')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.urgency" ng-click="toggleFilter('urgency', key)">

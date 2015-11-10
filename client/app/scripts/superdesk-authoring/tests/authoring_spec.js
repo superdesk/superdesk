@@ -703,6 +703,30 @@ describe('authoring actions', function() {
             allowedActions(itemActions, ['view']);
         }));
 
+    it('cannot create an update for a rewritten story ',
+        inject(function(privileges, desks, authoring, $q, $rootScope) {
+            var item = {
+                '_id': 'test',
+                'state': 'published',
+                'type': 'text',
+                'rewritten_by': 1,
+                'task': {
+                    'desk': 'desk1'
+                }
+            };
+
+            var userPrivileges = {
+                'archive': true,
+                'rewrite': true,
+                'unlock': true
+            };
+
+            privileges.setUserPrivileges(userPrivileges);
+            $rootScope.$digest();
+            var itemActions = authoring.itemActions(item);
+            allowedActions(itemActions, ['new_take', 'view', 'package_item', 'multi_edit', 'create_broadcast']);
+        }));
+
     it('can only view item if the item is spiked',
         inject(function(privileges, desks, authoring, $q, $rootScope) {
             var item = {
@@ -832,7 +856,7 @@ describe('authoring actions', function() {
 
             itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
-                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
+                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write', 'create_broadcast']);
         }));
 
     it('Can perform correction or kill on published item',
@@ -876,7 +900,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
-                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write']);
+                'mark_item', 'package_item', 'multi_edit', 'correct', 'kill', 're_write', 'create_broadcast']);
         }));
 
     it('Cannot perform correction or kill on published item without privileges',
@@ -920,7 +944,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['new_take', 'duplicate', 'view',
-                'mark_item', 'package_item', 'multi_edit', 're_write']);
+                'mark_item', 'package_item', 'multi_edit', 're_write', 'create_broadcast']);
         }));
 
     it('Can only view if the item is not the current version',
@@ -1051,7 +1075,7 @@ describe('authoring actions', function() {
             $rootScope.$digest();
             var itemActions = authoring.itemActions(item);
             allowedActions(itemActions, ['correct', 'kill', 'new_take', 're_write',
-                'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit']);
+                'mark_item', 'duplicate', 'view', 'package_item', 'multi_edit', 'create_broadcast']);
         }));
 
     it('Cannot send item if the version is zero',

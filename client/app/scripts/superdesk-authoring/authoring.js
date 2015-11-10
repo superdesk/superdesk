@@ -481,7 +481,8 @@
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming);
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -500,9 +501,12 @@
                     action.correct = user_privileges.correct && lockedByMe && !is_read_only_state;
                 }
 
-                action.re_write = (_.contains(['published', 'corrected'], current_item.state) &&
-                    _.contains(['text', 'preformatted'], current_item.type) && !current_item.embargo &&
-                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming));
+                action.re_write = _.contains(['published', 'corrected'], current_item.state) &&
+                    _.contains(['text', 'preformatted'], current_item.type) &&
+                    !current_item.embargo &&
+                    angular.isUndefined(current_item.rewritten_by) &&
+                    (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
+                    (!current_item.broadcast || !current_item.broadcast.master_id);
 
             } else {
                 // production states i.e in_progress, routed, fetched, submitted.
@@ -536,6 +540,11 @@
             action.package_item = current_item.state !== 'spiked' && current_item.state !== 'scheduled' &&
                 !current_item.embargo && current_item.package_type !== 'takes' &&
                 current_item.state !== 'killed' && !current_item.publish_schedule;
+
+            action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
+                (_.contains(['published', 'corrected'], current_item.state)) &&
+                current_item.type === 'text' &&
+                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
 
             action.multi_edit = !is_read_only_state;
 
@@ -2026,10 +2035,11 @@
 
                 metadata.initialize().then(function() {
                     scope.metadata = metadata.values;
-                    if (scope.item.type === 'picture'){
+
+                    if (scope.item.type === 'picture') {
                         scope.item.hasCrops = false;
                         scope.item.hasCrops = scope.metadata.crop_sizes.some(function (crop) {
-                            return scope.item.renditions[crop.name];
+                            return scope.item.renditions && scope.item.renditions[crop.name];
                         });
                     }
                 });
@@ -2320,8 +2330,8 @@
         };
     }
 
-    headerInfoDirective.$inject = ['familyService', 'authoringWidgets', 'authoring', 'archiveService'];
-    function headerInfoDirective(familyService, authoringWidgets, authoring, archiveService) {
+    headerInfoDirective.$inject = ['api', 'familyService', 'authoringWidgets', 'authoring', '$rootScope', 'archiveService'];
+    function headerInfoDirective(api, familyService, authoringWidgets, authoring, $rootScope, archiveService) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/header-info.html',
             require: '^sdAuthoringWidgets',
@@ -2347,6 +2357,14 @@
 
                         scope.activateWidget = function () {
                             WidgetsManagerCtrl.activate(relatedItemWidget[0]);
+                        };
+
+                        scope.previewMasterStory = function () {
+                            var item_id = item.broadcast.takes_package_id ?
+                                item.broadcast.takes_package_id : item.broadcast.master_id;
+                            return api.find('archive', item_id).then(function(item) {
+                                $rootScope.$broadcast('broadcast:preview', {'item': item});
+                            });
                         };
                     }
 

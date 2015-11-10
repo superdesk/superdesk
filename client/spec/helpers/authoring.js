@@ -30,6 +30,7 @@ function Authoring() {
         .element(by.tagName('button'));
 
     this.sendItemContainer = element(by.id('send-item-container'));
+    this.linkToMasterButton = element(by.id('preview-master'));
 
     /**
      * Find all file type icons in the item's info icons box matching the
