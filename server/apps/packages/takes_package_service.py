@@ -12,7 +12,6 @@ import logging
 import json
 from eve.utils import config, ParsedRequest
 from eve.versioning import resolve_document_version
-from flask import current_app as app
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk import get_resource_service
 from apps.archive.archive import SOURCE as ARCHIVE
@@ -130,9 +129,8 @@ class TakesPackageService():
         insert_into_versions(id_=ids[0])
         original_target = get_resource_service(ARCHIVE).find_one(req=None, _id=target[config.ID_FIELD])
         target[LINKED_IN_PACKAGES] = original_target[LINKED_IN_PACKAGES]
-        if hasattr(app, 'on_broadcast_master_updated'):
-            app.on_broadcast_master_updated(ITEM_CREATE, target,
-                                            takes_package_id=ids[0])
+        get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
+                                                                              takes_package_id=ids[0])
         return ids[0]
 
     def link_as_next_take(self, target, link):
@@ -165,9 +163,8 @@ class TakesPackageService():
             del takes_package[config.ID_FIELD]
             resolve_document_version(takes_package, ARCHIVE, 'PATCH', takes_package)
             archive_service.patch(takes_package_id, takes_package)
-            if hasattr(app, 'on_broadcast_master_updated'):
-                app.on_broadcast_master_updated(ITEM_CREATE, target,
-                                                takes_package_id=takes_package_id)
+            get_resource_service('archive_broadcast').on_broadcast_master_updated(ITEM_CREATE, target,
+                                                                                  takes_package_id=takes_package_id)
 
         if link.get(SEQUENCE):
             archive_service.patch(link[config.ID_FIELD], {SEQUENCE: link[SEQUENCE]})
