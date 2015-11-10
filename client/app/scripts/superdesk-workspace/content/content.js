@@ -58,6 +58,7 @@
          */
         this.createItemFromTemplate = function(template) {
             var item = _.pick(template, templates.TEMPLATE_METADATA);
+            item.template_id = template._id;
             return save(item).then(function(newItem) {
                 templates.addRecentTemplate(desks.activeDeskId, template._id);
                 return newItem;

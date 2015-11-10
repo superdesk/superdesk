@@ -174,7 +174,6 @@
 
         this.limits = {
             slugline: 24,
-            headline: 64,
             'abstract': 160
         };
 
@@ -1997,8 +1996,8 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', '$filter', 'superdesk'];
-    function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk) {
+    ArticleEditDirective.$inject = ['autosave', 'authoring', 'metadata', '$filter', 'superdesk', 'templates'];
+    function ArticleEditDirective(autosave, authoring, metadata, $filter, superdesk, templates) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
@@ -2006,6 +2005,7 @@
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
                 scope.errorMessage = null;
+                scope.itemTemplate = null;
                 var mainEditScope = scope.$parent.$parent;
 
                 /* Start: Dateline related properties */
@@ -2029,6 +2029,13 @@
                                 scope.datelineDay = monthAndDay.day;
                                 scope.resetNumberOfDays(false);
                             }
+                        }
+
+                        if (item.template_id) {
+                            templates.fetchTemplatesByIds([item.template_id])
+                            .then(function(result) {
+                                scope.itemTemplate = result._items[0];
+                            });
                         }
 
                         _.extend(item, updates);

@@ -78,6 +78,7 @@ class ContentTemplatesResource(Resource):
         }},
         'last_run': {'type': 'datetime', 'readonly': True},
         'next_run': {'type': 'datetime', 'readonly': True},
+        'headline_limit': {'type': 'integer', 'default': 0},
     }
 
     schema.update(metadata_schema)

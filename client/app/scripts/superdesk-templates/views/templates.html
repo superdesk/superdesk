@@ -97,6 +97,11 @@
         </div>
 
         <div class="field">
+          <label for="template-headline-limit" translate>Headline Character Limit</label>
+          <input id="template-headline-limit" type="number" min="0" max="2000" ng-model="template.headline_limit">
+        </div>
+
+        <div class="field">
           <label for="schedule-toggle" translate>Automatically create item</label>
           <div class="control">
             <span sd-switch ng-model="template.schedule.is_active"></span>
