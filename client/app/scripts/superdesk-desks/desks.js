@@ -974,10 +974,6 @@
                         }
                     };
 
-                    scope.previous = function() {
-                        WizardHandler.wizard('desks').previous();
-                    };
-
                     scope.next = function(done) {
                         if (!done) {
                             WizardHandler.wizard('desks').next();
@@ -1236,10 +1232,6 @@
                         _.remove(scope.deskMembers, user);
                     };
 
-                    scope.previous = function() {
-                        WizardHandler.wizard('desks').previous();
-                    };
-
                     scope.save = function(done) {
                         var members = _.map(scope.deskMembers, function(obj) {
                             return {user: obj._id};
@@ -1285,10 +1277,6 @@
                             scope.macros = macroList;
                         });
                     }
-
-                    scope.previous = function () {
-                        WizardHandler.wizard('desks').previous();
-                    };
 
                     scope.save = function () {
                         WizardHandler.wizard('desks').finish();
