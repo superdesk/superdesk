@@ -482,7 +482,8 @@
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
                 (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
-                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
+                (!current_item.genre || current_item.genre.length === 0 ||
+                current_item.genre[0].name !== 'Broadcast Script');
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
