@@ -510,10 +510,9 @@
                         };
                     };
 
+                    initAggregations();
+
                     scope.$watch('items', function() {
-
-                        initAggregations();
-
                         tags.initSelectedFacets().then(function(currentTags) {
 
                             scope.tags = currentTags;
