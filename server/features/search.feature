@@ -119,3 +119,14 @@ Feature: Search Feature
         Then we get list with 1 items
         When we get "/archive/#archive._id#"
         Then we get response code 200
+
+    @auth
+    Scenario: Search by slugline
+        Given "ingest"
+            """
+            [{"guid": "1", "slugline": "ABUSE PHOTO"}]
+            """
+        When we get "/search?source={"query":{"filtered":{"filter": null,"query":{"query_string":{"query":"slugline:(abuse)","lenient":false,"default_operator":"AND"}}}}}"
+        Then we get list with 1 items
+        When we get "/search?source={"query":{"filtered":{"filter": null,"query":{"query_string":{"query":"slugline:(absent)","lenient":false,"default_operator":"AND"}}}}}"
+        Then we get list with 0 items
