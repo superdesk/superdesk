@@ -266,6 +266,7 @@
                 };
 
                 function reset() {
+                    desks.changeDesk = true;
                     $location.search('_id', null);
                 }
 

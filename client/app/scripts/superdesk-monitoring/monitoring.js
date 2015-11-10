@@ -170,8 +170,8 @@
         }
     }
 
-    MonitoringController.$inject = ['$location'];
-    function MonitoringController($location) {
+    MonitoringController.$inject = ['$location', 'desks'];
+    function MonitoringController($location, desks) {
         this.state = {};
 
         this.preview = preview;
@@ -188,6 +188,16 @@
 
         this.edit = edit;
         this.editItem = null;
+
+        this.isDeskChanged = function () {
+            return desks.changeDesk;
+        };
+
+        this.highlightsDeskChanged = function () {
+            if (desks.changeDesk) {
+                $location.url('/workspace/monitoring');
+            }
+        };
 
         var vm = this;
 
@@ -235,9 +245,9 @@
     }
 
     MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
-        'activityService', 'workflowService', 'keyboardManager'];
+        'activityService', 'workflowService', 'keyboardManager', 'desks'];
     function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
-            workflowService, keyboardManager) {
+            workflowService, keyboardManager, desks) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -292,6 +302,12 @@
                 scope.$on('broadcast:preview', function(event, args) {
                     scope.previewingBroadcast = true;
                     preview(args.item);
+                });
+
+                scope.$on('item:highlight', function(event, data) {
+                    if (scope.group.type === 'highlights') {
+                        queryItems();
+                    }
                 });
 
                 scope.$on('content:update', function(event, data) {
@@ -415,6 +431,11 @@
 
                     if (!scope.previewingBroadcast) {
                         monitoring.preview(null);
+                    }
+
+                    if (desks.changeDesk) {
+                        desks.changeDesk = false;
+                        monitoring.singleGroup = null;
                     }
 
                     return apiquery().then(function(items) {
