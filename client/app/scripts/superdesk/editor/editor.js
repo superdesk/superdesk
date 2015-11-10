@@ -624,7 +624,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 }
                 angular.extend(vm, {
                     blocks: [],
-                    initEditor: function(model) {
+                    initEditorWithOneBlock: function(model) {
+                        vm.model = model;
+                        vm.blocks = [new Block({body: model.$modelValue})];
+                    },
+                    initEditorWithMultipleBlock: function(model) {
                         // save the model to update it later
                         vm.model = model;
                         // parse the given model and create blocks per paragraph
@@ -675,24 +679,25 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         // update the actual blocks value at the end to prevent more digest cycle as needed
                         vm.blocks = blocks;
                     },
-                    onBlockChange: function() {
-                        vm.commitChanges();
-                    },
                     commitChanges: function(b) {
                         var new_body = '';
-                        vm.blocks.forEach(function(block) {
-                            if(angular.isDefined(block.body) && block.body.trim() !== '') {
-                                if (block.blockType === 'embed') {
-                                    new_body += [
-                                        '<!-- EMBED START -->',
-                                        block.body,
-                                        '<!-- EMBED END -->\n'].join('\n');
-                                } else {
-                                    // wrap all the other blocks around <p></p>
-                                    new_body += '<p>' + block.body + '</p>\n';
+                        if (vm.blocks.length > 1) {
+                            vm.blocks.forEach(function(block) {
+                                if(angular.isDefined(block.body) && block.body.trim() !== '') {
+                                    if (block.blockType === 'embed') {
+                                        new_body += [
+                                            '<!-- EMBED START -->',
+                                            block.body,
+                                            '<!-- EMBED END -->\n'].join('\n');
+                                    } else {
+                                        // wrap all the other blocks around <p></p>
+                                        new_body += '<p>' + block.body + '</p>\n';
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            new_body = vm.blocks[0].body;
+                        }
                         vm.model.$setViewValue(new_body);
                     },
                     getBlockPosition: function(block) {
@@ -709,6 +714,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         if (block_position > 0) {
                             vm.blocks.splice(block_position, 1);
                             vm.setFocusOnBlock(vm.blocks[block_position - 1]);
+                        } else {
+                            // if it's the first block, just remove the content
+                            block.body = '';
                         }
                     },
                     setFocusOnBlock: function(block) {
@@ -722,7 +730,11 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 var controller = controllers[0];
                 var ngModel = controllers[1];
                 $timeout(function() {
-                    controller.initEditor(ngModel);
+                    if (scope.config.multiBlockEdition) {
+                        controller.initEditorWithMultipleBlock(ngModel);
+                    } else {
+                        controller.initEditorWithOneBlock(ngModel);
+                    }
                 });
             }
         };
@@ -915,29 +927,35 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     render(null, null, true);
 
                     // Actions to support multi blocks edition
-                    editorElem.on('keyup', function(e) {
-                        // press enter, create a new block
-                        if (e.keyCode === 13) {
-                            // last paragraph contains what is after the cursor
-                            var last_paragraph = $(scope.node).find('p:last');
-                            // add a new block just after this one
-                            $timeout(function () {
-                                sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, {
-                                    body: last_paragraph.html()
-                                });
-                                // remove it from current block
-                                last_paragraph.remove();
-                            });
-                        }
-                        // backspace, remove the block if empty
-                        if (e.keyCode === 8) {
-                            if ($(scope.node).text()=== '') {
+                    if (scope.config.multiBlockEdition) {
+                        editorElem.on('keyup', function(e) {
+                            // press enter, create a new block
+                            if (e.keyCode === 13) {
+                                // last paragraph contains what is after the cursor
+                                var last_paragraph = $(scope.node).find('p:last');
+                                // add a new block just after this one
                                 $timeout(function () {
-                                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                                    sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, {
+                                        body: last_paragraph.html()
+                                    });
+                                    // remove it from current block
+                                    last_paragraph.remove();
                                 });
                             }
-                        }
-                    });
+                            // backspace, remove the block if empty
+                            if (e.keyCode === 8) {
+                                if ($(scope.node).text()=== '') {
+                                    $timeout(function () {
+                                        scope.removeBlock();
+                                    });
+                                }
+                            }
+                        });
+                    }
+                };
+
+                scope.removeBlock = function() {
+                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
                 };
 
                 function render($event, event, preventStore) {

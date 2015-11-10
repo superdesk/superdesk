@@ -2,7 +2,18 @@
 @import 'mixins.less';
 
 .block {
-    &__container {
+    &__container:hover {
+        .block__remove {
+            opacity: 1;
+        }
+    }
+
+    &__remove {
+        position: absolute;
+        right: -17px;
+        top: -17px;
+        cursor: pointer;
+        opacity: .1;
     }
 }
 .add-embed {
@@ -11,7 +22,7 @@
         text-align: center;
         position: relative;
         cursor: pointer;
-        opacity: 0;
+        opacity: .1;
         transition-duration: .25s;
         transition-property: .25s;
         &:hover {
