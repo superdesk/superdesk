@@ -31,18 +31,25 @@ class SavedSearchesResource(Resource):
             'required': True,
             'minlength': 1
         },
+        'description': {
+            'type': 'string'
+        },
         'filter': {
             'type': 'dict',
             'required': True
         },
         'user': Resource.rel('users'),
+        'is_global': {
+            'type': 'boolean',
+            'default': False
+        }
     }
 
     url = 'users/<regex("[a-zA-Z0-9:\\-\\.]+"):user>/saved_searches'
 
-    item_methods = ['GET', 'DELETE']
+    item_methods = ['GET', 'PATCH', 'DELETE']
 
-    privileges = {'POST': 'saved_searches', 'DELETE': 'saved_searches'}
+    privileges = {'POST': 'saved_searches', 'PATCH': 'saved_searches', 'DELETE': 'saved_searches'}
 
 
 class AllSavedSearchesResource(Resource):
@@ -70,7 +77,7 @@ class SavedSearchesService(BaseService):
         """
 
         req = ParsedRequest()
-        req.where = json.dumps(lookup)
+        req.where = json.dumps({'$or': [lookup, {'is_global': True}]})
         return super().get(req, lookup=None)
 
     def init_request(self, elastic_query):

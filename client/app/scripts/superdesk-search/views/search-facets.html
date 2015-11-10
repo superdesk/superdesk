@@ -11,6 +11,10 @@
     </div>
     <div class="content" ng-if="sTab">
 
+        <div ng-if="editingSearch">
+            <div class="title" translate>{{ editingSearch.name}}</div>
+        </div>
+
         <div sd-search-within></div>
 
         <div id="search-parameters" sd-toggle-box data-title="{{:: 'Parameters' | translate }}" data-open="false">

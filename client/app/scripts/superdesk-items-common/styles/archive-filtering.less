@@ -250,6 +250,24 @@
 		}
 	}
 
+	.save-search {
+		background-color: #f8f8f8;
+		position: absolute;
+		bottom: 10px;
+		margin: 0 6px 0px -13px;
+		width: 95%;
+		.title {
+			text-transform: uppercase;
+			font-size: 12px;
+    		font-weight: 500;
+    		color: #666;
+		}
+		input {
+			border-width: 1px 1px 1px 1px !important;
+			margin-bottom: 10px;
+		}
+	}
+
 	.date-filter {
 
 		.predefined-dates {
@@ -289,8 +307,18 @@
 					display: block;
 					padding: 10px 15px 10px 20px;
 					border-bottom: 1px solid #ddd;
+					float: left;
+					width: 100%;
+					.search-item {
+						float: left;
+						width: 70%;
+					}
+					.search-button {
+						float: left;
+						width: 20%;
+					}
 					.delete {
-						float: right;
+						float: left;
 						border: 0;
 						background: 0;
 						display: none;

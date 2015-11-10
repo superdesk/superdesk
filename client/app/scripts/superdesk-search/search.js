@@ -492,8 +492,20 @@
                 link: function(scope, element, attrs, controller) {
                     scope.flags = controller.flags;
                     scope.sTab = true;
+                    scope.editingSearch = false;    
+
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
+
+                    scope.$on('edit:search', function(event, args)  {
+                        scope.sTab = true;
+                        scope.editingSearch = args;    
+                        console.log('Args:', args);                    
+                    });
+
+                    scope.changeTab = function() {
+                        scope.sTab = !scope.sTab;
+                    }
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -544,34 +556,41 @@
                                 });
                             }
 
-                            _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
-                                scope.aggregations.priority[priority.key] = priority.doc_count;
-                            });
-
-                            _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                scope.aggregations.source[source.key] = source.doc_count;
-                            });
-                            if (angular.isDefined(scope.items._aggregations.source))
-                            {
+                            if (angular.isDefined(scope.items._aggregations.priority)) {
+                               _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
+                                    scope.aggregations.priority[priority.key] = priority.doc_count;
+                                }); 
+                            }
+                            
+                            if (angular.isDefined(scope.items._aggregations.priority)) {
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                     scope.aggregations.source[source.key] = source.doc_count;
                                 });
                             }
 
-                            if (angular.isDefined(scope.items._aggregations.credit))
-                            {
+                            if (angular.isDefined(scope.items._aggregations.source)) {
+                                _.forEach(scope.items._aggregations.source.buckets, function(source) {
+                                    scope.aggregations.source[source.key] = source.doc_count;
+                                });
+                            }
+
+                            if (angular.isDefined(scope.items._aggregations.credit)) {
                                 _.forEach(scope.items._aggregations.credit.buckets, function(credit) {
                                     scope.aggregations.credit[credit.key] = {'count': credit.doc_count, 'qcode': credit.qcode};
                                 });
                             }
 
-                            _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                scope.aggregations.date['Last Day'] = day.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.day)) {
+                                _.forEach(scope.items._aggregations.day.buckets, function(day) {
+                                    scope.aggregations.date['Last Day'] = day.doc_count;
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                scope.aggregations.date['Last Week'] = week.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.week)) {
+                                _.forEach(scope.items._aggregations.week.buckets, function(week) {
+                                    scope.aggregations.date['Last Week'] = week.doc_count;
+                                });
+                            }
 
                             _.forEach(scope.items._aggregations.month.buckets, function(month) {
                                 scope.aggregations.date['Last Month'] = month.doc_count;
@@ -1051,32 +1070,42 @@
         .directive('sdSaveSearch', ['$location', 'asset', 'api', 'session', 'notify', 'gettext', 
             function($location, asset, api, session, notify, gettext) {
             return {
-                scope: {},
                 templateUrl: asset.templateUrl('superdesk-search/views/save-search.html'),
                 link: function(scope, elem) {
-                    var resource = api('saved_searches', session.identity);
-                    scope.editSearch = null;
+                    scope.edit = null;
 
-                    scope.edit = function() {
-                        scope.editSearch = {};
+                    scope.editItem = function() {
+                        scope.edit = _.create(scope.editingSearch) || {};
+                    };
+
+                    scope.saveas = function() {
+                        scope.edit = _.clone(scope.editingSearch) || {};
+                        delete scope.edit._id;
                     };
 
                     scope.cancel = function() {
-                        scope.editSearch = null;
+                        scope.editingSearch = null;
+                        scope.edit = null;
                     };
 
                     scope.save = function(editSearch) {
 
-                        editSearch.filter = {query: $location.search()};
-
-                        resource.save({}, editSearch)
-                        .then(function(result) {
-                            notify.success(gettext('Saved search created'));
+                        function onSuccess() {
+                            notify.success(gettext('Saved search is saved successfully'));
                             scope.cancel();
-                            scope.views.push(result);
-                        }, function() {
-                            notify.error(gettext('Error. Saved search not created.'));
-                        });
+                            scope.changeTab();
+                        }
+
+                        function onFail() {
+                            notify.error(gettext('Error. Saved search could not be saved.'));
+                        }
+
+                        editSearch.filter = {query: $location.search()};
+                        if (!editSearch._id) {
+                            api('saved_searches', session.identity).save({}, editSearch).then(onSuccess, onFail);
+                        } else {
+                            api('saved_searches', session.identity).save(scope.editingSearch, editSearch).then(onSuccess, onFail);
+                        }
                     };
                 }
             };
@@ -1602,8 +1631,8 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['api', 'session', 'notify', 'gettext', 'asset',
-        function(api, session, notify, gettext, asset) {
+        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'notify', 'gettext', 'asset', '$location', 'desks',
+        function($rootScope, api, session, notify, gettext, asset, $location, desks) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
@@ -1612,23 +1641,43 @@
                     var resource = api('saved_searches', session.identity);
                     scope.selected = null;
 
-                    resource.query({'max_results': 200}).then(function(views) {
-                        scope.views = views._items;
+                    desks.initialize()
+                    .then(function() {
+                        scope.userLookup = desks.userLookup;
                     });
 
-                    scope.select = function(view) {
-                        scope.selected = view;
-                        $location.search(view.filter.query);
+                    resource.query({'max_results': 200}).then(function(searches) {
+                        scope.searches = searches._items;
+                        scope.userSavedSearches = [];
+                        scope.globalSavedSearches = [];
+                        _.forEach(scope.searches, function(search) {
+                            if (search.user == session.identity._id) {
+                                scope.userSavedSearches.push(search);
+                            } else if(search.is_global) {
+                                scope.globalSavedSearches.push(search);
+                            }
+                        });
+                    });
+
+                    scope.select = function(search) {
+                        scope.selected = search;
+                        $location.search(search.filter.query);
                     };
 
-                    scope.remove = function(view) {
-                        resource.remove(view).then(function() {
+                    scope.edit = function(search) {
+                        scope.select(search);
+                        $rootScope.$broadcast('edit:search', search);
+                    }
+
+                    scope.remove = function(searches) {
+                        resource.remove(searches).then(function() {
                             notify.success(gettext('Saved search removed'));
-                            _.remove(scope.views, {_id: view._id});
+                            _.remove(scope.views, {_id: searches._id});
                         }, function() {
                             notify.error(gettext('Error. Saved search not deleted.'));
                         });
                     };
+
                 }
             };
         }])
