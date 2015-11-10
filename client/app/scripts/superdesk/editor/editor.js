@@ -550,10 +550,63 @@ function EditorService(spellcheck, $rootScope, $timeout) {
     }
 }
 
-angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
+angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed'])
 
     .service('editor', EditorService)
-
+    .directive('sdAddEmbed', function() {
+        return {
+            scope: true,
+            require: ['sdAddEmbed', '^sdTextEditor'],
+            templateUrl: 'scripts/superdesk/editor/views/add-embed.html',
+            controllerAs: 'vm',
+            controller: ['embedService', '$element', '$timeout', '$q', 'lodash',
+                        function(embedService, $element, $timeout, $q, _) {
+                var vm = this;
+                angular.extend(vm, {
+                    blockBefore: undefined,  // defined in link method
+                    editorCtrl: undefined,  // defined in link method
+                    extended: false,
+                    toggle: function(close) {
+                        // use parameter or toggle
+                        vm.extended = angular.isDefined(close) ? !close : !vm.extended;
+                        // on enter, focus on input
+                        if (vm.extended) {
+                            $timeout(function() {
+                                angular.element($element).find('input').focus();
+                            });
+                        // on leave, clear field
+                        } else {
+                            vm.input = '';
+                        }
+                    },
+                    retrieveEmbed:function() {
+                        // if it's an url, use embedService to retrieve the embed code
+                        var embedCode;
+                        if(_.startsWith(vm.input, 'http')) {
+                            embedCode = embedService.get(vm.input).then(function(data) {
+                                return data.html;
+                            });
+                        // otherwise we use the content of the field directly
+                        } else {
+                            embedCode = $q.when(vm.input);
+                        }
+                        embedCode.then(function(embed) {
+                            // create a new block containing the embed
+                            vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {blockType: 'embed', body: embed});
+                            // close the addEmbed form
+                            vm.toggle();
+                        });
+                    }
+                });
+            }],
+            link: function(scope, element, attrs, controllers) {
+                angular.extend(controllers[0], {
+                    blockBefore: scope.block,
+                    editorCtrl: controllers[1]
+                });
+            }
+        };
+    })
     .directive('sdTextEditor', ['$timeout', 'lodash', function ($timeout, _) {
         return {
             scope: {type: '=', config: '=', language: '='},
@@ -562,10 +615,12 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
             controllerAs: 'vm',
             controller: function() {
                 var vm = this;
-                function Block(body) {
-                    var empty = ['<br>', '<br/>', '<br></br>'];
-                    this.body = (empty.indexOf(empty) === -1) ? body : '';
-                    this.focus = false;
+                function Block(attrs) {
+                    angular.extend(this, {
+                        body: attrs && attrs.body || '',
+                        blockType: attrs && attrs.blockType || 'text',
+                        focus: false
+                    });
                 }
                 angular.extend(vm, {
                     blocks: [],
@@ -574,29 +629,43 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         vm.model = model;
                         // parse the given model and create blocks per paragraph
                         var blocks = [], block;
-                        $('<div>' + model.$modelValue || '' + '</div>').contents().toArray().forEach(function(element) {
+                        $('<div>' + model.$modelValue || '' + '</div>')
+                        .contents()
+                        .toArray()
+                        .forEach(function(element) {
                             // if we get a <p>, we push the current block and create a new one
                             // for the paragraph content
                             if (element.nodeName === 'P') {
-                                if (block !== undefined) {
+                                if (block !== undefined && block.body.trim() !== '') {
                                     blocks.push(block);
                                     block = undefined;
                                 }
-                                if (element.innerHTML !== '' && element.innerHTML !== '<br>') {
-                                    blocks.push(new Block(element.innerHTML));
+                                if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
+                                    blocks.push(new Block({body: element.innerHTML}));
                                 }
-                            // if it's not a paragraph, we update the current block
+                            // detect if it's an embed
+                            } else if (element.nodeName === '#comment') {
+                                if (element.nodeValue.indexOf('EMBED START') > -1) {
+                                    block = new Block({blockType: 'embed'});
+                                }
+                                if (element.nodeValue.indexOf('EMBED END') > -1) {
+                                    if (block !== undefined && block.body.trim() !== '') {
+                                        blocks.push(block);
+                                        block = undefined;
+                                    }
+                                }
+                            // if it's not a paragraph or an embed, we update the current block
                             } else {
                                 if (block === undefined) {
                                     block = new Block();
                                 }
                                 // we want the outerHTML (ex: '<b>text</b>') or the node value for text and comment
                                 // TODO: check if it works for comment
-                                block.body += element.outerHTML || element.nodeValue;
+                                block.body += element.outerHTML || element.nodeValue || '';
                             }
                         });
                         // at the end of the loop, we push the last current block
-                        if (block !== undefined) {
+                        if (block !== undefined && block.body.trim() !== '') {
                             blocks.push(block);
                         }
                         // if no block, create an empty one to start
@@ -611,17 +680,26 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     },
                     commitChanges: function(b) {
                         var new_body = '';
-                        // wrap all the blocks around <p></p>
                         vm.blocks.forEach(function(block) {
-                            new_body += '<p>' + block.body + '</p>';
+                            if(angular.isDefined(block.body) && block.body.trim() !== '') {
+                                if (block.blockType === 'embed') {
+                                    new_body += [
+                                        '<!-- EMBED START -->',
+                                        block.body,
+                                        '<!-- EMBED END -->\n'].join('\n');
+                                } else {
+                                    // wrap all the other blocks around <p></p>
+                                    new_body += '<p>' + block.body + '</p>\n';
+                                }
+                            }
                         });
                         vm.model.$setViewValue(new_body);
                     },
                     getBlockPosition: function(block) {
                         return _.indexOf(vm.blocks, block);
                     },
-                    insertNewBlockAfter: function(block, body) {
-                        var new_block = new Block(body);
+                    insertNewBlockAfter: function(block, attrs) {
+                        var new_block = new Block(attrs);
                         vm.blocks.splice(vm.getBlockPosition(block) + 1, 0, new_block);
                         vm.setFocusOnBlock(new_block);
                     },
@@ -820,29 +898,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                         }
                     });
 
-                    // Actions to support multi blocks edition
-                    editorElem.on('keyup', function(e) {
-                        // press enter, create a new block
-                        if (e.keyCode === 13) {
-                            // last paragraph contains what is after the cursor
-                            var last_paragraph = $(scope.node).find('p:last');
-                            // add a new block just after this one
-                            $timeout(function () {
-                                sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, last_paragraph.html());
-                                // remove it from current block
-                                last_paragraph.remove();
-                            });
-                        }
-                        // backspace, remove the block if empty
-                        if (e.keyCode === 8) {
-                            if ($(scope.node).text()=== '') {
-                                $timeout(function () {
-                                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
-                                });
-                            }
-                        }
-                    });
-
                     if (scope.type === 'preformatted') {
                         editorElem.on('keydown keyup click', function() {
                             scope.$apply(function() {
@@ -858,6 +913,31 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                     scope.cursor = {};
                     render(null, null, true);
+
+                    // Actions to support multi blocks edition
+                    editorElem.on('keyup', function(e) {
+                        // press enter, create a new block
+                        if (e.keyCode === 13) {
+                            // last paragraph contains what is after the cursor
+                            var last_paragraph = $(scope.node).find('p:last');
+                            // add a new block just after this one
+                            $timeout(function () {
+                                sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, {
+                                    body: last_paragraph.html()
+                                });
+                                // remove it from current block
+                                last_paragraph.remove();
+                            });
+                        }
+                        // backspace, remove the block if empty
+                        if (e.keyCode === 8) {
+                            if ($(scope.node).text()=== '') {
+                                $timeout(function () {
+                                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                                });
+                            }
+                        }
+                    });
                 };
 
                 function render($event, event, preventStore) {

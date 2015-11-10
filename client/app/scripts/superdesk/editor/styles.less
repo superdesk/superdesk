@@ -1,0 +1,58 @@
+@import 'variables.less';
+@import 'mixins.less';
+
+.block {
+    &__container {
+    }
+}
+.add-embed {
+    &__plus {
+        display: block;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        opacity: 0;
+        transition-duration: .25s;
+        transition-property: .25s;
+        &:hover {
+            opacity: 1;
+        }
+        &::after {
+            content: '';
+            background-color: #5EA9C8;
+            height: 3px;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 8px;
+            z-index: -1;
+        }
+    }
+    &__body {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid @sd-blue;
+        .border-radius(3px);
+        form {
+            position: relative;
+            // input
+            .form-group:nth-child(1) {
+                // leave place for action buttons on the right
+                margin-right: 80px;
+            }
+            // action buttons
+            .form-group:nth-child(2) {
+                // align right
+                position: absolute;
+                top: 0;
+                right: 0;
+                // centers icons
+                i {
+                    left: 2px;
+                    position: relative;
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,8 @@
-<div ng-repeat="block in vm.blocks"
-     sd-text-editor-block='block'
-     ng-change="vm.onBlockChange()"
-     ng-model="block.body">
+
+<div ng-repeat="block in vm.blocks" class="block__container">
+
+    <div sd-text-editor-block='block'
+         ng-change="vm.onBlockChange()"
+         ng-model="block.body"></div>
+    <sd-add-embed class="block__add-embed"></sd-add-embed>
 </div>

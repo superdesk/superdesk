@@ -20,7 +20,8 @@
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
     "medium-editor": "5.10.0",
-    "ment.io": "0.9.22"
+    "ment.io": "0.9.22",
+    "angular-embed": "~2.0.3"
   },
   "ignore": [
     "**/.*",
@@ -31,5 +32,8 @@
   ],
   "devDependencies": {
     "rangy": "~1.3.0"
+  },
+  "resolutions": {
+    "angular": "1.4.1"
   }
 }
