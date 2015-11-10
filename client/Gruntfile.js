@@ -75,7 +75,11 @@ module.exports = function (grunt) {
 
     grunt.registerTask('bower', [
         'build',
-        'copy:bower'
+        'copy:bower',
+        'concat:bowerCore',
+        'concat:bowerApps',
+        'uglify:bower',
+        'clean:bower',
     ]);
 
     grunt.registerTask('build', [
