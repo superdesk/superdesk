@@ -392,23 +392,41 @@
                 var PREFERENCES_KEY = 'agg:view';
                 var defaultMaxItems = 10;
 
+                scope.showGlobalSavedSearches = false;
+                scope.showPrivateSavedSearches = true;
+                scope.privateSavedSearches = [];
+                scope.globalSavedSearches = [];
+
                 scope.step = {
                     current: 'desks'
                 };
 
+                desks.initialize()
+                .then(function() {
+                    scope.userLookup = desks.userLookup;
+                });
+
                 scope.$watch('step.current', function(step) {
                     if (step === 'searches') {
-                        scope.initSavedSearches(scope.showAllSavedSearches);
+                        workspaces.getActiveId().then(function(activeWorkspace) {
+                            if (activeWorkspace.type === 'workspace') {
+                                scope.showPrivateSavedSearches = true;
+                            } else {
+                                scope.showGlobalSavedSearches = true;
+                                scope.showPrivateSavedSearches = false;
+                            }
+                        });
+
+                        scope.initGlobalSavedSearches();
+                        scope.initPrivateSavedSearches();
                     }
                 });
 
-                scope.showAllSavedSearches = false;
-                scope.currentSavedSearches = [];
 
                 scope.closeModal = function() {
                     scope.step.current = 'desks';
                     scope.modalActive = false;
-                    scope.showAllSavedSearches = false;
+                    scope.showGlobalSavedSearches = false;
                     scope.onclose();
                 };
 
@@ -477,20 +495,36 @@
                 };
 
                 /**
-                 * Init searches list with all searches if allSearches is true or
-                 * user saved searches and other user saved searches
-                 * if they are already selected
+                 * Init private saved searches with all saved searches for this user
                  */
-                scope.initSavedSearches = function(showAllSavedSearches) {
+                scope.initPrivateSavedSearches = function() {
                     var user = session.identity._id;
-                    scope.showAllSavedSearches = showAllSavedSearches;
-                    if (scope.currentSavedSearches.length > 0) {
-                        scope.currentSavedSearches.length = 0;
+                    if (scope.privateSavedSearches.length > 0) {
+                        scope.privateSavedSearches.length = 0;
                     }
                     _.each(scope.searches, function(item) {
-                        var group = scope.editGroups[item._id];
-                        if (scope.showAllSavedSearches || item.user === user || group && group.selected) {
-                            scope.currentSavedSearches.push(item);
+                        if (item.user === user && !item.is_global) {
+                            scope.privateSavedSearches.push(item);
+                        }
+                    });
+                };
+
+                /**
+                 * Init global saved searches with all saved searches for all users
+                 * where is_global flag is true
+                 */
+                scope.initGlobalSavedSearches = function() {
+                    var user = session.identity._id;
+                    if (scope.globalSavedSearches.length > 0) {
+                        scope.globalSavedSearches.length = 0;
+                    }
+                    _.each(scope.searches, function(item) {
+                        if (item.is_global) {
+                            scope.globalSavedSearches.push(item);
+                            var group = scope.editGroups[item._id];
+                            if (group && group.selected) {
+                                scope.showGlobalSavedSearches = true;
+                            }
                         }
                     });
                 };
@@ -568,7 +602,7 @@
                             });
                             workspaces.save(workspace, {'widgets': widgets})
                             .then(function() {
-                                scope.showAllSavedSearches = false;
+                                scope.showGlobalSavedSearches = false;
                                 scope.onclose();
                             });
                         });
@@ -595,7 +629,7 @@
                                 });
                             }
                         });
-                        scope.showAllSavedSearches = false;
+                        scope.showGlobalSavedSearches = false;
                         scope.onclose();
                     }
                 };

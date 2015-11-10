@@ -40,20 +40,39 @@
 
     <div sd-wizard-step data-title="{{ :: 'Saved Searches' | translate }}" data-code="searches">
         <div class="content">
-            <div class="legend" translate>Select saved searches for view.  
-                <span sd-switch class="pull-right" ng-model="showAllSavedSearches" 
-                 ng-click="initSavedSearches(showAllSavedSearches)" title="{{'Show all saved searches'}} | translate"></span>
+            <div class="legend" translate>Select global saved searches  
+                <span sd-switch class="pull-right" ng-model="showGlobalSavedSearches" 
+                 title="{{'Show all saved searches'}} | translate"></span>
             </div>
-            <div class="desk" ng-repeat="search in currentSavedSearches | orderBy: 'name'">
+            <div class="desk" ng-repeat="search in globalSavedSearches | orderBy: 'name'" ng-if="showGlobalSavedSearches">
                 <div class="desk-title">
-                    {{search.name}}
-                    <span sd-switch class="pull-right" ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>
+                    <div>
+                        {{search.name}} <i>by {{userLookup[search.user].display_name}}</i><br />
+                        <span class="search-description">{{ search.description }} </span>
+                    </div>
+                    <div class="switch">
+                        <span sd-switch  ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="legend"  ng-if="showPrivateSavedSearches" translate>Private saved searches </div>
+
+            <div class="desk" ng-repeat="search in privateSavedSearches | orderBy: 'name'" ng-if="showPrivateSavedSearches">
+                <div class="desk-title">
+                    <div>
+                        {{search.name}}<br />
+                        <span class="search-description">{{ search.description }} </span>
+                    </div>
+                    <div class="switch">
+                        <span sd-switch  ng-model="editGroups[search._id].selected" ng-click="setSearchInfo(search._id)"></span>
+                    </div>
+                    
                 </div>
             </div>
             <div ng-show="" class="legend" translate>Select saved searches for view</div>
-
         </div>
-
     </div>
 
     <div sd-wizard-step data-title="{{ :: 'Reorder Sections' | translate }}" data-code="reorder">
