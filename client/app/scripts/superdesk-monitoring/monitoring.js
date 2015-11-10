@@ -52,8 +52,8 @@
             });
     }
 
-    CardsService.$inject = ['api', 'search', 'session'];
-    function CardsService(api, search, session) {
+    CardsService.$inject = ['api', 'search', 'session', 'desks'];
+    function CardsService(api, search, session, desks) {
         this.criteria = getCriteria;
         this.shouldUpdate = shouldUpdate;
 
@@ -108,6 +108,27 @@
                 ]});
                 break;
 
+            case 'deskOutput':
+                var desk_id = card._id.substring(0, card._id.indexOf(':'));
+                var desk = desks.deskLookup ? desks.deskLookup[desk_id] : null;
+                if (desk) {
+                    if (desk.desk_type === 'authoring') {
+                        query.filter({or: [
+                            {term: {'task.last_authoring_desk': desk_id}},
+                            {and: [
+                                {term: {'task.desk': desk_id}},
+                                {terms: {state: ['scheduled', 'published', 'corrected', 'killed']}}
+                            ]}
+                        ]});
+                    } else if (desk.desk_type === 'production') {
+                        query.filter({and: [
+                            {term: {'task.desk': desk_id}},
+                            {terms: {state: ['scheduled', 'published', 'corrected', 'killed']}}
+                        ]});
+                    }
+                }
+                break;
+
             default:
                 query.filter({term: {'task.stage': card._id}});
                 break;
@@ -124,7 +145,10 @@
             var criteria = {source: query.getCriteria()};
             if (card.type === 'search' && card.search && card.search.filter.query.repo) {
                 criteria.repo = card.search.filter.query.repo;
+            } else if (card.type === 'deskOutput') {
+                criteria.repo = 'archive,published';
             }
+
             criteria.source.from = 0;
             criteria.source.size = card.max_items || 25;
             return criteria;
@@ -210,27 +234,10 @@
         };
     }
 
-    MonitoringGroupDirective.$inject = [
-        'cards',
-        'api',
-        'desks',
-        'authoringWorkspace',
-        '$timeout',
-        'superdesk',
-        'activityService',
-        'workflowService',
-        'keyboardManager'
-    ];
-    function MonitoringGroupDirective(
-            cards,
-            api,
-            desks,
-            authoringWorkspace,
-            $timeout,
-            superdesk,
-            activityService,
-            workflowService,
-            keyboardManager) {
+    MonitoringGroupDirective.$inject = ['cards', 'api', 'authoringWorkspace', '$timeout', 'superdesk',
+        'activityService', 'workflowService', 'keyboardManager'];
+    function MonitoringGroupDirective(cards, api, authoringWorkspace, $timeout, superdesk, activityService,
+            workflowService, keyboardManager) {
 
         var ITEM_HEIGHT = 57,
             ITEMS_COUNT = 5,
@@ -258,6 +265,7 @@
                 scope.view = 'compact';
                 scope.page = 1;
                 scope.fetching = false;
+                scope.previewingBroadcast = false;
                 scope.cacheNextItems = [];
                 scope.cachePreviousItems = [];
                 scope.limited = (monitoring.singleGroup || scope.group.type === 'highlights') ? false : true;
@@ -273,8 +281,18 @@
                 scope.$on('task:stage', queryItems);
                 scope.$on('ingest:update', queryItems);
                 scope.$on('item:spike', queryItems);
+                scope.$on('item:duplicate', queryItems);
+                scope.$on('broadcast:created', function(event, args) {
+                    scope.previewingBroadcast = true;
+                    queryItems();
+                    preview(args.item);
+                });
                 scope.$on('item:unspike', queryItems);
                 scope.$on('$routeUpdate', queryItems);
+                scope.$on('broadcast:preview', function(event, args) {
+                    scope.previewingBroadcast = true;
+                    preview(args.item);
+                });
 
                 scope.$on('content:update', function(event, data) {
                     if (cards.shouldUpdate(scope.group, data)) {
@@ -283,6 +301,12 @@
                 });
 
                 scope.$on('$destroy', unbindActionKeyShortcuts);
+
+                scope.$watch('selected', function(newVal, oldVal) {
+                    if (!newVal && scope.previewingBroadcast) {
+                        scope.previewingBroadcast = false;
+                    }
+                });
 
                 /*
                  * Change between simple and group by keyboard
@@ -388,6 +412,11 @@
                     criteria.source.size = 0; // we only need to get total num of items
                     scope.loading = true;
                     scope.total = null;
+
+                    if (!scope.previewingBroadcast) {
+                        monitoring.preview(null);
+                    }
+
                     return apiquery().then(function(items) {
                         scope.total = items._meta.total;
                         scope.$applyAsync(render);
@@ -429,7 +458,7 @@
                 function apiquery() {
 
                     var provider = 'search';
-                    if (scope.group.type === 'search') {
+                    if (scope.group.type === 'search' || scope.group.type === 'deskOutput') {
                         if (criteria.repo && criteria.repo.indexOf(',') === -1) {
                             provider = criteria.repo;
                             if (!angular.isDefined(criteria.source.size)) {

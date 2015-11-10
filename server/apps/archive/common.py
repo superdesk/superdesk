@@ -44,6 +44,8 @@ item_operations = [ITEM_CREATE, ITEM_UPDATE, ITEM_RESTORE, ITEM_DUPLICATE, ITEM_
 # part the task dict
 LAST_AUTHORING_DESK = 'last_authoring_desk'
 LAST_PRODUCTION_DESK = 'last_production_desk'
+BROADCAST_GENRE = 'Broadcast Script'
+RE_OPENS = 'reopens'
 
 
 def update_version(updates, original):
@@ -438,6 +440,16 @@ def item_schema(extra=None):
         EMBARGO: {
             'type': 'datetime',
             'nullable': True
+        },
+        'broadcast': {
+            'type': 'dict',
+            'nullable': True,
+            'schema': {
+                'status': {'type': 'string'},
+                'master_id': {'type': 'string', 'mapping': not_analyzed},
+                'takes_package_id': {'type': 'string', 'mapping': not_analyzed},
+                'rewrite_id': {'type': 'string', 'mapping': not_analyzed}
+            }
         }
     }
     schema.update(metadata_schema)
@@ -536,3 +548,14 @@ def copy_metadata_from_user_preferences(doc, repo_type=ARCHIVE):
                 doc['place'] = place_in_preference.get('place')
 
         set_sign_off(doc, repo_type=repo_type, user=user)
+
+
+def is_genre(item, genre_value):
+    """
+    Item to check specific genre exists or not
+    :param dict item: item on which the check is performed.
+    :param str genre_value: genre_value as string
+    :return: If exists then true else false
+    """
+    return item.get('genre') and any(genre.get('value', '').lower() == genre_value.lower()
+                                     for genre in item.get('genre', []))

@@ -217,7 +217,7 @@ define([
          * and Killed.
          *
          * @param {Object} item
-         * @return true if the state of the item is in one of the published states, false otherwise.
+         * @return boolean if the state of the item is in one of the published states, false otherwise.
          */
         this.isPublished = function(item) {
             return _.contains(['published', 'killed', 'scheduled', 'corrected'], item.state);
@@ -397,6 +397,28 @@ define([
                     },
                     additionalCondition:['authoring', 'item', function(authoring, item) {
                         return authoring.itemActions(item).duplicate;
+                    }]
+                })
+                .activity('createBroadcast', {
+                    label: gettext('Create Broadcast'),
+                    icon: 'copy',
+                    monitor: true,
+                    controller: ['api', 'notify', '$rootScope', 'data', 'desks', 'authoringWorkspace',
+                    function(api, notify, $rootScope, data, desks, authoringWorkspace) {
+                        api.save('archive_broadcast', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                            .then(function(broadcastItem) {
+                                authoringWorkspace.edit(broadcastItem);
+                                $rootScope.$broadcast('broadcast:created', {'item': data.item});
+                            });
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    keyboardShortcut: 'ctrl+b',
+                    privileges: {archive: 1},
+                    condition: function(item) {
+                        return (item.lock_user === null || angular.isUndefined(item.lock_user));
+                    },
+                    additionalCondition:['authoring', 'item', function(authoring, item) {
+                        return authoring.itemActions(item).create_broadcast;
                     }]
                 })
                 .activity('copy', {

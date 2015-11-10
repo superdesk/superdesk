@@ -103,6 +103,7 @@
 
 	.desk-container {
 		flex: 0 0 20%;
+		min-width: 250px;
 		.border-box();
 		position: relative;
 	}
@@ -254,6 +255,10 @@
 			line-height: 30px;
 			margin-right: 10px;
 		}
+		time {
+			color:#999;
+			font-size: 11px;
+		}
 		.text {
 			height: 32px;
 			overflow: hidden;
@@ -262,7 +267,8 @@
 			font-size: 12px;
 			padding-right: 10px;
 			.keywords {
-				  color: #216278;
+				  color: @sd-keyword;
+				  font-weight: 500;
 				  text-transform: uppercase;
 				  margin-right: 5px;
 			}

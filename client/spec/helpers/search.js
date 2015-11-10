@@ -207,11 +207,28 @@ function GlobalSearch() {
     };
 
     /**
+     * Get the Genre Elements
+     * @return {promise} Genre elements
+     */
+    this.getGenreElements = function() {
+        return element.all(by.repeater('(key,value) in aggregations.genre'));
+    };
+
+    /**
      * Get the Priority Element by Index
      * @param {number} index
      * @return {promise} Priority element
      */
     this.getPriorityElementByIndex = function(index) {
         return this.getPriorityElements().get(index);
+    };
+
+    /**
+     * Get the Genre Element by Index
+     * @param {number} index
+     * @return {promise} Genre element
+     */
+    this.getGenreElementByIndex = function(index) {
+        return this.getGenreElements().get(index);
     };
 }
