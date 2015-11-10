@@ -26,7 +26,7 @@
                 <div class="legend" translate>Article Defaults</div>
 
                 <div class="legend" translate>Dateline</div>
-                <div sd-info-item>
+                <div sd-info-item ng-if="preferencesLoaded === true">
                     <label translate>{{ :: preferences['dateline:located'].label }}</label>
                     <span sd-meta-locators data-list="cities" data-item="preferences['dateline:located']" data-field="located"
                           data-change="changeDatelinePreview(item, city)"></span>
@@ -36,7 +36,7 @@
                     <span>{{ datelinePreview | previewDateline:datelineSource}} </span>
                 </div>
 
-                <div sd-info-item>
+                <div sd-info-item ng-if="preferencesLoaded === true">
                     <label translate>{{ :: preferences['article:default:place'].label }}</label>
                     <span sd-meta-dropdown data-item="preferences['article:default:place']"
                           data-field="place" data-list="locators" data-change="articleDefaultsChanged(item)"></span>
