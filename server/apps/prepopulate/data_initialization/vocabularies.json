@@ -220,8 +220,10 @@
         "display_name": "Image Crop Sizes",
         "type": "manageable",
         "items": [
-            {"is_active": true, "name": "4-3", "width": 800, "height": 600},
-            {"is_active": true, "name": "16-9", "width": 1280, "height": 720}
+            {"is_active": true, "name": "thumbnail", "width": 300, "height": 300},
+            {"is_active": true, "name": "preview", "width": 1024, "height": 768},
+            {"is_active": true, "name": "wide-720", "width": 1280, "height": 720},
+            {"is_active": true, "name": "wide-1080", "width": 1920, "height": 1080}
         ]
     },
     {

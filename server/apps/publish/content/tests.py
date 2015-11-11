@@ -15,7 +15,7 @@ from copy import copy
 from datetime import timedelta
 from eve.utils import config, ParsedRequest
 from eve.versioning import versioned_id_field
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from apps.packages.package_service import PackageService
 from apps.publish.content.publish import ArchivePublishService
@@ -30,6 +30,7 @@ import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from superdesk.crop import CropService
 
 ARCHIVE_PUBLISH = 'archive_publish'
 ARCHIVE_CORRECT = 'archive_correct'
@@ -739,13 +740,14 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                             'href': 'https://c2.staticflickr.com/4/3665/9203816834_3329fac058_t.jpg',
                             'width': 100,
                             'height': 67,
+                            'mimetype': 'image/jpeg'
                         },
                         'thumbnail': {
                             'crop': {
                                 'CropLeft': 10,
-                                'CropRight': 90,
+                                'CropRight': 50,
                                 'CropTop': 10,
-                                'CropBottom': 57
+                                'CropBottom': 40,
                             }
                         }
                     }
@@ -753,13 +755,17 @@ class ArchivePublishTestCase(SuperdeskTestCase):
             }
         }
 
-        ArchivePublishService()._publish_associations(item)
+        thumbnail_crop = {'width': 40, 'height': 30}
+        with patch.object(CropService, 'get_crop_by_name', return_value=thumbnail_crop):
+            ArchivePublishService()._publish_associations(item, 'baz')
+
         self.assertNotIn('sidebar', item['associations'])
         self.assertIn('image', item['associations'])
 
         image = item['associations']['image']
         renditions = image['renditions']
         self.assertNotIn('crop', renditions['thumbnail'])
-        self.assertEqual(80, renditions['thumbnail']['width'])
-        self.assertEqual(47, renditions['thumbnail']['height'])
+        self.assertEqual(40, renditions['thumbnail']['width'])
+        self.assertEqual(30, renditions['thumbnail']['height'])
+        self.assertEqual('image/jpeg', renditions['thumbnail']['mimetype'])
         self.assertEqual('url_for_media', renditions['thumbnail']['href'])

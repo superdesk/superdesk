@@ -42,6 +42,7 @@ from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 from superdesk.media.media_operations import crop_image
 from superdesk.crop import CropService
+from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
 
@@ -847,36 +848,46 @@ class BasePublishService(BaseService):
             if item.get('pubstatus', 'usable') != 'usable':
                 associations.pop(rel)
                 continue
-            self._publish_renditions(item, guid, rel)
+            self._publish_renditions(item, rel, guid)
 
-    def _publish_renditions(self, item, guid, rel):
+    def _publish_renditions(self, item, rel, guid):
+        images = []
         renditions = item.get('renditions', {})
-        original = self._get_file(renditions.get('original'), item)
+        original = renditions.get('original')
         crop_service = CropService()
         for rendition_name, rendition in renditions.items():
             crop = rendition.pop('crop', {})
-            if crop and original:
-
+            if crop:
+                rend_spec = crop_service.get_crop_by_name(rendition_name)
                 file_name = '%s/%s/%s' % (guid, rel, rendition_name)
-                content_type = renditions['original']['mimetype']
-                rendition.update(self._generate_rendition(
-                    original, crop_service.get_crop_by_name(rendition_name), crop, file_name, content_type
-                ))
+                rendition['href'] = app.media.url_for_media(file_name)
+                rendition['width'] = rend_spec['width']
+                rendition['height'] = rend_spec['height']
+                rendition['mimetype'] = original.get('mimetype')
+                images.append({
+                    'rendition': rendition_name,
+                    'file_name': file_name,
+                    'spec': rend_spec,
+                    'crop': crop,
+                })
+        publish_images.delay(images=images, original=original, item=item)
 
-    def _get_file(self, rendition, item):
-        if item.get('fetch_endpoint'):
-            return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
-        else:
-            return app.media.fetch_rendition(rendition)
 
-    def _generate_rendition(self, original, rendition, crop, file_name, content_type):
-        img = {}
-        ok, output = crop_image(original, file_name, crop, rendition)
+@celery.task
+def publish_images(images, original, item):
+    orig_file = get_file(original, item)
+    for image in images:
+        content_type = original['mimetype']
+        ok, output = crop_image(orig_file, image['file_name'], image['crop'], image['spec'])
         if ok:
-            img['href'] = app.media.url_for_media(app.media.put(output, file_name, content_type))
-            img['width'] = output.width
-            img['height'] = output.height
-        return img
+            app.media.put(output, image['file_name'], content_type)
+
+
+def get_file(rendition, item):
+    if item.get('fetch_endpoint'):
+        return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
+    else:
+        return app.media.fetch_rendition(rendition)
 
 
 superdesk.workflow_state('published')
