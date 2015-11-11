@@ -6,7 +6,7 @@ from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from apps.archive.common import set_sign_off, ITEM_OPERATION, insert_into_versions
-from apps.archive.archive_crop import ArchiveCropService
+from superdesk.media.crop import CropService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class CorrectPublishService(BasePublishService):
     published_state = 'corrected'
 
     def on_update(self, updates, original):
-        ArchiveCropService().validate_multiple_crops(updates, original)
+        CropService().validate_multiple_crops(updates, original)
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_CORRECT
         set_sign_off(updates, original)
@@ -39,7 +39,7 @@ class CorrectPublishService(BasePublishService):
         original_updates['operation'] = updates['operation']
         original_updates[ITEM_STATE] = updates[ITEM_STATE]
         super().on_updated(updates, original)
-        ArchiveCropService().delete_replaced_crop_files(updates, original)
+        CropService().delete_replaced_crop_files(updates, original)
         packages = self.package_service.get_packages(original[config.ID_FIELD])
         if packages and packages.count() > 0:
             archive_correct = get_resource_service('archive_correct')
@@ -63,7 +63,7 @@ class CorrectPublishService(BasePublishService):
                     processed_packages.append(package[config.ID_FIELD])
 
     def update(self, id, updates, original):
-        ArchiveCropService().create_multiple_crops(updates, original)
+        CropService().create_multiple_crops(updates, original)
         super().update(id, updates, original)
 
     def get_subscribers(self, doc, target_media_type):

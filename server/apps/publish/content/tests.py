@@ -30,6 +30,7 @@ import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.metadata.item import TAKES_PACKAGE, PACKAGE_TYPE, ITEM_STATE, CONTENT_STATE, ITEM_TYPE, CONTENT_TYPE
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
+from superdesk.media.crop import CropService
 
 ARCHIVE_PUBLISH = 'archive_publish'
 ARCHIVE_CORRECT = 'archive_correct'
