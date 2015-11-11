@@ -580,3 +580,74 @@ Feature: Auto Routing
           "ingest": "#AAP.AFP.121974877.6504909#"
         }
         """
+
+    @auth @provider @vocabulary
+    Scenario: a versioned item with the same version ingested twice gets routed once
+        Given empty "desks"
+        Given "filter_conditions"
+        """
+        [{
+            "_id": "1111111111aaaa1111111111",
+            "name": "Syria in Slugline",
+            "field": "slugline",
+            "operator": "like",
+            "value": "syria"
+        }]
+        """
+        Given "content_filters"
+        """
+        [{
+            "_id": "1234567890abcd1234567890",
+            "name": "Syria Content",
+            "content_filter": [
+                {
+                    "expression": {
+                        "fc": ["1111111111aaaa1111111111"]
+                    }
+                }
+            ]
+        }]
+        """
+        When we post to "/desks"
+        """
+          {
+            "name": "World Desk", "members": [{"user": "#CONTEXT_USER_ID#"}]
+          }
+        """
+        Then we get response code 201
+        When we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Syria Rule",
+                "filter": "1234567890abcd1234567890",
+                "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}],
+                  "exit": false
+                }
+              }
+            ]
+          }
+        ]
+        """
+        Then we get response code 201
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NN" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        Then the ingest item is routed based on routing scheme and rule "Syria Rule"
+        """
+        {
+          "routing_scheme": "#routing_schemes._id#",
+          "ingest": "#reuters.tag_reuters.com_2014_newsml_KBN0FL0NN#"
+        }
+        """
+        When we get "/archive"
+        Then we get list with 1 items

@@ -29,26 +29,26 @@ describe('dashboard', function() {
         dashboard.addWidget(3);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(2);
-        expect(dashboard.getGroups(0).count()).toBe(4);
+        expect(dashboard.getGroups(0).count()).toBe(6);
 
-        expect(dashboard.getTextItem(0, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(0, 2, 2)).toBe('item6');
-        expect(dashboard.getTextItem(1, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(1, 2, 2)).toBe('item6');
+        expect(dashboard.getTextItem(0, 2, 0)).toBe('item5');
+        expect(dashboard.getTextItem(0, 3, 2)).toBe('item6');
+        expect(dashboard.getTextItem(1, 2, 0)).toBe('item5');
+        expect(dashboard.getTextItem(1, 3, 2)).toBe('item6');
 
         dashboard.showMonitoringSettings(0);
         monitoring.toggleDesk(0);
         monitoring.toggleDesk(1);
-        monitoring.toggleStage(1, 1);
-        monitoring.toggleStage(1, 3);
+        monitoring.toggleStage(1, 2);
+        monitoring.toggleStage(1, 4);
         monitoring.nextStages();
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
         expect(dashboard.getTextItem(0, 0, 0)).toBe('item3');
         expect(dashboard.getTextItem(0, 1, 0)).toBe('item4');
-        expect(dashboard.getTextItem(1, 1, 0)).toBe('item5');
-        expect(dashboard.getTextItem(1, 2, 2)).toBe('item6');
+        expect(dashboard.getTextItem(1, 2, 0)).toBe('item5');
+        expect(dashboard.getTextItem(1, 3, 2)).toBe('item6');
     });
 
     it('configure a label for the view', function() {
@@ -71,9 +71,9 @@ describe('dashboard', function() {
         dashboard.addWidget(3);  // the monitoring widget
         dashboard.doneAction();
         expect(dashboard.getWidgets().count()).toBe(1);
-        expect(dashboard.getGroupItems(0, 1).count()).toBe(4);
+        expect(dashboard.getGroupItems(0, 2).count()).toBe(4);
         dashboard.doSearch(0, 'item7');
-        expect(dashboard.getGroupItems(0, 1).count()).toBe(1);
-        expect(dashboard.getTextItem(0, 1, 0)).toBe('item7');
+        expect(dashboard.getGroupItems(0, 2).count()).toBe(1);
+        expect(dashboard.getTextItem(0, 2, 0)).toBe('item7');
     });
 });

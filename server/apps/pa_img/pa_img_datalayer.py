@@ -16,7 +16,7 @@ import re
 
 from eve.io.base import DataLayer
 from eve_elastic.elastic import ElasticCursor
-from flask import url_for
+from superdesk.upload import url_for_media
 import urllib3
 
 from superdesk.errors import SuperdeskApiError
@@ -228,7 +228,7 @@ class PaImgDatalayer(DataLayer):
 
             renditions = generate_renditions(out, file_id, inserted, file_type,
                                              content_type, rendition_spec,
-                                             self.url_for_media, insert_metadata=False)
+                                             url_for_media, insert_metadata=False)
             doc['renditions'] = renditions
         except Exception as io:
             logger.exception(io)
@@ -238,10 +238,6 @@ class PaImgDatalayer(DataLayer):
             raise SuperdeskApiError.internalError('Generating renditions failed')
 
         return doc
-
-    def url_for_media(self, media_id):
-        return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
-                       _external=True, _schema=self._app.config['URL_PROTOCOL'])
 
     def find_list_of_ids(self, resource, ids, client_projection=None):
         raise NotImplementedError

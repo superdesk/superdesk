@@ -458,12 +458,13 @@
         width: 23px;
         height: 23px;
         border: 0;
-        padding: 0 5px;
+        padding: 0;
         left: 50%;
         margin-left: -11.5px;
         bottom: -11px;
         background-color: @white;
         z-index: 3;
+        line-height: 0;
         .border-radius(23px);
         .box-shadow(0px 0px 5px 0px @grayLight);
         .transition(transform 0.5s);
@@ -544,6 +545,12 @@
             line-height: 12px;
             color: #575656;
             padding-right: .2em;
+        }
+        .broadcast-status {
+            color: #e51c23;
+            b {
+                font-size: 14px;
+            }
         }
         [class^="filetype-icon-"], 
         [class*="filetype-icon-"] { 

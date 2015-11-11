@@ -312,6 +312,10 @@ function Monitoring() {
         this.getStage(desk, stage).element(by.css('[ng-click="setStageInfo(stage._id)"]')).click();
     };
 
+    this.toggleDeskOutput = function(desk) {
+        this.getDesk(desk).element(by.model('editGroups[desk._id + \':output\'].selected')).click();
+    };
+
     this.togglePersonal = function() {
         element(by.css('[ng-click="setPersonalInfo()"]')).click();
     };
@@ -391,9 +395,17 @@ function Monitoring() {
 
     this.uploadModal = element(by.className('upload-media'));
 
-    this.fetchAs = function(group, item) {
+    this.openFetchAsOptions = function(group, item) {
         this.actionOnItem('Fetch To', group, item);
+    };
+
+    this.clickOnFetchButton = function() {
         return element(by.css('[ng-click="send()"]')).click();
+    };
+
+    this.fetchAs = function(group, item) {
+        this.openFetchAsOptions(group, item);
+        return this.clickOnFetchButton();
     };
 
     this.fetchAndOpen = function(group, item) {
@@ -416,8 +428,8 @@ function Monitoring() {
      */
     this.checkMarkedForHighlight = function(highlight, group, item) {
         var crtItem = this.getItem(group, item);
-        expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
-        browser.actions().mouseMove(crtItem.element(by.className('icon-star-color'))).perform();
+        expect(crtItem.element(by.className('icon-star')).isDisplayed()).toBeTruthy();
+        browser.actions().mouseMove(crtItem.element(by.className('icon-star'))).perform();
         element.all(by.css('.dropdown-menu.open li')).then(function (items) {
             expect(items[1].getText()).toContain(highlight);
         });
@@ -481,6 +493,22 @@ function Monitoring() {
         return browser.wait(function() {
             return element(by.className('list-view')).isPresent();
         }, 300);
+    };
+
+    this.turnOffWorkingStage = function(deskIndex, canCloseSettingsModal) {
+        this.showMonitoringSettings();
+        this.toggleStage(deskIndex, 0);
+
+        if (typeof canCloseSettingsModal !== 'boolean') {
+            canCloseSettingsModal = true;
+        }
+
+        if (canCloseSettingsModal) {
+            this.nextStages();
+            this.nextSearches();
+            this.nextReorder();
+            this.saveSettings();
+        }
     };
 
 }

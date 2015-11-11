@@ -185,6 +185,7 @@ describe('sdSearchFacets directive', function () {
                     desk: {buckets: []},
                     type: {buckets: []},
                     category: {buckets: []},
+                    genre: {buckets: []},
                     urgency: {buckets: []},
                     priority: {buckets: []},
                     source: {buckets: []},

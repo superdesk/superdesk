@@ -32,9 +32,8 @@
                 </li>
             </ul>
         </div>
-
-        <div sd-toggle-box ng-if="showEmbargo()" data-title="Embargo" data-open="true" data-style="dark">
-            <label class="label-lite" translate>Embargo</label>
+        <div sd-toggle-box id="embargoTimestamp" ng-if="mode === 'authoring' && showEmbargo()" data-title="Embargo" data-open="true" data-style="dark">
+            <label class="label--lite" translate>Embargo</label>
             <ul class="btn-list">
                 <li class="datepicker-input--dark">
                     <div sd-datepicker ng-model="item.embargo_date" ng-disabled="!isEmbargoEditable()"></div>
@@ -45,8 +44,8 @@
             </ul>
         </div>
         
-        <div sd-toggle-box ng-if="showPublishSchedule()" data-title="Publishing" data-open="true" data-style="dark">
-            <label class="label-lite" translate>Publish Schedule</label>
+        <div sd-toggle-box id="publishScheduleTimestamp" ng-if="mode === 'authoring' && showPublishSchedule()" data-title="Publishing" data-open="true" data-style="dark">
+            <label class="label--lite" translate>Publish Schedule</label>
             <ul class="btn-list">
                 <li class="datepicker-input--dark">
                     <div sd-datepicker ng-model="item.publish_schedule_date" ng-disabled="!_editable"></div>
@@ -61,7 +60,7 @@
 
     <div class="slide-pane__footer">
         <ul class="btn-list">
-            <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send">
+            <li ng-if="mode === 'authoring' && canSendAndContinue() && itemActions.send && itemActions.new_take">
                 <button class="btn btn-info"
                         ng-click="sendAndContinue()"
                         ng-disabled="item.embargo || disableSendButton()"

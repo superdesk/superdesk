@@ -9,7 +9,8 @@
             {field: 'urgency', label: gettext('News Value')},
             {field: 'anpa_category.name', label: gettext('Category')},
             {field: 'slugline', label: gettext('Slugline')},
-            {field: 'priority', label: gettext('Priority')}
+            {field: 'priority', label: gettext('Priority')},
+            {field: 'genre.name', label: gettext('Genre')}
         ];
 
         function getSort() {
@@ -170,6 +171,10 @@
                     query.post_filter({terms: {'anpa_category.name': JSON.parse(params.category)}});
                 }
 
+                if (params.genre) {
+                    query.post_filter({terms: {'genre.name': JSON.parse(params.genre)}});
+                }
+
                 if (params.desk) {
                     query.post_filter({terms: {'task.desk': JSON.parse(params.desk)}});
                 }
@@ -289,8 +294,8 @@
         };
     }
 
-    TagService.$inject = ['$location', 'desks'];
-    function TagService($location, desks) {
+    TagService.$inject = ['$location', 'desks', 'userList'];
+    function TagService($location, desks, userList) {
         var tags = {};
         tags.selectedFacets = {};
         tags.selectedParameters = [];
@@ -308,7 +313,8 @@
             'week': 1,
             'month': 1,
             'desk': 1,
-            'stage':1
+            'stage':1,
+            'genre': 1
         };
 
         function initSelectedParameters (parameters) {
@@ -421,6 +427,20 @@
                         }
                     }
                 });
+                /*
+                * if one of the parameters is the original creator then replace the user id with the
+                * display name.
+                */
+                var creatorParam = _.find(tags.selectedParameters, function(param) {
+                    return param.indexOf('original_creator') >= 0;
+                });
+                if (creatorParam) {
+                    var user_id = creatorParam.split(':')[1];
+                    user_id = user_id.substring(1, user_id.length - 1);
+                    userList.getUser(user_id).then(function(user) {
+                        tags.selectedParameters[tags.selectedParameters.indexOf(creatorParam)] = 'creator:(' + user.display_name + ')';
+                    return tags;});
+                }
 
                 return tags;
             });
@@ -485,14 +505,14 @@
                             'credit': {},
                             'category': {},
                             'urgency': {},
-                            'priority': {}
+                            'priority': {},
+                            'genre': {}
                         };
                     };
 
+                    initAggregations();
+
                     scope.$watch('items', function() {
-
-                        initAggregations();
-
                         tags.initSelectedFacets().then(function(currentTags) {
 
                             scope.tags = currentTags;
@@ -508,6 +528,12 @@
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                 if (cat.key !== '') {
                                     scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
+
+                            _.forEach(scope.items._aggregations.genre.buckets, function(g) {
+                                if (g.key !== '') {
+                                    scope.aggregations.genre[g.key] = g.doc_count;
                                 }
                             });
 
@@ -680,6 +706,19 @@
 
                                 metadata.removeSubjectTerm(elementName);
                             }
+                            /*
+                            * remove the original creator parameter
+                            */
+                            if (param.indexOf('creator:') >= 0) {
+                                var pArray = params.q.split(' ');
+                                _.forEach (pArray, function(p) {
+                                    if (p.indexOf('original_creator') >= 0)
+                                    {
+                                        params.q = params.q.replace(p, '').trim();
+                                    }
+                                });
+                                $location.search('q', params.q || null);
+                            }
                         }
 
                         if (param.indexOf('From Desk') >= 0) {
@@ -738,6 +777,8 @@
 
                     var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
+                    scope.previewingBroadcast = false;
+
                     var updateTimeout,
                         criteria = search.query($location.search()).getCriteria(true),
                         list = elem[0].getElementsByClassName('list-view')[0],
@@ -758,6 +799,15 @@
                     scope.$on('item:spike', queryItems);
                     scope.$on('item:unspike', queryItems);
                     scope.$on('item:duplicate', queryItems);
+                    scope.$on('broadcast:preview', function(event, args) {
+                        scope.previewingBroadcast = true;
+                        scope.preview(args.item);
+                    });
+                    scope.$on('broadcast:created', function(event, args) {
+                        scope.previewingBroadcast = true;
+                        queryItems();
+                        scope.preview(args.item);
+                    });
 
                     scrollElem.on('scroll', handleScroll);
 
@@ -767,6 +817,13 @@
                             render();
                         }
                     });
+
+                    scope.$watch('selected', function(newVal, oldVal) {
+                        if (!newVal && scope.previewingBroadcast) {
+                            scope.previewingBroadcast = false;
+                        }
+                    });
+
                     scope.$watch(function getSearchParams() {
                         return _.omit($location.search(), '_id');
                     }, function(newValue, oldValue) {
@@ -793,7 +850,9 @@
                         criteria = search.query($location.search()).getCriteria(true);
                         criteria.source.size = 0;
                         scope.total = null;
-                        scope.preview(null);
+                        if (!scope.previewingBroadcast) {
+                            scope.preview(null);
+                        }
                         return api.query(getProvider(criteria), criteria).then(function (items) {
                             scope.total = items._meta.total;
                             scope.$applyAsync(render);
@@ -1201,8 +1260,8 @@
             };
         }])
 
-        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks',
-            function($location, $timeout, asset, api, tags, search, metadata, desks) {
+        .directive('sdItemSearch', ['$location', '$timeout', 'asset', 'api', 'tags', 'search', 'metadata', 'desks', 'userList',
+            function($location, $timeout, asset, api, tags, search, metadata, desks, userList) {
             return {
                 scope: {
                     repo: '=',
@@ -1221,8 +1280,10 @@
                         scope.selectedDesk = {
                             from: null, to: null
                         };
+                        scope.meta = {};
 
                         fetchProviders();
+                        fetchUsers();
 
                         if (params.repo) {
                             var param_list = params.repo.split(',');
@@ -1251,6 +1312,20 @@
                     }
 
                     init();
+
+                    /*
+                    * initlialize the creator drop down selection.
+                    */
+                    function fetchUsers() {
+                        userList.getAll()
+                        .then(function(result) {
+                            scope.userList = {};
+                            scope.meta.original_creator = null;
+                            _.each(result, function(user) {
+                                scope.userList[user._id] = user;
+                            });
+                        });
+                    }
 
                     function fetchProviders() {
                         return api.ingestProviders.query({max_results: 200})

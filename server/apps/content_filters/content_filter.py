@@ -233,7 +233,7 @@ class ContentFilterService(BaseService):
 
     def does_match(self, content_filter, article):
         if not content_filter:
-            return False  # a non-existing filter does not match anything
+            return True  # a non-existing filter matches every thing
 
         filter_condition_service = get_resource_service('filter_conditions')
         expressions = []
