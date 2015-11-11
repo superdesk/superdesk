@@ -1662,18 +1662,24 @@
                         scope.userLookup = desks.userLookup;
                     });
 
-                    resource.query({'max_results': 200}).then(function(searches) {
-                        scope.searches = searches._items;
-                        _.forEach(scope.searches, function(search) {
-                            if (search.user == session.identity._id) {
-                                scope.userSavedSearches.push(search);
-                            } else if(search.is_global) {
-                                scope.globalSavedSearches.push(search);
-                            }
+                    function initSavedSearches() {
+                        resource.query({'max_results': 200}).then(function(searches) {
+                            scope.userSavedSearches.length = 0;
+                            scope.globalSavedSearches.length = 0;
+                            scope.searches = searches._items;
+                            _.forEach(scope.searches, function(search) {
+                                if (search.user == session.identity._id) {
+                                    scope.userSavedSearches.push(search);
+                                } else if(search.is_global) {
+                                    scope.globalSavedSearches.push(search);
+                                }
+                            });
+                            originalUserSavedSearches = _.clone(scope.userSavedSearches);
+                            originalGlobalSavedSearches = _.clone(scope.globalSavedSearches);
                         });
-                        originalUserSavedSearches = _.clone(scope.userSavedSearches);
-                        originalGlobalSavedSearches = _.clone(scope.globalSavedSearches);
-                    });
+                    }
+                    
+                    initSavedSearches();
 
                     scope.select = function(search) {
                         scope.selected = search;
@@ -1703,7 +1709,7 @@
                     scope.remove = function(searches) {
                         resource.remove(searches).then(function() {
                             notify.success(gettext('Saved search removed'));
-                            _.remove(scope.views, {_id: searches._id});
+                            initSavedSearches();
                         }, function() {
                             notify.error(gettext('Error. Saved search not deleted.'));
                         });
