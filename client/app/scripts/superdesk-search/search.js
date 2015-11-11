@@ -202,7 +202,7 @@
 
                 if (search.q) {
                     criteria.query.filtered.query = {query_string: {
-                        query: search.q,
+                        query: search.q.replace(/\//g, '\\/'),
                         lenient: false,
                         default_operator: 'AND'
                     }};

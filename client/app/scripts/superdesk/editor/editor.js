@@ -651,7 +651,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
 
                     scope.$on('spellcheck:run', render);
-                    scope.$on('key:ctrl:shift:s', render);
+                    scope.$on('key:ctrl:shift:d', render);
 
                     function cancelTimeout(event) {
                         $timeout.cancel(updateTimeout);

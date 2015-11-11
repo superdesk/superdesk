@@ -4,7 +4,8 @@
 var monitoring = require('./helpers/monitoring'),
     search = require('./helpers/search'),
     authoring = require('./helpers/authoring'),
-    ctrlKey = require('./helpers/utils').ctrlKey;
+    ctrlKey = require('./helpers/utils').ctrlKey,
+    ctrlShiftKey = require('./helpers/utils').ctrlShiftKey;
 
 describe('authoring', function() {
 
@@ -185,7 +186,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('z');
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('s');
+        ctrlShiftKey('s');
         browser.wait(function() {
             return element(by.buttonText('SAVE')).getAttribute('disabled');
         }, 500);
@@ -196,7 +197,7 @@ describe('authoring', function() {
         expect(authoring.getBodyText()).toBe('zitem5 text');
 
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('q');
+        ctrlShiftKey('e');
         browser.sleep(300);
 
         expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
