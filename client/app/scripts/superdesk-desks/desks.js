@@ -778,7 +778,6 @@
                 require: '^sdDeskConfig',
                 templateUrl: 'scripts/superdesk-desks/views/desk-config-modal.html',
                 link: function(scope, elem, attrs, ctrl) {
-
                 }
             };
         })
@@ -846,8 +845,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter',
-            function(gettext, desks, WizardHandler, metadata, $filter) {
+        .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', 'metadata', '$filter', '$interpolate',
+            function(gettext, desks, WizardHandler, metadata, $filter, $interpolate) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -868,7 +867,15 @@
                         scope.desk.edit = _.create(desk);
                     };
 
-                    scope.save = function(desk) {
+                    /**
+                     * Save desk for adding or editing
+                     *
+                     * @param {object} desk
+                     * @param {boolean} done
+                     *      when true it exits after saving otherwise
+                     *      continues to next step in wizard handler.
+                     */
+                    scope.save = function(desk, done) {
                         scope.message = gettext('Saving...');
 
                         var _new = desk._id ? false : true;
@@ -883,22 +890,32 @@
 
                             scope.desks._items = $filter('sortByName')(scope.desks._items);
                             desks.deskLookup[scope.desk.edit._id] = scope.desk.edit;
-                            WizardHandler.wizard('desks').next();
+                            if (!done) {
+                                WizardHandler.wizard('desks').next();
+                            } else {
+                                WizardHandler.wizard('desks').finish();
+                            }
                         }, errorMessage);
                     };
 
                     function errorMessage(response) {
-                        if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                            scope._errorUniqueness = true;
-                        } else {
-                            scope._error = true;
+                        scope._error = true;
+                        scope._errorMessage = gettext('There was a problem, desk not created/updated.');
+
+                        if (response.data && response.data._issues) {
+                            if (response.data._issues.name && response.data._issues.name.unique) {
+                                scope._errorMessage = $interpolate(gettext(
+                                    'Desk with name {{ name }} already exists.'))({name: scope.desk.edit.name});
+                            } else if (response.data._issues['validator exception']) {
+                                scope._errorMessage = gettext(response.data._issues['validator exception']);
+                            }
                         }
                         scope.message = null;
                     }
 
                     function clearErrorMessages() {
-                        if (scope._errorUniqueness || scope._error || scope._errorLimits) {
-                            scope._errorUniqueness = null;
+                        if (scope._error || scope._errorLimits) {
+                            scope._errorMessage = '';
                             scope._error = null;
                             scope._errorLimits = null;
                         }
@@ -965,12 +982,19 @@
                         }
                     };
 
-                    scope.previous = function() {
-                        WizardHandler.wizard('desks').previous();
-                    };
-
-                    scope.next = function() {
-                        WizardHandler.wizard('desks').next();
+                    /**
+                     * Save desk for adding or editing
+                     *
+                     * @param {boolean} done
+                     *      when true it exits otherwise continues
+                     *      to next step in wizard handler.
+                     */
+                    scope.next = function(done) {
+                        if (!done) {
+                            WizardHandler.wizard('desks').next();
+                        } else {
+                            WizardHandler.wizard('desks').finish();
+                        }
                     };
 
                     scope.edit = function(stage) {
@@ -1223,11 +1247,14 @@
                         _.remove(scope.deskMembers, user);
                     };
 
-                    scope.previous = function() {
-                        WizardHandler.wizard('desks').previous();
-                    };
-
-                    scope.save = function() {
+                    /**
+                     * Save members for editing desk
+                     *
+                     * @param {boolean} done
+                     *      when true it exits after saving otherwise
+                     *      continues to next step in wizard handler.
+                     */
+                    scope.save = function(done) {
                         var members = _.map(scope.deskMembers, function(obj) {
                             return {user: obj._id};
                         });
@@ -1237,7 +1264,11 @@
                             desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
                             var origDesk = desks.deskLookup[scope.desk.edit._id];
                             _.extend(origDesk, scope.desk.edit);
-                            WizardHandler.wizard('desks').next();
+                            if (!done) {
+                                WizardHandler.wizard('desks').next();
+                            } else {
+                                WizardHandler.wizard('desks').finish();
+                            }
                         }, function(response) {
                             scope.message = gettext('There was a problem, members not saved.');
                         });
@@ -1268,10 +1299,6 @@
                             scope.macros = macroList;
                         });
                     }
-
-                    scope.previous = function () {
-                        WizardHandler.wizard('desks').previous();
-                    };
 
                     scope.save = function () {
                         WizardHandler.wizard('desks').finish();

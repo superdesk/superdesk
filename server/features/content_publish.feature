@@ -1034,3 +1034,117 @@ Feature: Content Publishing
       """
       {"_current_version": 4, "state": "killed", "pubstatus": "canceled", "sign_off": "abc/foo", "operation": "kill", "task":{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}
       """
+
+    @auth @vocabulary
+    Scenario: Publish broadcast content to wire/digital subscribers
+      Given the "validators"
+      """
+        [
+          {
+              "schema": {},
+              "type": "text",
+              "act": "publish",
+              "_id": "publish_text"
+          },
+          {
+              "schema": {},
+              "type": "text",
+              "act": "correct",
+              "_id": "correct_text"
+          }
+        ]
+      """
+      And "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+      And "archive"
+      """
+      [{"guid": "123", "type": "text", "headline": "test", "_current_version": 1, "state": "fetched",
+        "task": {"desk": "#desks._id#", "stage": "#desks.working_stage#", "user": "#CONTEXT_USER_ID#"},
+        "subject":[{"qcode": "17004000", "name": "Statistics"}],
+        "body_html": "Test Document body"}]
+      """
+      When we post to "/subscribers" with "DigitalSubscriber" and success
+      """
+      {
+        "name":"Digital","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      And we post to "/subscribers" with "WireSubscriber" and success
+      """
+      {
+        "name":"Wire","media_type":"media", "subscriber_type": "wire", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+      When we publish "#archive._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we post to "/archive/123/broadcast"
+      """
+      [{"desk": "#desks._id#"}]
+      """
+      Then we get OK response
+      When we patch "/archive/#broadcast._id#"
+      """
+      {
+        "headline": "broadcast content",
+        "body_html": "broadcast content"
+      }
+      """
+      When we publish "#broadcast._id#" with "publish" type and "published" state
+      Then we get OK response
+      When we get "/archive/#broadcast._id#"
+      Then we get existing resource
+      """
+      { "_current_version": 3,
+        "state": "published",
+        "task":{"desk": "#desks._id#", "stage": "#desks.working_stage#"},
+        "_id": "#broadcast._id#",
+        "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+        "broadcast": {
+            "master_id": "123"
+          }
+       }
+      """
+      When we get "/published"
+      Then we get existing resource
+      """
+      {
+        "_items" : [
+            {
+              "_current_version": 3,
+              "state": "published",
+              "task":{"desk": "#desks._id#", "stage": "#desks.working_stage#"},
+              "_id": "#broadcast._id#",
+              "genre": [{"name": "Broadcast Script", "value": "Broadcast Script"}],
+              "broadcast": {
+                  "master_id": "123"
+              }
+            }
+        ]
+      }
+      """
+      When we get "/publish_queue"
+      Then we get list with 4 items
+      """
+      {
+        "_items": [
+          {
+            "item_version": 3,
+            "publishing_action": "published",
+            "headline": "broadcast content",
+            "item_id": "#broadcast._id#",
+            "subscriber_id": "#WireSubscriber#"
+          },
+          {
+            "item_version": 3,
+            "publishing_action": "published",
+            "headline": "broadcast content",
+            "item_id": "#broadcast._id#",
+            "subscriber_id": "#DigitalSubscriber#"
+          }
+        ]
+      }
+      """

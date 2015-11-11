@@ -772,7 +772,7 @@ Feature: Packages
         Given empty "archive"
         When we post to "archive" with success
         """
-        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606", "slugline": "WORMS"}]
         """
         When we post to "archive" with success
         """
@@ -798,5 +798,5 @@ Feature: Packages
         When we spike "tag:example.com,0000:newsml_BRE9A606"
         Then we get error 400
         """
-        {"_issues": {"validator exception": "400: This item is in a package it needs to be removed before the item can be spiked"}, "_status": "ERR"}
+        {"_issues": {"validator exception": "400: The item \"WORMS\" is in a package it needs to be removed before the item can be spiked"}, "_status": "ERR"}
         """

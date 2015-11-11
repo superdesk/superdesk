@@ -4,7 +4,8 @@
 var monitoring = require('./helpers/monitoring'),
     search = require('./helpers/search'),
     authoring = require('./helpers/authoring'),
-    ctrlKey = require('./helpers/utils').ctrlKey;
+    ctrlKey = require('./helpers/utils').ctrlKey,
+    ctrlShiftKey = require('./helpers/utils').ctrlShiftKey;
 
 describe('authoring', function() {
 
@@ -40,7 +41,7 @@ describe('authoring', function() {
         authoring.showPackages();
         expect(authoring.getPackages().count()).toBe(1);
         expect(authoring.getPackage(0).getText()).toMatch('PACKAGE2');
-        authoring.getPackage(0).click();
+        authoring.getPackage(0).element(by.tagName('a')).click();
         authoring.showInfo();
         expect(authoring.getGUID().getText()).toMatch('package2');
         authoring.close();
@@ -185,7 +186,7 @@ describe('authoring', function() {
         monitoring.actionOnItem('Edit', 1, 0);
         authoring.writeText('z');
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('s');
+        ctrlShiftKey('s');
         browser.wait(function() {
             return element(by.buttonText('SAVE')).getAttribute('disabled');
         }, 500);
@@ -196,9 +197,37 @@ describe('authoring', function() {
         expect(authoring.getBodyText()).toBe('zitem5 text');
 
         element(by.cssContainingText('span', 'Headline')).click();
-        ctrlKey('q');
+        ctrlShiftKey('e');
         browser.sleep(300);
 
         expect(element(by.className('authoring-embedded')).isDisplayed()).toBe(false);
+    });
+
+    it('can display monitoring after publishing an item using full view of authoring', function () {
+        monitoring.actionOnItem('Edit', 2, 2);
+        monitoring.showHideList();
+
+        authoring.publish();
+        expect(monitoring.getGroups().count()).toBe(5);
+    });
+
+    it('broadcast operation', function() {
+        expect(monitoring.getTextItem(1, 0)).toBe('item5');
+        monitoring.actionOnItem('Edit', 1, 0);
+        authoring.publish();
+        monitoring.showSearch();
+        search.setListView();
+        search.showCustomSearch();
+        search.toggleByType('text');
+        expect(search.getTextItem(0)).toBe('item5');
+
+        search.actionOnItem('Create Broadcast', 0);
+        expect(element(by.className('content-item-preview')).isDisplayed()).toBe(true);
+        expect(monitoring.getPreviewTitle()).toBe('item5');
+        monitoring.closePreview();
+
+        authoring.linkToMasterButton.click();
+        expect(monitoring.getPreviewTitle()).toBe('item5');
+        authoring.close();
     });
 });

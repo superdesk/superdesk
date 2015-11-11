@@ -40,14 +40,16 @@
 			</div>
 		</div>
 
-		<div class="assignee-container" ng-if="!editmode">
-			<figure ng-if="!editmode" class="avatar"><img sd-user-avatar data-src="users[task_details.user].picture_url"></figure>
-			<div class="assignee-name">
-	            <span ng-show="task_details.desk">{{desks[task_details.desk].name}} / </span>
-	            <span ng-show="task_details.user">{{users[task_details.user].display_name}}</span>
-	            <span ng-hide="task_details.user" translate>Unassigned</span>
-	        </div>
-		</div>
+        <div class="assignee-container" ng-if="!editmode">
+            <figure ng-if="!editmode" class="avatar">
+                <img sd-user-avatar data-src="users[task_details.user].picture_url" data-initials="users[task_details.user].display_name">
+            </figure>
+            <div class="assignee-name">
+                <span ng-show="task_details.desk">{{desks[task_details.desk].name}} / </span>
+                <span ng-show="task_details.user">{{users[task_details.user].display_name}}</span>
+                <span ng-hide="task_details.user" translate>Unassigned</span>
+            </div>
+        </div>
 		<div ng-if="editmode" sd-assignee-box data-desk-id="task_details.desk" data-user-id="task_details.user"></div>
 
         <div ng-if="!editmode" class="title">{{ task.slugline }}</div>

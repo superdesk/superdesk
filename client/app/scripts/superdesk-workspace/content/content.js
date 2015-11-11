@@ -159,6 +159,7 @@
 
                 scope.select = function(template) {
                     scope.selectAction(template);
+                    scope.close();
                 };
 
                 var fetchTemplates = function() {

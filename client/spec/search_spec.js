@@ -65,6 +65,46 @@ describe('Search', function() {
         expect(globalSearch.getItems().count()).toBe(1);
     });
 
+    it('can search by byline field', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        var bylineTextbox = element(by.id('search-byline'));
+        bylineTextbox.clear();
+        bylineTextbox.sendKeys('Billy The Fish');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+    });
+
+    it('can search by slugline', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        var bylineTextbox = element(by.id('search-slugline'));
+        bylineTextbox.clear();
+        bylineTextbox.sendKeys('one/two');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+    });
+
+    it('can search by original creator', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        globalSearch.selectCreator('search-creator', 'first name last name');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(9);
+    });
+
+    it('can search by genre field', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        expect(globalSearch.getGenreElements().count()).toBe(1);
+        var genre = globalSearch.getGenreElementByIndex(0);
+        genre.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+    });
+
     it('can search by from desk field', function() {
         monitoring.openMonitoring();
         monitoring.switchToDesk('SPORTS DESK').then(authoring.createTextItem());

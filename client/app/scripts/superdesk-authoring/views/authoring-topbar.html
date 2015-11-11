@@ -76,7 +76,7 @@
             <i class="big-icon-minimize"></i>
         </button>
 
-        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit"
+        <div ng-if="item._type !== 'legal_archive' && itemActions.multi_edit && !item._locked"
              class="navbtn dropdown strict multiedit-dropdown pull-left strict"
              title="{{ :: 'Multiedit' | translate }}" dropdown>
             <button class="dropdown-toggle" dropdown-toggle>
@@ -134,7 +134,7 @@
                             ng-click="spellcheckMenu.spellcheck()"
                             ng-disabled="spellcheckMenu.isAuto"
                             translate>
-                                <span class="shortcut pull-right">Ctrl+Shift+S</span>
+                                <span class="shortcut pull-right">Ctrl+Shift+D</span>
                                 Check spelling
                         </button>
                     </li>

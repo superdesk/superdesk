@@ -14,7 +14,7 @@ import logging
 from flask import current_app as app
 
 import superdesk
-from superdesk import get_resource_service
+from superdesk import get_resource_service, config
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.metadata.item import ITEM_STATE
 from superdesk.notification import push_notification
@@ -26,7 +26,8 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from apps.packages import PackageService, TakesPackageService
 from apps.archive.archive_rewrite import ArchiveRewriteService
-from apps.archive.common import item_operations, ITEM_OPERATION, is_item_in_package, set_sign_off
+from apps.archive.common import item_operations, ITEM_OPERATION, \
+    is_item_in_package, set_sign_off
 
 logger = logging.getLogger(__name__)
 
@@ -77,13 +78,14 @@ class ArchiveSpikeService(BaseService):
     def _validate_item(self, original):
         """
         Raises an exception if the item is linked in a non-take package, the idea being that you don't whant to
-        inadvertently remove thing from packages, this force that to be done as a conscious action.
+        inadvertently remove the item from the packages, this force that to be done as a conscious action.
         :param original:
         :raise: An exception or nothing
         """
         if is_item_in_package(original):
-            raise SuperdeskApiError.badRequestError(message="This item is in a package" +
-                                                            " it needs to be removed before the item can be spiked")
+            raise SuperdeskApiError.badRequestError(
+                message="The item \"{}\" is in a package".format(original.get('slugline', '')) +
+                        " it needs to be removed before the item can be spiked")
 
     def _validate_take(self, original):
         takes_service = TakesPackageService()
@@ -94,14 +96,20 @@ class ArchiveSpikeService(BaseService):
         """ Removes the reference from the rewritten story in published collection """
         rewrite_service = ArchiveRewriteService()
         if original.get('rewrite_of') and original.get('event_id'):
-            rewrite_service._clear_rewritten_flag(original.get('event_id'), original['_id'])
+            rewrite_service._clear_rewritten_flag(original.get('event_id'), original[config.ID_FIELD])
+
+    def _removed_refs_from_package(self, item):
+        """
+        Remove reference from the package of the spiked item
+        :param item:
+        """
+        PackageService().remove_spiked_refs_from_package(item)
 
     def update(self, id, updates, original):
         original_state = original[ITEM_STATE]
         if not is_workflow_state_transition_valid('spike', original_state):
             raise InvalidStateTransitionError()
 
-        package_service = PackageService()
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
@@ -118,10 +126,17 @@ class ArchiveSpikeService(BaseService):
         if original.get('rewrite_of'):
             updates['rewrite_of'] = None
 
+        if original.get('broadcast'):
+            updates['broadcast'] = None
+
         item = self.backend.update(self.datasource, id, updates, original)
-        push_notification('item:spike', item=str(item.get('_id')), user=str(user))
-        package_service.remove_spiked_refs_from_package(id)
+        push_notification('item:spike', item=str(item.get(config.ID_FIELD)), user=str(user))
+        self._removed_refs_from_package(id)
         return item
+
+    def on_updated(self, updates, original):
+        if hasattr(app, 'on_broadcast_spike_item'):
+            app.on_broadcast_spike_item(original)
 
 
 class ArchiveUnspikeService(BaseService):

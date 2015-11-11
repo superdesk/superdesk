@@ -1465,9 +1465,9 @@ def step_we_get_email(context):
         assert check_if_email_sent(context, email['body'])
 
 
-@then('we get no email')
-def step_we_get_no_email(context):
-    assert len(context.outbox) == 0
+@then('we get {count} emails')
+def step_we_get_no_email(context, count):
+    assert len(context.outbox) == int(count)
 
 
 def check_if_email_sent(context, body):
@@ -1756,6 +1756,16 @@ def there_is_no_key_in_response(context, key):
 def there_is_no_key_in_preferences(context, key):
     data = get_json_data(context.response)['task']
     assert key not in data, 'key "%s" is in task' % key
+
+
+@then('broadcast "{key}" has value "{value}"')
+def broadcast_key_has_value(context, key, value):
+    data = get_json_data(context.response).get('broadcast', {})
+    value = apply_placeholders(context, value)
+    if value.lower() == 'none':
+        assert data[key] is None, 'key "%s" is not none and has value "%s"' % (key, data[key])
+    else:
+        assert data[key] == value, 'key "%s" does not have valid value "%s"' % (key, data[key])
 
 
 @then('there is no "{key}" in "{namespace}" preferences')
