@@ -6,7 +6,7 @@ from superdesk.publish import SUBSCRIBER_TYPES
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from apps.archive.common import set_sign_off, ITEM_OPERATION, insert_into_versions
-from superdesk.crop import CropService
+from superdesk.media.crop import CropService
 import logging
 
 logger = logging.getLogger(__name__)

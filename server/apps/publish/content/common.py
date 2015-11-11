@@ -41,7 +41,7 @@ from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 from superdesk.media.media_operations import crop_image
-from superdesk.crop import CropService
+from superdesk.media.crop import CropService
 from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
