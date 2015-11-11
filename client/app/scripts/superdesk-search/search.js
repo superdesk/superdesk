@@ -1641,8 +1641,8 @@
             };
         }])
 
-        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'notify', 'gettext', 'asset', '$location', 'desks',
-        function($rootScope, api, session, notify, gettext, asset, $location, desks) {
+        .directive('sdSavedSearches', ['$rootScope', 'api', 'session', 'notify', 'gettext', 'asset', '$location', 'desks', 'privileges',
+        function($rootScope, api, session, notify, gettext, asset, $location, desks, privileges) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/saved-searches.html'),
                 scope: {},
@@ -1653,6 +1653,7 @@
                     scope.searchText = null;
                     scope.userSavedSearches = [];
                     scope.globalSavedSearches = [];
+                    scope.privileges = privileges.privileges;
                     var originalUserSavedSearches = [];
                     var originalGlobalSavedSearches = [];
 

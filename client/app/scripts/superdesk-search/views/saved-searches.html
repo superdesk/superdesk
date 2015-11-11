@@ -27,7 +27,8 @@
 	    		<div class="search-description">{{ search.description }}</div>
 	    	</div>
 	    	<div class="search-button">
-	    		<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}"><i class="icon-pencil"></i></button>
+	    		<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}" ng-if="privileges.global_saved_searches"><i class="icon-pencil"></i></button>
+	    		<button class="delete" ng-click="remove(search); $event.stopPropagation();" title="{{:: 'Delete search' | translate }}" ng-if="privileges.global_saved_searches"><i class="icon-trash"></i></button>
 	    	</div>
 	    </li>
 	</ul>

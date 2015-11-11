@@ -15,7 +15,7 @@ import logging
 from flask import request
 from eve.utils import ParsedRequest
 from eve_elastic.elastic import build_elastic_query
-
+from .common import get_user
 from superdesk import Resource, get_resource_service
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
@@ -70,6 +70,19 @@ class SavedSearchesService(BaseService):
                 repo = repo.split(',').pop(0)
 
             self.validate_and_run_elastic_query(query, repo)
+
+    def on_update(self, updates, original):
+        """
+        Checks if the request owner and the saved search owner are the same person
+        If not then the request owner should have global saved search privilege
+        """
+        request_user = request.view_args['user']
+        user = get_user(required=True)
+        if str(user['_id']) == request_user or \
+                        user['active_privileges'].get('global_saved_search', 0) == 0:
+            super().on_update(updates, original)
+        else:
+            raise SuperdeskApiError.forbiddenError("Unauthorized to modify global search")
 
     def get(self, req, lookup):
         """
