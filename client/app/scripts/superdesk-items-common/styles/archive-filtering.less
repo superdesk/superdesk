@@ -69,6 +69,13 @@
 		padding: 20px; 
 		overflow: auto;
 		padding-bottom: @bottom-view-padding;
+		.edit-search {
+			font-weight: 500;
+		    font-size: 15px;
+		    margin: -20px -20px 15px -15px;
+		    padding: 5px;
+		    border-bottom: 1px solid @gray;
+		}
 	}
 
 	.toggle-box {
@@ -250,15 +257,39 @@
 		}
 	}
 
-	.save-search {
-		background-color: #f8f8f8;
-		position: absolute;
-		bottom: 10px;
-		margin: 0 6px 0px -13px;
-		width: 95%;
+	.search-filters {
+		position: relative;
+		margin: 1px 0px 20px;
+		height: @nav-height;
+		input {
+			height: @nav-height;
+			border-width: 0 0 1px 0 !important;
+			padding-left: 15px;
+		}
+		button {
+			position: absolute;
+			top: 0; right: 0;
+			height: @nav-height;
+			width: @nav-height - 15px;
+			border: 0;
+			background: none;
+			i {
+				width: 18px;
+  				background-repeat: no-repeat;
+  				margin-top: 5px;
+			}
+		}
+	}
+
+	.save-search-panel {
+	    background-color: #fff;
+	    margin: -20px 0px 0px -10px;
+	    padding: 10px;
+	    float: left;
+	    width: 100%;
 		.title {
 			text-transform: uppercase;
-			font-size: 12px;
+			font-size: 13px;
     		font-weight: 500;
     		color: #666;
 		}
@@ -300,7 +331,6 @@
 			top: @nav-height;
 			position: absolute;
 			left: 0; right: 0;
-			bottom: @bottom-view-padding;
 			overflow: auto;
 			ul {
 				> li {
@@ -308,14 +338,21 @@
 					padding: 10px 15px 10px 20px;
 					border-bottom: 1px solid #ddd;
 					float: left;
-					width: 100%;
+					width: 88%;
 					.search-item {
 						float: left;
-						width: 70%;
+						width: 60%;
+						i {
+							color: @gray;
+						}
+						.search-description {
+							font-size: 11px;
+							color: @grayLight;
+						}
 					}
 					.search-button {
-						float: left;
-						width: 20%;
+						float: right;
+						width: 25%;
 					}
 					.delete {
 						float: left;
@@ -333,7 +370,16 @@
 					&.active {
 						background: @sd-hover;
 					}
+					&:last-child {
+						margin-bottom: 20px;
+					}
 				}
+
+			}
+			.title {
+				margin: 10px;
+				font-weight: 500;
+				font-size: 14px;
 			}
 		}
 		.edit-saved-searches {

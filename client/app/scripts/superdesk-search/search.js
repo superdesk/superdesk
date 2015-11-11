@@ -533,21 +533,27 @@
                                 return;
                             }
 
-                            _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                scope.aggregations.type[type.key] = type.doc_count;
-                            });
+                            if (angular.isDefined(scope.items._aggregations.type)) {
+                                _.forEach(scope.items._aggregations.type.buckets, function(type) {
+                                    scope.aggregations.type[type.key] = type.doc_count;
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                if (cat.key !== '') {
-                                    scope.aggregations.category[cat.key] = cat.doc_count;
-                                }
-                            });
+                            if (angular.isDefined(scope.items._aggregations.category)) {
+                                _.forEach(scope.items._aggregations.category.buckets, function(cat) {
+                                    if (cat.key !== '') {
+                                        scope.aggregations.category[cat.key] = cat.doc_count;
+                                    }
+                                });
+                            }
 
-                            _.forEach(scope.items._aggregations.genre.buckets, function(g) {
-                                if (g.key !== '') {
-                                    scope.aggregations.genre[g.key] = g.doc_count;
-                                }
-                            });
+                            if (angular.isDefined(scope.items._aggregations.genre)) {
+                                _.forEach(scope.items._aggregations.genre.buckets, function(g) {
+                                    if (g.key !== '') {
+                                        scope.aggregations.genre[g.key] = g.doc_count;
+                                    }
+                                });
+                            }
 
                             if (angular.isDefined(scope.items._aggregations.urgency))
                             {
@@ -1084,8 +1090,12 @@
                     };
 
                     scope.cancel = function() {
-                        scope.editingSearch = null;
                         scope.edit = null;
+                    };
+
+                    scope.clear = function() {
+                        scope.cancel();
+                        $location.url('/search');
                     };
 
                     scope.save = function(editSearch) {
@@ -1640,6 +1650,11 @@
 
                     var resource = api('saved_searches', session.identity);
                     scope.selected = null;
+                    scope.searchText = null;
+                    scope.userSavedSearches = [];
+                    scope.globalSavedSearches = [];
+                    var originalUserSavedSearches = [];
+                    var originalGlobalSavedSearches = [];
 
                     desks.initialize()
                     .then(function() {
@@ -1648,8 +1663,6 @@
 
                     resource.query({'max_results': 200}).then(function(searches) {
                         scope.searches = searches._items;
-                        scope.userSavedSearches = [];
-                        scope.globalSavedSearches = [];
                         _.forEach(scope.searches, function(search) {
                             if (search.user == session.identity._id) {
                                 scope.userSavedSearches.push(search);
@@ -1657,6 +1670,8 @@
                                 scope.globalSavedSearches.push(search);
                             }
                         });
+                        originalUserSavedSearches = _.clone(scope.userSavedSearches);
+                        originalGlobalSavedSearches = _.clone(scope.globalSavedSearches);
                     });
 
                     scope.select = function(search) {
@@ -1667,6 +1682,21 @@
                     scope.edit = function(search) {
                         scope.select(search);
                         $rootScope.$broadcast('edit:search', search);
+                    }
+
+                    scope.filter = function() {
+                        scope.userSavedSearches = _.clone(originalUserSavedSearches);
+                        scope.globalSavedSearches = _.clone(originalGlobalSavedSearches);
+
+                        if (scope.searchText || scope.searchText !== '') {
+                            scope.userSavedSearches = _.filter(originalUserSavedSearches, function(n) {
+                                return n.name.toUpperCase().indexOf(scope.searchText.toUpperCase()) >= 0;
+                            });
+
+                            scope.globalSavedSearches = _.filter(originalGlobalSavedSearches, function(n) {
+                                return n.name.toUpperCase().indexOf(scope.searchText.toUpperCase()) >= 0;
+                            });
+                        }
                     }
 
                     scope.remove = function(searches) {
