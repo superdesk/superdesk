@@ -41,6 +41,7 @@ from apps.packages import TakesPackageService
 from apps.packages.package_service import PackageService
 from apps.publish.published_item import LAST_PUBLISHED_VERSION
 from superdesk.media.media_operations import crop_image
+from superdesk.crop import CropService
 
 logger = logging.getLogger(__name__)
 
@@ -160,7 +161,7 @@ class BasePublishService(BaseService):
             if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
                 self._publish_package_items(original, updates)
             else:
-                self._publish_associations(updates)
+                self._publish_associations(updates, id)
 
             queued_digital = False
             package = None
@@ -840,34 +841,42 @@ class BasePublishService(BaseService):
                     if doc.get('lock_session', None) and package['lock_session'] != doc['lock_session']:
                         validation_errors.extend(['{}: packaged item cannot be locked'.format(doc['headline'])])
 
-    def _publish_associations(self, parent):
+    def _publish_associations(self, parent, guid):
         associations = parent.get('associations', {})
         for rel, item in associations.copy().items():
             if item.get('pubstatus', 'usable') != 'usable':
                 associations.pop(rel)
                 continue
-            self._publish_renditions(item)
+            self._publish_renditions(item, guid, rel)
 
-    def _publish_renditions(self, item):
+    def _publish_renditions(self, item, guid, rel):
         renditions = item.get('renditions', {})
         original = self._get_file(renditions.get('original'), item)
+        crop_service = CropService()
         for rendition_name, rendition in renditions.items():
             crop = rendition.pop('crop', {})
             if crop and original:
-                rendition.update(self._generate_rendition(original, crop, rendition_name))
+
+                file_name = '%s/%s/%s' % (guid, rel, rendition_name)
+                content_type = renditions['original']['mimetype']
+                rendition.update(self._generate_rendition(
+                    original, crop_service.get_crop_by_name(rendition_name), crop, file_name, content_type
+                ))
 
     def _get_file(self, rendition, item):
         if item.get('fetch_endpoint'):
             return get_resource_service(item['fetch_endpoint']).fetch_rendition(rendition)
+        else:
+            return app.media.fetch_rendition(rendition)
 
-    def _generate_rendition(self, original, crop, rendition_name):
-        rendition = {}
-        ok, output = crop_image(original, rendition_name, crop)
+    def _generate_rendition(self, original, rendition, crop, file_name, content_type):
+        img = {}
+        ok, output = crop_image(original, file_name, crop, rendition)
         if ok:
-            rendition['href'] = app.media.url_for_media(app.media.put(output, rendition_name))
-            rendition['width'] = output.width
-            rendition['height'] = output.height
-        return rendition
+            img['href'] = app.media.url_for_media(app.media.put(output, file_name, content_type))
+            img['width'] = output.width
+            img['height'] = output.height
+        return img
 
 
 superdesk.workflow_state('published')
