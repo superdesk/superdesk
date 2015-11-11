@@ -5,7 +5,7 @@ module.exports = {
             '<%= bowerDir %>/scripts/templates-cache.js',
             '<%= bowerDir %>/scripts/superdesk.js'
         ],
-        dest: '<%= bowerDir %>/scripts/superdesk-core.js',
+        dest: '<%= bowerDir %>/scripts/superdesk-core.js'
     },
     bowerApps: {
         src: [
@@ -15,6 +15,6 @@ module.exports = {
             '<%= bowerDir %>/scripts/superdesk-archive.js',
             '<%= bowerDir %>/scripts/superdesk-ingest.js'
         ],
-        dest: '<%= bowerDir %>/scripts/superdesk-apps.js',
+        dest: '<%= bowerDir %>/scripts/superdesk-apps.js'
     }
 };
