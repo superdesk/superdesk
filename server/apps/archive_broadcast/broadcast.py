@@ -256,9 +256,6 @@ class ArchiveBroadcastService(BaseService):
         req.args = {'source': json.dumps(query)}
         broadcast_items = list(get_resource_service(SOURCE).get(req=req, lookup=None))
 
-        if not broadcast_items:
-            return
-
         for broadcast_item in broadcast_items:
             try:
                 updates = {
@@ -297,18 +294,18 @@ class ArchiveBroadcastService(BaseService):
         """
         broadcast_items = [item for item in self.get_broadcast_items_from_master_story(original)
                            if item.get(ITEM_STATE) not in PUBLISH_STATES]
+        spike_service = get_resource_service('archive_spike')
 
-        if broadcast_items:
-            for item in broadcast_items:
-                id_ = item.get(config.ID_FIELD)
-                try:
-                    self.packageService.remove_spiked_refs_from_package(id_)
-                    updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
-                    resolve_document_version(updates, SOURCE, 'PATCH', item)
-                    get_resource_service('archive_spike').patch(id_, updates)
-                    insert_into_versions(id_=id_)
-                except:
-                    logger.exception(message="Failed to spike the related broadcast item {}.".format(id_))
+        for item in broadcast_items:
+            id_ = item.get(config.ID_FIELD)
+            try:
+                self.packageService.remove_spiked_refs_from_package(id_)
+                updates = {ITEM_STATE: CONTENT_STATE.SPIKED}
+                resolve_document_version(updates, SOURCE, 'PATCH', item)
+                spike_service.patch(id_, updates)
+                insert_into_versions(id_=id_)
+            except:
+                logger.exception(message="Failed to spike the related broadcast item {}.".format(id_))
 
         if original.get('rewrite_of') and original.get(ITEM_STATE) not in PUBLISH_STATES:
             self.remove_rewrite_refs(original)
@@ -323,43 +320,44 @@ class ArchiveBroadcastService(BaseService):
         broadcast_items = [item for item in self.get_broadcast_items_from_master_story(original)
                            if item.get(ITEM_STATE) in PUBLISH_STATES]
 
+        correct_service = get_resource_service('archive_correct')
+        kill_service = get_resource_service('archive_kill')
+
         for item in broadcast_items:
             item_id = item.get(config.ID_FIELD)
             packages = self.packageService.get_packages(item_id)
 
-            if packages.count() > 0:
-                processed_packages = []
-                for package in packages:
-                    if str(package[config.ID_FIELD]) in processed_packages:
-                        continue
-                    try:
-                        if package.get(ITEM_STATE) in {CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED}:
-                            package_updates = {
-                                config.LAST_UPDATED: utcnow(),
-                                GROUPS: self.packageService.remove_group_ref(package, item_id)
-                            }
+            processed_packages = set()
+            for package in packages:
+                if str(package[config.ID_FIELD]) in processed_packages:
+                    continue
+                try:
+                    if package.get(ITEM_STATE) in {CONTENT_STATE.PUBLISHED, CONTENT_STATE.CORRECTED}:
+                        package_updates = {
+                            config.LAST_UPDATED: utcnow(),
+                            GROUPS: self.packageService.remove_group_ref(package, item_id)
+                        }
 
-                            refs = self.packageService.get_residrefs(package_updates)
-                            if refs:
-                                get_resource_service('archive_correct').patch(package.get(config.ID_FIELD),
-                                                                              package_updates)
-                            else:
-                                get_resource_service('archive_kill').patch(package.get(config.ID_FIELD),
-                                                                           package_updates)
-
-                            processed_packages.append(package.get(config.ID_FIELD))
+                        refs = self.packageService.get_residrefs(package_updates)
+                        if refs:
+                            correct_service.patch(package.get(config.ID_FIELD), package_updates)
                         else:
-                            package_list = self.packageService.remove_refs_in_package(package,
-                                                                                      item_id, processed_packages)
-                            processed_packages.extend(package_list)
-                    except:
-                        logger.exception('Failed to remove the broadcast item {} from package {}'.format(
-                            item_id, package.get(config.ID_FIELD)
-                        ))
+                            kill_service.patch(package.get(config.ID_FIELD), package_updates)
+
+                        processed_packages.add(package.get(config.ID_FIELD))
+                    else:
+                        package_list = self.packageService.remove_refs_in_package(package,
+                                                                                  item_id, processed_packages)
+
+                        processed_packages = processed_packages.union(set(package_list))
+                except:
+                    logger.exception('Failed to remove the broadcast item {} from package {}'.format(
+                        item_id, package.get(config.ID_FIELD)
+                    ))
 
             broadcast_updates = {}
             kill_fields = ['body_html', 'anpa_take_key', 'abstract', 'headline']
             for field in kill_fields:
                 broadcast_updates[field] = updates.get(field)
 
-            get_resource_service('archive_kill').patch(item_id, broadcast_updates)
+            kill_service.patch(item_id, broadcast_updates)
