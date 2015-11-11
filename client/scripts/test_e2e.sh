@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# check if we should only run a single test
+SINGLE_TEST=$1
+
 # prepare server
 grunt clean
 grunt server:travis &
@@ -11,7 +14,13 @@ done
 
 # run tests
 ./node_modules/protractor/bin/webdriver-manager update
-./node_modules/protractor/bin/protractor protractor-conf.js --baseUrl 'http://localhost:9000'
+if [ -z "$SINGLE_TEST" ]; then
+    echo "Running full test suite"
+    ./node_modules/protractor/bin/protractor protractor-conf.js --baseUrl 'http://localhost:9000'
+else
+    echo "Running single test: $SINGLE_TEST"
+    ./node_modules/protractor/bin/protractor protractor-conf.js --spec $SINGLE_TEST --baseUrl 'http://localhost:9000'
+fi
 TEST_STATUS=$?
 
 # stop server
