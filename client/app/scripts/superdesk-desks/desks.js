@@ -867,6 +867,14 @@
                         scope.desk.edit = _.create(desk);
                     };
 
+                    /**
+                     * Save desk for adding or editing
+                     *
+                     * @param {object} desk
+                     * @param {boolean} done
+                     *      when true it exits after saving otherwise
+                     *      continues to next step in wizard handler.
+                     */
                     scope.save = function(desk, done) {
                         scope.message = gettext('Saving...');
 
@@ -974,6 +982,13 @@
                         }
                     };
 
+                    /**
+                     * Save desk for adding or editing
+                     *
+                     * @param {boolean} done
+                     *      when true it exits otherwise continues
+                     *      to next step in wizard handler.
+                     */
                     scope.next = function(done) {
                         if (!done) {
                             WizardHandler.wizard('desks').next();
@@ -1232,6 +1247,13 @@
                         _.remove(scope.deskMembers, user);
                     };
 
+                    /**
+                     * Save members for editing desk
+                     *
+                     * @param {boolean} done
+                     *      when true it exits after saving otherwise
+                     *      continues to next step in wizard handler.
+                     */
                     scope.save = function(done) {
                         var members = _.map(scope.deskMembers, function(obj) {
                             return {user: obj._id};

@@ -52,7 +52,7 @@
                             </div>
                         </fieldset>
                         <span class="alert-danger" ng-show="_errorLimits" translate>Character limit exceeded, desk can not be created/updated.</span>
-                        <span class="alert-danger" ng-show="_error" translate>{{ _errorMessage }}</span>
+                        <span class="alert-danger" ng-show="_error">{{ _errorMessage }}</span>
                     </div>
                     <div class="modal-footer">
                         <button id="next-general" class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Save & Continue</button>
