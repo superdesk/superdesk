@@ -1058,6 +1058,11 @@
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, element, attrs) {
+                    /*
+                     * Set this to true after adding all the preferences to the scope. If done before, then the
+                     * directives which depend on scope variables might fail to load properly.
+                     */
+                    scope.preferencesLoaded = false;
                     var orig;  // original preferences, before any changes
 
                     preferencesService.get(null, true).then(function(result) {
@@ -1250,6 +1255,7 @@
                         });
 
                         scope.locators = helperData.locators;
+                        scope.preferencesLoaded = true;
                     }
 
                     /**
