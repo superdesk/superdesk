@@ -1,14 +1,15 @@
 <div class="dropdown" dropdown>
-    <div class="block__remove" ng-click="removeBlock()"><i class="icon-close-small"></i></div>
     <pre class="text-editor editor-type-text"
         ng-show="type=='preformatted'"
         spellcheck="false"
         ></pre>
-
     <div class="text-editor editor-type-html"
         ng-show="type=='text' || !type"
         spellcheck="false"
         ></div>
+        <div
+            ng-show="type=='embed' || !type"
+            ></div>
 
     <code class="text-editor-info" ng-if="cursor.line && type == 'preformatted'"><small translate>Line: {{ cursor.line }}, Column: {{ cursor.column }}</small></code>
 

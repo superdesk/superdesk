@@ -1,6 +1,12 @@
-<div ng-repeat="block in vm.blocks">
-    <div sd-text-editor-block='block'
-         class="block__container"
+<div ng-repeat="block in vm.blocks" class="block__container">
+    <div ng-if="$index > 0" class="block__remove" ng-click="vm.removeBlock(block)">
+        <i class="icon-close-small"></i>
+    </div>
+    <div sd-text-editor-block-embed="block"
+         ng-if="block.blockType === 'embed'">
+    </div>
+    <div sd-text-editor-block-text="block"
+         ng-if="block.blockType === 'text'"
          type="type"
          config="config"
          language="language"

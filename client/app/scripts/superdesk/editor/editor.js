@@ -553,7 +553,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed'])
 
     .service('editor', EditorService)
-    .directive('sdAddEmbed', function() {
+    .directive('sdAddEmbed', ['$timeout', function($timeout) {
         return {
             scope: true,
             require: ['sdAddEmbed', '^sdTextEditor'],
@@ -565,6 +565,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 angular.extend(vm, {
                     blockBefore: undefined,  // defined in link method
                     editorCtrl: undefined,  // defined in link method
+                    element: undefined,  // defined in link method
                     extended: false,
                     toggle: function(close) {
                         // use parameter or toggle
@@ -582,7 +583,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     retrieveEmbed:function() {
                         // if it's an url, use embedService to retrieve the embed code
                         var embedCode;
-                        if(_.startsWith(vm.input, 'http')) {
+                        if (_.startsWith(vm.input, 'http')) {
                             embedCode = embedService.get(vm.input).then(function(data) {
                                 return data.html;
                             });
@@ -590,23 +591,34 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         } else {
                             embedCode = $q.when(vm.input);
                         }
-                        embedCode.then(function(embed) {
+                        return embedCode;
+                    },
+                    updatePreview: function() {
+                        vm.retrieveEmbed().then(function(embed) {
+                            vm.element.find('.preview').html(embed);
+                        });
+                    },
+                    createBlock: function() {
+                        vm.retrieveEmbed().then(function(embed) {
                             // create a new block containing the embed
                             vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {blockType: 'embed', body: embed});
                             // close the addEmbed form
-                            vm.toggle();
+                            vm.toggle(true);
                         });
                     }
                 });
             }],
             link: function(scope, element, attrs, controllers) {
-                angular.extend(controllers[0], {
-                    blockBefore: scope.block,
-                    editorCtrl: controllers[1]
+                $timeout(function() {
+                    angular.extend(controllers[0], {
+                        element: element,
+                        blockBefore: scope.block,
+                        editorCtrl: controllers[1]
+                    });
                 });
             }
         };
-    })
+    }])
     .directive('sdTextEditor', ['$timeout', 'lodash', function ($timeout, _) {
         return {
             scope: {type: '=', config: '=', language: '='},
@@ -683,7 +695,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         var new_body = '';
                         if (vm.blocks.length > 1) {
                             vm.blocks.forEach(function(block) {
-                                if(angular.isDefined(block.body) && block.body.trim() !== '') {
+                                if (angular.isDefined(block.body) && block.body.trim() !== '') {
                                     if (block.blockType === 'embed') {
                                         new_body += [
                                             '<!-- EMBED START -->',
@@ -741,7 +753,30 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     }])
-    .directive('sdTextEditorBlock', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
+    .directive('sdTextEditorBlockEmbed', ['$timeout', function ($timeout) {
+        return {
+            scope: {type: '=', config: '=', language: '=', sdTextEditorBlockEmbed: '='},
+            require: ['sdTextEditorBlockEmbed', '^sdTextEditor'],
+            template: '<div class="embed-editor"></div>',
+            controllerAs: 'vm',
+            controller: ['$scope', function($scope) {
+                var vm = this;
+                angular.extend(vm, {
+                    editable: true,
+                    toggleEdit: function() {
+                        vm.editable = !vm.editable;
+                    }
+                });
+            }],
+            link: function(scope, elem, attrs, controllers) {
+                // render the embed code
+                $timeout(function() {
+                    elem.find('.embed-editor').html(scope.sdTextEditorBlockEmbed.body);
+                });
+            }
+        };
+    }])
+    .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
         var config = {
             buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
@@ -808,7 +843,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
         return {
             scope: {type: '=', config: '=', language: '=', sdTextEditorBlock: '='},
             require: ['ngModel', '^sdTextEditor'],
-            templateUrl: 'scripts/superdesk/editor/views/block.html',
+            templateUrl: 'scripts/superdesk/editor/views/block-text.html',
             link: function(scope, elem, attrs, controllers) {
                 var ngModel = controllers[0];
                 var sdTextEditor = controllers[1];
@@ -946,7 +981,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             }
                             // backspace, remove the block if empty
                             if (e.keyCode === 8) {
-                                if ($(scope.node).text()=== '') {
+                                if ($(scope.node).text() === '') {
                                     $timeout(function () {
                                         scope.removeBlock();
                                     });
