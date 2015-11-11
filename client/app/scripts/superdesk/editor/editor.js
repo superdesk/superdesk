@@ -756,22 +756,51 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
     .directive('sdTextEditorBlockEmbed', ['$timeout', function ($timeout) {
         return {
             scope: {type: '=', config: '=', language: '=', sdTextEditorBlockEmbed: '='},
-            require: ['sdTextEditorBlockEmbed', '^sdTextEditor'],
-            template: '<div class="embed-editor"></div>',
+            require: ['sdTextEditorBlockEmbed', 'ngModel'],
+            template: [
+                '<textarea ng-show="vm.editable" ng-model="vm.embedCode" class="embed-editor"></textarea>',
+                '<div ng-show="!vm.editable" class="embed-preview"></div>',
+                '<a class="btn btn-default btn-small" ng-show="!vm.editable" ng-click="vm.toggleEdition()">Edit the code</a>',
+                '<a class="btn btn-default btn-small" ng-show="vm.editable" ng-click="vm.cancel()">Cancel</a>',
+                '<a class="btn btn-default btn-small" ng-show="vm.editable" ng-click="vm.save()">Save</a>'].join(''),
             controllerAs: 'vm',
             controller: ['$scope', function($scope) {
                 var vm = this;
                 angular.extend(vm, {
-                    editable: true,
-                    toggleEdit: function() {
+                    model: undefined,  // defined in link method
+                    element: undefined,  // defined in link method
+                    embedCode: undefined,  // defined in init method
+                    editable: false,
+                    init: function() {
+                        vm.updatePreview();
+                        vm.embedCode = vm.model.$modelValue;
+                    },
+                    toggleEdition: function() {
                         vm.editable = !vm.editable;
+                    },
+                    updatePreview: function() {
+                        vm.element.find('.embed-preview').html(vm.model.$viewValue);
+                    },
+                    // in edition
+                    save: function() {
+                        vm.model.$setViewValue(vm.embedCode);
+                        vm.updatePreview();
+                        vm.toggleEdition();
+                    },
+                    cancel: function() {
+                        vm.embedCode = vm.model.$modelValue;
+                        vm.toggleEdition();
                     }
                 });
             }],
             link: function(scope, elem, attrs, controllers) {
-                // render the embed code
+                angular.extend(controllers[0], {
+                    element: elem,
+                    model: controllers[1],
+                });
+                // init preview
                 $timeout(function() {
-                    elem.find('.embed-editor').html(scope.sdTextEditorBlockEmbed.body);
+                    controllers[0].init();
                 });
             }
         };

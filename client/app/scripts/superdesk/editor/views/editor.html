@@ -2,7 +2,9 @@
     <div ng-if="$index > 0" class="block__remove" ng-click="vm.removeBlock(block)">
         <i class="icon-close-small"></i>
     </div>
-    <div sd-text-editor-block-embed="block"
+    <div sd-text-editor-block-embed
+         ng-change="vm.commitChanges()"
+         ng-model="block.body"
          ng-if="block.blockType === 'embed'">
     </div>
     <div sd-text-editor-block-text="block"

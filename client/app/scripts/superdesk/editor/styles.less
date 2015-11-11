@@ -5,7 +5,10 @@
     &__container {
         position: relative;
         .text-editor {padding: 0;}
-        .embed-editor iframe {width: 100%;}
+        .embed-editor {
+            min-height: 200px;
+        }
+        .embed-preview iframe {width: 100%;}
         &:hover .block__remove {opacity: 1;}
     }
     &__remove {
