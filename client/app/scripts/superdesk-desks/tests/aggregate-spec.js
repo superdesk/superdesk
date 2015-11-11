@@ -47,7 +47,7 @@ describe('templates', function() {
     describe('Aggregate Widget', function() {
         var fakeEndpoints = {};
         var queryDeferred;
-        beforeEach(module('superdesk.aggregate', 'templates'));
+        beforeEach(module('superdesk.aggregate', 'superdesk.templates-cache'));
 
         beforeEach(module(function($provide) {
 

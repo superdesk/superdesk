@@ -58,7 +58,7 @@ module.exports = {
                 'styles/css/app.css',
                 'scripts/vendor.js',
                 'scripts/superdesk-core.js',
-                'scripts/superdesk-templates.js',
+                'scripts/templates-cache.js',
                 'scripts/superdesk.js',
                 'scripts/vendor-docs.js',
                 'scripts/superdesk-docs-core.js',

@@ -95,10 +95,13 @@ define([
                 return false;
             }
         }]);
-
     // make sure there is templates module defined
-    angular.module('templates', []);
-    modules.push('templates');
-
+    try {
+        angular.module('superdesk.templates-cache');
+    } catch (e) {
+        angular.module('superdesk.templates-cache', []);
+    } finally {
+        modules.push('superdesk.templates-cache');
+    }
     return angular.module('superdesk', modules);
 });

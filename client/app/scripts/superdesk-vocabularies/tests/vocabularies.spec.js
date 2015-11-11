@@ -4,7 +4,7 @@ describe('vocabularies', function() {
 
     beforeEach(module('superdesk.vocabularies'));
     beforeEach(module('superdesk.authoring'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     it('can fetch vocabularies', inject(function(api, vocabularies, $q, $rootScope) {
         var fixture = {foo: 'bar'};

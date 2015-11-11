@@ -3,7 +3,7 @@
 describe('content', function() {
     var item = {_id: 1};
 
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
     beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive'));
 

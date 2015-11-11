@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
                     // avoid 404 in dev server for templates
                     function mockTemplates(req, res, next) {
-                        if (req.url === '/scripts/superdesk-templates.js') {
+                        if (req.url === '/scripts/templates-cache.js') {
                             return res.end('');
                         } else {
                             return next();

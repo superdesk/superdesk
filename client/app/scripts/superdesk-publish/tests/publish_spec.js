@@ -111,7 +111,7 @@ describe('publish queue', function() {
     beforeEach(module('superdesk.content_filters'));
     beforeEach(module('superdesk.publish'));
     beforeEach(module('superdesk.mocks'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     beforeEach(inject(function($rootScope, $controller, adminPublishSettingsService, $q, api) {
         spyOn(adminPublishSettingsService, 'fetchSubscribers').and.returnValue($q.when(subscribers));

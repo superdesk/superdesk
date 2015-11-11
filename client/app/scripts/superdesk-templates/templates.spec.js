@@ -2,7 +2,7 @@ describe('templates', function() {
     'use strict';
 
     beforeEach(module('superdesk.templates'));
-    beforeEach(module('templates'));
+    beforeEach(module('superdesk.templates-cache'));
 
     describe('templates widget', function() {
         it('should create a template', inject(function($controller, api, desks, $q, $rootScope) {
