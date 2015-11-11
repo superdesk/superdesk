@@ -538,7 +538,7 @@
         "username": "admin",
         "data": {
             "headline": "item5",
-            "slugline": "item5 slugline",
+            "slugline": "item5 slugline one/two ",
             "body_html" : "<p>item5 text</p>",
             "type": "text",
             "guid": "item5",

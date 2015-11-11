@@ -76,6 +76,17 @@ describe('Search', function() {
         expect(globalSearch.getItems().count()).toBe(1);
     });
 
+    it('can search by slugline', function () {
+        globalSearch.openFilterPanel();
+        expect(globalSearch.getItems().count()).toBe(10);
+        globalSearch.openParameters();
+        var bylineTextbox = element(by.id('search-slugline'));
+        bylineTextbox.clear();
+        bylineTextbox.sendKeys('one/two');
+        globalSearch.goButton.click();
+        expect(globalSearch.getItems().count()).toBe(1);
+    });
+
     it('can search by original creator', function () {
         globalSearch.openFilterPanel();
         expect(globalSearch.getItems().count()).toBe(10);
