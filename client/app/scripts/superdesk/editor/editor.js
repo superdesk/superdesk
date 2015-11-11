@@ -870,7 +870,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
         }
 
         return {
-            scope: {type: '=', config: '=', language: '=', sdTextEditorBlock: '='},
+            scope: {type: '=', config: '=', language: '=', sdTextEditorBlockText: '='},
             require: ['ngModel', '^sdTextEditor'],
             templateUrl: 'scripts/superdesk/editor/views/block-text.html',
             link: function(scope, elem, attrs, controllers) {
@@ -900,7 +900,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
                     // focus on the node if needed
-                    scope.$watch('sdTextEditorBlock.focus', function(should_focus) {
+                    scope.$watch('sdTextEditorBlockText.focus', function(should_focus) {
                         if (should_focus) {
                             scope.node.focus();
                             // set the cursor at the end of the block
@@ -1001,7 +1001,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 var last_paragraph = $(scope.node).find('p:last');
                                 // add a new block just after this one
                                 $timeout(function () {
-                                    sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlock, {
+                                    sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlockText, {
                                         body: last_paragraph.html()
                                     });
                                     // remove it from current block
@@ -1021,7 +1021,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 };
 
                 scope.removeBlock = function() {
-                    sdTextEditor.removeBlock(scope.sdTextEditorBlock);
+                    sdTextEditor.removeBlock(scope.sdTextEditorBlockText);
                 };
 
                 function render($event, event, preventStore) {

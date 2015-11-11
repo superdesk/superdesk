@@ -1,5 +1,5 @@
 <div ng-repeat="block in vm.blocks" class="block__container">
-    <div ng-if="$index > 0" class="block__remove" ng-click="vm.removeBlock(block)">
+    <div ng-if="config.multiBlockEdition" class="block__remove" ng-click="vm.removeBlock(block)">
         <i class="icon-close-small"></i>
     </div>
     <div sd-text-editor-block-embed
