@@ -743,12 +743,10 @@ class ArchivePublishTestCase(SuperdeskTestCase):
                             'mimetype': 'image/jpeg'
                         },
                         'thumbnail': {
-                            'crop': {
-                                'CropLeft': 10,
-                                'CropRight': 50,
-                                'CropTop': 10,
-                                'CropBottom': 40,
-                            }
+                            'CropLeft': 10,
+                            'CropRight': 50,
+                            'CropTop': 10,
+                            'CropBottom': 40,
                         }
                     }
                 }
@@ -764,7 +762,6 @@ class ArchivePublishTestCase(SuperdeskTestCase):
 
         image = item['associations']['image']
         renditions = image['renditions']
-        self.assertNotIn('crop', renditions['thumbnail'])
         self.assertEqual(40, renditions['thumbnail']['width'])
         self.assertEqual(30, renditions['thumbnail']['height'])
         self.assertEqual('image/jpeg', renditions['thumbnail']['mimetype'])

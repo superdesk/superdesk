@@ -2062,23 +2062,15 @@
                 };
 
                 scope.applyCrop = function() {
-                    var ar = {};
-                    scope.item.cropsizes = scope.metadata.crop_sizes;
-                    _.forEach(scope.item.cropsizes, function(cropsizes) {
-                        ar = {aspectRatio: renditions.evalAspectRatio(cropsizes.name)};
-                        _.extend(_.filter(scope.item.cropsizes, {name: cropsizes.name})[0], ar);
-                    });
-
-                    scope.metadata.crop_sizes;
-
-                    superdesk.intent('edit', 'crop',  scope.item).then(function(data) {
-                        if (!mainEditScope.dirty) {
-                            mainEditScope.dirty = data.isDirty;
-                        }
-                        var orig = _.create(data.renditions);
-                        var diff = data.cropData;
-                        scope.item.renditions = _.merge(orig, diff);
-                    });
+                    superdesk.intent('edit', 'crop', {item: scope.item, renditions: scope.metadata.crop_sizes})
+                        .then(function(data) {
+                            var renditions = angular.extend({}, scope.item.renditions || {});
+                            angular.forEach(data, function(crop, rendition) {
+                                mainEditScope.dirty = true;
+                                renditions[rendition] = angular.extend({}, renditions[rendition] || {}, crop);
+                            });
+                            scope.item.renditions = renditions;
+                        });
                 };
             }
         };
@@ -2510,10 +2502,7 @@
                             .then(function(data) {
                                 var renditions = angular.extend({}, scope.related.renditions || {});
                                 angular.forEach(data, function(crop, renditionName) {
-                                    renditions[renditionName] = angular.extend({},
-                                        renditions[renditionName] || {},
-                                        {crop: crop}
-                                    );
+                                    renditions[renditionName] = angular.extend({}, renditions[renditionName] || {}, crop);
                                 });
 
                                 var updated = angular.extend({}, scope.related, {renditions: renditions});
@@ -2534,23 +2523,6 @@
                 self.renditions = metadata.values.crop_sizes;
                 return self.renditions;
             });
-        };
-
-        /**
-         * Function to evaluate aspect ratio attribute in advance to provide in
-         * proper decimal format required by jCrop.
-         */
-        this.evalAspectRatio = function(rendition) {
-            var parts = rendition.split('-').map(_.partial(parseInt, _, 10));
-            var result = parts[0] / parts[1];
-
-            if (isNaN(result) || !isFinite(result)) {
-                scope.errorMessage = 'Error: Given Aspect ratio was not valid, using default: ' + DEFAULT_ASPECT_RATIO;
-                return DEFAULT_ASPECT_RATIO;
-            } else {
-                scope.errorMessage = null;
-                return result;
-            }
         };
     }
 

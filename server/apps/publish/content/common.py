@@ -872,9 +872,9 @@ class BasePublishService(BaseService):
         original = renditions.get('original')
         crop_service = CropService()
         for rendition_name, rendition in renditions.items():
-            crop = rendition.pop('crop', {})
-            if crop:
-                rend_spec = crop_service.get_crop_by_name(rendition_name)
+            crop = get_crop(rendition)
+            rend_spec = crop_service.get_crop_by_name(rendition_name)
+            if crop and rend_spec:
                 file_name = '%s/%s/%s' % (guid, rel, rendition_name)
                 rendition['href'] = app.media.url_for_media(file_name)
                 rendition['width'] = rend_spec['width']
@@ -887,6 +887,15 @@ class BasePublishService(BaseService):
                     'crop': crop,
                 })
         publish_images.delay(images=images, original=original, item=item)
+
+
+def get_crop(rendition):
+    crop = {}
+    fields = ('CropLeft', 'CropTop', 'CropRight', 'CropTop')
+    for field in fields:
+        if field in rendition:
+            crop[field] = rendition[field]
+    return crop
 
 
 @celery.task
