@@ -1,0 +1,17 @@
+<div class="field">
+    <label translate>Request activation code</label>
+    <span>CC</span>
+    <input type="text" class="input-mini" id="whatsapp_cc" placeholder="CC" ng-model="activation.cc">
+    <span>MCC</span>
+    <input type="text" class="input-mini" id="whatsapp_mcc" placeholder="MCC" ng-model="activation.mcc">
+    <span>MNC</span>
+    <input type="text" class="input-mini" id="whatsapp_mnc" placeholder="MNC" ng-model="activation.mnc">
+    <button type="button" class="btn" translate ng-click="sendActivation()">Send to phone</button>
+</div>
+
+<div class="field">
+    <label translate>Get password</label>
+    <span>Activation code</span>
+    <input type="text" class="input-mini" id="whatsapp_code" placeholder="Code" ng-model="activation.code">
+    <button type="button" class="btn" translate ng-click="getPassword()">Get password</button>
+</div>
