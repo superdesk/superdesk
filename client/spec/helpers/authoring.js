@@ -253,6 +253,17 @@ function Authoring() {
         browser.actions().mouseMove(element(by.css('.highlights-toggle .dropdown-toggle'))).perform();
     };
 
+    this.toggleAutoSpellCheck = function() {
+        var toggle = element(by.id('authoring-extra-dropdown')).element(by.className('icon-dots-vertical'));
+
+        browser.wait(function() {
+            return toggle.isDisplayed();
+        });
+
+        toggle.click();
+        element(by.model('spellcheckMenu.isAuto')).click();
+    };
+
     this.getSubnav = function() {
         return element(by.id('subnav'));
     };

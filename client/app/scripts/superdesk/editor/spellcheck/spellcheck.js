@@ -139,7 +139,7 @@ function SpellcheckService($q, api, dictionaries) {
 
 SpellcheckMenuController.$inject = ['editor', '$rootScope'];
 function SpellcheckMenuController(editor, $rootScope) {
-    this.isAuto = editor.settings.spellcheck || true;
+    this.isAuto = editor.settings.spellcheck;
     this.spellcheck = spellcheck;
     this.pushSettings = pushSettings;
 
