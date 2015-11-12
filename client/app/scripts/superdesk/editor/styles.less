@@ -20,6 +20,13 @@
     }
 }
 .add-embed {
+    &__drop-zone {
+        display: none;
+        border: 2px dashed #CFCFCF;
+        background-color: #F7F7F7;
+        width: 100%;
+
+    }
     &__plus {
         display: block;
         text-align: center;
@@ -28,8 +35,14 @@
         opacity: .1;
         transition-duration: .25s;
         transition-property: .25s;
-        &:hover {
+        &:hover, &.drag-active {
             opacity: 1;
+        }
+        &.drag-active {
+            .add-embed__drop-zone {
+                display: block;
+                height: 60px;
+            }
         }
         &::after {
             content: '';
@@ -66,6 +79,11 @@
                     left: 2px;
                     position: relative;
                 }
+            }
+        }
+        .preview {
+            iframe{
+                width: 100%;
             }
         }
     }

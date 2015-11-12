@@ -1,5 +1,6 @@
 <div class="add-embed__plus" ng-if='!vm.extended' ng-click="vm.toggle()">
     <i class="icon-plus-small icon-round icon-white"></i>
+    <div class="add-embed__drop-zone"></div>
 </div>
 <div class="add-embed__body" ng-if='vm.extended'>
     <form class="form-inline">
@@ -12,9 +13,9 @@
         </div>
         <div class="form-group">
             <button type="reset" class="btn btn-small btn-default" ng-click="vm.toggle()">
-                <i class="icon-remove"></i>
+                <i class="icon-close-small"></i>
             </button>
-            <button type="submit" class="btn btn-small btn-info" ng-click="vm.createBlock()">
+            <button type="submit" class="btn btn-small btn-info" ng-click="vm.createBlockFromEmbed()">
                 <i class="icon-white icon-ok"></i>
             </button>
         </div>

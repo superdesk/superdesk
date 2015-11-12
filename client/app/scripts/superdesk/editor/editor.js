@@ -598,22 +598,54 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             vm.element.find('.preview').html(embed);
                         });
                     },
-                    createBlock: function() {
+                    createBlock: function(embed) {
+                        // create a new block containing the embed
+                        return vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {
+                            blockType: 'embed',
+                            body: embed
+                        });
+                    },
+                    createBlockFromEmbed: function() {
                         vm.retrieveEmbed().then(function(embed) {
-                            // create a new block containing the embed
-                            vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {blockType: 'embed', body: embed});
+                            vm.createBlock(embed);
                             // close the addEmbed form
                             vm.toggle(true);
                         });
+                    },
+                    createBlockFromPicture: function(picture) {
+                        vm.createBlock([
+                            '<figure>',
+                            '    <img alt="' + picture.headline + '" src="' + picture.renditions.viewImage.href + '">',
+                            '    <figcaption>' + picture.description + '</figcaption>',
+                            '</figure>'
+                        ].join('\n'));
                     }
                 });
             }],
             link: function(scope, element, attrs, controllers) {
+                var ctrl = controllers[0];
+                angular.extend(ctrl, {
+                    element: element,
+                    blockBefore: scope.block,
+                    editorCtrl: controllers[1]
+                });
+                var PICTURE_TYPE = 'application/superdesk.item.picture';
                 $timeout(function() {
-                    angular.extend(controllers[0], {
-                        element: element,
-                        blockBefore: scope.block,
-                        editorCtrl: controllers[1]
+                    element.find('.add-embed__plus')
+                    .on('drop', function(event) {
+                        event.preventDefault();
+                        var item = angular.fromJson(event.originalEvent.dataTransfer.getData(PICTURE_TYPE));
+                        ctrl.createBlockFromPicture(item);
+                        element.find('.add-embed__plus').removeClass('drag-active');
+                    })
+                    .on('dragover', function(event) {
+                        if (event.originalEvent.dataTransfer.types[0] === PICTURE_TYPE) {
+                            event.preventDefault();
+                            element.find('.add-embed__plus').addClass('drag-active');
+                        }
+                    })
+                    .on('dragleave', function(event) {
+                            element.find('.add-embed__plus').removeClass('drag-active');
                     });
                 });
             }
@@ -737,6 +769,20 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         vm.blocks.forEach(function(b) {
                             b.focus = b === block;
                         });
+                    },
+                    focusPreviousBlock: function(block) {
+                        var pos = vm.getBlockPosition(block);
+                        // if not the first one, focus on the previous
+                        if (pos > 0) {
+                            vm.setFocusOnBlock(vm.blocks[pos - 1]);
+                        }
+                    },
+                    focusNextBlock: function(block) {
+                        var pos = vm.getBlockPosition(block);
+                        // if not the last one, focus on the next
+                        if (pos + 1 < vm.blocks.length) {
+                            vm.setFocusOnBlock(vm.blocks[pos + 1]);
+                        }
                     }
                 });
             },
@@ -807,10 +853,40 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
     }])
     .directive('sdTextEditorBlockText', ['editor', 'spellcheck', '$timeout', function (editor, spellcheck, $timeout) {
 
-        var config = {
-            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
-            anchorInputPlaceholder: gettext('Paste or type a full link'),
-            disablePlaceholders: true,
+        var EDITOR_CONFIG = {
+            toolbar: {
+                buttons: [
+                    // H1 and H2 buttons which actually produce
+                    // <h2> and <h3> tags respectively
+                    {
+                        name: 'h1',
+                        action: 'append-h2',
+                        aria: 'header type 1',
+                        tagNames: ['h2'],
+                        contentDefault: '<b>H1</b>',
+                        classList: ['custom-class-h1'],
+                        attrs: {
+                            'data-custom-attr': 'attr-value-h1'
+                        }
+                    },
+                    {
+                        name: 'h2',
+                        action: 'append-h3',
+                        aria: 'header type 2',
+                        tagNames: ['h3'],
+                        contentDefault: '<b>H2</b>',
+                        classList: ['custom-class-h2'],
+                        attrs: {
+                            'data-custom-attr': 'attr-value-h2'
+                        }
+                    },
+                    'bold', 'italic', 'underline', 'quote', 'anchor'
+                ]
+            },
+            anchor: {
+                placeholderText: gettext('Paste or type a full link')
+            },
+            placeholder: false,
             spellcheck: false
         };
 
@@ -869,6 +945,27 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             };
         }
 
+        /**
+         * Place caret at the end of the element
+         */
+        function placeCaretAtEnd(el) {
+            el.focus();
+            if (typeof window.getSelection !== 'undefined' &&
+            typeof document.createRange !== 'undefined') {
+                var range = document.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else if (typeof document.body.createTextRange !== 'undefined') {
+                var textRange = document.body.createTextRange();
+                textRange.moveToElementText(el);
+                textRange.collapse(false);
+                textRange.select();
+            }
+        }
+
         return {
             scope: {type: '=', config: '=', language: '=', sdTextEditorBlockText: '='},
             require: ['ngModel', '^sdTextEditor'],
@@ -882,37 +979,22 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 var editorElem;
                 var updateTimeout;
                 var renderTimeout;
-
                 ngModel.$viewChangeListeners.push(changeListener);
 
                 ngModel.$render = function () {
-
-                    var editorConfig = angular.extend({}, config, scope.config || {});
-
+                    var editorConfig = angular.extend({}, EDITOR_CONFIG, scope.config || {});
                     spellcheck.setLanguage(scope.language);
-
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
-
                     scope.node = editorElem[0];
                     scope.model = ngModel;
-
                     scope.medium = new window.MediumEditor(scope.node, editorConfig);
                     // focus on the node if needed
                     scope.$watch('sdTextEditorBlockText.focus', function(should_focus) {
                         if (should_focus) {
-                            scope.node.focus();
-                            // set the cursor at the end of the block
-                            // FIXME: Doesn't work when tag are present
-                            if (scope.node.textContent.length > 0) {
-                                var range = document.createRange();
-                                var sel = window.getSelection();
-                                range.setStart(scope.node.firstChild, scope.node.textContent.length);
-                                range.collapse(true);
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
+                            // focus and set the cursor at the end of the block
+                            placeCaretAtEnd(scope.node);
                         }
                     });
 
@@ -997,15 +1079,24 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         editorElem.on('keyup', function(e) {
                             // press enter, create a new block
                             if (e.keyCode === 13) {
-                                // last paragraph contains what is after the cursor
-                                var last_paragraph = $(scope.node).find('p:last');
-                                // add a new block just after this one
                                 $timeout(function () {
-                                    sdTextEditor.insertNewBlockAfter(scope.sdTextEditorBlockText, {
-                                        body: last_paragraph.html()
-                                    });
-                                    // remove it from current block
+                                    // last paragraph contains what is after the cursor
+                                    var last_paragraph = angular.element(scope.node).find('p:last');
+                                    // clean it
+                                    last_paragraph.find('br').remove();
+                                    // save content
+                                    var last_paragraph_html = last_paragraph.html();
+                                    // and remove it from the current block
                                     last_paragraph.remove();
+                                    // add a new block just after this one
+                                    sdTextEditor
+                                    .insertNewBlockAfter(scope.sdTextEditorBlockText, {
+                                        body: last_paragraph_html
+                                    });
+                                    // remove <br> added by the retrun key and unwrap <p>
+                                    angular.element(scope.node).get(0).normalize();
+                                    angular.element(scope.node).find('br').remove();
+                                    angular.element(scope.node).find('p').contents().unwrap();
                                 });
                             }
                             // backspace, remove the block if empty
