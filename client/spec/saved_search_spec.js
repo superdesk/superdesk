@@ -32,7 +32,6 @@ describe('Saved search', function() {
     });
 
     it('can save a global search and another user sees it', function() {
-        
         expect(globalSearch.getItems().count()).toBe(10);
         globalSearch.openFilterPanel();
         expect(globalSearch.getItems().count()).toBe(10);

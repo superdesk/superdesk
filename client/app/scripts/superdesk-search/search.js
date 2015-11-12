@@ -492,15 +492,15 @@
                 link: function(scope, element, attrs, controller) {
                     scope.flags = controller.flags;
                     scope.sTab = true;
-                    scope.editingSearch = false;    
+                    scope.editingSearch = false;
 
                     scope.aggregations = {};
                     scope.privileges = privileges.privileges;
 
                     scope.$on('edit:search', function(event, args)  {
                         scope.sTab = true;
-                        scope.editingSearch = args;    
-                        console.log('Args:', args);                    
+                        scope.editingSearch = args;
+                        console.log('Args:', args);
                     });
 
                     scope.changeTab = function() {
@@ -563,11 +563,11 @@
                             }
 
                             if (angular.isDefined(scope.items._aggregations.priority)) {
-                               _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
+                                _.forEach(scope.items._aggregations.priority.buckets, function(priority) {
                                     scope.aggregations.priority[priority.key] = priority.doc_count;
-                                }); 
+                                });
                             }
-                            
+
                             if (angular.isDefined(scope.items._aggregations.priority)) {
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                     scope.aggregations.source[source.key] = source.doc_count;
@@ -1073,7 +1073,10 @@
             };
         }])
 
-        .directive('sdSaveSearch', ['$location', 'asset', 'api', 'session', 'notify', 'gettext', 
+        /**
+         * Opens and manages save search panel
+         */
+        .directive('sdSaveSearch', ['$location', 'asset', 'api', 'session', 'notify', 'gettext',
             function($location, asset, api, session, notify, gettext) {
             return {
                 templateUrl: asset.templateUrl('superdesk-search/views/save-search.html'),
@@ -1098,6 +1101,9 @@
                         $location.url('/search');
                     };
 
+                    /**
+                     * Patches or posts the given search
+                     */
                     scope.save = function(editSearch) {
 
                         function onSuccess() {
@@ -1121,9 +1127,15 @@
                         api('saved_searches', session.identity).save(originalSearch, editSearch).then(onSuccess, onFail);
                     };
 
+                    /**
+                     * Converts the integer fields: priority and urgency to objects
+                     * within a given search
+                     *
+                     * @return {Object} the updated search object
+                     */
                     function getFilters(search) {
                         _.forOwn(search, function(value, key) {
-                            if(_.contains(['priority', 'urgency'], key)) {
+                            if (_.contains(['priority', 'urgency'], key)) {
                                 search[key] = JSON.parse(value);
                             }
                         });
@@ -1133,7 +1145,6 @@
                 }
             };
         }])
-
 
         .directive('sdItemContainer', ['$filter', 'desks', 'api', function($filter, desks, api) {
             return {
@@ -1683,7 +1694,7 @@
                             _.forEach(scope.searches, function(search) {
                                 if (search.user === session.identity._id) {
                                     scope.userSavedSearches.push(setFilters(search));
-                                } else if(search.is_global) {
+                                } else if (search.is_global) {
                                     scope.globalSavedSearches.push(setFilters(search));
                                 }
                             });
@@ -1691,7 +1702,7 @@
                             originalGlobalSavedSearches = _.clone(scope.globalSavedSearches);
                         });
                     }
-                    
+
                     initSavedSearches();
 
                     scope.select = function(search) {
@@ -1699,9 +1710,15 @@
                         $location.search(search.filter.query);
                     };
 
+                    /**
+                     * Converts the integer fields to string
+                     * within a given search
+                     *
+                     * @return {Object} the updated search object
+                     */
                     function setFilters(search) {
                         _.forOwn(search.filter.query, function(value, key) {
-                            if(_.contains(['priority', 'urgency'], key)) {
+                            if (_.contains(['priority', 'urgency'], key)) {
                                 search.filter.query[key] = JSON.stringify(value);
                             }
                         });
@@ -1714,6 +1731,10 @@
                         $rootScope.$broadcast('edit:search', search);
                     };
 
+                    /**
+                     * Filters the content of global and user filters
+                     *
+                     */
                     scope.filter = function() {
                         scope.userSavedSearches = _.clone(originalUserSavedSearches);
                         scope.globalSavedSearches = _.clone(originalGlobalSavedSearches);

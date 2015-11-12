@@ -422,7 +422,6 @@
                     }
                 });
 
-
                 scope.closeModal = function() {
                     scope.step.current = 'desks';
                     scope.modalActive = false;
