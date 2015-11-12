@@ -135,7 +135,9 @@
             'superdesk.monitoring',
 
             'superdesk.loading',
-            'templates'
+            'templates',
+
+            'superdesk.ingest.whatsapp'
         ];
 
         require([
@@ -143,8 +145,9 @@
             'superdesk-settings/module',
             'superdesk-dashboard/module',
             'superdesk-archive/module',
-            'superdesk-ingest/module'
+            'superdesk-ingest/module',
             //'superdesk-scratchpad/module',
+            'superdesk-ingest-whatsapp/module'
         ], function(bootstrap) {
             bootstrap(config, modules);
         });
