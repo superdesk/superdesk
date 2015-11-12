@@ -505,7 +505,7 @@
 
                     scope.changeTab = function() {
                         scope.sTab = !scope.sTab;
-                    }
+                    };
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -1110,14 +1110,15 @@
                             notify.error(gettext('Error. Saved search could not be saved.'));
                         }
 
-                        search = getFilters($location.search());
-
+                        var search = getFilters($location.search());
                         editSearch.filter = {query: search};
-                        if (!editSearch._id) {
-                            api('saved_searches', session.identity).save({}, editSearch).then(onSuccess, onFail);
-                        } else {
-                            api('saved_searches', session.identity).save(scope.editingSearch, editSearch).then(onSuccess, onFail);
+                        var originalSearch = {};
+
+                        if (editSearch._id) {
+                            originalSearch = scope.editingSearch;
                         }
+
+                        api('saved_searches', session.identity).save(originalSearch, editSearch).then(onSuccess, onFail);
                     };
 
                     function getFilters(search) {
@@ -1680,7 +1681,7 @@
                             scope.globalSavedSearches.length = 0;
                             scope.searches = searches._items;
                             _.forEach(scope.searches, function(search) {
-                                if (search.user == session.identity._id) {
+                                if (search.user === session.identity._id) {
                                     scope.userSavedSearches.push(setFilters(search));
                                 } else if(search.is_global) {
                                     scope.globalSavedSearches.push(setFilters(search));
@@ -1711,7 +1712,7 @@
                     scope.edit = function(search) {
                         scope.select(search);
                         $rootScope.$broadcast('edit:search', search);
-                    }
+                    };
 
                     scope.filter = function() {
                         scope.userSavedSearches = _.clone(originalUserSavedSearches);
@@ -1726,7 +1727,7 @@
                                 return n.name.toUpperCase().indexOf(scope.searchText.toUpperCase()) >= 0;
                             });
                         }
-                    }
+                    };
 
                     scope.remove = function(searches) {
                         resource.remove(searches).then(function() {

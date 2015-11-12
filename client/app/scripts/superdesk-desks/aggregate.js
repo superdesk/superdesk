@@ -514,7 +514,6 @@
                  * where is_global flag is true
                  */
                 scope.initGlobalSavedSearches = function() {
-                    var user = session.identity._id;
                     if (scope.globalSavedSearches.length > 0) {
                         scope.globalSavedSearches.length = 0;
                     }

@@ -10,8 +10,8 @@
 	<ul>
 	    <li ng-repeat="search in userSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
 	    	<div class="search-item">
-	    		<div class="search-name">{{:: search.name }} <i ng-if="search.is_global">[Global]</i></div>
-	    		<div class="search-description">{{ search.description }}</div>
+	    		<div class="search-name">{{:: search.name }} <i ng-if="search.is_global" translate>[Global]</i></div>
+	    		<div class="search-description">{{:: search.description }}</div>
 	    	</div>
 	    	<div class="search-button">
 		    	<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}"><i class="icon-pencil"></i></button>
@@ -23,8 +23,8 @@
 	<ul>
 	    <li ng-repeat="search in globalSavedSearches | orderBy:'name' " ng-click="select(search)" ng-class="{active: search == selected}">
 	    	<div class="search-item">
-	    		<div class="search-name">{{ search.name }} <i>by {{ userLookup[search.user].display_name }}</i></div>
-	    		<div class="search-description">{{ search.description }}</div>
+	    		<div class="search-name">{{:: search.name }} <i>by {{:: userLookup[search.user].display_name }}</i></div>
+	    		<div class="search-description">{{:: search.description }}</div>
 	    	</div>
 	    	<div class="search-button">
 	    		<button class="delete" ng-click="edit(search)" title="{{:: 'Edit search' | translate }}" ng-if="privileges.global_saved_searches"><i class="icon-pencil"></i></button>
