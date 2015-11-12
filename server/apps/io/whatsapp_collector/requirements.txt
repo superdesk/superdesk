@@ -1,6 +1,3 @@
-#git+https://github.com/GreatFruitOmsk/protobuf.git
-#git+https://github.com/tgalal/yowsup.git
-
 Pillow==3.0.0
 protobuf==3.0.0a1
 pycrypto==2.6.1
@@ -9,5 +6,6 @@ python-axolotl-curve25519==0.1
 python-dateutil==2.4.2
 six==1.10.0
 wheel==0.24.0
-#yowsup2==2.4
-git+https://github.com/tgalal/yowsup.git
+
+yowsup2==2.4.2
+#git+https://github.com/tgalal/yowsup.git
