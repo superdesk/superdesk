@@ -30,6 +30,15 @@ define('main', [
 
     return function bootstrap(config, apps) {
 
+        // make sure there is a templates-cache module define
+        try {
+            angular.modules('superdesk.templates-cache');
+        } catch (e) {
+            angular.module('superdesk.templates-cache', []); 
+        } finally {
+            apps.push('superdesk.templates-cache'); 
+        }
+
         apps.unshift(superdesk.name);
         superdesk.constant('config', config);
         superdesk.constant('lodash', _);

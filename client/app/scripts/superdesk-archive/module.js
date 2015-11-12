@@ -323,8 +323,8 @@ define([
                     label: gettext('Workspace'),
                     priority: 100,
                     controller: require('./controllers/list'),
-                    templateUrl: require.toUrl('./views/list.html'),
-                    topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html'),
+                    templateUrl: 'scripts/superdesk-archive/views/list.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                     sideTemplateUrl: 'scripts/superdesk-workspace/views/workspace-sidenav.html',
                     filters: [
                         {action: 'view', type: 'content'}
@@ -336,7 +336,7 @@ define([
                     modal: true,
                     cssClass: 'upload-media modal-responsive',
                     controller: require('./controllers/upload'),
-                    templateUrl: require.toUrl('./views/upload.html'),
+                    templateUrl: 'scripts/superdesk-archive/views/upload.html',
                     filters: [
                         {action: 'upload', type: 'media'}
                     ],

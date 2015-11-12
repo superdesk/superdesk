@@ -56,6 +56,8 @@ module.exports = {
                 'images/**',
                 'styles/css/bootstrap.css',
                 'styles/css/app.css',
+                'fonts/sd_icons.woff',
+                'fonts/sd_icons.ttf',
                 'scripts/vendor.js',
                 'scripts/superdesk-core.js',
                 'scripts/templates-cache.js',

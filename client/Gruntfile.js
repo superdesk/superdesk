@@ -79,7 +79,7 @@ module.exports = function (grunt) {
         'concat:bowerCore',
         'concat:bowerApps',
         'uglify:bower',
-        'clean:bower',
+        'clean:bower'
     ]);
 
     grunt.registerTask('build', [
