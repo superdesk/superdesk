@@ -20,7 +20,7 @@ module.exports = {
                 '<%= bowerDir %>/scripts/superdesk-settings.js',
                 '<%= bowerDir %>/scripts/superdesk-dashboard.js',
                 '<%= bowerDir %>/scripts/superdesk-archive.js',
-                '<%= bowerDir %>/scripts/superdesk-ingest.js',
+                '<%= bowerDir %>/scripts/superdesk-ingest.js'
             ]
         }]
     }
