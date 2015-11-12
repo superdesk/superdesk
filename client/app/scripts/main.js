@@ -34,9 +34,9 @@ define('main', [
         try {
             angular.modules('superdesk.templates-cache');
         } catch (e) {
-            angular.module('superdesk.templates-cache', []); 
+            angular.module('superdesk.templates-cache', []);
         } finally {
-            apps.push('superdesk.templates-cache'); 
+            apps.push('superdesk.templates-cache');
         }
 
         apps.unshift(superdesk.name);
