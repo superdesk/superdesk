@@ -1110,13 +1110,25 @@
                             notify.error(gettext('Error. Saved search could not be saved.'));
                         }
 
-                        editSearch.filter = {query: $location.search()};
+                        search = getFilters($location.search());
+
+                        editSearch.filter = {query: search};
                         if (!editSearch._id) {
                             api('saved_searches', session.identity).save({}, editSearch).then(onSuccess, onFail);
                         } else {
                             api('saved_searches', session.identity).save(scope.editingSearch, editSearch).then(onSuccess, onFail);
                         }
                     };
+
+                    function getFilters(search) {
+                        _.forOwn(search, function(value, key) {
+                            if(_.contains(['priority', 'urgency'], key)) {
+                                search[key] = JSON.parse(value);
+                            }
+                        });
+
+                        return search;
+                    }
                 }
             };
         }])
@@ -1669,9 +1681,9 @@
                             scope.searches = searches._items;
                             _.forEach(scope.searches, function(search) {
                                 if (search.user == session.identity._id) {
-                                    scope.userSavedSearches.push(search);
+                                    scope.userSavedSearches.push(setFilters(search));
                                 } else if(search.is_global) {
-                                    scope.globalSavedSearches.push(search);
+                                    scope.globalSavedSearches.push(setFilters(search));
                                 }
                             });
                             originalUserSavedSearches = _.clone(scope.userSavedSearches);
@@ -1685,6 +1697,16 @@
                         scope.selected = search;
                         $location.search(search.filter.query);
                     };
+
+                    function setFilters(search) {
+                        _.forOwn(search.filter.query, function(value, key) {
+                            if(_.contains(['priority', 'urgency'], key)) {
+                                search.filter.query[key] = JSON.stringify(value);
+                            }
+                        });
+
+                        return search;
+                    }
 
                     scope.edit = function(search) {
                         scope.select(search);

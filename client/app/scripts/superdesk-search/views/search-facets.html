@@ -5,7 +5,7 @@
         </div>
         <ul>
             <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Advanced Search</li>
-            <li ng-show="privileges.saved_searches == 1" ng-class="{active: !sTab}" ng-click="sTab = false" translate>Saved</li>
+            <li id="saved_searches_tab" ng-show="privileges.saved_searches == 1" ng-class="{active: !sTab}" ng-click="sTab = false" translate>Saved</li>
         </ul>
         <div class="doopen" ng-click="flags.facets = false"><i class="icon-backward-thin"></i></div>
     </div>
