@@ -16,6 +16,15 @@ define([
         };
     }]);
 
+    app.directive('sdWhatsappRegistration', ['api', function(api) {
+        return {
+            templateUrl: 'scripts/whatsapp-ingest/views/whatsappRegistration.html',
+            link: function($scope) {
+                console.log('whatsappregistration');
+            }
+        };
+    }]);
+
     return app;
 
 });
