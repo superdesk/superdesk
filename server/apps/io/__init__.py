@@ -12,7 +12,6 @@ import apps.io.aap  # NOQA
 import apps.io.afp  # NOQA
 import apps.io.dpa  # NOQA
 import apps.io.reuters  # NOQA
-import apps.io.whatsapp  # NOQA
 
 from superdesk.io import register_provider
 

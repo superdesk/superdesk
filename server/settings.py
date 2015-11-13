@@ -207,6 +207,8 @@ INSTALLED_APPS.extend([
     'apps.validate',
     'apps.workspace',
     'apps.macros',
+
+    'apps.superdesk_whatsapp',
 ])
 
 RESOURCE_METHODS = ['GET', 'POST']
