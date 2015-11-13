@@ -34,23 +34,10 @@ class WhatsAppRegistrationRequestResource(Resource):
 
 @celery.task(name='whatsapp_registration_request')
 def registration_request(model):
-    # code = model['code']
-    # code = code.replace('-', '')
-    # req = WARegRequest(model['cc'], model['phone'], code)
-    # result = req.send()
-
-    result = {
-        "login": b'491771781387',
-        "currency": b'EUR',
-        "price_expiration": 1449174519,
-        "price": b'0,89 \xe2\x82\xac',
-        "type": b'new',
-        "status": b'ok',
-        "kind": b'free',
-        "pw": b'm52HvXhrwyuNllcCUjRDyZDuVIw=',
-        "expiration": 1477675534,
-        "cost": b'0.89',
-    }
+    code = model['code']
+    code = code.replace('-', '')
+    req = WARegRequest(model['cc'], model['phone'], code)
+    result = req.send()
 
     push_notification(
         'whatsapp_registration_request',

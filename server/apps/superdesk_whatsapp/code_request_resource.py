@@ -35,23 +35,16 @@ class WhatsAppCodeRequestResource(Resource):
 
 @celery.task(name='whatsapp_code_request')
 def code_request(model):
-    # codeReq = WACodeRequest(
-        # model["cc"],
-        # model["phone"],
-        # model["mcc"],
-        # model["mnc"],
-        # model["mcc"],
-        # model["mnc"],
-        # "sms"
-    # )
-    # result = codeReq.send()
-
-    result = {
-        "length": 6,
-        "retry_after": 10805,
-        "status": b'sent',
-        "method": b'sms',
-    }
+    codeReq = WACodeRequest(
+        model["cc"],
+        model["phone"],
+        model["mcc"],
+        model["mnc"],
+        model["mcc"],
+        model["mnc"],
+        "sms"
+    )
+    result = codeReq.send()
 
     push_notification(
         'whatsapp_code_request',
