@@ -26,13 +26,66 @@ define([
             },
             templateUrl: modulePath + '/views/whatsappRegistration.html',
             link: function($scope) {
+                $scope.activation = {};
+
                 $scope.sendActivation = function() {
-                    notify.success(gettext('Activation code was sent to your phone.'));
+                    if (
+                        !$scope.provider.config.phone ||
+                        !$scope.activation.cc ||
+                        !$scope.activation.mcc ||
+                        !$scope.activation.mnc
+                    ) {
+                        notify.error(gettext('Please fill phone, CC, MCC and MNC fields.'));
+                        return;
+                    }
+                    api.save('whatsapp_code_request', {
+                        'phone': $scope.provider.config.phone,
+                        'cc': $scope.activation.cc,
+                        'mcc': $scope.activation.mcc,
+                        'mnc': $scope.activation.mnc
+                    }).then(function(result) {
+                        $scope.code_request_id = result._id;
+                    });
                 };
+                $scope.$on('whatsapp_code_request', function(_e, data) {
+                    if (data.id !== $scope.code_request_id) { console.log(data.id); return; }
+                    if (data.result.status === 'sent') {
+                        console.log('sent');
+                        notify.success(gettext('Activation code was sent to your phone.'));
+                    } else {
+                        console.log(data.result);
+                        notify.error(data.result);
+                    }
+                });
+
                 $scope.getPassword = function() {
-                    notify.success(gettext('Password field was filled in.'));
+                    if (
+                        !$scope.provider.config.phone ||
+                        !$scope.activation.cc ||
+                        !$scope.activation.code
+                    ) {
+                        notify.error(gettext('Please fill phone, CC and activation code fields.'));
+                        return;
+                    }
+                    api.save('whatsapp_registration_request', {
+                        'phone': $scope.provider.config.phone,
+                        'cc': $scope.activation.cc,
+                        'code': $scope.activation.code
+                    }).then(function(result) {
+                        $scope.registration_request_id = result._id;
+                    });
                 };
-                console.log('whatsappregistration');
+                $scope.$on('whatsapp_registration_request', function(_e, data) {
+                    if (data.id !== $scope.registration_request_id) { console.log(data.id); return; }
+                    if (data.result.pw) {
+                        console.log('pw filled');
+                        $scope.provider.config.password = data.result.pw;
+                        notify.success(gettext('Password field was filled in.'));
+                    } else {
+                        console.log(data.result);
+                        notify.error(data.result);
+                    }
+                });
             }
         };
     }]);
