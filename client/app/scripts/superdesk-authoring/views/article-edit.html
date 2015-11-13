@@ -97,17 +97,19 @@
 
 <div class="field" ng-if="metadata.footers && item.type !== 'composite' && !item.package_type">
     <label translate>Public Service Announcements</label>
-    <select id="psaFooter" ng-model="item.psa_footer_value" ng-disabled="!_editable"
-            ng-options="f.name for f in metadata.footers" ng-change="addPSAFooter()">
+    <select id="psa_options" ng-model="item.body_footer_value" ng-disabled="!_editable"
+            ng-options="f.name for f in metadata.footers" ng-change="addPSAToFooter()">
         <option value=""></option>
     </select>
-    <div id="psa_footer" class="body" sd-text-editor
-        data-config="{disableToolbar: true}" data-language="item.language"
-        ng-model="item.psa_footer" ng-if="_editable" ng-trim="false"></div>
-    <div class="abstract" ng-if="!_editable">{{item.psa_footer}}</div>
 </div>
 
-
+<div class="field" ng-if="item.body_footer">
+    <label translate>Footer</label>
+    <div id="body_footer" class="body" sd-text-editor
+        data-config="{disableToolbar: true}" data-language="item.language"
+        ng-model="item.body_footer" ng-if="_editable" ng-trim="false"></div>
+    <div class="abstract" ng-if="!_editable">{{item.body_footer}}</div>
+</div>
 
 <div class="field" ng-if="isMediaType">
 

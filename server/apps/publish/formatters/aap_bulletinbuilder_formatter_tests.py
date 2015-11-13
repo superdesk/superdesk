@@ -113,7 +113,7 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
         self.assertEqual(test_article['headline'], 'This is a test headline')
         self.assertEqual(test_article['place'][0]['qcode'], 'VIC')
 
-    def test_psa_footer(self):
+    def test_body_footer(self):
         article = {
             'source': 'AAP',
             'anpa_category': [{'qcode': 's'}],
@@ -130,7 +130,7 @@ class AapBulletinBuilderFormatterTest(SuperdeskTestCase):
             'firstcreated': utcnow(),
             'versioncreated': utcnow(),
             'lock_user': ObjectId(),
-            'psa_footer': 'call helpline 999 if you are planning to quit smoking'
+            'body_footer': 'call helpline 999 if you are planning to quit smoking'
         }
 
         subscriber = self.app.data.find('subscribers', None, None)[0]

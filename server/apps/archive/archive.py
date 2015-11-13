@@ -10,10 +10,10 @@
 
 import flask
 from superdesk.resource import Resource
-from superdesk.metadata.utils import extra_response_fields, item_url, aggregations
+from superdesk.metadata.utils import extra_response_fields, item_url, aggregations, is_normal_package
 from .common import remove_unwanted, update_state, set_item_expiry, remove_media_files, \
     on_create_item, on_duplicate_item, get_user, update_version, set_sign_off, \
-    handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
+    handle_existing_data, item_schema, validate_schedule, is_item_in_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
     LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
 from superdesk.media.crop import CropService
@@ -146,7 +146,7 @@ class ArchiveService(BaseService):
         on_create_item(docs)
 
         for doc in docs:
-            if doc.get('psa_footer') and is_normal_package(doc):
+            if doc.get('body_footer') and is_normal_package(doc):
                 raise SuperdeskApiError.badRequestError("Package doesn't support Public Service Announcements")
 
             doc['version_creator'] = doc['original_creator']
@@ -550,7 +550,7 @@ class ArchiveService(BaseService):
         if original.get(ITEM_STATE) == CONTENT_STATE.KILLED:
             raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")
 
-        if updates.get('psa_footer') and is_normal_package(original):
+        if updates.get('body_footer') and is_normal_package(original):
             raise SuperdeskApiError.badRequestError("Package doesn't support Public Service Announcements")
 
         if 'unique_name' in updates and not is_admin(user) \

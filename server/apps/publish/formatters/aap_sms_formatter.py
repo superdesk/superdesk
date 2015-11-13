@@ -29,7 +29,7 @@ class AAPSMSFormatter(Formatter):
                          'Headline': article.get('headline', '').replace('\'', '\'\''),
                          'Priority': map_priority(article.get('priority'))}
 
-            body = self.append_public_service_announcements(article)
+            body = self.append_body_footer(article)
             if article.get(EMBARGO):
                 embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
                 body = embargo + body

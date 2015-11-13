@@ -827,7 +827,7 @@ Feature: Packages
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605",
             "type": "composite",
-            "psa_footer": "Suicide Call Back Service 1300 659 467"
+            "body_footer": "Suicide Call Back Service 1300 659 467"
         }
         """
         Then we get error 400
@@ -865,7 +865,7 @@ Feature: Packages
         """
         And we patch "/archive/#archive._id#"
         """
-        {"psa_footer": "Suicide Call Back Service 1300 659 467"}
+        {"body_footer": "Suicide Call Back Service 1300 659 467"}
         """
         Then we get error 400
         """

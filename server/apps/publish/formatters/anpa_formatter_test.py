@@ -41,7 +41,7 @@ class ANPAFormatterTest(SuperdeskTestCase):
         'word_count': '1',
         'priority': 1,
         'task': {'desk': 1},
-        'psa_footer': 'call helpline 999 if you are planning to quit smoking'
+        'body_footer': 'call helpline 999 if you are planning to quit smoking'
     }
 
     desks = [{'_id': 1, 'name': 'National'},

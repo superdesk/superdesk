@@ -98,7 +98,7 @@ class AAPAnpaFormatter(Formatter):
                 if 'dateline' in article and 'text' in article['dateline']:
                     anpa.append(article.get('dateline').get('text').encode('ascii', 'ignore'))
 
-                body = self.append_public_service_announcements(article)
+                body = self.append_body_footer(article)
                 if article.get(EMBARGO):
                     embargo = '{}{}'.format('Embargo Content. Timestamp: ', article.get(EMBARGO).isoformat())
                     body = embargo + body

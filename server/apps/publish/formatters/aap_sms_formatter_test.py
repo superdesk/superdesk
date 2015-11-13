@@ -27,7 +27,7 @@ class AapSMSFormatterTest(SuperdeskTestCase):
         'headline': 'This is a test headline',
         'type': 'preformatted',
         'body_html': 'The story body',
-        'psa_footer': 'call helpline 999 if you are planning to quit smoking'
+        'body_footer': 'call helpline 999 if you are planning to quit smoking'
     }
 
     def setUp(self):

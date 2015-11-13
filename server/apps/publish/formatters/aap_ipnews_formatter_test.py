@@ -245,10 +245,10 @@ class AapIpNewsFormatterTest(SuperdeskTestCase):
         self.assertEqual(doc['subject_reference'], '00000000')
         self.assertEqual(doc['headline'], 'This is a test headline')
 
-    def test_aap_ipnews_formatter_with_psa_footer(self):
+    def test_aap_ipnews_formatter_with_body_footer(self):
         subscriber = self.app.data.find('subscribers', None, None)[0]
         doc = self.article.copy()
-        doc['psa_footer'] = 'call helpline 999 if you are planning to quit smoking'
+        doc['body_footer'] = 'call helpline 999 if you are planning to quit smoking'
 
         f = AAPIpNewsFormatter()
         seq, item = f.format(doc, subscriber)[0]
