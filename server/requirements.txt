@@ -8,4 +8,13 @@ Eve==0.6.0
 
 -e git+git://github.com/superdesk/superdesk-core@a5ad19d#egg=Superdesk-Core==0.0.1-dev
 
--r ./apps/superdesk_whatsapp/requirements.txt
+#whatsapp ingest
+Pillow==3.0.0
+protobuf==3.0.0a1
+pycrypto==2.6.1
+python-axolotl==0.1.7
+python-axolotl-curve25519==0.1
+python-dateutil==2.4.2
+six==1.10.0
+wheel==0.24.0
+yowsup2==2.4.2
