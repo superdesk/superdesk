@@ -500,7 +500,6 @@
                     scope.$on('edit:search', function(event, args)  {
                         scope.sTab = true;
                         scope.editingSearch = args;
-                        console.log('Args:', args);
                     });
 
                     scope.changeTab = function() {

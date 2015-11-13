@@ -78,8 +78,7 @@ class SavedSearchesService(BaseService):
         """
         request_user = request.view_args['user']
         user = get_user(required=True)
-        if str(user['_id']) == request_user or \
-                        user['active_privileges'].get('global_saved_search', 0) == 0:
+        if str(user['_id']) == request_user or user['active_privileges'].get('global_saved_search', 0) == 0:
             super().on_update(updates, original)
         else:
             raise SuperdeskApiError.forbiddenError("Unauthorized to modify global search")

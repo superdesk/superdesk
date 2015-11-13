@@ -970,5 +970,64 @@
             "name": "saved search admin1",
             "user": "-id user admin1-"
         }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo" : "archive",
+                    "q": "headline:(item*)"
+                }
+            },
+            "name": "global saved search item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "repo": "ingest",
+                    "q": "headline:(ingest1)"
+                }
+            },
+            "name": "global saved search ingest1",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search ingest1 and item",
+            "user": "-id user admin-",
+            "is_global": true
+        }
+    },
+    {
+        "resource": "saved_searches",
+        "username": "admin",
+        "data": {
+            "filter": {
+                "query": {
+                    "q": "headline:(i*)"
+                }
+            },
+            "name": "global saved search other user",
+            "user": "-id user admin1-",
+            "is_global": true
+        }
     }
+
 ]
