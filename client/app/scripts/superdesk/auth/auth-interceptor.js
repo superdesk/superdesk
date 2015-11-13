@@ -4,8 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Expire session on 401 server response
      */
-    AuthExpiredInterceptor.$inject = ['session', '$q', '$injector', '$rootScope'];
-    function AuthExpiredInterceptor(session, $q, $injector, $rootScope) {
+    AuthExpiredInterceptor.$inject = ['session', '$q', '$injector', '$rootScope', 'config', 'lodash'];
+    function AuthExpiredInterceptor(session, $q, $injector, $rootScope, config, _) {
 
         function handleAuthExpired(response) {
             session.expire();
@@ -19,16 +19,14 @@ define(['lodash'], function(_) {
 
         return {
             response: function(response) {
-                if (response.status === 401) {
+                if (_.startsWith(response.config.url, config.server.url) && response.status === 401) {
                     return handleAuthExpired(response);
                 }
 
                 return response;
             },
             responseError: function(response) {
-
-                if (response.status === 401) {
-
+                if (_.startsWith(response.config.url, config.server.url) && response.status === 401) {
                     if (!(((response.data || {})._issues || {}).credentials)) {
                         return handleAuthExpired(response);
                     }
