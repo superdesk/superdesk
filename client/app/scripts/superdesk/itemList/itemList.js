@@ -113,24 +113,10 @@ angular.module('superdesk.itemList', ['superdesk.search'])
 
         // Process related items only search
         if (options.related === true) {
-            var queryRelatedItem = [];
-            var queryWords = [];
-            queryWords = options.keyword.split(' ');
-            var length = queryWords.length;
-            queryRelatedItem.push('slugline' + ':("' + options.keyword + '")');
-
-            for (var i = 0; i < length; i++) {
-                if (options.keyword) {
-                    queryRelatedItem.push('slugline' + ':(' + queryWords[i] + ')');
-                }
-            }
-
-            if (queryRelatedItem.length) {
+            if (options.keyword) {
                 query.source.query.filtered.query = {
-                    query_string: {
-                        query: queryRelatedItem.join(' '),
-                        lenient: false,
-                        default_operator: 'OR'
+                    match_phrase_prefix: {
+                        'slugline.phrase': options.keyword
                     }
                 };
             }
