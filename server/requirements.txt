@@ -10,7 +10,7 @@ Eve==0.6.0
 
 #whatsapp ingest
 Pillow==3.0.0
-protobuf==3.0.0a1
+protobuf==3.0.0a3
 pycrypto==2.6.1
 python-axolotl==0.1.7
 python-axolotl-curve25519==0.1
