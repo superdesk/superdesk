@@ -553,7 +553,7 @@ function EditorService(spellcheck, $rootScope, $timeout) {
 angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embed'])
 
     .service('editor', EditorService)
-    .directive('sdAddEmbed', ['$timeout', function($timeout) {
+    .directive('sdAddEmbed', function() {
         return {
             scope: true,
             require: ['sdAddEmbed', '^sdTextEditor'],
@@ -565,7 +565,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 angular.extend(vm, {
                     blockBefore: undefined,  // defined in link method
                     editorCtrl: undefined,  // defined in link method
-                    element: undefined,  // defined in link method
                     extended: false,
                     toggle: function(close) {
                         // use parameter or toggle
@@ -595,14 +594,18 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     },
                     updatePreview: function() {
                         vm.retrieveEmbed().then(function(embed) {
-                            vm.element.find('.preview').html(embed);
+                            angular.element($element).find('.preview').html(embed);
                         });
                     },
                     createBlock: function(embed) {
                         // create a new block containing the embed
                         return vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {
                             blockType: 'embed',
-                            body: embed
+                            body: [
+                                '<figure>',
+                                embed,
+                                '</figure>'
+                            ].join('\n')
                         });
                     },
                     createBlockFromEmbed: function() {
@@ -614,39 +617,41 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     },
                     createBlockFromPicture: function(picture) {
                         vm.createBlock([
-                            '<figure>',
-                            '    <img alt="' + picture.headline + '" src="' + picture.renditions.viewImage.href + '">',
-                            '    <figcaption>' + picture.description + '</figcaption>',
-                            '</figure>'
+                            '<img alt="' + picture.description + '" src="' + picture.renditions.viewImage.href + '">',
+                            '<figcaption>' + picture.headline + '</figcaption>'
                         ].join('\n'));
                     }
                 });
             }],
             link: function(scope, element, attrs, controllers) {
-                var ctrl = controllers[0];
-                angular.extend(ctrl, {
-                    element: element,
+                angular.extend(controllers[0], {
                     blockBefore: scope.block,
                     editorCtrl: controllers[1]
                 });
+            }
+        };
+    })
+    .directive('sdTextEditorDropZone', ['$timeout', function ($timeout) {
+        return {
+            scope: true,
+            require: '^sdAddEmbed',
+            link: function(scope, element, attrs, ctrl) {
                 var PICTURE_TYPE = 'application/superdesk.item.picture';
-                $timeout(function() {
-                    element.find('.add-embed__plus')
-                    .on('drop', function(event) {
+                element
+                .on('drop', function(event) {
+                    event.preventDefault();
+                    var item = angular.fromJson(event.originalEvent.dataTransfer.getData(PICTURE_TYPE));
+                    ctrl.createBlockFromPicture(item);
+                    element.removeClass('drag-active');
+                })
+                .on('dragover', function(event) {
+                    if (event.originalEvent.dataTransfer.types[0] === PICTURE_TYPE) {
                         event.preventDefault();
-                        var item = angular.fromJson(event.originalEvent.dataTransfer.getData(PICTURE_TYPE));
-                        ctrl.createBlockFromPicture(item);
-                        element.find('.add-embed__plus').removeClass('drag-active');
-                    })
-                    .on('dragover', function(event) {
-                        if (event.originalEvent.dataTransfer.types[0] === PICTURE_TYPE) {
-                            event.preventDefault();
-                            element.find('.add-embed__plus').addClass('drag-active');
-                        }
-                    })
-                    .on('dragleave', function(event) {
-                            element.find('.add-embed__plus').removeClass('drag-active');
-                    });
+                        element.addClass('drag-active');
+                    }
+                })
+                .on('dragleave', function(event) {
+                    element.removeClass('drag-active');
                 });
             }
         };
@@ -673,10 +678,16 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         vm.blocks = [new Block({body: model.$modelValue})];
                     },
                     initEditorWithMultipleBlock: function(model) {
+                        var blocks = [], block;
+                        function commitBlock() {
+                            if (block !== undefined && block.body.trim() !== '') {
+                                blocks.push(block);
+                                block = undefined;
+                            }
+                        }
                         // save the model to update it later
                         vm.model = model;
                         // parse the given model and create blocks per paragraph
-                        var blocks = [], block;
                         $('<div>' + model.$modelValue || '' + '</div>')
                         .contents()
                         .toArray()
@@ -684,23 +695,18 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             // if we get a <p>, we push the current block and create a new one
                             // for the paragraph content
                             if (element.nodeName === 'P') {
-                                if (block !== undefined && block.body.trim() !== '') {
-                                    blocks.push(block);
-                                    block = undefined;
-                                }
+                                commitBlock();
                                 if (angular.isDefined(element.innerHTML) && element.textContent !== '' && element.textContent !== '\n') {
                                     blocks.push(new Block({body: element.innerHTML}));
                                 }
                             // detect if it's an embed
                             } else if (element.nodeName === '#comment') {
                                 if (element.nodeValue.indexOf('EMBED START') > -1) {
+                                    commitBlock();
                                     block = new Block({blockType: 'embed'});
                                 }
                                 if (element.nodeValue.indexOf('EMBED END') > -1) {
-                                    if (block !== undefined && block.body.trim() !== '') {
-                                        blocks.push(block);
-                                        block = undefined;
-                                    }
+                                    commitBlock();
                                 }
                             // if it's not a paragraph or an embed, we update the current block
                             } else {
