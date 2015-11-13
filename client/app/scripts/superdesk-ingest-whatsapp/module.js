@@ -52,11 +52,15 @@ define([
                 $scope.$on('whatsapp_code_request', function(_e, data) {
                     if (data.id !== $scope.code_request_id) { return; }
                     if (data.result.status === 'sent') {
-                        notify.success(gettext('Activation code was sent to your phone.'));
                         $scope.code_request_sent = true;
+                        $scope.$apply(function() {
+                            notify.success(gettext('Activation code was sent to your phone.'));
+                        });
                     } else {
                         console.log(data.result);
-                        notify.error(data.result);
+                        $scope.$apply(function() {
+                            notify.error(data.result);
+                        });
                     }
                     $scope.code_request_id = null;
                 });
@@ -83,10 +87,14 @@ define([
                     if (data.result.pw) {
                         $scope.provider.config.password = data.result.pw;
                         $scope.registration_request_sent = true;
-                        notify.success(gettext('Password field was filled in.'));
+                        $scope.$apply(function() {
+                            notify.success(gettext('Password field was filled in.'));
+                        });
                     } else {
                         console.log(data.result);
-                        notify.error(data.result);
+                        $scope.$apply(function() {
+                            notify.error(data.result);
+                        });
                     }
                     $scope.registration_request_id = null;
                 });
