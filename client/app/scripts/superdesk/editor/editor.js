@@ -584,39 +584,53 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         var embedCode;
                         if (_.startsWith(vm.input, 'http')) {
                             embedCode = embedService.get(vm.input).then(function(data) {
-                                return data.html;
+                                return {
+                                    body: data.html,
+                                    provider: data.provider_name
+                                };
                             });
                         // otherwise we use the content of the field directly
                         } else {
-                            embedCode = $q.when(vm.input);
+                            var embedType = 'Custom';
+                            // try to guess the provider of the custom embed
+                            if (vm.input.indexOf('twitter.com/widgets.js')) {
+                                embedType = 'Twitter';
+                            } else if (vm.input.indexOf('https://www.youtube.com')){
+                                embedType = 'YouTube';
+                            }
+                            embedCode = $q.when({
+                                body: vm.input,
+                                provider: embedType
+                            });
                         }
                         return embedCode;
                     },
                     updatePreview: function() {
                         vm.retrieveEmbed().then(function(embed) {
-                            angular.element($element).find('.preview').html(embed);
+                            angular.element($element).find('.preview').html(embed.body);
                         });
                     },
-                    createBlock: function(embed) {
+                    createFigureBlock: function(embedType, embedBody) {
                         // create a new block containing the embed
                         return vm.editorCtrl.insertNewBlockAfter(vm.blockBefore, {
                             blockType: 'embed',
+                            embedType: embedType,
                             body: [
                                 '<figure>',
-                                embed,
+                                embedBody,
                                 '</figure>'
                             ].join('\n')
                         });
                     },
                     createBlockFromEmbed: function() {
                         vm.retrieveEmbed().then(function(embed) {
-                            vm.createBlock(embed);
+                            vm.createFigureBlock(embed.provider, embed.body);
                             // close the addEmbed form
                             vm.toggle(true);
                         });
                     },
                     createBlockFromPicture: function(picture) {
-                        vm.createBlock([
+                        vm.createFigureBlock('Image', [
                             '<img alt="' + picture.description + '" src="' + picture.renditions.viewImage.href + '">',
                             '<figcaption>' + picture.headline + '</figcaption>'
                         ].join('\n'));
@@ -668,6 +682,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     angular.extend(this, {
                         body: attrs && attrs.body || '',
                         blockType: attrs && attrs.blockType || 'text',
+                        embedType: attrs && attrs.embedType || undefined,
                         focus: false
                     });
                 }
@@ -703,7 +718,10 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                             } else if (element.nodeName === '#comment') {
                                 if (element.nodeValue.indexOf('EMBED START') > -1) {
                                     commitBlock();
-                                    block = new Block({blockType: 'embed'});
+                                    // retrieve the embed type following the comment
+                                    var embed_type = angular.copy(element.nodeValue).replace(' EMBED START ', '');
+                                    // create the embed block
+                                    block = new Block({blockType: 'embed', embedType: embed_type});
                                 }
                                 if (element.nodeValue.indexOf('EMBED END') > -1) {
                                     commitBlock();
@@ -736,9 +754,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                                 if (angular.isDefined(block.body) && block.body.trim() !== '') {
                                     if (block.blockType === 'embed') {
                                         new_body += [
-                                            '<!-- EMBED START -->',
+                                            '<!-- EMBED START '+ block.embedType.trim() +' -->',
                                             block.body,
-                                            '<!-- EMBED END -->\n'].join('\n');
+                                            '<!-- EMBED END '+ block.embedType.trim() +' -->\n'].join('\n');
                                     } else {
                                         // wrap all the other blocks around <p></p>
                                         new_body += '<p>' + block.body + '</p>\n';
