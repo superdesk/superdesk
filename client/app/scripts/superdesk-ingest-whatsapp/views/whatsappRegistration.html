@@ -6,12 +6,14 @@
     <input type="text" class="input-mini" id="whatsapp_mcc" placeholder="MCC" ng-model="activation.mcc">
     <span>MNC</span>
     <input type="text" class="input-mini" id="whatsapp_mnc" placeholder="MNC" ng-model="activation.mnc">
-    <button type="button" class="btn" translate ng-click="sendActivation()">Send to phone</button>
+    <button type="button" class="btn" translate ng-click="sendActivation()" ng-disabled="code_request_id">Send to phone</button>
+    <span ng-if="code_request_sent">Sent</span>
 </div>
 
 <div class="field">
     <label translate>Get password</label>
     <span>Activation code</span>
     <input type="text" class="input-mini" id="whatsapp_code" placeholder="Code" ng-model="activation.code">
-    <button type="button" class="btn" translate ng-click="getPassword()">Get password</button>
+    <button type="button" class="btn" translate ng-click="getPassword()" ng-disabled="registration_request_id">Get password</button>
+    <span ng-if="registration_request_sent">Done</span>
 </div>

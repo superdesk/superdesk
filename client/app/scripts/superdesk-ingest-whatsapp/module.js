@@ -27,6 +27,8 @@ define([
             templateUrl: modulePath + '/views/whatsappRegistration.html',
             link: function($scope) {
                 $scope.activation = {};
+                $scope.code_request_sent = false;
+                $scope.registration_request_sent = false;
 
                 $scope.sendActivation = function() {
                     if (
@@ -48,14 +50,15 @@ define([
                     });
                 };
                 $scope.$on('whatsapp_code_request', function(_e, data) {
-                    if (data.id !== $scope.code_request_id) { console.log(data.id); return; }
+                    if (data.id !== $scope.code_request_id) { return; }
                     if (data.result.status === 'sent') {
-                        console.log('sent');
                         notify.success(gettext('Activation code was sent to your phone.'));
+                        $scope.code_request_sent = true;
                     } else {
                         console.log(data.result);
                         notify.error(data.result);
                     }
+                    $scope.code_request_id = null;
                 });
 
                 $scope.getPassword = function() {
@@ -76,15 +79,16 @@ define([
                     });
                 };
                 $scope.$on('whatsapp_registration_request', function(_e, data) {
-                    if (data.id !== $scope.registration_request_id) { console.log(data.id); return; }
+                    if (data.id !== $scope.registration_request_id) { return; }
                     if (data.result.pw) {
-                        console.log('pw filled');
                         $scope.provider.config.password = data.result.pw;
+                        $scope.registration_request_sent = true;
                         notify.success(gettext('Password field was filled in.'));
                     } else {
                         console.log(data.result);
                         notify.error(data.result);
                     }
+                    $scope.registration_request_id = null;
                 });
             }
         };
