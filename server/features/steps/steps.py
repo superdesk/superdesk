@@ -196,12 +196,16 @@ def apply_placeholders(context, text):
             value = value.strftime("%Y-%m-%dT%H:%M:%S%z")
         elif placeholder not in placeholders:
             try:
-                resource_name, field_name = placeholder.lower().split('.', maxsplit=1)
+                resource_name, field_name = placeholder.split('.', maxsplit=1)
             except:
                 continue
             resource = getattr(context, resource_name, None)
-            if resource and field_name in resource:
-                value = str(resource[field_name])
+            for name in field_name.split('.'):
+                if not resource:
+                    break
+                resource = resource.get(name, None)
+            if resource:
+                value = str(resource)
             else:
                 continue
         else:

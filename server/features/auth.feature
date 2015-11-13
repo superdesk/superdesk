@@ -180,7 +180,7 @@ Feature: Authentication
         When we get "/users"
         Then we get list with 2 items
             """
-            {"_items": [{"username": "foo", "_etag": "#USERS._etag#"}, {"username": "test_user"}]}
+            {"_items": [{"username": "foo", "_etag": "#users._etag#"}, {"username": "test_user"}]}
             """
 
      @auth
@@ -210,7 +210,7 @@ Feature: Authentication
         When we get "/users"
         Then we get list with 2 items
             """
-            {"_items": [{"username": "foo", "_etag": "#USERS._etag#"}, {"username": "test_user"}]}
+            {"_items": [{"username": "foo", "_etag": "#users._etag#"}, {"username": "test_user"}]}
             """
 
     Scenario: user logs in locks content and logs out logs in again and the content is no longer locked
