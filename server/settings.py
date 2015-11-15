@@ -190,6 +190,7 @@ INSTALLED_APPS.extend([
     'apps.prepopulate',
     'apps.legal_archive',
     'apps.search',
+    'apps.saved_searches',
     'apps.privilege',
     'apps.rules',
     'apps.highlights',

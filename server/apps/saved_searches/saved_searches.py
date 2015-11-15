@@ -15,7 +15,7 @@ import logging
 from flask import request
 from eve.utils import ParsedRequest
 from eve_elastic.elastic import build_elastic_query
-from .common import get_user
+from apps.archive.common import get_user
 from superdesk import Resource, get_resource_service
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError

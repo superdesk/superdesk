@@ -7,12 +7,14 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-from apps.archive.saved_searches import AllSavedSearchesResource
 
 
 """Media archive module"""
 
 import logging
+
+import superdesk
+from superdesk.celery_app import celery
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveSaveService
@@ -23,20 +25,14 @@ from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCo
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
 from .archive_spike import ArchiveUnspikeResource, ArchiveSpikeService, ArchiveSpikeResource, ArchiveUnspikeService
-import superdesk
 from apps.common.components.utils import register_component
 from apps.item_lock.components.item_lock import ItemLock
 from apps.item_lock.components.item_hold import ItemHold
 from apps.common.models.utils import register_model
 from apps.item_lock.models.item import ItemModel
 from apps.common.models.io.eve_proxy import EveProxy
-from superdesk.celery_app import celery
-from .saved_searches import SavedSearchesService, SavedSearchesResource, \
-    SavedSearchItemsResource, SavedSearchItemsService
 from .archive_link import ArchiveLinkResource, ArchiveLinkService
 from .archive_rewrite import ArchiveRewriteResource, ArchiveRewriteService
-from superdesk.services import BaseService
-
 
 logger = logging.getLogger(__name__)
 
@@ -91,18 +87,6 @@ def init_app(app):
     service = ArchiveRewriteService(endpoint_name, backend=superdesk.get_backend())
     ArchiveRewriteResource(endpoint_name, app=app, service=service)
 
-    endpoint_name = 'saved_searches'
-    service = SavedSearchesService(endpoint_name, backend=superdesk.get_backend())
-    SavedSearchesResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'all_saved_searches'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
-    AllSavedSearchesResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'saved_search_items'
-    service = SavedSearchItemsService(endpoint_name, backend=superdesk.get_backend())
-    SavedSearchItemsResource(endpoint_name, app=app, service=service)
-
     endpoint_name = 'archive_autosave'
     service = ArchiveSaveService(endpoint_name, backend=superdesk.get_backend())
     AutoSaveResource(endpoint_name, app=app, service=service)
@@ -121,13 +105,6 @@ def init_app(app):
     superdesk.privilege(name='unspike', label='Un Spike', description='User can un-spike content.')
     superdesk.privilege(name='unlock', label='Unlock content', description='User can unlock content.')
     superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
-    superdesk.privilege(name='global_saved_searches',
-                        label='Manage Global Saved Searches',
-                        description='User can manage other users\' global saved searches')
-    superdesk.privilege(name='saved_searches',
-                        label='Manage Saved Searches',
-                        description='User can manage saved searches')
-
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
     superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
     superdesk.privilege(name='rewrite', label='Rewrite', description='Rewrite a published content')

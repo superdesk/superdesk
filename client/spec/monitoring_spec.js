@@ -190,7 +190,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
         expect(monitoring.getGlobalSearchText(0)).toBe('global saved search item by first name last name');
-        expect(monitoring.getPrivateSearchText(0)).toBe('saved search ingest1');
+        expect(monitoring.getPrivateSearchText(0)).toBe('saved search item');
     });
 
     it('configure monitoring view for more than 1 desk', function() {

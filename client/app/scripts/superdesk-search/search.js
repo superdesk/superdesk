@@ -567,12 +567,6 @@
                                 });
                             }
 
-                            if (angular.isDefined(scope.items._aggregations.priority)) {
-                                _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                    scope.aggregations.source[source.key] = source.doc_count;
-                                });
-                            }
-
                             if (angular.isDefined(scope.items._aggregations.source)) {
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                     scope.aggregations.source[source.key] = source.doc_count;
