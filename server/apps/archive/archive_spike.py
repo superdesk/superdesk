@@ -135,8 +135,7 @@ class ArchiveSpikeService(BaseService):
         return item
 
     def on_updated(self, updates, original):
-        if hasattr(app, 'on_broadcast_spike_item'):
-            app.on_broadcast_spike_item(original)
+        get_resource_service('archive_broadcast').spike_item(original)
 
 
 class ArchiveUnspikeService(BaseService):

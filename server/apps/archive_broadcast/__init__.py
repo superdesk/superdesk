@@ -20,15 +20,6 @@ def init_app(app):
     endpoint_name = ARCHIVE_BROADCAST_NAME
     service = ArchiveBroadcastService(endpoint_name, backend=superdesk.get_backend())
     ArchiveBroadcastResource(endpoint_name, app=app, service=service)
-    # using events as all broadcast activity is based on the user actions
-    # and will be handle by Eve. If anything is needs to be processed by backend jobs
-    # then this needs to be re-visited.
-    app.on_broadcast_master_updated -= service.on_broadcast_master_updated
-    app.on_broadcast_master_updated += service.on_broadcast_master_updated
-    app.on_broadcast_content_updated -= service.reset_broadcast_status
-    app.on_broadcast_content_updated += service.reset_broadcast_status
-    app.on_broadcast_spike_item -= service.spike_item
-    app.on_broadcast_spike_item += service.spike_item
 
     superdesk.privilege(name=ARCHIVE_BROADCAST_NAME, label='Broadcast',
                         description='Allows user to create broadcast content.')

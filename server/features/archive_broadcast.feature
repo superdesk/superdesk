@@ -853,7 +853,7 @@ Feature: Archive Broadcast
     }
     """
 
-  @auth @vocabulary @test
+  @auth @vocabulary
   Scenario: Change the broadcast content status based on the actions performed in the published master story
     Given "desks"
       """
@@ -1329,3 +1329,750 @@ Feature: Archive Broadcast
     {"_message": "Cannot add new take to the story with genre as broadcast."}
     """
 
+  @auth @vocabulary
+  Scenario: If Master Story is kill then kill published broadcast content and spike unpublished broadcast content.
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "schema": {},
+            "type": "text",
+            "act": "kill",
+            "_id": "kill_text"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_ONE" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we patch "archive/#BROADCAST_ONE#"
+    """
+    {"body_html": "TEST", "headline": "TEST"}
+    """
+    Then we get OK response
+    When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_TWO#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    Then we get OK response
+    When we publish "123" with "kill" type and "killed" state
+    Then we get OK response
+    And we get "/archive/123" and match
+    """
+    {
+      "state": "killed",
+      "_id": "123"
+    }
+    """
+    And we get "/archive/#BROADCAST_ONE#" and match
+    """
+    {
+      "state": "killed"
+    }
+    """
+    And we get "/archive/#BROADCAST_TWO#" and match
+    """
+    {
+      "state": "spiked"
+    }
+    """
+
+  @auth @vocabulary
+  Scenario: Master Story is killed and broadcast content in packaged in a unpublished package.
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {
+            "schema": {},
+            "type": "text",
+            "act": "publish",
+            "_id": "publish_text"
+        },
+        {
+            "schema": {},
+            "type": "text",
+            "act": "kill",
+            "_id": "kill_text"
+        },
+        {
+            "schema": {},
+            "type": "composite",
+            "act": "publish",
+            "_id": "publish_composite"
+        },
+        {
+            "schema": {},
+            "type": "composite",
+            "act": "kill",
+            "_id": "kill_composite"
+        }
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_ONE" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we patch "archive/#BROADCAST_ONE#"
+    """
+    {"body_html": "TEST", "headline": "TEST"}
+    """
+    Then we get OK response
+    When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_TWO#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    Then we get OK response
+    When we post to "archive" with "PACKAGE" and success
+    """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "#BROADCAST_ONE#",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "#BROADCAST_ONE#"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+    """
+    Then we get OK response
+    When we publish "123" with "kill" type and "killed" state
+    Then we get OK response
+    And we get "/archive/123" and match
+    """
+    {
+      "state": "killed",
+      "_id": "123"
+    }
+    """
+    And we get "/archive/#BROADCAST_ONE#" and match
+    """
+    {
+      "state": "killed"
+    }
+    """
+    And we get "/archive/#BROADCAST_TWO#" and match
+    """
+    {
+      "state": "spiked"
+    }
+    """
+    And we get "/archive/#PACKAGE#" and match
+    """
+    {
+      "state": "in_progress",
+      "groups": [
+        {
+            "id": "root",
+            "refs": [
+                {
+                    "idRef": "main"
+                }
+            ],
+            "role": "grpRole:NEP"
+        },
+        {
+            "id": "main",
+            "refs": [],
+            "role": "grpRole:main"
+        }
+      ]
+    }
+    """
+
+  @auth @vocabulary
+  Scenario: Master Story is killed and broadcast content in packaged in a published package.
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {"schema": {}, "type": "text", "act": "publish", "_id": "publish_text"},
+        {"schema": {}, "type": "text", "act": "kill", "_id": "kill_text"},
+        {"schema": {}, "type": "text", "act": "correct", "_id": "correct_text"},
+        {"schema": {}, "type": "composite", "act": "publish", "_id": "publish_composite"},
+        {"schema": {}, "type": "composite", "act": "kill", "_id": "kill_composite"},
+        {"schema": {}, "type": "composite", "act": "correct", "_id": "correct_composite"}
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "#archive._id#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_ONE" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we patch "archive/#BROADCAST_ONE#"
+    """
+    {"body_html": "TEST", "headline": "TEST"}
+    """
+    Then we get OK response
+    When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_TWO#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    Then we get OK response
+    When we post to "archive" with "PACKAGE" and success
+    """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "Boat",
+                          "guid": "#BROADCAST_ONE#",
+                          "headline": "item-1 headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "#BROADCAST_ONE#"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "state" : "submitted",
+              "type" : "composite"
+          }]
+    """
+    Then we get OK response
+    When we publish "#PACKAGE#" with "publish" type and "published" state
+    Then we get OK response
+    When we publish "123" with "kill" type and "killed" state
+    Then we get OK response
+    And we get "/archive/123" and match
+    """
+    {
+      "state": "killed",
+      "_id": "123"
+    }
+    """
+    And we get "/archive/#BROADCAST_ONE#" and match
+    """
+    {
+      "state": "killed"
+    }
+    """
+    And we get "/archive/#BROADCAST_TWO#" and match
+    """
+    {
+      "state": "spiked"
+    }
+    """
+    And we get "/archive/#PACKAGE#" and match
+    """
+    {
+      "state": "killed",
+      "groups": [
+        {
+            "id": "root",
+            "refs": [
+                {
+                    "idRef": "main"
+                }
+            ],
+            "role": "grpRole:NEP"
+        },
+        {
+            "id": "main",
+            "refs": [],
+            "role": "grpRole:main"
+        }
+      ]
+    }
+    """
+
+  @auth @vocabulary
+  Scenario: Master Story is killed and broadcast content in packaged in a published package with extra content.
+    Given "desks"
+      """
+      [{"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}]
+      """
+    And the "validators"
+      """
+      [
+        {"schema": {}, "type": "text", "act": "publish", "_id": "publish_text"},
+        {"schema": {}, "type": "text", "act": "kill", "_id": "kill_text"},
+        {"schema": {}, "type": "text", "act": "correct", "_id": "correct_text"},
+        {"schema": {}, "type": "composite", "act": "publish", "_id": "publish_composite"},
+        {"schema": {}, "type": "composite", "act": "kill", "_id": "kill_composite"},
+        {"schema": {}, "type": "composite", "act": "correct", "_id": "correct_composite"}
+      ]
+      """
+    When we post to "archive"
+      """
+      [{
+          "guid": "123",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      },
+      {
+          "guid": "456",
+          "type": "text",
+          "headline": "headline",
+          "slugline": "comics",
+          "anpa_take_key": "take key",
+          "anpa_category": [
+                {"name": "Australian General News", "qcode": "a"}
+          ],
+          "state": "in_progress",
+          "subject":[{"qcode": "17004000", "name": "Statistics"}],
+          "task": {
+              "user": "#CONTEXT_USER_ID#",
+              "desk": "#desks._id#",
+              "stage": "#desks.working_stage#"
+          },
+          "genre": [{"name": "Article", "value": "Article"}],
+          "urgency": 1,
+          "priority": 3,
+          "family_id": "xyz",
+          "place": [{"qcode": "VIC", "name": "VIC"}],
+          "body_html": "Take-1",
+          "dateline": {
+            "source": "AAP",
+            "text": "Los Angeles, Aug 11 AAP -"
+          }
+      }]
+      """
+    Then we get OK response
+    When we post to "/subscribers" with success
+      """
+      {
+        "name":"Channel 3","media_type":"media", "subscriber_type": "digital", "sequence_num_settings":{"min" : 1, "max" : 10}, "email": "test@test.com",
+        "destinations":[{"name":"Test","format": "nitf", "delivery_type":"email","config":{"recipients":"test@test.com"}}]
+      }
+      """
+    And we publish "123" with "publish" type and "published" state
+    Then we get OK response
+    When we publish "456" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_ONE" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_ONE#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    When we patch "archive/#BROADCAST_ONE#"
+    """
+    {"body_html": "TEST", "headline": "TEST"}
+    """
+    Then we get OK response
+    When we publish "#BROADCAST_ONE#" with "publish" type and "published" state
+    Then we get OK response
+    When we post to "archive/123/broadcast" with "BROADCAST_TWO" and success
+    """
+    [{"desk": "#desks._id#"}]
+    """
+    Then we get updated response
+    """
+    {
+      "state": "draft",
+      "_id": "#BROADCAST_TWO#",
+      "_current_version": 1,
+      "broadcast": {
+        "status": "",
+        "master_id": "123"
+      }
+    }
+    """
+    Then we get OK response
+    When we post to "archive" with "PACKAGE" and success
+    """
+          [{
+              "groups": [
+              {
+                  "id": "root",
+                  "refs": [
+                      {
+                          "idRef": "main"
+                      }
+                  ],
+                  "role": "grpRole:NEP"
+              },
+              {
+                  "id": "main",
+                  "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "comics",
+                          "guid": "#BROADCAST_ONE#",
+                          "headline": "headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "#BROADCAST_ONE#"
+                      },
+                      {
+                          "renditions": {},
+                          "slugline": "comics",
+                          "guid": "456",
+                          "headline": "headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+                  ],
+                  "role": "grpRole:main"
+              }
+          ],
+              "task": {
+                  "user": "#CONTEXT_USER_ID#",
+                  "status": "todo",
+                  "stage": "#desks.incoming_stage#",
+                  "desk": "#desks._id#"
+              },
+              "guid" : "compositeitem",
+              "state" : "submitted",
+              "type" : "composite",
+              "headline": "package headline",
+              "abstract": "package abstract"
+          }]
+    """
+    Then we get OK response
+    When we publish "#PACKAGE#" with "publish" type and "published" state
+    Then we get OK response
+    When we publish "123" with "kill" type and "killed" state
+    Then we get OK response
+    And we get "/archive/123" and match
+    """
+    {
+      "state": "killed",
+      "_id": "123"
+    }
+    """
+    And we get "/archive/#BROADCAST_ONE#" and match
+    """
+    {
+      "state": "killed"
+    }
+    """
+    And we get "/archive/#BROADCAST_TWO#" and match
+    """
+    {
+      "state": "spiked"
+    }
+    """
+    And we get "/archive/#PACKAGE#" and match
+    """
+    {
+      "state": "corrected",
+      "groups": [
+        {
+            "id": "root",
+            "refs": [
+                {
+                    "idRef": "main"
+                }
+            ],
+            "role": "grpRole:NEP"
+        },
+        {
+            "id": "main",
+            "refs": [
+                      {
+                          "renditions": {},
+                          "slugline": "comics",
+                          "guid": "456",
+                          "headline": "headline",
+                          "location": "archive",
+                          "type": "text",
+                          "itemClass": "icls:text",
+                          "residRef": "456"
+                      }
+            ],
+            "role": "grpRole:main"
+        }
+      ]
+    }
+    """
