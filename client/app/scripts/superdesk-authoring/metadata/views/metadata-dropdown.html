@@ -8,9 +8,7 @@
         <b class="caret"></b>
     </button>
     <button class="dropdown-toggle line-input" dropdown-toggle ng-if="icon">
-        <i class="{{icon}}-{{item[field]}}">
-            <span ng-if="field === 'urgency'">{{item[field] ? item[field] : 0}}</span>
-        </i>
+        <span class="{{icon}}-{{item[field]}}">{{item[field] ? item[field] : 0}}</span>
          <b class="caret"></b>
     </button>
     <ul class="dropdown-menu">
@@ -19,9 +17,7 @@
 
         <li ng-repeat="item in list" ng-click="select(item)" ng-if="field !== 'place'">
             <button ng-disabled="disabled">
-                <i ng-if="icon" class="{{icon}}-{{item.name}}">
-                    <span ng-if="field === 'urgency'">{{item.name}}</span>
-                </i> 
+                <span ng-if="icon" class="{{icon}}-{{item.name}}">{{item.name}}</span> 
                 {{::item.name}}
             </button>
         </li>
