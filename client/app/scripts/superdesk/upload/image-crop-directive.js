@@ -12,11 +12,11 @@ define([
      * <div sd-image-crop
      *  data-src="data.renditions.viewImage.href"
      *  data-show-Min-Size-Error="true"
-     *  data-crop-init="preview.cords"
+     *  data-crop-init="{}"
      *  data-box-width="800"
      *  data-box-height="600"
-     *  data-min-size="[800, 600]"
-     *  data-crop-select="[0, 0, 800, 600]">
+     *  data-rendition="{width: 800, height: 600}"
+     *  data-crop-data="{CropLeft: 0, CropTop: 0, CropRight: 800, CropBottom: 600}">
      * </div>
      *
      * @data-cords attribute used to provide updated crop coordinates in preview.cords

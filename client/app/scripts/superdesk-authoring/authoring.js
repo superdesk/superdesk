@@ -1957,7 +1957,6 @@
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
-                var DEFAULT_ASPECT_RATIO = 4 / 3;
                 scope.limits = authoring.limits;
                 scope.toggleDetails = true;
                 scope.errorMessage = null;
@@ -2064,7 +2063,7 @@
                 scope.applyCrop = function() {
                     superdesk.intent('edit', 'crop', {item: scope.item, renditions: scope.metadata.crop_sizes})
                         .then(function(data) {
-                            var renditions = angular.extend({}, scope.item.renditions || {});
+                            var renditions = _.create(scope.item.renditions || {});
                             angular.forEach(data, function(crop, rendition) {
                                 mainEditScope.dirty = true;
                                 renditions[rendition] = angular.extend({}, renditions[rendition] || {}, crop);
@@ -2499,10 +2498,14 @@
                 renditions.get().then(function() {
                     scope.edit = function() {
                         superdesk.intent('edit', 'crop', {item: scope.related, renditions: renditions.renditions})
-                            .then(function(data) {
+                            .then(function(crops) {
                                 var renditions = angular.extend({}, scope.related.renditions || {});
-                                angular.forEach(data, function(crop, renditionName) {
-                                    renditions[renditionName] = angular.extend({}, renditions[renditionName] || {}, crop);
+                                angular.forEach(crops, function(crop, renditionName) {
+                                    renditions[renditionName] = angular.extend(
+                                        {},
+                                        renditions[renditionName] || {},
+                                        crop
+                                    );
                                 });
 
                                 var updated = angular.extend({}, scope.related, {renditions: renditions});
