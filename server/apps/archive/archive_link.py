@@ -63,7 +63,7 @@ class ArchiveLinkService(Service):
             if not desk:
                 raise SuperdeskApiError.forbiddenError("No privileges to create new take on requested desk.")
 
-            link['task']['stage'] = desk['incoming_stage']
+            link['task']['stage'] = desk['working_stage']
 
         if link_id:
             link = service.find_one(req=None, _id=link_id)
