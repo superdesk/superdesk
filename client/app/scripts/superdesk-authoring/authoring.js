@@ -477,13 +477,17 @@
             var lockedByMe = !lock.isLocked(current_item);
             action.view = !lockedByMe;
 
+            var isBroadcast = (current_item.genre && current_item.genre.length > 0 &&
+                               (current_item.type === 'text' || current_item.type === 'preformatted') &&
+                               current_item.genre.some(function(genre) {
+                                   return genre.name === 'Broadcast Script';
+                               }));
+
             // new take should be on the text item that are closed or last take but not killed and doesn't have embargo.
             action.new_take = !is_read_only_state && (current_item.type === 'text' || current_item.type === 'preformatted') &&
                 !current_item.embargo && !current_item.publish_schedule &&
                 (angular.isUndefined(current_item.takes) || current_item.takes.last_take === current_item._id) &&
-                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) &&
-                (!current_item.genre || current_item.genre.length === 0 ||
-                current_item.genre[0].name !== 'Broadcast Script');
+                (angular.isUndefined(current_item.more_coming) || !current_item.more_coming) && !isBroadcast;
 
             // item is published state - corrected, published, scheduled, killed
             if (self.isPublished(current_item)) {
@@ -544,8 +548,7 @@
 
             action.create_broadcast = (!_.contains(['spiked', 'scheduled', 'killed'], current_item.state)) &&
                 (_.contains(['published', 'corrected'], current_item.state)) &&
-                current_item.type === 'text' &&
-                (!current_item.genre || current_item.genre[0].name !== 'Broadcast Script');
+                (current_item.type === 'text' || current_item.type === 'preformatted') && !isBroadcast;
 
             action.multi_edit = !is_read_only_state;
 
