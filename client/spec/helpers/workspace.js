@@ -67,6 +67,19 @@ function Workspace() {
         });
     };
 
+    this.createWorkspace = function(name) {
+        var dropdownBtn = element(by.id('selected-desk'));
+        dropdownBtn.click();
+
+        var newWorkspaceBtn = element(by.className('action-btn'));
+        newWorkspaceBtn.click();
+
+        var workspaceName = element(by.model('workspace.name'));
+        workspaceName.sendKeys(name);
+
+        element(by.className('btn-primary')).click();
+    };
+
     /**
      * Show name list from right menu
      *

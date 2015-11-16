@@ -61,7 +61,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -76,7 +76,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 4);
         monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -92,7 +92,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 4);
         monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -113,8 +113,8 @@ describe('monitoring view', function() {
         monitoring.toggleStage(0, 4);
         monitoring.toggleDeskOutput(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
-        monitoring.toggleSearch(2);
+        monitoring.toggleGlobalSearch(0);
+        monitoring.toggleGlobalSearch(1);
         monitoring.nextSearches();
         monitoring.moveOrderItem(0, 1);
         monitoring.nextReorder();
@@ -125,7 +125,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
         monitoring.nextSearches();
-        expect(monitoring.getOrderItemText(0)).toBe('saved search item');
+        expect(monitoring.getOrderItemText(0)).toBe('global saved search item');
         expect(monitoring.getOrderItemText(1)).toBe('Politic Desk : two');
     });
 
@@ -137,7 +137,7 @@ describe('monitoring view', function() {
         monitoring.toggleDeskOutput(0);
         monitoring.togglePersonal();
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.moveOrderItem(0, 1);
         monitoring.nextReorder();
@@ -154,7 +154,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(0);
+        monitoring.toggleGlobalSearch(1);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -165,7 +165,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(2);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -174,23 +174,23 @@ describe('monitoring view', function() {
     });
 
     it('configure a saved search from other user', function() {
+        workspace.createWorkspace('My Workspace');
+        browser.sleep(500);
         monitoring.showMonitoringSettings();
-        monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleAllSearches();
-        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
-        monitoring.toggleSearch(0);
+        monitoring.switchGlobalSearchOn();
+        monitoring.toggleGlobalSearch(3);
+        expect(monitoring.getGlobalSearchText(3)).toBe('global saved search other user by first name1 last name1');
+        monitoring.togglePrivateSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
-        expect(monitoring.getTextItem(0, 0)).toBe('ingest1');
-        expect(monitoring.getTextItem(0, 1)).toBe('item5');
-
+        expect(monitoring.getTextItem(6, 0)).toBe('ingest1');
+        expect(monitoring.getTextItem(6, 1)).toBe('item5');
         monitoring.showMonitoringSettings();
         monitoring.nextStages();
-        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
-        monitoring.toggleAllSearches();
-        expect(monitoring.getSearchText(0)).toBe('saved search admin1');
+        expect(monitoring.getGlobalSearchText(0)).toBe('global saved search item by first name last name');
+        expect(monitoring.getPrivateSearchText(0)).toBe('saved search item');
     });
 
     it('configure monitoring view for more than 1 desk', function() {
@@ -241,7 +241,7 @@ describe('monitoring view', function() {
         monitoring.toggleStage(1, 2);
         monitoring.toggleStage(1, 4);
         monitoring.nextStages();
-        monitoring.toggleSearch(1);
+        monitoring.toggleGlobalSearch(0);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -400,7 +400,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(3);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -411,7 +411,7 @@ describe('monitoring view', function() {
         monitoring.toggleDesk(0);
         monitoring.toggleStage(0, 1);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(3);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -424,7 +424,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(3);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -440,7 +440,7 @@ describe('monitoring view', function() {
         monitoring.toggleDesk(0);
         monitoring.toggleStage(0, 1);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(3);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
@@ -452,7 +452,7 @@ describe('monitoring view', function() {
         monitoring.showMonitoringSettings();
         monitoring.toggleDesk(0);
         monitoring.nextStages();
-        monitoring.toggleSearch(3);
+        monitoring.toggleGlobalSearch(3);
         monitoring.nextSearches();
         monitoring.nextReorder();
         monitoring.saveSettings();
