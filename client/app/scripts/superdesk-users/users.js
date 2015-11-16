@@ -910,6 +910,10 @@
                     scope.dirty = false;
                     scope.errorMessage = null;
 
+                    scope.$watch('origUser', function() {
+                        scope.user = _.create(scope.origUser);
+                    });
+
                     resetUser(scope.origUser);
 
                     scope.$watchCollection('user', function(user) {

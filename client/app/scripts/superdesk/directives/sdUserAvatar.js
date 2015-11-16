@@ -23,7 +23,8 @@ define(['angular'], function (angular) {
                             figure.addClass('no-bg');
                         } else if (scope.initials) {
                             var initials = scope.initials.replace(/\W*(\w)\w*/g, '$1').toUpperCase();
-                            element.hide().parent().html(initials);
+                            element.hide();
+                            figure.html(initials);
                             figure.addClass('initials');
                         } else {
                             element.hide();
