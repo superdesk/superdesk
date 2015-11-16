@@ -645,7 +645,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
             }
         };
     })
-    .directive('sdTextEditorDropZone', ['$timeout', function ($timeout) {
+    .directive('sdTextEditorDropZone', function () {
         return {
             scope: true,
             require: '^sdAddEmbed',
@@ -669,7 +669,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 });
             }
         };
-    }])
+    })
     .directive('sdTextEditor', ['$timeout', 'lodash', function ($timeout, _) {
         return {
             scope: {type: '=', config: '=', language: '='},
@@ -702,7 +702,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         }
                         // save the model to update it later
                         vm.model = model;
-                        // parse the given model and create blocks per paragraph
+                        // parse the given model and create blocks per paragraph and embed
                         $('<div>' + model.$modelValue || '' + '</div>')
                         .contents()
                         .toArray()
@@ -806,6 +806,13 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                         // if not the last one, focus on the next
                         if (pos + 1 < vm.blocks.length) {
                             vm.setFocusOnBlock(vm.blocks[pos + 1]);
+                        }
+                    },
+                    getPreviousBlock: function(block) {
+                        var pos = vm.getBlockPosition(block);
+                        // if not the first one
+                        if (pos > 0) {
+                            return vm.blocks[pos - 1];
                         }
                     }
                 });
@@ -911,6 +918,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 placeholderText: gettext('Paste or type a full link')
             },
             placeholder: false,
+            disableReturn: true,
             spellcheck: false
         };
 
@@ -1018,7 +1026,9 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     scope.$watch('sdTextEditorBlockText.focus', function(should_focus) {
                         if (should_focus) {
                             // focus and set the cursor at the end of the block
-                            placeCaretAtEnd(scope.node);
+                            $timeout(function() {
+                                placeCaretAtEnd(scope.node);
+                            });
                         }
                     });
 
@@ -1098,39 +1108,62 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                     scope.cursor = {};
                     render(null, null, true);
 
+                    function extractBlockContentsFromCaret() {
+                        function getBlockContainer(node) {
+                            while (node) {
+                                if (node.nodeType === 1 && /^(P|H[1-6]|DIV)$/i.test(node.nodeName)) {
+                                    return node;
+                                }
+                                node = node.parentNode;
+                            }
+                        }
+                        var sel = window.getSelection();
+                        if (sel.rangeCount) {
+                            var selRange = sel.getRangeAt(0);
+                            var blockEl = getBlockContainer(selRange.endContainer);
+                            if (blockEl) {
+                                var range = selRange.cloneRange();
+                                range.selectNodeContents(blockEl);
+                                range.setStart(selRange.endContainer, selRange.endOffset);
+                                return range.extractContents();
+                            }
+                        }
+                    }
+
                     // Actions to support multi blocks edition
                     if (scope.config.multiBlockEdition) {
                         editorElem.on('keyup', function(e) {
-                            // press enter, create a new block
-                            if (e.keyCode === 13) {
-                                $timeout(function () {
+                            $timeout(function () {
+                                // press enter, create a new block
+                                 if (e.keyCode === 13) {
                                     // last paragraph contains what is after the cursor
-                                    var last_paragraph = angular.element(scope.node).find('p:last');
-                                    // clean it
-                                    last_paragraph.find('br').remove();
-                                    // save content
-                                    var last_paragraph_html = last_paragraph.html();
-                                    // and remove it from the current block
-                                    last_paragraph.remove();
-                                    // add a new block just after this one
+                                    var last_paragraph = extractBlockContentsFromCaret();
+                                    var last_paragraph_div = document.createElement('div');
+                                    last_paragraph_div.appendChild(last_paragraph.cloneNode(true));
                                     sdTextEditor
                                     .insertNewBlockAfter(scope.sdTextEditorBlockText, {
-                                        body: last_paragraph_html
-                                    });
-                                    // remove <br> added by the retrun key and unwrap <p>
-                                    angular.element(scope.node).get(0).normalize();
-                                    angular.element(scope.node).find('br').remove();
-                                    angular.element(scope.node).find('p').contents().unwrap();
-                                });
-                            }
-                            // backspace, remove the block if empty
-                            if (e.keyCode === 8) {
-                                if ($(scope.node).text() === '') {
-                                    $timeout(function () {
-                                        scope.removeBlock();
+                                        body: last_paragraph_div.innerHTML.replace(/^<br>$/, '')
                                     });
                                 }
-                            }
+                                // backspace
+                                else if (e.keyCode === 8) {
+                                    // remove the block if empty
+                                    if ($(scope.node).text() === '') {
+                                        scope.removeBlock();
+                                    } else {
+                                        var sel = window.getSelection();
+                                        if (sel.rangeCount) {
+                                            var selRange = sel.getRangeAt(0);
+                                            var previous_block = sdTextEditor.getPreviousBlock(scope.sdTextEditorBlockText);
+                                            if (selRange.startOffset === 0 && previous_block && previous_block.blockType === 'text') {
+                                                // complete the previous block with the current block content
+                                                previous_block.body += scope.node.innerHTML;
+                                                scope.removeBlock();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
                         });
                     }
                 };
@@ -1140,8 +1173,8 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
                 };
 
                 function render($event, event, preventStore) {
-                    editor.renderScope(scope, $event, preventStore);
                     scope.node.classList.remove(TYPING_CLASS);
+                    editor.renderScope(scope, $event, preventStore);
                     if (event) {
                         event.preventDefault();
                     }
@@ -1178,7 +1211,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck', 'angular-embe
 
                 function changeListener() {
                     $timeout.cancel(renderTimeout);
-                    renderTimeout = $timeout(render, 500, false);
+                    renderTimeout = $timeout(render, 0, false);
                 }
             }
         };
