@@ -112,14 +112,12 @@ angular.module('superdesk.itemList', ['superdesk.search'])
         }
 
         // Process related items only search
-        if (options.related === true) {
-            if (options.keyword) {
-                query.source.query.filtered.query = {
-                    match_phrase_prefix: {
-                        'slugline.phrase': options.keyword
-                    }
-                };
-            }
+        if (options.related === true && options.keyword) {
+            query.source.query.filtered.query = {
+                match_phrase_prefix: {
+                    'slugline.phrase': options.keyword
+                }
+            };
         }
 
         // process search
