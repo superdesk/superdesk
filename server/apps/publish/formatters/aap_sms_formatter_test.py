@@ -25,7 +25,7 @@ class AapSMSFormatterTest(SuperdeskTestCase):
         'priority': 1,
         'anpa_category': [{'qcode': 'a'}],
         'headline': 'This is a test headline',
-        'type': 'preformatted',
+        'type': 'text',
         'body_html': 'The story body',
         'body_footer': 'call helpline 999 if you are planning to quit smoking'
     }
@@ -45,4 +45,4 @@ class AapSMSFormatterTest(SuperdeskTestCase):
         self.assertDictEqual(item, {'Category': 'a', 'Priority': 'f', 'Sequence': item['Sequence'], 'ident': '0',
                                     'Headline': 'This is a test headline',
                                     'StoryText':
-                                        'The story body<br>call helpline 999 if you are planning to quit smoking'})
+                                        'The story bodycall helpline 999 if you are planning to quit smoking'})
