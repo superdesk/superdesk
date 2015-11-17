@@ -53,7 +53,7 @@ function Desks() {
     /**
      * Returns the stage count for named desk on desks settings list
      * @param {string} name of desk
-     * @return {string} stage count
+     * @return {Promise.<string>} a promise which is resolved with the stage count
      **/
     this.getStageCount = function(name) {
         return this.getRow(name).then(function(rows) {
