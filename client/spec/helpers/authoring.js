@@ -259,6 +259,7 @@ function Authoring() {
     var bodyHtml = element(by.model('item.body_html')).all(by.className('editor-type-html')).first();
     var headline = element(by.model('item.headline')).all(by.className('editor-type-html')).first();
     var abstract = element(by.model('item.abstract')).all(by.className('editor-type-html')).first();
+    var bodyFooter = element(by.id('body_footer')).all(by.className('editor-type-html')).first();
     var packageSlugline = element.all(by.className('keyword')).last();
 
     this.writeText = function (text) {
@@ -308,4 +309,21 @@ function Authoring() {
         element(by.className('proofread-theme-list'))
                 .all(by.className(theme)).first().click();
     };
+
+    this.addPublicServiceAnnouncement = function (psaLabel) {
+        element(by.id('psa_options')).element(by.css('option[label="' + psaLabel + '"]')).click();
+    };
+
+    this.getBodyFooter = function () {
+        return bodyFooter.getText();
+    };
+
+    this.showTransmissionDetails = function (publishedHistoryItemIndex) {
+        this.getHistoryItem(publishedHistoryItemIndex).element(
+            by.css('[ng-click="showOrHideTransmissionDetails()"]')).click();
+        browser.sleep(700);
+
+        return element.all(by.repeater('queuedItem in queuedItems'));
+    };
+
 }

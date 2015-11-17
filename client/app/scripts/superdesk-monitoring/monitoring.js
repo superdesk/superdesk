@@ -404,6 +404,9 @@
                                     authoringWorkspace.edit(item, !lock);
                                     monitoring.preview(null);
                                 });
+                        } else if (item.type === 'composite' && item.package_type === 'takes') {
+                            authoringWorkspace.view(item);
+                            monitoring.preview(null);
                         } else {
                             authoringWorkspace.edit(item, !lock);
                             monitoring.preview(null);

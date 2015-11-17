@@ -30,7 +30,8 @@
         more_coming: false,
         targeted_for: [],
         embargo: null,
-        renditions: null
+        renditions: null,
+        body_footer: null
     });
 
     var DEFAULT_ACTIONS = Object.freeze({
@@ -2137,6 +2138,20 @@
                         var diff = data.cropData;
                         scope.item.renditions = _.merge(orig, diff);
                     });
+                };
+
+                /**
+                 * Adds the selected Public Service Announcement to the item allowing user for further edit.
+                 */
+                scope.addPSAToFooter = function() {
+                    if (!scope.item.body_footer) {
+                        scope.item.body_footer = '';
+                    }
+
+                    if (scope.item.body_footer_value) {
+                        scope.item.body_footer = scope.item.body_footer + scope.item.body_footer_value.value + '<br>';
+                        autosave.save(scope.item);
+                    }
                 };
             }
         };
