@@ -220,7 +220,7 @@ class ArchiveService(BaseService):
         self._add_system_updates(original, updates, user)
 
         if original[ITEM_TYPE] == CONTENT_TYPE.PICTURE:  # create crops
-            ArchiveCropService().create_multiple_crops(updates, original)
+            CropService().create_multiple_crops(updates, original)
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
@@ -572,7 +572,7 @@ class ArchiveService(BaseService):
             validate_schedule(updates['publish_schedule'], package.get(SEQUENCE, 1))
 
         if original[ITEM_TYPE] == CONTENT_TYPE.PICTURE:
-            ArchiveCropService().validate_multiple_crops(updates, original)
+            CropService().validate_multiple_crops(updates, original)
         elif original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_update(updates, original)
 
