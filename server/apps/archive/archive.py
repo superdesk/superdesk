@@ -16,7 +16,7 @@ from .common import remove_unwanted, update_state, set_item_expiry, remove_media
     handle_existing_data, item_schema, validate_schedule, is_item_in_package, is_normal_package, \
     ITEM_DUPLICATE, ITEM_OPERATION, ITEM_RESTORE, ITEM_UPDATE, ITEM_DESCHEDULE, ARCHIVE as SOURCE, \
     LAST_PRODUCTION_DESK, LAST_AUTHORING_DESK, convert_task_attributes_to_objectId, BROADCAST_GENRE
-from .archive_crop import ArchiveCropService
+from superdesk.media.crop import CropService
 from flask import current_app as app
 from superdesk import get_resource_service
 from superdesk.errors import SuperdeskApiError
@@ -245,7 +245,7 @@ class ArchiveService(BaseService):
             del updates['force_unlock']
 
         # create crops
-        crop_service = ArchiveCropService()
+        crop_service = CropService()
         crop_service.validate_multiple_crops(updates, original)
         crop_service.create_multiple_crops(updates, original)
 
@@ -270,7 +270,7 @@ class ArchiveService(BaseService):
         if original[ITEM_TYPE] == CONTENT_TYPE.COMPOSITE:
             self.packageService.on_updated(updates, original)
 
-        ArchiveCropService().delete_replaced_crop_files(updates, original)
+        CropService().delete_replaced_crop_files(updates, original)
 
         updated = copy(original)
         updated.update(updates)
