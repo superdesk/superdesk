@@ -21,9 +21,9 @@ class WhatsAppRegistrationRequestService(BaseService):
 
 class WhatsAppRegistrationRequestResource(Resource):
     schema = {
-        'phone': {'type': 'integer'},
-        'cc': {'type': 'integer'},
-        'code': {'type': 'integer'},
+        'phone': {'type': 'string'},
+        'cc': {'type': 'string'},
+        'code': {'type': 'string'},
     }
     privileges = {
         'GET': 'archive',

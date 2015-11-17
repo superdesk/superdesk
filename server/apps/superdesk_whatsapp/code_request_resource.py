@@ -21,10 +21,10 @@ class WhatsAppCodeRequestService(BaseService):
 
 class WhatsAppCodeRequestResource(Resource):
     schema = {
-        'phone': {'type': 'integer'},
-        'cc': {'type': 'integer'},
-        'mcc': {'type': 'integer'},
-        'mnc': {'type': 'integer'},
+        'phone': {'type': 'string'},
+        'cc': {'type': 'string'},
+        'mcc': {'type': 'string'},
+        'mnc': {'type': 'string'},
     }
     privileges = {
         'GET': 'archive',
