@@ -34,9 +34,9 @@ class WhatsAppRegistrationRequestResource(Resource):
 
 @celery.task(name='whatsapp_registration_request')
 def registration_request(model):
-    code = model['code']
-    code = code.replace('-', '')
-    req = WARegRequest(model['cc'], model['phone'], code)
+    code = model['code'].replace('-', '')
+    stripped_phone = model['phone'].replace('+', '').replace(model['cc'], '')
+    req = WARegRequest(model['cc'], stripped_phone, code)
     result = req.send()
 
     push_notification(

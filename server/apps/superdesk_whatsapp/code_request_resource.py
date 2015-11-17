@@ -35,9 +35,10 @@ class WhatsAppCodeRequestResource(Resource):
 
 @celery.task(name='whatsapp_code_request')
 def code_request(model):
+    stripped_phone = model['phone'].replace('+', '').replace(model['cc'], '')
     codeReq = WACodeRequest(
         model["cc"],
-        model["phone"],
+        stripped_phone,
         model["mcc"],
         model["mnc"],
         model["mcc"],
