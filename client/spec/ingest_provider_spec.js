@@ -2,7 +2,7 @@
 var openUrl = require('./helpers/utils').open,
     ingestDashboard = require('./helpers/pages').ingestDashboard;
 
-describe('Ingest Provider Dashboard Maintenance', function() {
+describe('ingest_provider', function() {
 
     beforeEach(function(done) {
         openUrl('/#/ingest_dashboard').then(done);

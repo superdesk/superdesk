@@ -8,7 +8,7 @@ var openUrl = require('./helpers/utils').open,
 
 var Login = require('./helpers/pages').login;
 
-describe('Saved search', function() {
+describe('saved_search', function() {
 
     beforeEach(function() {
         openUrl('/#/search').then(globalSearch.setListView());

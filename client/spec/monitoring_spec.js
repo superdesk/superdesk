@@ -6,7 +6,7 @@ var authoring = require('./helpers/authoring'),
     dashboard = require('./helpers/dashboard'),
     desks = require('./helpers/desks');
 
-describe('monitoring view', function() {
+describe('monitoring', function() {
 
     beforeEach(function() {
         monitoring.openMonitoring();
