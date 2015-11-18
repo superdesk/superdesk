@@ -1139,8 +1139,12 @@
                             scope.changeTab();
                         }
 
-                        function onFail() {
-                            notify.error(gettext('Error. Saved search could not be saved.'));
+                        function onFail(error) {
+                            if (angular.isDefined(error.data._message)) {
+                                notify.error(error.data._message);
+                            } else {
+                                notify.error(gettext('Error. Saved search could not be saved.'));
+                            }
                         }
 
                         var search = getFilters($location.search());

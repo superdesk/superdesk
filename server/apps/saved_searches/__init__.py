@@ -11,7 +11,7 @@ import logging
 import superdesk
 from superdesk.services import BaseService
 from .saved_searches import SavedSearchesService, SavedSearchesResource, AllSavedSearchesResource, \
-    SavedSearchItemsResource, SavedSearchItemsService
+    SavedSearchItemsResource, SavedSearchItemsService, AllSavedSearchesService
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ def init_app(app):
     SavedSearchesResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'all_saved_searches'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = AllSavedSearchesService(endpoint_name, backend=superdesk.get_backend())
     AllSavedSearchesResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'saved_search_items'
