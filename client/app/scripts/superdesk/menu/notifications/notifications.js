@@ -20,8 +20,7 @@
          */
         function getFilter() {
             var filter = {};
-            var user_key = 'read.' + session.identity._id || 'all';
-            filter[user_key] = {$exists: true};
+            filter['recipients.user_id'] = session.identity._id;
 
             // filter out system messages for non-admin users
             if (session.identity.user_type === 'user') {
@@ -42,18 +41,18 @@
 
             var criteria = {
                 where: getFilter(),
-                embedded: {user: 1, item: 1},
+                embedded: {user: 1, item: 0},
                 max_results: 8
             };
 
-            return api.query('activity', criteria)
+            return api.query('activity', JSON.stringify(criteria))
                 .then(angular.bind(this, function(response) {
                     this._items = response._items;
                     this.unread = 0;
                     var identity = session.identity || {};
                     _.each(this._items, function(item) {
-                        var read = item.read || {};
-                        item._unread = !read[identity._id];
+                        var recipients = item.recipients || {};
+                        item._unread = !isRead(recipients, identity._id, true);
                         this.unread += item._unread ? 1 : 0;
                     }, this);
                 }));
@@ -62,17 +61,29 @@
         // mark an item as read
         this.markAsRead = function(notification) {
             var _notification = angular.extend({}, notification);
-            var users = notification.read;
-            users[session.identity._id] = 1;
-            return api('activity').save(_notification, {read: users}).then(angular.bind(this, function() {
-                this.unread = _.max([0, this.unread - 1]);
-                notification._unread = null;
-            }));
+            var recipients = notification.recipients;
+            var recipient = _.find(recipients, {'user_id': session.identity._id});
+            if (recipient && !recipient['read']) {
+                recipient['read'] = true;
+                return api('activity').save(_notification, {'recipients': recipients}).then(angular.bind(this, function() {
+                    this.unread = _.max([0, this.unread - 1]);
+                    notification._unread = null;
+                }));
+            }
         };
 
+        function isUserInRecipients(activity, user_id) {
+            return _.find(activity, {'user_id': session.identity._id});
+        }
+
+        function isRead(activity, user_id) {
+            var userReadRecord = isUserInRecipients(activity, user_id);
+            return userReadRecord && userReadRecord['read']
+        }
+
         function isCurrentUser(extras) {
-            var dest = extras._dest || {};
-            return session.identity && !dest[session.identity._id];
+            var dest = extras._dest || [];
+            return session.identity && isUserInRecipients(dest, user_id);
         }
 
         var reload = angular.bind(this, this.reload);

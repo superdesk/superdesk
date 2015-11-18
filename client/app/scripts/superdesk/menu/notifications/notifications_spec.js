@@ -3,9 +3,9 @@
 describe('notifications', function() {
 
     var notifications = {_items: [
-        {read: {foo: 0, bar: 1}},
-        {read: {foo: 1, bar: 1}},
-        {read: {foo: 1, bar: 0}}
+        {recipients: [{'user_id': 'foo', 'read': 0}, {'user_id': 'bar', 'read': 1}]},
+        {recipients: [{'user_id': 'foo', 'read': 1}, {'user_id': 'bar', 'read': 1}]},
+        {recipients: [{'user_id': 'foo', 'read': 1}, {'user_id': 'bar', 'read': 0}]}
     ]};
 
     beforeEach(module('superdesk.api'));
