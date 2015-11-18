@@ -8,7 +8,7 @@ var openUrl = require('./helpers/utils').open,
     authoring = require('./helpers/authoring'),
     monitoring = require('./helpers/monitoring');
 
-describe('Search', function() {
+describe('search', function() {
 
     beforeEach(function() {
         openUrl('/#/search').then(globalSearch.setListView());
