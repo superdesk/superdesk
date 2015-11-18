@@ -31,6 +31,7 @@ class KillPublishService(BasePublishService):
             raise SuperdeskApiError.badRequestError(message='This item is in a package' +
                                                             ' it needs to be removed before the item can be killed')
         updates['pubstatus'] = PUB_STATUS.CANCELED
+        updates['versioncreated'] = utcnow()
         super().on_update(updates, original)
         updates[ITEM_OPERATION] = ITEM_KILL
         self.takes_package_service.process_killed_takes_package(original)
