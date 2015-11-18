@@ -1,0 +1,30 @@
+[
+    {
+        "_id": "snap",
+        "label": "Snap",
+        "priority": 80,
+        "schema": {
+            "headline": {"required": true},
+            "body_html": {"required": true}
+        }
+    },
+    {
+        "_id": "live",
+        "label": "Live",
+        "priority": 50,
+        "schema": {
+            "headline": {"required": true},
+            "body_html": {"required": true}
+        }
+    },
+    {
+        "_id": "article",
+        "label": "Article",
+        "priority": 30,
+        "schema": {
+            "headline": {"required": true},
+            "slugline": {"required": true},
+            "body_html": {"required": true}
+        }
+    }
+]
