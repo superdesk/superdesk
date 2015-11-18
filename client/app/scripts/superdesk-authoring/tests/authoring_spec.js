@@ -7,6 +7,9 @@ describe('authoring', function() {
     var USER = 'user:1';
     var ITEM = {guid: GUID};
 
+    beforeEach(module(function($provide) {
+        $provide.constant('lodash', _);
+    }));
     beforeEach(module('superdesk.preferences'));
     beforeEach(module('superdesk.archive'));
     beforeEach(module('superdesk.authoring'));

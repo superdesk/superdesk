@@ -1,13 +1,18 @@
 define([
     './auth-interceptor',
-    'superdesk/api/request-service'
-], function(AuthInterceptor, RequestService) {
+    'superdesk/api/request-service',
+    'lodash'
+], function(AuthInterceptor, RequestService, _) {
     'use strict';
 
     describe('auth interceptor', function() {
 
         beforeEach(module(function($provide) {
             $provide.service('request', RequestService);
+            $provide.constant('lodash', _);
+            $provide.constant('config', {
+                server: {url: 'http://localhost:5000'}
+            });
         }));
 
         it('should intercept 401 response, run auth and resend request',
