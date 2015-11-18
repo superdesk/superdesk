@@ -41,7 +41,7 @@ define([
                 mode: 'basic',
                 pinMode: 'archive',
                 related: true,
-                itemTypes: ['text', 'picture', 'audio', 'video', 'composite']
+                itemTypes: ['text', 'picture', 'audio', 'video', 'composite', 'preformatted']
             };
             $scope.actions = {
                 apply: {
