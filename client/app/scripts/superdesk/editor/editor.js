@@ -563,61 +563,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
             spellcheck: false
         };
 
-        /**
-         * Get number of lines for all p nodes before given node withing same parent.
-         */
-        function getLinesBeforeNode(p) {
-
-            function getLineCount(text) {
-                return text.split('\n').length;
-            }
-
-            var lines = 0;
-            while (p) {
-                if (p.childNodes.length && p.childNodes[0].nodeType === Node.TEXT_NODE) {
-                    lines += getLineCount(p.childNodes[0].wholeText);
-                } else if (p.childNodes.length) {
-                    lines += 1; // empty paragraph
-                }
-                p = p.previousSibling;
-            }
-
-            return lines;
-        }
-
-        /**
-         * Get line/column coordinates for given cursor position.
-         */
-        function getLineColumn() {
-            var column, lines,
-                selection = window.getSelection();
-            if (selection.anchorNode.nodeType === Node.TEXT_NODE) {
-                var text = selection.anchorNode.wholeText.substring(0, selection.anchorOffset);
-                var node = selection.anchorNode;
-                column = text.length + 1;
-                while (node.nodeName !== 'P') {
-                    if (node.previousSibling) {
-                        column += node.previousSibling.wholeText ?
-                            node.previousSibling.wholeText.length :
-                            node.previousSibling.textContent.length;
-                        node = node.previousSibling;
-                    } else {
-                        node = node.parentNode;
-                    }
-                }
-
-                lines = 0 + getLinesBeforeNode(node);
-            } else {
-                lines = 0 + getLinesBeforeNode(selection.anchorNode);
-                column = 1;
-            }
-
-            return {
-                line: lines,
-                column: column
-            };
-        }
-
         return {
             scope: {type: '=', config: '=', language: '='},
             require: 'ngModel',
@@ -641,7 +586,7 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
 
                     spellcheck.setLanguage(scope.language);
 
-                    editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
+                    editorElem = elem.find('.editor-type-html');
                     editorElem.empty();
                     editorElem.html(ngModel.$viewValue || '');
 
@@ -709,14 +654,6 @@ angular.module('superdesk.editor', ['superdesk.editor.spellcheck'])
                             return false;
                         }
                     });
-
-                    if (scope.type === 'preformatted') {
-                        editorElem.on('keydown keyup click', function() {
-                            scope.$apply(function() {
-                                angular.extend(scope.cursor, getLineColumn());
-                            });
-                        });
-                    }
 
                     scope.$on('$destroy', function() {
                         editorElem.off();
